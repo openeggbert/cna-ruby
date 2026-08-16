@@ -1,6 +1,6 @@
 # CNA Ruby Binding
 
-> **Status: In progress - ZATÍM NEFUNKČNÍ**
+> **Status: In progress - NOT YET FUNCTIONAL**
 
 
 Ruby bindings for the CNA framework, providing an XNA 4.0 compatible API.
