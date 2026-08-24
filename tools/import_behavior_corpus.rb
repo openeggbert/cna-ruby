@@ -45,6 +45,10 @@ curve_path = File.expand_path("../behavior/xna40-curve-values.json", __dir__)
 curve = JSON.parse(File.read(curve_path))
 abort "Milestone 4 behavior evidence is not PURE_XNA_DERIVED" unless curve["category"] == "PURE_XNA_DERIVED"
 observations.concat(curve.fetch("observations"))
+packed_vector_path = File.expand_path("../behavior/xna40-packed-vector-values.json", __dir__)
+packed_vector = JSON.parse(File.read(packed_vector_path))
+abort "Milestone 5 behavior evidence is not PURE_XNA_DERIVED" unless packed_vector["category"] == "PURE_XNA_DERIVED"
+observations.concat(packed_vector.fetch("observations"))
 abort "duplicate behavior observation id" unless observations.map { |item| item.fetch("id") }.uniq.length == observations.length
 result = source_corpus.merge(
   "provenance" => "PURE_XNA_DERIVED retained observations: XNA 4.0 reference metadata and IL/algorithm analysis; never CNA output",
@@ -52,6 +56,7 @@ result = source_corpus.merge(
   "sourceSha256" => EXPECTED_SHA256,
   "milestone3SourceAssemblySha256" => milestone.fetch("sourceAssemblySha256"),
   "milestone4SourceAssemblySha256" => curve.fetch("sourceAssemblySha256"),
+  "milestone5SourceAssemblySha256" => packed_vector.fetch("sourceAssemblySha256"),
   "observations" => observations
 )
 destination = File.expand_path("../behavior/xna40-foundation-values.json", __dir__)

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "json"
+require_relative "name_mapper"
 
 module CNAApiCompat
   CATEGORIES = %w[
@@ -98,7 +99,7 @@ module CNAApiCompat
       result.add("INTERFACE_MAPPING_MISMATCH", name, type: name) unless expected.fetch("interfaces", []) == actual.fetch("interfaces", []) && expected.fetch("directInterfaces", []) == actual.fetch("directInterfaces", [])
       result.add("GENERIC_MAPPING_MISMATCH", "#{name} type generic parameters", type: name) unless expected.fetch("genericParameters", []) == actual.fetch("genericParameters", [])
       result.add("FLAGS_MAPPING_MISMATCH", name, type: name) unless expected.fetch("flags", false) == actual.fetch("flags", false)
-      expected_ruby_name = name.gsub(".", "::")
+      expected_ruby_name = NameMapper.runtime_constant_path(name)
       result.add("LANGUAGE_MAPPING_MISMATCH", "#{name}: #{actual["rubyName"].inspect}", type: name) unless actual["rubyName"] == expected_ruby_name
 
       expected_groups = expected.fetch("members").group_by { |member| group_key(member) }
@@ -187,6 +188,7 @@ module CNAApiCompat
           result.add("FLAGS_MAPPING_MISMATCH", "runtime #{ruby_name}", type: name)
         end
         verify_runtime_base(name, type, object, result)
+        verify_runtime_interfaces(name, type, object, target_types, result)
         type.fetch("members").each do |member|
           missing = ruby_projections(member).reject { |projection| projection_exists?(object, projection, member) }
           next if missing.empty?
@@ -196,15 +198,52 @@ module CNAApiCompat
     end
 
     def verify_runtime_base(name, type, object, result)
+      return if object.instance_of?(Module) && !object.instance_of?(Class)
+
       base = type["baseType"]
       expected = if base&.start_with?("Microsoft.Xna.") && target.fetch("types").any? { |candidate| candidate["name"] == base }
-                   resolve_ruby_type(base.gsub(".", "::"))
+                   resolve_ruby_type(NameMapper.runtime_constant_path(base))
                  elsif type["kind"] == "enum"
                    CNA::Runtime::EnumValue
                  else
                    Object
                  end
       result.add("BASE_MAPPING_MISMATCH", "runtime #{name}: expected #{expected}, got #{object.superclass}", type: name) unless object.superclass == expected
+    end
+
+    def verify_runtime_interfaces(name, type, object, target_types, result)
+      return unless name.start_with?("Microsoft.Xna.Framework.Graphics.PackedVector.")
+
+      type.fetch("interfaces", []).each do |interface_identity|
+        definition_identity = interface_identity.sub(/\[.*\]\z/, "")
+        next unless target_types.key?(definition_identity)
+
+        interface = resolve_ruby_type(NameMapper.runtime_constant_path(definition_identity))
+        next if object.ancestors.include?(interface)
+
+        result.add(
+          "INTERFACE_MAPPING_MISMATCH",
+          "runtime #{name}: missing #{definition_identity}",
+          type: name
+        )
+      end
+
+      return if type["kind"] == "interface"
+
+      abstract_owners = [
+        resolve_ruby_type(NameMapper.runtime_constant_path("Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector")),
+        resolve_ruby_type(NameMapper.runtime_constant_path("Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1"))
+      ]
+      %i[PackFromVector4 ToVector4 PackedValue PackedValue=].each do |method_name|
+        next unless object.method_defined?(method_name) || object.private_method_defined?(method_name)
+        next unless abstract_owners.include?(object.instance_method(method_name).owner)
+
+        result.add(
+          "MISSING_MEMBER",
+          "runtime #{name}: #{method_name} is only the abstract interface projection",
+          type: name
+        )
+      end
     end
 
     def ruby_projections(member)
@@ -249,7 +288,7 @@ module CNAApiCompat
     end
 
     def verify_public_leaks(target_types, result)
-      expected_names = target_types.keys.to_h { |name| [name.gsub(".", "::"), true] }
+      expected_names = target_types.keys.to_h { |name| [NameMapper.runtime_constant_path(name), true] }
       namespaces = expected_names.keys.flat_map do |name|
         parts = name.split("::")
         (1...parts.length).map { |length| parts.first(length).join("::") }

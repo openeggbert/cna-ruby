@@ -4,6 +4,7 @@ require "minitest/autorun"
 require "json"
 require_relative "../lib/cna"
 require_relative "../tools/api_compat/verifier"
+require_relative "../tools/api_compat/name_mapper"
 
 class ApiVerifierTest < Minitest::Test
   TYPE_NAME = "Microsoft.Xna.Framework.Fixture"
@@ -62,6 +63,51 @@ class ApiVerifierTest < Minitest::Test
   def test_event = assert_detects("EVENT_MAPPING_MISMATCH") { |_reference, target| target["types"][0]["members"][5]["type"] = "System.Action" }
   def test_operator = assert_detects("OPERATOR_MAPPING_MISMATCH") { |_reference, target| target["types"][0]["members"][4]["returnType"] = "System.Int32" }
   def test_generic = assert_detects("GENERIC_MAPPING_MISMATCH") { |_reference, target| target["types"][0]["genericParameters"] = ["T"] }
+
+  def test_clr_name_mapper_preserves_ordinary_and_nested_names
+    assert_equal "Microsoft::Xna::Framework::Vector4",
+                 CNAApiCompat::NameMapper.runtime_constant_path("Microsoft.Xna.Framework.Vector4")
+    assert_equal "Example::Outer::Inner",
+                 CNAApiCompat::NameMapper.runtime_constant_path("Example.Outer+Inner")
+  end
+
+  def test_clr_name_mapper_rewrites_generic_definitions_deterministically
+    assert_equal "Microsoft::Xna::Framework::Graphics::PackedVector::IPackedVectorOfT",
+                 CNAApiCompat::NameMapper.runtime_constant_path("Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1")
+    assert_equal "Example::PairOfT1T2", CNAApiCompat::NameMapper.runtime_constant_path("Example.Pair`2")
+    assert_raises(ArgumentError) do
+      CNAApiCompat::NameMapper.runtime_constant_path("Example.Pair`2[System.Int32,System.String]")
+    end
+  end
+
+  def test_packed_vector_collision_not_rewritten_is_detected
+    reference, target = packed_vector_contracts
+    generic = target["types"].find { |type| type["name"].end_with?("IPackedVector`1") }
+    generic["rubyName"] = "Microsoft::Xna::Framework::Graphics::PackedVector::IPackedVector"
+    assert_operator verify(reference, target).counts["LANGUAGE_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_packed_vector_wrong_generic_parameter_is_detected
+    reference, target = packed_vector_contracts
+    generic = target["types"].find { |type| type["name"].end_with?("IPackedVector`1") }
+    generic["genericParameters"][0]["name"] = "TWrong"
+    assert_operator verify(reference, target).counts["GENERIC_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_packed_vector_wrong_generic_interface_inheritance_is_detected
+    reference, target = packed_vector_contracts
+    generic = target["types"].find { |type| type["name"].end_with?("IPackedVector`1") }
+    generic["interfaces"] = []
+    generic["directInterfaces"] = []
+    assert_operator verify(reference, target).counts["INTERFACE_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_packed_vector_wrong_concrete_tpacked_is_detected
+    reference, target = packed_vector_contracts
+    alpha = target["types"].find { |type| type["name"].end_with?("Alpha8") }
+    alpha["directInterfaces"][0] = alpha["directInterfaces"][0].sub("System.Byte", "System.UInt16")
+    assert_operator verify(reference, target).counts["INTERFACE_MAPPING_MISMATCH"], :>, 0
+  end
 
   def test_enum_value_and_flags
     enum = {"name" => "Microsoft.Xna.Framework.SampleEnum", "rubyName" => "Microsoft::Xna::Framework::SampleEnum", "kind" => "enum", "flags" => true, "baseType" => "System.Enum", "interfaces" => [], "directInterfaces" => [], "genericParameters" => [], "members" => [{"kind" => "field", "name" => "One", "type" => "Microsoft.Xna.Framework.SampleEnum", "static" => true, "access" => "public", "value" => "1"}]}
@@ -130,5 +176,21 @@ class ApiVerifierTest < Minitest::Test
     reference, target = curve_contracts("Microsoft.Xna.Framework.CurveLoopType")
     target["types"][0]["members"].find { |member| member["name"] == "Oscillate" }["value"] = "4"
     assert_operator verify(reference, target).counts["ENUM_VALUE_MISMATCH"], :>, 0
+  end
+
+
+  def packed_vector_contracts
+    reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
+    names = [
+      "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+      "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1",
+      "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8"
+    ]
+    reference_types = reference.fetch("types").select { |type| names.include?(type.fetch("name")) }
+    target_types = Marshal.load(Marshal.dump(reference_types))
+    target_types.each do |type|
+      type["rubyName"] = CNAApiCompat::NameMapper.runtime_constant_path(type.fetch("name"))
+    end
+    [{"types" => reference_types}, {"types" => target_types}]
   end
 end

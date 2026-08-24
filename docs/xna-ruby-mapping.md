@@ -18,11 +18,15 @@ The selected authority is the Microsoft XNA Framework 4.0 Windows runtime metada
 | several `out` values | ordered Ruby Array return, following any non-void CLR return (`Matrix#Decompose` returns `[success, scale, rotation, translation]`) |
 | array transform overload | caller-provided source/destination Arrays with exact whole-array or indexed-range call shape |
 | event | measured contract identity; eventual projection uses explicit add/remove subscription methods |
-| generic type/member | CLR arity and full signature remain in the contract; Ruby call dispatch must reject collisions deterministically |
+| generic type/member | CLR arity and full signature remain in the contract; a generic definition with base name `Name` maps to `NameOfT` for arity 1 and `NameOfT1T2...TN` for higher arity |
 | `ICollection<CurveKey>` | the CLR interfaces remain in structural metadata; the exact typed collection members live directly on `CurveKeyCollection` |
 | `IEnumerator<CurveKey>` | `GetEnumerator` returns a fresh Ruby `Enumerator`; no public fake `System::Collections` hierarchy |
 
 Ruby enum APIs reject arbitrary integers unless the formal parameter bridge explicitly calls the enum's coercion function. Flags enum combinations may contain only declared bits. The synthetic CLR enum storage field `value__` has no Ruby projection, so the formal expected member count excludes exactly those 49 metadata fields.
+
+The generic-name rule is project-wide and collision-safe. The non-generic `Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector` therefore remains `Microsoft::Xna::Framework::Graphics::PackedVector::IPackedVector`, while the CLR arity-one identity maps to `Microsoft::Xna::Framework::Graphics::PackedVector::IPackedVectorOfT`. The latter remains `IPackedVectorOfT[TPacked]` in RBS and retains the CLR `TPacked` parameter and every constructed generic identity in verifier metadata. There is no alias between the two modules and no synthetic `System` namespace.
+
+CLR interfaces project to Ruby modules. PackedVector explicit interface members are private Ruby protocol methods: a format-specific public `ToAlpha`, `ToSingle`, `ToVector2`, or `ToVector3` remains the only declared conversion where the XNA metadata says so, while private `ToVector4` and `PackFromVector4` retain callable interface behavior without becoming unexpected public XNA members. The verifier checks module ancestry and rejects a concrete type that merely inherits an abstract interface stub without supplying the protocol operation.
 
 Ruby objects cannot reproduce CLR struct assignment copying: `b = a` aliases. Value objects therefore contain no native handle, implement `dup`/`clone`, and copy at constructors, returned/set struct properties, collection boundaries, and marshal boundaries. This limitation is classified as `LANGUAGE_MAPPING_LIMITATION`, not hidden.
 

@@ -5,6 +5,7 @@ require "json"
 require_relative "../lib/cna"
 
 F = Microsoft::Xna::Framework
+PV = F::Graphics::PackedVector
 
 def vector(value) = F::Vector2.new(*value)
 def vector3(value) = F::Vector3.new(*value)
@@ -30,6 +31,7 @@ def hex32(value)
 end
 def hex_values(values) = values.map { |value| hex32(value) }
 def float_from_bits(value) = [value].pack("L").unpack1("f")
+def packed_type(name) = PV.const_get(name, false)
 def error_name
   yield
   "none"
@@ -66,6 +68,13 @@ def behavior_group(item)
   return "CURVE_TANGENTS" if id.start_with?("curve.tangents.")
   return "CURVE_LOOPS" if id.start_with?("curve.loops.")
   return "CURVE_KEY" if id.start_with?("curve.key.")
+  return "PACKED_ALPHA" if id.start_with?("packed.alpha.")
+  return "PACKED_UNSIGNED" if id.start_with?("packed.unsigned.")
+  return "PACKED_SIGNED" if id.start_with?("packed.signed.")
+  return "PACKED_NORMALIZED" if id.start_with?("packed.normalized.")
+  return "PACKED_HALF" if id.start_with?("packed.half.")
+  return "PACKED_RGBA" if id.start_with?("packed.rgba.")
+  return "PACKED_INTERFACE" if id.start_with?("packed.interface.")
 
   id.split(".").first.upcase
 end
@@ -73,6 +82,25 @@ end
 def execute(item)
   args = item.fetch("args")
   case item.fetch("operation")
+  when "PackedVector.PackedValue"
+    type_name, values = args
+    packed_type(type_name).new(*values).PackedValue
+  when "PackedVector.HalfBits"
+    input_bits = Integer(args[0], 16)
+    value = PV::HalfSingle.new(CNA::Runtime::Numeric.f32_from_bits(input_bits))
+    [value.PackedValue, hex32(value.ToSingle), value.ToString]
+  when "PackedVector.Interface"
+    type_name, initial, lanes = args
+    value = packed_type(type_name).new(*initial)
+    value.__send__(:PackFromVector4, vector4(lanes))
+    expanded = value.__send__(:ToVector4)
+    [value.PackedValue, *hex_values(vector4_result(expanded))]
+  when "PackedVector.ValueSemantics"
+    type_name, initial, packed = args
+    value = packed_type(type_name).new(*initial)
+    value.PackedValue = packed
+    copy = value.dup
+    [value.GetHashCode, value.ToString, value.Equals(copy), value == copy, value != copy, !value.equal?(copy)]
   when "MathHelper.Clamp" then F::MathHelper.Clamp(*args)
   when "MathHelper.Lerp" then F::MathHelper.Lerp(*args)
   when "MathHelper.Barycentric" then F::MathHelper.Barycentric(*args)

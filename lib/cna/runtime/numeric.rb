@@ -97,11 +97,61 @@ module CNA
         value
       end
 
+      def int8(value, name = "value")
+        raise TypeError, "#{name} must be an Integer" unless value.instance_of?(Integer)
+        raise RangeError, "#{name} is outside SByte" unless (-128..127).cover?(value)
+
+        value
+      end
+
+      def uint16(value, name = "value")
+        raise TypeError, "#{name} must be an Integer" unless value.instance_of?(Integer)
+        raise RangeError, "#{name} is outside UInt16" unless (0..65_535).cover?(value)
+
+        value
+      end
+
+      def int16(value, name = "value")
+        raise TypeError, "#{name} must be an Integer" unless value.instance_of?(Integer)
+        raise RangeError, "#{name} is outside Int16" unless (-32_768..32_767).cover?(value)
+
+        value
+      end
+
       def uint32(value, name = "value")
         raise TypeError, "#{name} must be an Integer" unless value.instance_of?(Integer)
         raise RangeError, "#{name} is outside UInt32" unless (0..4_294_967_295).cover?(value)
 
         value
+      end
+
+      def uint64(value, name = "value")
+        raise TypeError, "#{name} must be an Integer" unless value.instance_of?(Integer)
+        raise RangeError, "#{name} is outside UInt64" unless (0..18_446_744_073_709_551_615).cover?(value)
+
+        value
+      end
+
+      def sign_extend(value, bits)
+        mask = (1 << bits) - 1
+        narrowed = value & mask
+        sign = 1 << (bits - 1)
+        (narrowed & sign).zero? ? narrowed : narrowed - (1 << bits)
+      end
+
+      def f32_bits(value)
+        number = f32(value)
+        if number.nan?
+          sign = [number].pack("E").unpack1("Q<") >> 63
+          return (sign << 31) | 0x7fc0_0000
+        end
+
+        [number].pack("e").unpack1("L<")
+      end
+
+      def f32_from_bits(value)
+        bits = uint32(value, "bits")
+        [bits].pack("L<").unpack1("e")
       end
 
       def wrap_int32(value)

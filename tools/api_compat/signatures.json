@@ -23149,6 +23149,3920 @@
       "rubyName": "Microsoft::Xna::Framework::Graphics::Texture"
     },
     {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+      "kind": "interface",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": null,
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "ToVector4",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector4",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "PackFromVector4",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::IPackedVector"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1",
+      "kind": "interface",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": null,
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector"
+      ],
+      "genericParameters": [
+        {
+          "name": "TPacked",
+          "position": 0,
+          "specialConstraints": [
+
+          ],
+          "typeConstraints": [
+
+          ]
+        }
+      ],
+      "members": [
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "!0",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::IPackedVectorOfT"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.Byte]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.Byte]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "alpha",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToAlpha",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Single",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.Byte",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::Alpha8"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt16]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt16]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "z",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector3",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector3",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector3",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt16",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::Bgr565"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt16]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt16]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "z",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "w",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector4",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector4",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt16",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::Bgra4444"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra5551",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt16]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Bgra5551]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt16]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Bgra5551]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "z",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "w",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector4",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector4",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra5551",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra5551",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra5551",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra5551",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra5551",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt16",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::Bgra5551"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Byte4",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt32]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Byte4]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt32]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Byte4]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "z",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "w",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector4",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector4",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Byte4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Byte4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Byte4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Byte4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Byte4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::Byte4"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt16]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt16]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "value",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToSingle",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Single",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt16",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::HalfSingle"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector2",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt32]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector2]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt32]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector2]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector2",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector2",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::HalfVector2"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector4",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt64]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector4]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt64]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector4]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "z",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "w",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector4",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector4",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt64",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::HalfVector4"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt16]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt16]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector2",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector2",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt16",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::NormalizedByte2"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte4",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt32]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte4]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt32]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte4]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "z",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "w",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector4",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector4",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::NormalizedByte4"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort2",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt32]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort2]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt32]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort2]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector2",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector2",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::NormalizedShort2"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort4",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt64]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort4]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt64]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort4]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "z",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "w",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector4",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector4",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt64",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::NormalizedShort4"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Rg32",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt32]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Rg32]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt32]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Rg32]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector2",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector2",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Rg32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Rg32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Rg32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Rg32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Rg32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::Rg32"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba1010102",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt32]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Rgba1010102]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt32]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Rgba1010102]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "z",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "w",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector4",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector4",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba1010102",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba1010102",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba1010102",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba1010102",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba1010102",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::Rgba1010102"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba64",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt64]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Rgba64]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt64]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Rgba64]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "z",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "w",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector4",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector4",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba64",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba64",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba64",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba64",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba64",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt64",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::Rgba64"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Short2",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt32]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Short2]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt32]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Short2]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector2",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector2",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Short2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Short2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Short2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Short2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Short2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::Short2"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Short4",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt64]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Short4]"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[System.UInt64]",
+        "System.IEquatable`1[Microsoft.Xna.Framework.Graphics.PackedVector.Short4]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "x",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "y",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "z",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "w",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector4",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector4",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Short4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Short4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Short4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "a",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Short4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "Microsoft.Xna.Framework.Graphics.PackedVector.Short4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PackedValue",
+          "type": "System.UInt64",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::Short4"
+    },
+    {
       "name": "Microsoft.Xna.Framework.Graphics.Texture2D",
       "kind": "class",
       "flags": false,

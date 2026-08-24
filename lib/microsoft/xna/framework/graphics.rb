@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../framework"
+require_relative "graphics/packed_vector"
 
 module Microsoft
   module Xna

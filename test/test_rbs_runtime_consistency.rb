@@ -136,6 +136,58 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     assert_includes source, "def GetEnumerator: () -> Enumerator[CurveKey, nil]"
   end
 
+  def test_packed_vector_rbs_retains_generic_and_all_171_callable_identities
+    environment = load_environment
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    selected = contract.fetch("types").select do |type|
+      type.fetch("name").start_with?("Microsoft.Xna.Framework.Graphics.PackedVector.")
+    end
+    assert_equal 19, selected.length
+    assert_equal 171, selected.sum { |type| type.fetch("members").length }
+
+    expected = selected.sum do |type|
+      type.fetch("members").sum do |member|
+        if %w[constructor method].include?(member["kind"])
+          1
+        elsif member["kind"] == "property"
+          (member["get"] ? 1 : 0) + (member["set"] ? 1 : 0)
+        else
+          0
+        end
+      end
+    end
+    actual = selected.sum do |type|
+      _name, entry = environment.class_decls.find { |candidate, _value| candidate.to_s == "::#{type.fetch("rubyName")}" }
+      refute_nil entry, type.fetch("rubyName")
+      entry.decls.sum do |declaration|
+        declaration.decl.members.sum do |member|
+          case member
+          when RBS::AST::Members::MethodDefinition then member.overloads.length
+          when RBS::AST::Members::AttrAccessor then 2
+          when RBS::AST::Members::AttrReader, RBS::AST::Members::AttrWriter then 1
+          else 0
+          end
+        end
+      end
+    end
+    assert_equal expected, actual
+    assert_equal 189, actual
+
+    generic_name, generic_entry = environment.class_decls.find do |name, _entry|
+      name.to_s == "::Microsoft::Xna::Framework::Graphics::PackedVector::IPackedVectorOfT"
+    end
+    refute_nil generic_name
+    generic = generic_entry.decls.first.decl
+    assert_equal ["TPacked"], generic.type_params.map { |parameter| parameter.name.to_s }
+    includes = generic.members.grep(RBS::AST::Members::Include).map { |member| member.name.to_s }
+    assert_includes includes, "::Microsoft::Xna::Framework::Graphics::PackedVector::IPackedVector"
+
+    source = File.read(SIGNATURE_ROOT.join("microsoft", "xna", "packed_vector.rbs"))
+    refute_includes source, "untyped"
+    refute_match(/\*\w*/, source)
+    assert_includes source, "module IPackedVectorOfT[TPacked]"
+  end
+
   private
 
   def load_environment

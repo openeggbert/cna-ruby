@@ -4,8 +4,10 @@
 | --- | --- | --- | --- |
 | `managed.mathhelper-point-gametime` | VERIFIED_MANAGED | verified | behavior corpus and structural verifier |
 | `managed.geometry-transform` | VERIFIED_MANAGED | verified complete cluster | Vector2/3/4, Quaternion, Matrix, Plane, Ray, bounds/frustum and dependency enums locally strict-zero |
-| `managed.rectangle-color` | VERIFIED_MANAGED | verified partial types | exact missing members reported; unchanged in Foundation 2 |
-| `managed.binary32` | VERIFIED_MANAGED | verified selected operations | 88 PURE_XNA_DERIVED observations including signed zero, NaN sign, transform order and degenerate geometry |
+| `managed.rectangle-color` | VERIFIED_MANAGED | verified complete cluster | Color and Rectangle locally strict-zero with packed/fixed-point and unchecked Int32 evidence |
+| `managed.curve` | VERIFIED_MANAGED | verified complete cluster | Curve, CurveKey, collection and enum closure locally strict-zero |
+| `managed.packed-vector` | VERIFIED_MANAGED | verified complete cluster | 19 types / 171 XNA identities, 68 golden observations and 262400 exhaustive iterations |
+| `managed.binary32` | VERIFIED_MANAGED | verified selected operations | 193 PURE_XNA_DERIVED observations including signed zero, NaN sign, transforms, Curve, packed bits and XNA half behavior |
 | `native.abi-0.7` | VERIFIED_NATIVE | verified | 30 exports, 90 signatures, 158+158 layout measurements, 2 callbacks, 12 constants |
 | `native.game-lifecycle` | VERIFIED_NATIVE | verified | Initialize/LoadContent/BeginRun/Update/Draw/EndRun/UnloadContent native ordering |
 | `native.callback-exceptions` | VERIFIED_NATIVE | verified | Initialize, LoadContent, Update, Draw containment tests |
@@ -19,7 +21,7 @@
 | `struct.assignment-copy` | LANGUAGE_MAPPING_LIMITATION | documented | Ruby assignment aliases; copies enforced at binding boundaries |
 | `content.xnb` | UNIMPLEMENTED_CNA_RUBY | deferred | fake ContentManager removed |
 | `effects.3d-model` | UNIMPLEMENTED_CNA_RUBY | deferred | managed Matrix is qualified; fake BasicEffect/cube support remains removed |
-| `audio-media` | UNIMPLEMENTED_CNA_RUBY | deferred | outside Foundation 2 |
+| `audio-media` | UNIMPLEMENTED_CNA_RUBY | deferred | outside Foundation 5 |
 | `platform.windows` | PLATFORM_PENDING | not qualified | — |
 | `platform.macos` | PLATFORM_PENDING | not qualified | — |
 | `platform.browser-wasm` | PLATFORM_PENDING | unsupported | no CNA C-ABI Wasm/Ruby-Wasm architecture |

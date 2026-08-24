@@ -1,0 +1,256 @@
+module Microsoft
+  module Xna
+    module Framework
+      module Graphics
+        module PackedVector
+          module IPackedVector
+            private
+            def ToVector4: () -> Vector4
+            def PackFromVector4: (Vector4 vector) -> nil
+          end
+
+          module IPackedVectorOfT[TPacked]
+            include IPackedVector
+            attr_accessor PackedValue: TPacked
+          end
+
+          class Alpha8
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float alpha) -> void
+            def ToAlpha: () -> Float
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (Alpha8 other) -> bool
+            def ==: (Alpha8 other) -> bool
+            def !=: (Alpha8 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class Bgr565
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float x, Float y, Float z) -> void
+                          | (Vector3 vector) -> void
+            def ToVector3: () -> Vector3
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (Bgr565 other) -> bool
+            def ==: (Bgr565 other) -> bool
+            def !=: (Bgr565 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class Bgra4444
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float x, Float y, Float z, Float w) -> void
+                          | (Vector4 vector) -> void
+            def ToVector4: () -> Vector4
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (Bgra4444 other) -> bool
+            def ==: (Bgra4444 other) -> bool
+            def !=: (Bgra4444 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class Bgra5551
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float x, Float y, Float z, Float w) -> void
+                          | (Vector4 vector) -> void
+            def ToVector4: () -> Vector4
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (Bgra5551 other) -> bool
+            def ==: (Bgra5551 other) -> bool
+            def !=: (Bgra5551 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class Byte4
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float x, Float y, Float z, Float w) -> void
+                          | (Vector4 vector) -> void
+            def ToVector4: () -> Vector4
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (Byte4 other) -> bool
+            def ==: (Byte4 other) -> bool
+            def !=: (Byte4 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class HalfSingle
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float value) -> void
+            def ToSingle: () -> Float
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (HalfSingle other) -> bool
+            def ==: (HalfSingle other) -> bool
+            def !=: (HalfSingle other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class HalfVector2
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float x, Float y) -> void
+                          | (Vector2 vector) -> void
+            def ToVector2: () -> Vector2
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (HalfVector2 other) -> bool
+            def ==: (HalfVector2 other) -> bool
+            def !=: (HalfVector2 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class HalfVector4
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float x, Float y, Float z, Float w) -> void
+                          | (Vector4 vector) -> void
+            def ToVector4: () -> Vector4
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (HalfVector4 other) -> bool
+            def ==: (HalfVector4 other) -> bool
+            def !=: (HalfVector4 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class NormalizedByte2
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float x, Float y) -> void
+                          | (Vector2 vector) -> void
+            def ToVector2: () -> Vector2
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (NormalizedByte2 other) -> bool
+            def ==: (NormalizedByte2 other) -> bool
+            def !=: (NormalizedByte2 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class NormalizedByte4
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float x, Float y, Float z, Float w) -> void
+                          | (Vector4 vector) -> void
+            def ToVector4: () -> Vector4
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (NormalizedByte4 other) -> bool
+            def ==: (NormalizedByte4 other) -> bool
+            def !=: (NormalizedByte4 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class NormalizedShort2
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float x, Float y) -> void
+                          | (Vector2 vector) -> void
+            def ToVector2: () -> Vector2
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (NormalizedShort2 other) -> bool
+            def ==: (NormalizedShort2 other) -> bool
+            def !=: (NormalizedShort2 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class NormalizedShort4
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float x, Float y, Float z, Float w) -> void
+                          | (Vector4 vector) -> void
+            def ToVector4: () -> Vector4
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (NormalizedShort4 other) -> bool
+            def ==: (NormalizedShort4 other) -> bool
+            def !=: (NormalizedShort4 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class Rg32
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float x, Float y) -> void
+                          | (Vector2 vector) -> void
+            def ToVector2: () -> Vector2
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (Rg32 other) -> bool
+            def ==: (Rg32 other) -> bool
+            def !=: (Rg32 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class Rgba1010102
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float x, Float y, Float z, Float w) -> void
+                          | (Vector4 vector) -> void
+            def ToVector4: () -> Vector4
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (Rgba1010102 other) -> bool
+            def ==: (Rgba1010102 other) -> bool
+            def !=: (Rgba1010102 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class Rgba64
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float x, Float y, Float z, Float w) -> void
+                          | (Vector4 vector) -> void
+            def ToVector4: () -> Vector4
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (Rgba64 other) -> bool
+            def ==: (Rgba64 other) -> bool
+            def !=: (Rgba64 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class Short2
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float x, Float y) -> void
+                          | (Vector2 vector) -> void
+            def ToVector2: () -> Vector2
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (Short2 other) -> bool
+            def ==: (Short2 other) -> bool
+            def !=: (Short2 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+
+          class Short4
+            include IPackedVectorOfT[Integer]
+            def initialize: (Float x, Float y, Float z, Float w) -> void
+                          | (Vector4 vector) -> void
+            def ToVector4: () -> Vector4
+            def ToString: () -> String
+            def GetHashCode: () -> Integer
+            def Equals: (Object obj) -> bool
+                      | (Short4 other) -> bool
+            def ==: (Short4 other) -> bool
+            def !=: (Short4 other) -> bool
+            attr_accessor PackedValue: Integer
+          end
+        end
+      end
+    end
+  end
+end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "json"
+require_relative "name_mapper"
 
 reference_path = File.expand_path("reference/xna40-windows-runtime-contract.json", __dir__)
 selection_path = File.expand_path("selection.json", __dir__)
@@ -51,7 +52,10 @@ target_types = selection.fetch("types").map do |type_selection|
             end
   member_keys = members.map { |member| [member["kind"], member["name"], member["static"], parameters(member)] }
   abort "duplicate target member in #{reference_type["name"]}" unless member_keys.uniq.length == member_keys.length
-  reference_type.merge("members" => members, "rubyName" => reference_type.fetch("name").gsub(".", "::"))
+  reference_type.merge(
+    "members" => members,
+    "rubyName" => CNAApiCompat::NameMapper.runtime_constant_path(reference_type.fetch("name"))
+  )
 end
 
 result = {

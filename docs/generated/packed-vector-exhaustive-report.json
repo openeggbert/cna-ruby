@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "provenance": "XNA-derived semantic round-trip sweeps; expected classifications come from the 16-bit encoding fields, not production packing tables",
+  "sweeps": [
+    {
+      "name": "Alpha8",
+      "iterations": 256,
+      "failures": 0,
+      "seconds": 0.001972
+    },
+    {
+      "name": "Bgr565",
+      "iterations": 65536,
+      "failures": 0,
+      "seconds": 2.14446
+    },
+    {
+      "name": "Bgra4444",
+      "iterations": 65536,
+      "failures": 0,
+      "seconds": 3.012282
+    },
+    {
+      "name": "Bgra5551",
+      "iterations": 65536,
+      "failures": 0,
+      "seconds": 2.952966
+    },
+    {
+      "name": "HalfSingle",
+      "iterations": 65536,
+      "failures": 0,
+      "seconds": 0.345209
+    }
+  ],
+  "halfClassification": {
+    "zero": 2,
+    "subnormal": 2046,
+    "normal": 61440,
+    "infinity": 2,
+    "nan": 2046
+  },
+  "TOTAL_ITERATIONS": 262400,
+  "FAILURES": 0,
+  "TOTAL_SECONDS": 8.456889
+}

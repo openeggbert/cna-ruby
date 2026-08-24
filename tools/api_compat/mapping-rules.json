@@ -23,7 +23,15 @@
   "structs": "Ruby classes with boundary copies and dup/clone; assignment aliasing is documented",
   "operators": "map to Ruby syntax where available and retain op_* identity in static contract",
   "events": "retain identity; explicit subscription mapping when implemented",
-  "generics": "retain CLR arity/signature and reject ambiguous runtime dispatch",
+  "generics": {
+    "contract": "retain CLR arity/signature and reject ambiguous runtime dispatch",
+    "runtimeTypeName": "each CLR generic type definition Name`N maps deterministically to NameOfT for arity 1 and NameOfT1T2...TN for higher arity",
+    "collisionRule": "the non-generic CLR identity keeps Name; no alias may collapse it with the generic identity",
+    "packedVector": {
+      "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector": "Microsoft::Xna::Framework::Graphics::PackedVector::IPackedVector",
+      "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1": "Microsoft::Xna::Framework::Graphics::PackedVector::IPackedVectorOfT"
+    }
+  },
   "expectedTypeFormula": "reference public types",
   "expectedMemberFormula": "reference public members minus enum value__ metadata storage"
 }
