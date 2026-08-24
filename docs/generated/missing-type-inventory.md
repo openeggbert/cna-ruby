@@ -88,7 +88,6 @@
 - `Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect`
 - `Microsoft.Xna.Framework.Graphics.FillMode`
 - `Microsoft.Xna.Framework.Graphics.GraphicsAdapter`
-- `Microsoft.Xna.Framework.Graphics.GraphicsProfile`
 - `Microsoft.Xna.Framework.Graphics.IEffectFog`
 - `Microsoft.Xna.Framework.Graphics.IEffectLights`
 - `Microsoft.Xna.Framework.Graphics.IEffectMatrices`

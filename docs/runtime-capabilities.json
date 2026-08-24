@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 10",
+  "milestone": "Foundation 11",
   "platform": "Linux x86-64 MRI Ruby 3.3.8",
   "cnaAbi": "0.7.0",
   "capabilities": [
@@ -12,6 +12,7 @@
     {"id": "managed.vertex-element", "category": "VERIFIED_MANAGED", "status": "verified complete descriptor cluster", "evidence": "VertexElement, VertexElementFormat and VertexElementUsage: 37 CLR / 35 Ruby identities, exact Int32 mutation, equality, smart-memory hash and string behavior"},
     {"id": "managed.display-orientation", "category": "VERIFIED_MANAGED", "status": "verified complete flags enum", "evidence": "DisplayOrientation: 5 CLR / 4 Ruby identities, explicit values 0/1/2/4, valid mask 0x7, controlled OR/AND and cross-type safety; no orientation application claim"},
     {"id": "managed.graphics-device-status", "category": "VERIFIED_MANAGED", "status": "verified complete non-flags enum", "evidence": "GraphicsDeviceStatus: 4 CLR / 3 Ruby identities, Normal=0, Lost=1, NotReset=2, ordinary-enum coercion and cross-type safety; no GraphicsDevice property or device-loss/reset behavior claim"},
+    {"id": "managed.graphics-profile", "category": "VERIFIED_MANAGED", "status": "verified complete non-flags enum", "evidence": "GraphicsProfile: 3 CLR / 2 Ruby identities, Reach=0, HiDef=1, ordinary-enum coercion and cross-type safety; no device property, constructor, profile selection, hardware capability, or feature-level claim"},
     {"id": "managed.button-state", "category": "VERIFIED_MANAGED", "status": "verified complete type", "evidence": "Released=0, Pressed=1; typed frozen non-flags enum; locally strict-zero"},
     {"id": "managed.mouse-state", "category": "VERIFIED_MANAGED", "status": "verified complete type", "evidence": "14/14 identities; exact constructor, properties, equality, XOR hash, string, Int32 extremes, and independent copies"},
     {"id": "managed.gamepad.enums", "category": "VERIFIED_MANAGED", "status": "verified complete types", "evidence": "Buttons 25/25 Ruby identities with flags composition; GamePadDeadZone 3/3; GamePadType 10/10 including BigButtonPad=768"},
@@ -22,7 +23,7 @@
     {"id": "managed.gamepad-state", "category": "VERIFIED_MANAGED", "status": "verified complete type", "evidence": "15/15 identities; both constructors, Buttons[] projection, all-flags query, exact virtual thresholds, nested copies, equality/hash/string"},
     {"id": "managed.gamepad-capabilities", "category": "VERIFIED_MANAGED", "status": "verified complete type", "evidence": "26/26 read-only properties, no public constructor, private independent native snapshots"},
     {"id": "managed.intptr", "category": "VERIFIED_MANAGED", "status": "verified signed native-width mapping", "evidence": "System.IntPtr maps to Integer; Fiddle::SIZEOF_VOIDP=8 on the qualified host; exact signed range and two's-complement native carrier"},
-    {"id": "managed.binary32", "category": "VERIFIED_MANAGED", "status": "verified selected operations", "evidence": "253 pre-Foundation-9 PURE_XNA_DERIVED observations include signed zero, NaN sign, transforms, Curve, packed bits, XNA half behavior, MouseState, GamePad values, and VertexElement; DisplayOrientation and GraphicsDeviceStatus add no binary32 behavior"},
+    {"id": "managed.binary32", "category": "VERIFIED_MANAGED", "status": "verified selected operations", "evidence": "253 pre-Foundation-9 PURE_XNA_DERIVED observations include signed zero, NaN sign, transforms, Curve, packed bits, XNA half behavior, MouseState, GamePad values, and VertexElement; DisplayOrientation, GraphicsDeviceStatus, and GraphicsProfile add no binary32 behavior"},
     {"id": "native.abi-0.7", "category": "VERIFIED_NATIVE", "status": "verified", "evidence": "38 exports, 122 signatures, 290+290 layout measurements, 2 callbacks, 59 constants"},
     {"id": "native.game-lifecycle", "category": "VERIFIED_NATIVE", "status": "verified", "evidence": "Initialize/LoadContent/BeginRun/Update/Draw/EndRun/UnloadContent native ordering"},
     {"id": "native.callback-exceptions", "category": "VERIFIED_NATIVE", "status": "verified", "evidence": "Initialize, LoadContent, Update, Draw containment tests"},
@@ -54,7 +55,7 @@
     {"id": "struct.assignment-copy", "category": "LANGUAGE_MAPPING_LIMITATION", "status": "documented", "evidence": "Ruby assignment aliases; copies enforced at binding boundaries"},
     {"id": "content.xnb", "category": "UNIMPLEMENTED_CNA_RUBY", "status": "deferred", "evidence": "fake ContentManager removed"},
     {"id": "effects.3d-model", "category": "UNIMPLEMENTED_CNA_RUBY", "status": "deferred", "evidence": "managed Matrix is qualified; fake BasicEffect/cube support remains removed"},
-    {"id": "audio-media", "category": "UNIMPLEMENTED_CNA_RUBY", "status": "deferred", "evidence": "outside Foundation 10"},
+    {"id": "audio-media", "category": "UNIMPLEMENTED_CNA_RUBY", "status": "deferred", "evidence": "outside Foundation 11"},
     {"id": "platform.windows", "category": "PLATFORM_PENDING", "status": "not qualified", "evidence": null},
     {"id": "platform.macos", "category": "PLATFORM_PENDING", "status": "not qualified", "evidence": null},
     {"id": "platform.browser-wasm", "category": "PLATFORM_PENDING", "status": "unsupported", "evidence": "no CNA C-ABI Wasm/Ruby-Wasm architecture"},

@@ -1275,6 +1275,44 @@
       "rubyName": "Microsoft::Xna::Framework::Graphics::GraphicsDeviceStatus"
     },
     {
+      "name": "Microsoft.Xna.Framework.Graphics.GraphicsProfile",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Reach",
+          "type": "Microsoft.Xna.Framework.Graphics.GraphicsProfile",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "HiDef",
+          "type": "Microsoft.Xna.Framework.Graphics.GraphicsProfile",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::GraphicsProfile"
+    },
+    {
       "name": "Microsoft.Xna.Framework.Input.KeyState",
       "kind": "enum",
       "flags": false,

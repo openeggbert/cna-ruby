@@ -10,6 +10,7 @@
     {"name": "Microsoft.Xna.Framework.Graphics.SpriteEffects", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.SurfaceFormat", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus", "complete": true},
+    {"name": "Microsoft.Xna.Framework.Graphics.GraphicsProfile", "complete": true},
     {"name": "Microsoft.Xna.Framework.Input.KeyState", "complete": true},
     {"name": "Microsoft.Xna.Framework.Input.Keys", "complete": true},
     {"name": "Microsoft.Xna.Framework.Input.KeyboardState", "complete": true},

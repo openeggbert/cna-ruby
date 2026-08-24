@@ -39,6 +39,14 @@ module Microsoft
           })
         end
 
+        class GraphicsProfile < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "Reach" => 0,
+            "HiDef" => 1
+          })
+        end
+
         class Viewport
           include CNA::Runtime::ValueSemantics
           N = CNA::Runtime::Numeric

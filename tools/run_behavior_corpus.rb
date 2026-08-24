@@ -13,6 +13,11 @@ GRAPHICS_DEVICE_STATUS_SIGNATURE = JSON.parse(
 ).fetch("types").find do |type|
   type.fetch("name") == "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus"
 end
+GRAPHICS_PROFILE_SIGNATURE = JSON.parse(
+  File.read(File.expand_path("api_compat/signatures.json", __dir__))
+).fetch("types").find do |type|
+  type.fetch("name") == "Microsoft.Xna.Framework.Graphics.GraphicsProfile"
+end
 
 def vector(value) = F::Vector2.new(*value)
 def vector3(value) = F::Vector3.new(*value)
@@ -99,6 +104,7 @@ def behavior_group(item)
   return "VERTEX_ELEMENT" if id.start_with?("vertex_element.")
   return "DISPLAY_ORIENTATION" if id.start_with?("display_orientation.")
   return "GRAPHICS_DEVICE_STATUS" if id.start_with?("graphics_device_status.")
+  return "GRAPHICS_PROFILE" if id.start_with?("graphics_profile.")
 
   id.split(".").first.upcase
 end
@@ -106,6 +112,40 @@ end
 def execute(item)
   args = item.fetch("args")
   case item.fetch("operation")
+  when "GraphicsProfile.Contract"
+    profile = G::GraphicsProfile
+    values = [profile::Reach, profile::HiDef]
+    [GRAPHICS_PROFILE_SIGNATURE.fetch("kind"),
+     GRAPHICS_PROFILE_SIGNATURE.fetch("underlyingType"),
+     profile.instance_variable_get(:@enum_flags), values.map(&:to_i)]
+  when "GraphicsProfile.RubyEnumMapping"
+    profile = G::GraphicsProfile
+    values = [profile::Reach, profile::HiDef]
+    foreign = [G::GraphicsDeviceStatus::Normal, F::DisplayOrientation::Default,
+               G::SurfaceFormat::Color, G::SpriteSortMode::Deferred,
+               F::PlayerIndex::One, I::GamePadDeadZone::None]
+    [
+      values.all? { |value| value.instance_of?(profile) },
+      values.all?(&:frozen?),
+      profile.coerce(0).equal?(profile::Reach),
+      profile.coerce(1).equal?(profile::HiDef),
+      profile.coerce(profile::Reach).equal?(profile::Reach),
+      profile.coerce(profile::HiDef).equal?(profile::HiDef),
+      [-1, 2].map { |value| error_name { profile.coerce(value) } },
+      [nil, "1", 1.0, Object.new].map { |value| error_name { profile.coerce(value) } },
+      foreign.map { |value| error_name { profile.coerce(value) } },
+      error_name { profile::Reach | profile::HiDef },
+      error_name { profile::HiDef & profile::Reach },
+      foreign.map { |value| profile::Reach == value },
+      foreign.map { |value| profile::Reach <=> value },
+      values.map(&:to_s),
+      profile::HiDef.inspect,
+      profile.constants(false).map(&:to_s).sort,
+      profile.constants(false).include?(:value__),
+      profile::Reach.respond_to?(:ToString),
+      profile::Reach.respond_to?(:HasFlag),
+      profile.instance_variable_get(:@enum_mask)
+    ]
   when "GraphicsDeviceStatus.Contract"
     status = G::GraphicsDeviceStatus
     values = [status::Normal, status::Lost, status::NotReset]

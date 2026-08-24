@@ -11,6 +11,11 @@ module Microsoft
           NotReset: GraphicsDeviceStatus
         end
 
+        class GraphicsProfile
+          Reach: GraphicsProfile
+          HiDef: GraphicsProfile
+        end
+
         class Viewport
           attr_accessor X: Integer
           attr_accessor Y: Integer

@@ -567,6 +567,96 @@ class ApiVerifierTest < Minitest::Test
     refute selected_device.fetch("members").any? { |member| member["name"] == "GraphicsDeviceStatus" }
   end
 
+  def test_graphics_profile_missing_type_and_wrong_namespace_are_detected
+    reference, target = graphics_profile_contracts
+    target.fetch("types").clear
+    assert_operator verify(reference, target).counts["MISSING_TYPE"], :>, 0
+
+    reference, target = graphics_profile_contracts
+    profile = target.fetch("types").first
+    profile["name"] = "Microsoft.Xna.Framework.GraphicsProfile"
+    profile["rubyName"] = "Microsoft::Xna::Framework::GraphicsProfile"
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_TYPE"], :>, 0
+    assert_operator result.counts["UNEXPECTED_TYPE"], :>, 0
+  end
+
+  def test_graphics_profile_wrong_kind_underlying_type_and_flags_are_detected
+    reference, target = graphics_profile_contracts
+    target.fetch("types").first["kind"] = "class"
+    assert_operator verify(reference, target).counts["TYPE_KIND_MISMATCH"], :>, 0
+
+    reference, target = graphics_profile_contracts
+    target.fetch("types").first["underlyingType"] = "System.UInt32"
+    assert_operator verify(reference, target).counts["ENUM_VALUE_MISMATCH"], :>, 0
+
+    reference, target = graphics_profile_contracts
+    target.fetch("types").first["flags"] = true
+    assert_operator verify(reference, target).counts["FLAGS_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_graphics_profile_reach_and_hidef_raw_value_mutations_are_detected
+    reference, target = graphics_profile_contracts
+    profile = target.fetch("types").first
+    profile.fetch("members").find { |member| member["name"] == "Reach" }["value"] = "1"
+    profile.fetch("members").find { |member| member["name"] == "HiDef" }["value"] = "0"
+    assert_operator verify(reference, target).counts["ENUM_VALUE_MISMATCH"], :>=, 2
+  end
+
+  def test_graphics_profile_missing_hidef_exposed_storage_and_extra_enum_value_are_detected
+    reference, target = graphics_profile_contracts
+    profile = target.fetch("types").first
+    profile.fetch("members").reject! { |member| member["name"] == "HiDef" }
+    storage = reference.fetch("types").first.fetch("members").find { |member| member["name"] == "value__" }
+    profile.fetch("members") << Marshal.load(Marshal.dump(storage))
+    profile.fetch("members") << {
+      "kind" => "field", "name" => "Default", "type" => profile.fetch("name"),
+      "static" => true, "constant" => true, "value" => "2"
+    }
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_MEMBER"], :>, 0
+    assert_operator result.counts["UNEXPECTED_MEMBER"], :>=, 2
+  end
+
+  def test_graphics_profile_unexpected_public_helper_is_detected_at_runtime
+    reference, target = graphics_profile_contracts
+    profile = Microsoft::Xna::Framework::Graphics::GraphicsProfile
+    profile.class_eval { def SupportsHiDef? = false }
+    assert_operator verify(reference, target, runtime: true).counts["UNEXPECTED_MEMBER"], :>, 0
+  ensure
+    profile&.__send__(:remove_method, :SupportsHiDef?) if profile&.public_method_defined?(:SupportsHiDef?)
+  end
+
+  def test_graphics_profile_selected_surface_rejects_accidental_device_and_manager_properties
+    full_reference = reference_contract
+
+    reference, target = graphics_profile_selected_surface_contracts
+    device_name = "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+    property = full_reference.fetch("types").find { |type| type.fetch("name") == device_name }
+                             .fetch("members").find do |member|
+      member["kind"] == "property" && member["name"] == "GraphicsProfile"
+    end
+    target.fetch("types").find { |type| type.fetch("name") == device_name }
+          .fetch("members") << Marshal.load(Marshal.dump(property))
+    assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0
+
+    reference, target = graphics_profile_selected_surface_contracts
+    manager_name = "Microsoft.Xna.Framework.GraphicsDeviceManager"
+    property = full_reference.fetch("types").find { |type| type.fetch("name") == manager_name }
+                             .fetch("members").find do |member|
+      member["kind"] == "property" && member["name"] == "GraphicsProfile"
+    end
+    target.fetch("types").find { |type| type.fetch("name") == manager_name }
+          .fetch("members") << Marshal.load(Marshal.dump(property))
+    assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0
+
+    selected = signature_contract.fetch("types")
+    refute selected.find { |type| type.fetch("name") == device_name }.fetch("members")
+                   .any? { |member| member["name"] == "GraphicsProfile" }
+    refute selected.find { |type| type.fetch("name") == manager_name }.fetch("members")
+                   .any? { |member| member["name"] == "GraphicsProfile" }
+  end
+
 
   def packed_vector_contracts
     reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
@@ -647,6 +737,29 @@ class ApiVerifierTest < Minitest::Test
     selected_device = signature_contract.fetch("types").find { |type| type.fetch("name") == device_name }
     reference.fetch("types") << Marshal.load(Marshal.dump(selected_device))
     target.fetch("types") << Marshal.load(Marshal.dump(selected_device))
+    [reference, target]
+  end
+
+  def graphics_profile_contracts
+    reference = reference_contract
+    target = signature_contract
+    name = "Microsoft.Xna.Framework.Graphics.GraphicsProfile"
+    reference_types = reference.fetch("types").select { |type| type.fetch("name") == name }
+    target_types = target.fetch("types").select { |type| type.fetch("name") == name }
+    [{"types" => reference_types}, {"types" => Marshal.load(Marshal.dump(target_types))}]
+  end
+
+  def graphics_profile_selected_surface_contracts
+    reference, target = graphics_profile_contracts
+    names = [
+      "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+      "Microsoft.Xna.Framework.GraphicsDeviceManager"
+    ]
+    names.each do |name|
+      selected = signature_contract.fetch("types").find { |type| type.fetch("name") == name }
+      reference.fetch("types") << Marshal.load(Marshal.dump(selected))
+      target.fetch("types") << Marshal.load(Marshal.dump(selected))
+    end
     [reference, target]
   end
 

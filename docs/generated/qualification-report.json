@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 10",
+  "milestone": "Foundation 11",
   "complete": true,
   "date": "2026-08-24",
   "ruby": "ruby 3.3.8 (2025-04-09 revision b200bad6cd) [x86_64-linux-gnu]",
@@ -12,7 +12,7 @@
   "gem": {
     "filename": "cna-ruby-0.1.0.dev0.gem",
     "version": "0.1.0.dev0",
-    "sha256": "45f65ec9ab8e6419ebf3605bdfa77ec4326c2f3e3a1eb336ce742c928f77b348",
+    "sha256": "90ebc19f1afe1d1de1f83c20e4057d75049ed5256dbc11007e175c2f622f878a",
     "entries": 37,
     "forbiddenEntries": 0,
     "nativeLibrariesBundled": 0,
@@ -27,8 +27,8 @@
     "audio": "NULL"
   },
   "tests": {
-    "runs": 201,
-    "assertions": 4270,
+    "runs": 213,
+    "assertions": 4385,
     "failures": 0,
     "errors": 0,
     "skips": 0
@@ -38,14 +38,14 @@
     "referenceMembers": 2964,
     "expectedRubyTypes": 257,
     "expectedRubyMembers": 2915,
-    "targetTypes": 76,
-    "targetMembers": 1460,
-    "totalDiagnostics": 370,
-    "missingType": 181,
+    "targetTypes": 77,
+    "targetMembers": 1462,
+    "totalDiagnostics": 369,
+    "missingType": 180,
     "missingMember": 135,
-    "completeTypes": 69,
+    "completeTypes": 70,
     "partialTypes": 7,
-    "missingTypes": 181,
+    "missingTypes": 180,
     "unexpectedType": 0,
     "unexpectedMember": 0,
     "typeKindMismatch": 0,
@@ -122,35 +122,52 @@
     "graphicsDevicePropertyImplemented": false,
     "graphicsDeviceMissingMemberIdentities": 54
   },
+  "graphicsProfileClosure": {
+    "sourceTypes": 1,
+    "clrIdentities": 3,
+    "expectedRubyIdentities": 2,
+    "targetRubyIdentities": 2,
+    "localDiagnostics": 0,
+    "kind": "enum",
+    "underlyingType": "System.Int32",
+    "flags": false,
+    "values": {"Reach": 0, "HiDef": 1},
+    "valueStorageExposed": false,
+    "graphicsDevicePropertyImplemented": false,
+    "graphicsDeviceManagerPropertyImplemented": false,
+    "graphicsDeviceConstructorChanged": false,
+    "hardwareProfileDetectionImplemented": false
+  },
   "focusedManaged": {
     "nativeLibraryUnset": true,
     "runs": 5,
-    "assertions": 70,
+    "assertions": 69,
     "failures": 0,
     "errors": 0,
     "skips": 0
   },
   "verifier": {
-    "mutationSelfTestRuns": 57,
-    "assertions": 102,
+    "mutationSelfTestRuns": 63,
+    "assertions": 116,
     "failures": 0,
     "focusedGraphicsDeviceStatusFixtures": 12,
+    "focusedGraphicsProfileFixtures": 13,
     "manualAllowlistEntries": 0,
     "unmeasuredStructuralCategories": 0
   },
   "rbsRuntimeConsistency": {
-    "runs": 10,
-    "assertions": 1669,
+    "runs": 11,
+    "assertions": 1701,
     "failures": 0,
     "selectedProjectionUntyped": 0,
     "selectedProjectionCatchAll": 0
   },
   "behavior": {
     "provenance": "OBSERVATION_LEVEL",
-    "pureXnaDerived": 255,
-    "rubyMappingQualification": 2,
-    "observations": 257,
-    "assertions": 257,
+    "pureXnaDerived": 256,
+    "rubyMappingQualification": 3,
+    "observations": 259,
+    "assertions": 259,
     "failures": 0,
     "gamepadGroups": {
       "BUTTONS": 4,
@@ -167,6 +184,7 @@
     },
     "displayOrientationGroup": 2,
     "graphicsDeviceStatusGroup": 2,
+    "graphicsProfileGroup": 2,
     "nativeGamePadIncludedInPureTotals": false
   },
   "nativeAbi": {
@@ -238,10 +256,12 @@
     "SpriteBatch"
   ],
   "nextMilestone": {
-    "types": ["GraphicsProfile"],
+    "types": ["Viewport"],
     "sourceTypes": 1,
-    "clrIdentities": 3,
-    "expectedRubyIdentities": 2,
+    "clrIdentities": 14,
+    "expectedRubyIdentities": 14,
+    "currentTargetIdentities": 11,
+    "remainingIdentities": 3,
     "selectedOnly": true,
     "started": false
   }
