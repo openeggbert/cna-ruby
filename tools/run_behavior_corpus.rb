@@ -7,6 +7,7 @@ require_relative "../lib/cna"
 F = Microsoft::Xna::Framework
 PV = F::Graphics::PackedVector
 I = F::Input
+G = F::Graphics
 
 def vector(value) = F::Vector2.new(*value)
 def vector3(value) = F::Vector3.new(*value)
@@ -89,6 +90,8 @@ def behavior_group(item)
   return "GAMEPAD_THUMBSTICKS" if id.start_with?("gamepad_thumbsticks.")
   return "GAMEPAD_STATE" if id.start_with?("gamepad_state.")
   return "GAMEPAD_ENUMS" if id.start_with?("gamepad_enums.")
+  return "VERTEX_ELEMENT_ENUMS" if id.start_with?("vertex_element_enums.")
+  return "VERTEX_ELEMENT" if id.start_with?("vertex_element.")
 
   id.split(".").first.upcase
 end
@@ -96,6 +99,116 @@ end
 def execute(item)
   args = item.fetch("args")
   case item.fetch("operation")
+  when "VertexElement.Enums"
+    formats = %i[Single Vector2 Vector3 Vector4 Color Byte4 Short2 Short4 NormalizedShort2
+                 NormalizedShort4 HalfVector2 HalfVector4].map { |name| G::VertexElementFormat.const_get(name) }
+    usages = %i[Position Color TextureCoordinate Normal Binormal Tangent BlendIndices BlendWeight
+                Depth Fog PointSize Sample TessellateFactor].map { |name| G::VertexElementUsage.const_get(name) }
+    [formats.map(&:to_i), usages.map(&:to_i), formats.all? { |value| value.instance_of?(G::VertexElementFormat) && value.frozen? },
+     usages.all? { |value| value.instance_of?(G::VertexElementUsage) && value.frozen? },
+     G::VertexElementFormat.instance_variable_get(:@enum_flags),
+     G::VertexElementUsage.instance_variable_get(:@enum_flags)]
+  when "VertexElement.EnumNames"
+    [G::VertexElementFormat.constants(false).sort_by { |name| G::VertexElementFormat.const_get(name).to_i }
+       .map { |name| G::VertexElementFormat.const_get(name).to_s },
+     G::VertexElementUsage.constants(false).sort_by { |name| G::VertexElementUsage.const_get(name).to_i }
+       .map { |name| G::VertexElementUsage.const_get(name).to_s }]
+  when "VertexElement.EnumValidation"
+    [error_name { G::VertexElementFormat.coerce(12) }, error_name { G::VertexElementUsage.coerce(13) },
+     error_name { G::VertexElementFormat.coerce(G::VertexElementUsage::Position) },
+     error_name { G::VertexElementFormat::Single | G::VertexElementFormat::Vector2 },
+     error_name { G::VertexElementUsage::Position | G::VertexElementUsage::Color },
+     G::VertexElementFormat::Single.respond_to?(:SizeInBytes),
+     G::VertexElementUsage::Position.respond_to?(:ComponentCount)]
+  when "VertexElement.Default"
+    value = G::VertexElement.new
+    explicit = G::VertexElement.new(0, G::VertexElementFormat::Single, G::VertexElementUsage::Position, 0)
+    [value.Offset, value.VertexElementFormat.to_i, value.VertexElementUsage.to_i, value.UsageIndex,
+     value.GetHashCode, value.ToString, value == explicit]
+  when "VertexElement.Constructor"
+    value = G::VertexElement.new(12, G::VertexElementFormat::Vector3,
+                                 G::VertexElementUsage::TextureCoordinate, 7)
+    [value.Offset, value.VertexElementFormat.to_i, value.VertexElementUsage.to_i,
+     value.UsageIndex, value.ToString]
+  when "VertexElement.Setters"
+    value = G::VertexElement.new
+    value.Offset = -16
+    value.VertexElementFormat = G::VertexElementFormat::HalfVector4
+    value.VertexElementUsage = G::VertexElementUsage::Tangent
+    value.UsageIndex = -3
+    [value.Offset, value.VertexElementFormat.to_i, value.VertexElementUsage.to_i, value.UsageIndex]
+  when "VertexElement.Int32Boundaries"
+    [0, 1, -1, -2_147_483_648, 2_147_483_647].flat_map do |number|
+      value = G::VertexElement.new(number, G::VertexElementFormat::Single,
+                                   G::VertexElementUsage::Position, number)
+      [value.Offset, value.UsageIndex]
+    end
+  when "VertexElement.Copy"
+    value = G::VertexElement.new(12, G::VertexElementFormat::Vector3,
+                                 G::VertexElementUsage::TextureCoordinate, 7)
+    duplicate = value.dup
+    clone = value.clone
+    duplicate.Offset = -16
+    duplicate.VertexElementFormat = G::VertexElementFormat::HalfVector4
+    duplicate.VertexElementUsage = G::VertexElementUsage::Tangent
+    duplicate.UsageIndex = -3
+    clone.Offset = 1
+    clone.VertexElementFormat = G::VertexElementFormat::Color
+    clone.VertexElementUsage = G::VertexElementUsage::Normal
+    clone.UsageIndex = 9
+    [!duplicate.equal?(value), !clone.equal?(value), value.Offset, value.VertexElementFormat.to_i,
+     value.VertexElementUsage.to_i, value.UsageIndex, duplicate.Offset,
+     duplicate.VertexElementFormat.to_i, duplicate.VertexElementUsage.to_i, duplicate.UsageIndex,
+     clone.Offset, clone.VertexElementFormat.to_i, clone.VertexElementUsage.to_i, clone.UsageIndex]
+  when "VertexElement.Equality"
+    value = G::VertexElement.new(12, G::VertexElementFormat::Vector3,
+                                 G::VertexElementUsage::TextureCoordinate, 7)
+    equal = value.dup
+    different = G::VertexElement.new(13, G::VertexElementFormat::Vector3,
+                                     G::VertexElementUsage::TextureCoordinate, 7)
+    [value.Equals(equal), value == equal, value != equal, value.Equals(nil), value.Equals(Object.new),
+     value == different, value != different]
+  when "VertexElement.FieldDifferences"
+    value = G::VertexElement.new(12, G::VertexElementFormat::Vector3,
+                                 G::VertexElementUsage::TextureCoordinate, 7)
+    [G::VertexElement.new(13, G::VertexElementFormat::Vector3, G::VertexElementUsage::TextureCoordinate, 7),
+     G::VertexElement.new(12, G::VertexElementFormat::Vector4, G::VertexElementUsage::TextureCoordinate, 7),
+     G::VertexElement.new(12, G::VertexElementFormat::Vector3, G::VertexElementUsage::Normal, 7),
+     G::VertexElement.new(12, G::VertexElementFormat::Vector3, G::VertexElementUsage::TextureCoordinate, 8)]
+      .map { |other| value != other }
+  when "VertexElement.HashGoldens"
+    [G::VertexElement.new,
+     G::VertexElement.new(12, G::VertexElementFormat::Vector3, G::VertexElementUsage::TextureCoordinate, 7),
+     G::VertexElement.new(-16, G::VertexElementFormat::HalfVector4, G::VertexElementUsage::Tangent, -3),
+     G::VertexElement.new(-2_147_483_648, G::VertexElementFormat::HalfVector4,
+                          G::VertexElementUsage::TessellateFactor, 2_147_483_647),
+     G::VertexElement.new(1, G::VertexElementFormat::Vector3, G::VertexElementUsage::Normal, 0),
+     G::VertexElement.new(2_147_483_647, G::VertexElementFormat::Single,
+                          G::VertexElementUsage::Position, -2_147_483_648)].map(&:GetHashCode)
+  when "VertexElement.StringGoldens"
+    [G::VertexElement.new,
+     G::VertexElement.new(12, G::VertexElementFormat::Vector3, G::VertexElementUsage::TextureCoordinate, 7),
+     G::VertexElement.new(-16, G::VertexElementFormat::HalfVector4, G::VertexElementUsage::Tangent, -3),
+     G::VertexElement.new(-2_147_483_648, G::VertexElementFormat::HalfVector4,
+                          G::VertexElementUsage::TessellateFactor, 2_147_483_647)].map(&:ToString)
+  when "VertexElement.ConstructorValidation"
+    [error_name { G::VertexElement.new(0) },
+     error_name { G::VertexElement.new(0.0, G::VertexElementFormat::Single, G::VertexElementUsage::Position, 0) },
+     error_name { G::VertexElement.new(-2_147_483_649, G::VertexElementFormat::Single, G::VertexElementUsage::Position, 0) },
+     error_name { G::VertexElement.new(0, G::VertexElementFormat::Single, G::VertexElementUsage::Position, 2_147_483_648) },
+     error_name { G::VertexElement.new(0, G::VertexElementUsage::Position, G::VertexElementUsage::Position, 0) },
+     error_name { G::VertexElement.new(0, G::VertexElementFormat::Single, G::VertexElementFormat::Single, 0) },
+     error_name { G::VertexElement.new(0, 12, G::VertexElementUsage::Position, 0) },
+     error_name { G::VertexElement.new(0, G::VertexElementFormat::Single, 13, 0) }]
+  when "VertexElement.SetterValidationSurface"
+    value = G::VertexElement.new
+    [error_name { value.Offset = nil }, error_name { value.Offset = 2_147_483_648 },
+     error_name { value.UsageIndex = 1.0 }, error_name { value.UsageIndex = -2_147_483_649 },
+     error_name { value.VertexElementFormat = G::VertexElementUsage::Position },
+     error_name { value.VertexElementFormat = -1 },
+     error_name { value.VertexElementUsage = G::VertexElementFormat::Single },
+     error_name { value.VertexElementUsage = 99 }, value.respond_to?(:Format), value.respond_to?(:Usage),
+     value.respond_to?(:SizeInBytes), value.respond_to?(:VertexDeclaration)]
   when "ButtonState.Values"
     [I::ButtonState::Released.to_i, I::ButtonState::Pressed.to_i,
      I::ButtonState::Released.instance_of?(I::ButtonState), I::ButtonState::Pressed.frozen?]

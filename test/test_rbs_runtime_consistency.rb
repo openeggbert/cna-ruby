@@ -232,6 +232,54 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     assert_includes source, "def self.SetVibration: (::Microsoft::Xna::Framework::PlayerIndex playerIndex, Float leftMotor, Float rightMotor) -> bool"
   end
 
+  def test_vertex_element_rbs_retains_exact_35_identity_closure_and_default_projection
+    environment = load_environment
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    names = %w[VertexElement VertexElementFormat VertexElementUsage].map do |name|
+      "Microsoft.Xna.Framework.Graphics.#{name}"
+    end
+    selected = contract.fetch("types").select { |type| names.include?(type.fetch("name")) }
+    assert_equal 3, selected.length
+    assert_equal 35, selected.sum { |type| type.fetch("members").length }
+
+    expected_callable = selected.sum do |type|
+      type.fetch("members").sum do |member|
+        if %w[constructor method].include?(member["kind"])
+          1
+        elsif member["kind"] == "property"
+          (member["get"] ? 1 : 0) + (member["set"] ? 1 : 0)
+        else
+          0
+        end
+      end
+    end
+    actual_callable = selected.sum do |type|
+      _name, entry = environment.class_decls.find do |candidate, _value|
+        candidate.to_s == "::#{type.fetch("rubyName")}"
+      end
+      refute_nil entry, type.fetch("rubyName")
+      entry.decls.sum do |declaration|
+        declaration.decl.members.sum do |member|
+          member.instance_of?(RBS::AST::Members::MethodDefinition) ? member.overloads.length : 0
+        end
+      end
+    end
+    assert_equal 14, expected_callable
+    assert_equal expected_callable + 1, actual_callable
+
+    source = File.read(SIGNATURE_ROOT.join("microsoft", "xna", "vertex_element.rbs"))
+    refute_includes source, "untyped"
+    refute_match(/\*\w*/, source)
+    assert_includes source, "def initialize: () -> void"
+    assert_includes source, "| (Integer offset, VertexElementFormat elementFormat, VertexElementUsage elementUsage, Integer usageIndex) -> void"
+    assert_includes source, "def Equals: (Object obj) -> bool"
+    refute_includes source, "def Equals: (VertexElement"
+    assert_includes source, "def ==: (VertexElement right) -> bool"
+    assert_includes source, "def !=: (VertexElement right) -> bool"
+    assert_equal 12, selected.find { |type| type["name"].end_with?(".VertexElementFormat") }.fetch("members").length
+    assert_equal 13, selected.find { |type| type["name"].end_with?(".VertexElementUsage") }.fetch("members").length
+  end
+
   private
 
   def load_environment

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 7",
+  "milestone": "Foundation 8",
   "complete": true,
   "date": "2026-08-24",
   "ruby": "ruby 3.3.8 (2025-04-09 revision b200bad6cd) [x86_64-linux-gnu]",
@@ -12,8 +12,8 @@
   "gem": {
     "filename": "cna-ruby-0.1.0.dev0.gem",
     "version": "0.1.0.dev0",
-    "sha256": "2971d2fb1c179639849be041acc7a76ba5da58ea135b8c589db5181f43969694",
-    "entries": 35,
+    "sha256": "122d34535f6035ef3bd494c85be2d6b48918ed10d8f454dcc062bde3a2e8d48a",
+    "entries": 37,
     "forbiddenEntries": 0,
     "nativeLibrariesBundled": 0,
     "developerPathLeaks": 0
@@ -27,8 +27,8 @@
     "audio": "NULL"
   },
   "tests": {
-    "runs": 161,
-    "assertions": 3677,
+    "runs": 180,
+    "assertions": 4135,
     "failures": 0,
     "errors": 0,
     "skips": 0
@@ -38,14 +38,14 @@
     "referenceMembers": 2964,
     "expectedRubyTypes": 257,
     "expectedRubyMembers": 2915,
-    "targetTypes": 71,
-    "targetMembers": 1418,
-    "totalDiagnostics": 375,
-    "missingType": 186,
+    "targetTypes": 74,
+    "targetMembers": 1453,
+    "totalDiagnostics": 372,
+    "missingType": 183,
     "missingMember": 135,
-    "completeTypes": 64,
+    "completeTypes": 67,
     "partialTypes": 7,
-    "missingTypes": 186,
+    "missingTypes": 183,
     "unexpectedType": 0,
     "unexpectedMember": 0,
     "typeKindMismatch": 0,
@@ -87,10 +87,21 @@
       "GamePadType": [11, 10, 10, "enum"]
     }
   },
+  "vertexClosure": {
+    "sourceTypes": 3,
+    "clrIdentities": 37,
+    "expectedRubyIdentities": 35,
+    "allLocalDiagnostics": 0,
+    "typeMatrix": {
+      "VertexElement": [10, 10, 10, "struct/value object"],
+      "VertexElementFormat": [13, 12, 12, "non-flags Int32 enum"],
+      "VertexElementUsage": [14, 13, 13, "non-flags Int32 enum"]
+    }
+  },
   "behavior": {
     "provenance": "PURE_XNA_DERIVED",
-    "observations": 239,
-    "assertions": 239,
+    "observations": 253,
+    "assertions": 253,
     "failures": 0,
     "gamepadGroups": {
       "BUTTONS": 4,
@@ -100,6 +111,10 @@
       "GAMEPAD_THUMBSTICKS": 5,
       "GAMEPAD_STATE": 7,
       "GAMEPAD_ENUMS": 2
+    },
+    "vertexGroups": {
+      "VERTEX_ELEMENT": 11,
+      "VERTEX_ELEMENT_ENUMS": 3
     },
     "nativeGamePadIncludedInPureTotals": false
   },
@@ -134,6 +149,8 @@
     "spriteBatchCycles": 20,
     "gameRecreationCycles": 20,
     "mouseGetStateCycles": 50,
+    "gamePadGetStateCycles": 50,
+    "gamePadCapabilitiesCycles": 20,
     "nativeCrashes": 0,
     "observedUaf": 0,
     "observedDoubleFree": 0,
@@ -153,7 +170,7 @@
     "sourcePathGem": false,
     "require": "PASS",
     "syntax": "PASS",
-    "installedSourceFiles": 27,
+    "installedSourceFiles": 28,
     "frames60": {"updates": 60, "draws": 60, "status": "PASS"},
     "frames600": {"updates": 600, "draws": 600, "status": "PASS"}
   },
@@ -167,10 +184,10 @@
     "SpriteBatch"
   ],
   "nextMilestone": {
-    "types": ["VertexElement", "VertexElementFormat", "VertexElementUsage"],
-    "sourceTypes": 3,
-    "clrIdentities": 37,
-    "expectedRubyIdentities": 35,
+    "types": ["DisplayOrientation"],
+    "sourceTypes": 1,
+    "clrIdentities": 5,
+    "expectedRubyIdentities": 4,
     "started": false
   }
 }

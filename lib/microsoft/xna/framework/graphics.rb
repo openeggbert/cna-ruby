@@ -2,6 +2,7 @@
 
 require_relative "../framework"
 require_relative "graphics/packed_vector"
+require_relative "graphics/vertex_element"
 
 module Microsoft
   module Xna

@@ -87,6 +87,9 @@
     {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba64", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.Short2", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.Short4", "complete": true},
+    {"name": "Microsoft.Xna.Framework.Graphics.VertexElement", "complete": true},
+    {"name": "Microsoft.Xna.Framework.Graphics.VertexElementFormat", "complete": true},
+    {"name": "Microsoft.Xna.Framework.Graphics.VertexElementUsage", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.Texture2D", "include": [
       {"kind": "method", "name": "FromStream", "parameters": ["Microsoft.Xna.Framework.Graphics.GraphicsDevice", "System.IO.Stream"]},
       {"name": "Bounds"}, {"name": "Height"}, {"name": "Width"}

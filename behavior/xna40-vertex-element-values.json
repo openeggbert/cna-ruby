@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "category": "PURE_XNA_DERIVED",
+  "provenance": "Pinned XNA 4.0 Windows Microsoft.Xna.Framework.Graphics.dll metadata and direct IL review; never CNA output",
+  "sourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+  "observations": [
+    {
+      "id": "vertex_element_enums.values",
+      "operation": "VertexElement.Enums",
+      "args": [],
+      "expected": [
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+        true,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "id": "vertex_element_enums.names",
+      "operation": "VertexElement.EnumNames",
+      "args": [],
+      "expected": [
+        ["Single", "Vector2", "Vector3", "Vector4", "Color", "Byte4", "Short2", "Short4", "NormalizedShort2", "NormalizedShort4", "HalfVector2", "HalfVector4"],
+        ["Position", "Color", "TextureCoordinate", "Normal", "Binormal", "Tangent", "BlendIndices", "BlendWeight", "Depth", "Fog", "PointSize", "Sample", "TessellateFactor"]
+      ]
+    },
+    {
+      "id": "vertex_element_enums.validation",
+      "operation": "VertexElement.EnumValidation",
+      "args": [],
+      "expected": ["RangeError", "RangeError", "TypeError", "TypeError", "TypeError", false, false]
+    },
+    {
+      "id": "vertex_element.default",
+      "operation": "VertexElement.Default",
+      "args": [],
+      "expected": [0, 0, 0, 0, 2147483647, "{Offset:0 Format:Single Usage:Position UsageIndex:0}", true]
+    },
+    {
+      "id": "vertex_element.constructor",
+      "operation": "VertexElement.Constructor",
+      "args": [],
+      "expected": [12, 2, 2, 7, "{Offset:12 Format:Vector3 Usage:TextureCoordinate UsageIndex:7}"]
+    },
+    {
+      "id": "vertex_element.setters",
+      "operation": "VertexElement.Setters",
+      "args": [],
+      "expected": [-16, 11, 5, -3]
+    },
+    {
+      "id": "vertex_element.int32_boundaries",
+      "operation": "VertexElement.Int32Boundaries",
+      "args": [],
+      "expected": [0, 0, 1, 1, -1, -1, -2147483648, -2147483648, 2147483647, 2147483647]
+    },
+    {
+      "id": "vertex_element.copy_semantics",
+      "operation": "VertexElement.Copy",
+      "args": [],
+      "expected": [true, true, 12, 2, 2, 7, -16, 11, 5, -3, 1, 4, 3, 9]
+    },
+    {
+      "id": "vertex_element.equals_object_operators",
+      "operation": "VertexElement.Equality",
+      "args": [],
+      "expected": [true, true, false, false, false, false, true]
+    },
+    {
+      "id": "vertex_element.one_field_differences",
+      "operation": "VertexElement.FieldDifferences",
+      "args": [],
+      "expected": [true, true, true, true]
+    },
+    {
+      "id": "vertex_element.hash_goldens",
+      "operation": "VertexElement.HashGoldens",
+      "args": [],
+      "expected": [2147483647, 11, 3, -8, 2147483647, -1]
+    },
+    {
+      "id": "vertex_element.string_goldens",
+      "operation": "VertexElement.StringGoldens",
+      "args": [],
+      "expected": [
+        "{Offset:0 Format:Single Usage:Position UsageIndex:0}",
+        "{Offset:12 Format:Vector3 Usage:TextureCoordinate UsageIndex:7}",
+        "{Offset:-16 Format:HalfVector4 Usage:Tangent UsageIndex:-3}",
+        "{Offset:-2147483648 Format:HalfVector4 Usage:TessellateFactor UsageIndex:2147483647}"
+      ]
+    },
+    {
+      "id": "vertex_element.constructor_validation",
+      "operation": "VertexElement.ConstructorValidation",
+      "args": [],
+      "expected": ["ArgumentError", "TypeError", "RangeError", "RangeError", "TypeError", "TypeError", "RangeError", "RangeError"]
+    },
+    {
+      "id": "vertex_element.setter_validation_surface",
+      "operation": "VertexElement.SetterValidationSurface",
+      "args": [],
+      "expected": ["TypeError", "RangeError", "TypeError", "RangeError", "TypeError", "RangeError", "TypeError", "RangeError", false, false, false, false]
+    }
+  ]
+}

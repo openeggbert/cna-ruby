@@ -357,6 +357,95 @@ class ApiVerifierTest < Minitest::Test
     assert_operator result.counts["PUBLIC_NATIVE_FFI_LEAK"], :>, 0
   end
 
+  def test_vertex_element_wrong_kind_missing_constructor_and_constructor_order_are_detected
+    reference, target = vertex_contracts
+    vertex = target["types"].find { |type| type["name"].end_with?(".VertexElement") }
+    vertex["kind"] = "class"
+    constructor = vertex["members"].find { |member| member["kind"] == "constructor" }
+    constructor["parameters"][0], constructor["parameters"][3] =
+      constructor["parameters"][3], constructor["parameters"][0]
+    result = verify(reference, target)
+    assert_operator result.counts["TYPE_KIND_MISMATCH"], :>, 0
+    assert_operator result.counts["PARAMETER_MAPPING_MISMATCH"], :>, 0
+
+    vertex["members"].delete(constructor)
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_MEMBER"], :>, 0
+    assert_operator result.counts["OVERLOAD_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_vertex_element_wrong_constructor_enum_types_are_detected
+    reference, target = vertex_contracts
+    constructor = target["types"].find { |type| type["name"].end_with?(".VertexElement") }
+                               .fetch("members").find { |member| member["kind"] == "constructor" }
+    constructor["parameters"][1]["type"] = "Microsoft.Xna.Framework.Graphics.VertexElementUsage"
+    constructor["parameters"][2]["type"] = "Microsoft.Xna.Framework.Graphics.VertexElementFormat"
+    assert_operator verify(reference, target).counts["PARAMETER_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_vertex_element_property_kind_mutability_and_types_are_detected
+    reference, target = vertex_contracts
+    vertex = target["types"].find { |type| type["name"].end_with?(".VertexElement") }
+    offset = vertex["members"].find { |member| member["name"] == "Offset" }
+    offset["kind"] = "field"
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_MEMBER"], :>, 0
+    assert_operator result.counts["UNEXPECTED_MEMBER"], :>, 0
+
+    reference, target = vertex_contracts
+    vertex = target["types"].find { |type| type["name"].end_with?(".VertexElement") }
+    offset = vertex["members"].find { |member| member["name"] == "Offset" }
+    offset["set"] = false
+    offset["type"] = "System.Int64"
+    vertex["members"].find { |member| member["name"] == "UsageIndex" }["type"] = "System.UInt32"
+    assert_operator verify(reference, target).counts["PROPERTY_MAPPING_MISMATCH"], :>=, 2
+  end
+
+  def test_vertex_element_missing_enum_setters_and_wrong_usage_index_type_are_detected
+    reference, target = vertex_contracts
+    vertex = target["types"].find { |type| type["name"].end_with?(".VertexElement") }
+    vertex["members"].find { |member| member["name"] == "VertexElementFormat" }["set"] = false
+    vertex["members"].find { |member| member["name"] == "VertexElementUsage" }["set"] = false
+    vertex["members"].find { |member| member["name"] == "UsageIndex" }["type"] = "System.Int64"
+    assert_operator verify(reference, target).counts["PROPERTY_MAPPING_MISMATCH"], :>=, 3
+  end
+
+  def test_vertex_element_typed_equals_and_missing_operator_identities_are_detected
+    reference, target = vertex_contracts
+    vertex = target["types"].find { |type| type["name"].end_with?(".VertexElement") }
+    object_equals = vertex["members"].find { |member| member["name"] == "Equals" }
+    typed_equals = Marshal.load(Marshal.dump(object_equals))
+    typed_equals["parameters"][0]["type"] = vertex["name"]
+    vertex["members"] << typed_equals
+    vertex["members"].reject! { |member| %w[op_Equality op_Inequality].include?(member["name"]) }
+    result = verify(reference, target)
+    assert_operator result.counts["UNEXPECTED_MEMBER"], :>, 0
+    assert_operator result.counts["MISSING_MEMBER"], :>=, 2
+    assert_operator result.counts["OVERLOAD_MAPPING_MISMATCH"], :>=, 2
+  end
+
+  def test_vertex_element_enum_raw_values_flags_and_underlying_types_are_detected
+    reference, target = vertex_contracts
+    format = target["types"].find { |type| type["name"].end_with?(".VertexElementFormat") }
+    usage = target["types"].find { |type| type["name"].end_with?(".VertexElementUsage") }
+    format["members"].find { |member| member["name"] == "HalfVector4" }["value"] = "12"
+    usage["members"].find { |member| member["name"] == "TessellateFactor" }["value"] = "13"
+    format["flags"] = true
+    usage["underlyingType"] = "System.UInt32"
+    result = verify(reference, target)
+    assert_operator result.counts["ENUM_VALUE_MISMATCH"], :>=, 3
+    assert_operator result.counts["FLAGS_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_vertex_element_unexpected_public_helper_is_detected_at_runtime
+    reference, target = vertex_contracts
+    vertex = Microsoft::Xna::Framework::Graphics::VertexElement
+    vertex.class_eval { def SizeInBytes = 16 }
+    assert_operator verify(reference, target, runtime: true).counts["UNEXPECTED_MEMBER"], :>, 0
+  ensure
+    vertex&.__send__(:remove_method, :SizeInBytes) if vertex&.public_method_defined?(:SizeInBytes)
+  end
+
 
   def packed_vector_contracts
     reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
@@ -397,6 +486,17 @@ class ApiVerifierTest < Minitest::Test
       Buttons GamePad GamePadButtons GamePadCapabilities GamePadDPad GamePadDeadZone
       GamePadState GamePadThumbSticks GamePadTriggers GamePadType
     ].map { |name| "Microsoft.Xna.Framework.Input.#{name}" }
+    reference_types = reference.fetch("types").select { |type| names.include?(type.fetch("name")) }
+    target_types = target.fetch("types").select { |type| names.include?(type.fetch("name")) }
+    [{"types" => reference_types}, {"types" => Marshal.load(Marshal.dump(target_types))}]
+  end
+
+  def vertex_contracts
+    reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
+    target = JSON.parse(File.read(File.expand_path("../tools/api_compat/signatures.json", __dir__)))
+    names = %w[VertexElement VertexElementFormat VertexElementUsage].map do |name|
+      "Microsoft.Xna.Framework.Graphics.#{name}"
+    end
     reference_types = reference.fetch("types").select { |type| names.include?(type.fetch("name")) }
     target_types = target.fetch("types").select { |type| names.include?(type.fetch("name")) }
     [{"types" => reference_types}, {"types" => Marshal.load(Marshal.dump(target_types))}]

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "GEM_FILENAME": "cna-ruby-0.1.0.dev0.gem",
   "VERSION": "0.1.0.dev0",
-  "GEM_SHA256": "2971d2fb1c179639849be041acc7a76ba5da58ea135b8c589db5181f43969694",
-  "GEM_ENTRIES": 35,
+  "GEM_SHA256": "122d34535f6035ef3bd494c85be2d6b48918ed10d8f454dcc062bde3a2e8d48a",
+  "GEM_ENTRIES": 37,
   "FORBIDDEN_ENTRIES": [
 
   ],
@@ -40,6 +40,7 @@
     "lib/microsoft/xna/framework/geometry_vectors.rb",
     "lib/microsoft/xna/framework/graphics.rb",
     "lib/microsoft/xna/framework/graphics/packed_vector.rb",
+    "lib/microsoft/xna/framework/graphics/vertex_element.rb",
     "lib/microsoft/xna/framework/input.rb",
     "lib/microsoft/xna/framework/values.rb",
     "sig/microsoft/xna/curve.rbs",
@@ -48,6 +49,7 @@
     "sig/microsoft/xna/framework/input.rbs",
     "sig/microsoft/xna/geometry.rbs",
     "sig/microsoft/xna/packed_vector.rbs",
-    "sig/microsoft/xna/presentation_values.rbs"
+    "sig/microsoft/xna/presentation_values.rbs",
+    "sig/microsoft/xna/vertex_element.rbs"
   ]
 }

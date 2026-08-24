@@ -7,6 +7,7 @@
 | `managed.rectangle-color` | VERIFIED_MANAGED | verified complete cluster | Color and Rectangle locally strict-zero with packed/fixed-point and unchecked Int32 evidence |
 | `managed.curve` | VERIFIED_MANAGED | verified complete cluster | Curve, CurveKey, collection and enum closure locally strict-zero |
 | `managed.packed-vector` | VERIFIED_MANAGED | verified complete cluster | 19 types / 171 XNA identities, 68 golden observations and 262400 exhaustive iterations |
+| `managed.vertex-element` | VERIFIED_MANAGED | verified complete descriptor cluster | VertexElement, VertexElementFormat and VertexElementUsage: 37 CLR / 35 Ruby identities, exact Int32 mutation, equality, smart-memory hash and string behavior |
 | `managed.button-state` | VERIFIED_MANAGED | verified complete type | Released=0, Pressed=1; typed frozen non-flags enum; locally strict-zero |
 | `managed.mouse-state` | VERIFIED_MANAGED | verified complete type | 14/14 identities; exact constructor, properties, equality, XOR hash, string, Int32 extremes, and independent copies |
 | `managed.gamepad.enums` | VERIFIED_MANAGED | verified complete types | Buttons 25/25 Ruby identities with flags composition; GamePadDeadZone 3/3; GamePadType 10/10 including BigButtonPad=768 |
@@ -17,7 +18,7 @@
 | `managed.gamepad-state` | VERIFIED_MANAGED | verified complete type | 15/15 identities; both constructors, Buttons[] projection, all-flags query, exact virtual thresholds, nested copies, equality/hash/string |
 | `managed.gamepad-capabilities` | VERIFIED_MANAGED | verified complete type | 26/26 read-only properties, no public constructor, private independent native snapshots |
 | `managed.intptr` | VERIFIED_MANAGED | verified signed native-width mapping | System.IntPtr maps to Integer; Fiddle::SIZEOF_VOIDP=8 on the qualified host; exact signed range and two's-complement native carrier |
-| `managed.binary32` | VERIFIED_MANAGED | verified selected operations | 239 PURE_XNA_DERIVED observations including signed zero, NaN sign, transforms, Curve, packed bits, XNA half behavior, MouseState, and the GamePad value family |
+| `managed.binary32` | VERIFIED_MANAGED | verified selected operations | 253 PURE_XNA_DERIVED observations including signed zero, NaN sign, transforms, Curve, packed bits, XNA half behavior, MouseState, GamePad values, and VertexElement |
 | `native.abi-0.7` | VERIFIED_NATIVE | verified | 38 exports, 122 signatures, 290+290 layout measurements, 2 callbacks, 59 constants |
 | `native.game-lifecycle` | VERIFIED_NATIVE | verified | Initialize/LoadContent/BeginRun/Update/Draw/EndRun/UnloadContent native ordering |
 | `native.callback-exceptions` | VERIFIED_NATIVE | verified | Initialize, LoadContent, Update, Draw containment tests |
@@ -49,7 +50,7 @@
 | `struct.assignment-copy` | LANGUAGE_MAPPING_LIMITATION | documented | Ruby assignment aliases; copies enforced at binding boundaries |
 | `content.xnb` | UNIMPLEMENTED_CNA_RUBY | deferred | fake ContentManager removed |
 | `effects.3d-model` | UNIMPLEMENTED_CNA_RUBY | deferred | managed Matrix is qualified; fake BasicEffect/cube support remains removed |
-| `audio-media` | UNIMPLEMENTED_CNA_RUBY | deferred | outside Foundation 7 |
+| `audio-media` | UNIMPLEMENTED_CNA_RUBY | deferred | outside Foundation 8 |
 | `platform.windows` | PLATFORM_PENDING | not qualified | — |
 | `platform.macos` | PLATFORM_PENDING | not qualified | — |
 | `platform.browser-wasm` | PLATFORM_PENDING | unsupported | no CNA C-ABI Wasm/Ruby-Wasm architecture |

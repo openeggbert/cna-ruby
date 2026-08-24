@@ -60,6 +60,10 @@ gamepad_path = File.expand_path("../behavior/xna40-gamepad-values.json", __dir__
 gamepad = JSON.parse(File.read(gamepad_path))
 abort "Milestone 7 behavior evidence is not PURE_XNA_DERIVED" unless gamepad["category"] == "PURE_XNA_DERIVED"
 observations.concat(gamepad.fetch("observations"))
+vertex_element_path = File.expand_path("../behavior/xna40-vertex-element-values.json", __dir__)
+vertex_element = JSON.parse(File.read(vertex_element_path))
+abort "Milestone 8 VertexElement behavior evidence is not PURE_XNA_DERIVED" unless vertex_element["category"] == "PURE_XNA_DERIVED"
+observations.concat(vertex_element.fetch("observations"))
 abort "duplicate behavior observation id" unless observations.map { |item| item.fetch("id") }.uniq.length == observations.length
 result = source_corpus.merge(
   "provenance" => "PURE_XNA_DERIVED retained observations: XNA 4.0 reference metadata and IL/algorithm analysis; never CNA output",
@@ -70,6 +74,7 @@ result = source_corpus.merge(
   "milestone5SourceAssemblySha256" => packed_vector.fetch("sourceAssemblySha256"),
   "milestone6SourceAssemblySha256" => previous_foundation.fetch("milestone6SourceAssemblySha256"),
   "milestone7SourceAssemblySha256" => gamepad.fetch("sourceAssemblySha256"),
+  "milestone8SourceAssemblySha256" => vertex_element.fetch("sourceAssemblySha256"),
   "observations" => observations
 )
 destination = File.expand_path("../behavior/xna40-foundation-values.json", __dir__)

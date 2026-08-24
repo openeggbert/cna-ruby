@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "provenance": "PURE_XNA_DERIVED retained observations: XNA 4.0 reference metadata and IL/algorithm analysis; never CNA output",
-  "OBSERVATIONS": 239,
-  "ASSERTIONS": 239,
+  "OBSERVATIONS": 253,
+  "ASSERTIONS": 253,
   "FAILURES": 0,
   "groupCounts": {
     "BINARY32": 2,
@@ -41,7 +41,9 @@
     "RECTANGLE": 13,
     "VECTOR2": 8,
     "VECTOR3": 7,
-    "VECTOR4": 4
+    "VECTOR4": 4,
+    "VERTEX_ELEMENT": 11,
+    "VERTEX_ELEMENT_ENUMS": 3
   },
   "nativeEvidence": [
     {

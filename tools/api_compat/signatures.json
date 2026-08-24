@@ -29528,6 +29528,468 @@
       "rubyName": "Microsoft::Xna::Framework::Graphics::PackedVector::Short4"
     },
     {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexElement",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "offset",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementFormat",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementUsage",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "usageIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexElement",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexElement",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexElement",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexElement",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Offset",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "VertexElementFormat",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "VertexElementUsage",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "UsageIndex",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::VertexElement"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Single",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Vector2",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "Vector3",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "Vector4",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+          "static": true,
+          "constant": true,
+          "value": "3"
+        },
+        {
+          "kind": "field",
+          "name": "Color",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        },
+        {
+          "kind": "field",
+          "name": "Byte4",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+          "static": true,
+          "constant": true,
+          "value": "5"
+        },
+        {
+          "kind": "field",
+          "name": "Short2",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+          "static": true,
+          "constant": true,
+          "value": "6"
+        },
+        {
+          "kind": "field",
+          "name": "Short4",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+          "static": true,
+          "constant": true,
+          "value": "7"
+        },
+        {
+          "kind": "field",
+          "name": "NormalizedShort2",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+          "static": true,
+          "constant": true,
+          "value": "8"
+        },
+        {
+          "kind": "field",
+          "name": "NormalizedShort4",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+          "static": true,
+          "constant": true,
+          "value": "9"
+        },
+        {
+          "kind": "field",
+          "name": "HalfVector2",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+          "static": true,
+          "constant": true,
+          "value": "10"
+        },
+        {
+          "kind": "field",
+          "name": "HalfVector4",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+          "static": true,
+          "constant": true,
+          "value": "11"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::VertexElementFormat"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Position",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Color",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "TextureCoordinate",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "Normal",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+          "static": true,
+          "constant": true,
+          "value": "3"
+        },
+        {
+          "kind": "field",
+          "name": "Binormal",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        },
+        {
+          "kind": "field",
+          "name": "Tangent",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+          "static": true,
+          "constant": true,
+          "value": "5"
+        },
+        {
+          "kind": "field",
+          "name": "BlendIndices",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+          "static": true,
+          "constant": true,
+          "value": "6"
+        },
+        {
+          "kind": "field",
+          "name": "BlendWeight",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+          "static": true,
+          "constant": true,
+          "value": "7"
+        },
+        {
+          "kind": "field",
+          "name": "Depth",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+          "static": true,
+          "constant": true,
+          "value": "8"
+        },
+        {
+          "kind": "field",
+          "name": "Fog",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+          "static": true,
+          "constant": true,
+          "value": "9"
+        },
+        {
+          "kind": "field",
+          "name": "PointSize",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+          "static": true,
+          "constant": true,
+          "value": "10"
+        },
+        {
+          "kind": "field",
+          "name": "Sample",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+          "static": true,
+          "constant": true,
+          "value": "11"
+        },
+        {
+          "kind": "field",
+          "name": "TessellateFactor",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+          "static": true,
+          "constant": true,
+          "value": "12"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::VertexElementUsage"
+    },
+    {
       "name": "Microsoft.Xna.Framework.Graphics.Texture2D",
       "kind": "class",
       "flags": false,

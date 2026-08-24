@@ -136,9 +136,6 @@
 - `Microsoft.Xna.Framework.Graphics.VertexBuffer`
 - `Microsoft.Xna.Framework.Graphics.VertexBufferBinding`
 - `Microsoft.Xna.Framework.Graphics.VertexDeclaration`
-- `Microsoft.Xna.Framework.Graphics.VertexElement`
-- `Microsoft.Xna.Framework.Graphics.VertexElementFormat`
-- `Microsoft.Xna.Framework.Graphics.VertexElementUsage`
 - `Microsoft.Xna.Framework.Graphics.VertexPositionColor`
 - `Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture`
 - `Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture`
