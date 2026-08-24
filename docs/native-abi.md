@@ -1,6 +1,6 @@
 # Native ABI Qualification
 
-The Foundation 1 admission policy retained unchanged through Foundation 3 admits exactly CNA C ABI 0.7.0 (`0x00000700`). Newer 0.x and same-major versions are rejected until separately reviewed.
+The Foundation 1 admission policy retained unchanged through Foundation 4 admits exactly CNA C ABI 0.7.0 (`0x00000700`). Newer 0.x and same-major versions are rejected until separately reviewed.
 
 The retained qualification artifact used for this milestone is:
 

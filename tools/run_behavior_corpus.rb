@@ -30,6 +30,12 @@ def hex32(value)
 end
 def hex_values(values) = values.map { |value| hex32(value) }
 def float_from_bits(value) = [value].pack("L").unpack1("f")
+def error_name
+  yield
+  "none"
+rescue Exception => error
+  error.class.name
+end
 
 def equivalent?(actual, expected)
   if expected.instance_of?(Array)
@@ -55,6 +61,11 @@ def behavior_group(item)
   return "RAY" if id.start_with?("ray.")
   return "BINARY32" if id.start_with?("vector.scalar.", "float32.")
   return "CROSS_GEOMETRY" if id.start_with?("geometry.", "value.")
+  return "CURVE_KEY_COLLECTION" if id.start_with?("curve.collection.")
+  return "CURVE_EVALUATE" if id.start_with?("curve.evaluate.")
+  return "CURVE_TANGENTS" if id.start_with?("curve.tangents.")
+  return "CURVE_LOOPS" if id.start_with?("curve.loops.")
+  return "CURVE_KEY" if id.start_with?("curve.key.")
 
   id.split(".").first.upcase
 end
@@ -193,6 +204,112 @@ def execute(item)
     value = rectangle(args); copy = value.dup; copy.X = 9
     [value.GetHashCode, value.ToString, value == rectangle(args), value.X, copy.X,
      !value.Location.equal?(value.Location), !value.Center.equal?(value.Center), !F::Rectangle.Empty.equal?(F::Rectangle.Empty)]
+  when "CurveKey.Constructors"
+    short = F::CurveKey.new(1.0 / 3.0, 2.0 / 3.0)
+    four = F::CurveKey.new(1, 2, 3, 4)
+    five = F::CurveKey.new(1, 2, 3, 4, F::CurveContinuity::Step)
+    [hex32(short.Position), hex32(short.Value), hex32(short.TangentIn), hex32(short.TangentOut),
+     short.Continuity.to_i, four.Continuity.to_i, five.Continuity.to_i, short.respond_to?(:Position=)]
+  when "CurveKey.Clone"
+    value = F::CurveKey.new(1, 2, 3, 4, F::CurveContinuity::Step); clone = value.Clone
+    equal_before = value.Equals(clone); clone.Value = 20
+    [!clone.equal?(value), equal_before, value.Value, clone.Value]
+  when "CurveKey.Equality"
+    value = F::CurveKey.new(1, 2, 3, 4, F::CurveContinuity::Step)
+    nan = F::CurveKey.new(Float::NAN, 1)
+    positive_zero = F::CurveKey.new(0.0, -0.0); negative_zero = F::CurveKey.new(-0.0, 0.0)
+    [value.GetHashCode, value == value.Clone, nan == nan, positive_zero == negative_zero,
+     positive_zero.GetHashCode, negative_zero.GetHashCode]
+  when "CurveKey.Compare"
+    low = F::CurveKey.new(-1, 0); equal = F::CurveKey.new(-1, 99); high = F::CurveKey.new(1, 0)
+    nan_a = F::CurveKey.new(Float::NAN, 0); nan_b = F::CurveKey.new(Float::NAN, 0)
+    [low.CompareTo(high), low.CompareTo(equal), high.CompareTo(low), nan_a.CompareTo(low),
+     low.CompareTo(nan_a), nan_a.CompareTo(nan_b), F::CurveKey.new(-Float::INFINITY, 0).CompareTo(low),
+     F::CurveKey.new(Float::INFINITY, 0).CompareTo(high), F::CurveKey.new(0.0, 0).CompareTo(F::CurveKey.new(-0.0, 1))]
+  when "CurveCollection.Ordering"
+    keys = F::CurveKeyCollection.new; first = F::CurveKey.new(1, 10); second = F::CurveKey.new(1, 20)
+    keys.Add(F::CurveKey.new(2, 30)); keys.Add(first); keys.Add(F::CurveKey.new(0, 0)); keys.Add(second)
+    [[0, 1, 2, 3].map { |index| keys[index].Position }, [0, 1, 2, 3].map { |index| keys[index].Value },
+     keys[1].equal?(first), keys[2].equal?(second)]
+  when "CurveCollection.Replacement"
+    keys = F::CurveKeyCollection.new; keys.Add(F::CurveKey.new(0, 1)); keys.Add(F::CurveKey.new(5.0e-8, 2))
+    replacement = F::CurveKey.new(1.0e-7, 3); keys[0] = replacement
+    same = F::CurveKey.new(1.0e-7, 4); keys[1] = same
+    [hex32(keys[0].Value), hex32(keys[1].Value), keys[1].equal?(same)]
+  when "CurveCollection.CopyClone"
+    keys = F::CurveKeyCollection.new; first = F::CurveKey.new(0, 1); second = F::CurveKey.new(1, 2)
+    keys.Add(first); keys.Add(second); destination = Array.new(4); keys.CopyTo(destination, 1); clone = keys.Clone
+    clone[0].Value = 42; clone.Add(F::CurveKey.new(2, 3))
+    [destination[1].equal?(first), destination[2].equal?(second), !clone.equal?(keys),
+     clone[0].equal?(keys[0]), keys[0].Value, keys.Count, clone.Count]
+  when "CurveCollection.Enumeration"
+    keys = F::CurveKeyCollection.new; first = F::CurveKey.new(0, 0); second = F::CurveKey.new(1, 1)
+    keys.Add(first); keys.Add(second); left = keys.GetEnumerator; right = keys.GetEnumerator
+    fresh = !left.equal?(right) && left.next.equal?(first) && right.next.equal?(first)
+    invalid = keys.GetEnumerator; invalid.next; keys.Add(F::CurveKey.new(2, 2)); failure = error_name { invalid.next }
+    safe = keys.GetEnumerator; keys.CopyTo(Array.new(keys.Count), 0)
+    [fresh, failure, safe.next.equal?(first), [second, keys[2]] == [safe.next, safe.next]]
+  when "CurveCollection.Validation"
+    keys = F::CurveKeyCollection.new; keys.Add(F::CurveKey.new(0, 0))
+    [error_name { keys[-1] }, error_name { keys.RemoveAt(keys.Count) },
+     error_name { keys.Add(nil) }, error_name { keys.CopyTo([], -1) }, error_name { keys.CopyTo([], 0) }]
+  when "CurveEvaluate.Defaults"
+    value = F::Curve.new; same_keys = value.Keys.equal?(value.Keys); empty = hex32(value.Evaluate(5)); value.Keys.Add(F::CurveKey.new(5, 7))
+    singleton = hex32(value.Evaluate(Float::NAN)); one_constant = value.IsConstant; value.Keys.Add(F::CurveKey.new(6, 7))
+    [value.PreLoop.to_i, value.PostLoop.to_i, same_keys, empty, one_constant, singleton, value.IsConstant]
+  when "CurveEvaluate.Hermite"
+    ordinary = F::Curve.new; ordinary.Keys.Add(F::CurveKey.new(0, 0)); ordinary.Keys.Add(F::CurveKey.new(1, 10))
+    asymmetric = F::Curve.new; asymmetric.Keys.Add(F::CurveKey.new(0, 0, 99, 4)); asymmetric.Keys.Add(F::CurveKey.new(2, 10, -2, 77))
+    [hex32(ordinary.Evaluate(0.25)), hex32(asymmetric.Evaluate(1))]
+  when "CurveEvaluate.Step"
+    value = F::Curve.new; value.Keys.Add(F::CurveKey.new(0, 2, 0, 0, F::CurveContinuity::Step)); value.Keys.Add(F::CurveKey.new(1, 9))
+    [hex32(value.Evaluate(0.999)), hex32(value.Evaluate(1))]
+  when "CurveEvaluate.Duplicates"
+    value = F::Curve.new; value.Keys.Add(F::CurveKey.new(1, 10)); value.Keys.Add(F::CurveKey.new(1, 20))
+    value.PreLoop = F::CurveLoopType::Cycle; value.PostLoop = F::CurveLoopType::Oscillate
+    nan_step = F::Curve.new; nan_step.Keys.Add(F::CurveKey.new(0, 10, 0, 0, F::CurveContinuity::Step)); nan_step.Keys.Add(F::CurveKey.new(1, 20, 0, 0, F::CurveContinuity::Step))
+    [hex32(value.Evaluate(0)), hex32(value.Evaluate(1)), hex32(value.Evaluate(2)), hex32(nan_step.Evaluate(Float::NAN))]
+  when "CurveTangents.Modes"
+    value = F::Curve.new; [[0, 0], [1, 10], [3, 30]].each { |key| value.Keys.Add(F::CurveKey.new(*key)) }
+    value.ComputeTangents(F::CurveTangent::Smooth)
+    hex_values([value.Keys[0].TangentIn, value.Keys[1].TangentIn, value.Keys[1].TangentOut, value.Keys[2].TangentOut])
+  when "CurveTangents.Mixed"
+    value = F::Curve.new; [[0, 0], [2, 10], [5, 40]].each { |key| value.Keys.Add(F::CurveKey.new(*key)) }
+    value.ComputeTangent(1, F::CurveTangent::Flat, F::CurveTangent::Linear); first = [value.Keys[1].TangentIn, value.Keys[1].TangentOut]
+    value.ComputeTangent(1, F::CurveTangent::Linear, F::CurveTangent::Smooth)
+    hex_values([*first, value.Keys[1].TangentIn, value.Keys[1].TangentOut])
+  when "CurveTangents.Epsilon"
+    value = F::Curve.new; [[0, 0], [1, 5.0e-9], [2, 1.0e-8]].each { |key| value.Keys.Add(F::CurveKey.new(*key)) }
+    value.ComputeTangent(1, F::CurveTangent::Smooth); hex_values([value.Keys[1].TangentIn, value.Keys[1].TangentOut])
+  when "CurveTangents.Duplicate"
+    value = F::Curve.new; [[1, 0], [1, 1], [1, 2]].each { |key| value.Keys.Add(F::CurveKey.new(*key)) }
+    value.ComputeTangent(1, F::CurveTangent::Smooth)
+    singleton = F::Curve.new; singleton.Keys.Add(F::CurveKey.new(1, 9, 2, 3)); singleton.ComputeTangents(F::CurveTangent::Smooth)
+    [value.Keys[1].TangentIn.nan?, value.Keys[1].TangentOut.nan?, singleton.Keys[0].TangentIn, singleton.Keys[0].TangentOut]
+  when "CurveLoops.All"
+    results = []
+    [F::CurveLoopType::Constant, F::CurveLoopType::Cycle, F::CurveLoopType::CycleOffset,
+     F::CurveLoopType::Oscillate, F::CurveLoopType::Linear].each do |mode|
+      value = F::Curve.new; value.Keys.Add(F::CurveKey.new(5, 0)); value.Keys.Add(F::CurveKey.new(7, 10))
+      value.Keys[0].TangentIn = 2; value.Keys[1].TangentOut = 3; value.PreLoop = mode; value.PostLoop = mode
+      results.concat([hex32(value.Evaluate(4)), hex32(value.Evaluate(8))])
+    end
+    results
+  when "CurveLoops.NegativeExact"
+    [F::CurveLoopType::Cycle, F::CurveLoopType::CycleOffset, F::CurveLoopType::Oscillate].map do |mode|
+      value = F::Curve.new; value.Keys.Add(F::CurveKey.new(5, 0)); value.Keys.Add(F::CurveKey.new(7, 10)); value.PreLoop = mode
+      hex32(value.Evaluate(3))
+    end
+  when "CurveLoops.NormalizedBoundaries"
+    value = F::Curve.new; value.Keys.Add(F::CurveKey.new(5, 10, 0, 0, F::CurveContinuity::Step)); value.Keys.Add(F::CurveKey.new(7, 20, 0, 0, F::CurveContinuity::Step))
+    value.PreLoop = F::CurveLoopType::Cycle; value.PostLoop = F::CurveLoopType::Cycle
+    [4.8, 3.0, 2.8, 1.0, 7.0, 7.2].map { |position| value.Evaluate(position) }
+  when "CurveLoops.Formulas"
+    signed = F::Curve.new; signed.Keys.Add(F::CurveKey.new(0, -0.0)); signed.Keys.Add(F::CurveKey.new(1, Float::NAN))
+    descending = F::Curve.new; descending.Keys.Add(F::CurveKey.new(0, 10)); descending.Keys.Add(F::CurveKey.new(1, 0)); descending.PostLoop = F::CurveLoopType::CycleOffset
+    linear = F::Curve.new; linear.Keys.Add(F::CurveKey.new(5, 0, 2, 0)); linear.Keys.Add(F::CurveKey.new(7, 10, 0, 3)); linear.PreLoop = F::CurveLoopType::Linear; linear.PostLoop = F::CurveLoopType::Linear
+    [hex32(signed.Evaluate(-1)), hex32(signed.Evaluate(2)), hex32(descending.Evaluate(1.5)),
+     hex32(linear.Evaluate(4)), hex32(linear.Evaluate(9))]
   when "Point.Equal" then F::Point.new(args[0], args[1]) == F::Point.new(args[2], args[3])
   when "Point.ZeroFresh" then !F::Point.Zero.equal?(F::Point.Zero)
   when "Plane.Normalize"

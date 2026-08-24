@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "category": "PURE_XNA_DERIVED",
+  "provenance": "Pinned XNA 4.0 Windows Microsoft.Xna.Framework.dll metadata, decompiled source, and direct monodis IL review; never CNA or CNA-Ruby output",
+  "sourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+  "observations": [
+    {"id":"curve.key.constructors","operation":"CurveKey.Constructors","args":[],"expected":["3EAAAAAB","3F2AAAAB","00000000","00000000",0,0,1,false]},
+    {"id":"curve.key.clone","operation":"CurveKey.Clone","args":[],"expected":[true,true,2.0,20.0]},
+    {"id":"curve.key.equality","operation":"CurveKey.Equality","args":[],"expected":[4194305,true,false,true,0,0]},
+    {"id":"curve.key.compare","operation":"CurveKey.Compare","args":[],"expected":[-1,0,1,1,1,1,-1,1,0]},
+
+    {"id":"curve.collection.ordering","operation":"CurveCollection.Ordering","args":[],"expected":[[0.0,1.0,1.0,2.0],[0.0,10.0,20.0,30.0],true,true]},
+    {"id":"curve.collection.replacement","operation":"CurveCollection.Replacement","args":[],"expected":["40000000","40800000",true]},
+    {"id":"curve.collection.copy_clone","operation":"CurveCollection.CopyClone","args":[],"expected":[true,true,true,true,42.0,2,3]},
+    {"id":"curve.collection.enumeration","operation":"CurveCollection.Enumeration","args":[],"expected":[true,"RuntimeError",true,true]},
+    {"id":"curve.collection.validation","operation":"CurveCollection.Validation","args":[],"expected":["IndexError","IndexError","TypeError","IndexError","ArgumentError"]},
+
+    {"id":"curve.evaluate.defaults","operation":"CurveEvaluate.Defaults","args":[],"expected":[0,0,true,"00000000",true,"40E00000",false]},
+    {"id":"curve.evaluate.hermite","operation":"CurveEvaluate.Hermite","args":[],"expected":["3FC80000","40B80000"]},
+    {"id":"curve.evaluate.step","operation":"CurveEvaluate.Step","args":[],"expected":["40000000","41100000"]},
+    {"id":"curve.evaluate.duplicates","operation":"CurveEvaluate.Duplicates","args":[],"expected":["41200000","41200000","41A00000","41A00000"]},
+
+    {"id":"curve.tangents.modes","operation":"CurveTangents.Modes","args":[],"expected":["00000000","41200000","41A00000","00000000"]},
+    {"id":"curve.tangents.mixed","operation":"CurveTangents.Mixed","args":[],"expected":["00000000","41F00000","41200000","41C00000"]},
+    {"id":"curve.tangents.epsilon","operation":"CurveTangents.Epsilon","args":[],"expected":["00000000","00000000"]},
+    {"id":"curve.tangents.duplicate","operation":"CurveTangents.Duplicate","args":[],"expected":[true,true,0.0,0.0]},
+
+    {"id":"curve.loops.all","operation":"CurveLoops.All","args":[],"expected":["00000000","41200000","40A00000","40A00000","C0A00000","41700000","40A00000","40A00000","C0000000","41500000"]},
+    {"id":"curve.loops.negative_exact","operation":"CurveLoops.NegativeExact","args":[],"expected":["41200000","C1200000","41200000"]},
+    {"id":"curve.loops.normalized_boundaries","operation":"CurveLoops.NormalizedBoundaries","args":[],"expected":[10.0,20.0,10.0,20.0,20.0,10.0]},
+    {"id":"curve.loops.formulas","operation":"CurveLoops.Formulas","args":[],"expected":["80000000","7FC00000","C0A00000","C0000000","41800000"]}
+  ]
+}

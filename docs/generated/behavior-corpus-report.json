@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "provenance": "PURE_XNA_DERIVED retained observations: XNA 4.0 reference metadata and IL/algorithm analysis; never CNA output",
-  "OBSERVATIONS": 104,
-  "ASSERTIONS": 104,
+  "OBSERVATIONS": 125,
+  "ASSERTIONS": 125,
   "FAILURES": 0,
   "groupCounts": {
     "BINARY32": 2,
@@ -11,6 +11,11 @@
     "BOUNDING_SPHERE": 3,
     "COLOR": 13,
     "CROSS_GEOMETRY": 3,
+    "CURVE_EVALUATE": 4,
+    "CURVE_KEY": 4,
+    "CURVE_KEY_COLLECTION": 5,
+    "CURVE_LOOPS": 4,
+    "CURVE_TANGENTS": 4,
     "MATHHELPER": 9,
     "MATRIX": 12,
     "PLANE": 6,

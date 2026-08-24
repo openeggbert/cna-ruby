@@ -2,15 +2,15 @@
 
 ## Exact current boundary
 
-Foundation 3 adds complete managed Color and Rectangle value types without changing the loader, native manifest, ownership model, or desktop canary. Read `docs/generated/*.json`, `docs/geometry-transform-evidence.md`, and `docs/color-rectangle-evidence.md` before changing status or counts.
+Foundation 4 adds the complete managed Curve family without changing the loader, native manifest, ownership model, desktop canary, or starter template. Read `docs/generated/*.json`, `docs/geometry-transform-evidence.md`, `docs/color-rectangle-evidence.md`, and `docs/curve-evidence.md` before changing status or counts.
 
 The exact qualified library is supplied externally with `CNA_NATIVE_LIBRARY`; it is never copied into the gem. Its qualification record is in `docs/native-abi.md` and `docs/runtime-capabilities.json`.
 
 ## Next dependency-complete milestone
 
-Complete the dependency-contained managed Curve cluster: `Curve`, `CurveKey`, `CurveKeyCollection`, `CurveContinuity`, `CurveLoopType`, and `CurveTangent`. Treat the six types as one all-or-nothing milestone, derive interpolation, tangent, loop, collection, copy, equality, and exceptional behavior from the pinned XNA 4.0 Windows runtime, and require every included type to finish locally strict-clean.
+Complete the dependency-contained managed `Microsoft.Xna.Framework.Graphics.PackedVector` cluster: all 17 packed value structs plus `IPackedVector` and `IPackedVector<T>`. Treat packing, half conversion, normalization, interfaces, constructors, equality/hash/operators, and binary32 edge behavior as one all-or-nothing milestone derived from the pinned XNA 4.0 Windows runtime.
 
-Do not start PackedVector, Design converters, native ABI expansion, Content/XNB, or Effects/3D rendering in that milestone. Preserve all diagnostics for deferred whole families and the seven remaining native partial types.
+Do not start Design converters, native ABI expansion, Content/XNB, or Effects/3D rendering in that milestone. Preserve all diagnostics for deferred whole families and the seven remaining native partial types.
 
 ## Known engineering constraints
 

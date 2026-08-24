@@ -30,6 +30,15 @@ class ApiVerifierTest < Minitest::Test
     [reference, target]
   end
 
+  def curve_contracts(type_name)
+    reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
+    reference_type = reference.fetch("types").find { |type| type.fetch("name") == type_name }
+    mapped = Marshal.load(Marshal.dump(reference_type))
+    mapped["members"].reject! { |member| mapped["kind"] == "enum" && member["name"] == "value__" }
+    mapped["rubyName"] = mapped.fetch("name").gsub(".", "::")
+    [{"types" => [reference_type]}, {"types" => [mapped]}]
+  end
+
   def verify(reference, target, runtime: false)
     CNAApiCompat::Verifier.new(reference: reference, target: target, runtime: runtime).verify
   end
@@ -91,5 +100,35 @@ class ApiVerifierTest < Minitest::Test
   def test_every_required_category_is_measured
     reference, target = contracts
     assert_equal CNAApiCompat::CATEGORIES.sort, verify(reference, target).counts.keys.sort
+  end
+
+  def test_curve_key_collection_wrong_item_mutability_is_detected
+    reference, target = curve_contracts("Microsoft.Xna.Framework.CurveKeyCollection")
+    target["types"][0]["members"].find { |member| member["name"] == "Item" }["set"] = false
+    assert_operator verify(reference, target).counts["PROPERTY_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_curve_key_collection_wrong_enumerator_return_is_detected
+    reference, target = curve_contracts("Microsoft.Xna.Framework.CurveKeyCollection")
+    target["types"][0]["members"].find { |member| member["name"] == "GetEnumerator" }["returnType"] = "System.Object"
+    assert_operator verify(reference, target).counts["RETURN_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_curve_key_collection_missing_generic_interface_is_detected
+    reference, target = curve_contracts("Microsoft.Xna.Framework.CurveKeyCollection")
+    target["types"][0]["directInterfaces"] = []
+    assert_operator verify(reference, target).counts["INTERFACE_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_curve_key_wrong_reference_kind_is_detected
+    reference, target = curve_contracts("Microsoft.Xna.Framework.CurveKey")
+    target["types"][0]["kind"] = "struct"
+    assert_operator verify(reference, target).counts["TYPE_KIND_MISMATCH"], :>, 0
+  end
+
+  def test_curve_enum_wrong_raw_value_is_detected
+    reference, target = curve_contracts("Microsoft.Xna.Framework.CurveLoopType")
+    target["types"][0]["members"].find { |member| member["name"] == "Oscillate" }["value"] = "4"
+    assert_operator verify(reference, target).counts["ENUM_VALUE_MISMATCH"], :>, 0
   end
 end

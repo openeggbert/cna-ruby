@@ -1588,100 +1588,609 @@
     {
       "id": "color.float.constructors.bits",
       "operation": "Color.FloatConstructors",
-      "args": [],
-      "expected": [4286643968, 16711808, 33554944]
+      "args": [
+
+      ],
+      "expected": [
+        4286643968,
+        16711808,
+        33554944
+      ]
     },
     {
       "id": "color.vector.constructors",
       "operation": "Color.VectorConstructors",
-      "args": [[0.5, 0.25, 1.0], [1.0, 0.5, 0.25, 0.0]],
-      "expected": [4294918272, 4227327]
+      "args": [
+        [
+          0.5,
+          0.25,
+          1.0
+        ],
+        [
+          1.0,
+          0.5,
+          0.25,
+          0.0
+        ]
+      ],
+      "expected": [
+        4294918272,
+        4227327
+      ]
     },
     {
       "id": "color.nonpremultiplied.vector",
       "operation": "Color.FromNonPremultipliedVector",
-      "args": [[1.0, 0.5, 0.25, 0.5]],
-      "expected": [2149597312, 4278255360]
+      "args": [
+        [
+          1.0,
+          0.5,
+          0.25,
+          0.5
+        ]
+      ],
+      "expected": [
+        2149597312,
+        4278255360
+      ]
     },
     {
       "id": "color.nonpremultiplied.integer.boundaries",
       "operation": "Color.FromNonPremultipliedInt",
-      "args": [0, 1, 127, 128, 254, 255],
-      "expected": [0, 16777217, 2132754303, 2149597312, 4265574398, 4282417407]
+      "args": [
+        0,
+        1,
+        127,
+        128,
+        254,
+        255
+      ],
+      "expected": [
+        0,
+        16777217,
+        2132754303,
+        2149597312,
+        4265574398,
+        4282417407
+      ]
     },
     {
       "id": "color.vector.normalization.bits",
       "operation": "Color.ToVectorBits",
-      "args": [[0, 1, 127, 128], [254, 255, 1, 127]],
-      "expected": ["00000000", "3B808081", "3EFEFEFF", "3F7EFEFF", "3F800000", "3B808081", "3EFEFEFF"]
+      "args": [
+        [
+          0,
+          1,
+          127,
+          128
+        ],
+        [
+          254,
+          255,
+          1,
+          127
+        ]
+      ],
+      "expected": [
+        "00000000",
+        "3B808081",
+        "3EFEFEFF",
+        "3F7EFEFF",
+        "3F800000",
+        "3B808081",
+        "3EFEFEFF"
+      ]
     },
     {
       "id": "color.palette.complete.fresh",
       "operation": "Color.Palette",
-      "args": [],
-      "expected": [141, "185126baaf495ee47e339aa73dd86c7a4a95d40432c1bc3a44b07f3d32911d1b", true]
+      "args": [
+
+      ],
+      "expected": [
+        141,
+        "185126baaf495ee47e339aa73dd86c7a4a95d40432c1bc3a44b07f3d32911d1b",
+        true
+      ]
     },
     {
       "id": "color.lerp.edges",
       "operation": "Color.LerpEdges",
-      "args": [],
-      "expected": [4281518090, 4281518090, 2140562492, 16384110, 16384110, 4281518090, 16384110, 4281518090]
+      "args": [
+
+      ],
+      "expected": [
+        4281518090,
+        4281518090,
+        2140562492,
+        16384110,
+        16384110,
+        4281518090,
+        16384110,
+        4281518090
+      ]
     },
     {
       "id": "color.multiply.edges",
       "operation": "Color.MultiplyEdges",
-      "args": [],
-      "expected": [0, 4291322881, 2137272832, 0, 4294952962, 0, 4294967295, 0]
+      "args": [
+
+      ],
+      "expected": [
+        0,
+        4291322881,
+        2137272832,
+        0,
+        4294952962,
+        0,
+        4294967295,
+        0
+      ]
     },
     {
       "id": "color.value.hash.string.transparent",
       "operation": "Color.ValueSemantics",
-      "args": [],
-      "expected": [0, -16580095, "{R:1 G:2 B:3 A:255}", true, 1, 9]
+      "args": [
+
+      ],
+      "expected": [
+        0,
+        -16580095,
+        "{R:1 G:2 B:3 A:255}",
+        true,
+        1,
+        9
+      ]
     },
     {
       "id": "rectangle.boundaries.complete",
       "operation": "Rectangle.Boundaries",
-      "args": [0, 0, 10, 10],
-      "expected": [true, false, false, true]
+      "args": [
+        0,
+        0,
+        10,
+        10
+      ],
+      "expected": [
+        true,
+        false,
+        false,
+        true
+      ]
     },
     {
       "id": "rectangle.degenerate.negative",
       "operation": "Rectangle.Degenerate",
-      "args": [0, 0, 10, 10],
-      "expected": [true, true, false, true]
+      "args": [
+        0,
+        0,
+        10,
+        10
+      ],
+      "expected": [
+        true,
+        true,
+        false,
+        true
+      ]
     },
     {
       "id": "rectangle.refout.projection",
       "operation": "Rectangle.RefOutProjection",
-      "args": [[0, 0, 10, 10], [9, 9, 2, 2]],
-      "expected": [true, false, true, 9, 9, 1, 1, 0, 0, 11, 11]
+      "args": [
+        [
+          0,
+          0,
+          10,
+          10
+        ],
+        [
+          9,
+          9,
+          2,
+          2
+        ]
+      ],
+      "expected": [
+        true,
+        false,
+        true,
+        9,
+        9,
+        1,
+        1,
+        0,
+        0,
+        11,
+        11
+      ]
     },
     {
       "id": "rectangle.int32.overflow",
       "operation": "Rectangle.Overflow",
-      "args": [],
-      "expected": [-2147483648, 2147483647, 2147483647, -2147483648, -2147483648, 2147483647, 1, -1, 2147483647, -2147483648, -2147483647, 2147483646]
+      "args": [
+
+      ],
+      "expected": [
+        -2147483648,
+        2147483647,
+        2147483647,
+        -2147483648,
+        -2147483648,
+        2147483647,
+        1,
+        -1,
+        2147483647,
+        -2147483648,
+        -2147483647,
+        2147483646
+      ]
     },
     {
       "id": "rectangle.intersection.edges",
       "operation": "Rectangle.IntersectionEdges",
-      "args": [0, 0, 10, 10],
-      "expected": [0, 0, 0, 0, 9, 9, 1, 1, 2, 2, 3, 3]
+      "args": [
+        0,
+        0,
+        10,
+        10
+      ],
+      "expected": [
+        0,
+        0,
+        0,
+        0,
+        9,
+        9,
+        1,
+        1,
+        2,
+        2,
+        3,
+        3
+      ]
     },
     {
       "id": "rectangle.union.overflow",
       "operation": "Rectangle.UnionOverflow",
-      "args": [],
-      "expected": [-2147483648, 0, 1, 1, -2147483648, -2147483648, -1, -1]
+      "args": [
+
+      ],
+      "expected": [
+        -2147483648,
+        0,
+        1,
+        1,
+        -2147483648,
+        -2147483648,
+        -1,
+        -1
+      ]
     },
     {
       "id": "rectangle.value.hash.string",
       "operation": "Rectangle.ValueSemantics",
-      "args": [1, 2, 3, 4],
-      "expected": [10, "{X:1 Y:2 Width:3 Height:4}", true, 1, 9, true, true, true]
+      "args": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "expected": [
+        10,
+        "{X:1 Y:2 Width:3 Height:4}",
+        true,
+        1,
+        9,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "curve.key.constructors",
+      "operation": "CurveKey.Constructors",
+      "args": [
+
+      ],
+      "expected": [
+        "3EAAAAAB",
+        "3F2AAAAB",
+        "00000000",
+        "00000000",
+        0,
+        0,
+        1,
+        false
+      ]
+    },
+    {
+      "id": "curve.key.clone",
+      "operation": "CurveKey.Clone",
+      "args": [
+
+      ],
+      "expected": [
+        true,
+        true,
+        2.0,
+        20.0
+      ]
+    },
+    {
+      "id": "curve.key.equality",
+      "operation": "CurveKey.Equality",
+      "args": [
+
+      ],
+      "expected": [
+        4194305,
+        true,
+        false,
+        true,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "curve.key.compare",
+      "operation": "CurveKey.Compare",
+      "args": [
+
+      ],
+      "expected": [
+        -1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "curve.collection.ordering",
+      "operation": "CurveCollection.Ordering",
+      "args": [
+
+      ],
+      "expected": [
+        [
+          0.0,
+          1.0,
+          1.0,
+          2.0
+        ],
+        [
+          0.0,
+          10.0,
+          20.0,
+          30.0
+        ],
+        true,
+        true
+      ]
+    },
+    {
+      "id": "curve.collection.replacement",
+      "operation": "CurveCollection.Replacement",
+      "args": [
+
+      ],
+      "expected": [
+        "40000000",
+        "40800000",
+        true
+      ]
+    },
+    {
+      "id": "curve.collection.copy_clone",
+      "operation": "CurveCollection.CopyClone",
+      "args": [
+
+      ],
+      "expected": [
+        true,
+        true,
+        true,
+        true,
+        42.0,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "curve.collection.enumeration",
+      "operation": "CurveCollection.Enumeration",
+      "args": [
+
+      ],
+      "expected": [
+        true,
+        "RuntimeError",
+        true,
+        true
+      ]
+    },
+    {
+      "id": "curve.collection.validation",
+      "operation": "CurveCollection.Validation",
+      "args": [
+
+      ],
+      "expected": [
+        "IndexError",
+        "IndexError",
+        "TypeError",
+        "IndexError",
+        "ArgumentError"
+      ]
+    },
+    {
+      "id": "curve.evaluate.defaults",
+      "operation": "CurveEvaluate.Defaults",
+      "args": [
+
+      ],
+      "expected": [
+        0,
+        0,
+        true,
+        "00000000",
+        true,
+        "40E00000",
+        false
+      ]
+    },
+    {
+      "id": "curve.evaluate.hermite",
+      "operation": "CurveEvaluate.Hermite",
+      "args": [
+
+      ],
+      "expected": [
+        "3FC80000",
+        "40B80000"
+      ]
+    },
+    {
+      "id": "curve.evaluate.step",
+      "operation": "CurveEvaluate.Step",
+      "args": [
+
+      ],
+      "expected": [
+        "40000000",
+        "41100000"
+      ]
+    },
+    {
+      "id": "curve.evaluate.duplicates",
+      "operation": "CurveEvaluate.Duplicates",
+      "args": [
+
+      ],
+      "expected": [
+        "41200000",
+        "41200000",
+        "41A00000",
+        "41A00000"
+      ]
+    },
+    {
+      "id": "curve.tangents.modes",
+      "operation": "CurveTangents.Modes",
+      "args": [
+
+      ],
+      "expected": [
+        "00000000",
+        "41200000",
+        "41A00000",
+        "00000000"
+      ]
+    },
+    {
+      "id": "curve.tangents.mixed",
+      "operation": "CurveTangents.Mixed",
+      "args": [
+
+      ],
+      "expected": [
+        "00000000",
+        "41F00000",
+        "41200000",
+        "41C00000"
+      ]
+    },
+    {
+      "id": "curve.tangents.epsilon",
+      "operation": "CurveTangents.Epsilon",
+      "args": [
+
+      ],
+      "expected": [
+        "00000000",
+        "00000000"
+      ]
+    },
+    {
+      "id": "curve.tangents.duplicate",
+      "operation": "CurveTangents.Duplicate",
+      "args": [
+
+      ],
+      "expected": [
+        true,
+        true,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "id": "curve.loops.all",
+      "operation": "CurveLoops.All",
+      "args": [
+
+      ],
+      "expected": [
+        "00000000",
+        "41200000",
+        "40A00000",
+        "40A00000",
+        "C0A00000",
+        "41700000",
+        "40A00000",
+        "40A00000",
+        "C0000000",
+        "41500000"
+      ]
+    },
+    {
+      "id": "curve.loops.negative_exact",
+      "operation": "CurveLoops.NegativeExact",
+      "args": [
+
+      ],
+      "expected": [
+        "41200000",
+        "C1200000",
+        "41200000"
+      ]
+    },
+    {
+      "id": "curve.loops.normalized_boundaries",
+      "operation": "CurveLoops.NormalizedBoundaries",
+      "args": [
+
+      ],
+      "expected": [
+        10.0,
+        20.0,
+        10.0,
+        20.0,
+        20.0,
+        10.0
+      ]
+    },
+    {
+      "id": "curve.loops.formulas",
+      "operation": "CurveLoops.Formulas",
+      "args": [
+
+      ],
+      "expected": [
+        "80000000",
+        "7FC00000",
+        "C0A00000",
+        "C0000000",
+        "41800000"
+      ]
     }
   ],
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
-  "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130"
+  "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+  "milestone4SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130"
 }

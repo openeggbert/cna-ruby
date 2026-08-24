@@ -9,6 +9,7 @@ The selected authority is the Microsoft XNA Framework 4.0 Windows runtime metada
 | enum | frozen instances of a dedicated Ruby class, with named constants and exact integer identity |
 | constructor overload | one retained `.ctor` contract identity; runtime dispatch through `Class.new`/`initialize` |
 | method/property | exact XNA spelling; getter `X`, setter `X=` only when writable |
+| indexed `Item[index]` property | `collection[index]` and `collection[index] = value`; getter/setter identity and mutability remain measured |
 | static method/property | class method such as `Vector2.Zero`, returning a fresh value where XNA returns a struct |
 | field | exact reader and, for mutable struct fields, writer; field identity remains distinct in the static contract |
 | operator | mapped Ruby operator where syntax exists; original `op_*` identity remains measured |
@@ -18,6 +19,8 @@ The selected authority is the Microsoft XNA Framework 4.0 Windows runtime metada
 | array transform overload | caller-provided source/destination Arrays with exact whole-array or indexed-range call shape |
 | event | measured contract identity; eventual projection uses explicit add/remove subscription methods |
 | generic type/member | CLR arity and full signature remain in the contract; Ruby call dispatch must reject collisions deterministically |
+| `ICollection<CurveKey>` | the CLR interfaces remain in structural metadata; the exact typed collection members live directly on `CurveKeyCollection` |
+| `IEnumerator<CurveKey>` | `GetEnumerator` returns a fresh Ruby `Enumerator`; no public fake `System::Collections` hierarchy |
 
 Ruby enum APIs reject arbitrary integers unless the formal parameter bridge explicitly calls the enum's coercion function. Flags enum combinations may contain only declared bits. The synthetic CLR enum storage field `value__` has no Ruby projection, so the formal expected member count excludes exactly those 49 metadata fields.
 
@@ -26,3 +29,5 @@ Ruby objects cannot reproduce CLR struct assignment copying: `b = a` aliases. Va
 Geometry array transforms retain caller-owned destination storage. Whole-array calls map to `(source, transform, destination)` and range calls to `(source, source_index, transform, destination, destination_index, length)`. XNA's forward write order is preserved, including observable overlap behavior. A negative length performs no iteration; invalid indices are observed only when at least one element is processed. Every collapsed Ruby call shape still has one entry per CLR overload in `tools/api_compat/signatures.json` and the generated geometry RBS.
 
 Uppercase methods are legal in Ruby but bare uppercase tokens are parsed as constants in several contexts. Ported code uses an explicit receiver (`self.Exit`, `Color.White`). Idiomatic snake_case aliases are excluded from the strict surface.
+
+`CurveKeyCollection` deliberately does not mix in Ruby `Enumerable`, because that would add a broad helper surface unrelated to XNA. Its mapped `Enumerator` preserves XNA order, independent cursors, and `List<CurveKey>`-style fail-fast mutation detection. Invalid strict collection indices, including negative indices, map to `IndexError`; null/wrong typed values map to `TypeError`, destination-capacity failures map to `ArgumentError`, and enumerator invalidation maps to `RuntimeError`.

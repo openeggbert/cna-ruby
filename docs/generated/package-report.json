@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "GEM_FILENAME": "cna-ruby-0.1.0.dev0.gem",
   "VERSION": "0.1.0.dev0",
-  "GEM_SHA256": "e5bac66a205bdd91a0c8ce75a2b861538e1ea9826b5ffd83f6a823a49506b9fa",
-  "GEM_ENTRIES": 30,
+  "GEM_SHA256": "316810df8e207fb25ea5bfb4810e19ee6aaebc7c10706861dd351ef4e3c4e0e2",
+  "GEM_ENTRIES": 32,
   "FORBIDDEN_ENTRIES": [
 
   ],
@@ -32,6 +32,7 @@
     "lib/cna/runtime/value_semantics.rb",
     "lib/cna/version.rb",
     "lib/microsoft/xna/framework.rb",
+    "lib/microsoft/xna/framework/curve.rb",
     "lib/microsoft/xna/framework/game.rb",
     "lib/microsoft/xna/framework/geometry_bounds.rb",
     "lib/microsoft/xna/framework/geometry_matrix.rb",
@@ -39,6 +40,7 @@
     "lib/microsoft/xna/framework/graphics.rb",
     "lib/microsoft/xna/framework/input.rb",
     "lib/microsoft/xna/framework/values.rb",
+    "sig/microsoft/xna/curve.rbs",
     "sig/microsoft/xna/framework.rbs",
     "sig/microsoft/xna/framework/graphics.rbs",
     "sig/microsoft/xna/framework/input.rbs",

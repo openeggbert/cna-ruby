@@ -97,6 +97,45 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     refute_includes File.read(SIGNATURE_ROOT.join("microsoft", "xna", "presentation_values.rbs")), "untyped"
   end
 
+  def test_curve_rbs_retains_every_static_contract_identity_and_collection_projection
+    environment = load_environment
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    curve_names = %w[Curve CurveKey CurveKeyCollection CurveContinuity CurveLoopType CurveTangent].map do |name|
+      "Microsoft.Xna.Framework.#{name}"
+    end
+    selected = contract.fetch("types").select { |type| curve_names.include?(type.fetch("name")) }
+    expected_methods = selected.sum do |type|
+      type.fetch("members").sum do |member|
+        if %w[constructor method].include?(member["kind"])
+          1
+        elsif member["kind"] == "property"
+          (member["get"] ? 1 : 0) + (member["set"] ? 1 : 0)
+        else
+          0
+        end
+      end
+    end
+    actual_methods = selected.sum do |type|
+      name, entry = environment.class_decls.find { |candidate, _value| candidate.to_s == "::#{type.fetch("rubyName")}" }
+      raise "missing Curve RBS declaration #{type.fetch("rubyName")}" unless name
+      entry.decls.sum do |declaration|
+        declaration.decl.members.sum do |member|
+          member.instance_of?(RBS::AST::Members::MethodDefinition) ? member.overloads.length : 0
+        end
+      end
+    end
+    assert_equal 6, selected.length
+    assert_equal 49, selected.sum { |type| type.fetch("members").length }
+    assert_equal expected_methods, actual_methods
+
+    source = File.read(SIGNATURE_ROOT.join("microsoft", "xna", "curve.rbs"))
+    refute_includes source, "untyped"
+    refute_match(/\*\w*/, source)
+    assert_includes source, "def []: (Integer index) -> CurveKey"
+    assert_includes source, "def []=: (Integer index, CurveKey value) -> CurveKey"
+    assert_includes source, "def GetEnumerator: () -> Enumerator[CurveKey, nil]"
+  end
+
   private
 
   def load_environment

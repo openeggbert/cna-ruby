@@ -2,15 +2,15 @@
 
 CNA-Ruby is implementing a formally measured Ruby projection of the selected Microsoft XNA Framework 4.0 Windows runtime API over the CNA C ABI.
 
-Foundation 3 is functional on the qualified Linux x86-64 desktop MRI runtime, but the selected XNA profile is intentionally incomplete. The strict scoreboard targets 33 types and 1053 members from the 257-type / 2915-member Ruby projection; it remains red for genuine deferred work. See `docs/generated/api-compat-report.json` for authoritative counts.
+Foundation 4 is functional on the qualified Linux x86-64 desktop MRI runtime, but the selected XNA profile is intentionally incomplete. The strict scoreboard targets 39 types and 1102 members from the 257-type / 2915-member Ruby projection; it remains red for genuine deferred work. See `docs/generated/api-compat-report.json` for authoritative counts.
 
 ## Qualified foundation
 
 - MRI Ruby 3.3.8 and Fiddle 1.1.2
 - exact CNA C ABI 0.7.0 admission
 - centralized native resolver, signature manifest, layouts, result translation, ownership, generation/thread checks, and callback exception containment
-- complete mapped MathHelper, Vector2/3/4, Quaternion, Matrix, Plane, Ray, BoundingBox, BoundingSphere, BoundingFrustum, Rectangle, Color, ContainmentType, PlaneIntersectionType, Point, GameTime, PlayerIndex, SpriteSortMode, SpriteEffects, SurfaceFormat, KeyState, Keys, KeyboardState, Keyboard, and Texture contract types
-- 104 green PURE_XNA_DERIVED managed observations, including exact binary32 geometry, Color, and Rectangle evidence
+- complete mapped MathHelper, Vector2/3/4, Quaternion, Matrix, Plane, Ray, BoundingBox, BoundingSphere, BoundingFrustum, Rectangle, Color, Curve, CurveKey, CurveKeyCollection, CurveContinuity, CurveLoopType, CurveTangent, ContainmentType, PlaneIntersectionType, Point, GameTime, PlayerIndex, SpriteSortMode, SpriteEffects, SurfaceFormat, KeyState, Keys, KeyboardState, Keyboard, and Texture contract types
+- 125 green PURE_XNA_DERIVED managed observations, including exact binary32 geometry, Color, Rectangle, Curve collection, interpolation, loop, and tangent evidence
 - measured partial Game, GraphicsDeviceManager, Viewport, GraphicsDevice, GraphicsResource, Texture2D, and SpriteBatch types
 - real native Game lifecycle and GameTime callbacks
 - real HEADLESS-qualified viewport, Clear, PNG Texture2D stream decode, SpriteBatch scaled draw, and keyboard state capture
@@ -41,7 +41,7 @@ require "microsoft/xna/framework/graphics"
 require "microsoft/xna/framework/input"
 ```
 
-There is intentionally no `microsoft/xna/framework/content` implementation in Foundation 3.
+There is intentionally no `microsoft/xna/framework/content` implementation in Foundation 4.
 
 ## Evidence
 
@@ -52,6 +52,7 @@ There is intentionally no `microsoft/xna/framework/content` implementation in Fo
 - `docs/placeholder-audit.md` — every original fake member and disposition
 - `docs/geometry-transform-evidence.md` — Foundation 2 managed geometry closure
 - `docs/color-rectangle-evidence.md` — Foundation 3 managed presentation-value closure
+- `docs/curve-evidence.md` — Foundation 4 managed Curve-family closure
 - `tools/api_compat/verify.rb` — structural report/strict/leak-only modes
 - `tools/native_abi/verify.rb` — compiler-backed header/manifest/export verification
 - `tools/run_behavior_corpus.rb` — PURE_XNA_DERIVED managed observations

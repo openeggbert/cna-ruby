@@ -12,7 +12,12 @@
     "multipleOut": "ordered Array following any non-void CLR return"
   },
   "arrayTransforms": "caller-owned source/destination Arrays; whole and indexed range forms preserve forward overlap order",
-  "properties": {"getter": "Name", "setter": "Name=", "preserveMutability": true},
+  "properties": {"getter": "Name", "setter": "Name=", "preserveMutability": true, "indexedItem": {"getter": "[]", "setter": "[]="}},
+  "collections": {
+    "genericICollection": "preserve the CLR interface identity and project its selected typed members directly on the Ruby collection class",
+    "genericIEnumerable": "preserve the CLR interface identity; GetEnumerator returns Ruby Enumerator without a fake System namespace",
+    "enumerationMutation": "fail-fast when the backing collection version changes"
+  },
   "staticMembers": "class methods; struct-valued members return fresh objects",
   "enums": {"representation": "typed frozen Ruby objects", "excludeMetadataMembers": ["value__"], "flags": "declared bits only"},
   "structs": "Ruby classes with boundary copies and dup/clone; assignment aliasing is documented",
