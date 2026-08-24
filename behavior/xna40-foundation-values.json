@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, and GraphicsProfile separate XNA metadata facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, and Viewport separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "observations": [
     {
@@ -4245,6 +4245,254 @@
         false,
         0
       ]
+    },
+    {
+      "id": "viewport_project.identity",
+      "operation": "Viewport.ProjectIdentity",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "437D6000",
+        "42E18000",
+        "3F300000"
+      ]
+    },
+    {
+      "id": "viewport_project.depth",
+      "operation": "Viewport.ProjectDepth",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          "43BAC800",
+          "43923000",
+          "3E4CCCCD"
+        ],
+        [
+          "43BAC800",
+          "43923000",
+          "3F59999A"
+        ],
+        [
+          "43BAC800",
+          "43923000",
+          "3ECA3D71"
+        ],
+        [
+          "43BAC800",
+          "43923000",
+          "3F966667"
+        ]
+      ]
+    },
+    {
+      "id": "viewport_project.nontrivial",
+      "operation": "Viewport.ProjectNontrivial",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "44420EED",
+        "43942FD4",
+        "3F32C1C2"
+      ]
+    },
+    {
+      "id": "viewport_project.w_boundary",
+      "operation": "Viewport.ProjectWBoundary",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          "43536000",
+          "431E7000",
+          "3F200000"
+        ],
+        [
+          "43536000",
+          "431E7000",
+          "3F200001"
+        ],
+        [
+          "43536000",
+          "431E7000",
+          "3F1FFFFF"
+        ],
+        [
+          "433FF000",
+          "430BF800",
+          "3EA00000"
+        ]
+      ]
+    },
+    {
+      "id": "viewport_project.negative_reversed_special",
+      "operation": "Viewport.ProjectNegativeSpecial",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          "C2A4CCCC",
+          "40A26666",
+          "BF133334"
+        ],
+        [
+          "FFC00000",
+          "7FC00000",
+          "FFC00000"
+        ]
+      ]
+    },
+    {
+      "id": "viewport_unproject.identity",
+      "operation": "Viewport.UnprojectIdentity",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "BE800000",
+        "3F000000",
+        "3F400000"
+      ]
+    },
+    {
+      "id": "viewport_unproject.nontrivial",
+      "operation": "Viewport.UnprojectNontrivial",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "C01F32F5",
+        "BEF8831C",
+        "3F55D950"
+      ]
+    },
+    {
+      "id": "viewport_unproject.w_boundary",
+      "operation": "Viewport.UnprojectWBoundary",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          "3E800000",
+          "BEC00000",
+          "3F200000"
+        ],
+        [
+          "3E7FFFFE",
+          "BEBFFFFF",
+          "3F1FFFFF"
+        ],
+        [
+          "3E800001",
+          "BEC00002",
+          "3F200001"
+        ],
+        [
+          "3E000000",
+          "BE400000",
+          "3EA00000"
+        ]
+      ]
+    },
+    {
+      "id": "viewport_unproject.negative_and_degenerate",
+      "operation": "Viewport.UnprojectNegativeDegenerate",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          "BEE718E7",
+          "3DC6731A",
+          "3F1D1746"
+        ],
+        [
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true
+        ]
+      ]
+    },
+    {
+      "id": "viewport_unproject.round_trips",
+      "operation": "Viewport.RoundTrips",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          "3EC00003",
+          "BFA00001",
+          "40200001"
+        ],
+        [
+          "43CDDFFE",
+          "42A63FFC",
+          "3ED70A3D"
+        ]
+      ]
+    },
+    {
+      "id": "viewport_title_safe_area.windows",
+      "operation": "Viewport.TitleSafeArea",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          13,
+          -7,
+          641,
+          479
+        ],
+        [
+          -11,
+          23,
+          5,
+          7
+        ],
+        [
+          3,
+          4,
+          0,
+          1
+        ],
+        [
+          7,
+          -8,
+          -9,
+          -10
+        ]
+      ]
+    },
+    {
+      "id": "viewport_title_safe_area.ruby_mapping",
+      "operation": "Viewport.RubyMapping",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        4,
+        4,
+        false,
+        false,
+        false,
+        false,
+        false,
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
+        true,
+        true,
+        true
+      ]
     }
   ],
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
@@ -4256,5 +4504,6 @@
   "milestone8SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
   "milestone9SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
   "milestone10SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
-  "milestone11SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55"
+  "milestone11SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+  "milestone12SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55"
 }

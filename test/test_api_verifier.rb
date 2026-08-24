@@ -657,6 +657,119 @@ class ApiVerifierTest < Minitest::Test
                    .any? { |member| member["name"] == "GraphicsProfile" }
   end
 
+  def test_viewport_missing_project_and_unproject_are_detected
+    %w[Project Unproject].each do |name|
+      reference, target = viewport_contracts
+      target.fetch("types").first.fetch("members").reject! { |member| member["name"] == name }
+      result = verify(reference, target)
+      assert_operator result.counts["MISSING_MEMBER"], :>, 0, name
+      assert_operator result.counts["OVERLOAD_MAPPING_MISMATCH"], :>, 0, name
+    end
+  end
+
+  def test_viewport_project_arity_parameter_and_return_mutations_are_detected
+    reference, target = viewport_contracts
+    project = target.fetch("types").first.fetch("members").find { |member| member["name"] == "Project" }
+    project.fetch("parameters").pop
+    assert_operator verify(reference, target).counts["PARAMETER_MAPPING_MISMATCH"], :>, 0
+
+    reference, target = viewport_contracts
+    project = target.fetch("types").first.fetch("members").find { |member| member["name"] == "Project" }
+    project.fetch("parameters")[0]["type"] = "Microsoft.Xna.Framework.Vector2"
+    project.fetch("parameters")[1]["type"] = "Microsoft.Xna.Framework.Vector3"
+    project["returnType"] = "Microsoft.Xna.Framework.Vector4"
+    result = verify(reference, target)
+    assert_operator result.counts["PARAMETER_MAPPING_MISMATCH"], :>, 0
+    assert_operator result.counts["RETURN_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_viewport_unproject_arity_parameter_order_and_return_mutations_are_detected
+    reference, target = viewport_contracts
+    unproject = target.fetch("types").first.fetch("members").find { |member| member["name"] == "Unproject" }
+    unproject.fetch("parameters") << {
+      "name" => "extra", "type" => "Microsoft.Xna.Framework.Matrix", "ref" => false,
+      "out" => false, "in" => false, "optional" => false
+    }
+    assert_operator verify(reference, target).counts["PARAMETER_MAPPING_MISMATCH"], :>, 0
+
+    reference, target = viewport_contracts
+    unproject = target.fetch("types").first.fetch("members").find { |member| member["name"] == "Unproject" }
+    unproject.fetch("parameters")[0]["type"] = "Microsoft.Xna.Framework.Matrix"
+    unproject.fetch("parameters")[2]["type"] = "Microsoft.Xna.Framework.Vector3"
+    unproject["returnType"] = "Microsoft.Xna.Framework.Vector2"
+    result = verify(reference, target)
+    assert_operator result.counts["PARAMETER_MAPPING_MISMATCH"], :>, 0
+    assert_operator result.counts["RETURN_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_viewport_title_safe_area_missing_type_and_writable_mutations_are_detected
+    reference, target = viewport_contracts
+    target.fetch("types").first.fetch("members").reject! { |member| member["name"] == "TitleSafeArea" }
+    assert_operator verify(reference, target).counts["MISSING_MEMBER"], :>, 0
+
+    reference, target = viewport_contracts
+    property = target.fetch("types").first.fetch("members").find { |member| member["name"] == "TitleSafeArea" }
+    property["type"] = "Microsoft.Xna.Framework.Vector4"
+    property["set"] = true
+    result = verify(reference, target)
+    assert_operator result.counts["PROPERTY_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_viewport_lowercase_alias_is_detected_at_runtime
+    reference, target = viewport_contracts
+    viewport = Microsoft::Xna::Framework::Graphics::Viewport
+    viewport.class_eval { def project(*) = nil }
+    assert_operator verify(reference, target, runtime: true).counts["UNEXPECTED_MEMBER"], :>, 0
+  ensure
+    viewport&.__send__(:remove_method, :project) if viewport&.public_method_defined?(:project)
+  end
+
+  def test_viewport_native_parameter_leaks_are_detected
+    reference, target = viewport_contracts
+    project = target.fetch("types").first.fetch("members").find { |member| member["name"] == "Project" }
+    project.fetch("parameters") << {
+      "name" => "native", "type" => "CNA_Handle/CNA::Native/Fiddle::Pointer", "ref" => false,
+      "out" => false, "in" => false, "optional" => false
+    }
+    result = verify(reference, target, runtime: true)
+    assert_operator result.counts["PARAMETER_MAPPING_MISMATCH"], :>, 0
+    assert_operator result.counts["RAW_HANDLE_LEAK"], :>, 0
+    assert_operator result.counts["PUBLIC_NATIVE_FFI_LEAK"], :>, 0
+  end
+
+  def test_viewport_complete_selection_and_accidental_partial_state_are_measured
+    selected = JSON.parse(File.read(File.expand_path("../tools/api_compat/selection.json", __dir__)))
+                   .fetch("types").find { |type| type.fetch("name") == viewport_name }
+    assert_equal true, selected.fetch("complete")
+
+    reference, target = viewport_contracts
+    target.fetch("types").first.fetch("members").reject! do |member|
+      %w[Project Unproject TitleSafeArea].include?(member["name"])
+    end
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_MEMBER"], :>=, 3
+    assert_operator result.counts["OVERLOAD_MAPPING_MISMATCH"], :>=, 2
+  end
+
+  def test_viewport_selected_surface_rejects_graphics_device_viewport_setter
+    reference, target = viewport_selected_surface_contracts
+    device_name = "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+    full_property = reference_contract.fetch("types").find { |type| type.fetch("name") == device_name }
+                                      .fetch("members").find do |member|
+      member["kind"] == "property" && member["name"] == "Viewport"
+    end
+    selected_property = target.fetch("types").find { |type| type.fetch("name") == device_name }
+                              .fetch("members").find { |member| member["name"] == "Viewport" }
+    selected_property["set"] = full_property.fetch("set")
+    selected_property["setAccess"] = full_property.fetch("setAccess")
+    assert_operator verify(reference, target).counts["PROPERTY_MAPPING_MISMATCH"], :>, 0
+
+    actual_property = signature_contract.fetch("types").find { |type| type.fetch("name") == device_name }
+                                        .fetch("members").find { |member| member["name"] == "Viewport" }
+    refute actual_property.fetch("set")
+    refute Microsoft::Xna::Framework::Graphics::GraphicsDevice.public_method_defined?(:Viewport=)
+  end
+
 
   def packed_vector_contracts
     reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
@@ -760,6 +873,27 @@ class ApiVerifierTest < Minitest::Test
       reference.fetch("types") << Marshal.load(Marshal.dump(selected))
       target.fetch("types") << Marshal.load(Marshal.dump(selected))
     end
+    [reference, target]
+  end
+
+  def viewport_name
+    "Microsoft.Xna.Framework.Graphics.Viewport"
+  end
+
+  def viewport_contracts
+    reference = reference_contract
+    target = signature_contract
+    reference_type = reference.fetch("types").find { |type| type.fetch("name") == viewport_name }
+    target_type = target.fetch("types").find { |type| type.fetch("name") == viewport_name }
+    [{"types" => [reference_type]}, {"types" => [Marshal.load(Marshal.dump(target_type))]}]
+  end
+
+  def viewport_selected_surface_contracts
+    reference, target = viewport_contracts
+    device_name = "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+    selected_device = signature_contract.fetch("types").find { |type| type.fetch("name") == device_name }
+    reference.fetch("types") << Marshal.load(Marshal.dump(selected_device))
+    target.fetch("types") << Marshal.load(Marshal.dump(selected_device))
     [reference, target]
   end
 

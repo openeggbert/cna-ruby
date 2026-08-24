@@ -25,8 +25,11 @@ module Microsoft
           attr_accessor MaxDepth: Float
           attr_accessor Bounds: Rectangle
           attr_reader AspectRatio: Float
+          attr_reader TitleSafeArea: Rectangle
           def initialize: (Rectangle bounds) -> void
                         | (Integer x, Integer y, Integer width, Integer height) -> void
+          def Project: (Vector3 source, Matrix projection, Matrix view, Matrix world) -> Vector3
+          def Unproject: (Vector3 source, Matrix projection, Matrix view, Matrix world) -> Vector3
         end
 
         class GraphicsDevice

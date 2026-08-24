@@ -97,6 +97,37 @@ module Microsoft
 
           def AspectRatio = @Width.zero? || @Height.zero? ? 0.0 : N.f32(@Width.fdiv(@Height))
 
+          def Project(source, projection, view, world)
+            require_projection_inputs(source, projection, view, world)
+            matrix = viewport_matrix_multiply(world, view)
+            matrix = viewport_matrix_multiply(matrix, projection)
+            result = viewport_transform(source, matrix)
+            w = homogeneous_w(source, matrix)
+            result = viewport_divide(result, w) unless within_epsilon?(w, 1.0)
+            result.X = stack32(:+, stack(:*, stack(:*, stack(:+, result.X, 1.0), 0.5), N.f32(@Width)), N.f32(@X))
+            result.Y = stack32(:+, stack(:*, stack(:*, stack(:+, stack_neg(result.Y), 1.0), 0.5), N.f32(@Height)), N.f32(@Y))
+            result.Z = stack32(:+, stack(:*, result.Z, stack(:-, @MaxDepth, @MinDepth)), @MinDepth)
+            result
+          end
+
+          def Unproject(source, projection, view, world)
+            require_projection_inputs(source, projection, view, world)
+            matrix = viewport_matrix_multiply(world, view)
+            matrix = viewport_matrix_multiply(matrix, projection)
+            matrix = viewport_matrix_invert(matrix)
+
+            normalized = Vector3.new(source.X, source.Y, source.Z)
+            normalized.X = stack32(:-, stack(:*, stack(:/, stack(:-, normalized.X, N.f32(@X)), N.f32(@Width)), 2.0), 1.0)
+            normalized.Y = stack32(stack_neg(stack(:-, stack(:*, stack(:/, stack(:-, normalized.Y, N.f32(@Y)), N.f32(@Height)), 2.0), 1.0)))
+            normalized.Z = stack32(:/, stack(:-, normalized.Z, @MinDepth), stack(:-, @MaxDepth, @MinDepth))
+
+            result = viewport_transform(normalized, matrix)
+            w = homogeneous_w(normalized, matrix)
+            within_epsilon?(w, 1.0) ? result : viewport_divide(result, w)
+          end
+
+          def TitleSafeArea = Rectangle.new(@X, @Y, @Width, @Height)
+
           def ToString = "{X:#{@X} Y:#{@Y} Width:#{@Width} Height:#{@Height} MinDepth:#{format("%g", @MinDepth)} MaxDepth:#{format("%g", @MaxDepth)}}"
           alias to_s ToString
 
@@ -107,6 +138,166 @@ module Microsoft
           end
 
           private
+
+          def require_projection_inputs(source, projection, view, world)
+            CNA::Runtime::GeometrySupport.require_type(source, Vector3, "source")
+            CNA::Runtime::GeometrySupport.require_type(projection, Matrix, "projection")
+            CNA::Runtime::GeometrySupport.require_type(view, Matrix, "view")
+            CNA::Runtime::GeometrySupport.require_type(world, Matrix, "world")
+          end
+
+          def homogeneous_w(source, matrix)
+            stack_sum(stack(:*, source.X, matrix.M14), stack(:*, source.Y, matrix.M24),
+                      stack(:*, source.Z, matrix.M34), matrix.M44)
+          end
+
+          def within_epsilon?(a, b)
+            difference = N.sub32(stack32(a), b)
+            epsilon = N.f32_from_bits(1)
+            difference >= N.neg32(epsilon) && difference <= epsilon
+          end
+
+          # XNA's x86 CLR keeps evaluation-stack values at its native floating
+          # precision and narrows these chains only when the IL stores a
+          # Matrix/Vector3 field. The qualified public Matrix/Vector3 methods
+          # intentionally retain the binding's established strict Single
+          # projection, so Viewport uses its exact IL storage grouping here.
+          def viewport_matrix_multiply(left, right)
+            Matrix.new(*(1..4).flat_map do |row|
+              (1..4).map do |column|
+                stack32(stack_sum(*(1..4).map do |index|
+                  stack(:*, left.public_send("M#{row}#{index}"), right.public_send("M#{index}#{column}"))
+                end))
+              end
+            end)
+          end
+
+          def viewport_transform(value, matrix)
+            Vector3.new(
+              stack32(stack_sum(stack(:*, value.X, matrix.M11), stack(:*, value.Y, matrix.M21),
+                                stack(:*, value.Z, matrix.M31), matrix.M41)),
+              stack32(stack_sum(stack(:*, value.X, matrix.M12), stack(:*, value.Y, matrix.M22),
+                                stack(:*, value.Z, matrix.M32), matrix.M42)),
+              stack32(stack_sum(stack(:*, value.X, matrix.M13), stack(:*, value.Y, matrix.M23),
+                                stack(:*, value.Z, matrix.M33), matrix.M43))
+            )
+          end
+
+          def viewport_divide(value, divider)
+            reciprocal = stack(:/, 1.0, divider)
+            Vector3.new(stack32(:*, value.X, reciprocal), stack32(:*, value.Y, reciprocal),
+                        stack32(:*, value.Z, reciprocal))
+          end
+
+          def viewport_matrix_invert(matrix)
+            n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13, n14, n15, n16 =
+              (1..4).flat_map { |row| (1..4).map { |column| matrix.public_send("M#{row}#{column}") } }
+            n17 = N.f32(n11 * n16 - n12 * n15); n18 = N.f32(n10 * n16 - n12 * n14)
+            n19 = N.f32(n10 * n15 - n11 * n14); n20 = N.f32(n9 * n16 - n12 * n13)
+            n21 = N.f32(n9 * n15 - n11 * n13); n22 = N.f32(n9 * n14 - n10 * n13)
+            n23 = N.f32(n6 * n17 - n7 * n18 + n8 * n19)
+            n24 = N.f32(-(n5 * n17 - n7 * n20 + n8 * n21))
+            n25 = N.f32(n5 * n18 - n6 * n20 + n8 * n22)
+            n26 = N.f32(-(n5 * n19 - n6 * n21 + n7 * n22))
+            n27 = stack(:/, 1.0, stack_sum(stack(:*, n1, n23), stack(:*, n2, n24),
+                                           stack(:*, n3, n25), stack(:*, n4, n26)))
+            result = Array.new(16, 0.0)
+            result[0] = stack32(:*, n23, n27); result[4] = stack32(:*, n24, n27)
+            result[8] = stack32(:*, n25, n27); result[12] = stack32(:*, n26, n27)
+            result[1] = stack32(:*, stack_neg(stack(:+, stack(:-, stack(:*, n2, n17), stack(:*, n3, n18)), stack(:*, n4, n19))), n27)
+            result[5] = stack32(:*, stack(:+, stack(:-, stack(:*, n1, n17), stack(:*, n3, n20)), stack(:*, n4, n21)), n27)
+            result[9] = stack32(:*, stack_neg(stack(:+, stack(:-, stack(:*, n1, n18), stack(:*, n2, n20)), stack(:*, n4, n22))), n27)
+            result[13] = stack32(:*, stack(:+, stack(:-, stack(:*, n1, n19), stack(:*, n2, n21)), stack(:*, n3, n22)), n27)
+            n28 = N.f32(n7 * n16 - n8 * n15); n29 = N.f32(n6 * n16 - n8 * n14)
+            n30 = N.f32(n6 * n15 - n7 * n14); n31 = N.f32(n5 * n16 - n8 * n13)
+            n32 = N.f32(n5 * n15 - n7 * n13); n33 = N.f32(n5 * n14 - n6 * n13)
+            result[2] = stack32(:*, stack(:+, stack(:-, stack(:*, n2, n28), stack(:*, n3, n29)), stack(:*, n4, n30)), n27)
+            result[6] = stack32(:*, stack_neg(stack(:+, stack(:-, stack(:*, n1, n28), stack(:*, n3, n31)), stack(:*, n4, n32))), n27)
+            result[10] = stack32(:*, stack(:+, stack(:-, stack(:*, n1, n29), stack(:*, n2, n31)), stack(:*, n4, n33)), n27)
+            result[14] = stack32(:*, stack_neg(stack(:+, stack(:-, stack(:*, n1, n30), stack(:*, n2, n32)), stack(:*, n3, n33))), n27)
+            n34 = N.f32(n7 * n12 - n8 * n11); n35 = N.f32(n6 * n12 - n8 * n10)
+            n36 = N.f32(n6 * n11 - n7 * n10); n37 = N.f32(n5 * n12 - n8 * n9)
+            n38 = N.f32(n5 * n11 - n7 * n9); n39 = N.f32(n5 * n10 - n6 * n9)
+            result[3] = stack32(:*, stack_neg(stack(:+, stack(:-, stack(:*, n2, n34), stack(:*, n3, n35)), stack(:*, n4, n36))), n27)
+            result[7] = stack32(:*, stack(:+, stack(:-, stack(:*, n1, n34), stack(:*, n3, n37)), stack(:*, n4, n38)), n27)
+            result[11] = stack32(:*, stack_neg(stack(:+, stack(:-, stack(:*, n1, n35), stack(:*, n2, n37)), stack(:*, n4, n39))), n27)
+            result[15] = stack32(:*, stack(:+, stack(:-, stack(:*, n1, n36), stack(:*, n2, n38)), stack(:*, n3, n39)), n27)
+            Matrix.new(*result)
+          end
+
+          def stack(*arguments)
+            return extended_value(arguments[0]) if arguments.length == 1
+
+            operation, left, right = arguments
+            left = extended_value(left); right = extended_value(right)
+            if left.instance_of?(Rational) && right.instance_of?(Rational) && !(operation == :/ && right.zero?)
+              value = case operation
+                      when :+ then left + right
+                      when :- then left - right
+                      when :* then left * right
+                      when :/ then left / right
+                      else raise ArgumentError, "unknown floating-stack operation"
+                      end
+              return round_extended(value)
+            end
+
+            left = left.to_f; right = right.to_f
+            case operation
+            when :+ then left + right
+            when :- then left - right
+            when :* then left * right
+            when :/ then left / right
+            else raise ArgumentError, "unknown floating-stack operation"
+            end
+          end
+
+          def stack_sum(*values)
+            values.drop(1).reduce(extended_value(values.first)) { |sum, value| stack(:+, sum, value) }
+          end
+
+          def stack_neg(value)
+            value = extended_value(value)
+            value.instance_of?(Rational) ? -value : -value.to_f
+          end
+
+          def stack32(*arguments)
+            value = arguments.length == 1 ? extended_value(arguments[0]) : stack(*arguments)
+            N.f32(value.to_f)
+          end
+
+          def extended_value(value)
+            return value if value.instance_of?(Rational)
+
+            number = N.f32(value)
+            number.finite? ? number.to_r : number
+          end
+
+          def round_extended(value)
+            return value if value.zero?
+
+            negative = value.negative?
+            magnitude = value.abs
+            numerator = magnitude.numerator
+            denominator = magnitude.denominator
+            exponent = numerator.bit_length - denominator.bit_length
+            exponent -= 1 if exponent >= 0 ? numerator < (denominator << exponent) : (numerator << -exponent) < denominator
+            shift = 63 - exponent
+            scaled_numerator = shift >= 0 ? numerator << shift : numerator
+            scaled_denominator = shift >= 0 ? denominator : denominator << -shift
+            significand, remainder = scaled_numerator.divmod(scaled_denominator)
+            comparison = remainder * 2 <=> scaled_denominator
+            significand += 1 if comparison.positive? || (comparison.zero? && significand.odd?)
+            if significand == (1 << 64)
+              significand >>= 1
+              exponent += 1
+            end
+            result = if exponent >= 63
+                       Rational(significand << (exponent - 63), 1)
+                     else
+                       Rational(significand, 1 << (63 - exponent))
+                     end
+            negative ? -result : result
+          end
 
           def value_components = [@X, @Y, @Width, @Height, @MinDepth, @MaxDepth]
         end

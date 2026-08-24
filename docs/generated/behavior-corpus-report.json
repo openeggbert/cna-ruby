@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, and GraphicsProfile separate XNA metadata facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
-  "OBSERVATIONS": 259,
-  "ASSERTIONS": 259,
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, and Viewport separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "OBSERVATIONS": 271,
+  "ASSERTIONS": 271,
   "FAILURES": 0,
   "provenanceCounts": {
-    "PURE_XNA_DERIVED": 256,
-    "RUBY_MAPPING_QUALIFICATION": 3
+    "PURE_XNA_DERIVED": 267,
+    "RUBY_MAPPING_QUALIFICATION": 4
   },
   "groupCounts": {
     "BINARY32": 2,
@@ -50,7 +50,10 @@
     "VECTOR3": 7,
     "VECTOR4": 4,
     "VERTEX_ELEMENT": 11,
-    "VERTEX_ELEMENT_ENUMS": 3
+    "VERTEX_ELEMENT_ENUMS": 3,
+    "VIEWPORT_PROJECT": 5,
+    "VIEWPORT_TITLE_SAFE_AREA": 2,
+    "VIEWPORT_UNPROJECT": 5
   },
   "nativeEvidence": [
     {

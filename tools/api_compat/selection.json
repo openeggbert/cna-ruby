@@ -60,8 +60,7 @@
       {"name": "GraphicsDevice"},
       {"name": "DefaultBackBufferWidth"}, {"name": "DefaultBackBufferHeight"}
     ]},
-    {"name": "Microsoft.Xna.Framework.Graphics.Viewport", "includeNonRefOut": true,
-      "excludeNames": ["Project", "Unproject", "TitleSafeArea"]},
+    {"name": "Microsoft.Xna.Framework.Graphics.Viewport", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.GraphicsDevice", "include": [
       {"kind": "method", "name": "Clear", "parameters": ["Microsoft.Xna.Framework.Color"]},
       {"name": "IsDisposed"}, {"name": "Viewport", "override": {"set": false}}

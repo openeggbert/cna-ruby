@@ -2,17 +2,38 @@
 
 ## Exact current boundary
 
-Foundation 11 closes exactly `Microsoft.Xna.Framework.Graphics.GraphicsProfile`: one non-flags Int32 enum, 3 CLR identities, and 2 Ruby XNA identities after excluding synthetic enum storage `value__`. It is completely managed and changes no CNA function, native manifest, Fiddle binding, layout, callback, or constant. The deferred `GraphicsDevice.GraphicsProfile` and `GraphicsDeviceManager.GraphicsProfile` properties remain absent, as do constructor and hardware-detection work. Read `docs/generated/*.json` and `docs/graphics-profile-evidence.md` before changing status or counts.
+Foundation 12 closes exactly the remaining managed contract of
+`Microsoft.Xna.Framework.Graphics.Viewport`. The type moves from 11/14 selected identities and
+five local diagnostics to 14/14 and local strict zero by adding only `Project`, `Unproject`, and
+read-only `TitleSafeArea`. The direct Windows XNA IL and result-bit evidence is retained in
+`docs/viewport-evidence.md` and `behavior/xna40-viewport-values.json`.
 
-The strict target is 77 types / 1462 member identities: 70 complete, the same seven partial native/runtime types, and 180 missing. The normal strict report retains 369 diagnostics solely for deferred work: 180 missing types, 135 missing members, one property mismatch, and 53 overload mismatches. Every other mismatch/leak/allowlist/unmeasured category is zero.
+The strict target is 77 types / 1465 member identities: 71 complete, six partial native/runtime
+types, and 180 missing. Normal strict retains 364 genuine deferred diagnostics: 180 missing types,
+132 missing members, one property mismatch, and 51 overload mismatches. Every unexpected-surface,
+other mismatch, leak, allowlist, and unmeasured category is zero. The one property mismatch is
+still the deliberately deferred `GraphicsDevice.Viewport` setter.
 
-The exact qualified library is supplied externally with `CNA_NATIVE_LIBRARY`; it is never copied into the gem. Its qualification record is in `docs/native-abi.md` and `docs/runtime-capabilities.json`.
+Viewport completion is pure managed XNA value mathematics. It changes no CNA function, native
+manifest, Fiddle binding, layout, callback, or constant and claims no camera, 3D, GPU, or renderer
+capability. The six remaining partial types are `Game`, `GraphicsDeviceManager`, `GraphicsDevice`,
+`GraphicsResource`, `Texture2D`, and `SpriteBatch`.
 
 ## Next dependency-complete milestone
 
-Complete exactly the remaining contract of `Microsoft.Xna.Framework.Graphics.Viewport` as the next dependency-contained managed milestone. The regenerated pinned metadata gives 14 CLR/Ruby identities. Eleven are already selected; the exact remainder is `Project`, `Unproject`, and read-only `TitleSafeArea`. `Project` and `Unproject` depend only on the already-complete `Vector3` and `Matrix`; `TitleSafeArea` depends only on the already-complete `Rectangle`. The current type-local diagnostics are the three missing identities plus the two corresponding overload mismatches.
+Select exactly `Microsoft.Xna.Framework.Graphics.ClearOptions` next. The regenerated public-
+signature dependency report gives one flags Int32 enum, four CLR identities, and three expected
+Ruby identities after excluding synthetic `value__`: `Target=1`, `DepthBuffer=2`, and `Stencil=4`.
+It has no XNA public-signature dependency and is the smallest remaining dependency-complete managed
+enum directly referenced by the selected partial remainder, through the two deferred
+`GraphicsDevice.Clear` overloads.
 
-Treat this as completion of the managed Viewport value contract only. Do not use it as permission to implement the mismatched `GraphicsDevice.Viewport` setter, either `GraphicsProfile` property, a `GraphicsDevice` constructor, display-adapter or presentation types, feature-level detection, hardware profile selection, or renderer functionality. The regenerated dependency comparison selects Viewport because its missing public-signature dependencies are already complete and its remainder is the smallest pure managed closure among current partial types; it does not select another namespace-adjacent enum. Do not automatically start `DisplayMode`, `GraphicsAdapter`, `PresentationParameters`, `VertexDeclaration`, `IVertexType`, vertex structs, buffers, effects, models, or rendering. Preserve deferred whole-family diagnostics and the six other partial native/runtime types.
+This selection is enum completion only. Do not infer permission to implement either deferred Clear
+overload, change the already-selected `Clear(Color)` native route, add a `GraphicsDevice`
+constructor, implement `GraphicsDevice.Viewport=`, or start rendering/device state. The other
+eligible dependency-complete managed enums recorded by the graph are `DepthFormat`,
+`PrimitiveType`, and `CubeMapFace`; they are not selected. Do not start this milestone
+automatically.
 
 `SELECTED_ONLY=true`
 
@@ -22,8 +43,8 @@ Treat this as completion of the managed Viewport value contract only. Do not use
 
 - Ruby assignment aliases value objects; copying is enforced only at binding boundaries and through `dup`/`clone`.
 - Uppercase XNA instance methods require an explicit receiver in Ruby source (`self.Exit`, not bare `Exit`).
-- Fiddle does not portably pass C structures by value. A C ABI member with such a prototype remains unbound until CNA exposes an audited pointer form or a different bridge is deliberately reviewed.
+- Fiddle does not portably pass C structures by value. The deferred native Viewport setter remains unbound until CNA exposes an audited pointer form or another bridge is deliberately reviewed.
 - HEADLESS proves command execution, lifecycle, and ownership but cannot prove visible pixels.
-- Mouse is process-global at the XNA surface but uses the current live Game internally to enter CNA. All four native operations are owner-thread checked; no current/initialized Game, ambiguity, shutdown, or a wrong thread raises before unsafe native access.
-- GamePad follows the same current-Game selection policy without retaining a handle. The four canonical routes return actual CNA snapshots/results. No controller was attached during Foundation 11 regression qualification, so positive state, capability, and rumble rows remain hardware-pending.
-- `System.IntPtr` maps to a signed native-width Ruby `Integer`. On the qualified host it is 64 bits; the mapping itself uses `Fiddle::SIZEOF_VOIDP` and preserves negative values through a two's-complement `uint64_t` carrier.
+- Mouse and GamePad use the current live Game to enter CNA, retain no stale handle, and reject wrong-thread, ambiguous, and shut-down contexts.
+- No controller was attached during Foundation 12 qualification, so positive state, capability, and rumble evidence remains hardware-pending.
+- `System.IntPtr` maps to a signed native-width Ruby `Integer`; the qualified host is 64-bit.

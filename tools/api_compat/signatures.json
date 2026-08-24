@@ -25435,6 +25435,94 @@
           ]
         },
         {
+          "kind": "method",
+          "name": "Project",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector3",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "source",
+              "type": "Microsoft.Xna.Framework.Vector3",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "projection",
+              "type": "Microsoft.Xna.Framework.Matrix",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "view",
+              "type": "Microsoft.Xna.Framework.Matrix",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "world",
+              "type": "Microsoft.Xna.Framework.Matrix",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Unproject",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector3",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "source",
+              "type": "Microsoft.Xna.Framework.Vector3",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "projection",
+              "type": "Microsoft.Xna.Framework.Matrix",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "view",
+              "type": "Microsoft.Xna.Framework.Matrix",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "world",
+              "type": "Microsoft.Xna.Framework.Matrix",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
           "kind": "property",
           "name": "X",
           "type": "System.Int32",
@@ -25529,6 +25617,19 @@
           "kind": "property",
           "name": "AspectRatio",
           "type": "System.Single",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "TitleSafeArea",
+          "type": "Microsoft.Xna.Framework.Rectangle",
           "static": false,
           "get": true,
           "set": false,

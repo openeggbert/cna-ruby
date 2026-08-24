@@ -50,6 +50,33 @@ def mouse_state(value)
   I::MouseState.new(value[0], value[1], value[2], button(value[3]), button(value[4]),
                     button(value[5]), button(value[6]), button(value[7]))
 end
+
+def qualified_viewport
+  G::Viewport.new(13, -7, 641, 479).tap do |viewport|
+    viewport.MinDepth = 0.2
+    viewport.MaxDepth = 0.85
+  end
+end
+
+def viewport_matrices
+  world = F::Matrix.new(
+    1.25, -0.375, 0.5, 0.0625, 0.2, 0.875, -0.45, -0.03125,
+    -0.15, 0.3, 1.1, 0.125, 3.5, -2.25, 4.75, 1.0
+  )
+  view = F::Matrix.new(
+    0.9, 0.1, -0.2, 0.015625, -0.05, 1.05, 0.125, -0.0078125,
+    0.225, -0.175, 0.8, 0.03125, -1.5, 2.75, -3.25, 1.0
+  )
+  projection = F::Matrix.new(
+    1.1, -0.075, 0.04, 0.2, 0.125, 0.95, -0.06, -0.1,
+    -0.035, 0.08, 1.2, 0.3, 0.15, -0.2, 0.25, 0.9
+  )
+  [world, view, projection]
+end
+
+def viewport_matrix_with_w(bits)
+  F::Matrix.Identity.tap { |matrix| matrix.M44 = CNA::Runtime::Numeric.f32_from_bits(bits) }
+end
 def error_name
   yield
   "none"
@@ -105,6 +132,9 @@ def behavior_group(item)
   return "DISPLAY_ORIENTATION" if id.start_with?("display_orientation.")
   return "GRAPHICS_DEVICE_STATUS" if id.start_with?("graphics_device_status.")
   return "GRAPHICS_PROFILE" if id.start_with?("graphics_profile.")
+  return "VIEWPORT_PROJECT" if id.start_with?("viewport_project.")
+  return "VIEWPORT_UNPROJECT" if id.start_with?("viewport_unproject.")
+  return "VIEWPORT_TITLE_SAFE_AREA" if id.start_with?("viewport_title_safe_area.")
 
   id.split(".").first.upcase
 end
@@ -112,6 +142,101 @@ end
 def execute(item)
   args = item.fetch("args")
   case item.fetch("operation")
+  when "Viewport.ProjectIdentity"
+    viewport = qualified_viewport
+    hex_values(vector3_result(viewport.Project(F::Vector3.new(-0.25, 0.5, 0.75),
+                                               F::Matrix.Identity, F::Matrix.Identity, F::Matrix.Identity)))
+  when "Viewport.ProjectDepth"
+    viewport = qualified_viewport
+    [0.0, 1.0, 0.3, 1.5].map do |depth|
+      hex_values(vector3_result(viewport.Project(F::Vector3.new(0.125, -0.25, depth),
+                                                 F::Matrix.Identity, F::Matrix.Identity, F::Matrix.Identity)))
+    end
+  when "Viewport.ProjectNontrivial"
+    world, view, projection = viewport_matrices
+    hex_values(vector3_result(qualified_viewport.Project(F::Vector3.new(0.375, -1.25, 2.5),
+                                                         projection, view, world)))
+  when "Viewport.ProjectWBoundary"
+    viewport = G::Viewport.new(17, 23, 311, 197)
+    source = F::Vector3.new(0.25, -0.375, 0.625)
+    [0x3f800000, 0x3f7fffff, 0x3f800001, 0x40000000].map do |bits|
+      hex_values(vector3_result(viewport.Project(source, F::Matrix.Identity, F::Matrix.Identity,
+                                                 viewport_matrix_with_w(bits))))
+    end
+  when "Viewport.ProjectNegativeSpecial"
+    viewport = G::Viewport.new(-31, 47, -257, -129)
+    viewport.MinDepth = 0.8
+    viewport.MaxDepth = -0.3
+    ordinary = viewport.Project(F::Vector3.new(-0.6, 0.35, 1.25),
+                                F::Matrix.Identity, F::Matrix.Identity, F::Matrix.Identity)
+    special = qualified_viewport.Project(F::Vector3.new(Float::NAN, Float::INFINITY, -Float::INFINITY),
+                                         F::Matrix.Identity, F::Matrix.Identity, F::Matrix.Identity)
+    [hex_values(vector3_result(ordinary)), hex_values(vector3_result(special))]
+  when "Viewport.UnprojectIdentity"
+    result = qualified_viewport.Unproject(F::Vector3.new(253.375, 112.75, 0.6875),
+                                          F::Matrix.Identity, F::Matrix.Identity, F::Matrix.Identity)
+    hex_values(vector3_result(result))
+  when "Viewport.UnprojectNontrivial"
+    world, view, projection = viewport_matrices
+    result = qualified_viewport.Unproject(F::Vector3.new(333.25, 211.5, 0.625), projection, view, world)
+    hex_values(vector3_result(result))
+  when "Viewport.UnprojectWBoundary"
+    viewport = G::Viewport.new(17, 23, 311, 197)
+    source = F::Vector3.new(211.375, 158.4375, 0.625)
+    [0x3f800000, 0x3f7fffff, 0x3f800001, 0x3f000000].map do |bits|
+      hex_values(vector3_result(viewport.Unproject(source, F::Matrix.Identity, F::Matrix.Identity,
+                                                   viewport_matrix_with_w(bits))))
+    end
+  when "Viewport.UnprojectNegativeDegenerate"
+    viewport = G::Viewport.new(-31, 47, -257, -129)
+    viewport.MinDepth = 0.8
+    viewport.MaxDepth = -0.3
+    ordinary = viewport.Unproject(F::Vector3.new(-101.5, -11.25, 0.125),
+                                  F::Matrix.Identity, F::Matrix.Identity, F::Matrix.Identity)
+    zero = G::Viewport.new(5, -9, 0, 0)
+    zero_result = zero.Unproject(F::Vector3.new(5, -9, 0.5),
+                                 F::Matrix.Identity, F::Matrix.Identity, F::Matrix.Identity)
+    zero.MinDepth = zero.MaxDepth = 0.25
+    depth_result = zero.Unproject(F::Vector3.new(6, -8, 0.25),
+                                  F::Matrix.Identity, F::Matrix.Identity, F::Matrix.Identity)
+    singular_result = qualified_viewport.Unproject(F::Vector3.new(101, 77, 0.4), F::Matrix.new,
+                                                    F::Matrix.Identity, F::Matrix.Identity)
+    [hex_values(vector3_result(ordinary)), vector3_result(zero_result).map(&:nan?),
+     vector3_result(depth_result).map(&:nan?), vector3_result(singular_result).map(&:nan?)]
+  when "Viewport.RoundTrips"
+    world, view, projection = viewport_matrices
+    viewport = qualified_viewport
+    object = F::Vector3.new(0.375, -1.25, 2.5)
+    object_result = viewport.Unproject(viewport.Project(object, projection, view, world), projection, view, world)
+    screen = F::Vector3.new(411.75, 83.125, 0.42)
+    screen_result = viewport.Project(viewport.Unproject(screen, projection, view, world), projection, view, world)
+    [hex_values(vector3_result(object_result)), hex_values(vector3_result(screen_result))]
+  when "Viewport.TitleSafeArea"
+    [[13, -7, 641, 479], [-11, 23, 5, 7], [3, 4, 0, 1], [7, -8, -9, -10]].map do |values|
+      rectangle_result(G::Viewport.new(*values).TitleSafeArea)
+    end
+  when "Viewport.RubyMapping"
+    viewport = qualified_viewport
+    world, view, projection = viewport_matrices
+    source = F::Vector3.new(0.375, -1.25, 2.5)
+    before = [vector3_result(source), matrix_result(projection), matrix_result(view), matrix_result(world)]
+    first = viewport.Project(source, projection, view, world)
+    second = viewport.Project(source, projection, view, world)
+    viewport.Unproject(first, projection, view, world)
+    after = [vector3_result(source), matrix_result(projection), matrix_result(view), matrix_result(world)]
+    first_title = viewport.TitleSafeArea
+    second_title = viewport.TitleSafeArea
+    first_title.X = -999
+    [
+      viewport.method(:Project).arity, viewport.method(:Unproject).arity,
+      viewport.respond_to?(:TitleSafeArea=), viewport.respond_to?(:project), viewport.respond_to?(:unproject),
+      viewport.respond_to?(:title_safe_area), G::GraphicsDevice.public_instance_methods(false).include?(:Viewport=),
+      [error_name { viewport.Project([], projection, view, world) },
+       error_name { viewport.Project(source, [], view, world) },
+       error_name { viewport.Project(source, projection, [], world) },
+       error_name { viewport.Project(source, projection, view, []) }],
+      before == after, !first.equal?(second), rectangle_result(second_title) == [13, -7, 641, 479]
+    ]
   when "GraphicsProfile.Contract"
     profile = G::GraphicsProfile
     values = [profile::Reach, profile::HiDef]

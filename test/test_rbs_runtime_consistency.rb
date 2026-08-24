@@ -356,6 +356,37 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     refute_match(/def GraphicsProfile:/, source)
   end
 
+  def test_viewport_rbs_retains_exact_complete_fourteen_identity_projection
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    selected = contract.fetch("types").find do |type|
+      type.fetch("name") == "Microsoft.Xna.Framework.Graphics.Viewport"
+    end
+    refute_nil selected
+    assert_equal "struct", selected.fetch("kind")
+    assert_equal 14, selected.fetch("members").length
+
+    source = File.read(SIGNATURE_ROOT.join("microsoft", "xna", "framework", "graphics.rbs"))
+    match = source.match(/^        class Viewport\n(?<body>.*?)^        end$/m)
+    refute_nil match
+    section = match[:body]
+    assert_includes section, "def Project: (Vector3 source, Matrix projection, Matrix view, Matrix world) -> Vector3"
+    assert_includes section, "def Unproject: (Vector3 source, Matrix projection, Matrix view, Matrix world) -> Vector3"
+    assert_includes section, "attr_reader TitleSafeArea: Rectangle"
+    refute_includes section, "attr_accessor TitleSafeArea"
+    refute_includes section, "attr_writer TitleSafeArea"
+    refute_includes section, "def project"
+    refute_includes section, "def unproject"
+    refute_includes section, "untyped"
+    refute_match(/\*\w*/, section)
+
+    viewport = Microsoft::Xna::Framework::Graphics::Viewport
+    assert_equal 4, viewport.instance_method(:Project).arity
+    assert_equal 4, viewport.instance_method(:Unproject).arity
+    refute viewport.public_method_defined?(:TitleSafeArea=)
+    refute viewport.public_method_defined?(:project)
+    refute viewport.public_method_defined?(:unproject)
+  end
+
   private
 
   def load_environment

@@ -11,6 +11,7 @@
 | `managed.display-orientation` | VERIFIED_MANAGED | verified complete flags enum | DisplayOrientation: 5 CLR / 4 Ruby identities, explicit values 0/1/2/4, valid mask 0x7, controlled OR/AND and cross-type safety; no orientation application claim |
 | `managed.graphics-device-status` | VERIFIED_MANAGED | verified complete non-flags enum | GraphicsDeviceStatus: 4 CLR / 3 Ruby identities, Normal=0, Lost=1, NotReset=2, ordinary-enum coercion and cross-type safety; no GraphicsDevice property or device-loss/reset behavior claim |
 | `managed.graphics-profile` | VERIFIED_MANAGED | verified complete non-flags enum | GraphicsProfile: 3 CLR / 2 Ruby identities, Reach=0, HiDef=1, ordinary-enum coercion and cross-type safety; no device property, constructor, profile selection, hardware capability, or feature-level claim |
+| `managed.viewport-value` | VERIFIED_MANAGED | verified complete value contract | Viewport: 14/14 identities; direct Windows XNA Project/Unproject Binary32 goldens, exact W branch and Y/depth/origin mapping, read-only TitleSafeArea copies; no GraphicsDevice setter, native projection, or renderer claim |
 | `managed.button-state` | VERIFIED_MANAGED | verified complete type | Released=0, Pressed=1; typed frozen non-flags enum; locally strict-zero |
 | `managed.mouse-state` | VERIFIED_MANAGED | verified complete type | 14/14 identities; exact constructor, properties, equality, XOR hash, string, Int32 extremes, and independent copies |
 | `managed.gamepad.enums` | VERIFIED_MANAGED | verified complete types | Buttons 25/25 Ruby identities with flags composition; GamePadDeadZone 3/3; GamePadType 10/10 including BigButtonPad=768 |
@@ -21,7 +22,7 @@
 | `managed.gamepad-state` | VERIFIED_MANAGED | verified complete type | 15/15 identities; both constructors, Buttons[] projection, all-flags query, exact virtual thresholds, nested copies, equality/hash/string |
 | `managed.gamepad-capabilities` | VERIFIED_MANAGED | verified complete type | 26/26 read-only properties, no public constructor, private independent native snapshots |
 | `managed.intptr` | VERIFIED_MANAGED | verified signed native-width mapping | System.IntPtr maps to Integer; Fiddle::SIZEOF_VOIDP=8 on the qualified host; exact signed range and two's-complement native carrier |
-| `managed.binary32` | VERIFIED_MANAGED | verified selected operations | 253 pre-Foundation-9 PURE_XNA_DERIVED observations include signed zero, NaN sign, transforms, Curve, packed bits, XNA half behavior, MouseState, GamePad values, and VertexElement; DisplayOrientation, GraphicsDeviceStatus, and GraphicsProfile add no binary32 behavior |
+| `managed.binary32` | VERIFIED_MANAGED | verified selected operations | Project/Unproject add direct Windows XNA Binary32 component goldens and exact x86 CLR storage grouping to the established geometry, Curve, packed, MouseState, GamePad, and VertexElement evidence |
 | `native.abi-0.7` | VERIFIED_NATIVE | verified | 38 exports, 122 signatures, 290+290 layout measurements, 2 callbacks, 59 constants |
 | `native.game-lifecycle` | VERIFIED_NATIVE | verified | Initialize/LoadContent/BeginRun/Update/Draw/EndRun/UnloadContent native ordering |
 | `native.callback-exceptions` | VERIFIED_NATIVE | verified | Initialize, LoadContent, Update, Draw containment tests |
@@ -53,7 +54,7 @@
 | `struct.assignment-copy` | LANGUAGE_MAPPING_LIMITATION | documented | Ruby assignment aliases; copies enforced at binding boundaries |
 | `content.xnb` | UNIMPLEMENTED_CNA_RUBY | deferred | fake ContentManager removed |
 | `effects.3d-model` | UNIMPLEMENTED_CNA_RUBY | deferred | managed Matrix is qualified; fake BasicEffect/cube support remains removed |
-| `audio-media` | UNIMPLEMENTED_CNA_RUBY | deferred | outside Foundation 11 |
+| `audio-media` | UNIMPLEMENTED_CNA_RUBY | deferred | outside Foundation 12 |
 | `platform.windows` | PLATFORM_PENDING | not qualified | — |
 | `platform.macos` | PLATFORM_PENDING | not qualified | — |
 | `platform.browser-wasm` | PLATFORM_PENDING | unsupported | no CNA C-ABI Wasm/Ruby-Wasm architecture |
