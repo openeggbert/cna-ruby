@@ -2,18 +2,18 @@
 
 CNA-Ruby is implementing a formally measured Ruby projection of the selected Microsoft XNA Framework 4.0 Windows runtime API over the CNA C ABI.
 
-Foundation 6 is functional on the qualified Linux x86-64 desktop MRI runtime, but the selected XNA profile is intentionally incomplete. The strict scoreboard targets 61 types and 1292 members from the 257-type / 2915-member Ruby projection; it remains red for genuine deferred work. See `docs/generated/api-compat-report.json` for authoritative counts.
+Foundation 7 is functional on the qualified Linux x86-64 desktop MRI runtime, but the selected XNA profile is intentionally incomplete. The strict scoreboard targets 71 types and 1418 members from the 257-type / 2915-member Ruby projection; it remains red for genuine deferred work. See `docs/generated/api-compat-report.json` for authoritative counts.
 
 ## Qualified foundation
 
 - MRI Ruby 3.3.8 and Fiddle 1.1.2
 - exact CNA C ABI 0.7.0 admission
 - centralized native resolver, signature manifest, layouts, result translation, ownership, generation/thread checks, and callback exception containment
-- complete mapped MathHelper, Vector2/3/4, Quaternion, Matrix, Plane, Ray, BoundingBox, BoundingSphere, BoundingFrustum, Rectangle, Color, Curve family, the full 19-type `Graphics.PackedVector` family, ContainmentType, PlaneIntersectionType, Point, GameTime, PlayerIndex, SpriteSortMode, SpriteEffects, SurfaceFormat, KeyState, Keys, KeyboardState, Keyboard, ButtonState, MouseState, Mouse, and Texture contract types
-- 208 green PURE_XNA_DERIVED managed observations, including exact binary32 geometry, Color, Rectangle, Curve, packed integer bits, XNA half conversion, normalized formats, explicit packed-interface behavior, ButtonState, and MouseState
+- complete mapped MathHelper, Vector2/3/4, Quaternion, Matrix, Plane, Ray, BoundingBox, BoundingSphere, BoundingFrustum, Rectangle, Color, Curve family, the full 19-type `Graphics.PackedVector` family, ContainmentType, PlaneIntersectionType, Point, GameTime, PlayerIndex, SpriteSortMode, SpriteEffects, SurfaceFormat, KeyState, Keys, KeyboardState, Keyboard, ButtonState, MouseState, Mouse, the exact ten-type GamePad family, and Texture contract types
+- 239 green PURE_XNA_DERIVED managed observations, including exact binary32 geometry, Color, Rectangle, Curve, packed integer bits, XNA half conversion, normalized formats, explicit packed-interface behavior, ButtonState, MouseState, and GamePad value semantics
 - measured partial Game, GraphicsDeviceManager, Viewport, GraphicsDevice, GraphicsResource, Texture2D, and SpriteBatch types
 - real native Game lifecycle and GameTime callbacks
-- real HEADLESS-qualified viewport, Clear, PNG Texture2D stream decode, SpriteBatch scaled draw, keyboard state capture, and canonical Mouse state/position/window-handle routes
+- real HEADLESS-qualified viewport, Clear, PNG Texture2D stream decode, SpriteBatch scaled draw, keyboard state capture, canonical Mouse state/position/window-handle routes, and all four canonical GamePad state/capability/vibration routes
 
 HEADLESS proves native execution and command submission, not visible renderer output. Managed Matrix support does not claim Effects, BasicEffect, Model, or 3D rendering. Content/XNB and Effects/3D remain deferred. The old fake ContentManager, BasicEffect, Matrix behavior, no-op Game/graphics/input methods, and synthetic texture behavior are gone.
 
@@ -41,7 +41,7 @@ require "microsoft/xna/framework/graphics"
 require "microsoft/xna/framework/input"
 ```
 
-There is intentionally no `microsoft/xna/framework/content` implementation in Foundation 6.
+There is intentionally no `microsoft/xna/framework/content` implementation in Foundation 7.
 
 ## Evidence
 
@@ -55,9 +55,12 @@ There is intentionally no `microsoft/xna/framework/content` implementation in Fo
 - `docs/curve-evidence.md` — Foundation 4 managed Curve-family closure
 - `docs/packed-vector-evidence.md` — Foundation 5 packed-bit, half, interface, and exhaustive evidence
 - `docs/mouse-evidence.md` — Foundation 6 managed MouseState and canonical native Mouse evidence
+- `docs/gamepad-evidence.md` — Foundation 7 managed GamePad-family and canonical native controller evidence
 - `tools/api_compat/verify.rb` — structural report/strict/leak-only modes
 - `tools/native_abi/verify.rb` — compiler-backed header/manifest/export verification
 - `tools/run_behavior_corpus.rb` — PURE_XNA_DERIVED managed observations
 - `tools/run_native_stress.rb` — explicit lifecycle/GC/thread stress
 
-Not qualified: Windows, macOS, JRuby, TruffleRuby, MRuby, Opal/browser/Wasm, Android, visible rendering, Content/XNB, Effects/3D/Model, audio, media, and the remaining XNA families.
+No physical controller was attached to the Foundation 7 host. Disconnected native paths are qualified; positive state/capability flags and physical vibration remain hardware-pending rather than simulated.
+
+Not qualified: Windows, macOS, JRuby, TruffleRuby, MRuby, Opal/browser/Wasm, Android, visible rendering, connected-controller positive paths, Content/XNB, Effects/3D/Model, audio, media, and the remaining XNA families.

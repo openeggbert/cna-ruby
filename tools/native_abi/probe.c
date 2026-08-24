@@ -42,6 +42,10 @@ CHECK_FN(cna_mouse_get_state, CNA_Result, (CNA_Handle, CNA_MouseState*));
 CHECK_FN(cna_mouse_set_position, CNA_Result, (CNA_Handle, int32_t, int32_t));
 CHECK_FN(cna_mouse_get_window_handle, CNA_Result, (CNA_Handle, uint64_t*));
 CHECK_FN(cna_mouse_set_window_handle, CNA_Result, (CNA_Handle, uint64_t));
+CHECK_FN(cna_gamepad_get_state, CNA_Result, (CNA_Handle, CNA_PlayerIndex, CNA_GamePadState*));
+CHECK_FN(cna_gamepad_get_state_with_dead_zone, CNA_Result, (CNA_Handle, CNA_PlayerIndex, CNA_GamePadDeadZone, CNA_GamePadState*));
+CHECK_FN(cna_gamepad_get_capabilities, CNA_Result, (CNA_Handle, CNA_PlayerIndex, CNA_GamePadCapabilities*));
+CHECK_FN(cna_gamepad_set_vibration, CNA_Result, (CNA_Handle, CNA_PlayerIndex, float, float, CNA_Bool*));
 
 typedef CNA_Result (*expected_lifecycle)(CNA_Handle, const CNA_GameTime*, void*, CNA_CallbackError*);
 typedef CNA_Result (*expected_begin_draw)(CNA_Handle, const CNA_GameTime*, void*, CNA_Bool*, CNA_CallbackError*);
@@ -88,6 +92,10 @@ int main(void) {
     SIGNATURE(cna_mouse_set_position, "CNA_Result|CNA_Handle,int32_t,int32_t");
     SIGNATURE(cna_mouse_get_window_handle, "CNA_Result|CNA_Handle,uint64_t*");
     SIGNATURE(cna_mouse_set_window_handle, "CNA_Result|CNA_Handle,uint64_t");
+    SIGNATURE(cna_gamepad_get_state, "CNA_Result|CNA_Handle,CNA_PlayerIndex,CNA_GamePadState*");
+    SIGNATURE(cna_gamepad_get_state_with_dead_zone, "CNA_Result|CNA_Handle,CNA_PlayerIndex,CNA_GamePadDeadZone,CNA_GamePadState*");
+    SIGNATURE(cna_gamepad_get_capabilities, "CNA_Result|CNA_Handle,CNA_PlayerIndex,CNA_GamePadCapabilities*");
+    SIGNATURE(cna_gamepad_set_vibration, "CNA_Result|CNA_Handle,CNA_PlayerIndex,float,float,CNA_Bool*");
 
     STRUCT(CNA_StringView); FIELD(CNA_StringView, data); FIELD(CNA_StringView, byte_length);
     STRUCT(CNA_ErrorInfo); FIELD(CNA_ErrorInfo, struct_size); FIELD(CNA_ErrorInfo, struct_version); FIELD(CNA_ErrorInfo, result); FIELD(CNA_ErrorInfo, category); FIELD(CNA_ErrorInfo, message_byte_length);
@@ -102,11 +110,22 @@ int main(void) {
     STRUCT(CNA_SpriteScaledCommand); FIELD(CNA_SpriteScaledCommand, struct_size); FIELD(CNA_SpriteScaledCommand, struct_version); FIELD(CNA_SpriteScaledCommand, texture); FIELD(CNA_SpriteScaledCommand, position); FIELD(CNA_SpriteScaledCommand, source); FIELD(CNA_SpriteScaledCommand, color); FIELD(CNA_SpriteScaledCommand, rotation); FIELD(CNA_SpriteScaledCommand, origin); FIELD(CNA_SpriteScaledCommand, scale); FIELD(CNA_SpriteScaledCommand, effects); FIELD(CNA_SpriteScaledCommand, layer_depth);
     STRUCT(CNA_KeyboardState); FIELD(CNA_KeyboardState, struct_size); FIELD(CNA_KeyboardState, struct_version); FIELD(CNA_KeyboardState, pressed_key_words);
     STRUCT(CNA_MouseState); FIELD(CNA_MouseState, struct_size); FIELD(CNA_MouseState, struct_version); FIELD(CNA_MouseState, x); FIELD(CNA_MouseState, y); FIELD(CNA_MouseState, scroll_wheel); FIELD(CNA_MouseState, horizontal_scroll_wheel); FIELD(CNA_MouseState, pressed_buttons); FIELD(CNA_MouseState, reserved);
+    STRUCT(CNA_Vector2); FIELD(CNA_Vector2, x); FIELD(CNA_Vector2, y);
+    STRUCT(CNA_GamePadAnalogState); FIELD(CNA_GamePadAnalogState, left_thumb_stick); FIELD(CNA_GamePadAnalogState, right_thumb_stick); FIELD(CNA_GamePadAnalogState, left_trigger); FIELD(CNA_GamePadAnalogState, right_trigger);
+    STRUCT(CNA_GamePadState); FIELD(CNA_GamePadState, struct_size); FIELD(CNA_GamePadState, struct_version); FIELD(CNA_GamePadState, is_connected); FIELD(CNA_GamePadState, reserved0); FIELD(CNA_GamePadState, packet_number); FIELD(CNA_GamePadState, pressed_buttons); FIELD(CNA_GamePadState, reserved1); FIELD(CNA_GamePadState, analog);
+    STRUCT(CNA_GamePadCapabilities); FIELD(CNA_GamePadCapabilities, struct_size); FIELD(CNA_GamePadCapabilities, struct_version); FIELD(CNA_GamePadCapabilities, gamepad_type); FIELD(CNA_GamePadCapabilities, is_connected); FIELD(CNA_GamePadCapabilities, has_a_button); FIELD(CNA_GamePadCapabilities, has_b_button); FIELD(CNA_GamePadCapabilities, has_x_button); FIELD(CNA_GamePadCapabilities, has_y_button); FIELD(CNA_GamePadCapabilities, has_back_button); FIELD(CNA_GamePadCapabilities, has_start_button); FIELD(CNA_GamePadCapabilities, has_big_button); FIELD(CNA_GamePadCapabilities, has_dpad_up_button); FIELD(CNA_GamePadCapabilities, has_dpad_down_button); FIELD(CNA_GamePadCapabilities, has_dpad_left_button); FIELD(CNA_GamePadCapabilities, has_dpad_right_button); FIELD(CNA_GamePadCapabilities, has_left_shoulder_button); FIELD(CNA_GamePadCapabilities, has_right_shoulder_button); FIELD(CNA_GamePadCapabilities, has_left_stick_button); FIELD(CNA_GamePadCapabilities, has_right_stick_button); FIELD(CNA_GamePadCapabilities, has_left_x_thumb_stick); FIELD(CNA_GamePadCapabilities, has_left_y_thumb_stick); FIELD(CNA_GamePadCapabilities, has_right_x_thumb_stick); FIELD(CNA_GamePadCapabilities, has_right_y_thumb_stick); FIELD(CNA_GamePadCapabilities, has_left_trigger); FIELD(CNA_GamePadCapabilities, has_right_trigger); FIELD(CNA_GamePadCapabilities, has_left_vibration_motor); FIELD(CNA_GamePadCapabilities, has_right_vibration_motor); FIELD(CNA_GamePadCapabilities, has_voice_support); FIELD(CNA_GamePadCapabilities, has_light_bar_ext); FIELD(CNA_GamePadCapabilities, has_trigger_vibration_motors_ext); FIELD(CNA_GamePadCapabilities, has_misc1_ext); FIELD(CNA_GamePadCapabilities, has_paddle1_ext); FIELD(CNA_GamePadCapabilities, has_paddle2_ext); FIELD(CNA_GamePadCapabilities, has_paddle3_ext); FIELD(CNA_GamePadCapabilities, has_paddle4_ext); FIELD(CNA_GamePadCapabilities, has_touchpad_ext); FIELD(CNA_GamePadCapabilities, has_gyro_ext); FIELD(CNA_GamePadCapabilities, has_accelerometer_ext); FIELD(CNA_GamePadCapabilities, reserved);
 
     CONSTANT(CNA_ABI_VERSION); CONSTANT(CNA_FALSE); CONSTANT(CNA_TRUE);
     CONSTANT(CNA_RESULT_SUCCESS); CONSTANT(CNA_RESULT_NOT_SUPPORTED); CONSTANT(CNA_RESULT_THREAD); CONSTANT(CNA_RESULT_CALLBACK);
     CONSTANT(CNA_SPRITE_SORT_MODE_DEFERRED); CONSTANT(CNA_SPRITE_EFFECT_NONE); CONSTANT(CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY); CONSTANT(CNA_SPRITE_EFFECT_FLIP_VERTICALLY);
     CONSTANT(CNA_SURFACE_FORMAT_COLOR);
     CONSTANT(CNA_MOUSE_BUTTON_LEFT); CONSTANT(CNA_MOUSE_BUTTON_MIDDLE); CONSTANT(CNA_MOUSE_BUTTON_RIGHT); CONSTANT(CNA_MOUSE_BUTTON_X1); CONSTANT(CNA_MOUSE_BUTTON_X2);
+    CONSTANT(CNA_PLAYER_INDEX_ONE); CONSTANT(CNA_PLAYER_INDEX_TWO); CONSTANT(CNA_PLAYER_INDEX_THREE); CONSTANT(CNA_PLAYER_INDEX_FOUR);
+    CONSTANT(CNA_GAMEPAD_DEAD_ZONE_NONE); CONSTANT(CNA_GAMEPAD_DEAD_ZONE_INDEPENDENT_AXES); CONSTANT(CNA_GAMEPAD_DEAD_ZONE_CIRCULAR);
+    CONSTANT(CNA_GAMEPAD_BUTTON_DPAD_UP); CONSTANT(CNA_GAMEPAD_BUTTON_DPAD_DOWN); CONSTANT(CNA_GAMEPAD_BUTTON_DPAD_LEFT); CONSTANT(CNA_GAMEPAD_BUTTON_DPAD_RIGHT);
+    CONSTANT(CNA_GAMEPAD_BUTTON_START); CONSTANT(CNA_GAMEPAD_BUTTON_BACK); CONSTANT(CNA_GAMEPAD_BUTTON_LEFT_STICK); CONSTANT(CNA_GAMEPAD_BUTTON_RIGHT_STICK); CONSTANT(CNA_GAMEPAD_BUTTON_LEFT_SHOULDER); CONSTANT(CNA_GAMEPAD_BUTTON_RIGHT_SHOULDER); CONSTANT(CNA_GAMEPAD_BUTTON_BIG_BUTTON);
+    CONSTANT(CNA_GAMEPAD_BUTTON_A); CONSTANT(CNA_GAMEPAD_BUTTON_B); CONSTANT(CNA_GAMEPAD_BUTTON_X); CONSTANT(CNA_GAMEPAD_BUTTON_Y);
+    CONSTANT(CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_LEFT); CONSTANT(CNA_GAMEPAD_BUTTON_RIGHT_TRIGGER); CONSTANT(CNA_GAMEPAD_BUTTON_LEFT_TRIGGER); CONSTANT(CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_UP); CONSTANT(CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_DOWN); CONSTANT(CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_RIGHT); CONSTANT(CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_LEFT); CONSTANT(CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_UP); CONSTANT(CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_DOWN); CONSTANT(CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_RIGHT);
+    CONSTANT(CNA_GAMEPAD_TYPE_UNKNOWN); CONSTANT(CNA_GAMEPAD_TYPE_GAMEPAD); CONSTANT(CNA_GAMEPAD_TYPE_WHEEL); CONSTANT(CNA_GAMEPAD_TYPE_ARCADE_STICK); CONSTANT(CNA_GAMEPAD_TYPE_FLIGHT_STICK); CONSTANT(CNA_GAMEPAD_TYPE_DANCE_PAD); CONSTANT(CNA_GAMEPAD_TYPE_GUITAR); CONSTANT(CNA_GAMEPAD_TYPE_ALTERNATE_GUITAR); CONSTANT(CNA_GAMEPAD_TYPE_DRUM_KIT); CONSTANT(CNA_GAMEPAD_TYPE_BIG_BUTTON_PAD);
     return 0;
 }

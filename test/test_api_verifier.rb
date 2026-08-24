@@ -259,6 +259,104 @@ class ApiVerifierTest < Minitest::Test
     assert_operator result.counts["PUBLIC_NATIVE_FFI_LEAK"], :>, 0
   end
 
+  def test_gamepad_enum_flags_values_and_underlying_types_are_detected
+    reference, target = gamepad_contracts
+    buttons = target["types"].find { |type| type["name"].end_with?(".Buttons") }
+    buttons["flags"] = false
+    buttons["underlyingType"] = "System.UInt32"
+    buttons["members"].find { |member| member["name"] == "LeftThumbstickRight" }["value"] = "1073741823"
+    dead_zone = target["types"].find { |type| type["name"].end_with?(".GamePadDeadZone") }
+    dead_zone["members"].find { |member| member["name"] == "Circular" }["value"] = "3"
+    gamepad_type = target["types"].find { |type| type["name"].end_with?(".GamePadType") }
+    gamepad_type["members"].find { |member| member["name"] == "BigButtonPad" }["value"] = "9"
+    result = verify(reference, target)
+    assert_operator result.counts["FLAGS_MAPPING_MISMATCH"], :>=, 2
+    assert_operator result.counts["ENUM_VALUE_MISMATCH"], :>=, 4
+  end
+
+  def test_gamepad_flags_runtime_combination_mask_is_measured
+    reference, target = gamepad_contracts
+    buttons = Microsoft::Xna::Framework::Input::Buttons
+    original = buttons.instance_variable_get(:@enum_mask)
+    buttons.instance_variable_set(:@enum_mask, original ^ Microsoft::Xna::Framework::Input::Buttons::A.to_i)
+    assert_operator verify(reference, target, runtime: true).counts["FLAGS_MAPPING_MISMATCH"], :>, 0
+  ensure
+    buttons&.instance_variable_set(:@enum_mask, original) if original
+  end
+
+  def test_gamepad_managed_shape_mutations_are_detected
+    reference, target = gamepad_contracts
+    gamepad_buttons = target["types"].find { |type| type["name"].end_with?(".GamePadButtons") }
+    property = Marshal.load(Marshal.dump(gamepad_buttons["members"].find { |member| member["name"] == "A" }))
+    property["name"] = "LeftTrigger"
+    gamepad_buttons["members"] << property
+
+    dpad = target["types"].find { |type| type["name"].end_with?(".GamePadDPad") }
+    constructor = dpad["members"].find { |member| member["kind"] == "constructor" }
+    constructor["parameters"][2], constructor["parameters"][3] =
+      constructor["parameters"][3], constructor["parameters"][2]
+
+    triggers = target["types"].find { |type| type["name"].end_with?(".GamePadTriggers") }
+    triggers["members"].find { |member| member["name"] == "Left" }["set"] = true
+
+    thumbsticks = target["types"].find { |type| type["name"].end_with?(".GamePadThumbSticks") }
+    thumbsticks["members"].find { |member| member["name"] == "Left" }["type"] = "Microsoft.Xna.Framework.Vector3"
+
+    result = verify(reference, target)
+    assert_operator result.counts["UNEXPECTED_MEMBER"], :>, 0
+    assert_operator result.counts["PARAMETER_MAPPING_MISMATCH"], :>, 0
+    assert_operator result.counts["PROPERTY_MAPPING_MISMATCH"], :>=, 2
+  end
+
+  def test_gamepad_capabilities_fake_constructor_and_missing_property_are_detected
+    reference, target = gamepad_contracts
+    capabilities = target["types"].find { |type| type["name"].end_with?(".GamePadCapabilities") }
+    capabilities["members"] << {
+      "kind" => "constructor", "name" => ".ctor", "static" => false, "access" => "public",
+      "returnType" => nil, "genericParameters" => [], "parameters" => []
+    }
+    capabilities["members"].reject! { |member| member["name"] == "HasVoiceSupport" }
+    result = verify(reference, target)
+    assert_operator result.counts["UNEXPECTED_MEMBER"], :>, 0
+    assert_operator result.counts["MISSING_MEMBER"], :>, 0
+  end
+
+  def test_gamepad_state_constructor_array_and_typed_equals_mutations_are_detected
+    reference, target = gamepad_contracts
+    state = target["types"].find { |type| type["name"].end_with?(".GamePadState") }
+    constructors = state["members"].select { |member| member["kind"] == "constructor" }
+    array_constructor = constructors.find { |member| member["parameters"].length == 5 }
+    array_constructor["parameters"][4]["type"] = "Microsoft.Xna.Framework.Input.Buttons"
+    state["members"].delete(constructors.find { |member| member["parameters"].length == 4 })
+    object_equals = state["members"].find { |member| member["name"] == "Equals" }
+    typed_equals = Marshal.load(Marshal.dump(object_equals))
+    typed_equals["parameters"][0]["type"] = state["name"]
+    state["members"] << typed_equals
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_MEMBER"], :>, 0
+    assert_operator result.counts["OVERLOAD_MAPPING_MISMATCH"], :>, 0
+    assert_operator result.counts["PARAMETER_MAPPING_MISMATCH"], :>, 0
+    assert_operator result.counts["UNEXPECTED_MEMBER"], :>, 0
+  end
+
+  def test_gamepad_static_overload_return_and_native_leaks_are_detected
+    reference, target = gamepad_contracts
+    gamepad = target["types"].find { |type| type["name"].end_with?(".GamePad") }
+    state_overloads = gamepad["members"].select { |member| member["name"] == "GetState" }
+    gamepad["members"].delete(state_overloads.find { |member| member["parameters"].length == 2 })
+    gamepad["members"].find { |member| member["name"] == "SetVibration" }["returnType"] = "System.Void"
+    gamepad["members"] << {
+      "kind" => "method", "name" => "NativeState", "static" => true, "access" => "public",
+      "returnType" => "CNA_Handle/CNA::Native/Fiddle::Pointer", "genericParameters" => [], "parameters" => []
+    }
+    result = verify(reference, target, runtime: true)
+    assert_operator result.counts["MISSING_MEMBER"], :>, 0
+    assert_operator result.counts["OVERLOAD_MAPPING_MISMATCH"], :>, 0
+    assert_operator result.counts["RETURN_MAPPING_MISMATCH"], :>, 0
+    assert_operator result.counts["RAW_HANDLE_LEAK"], :>, 0
+    assert_operator result.counts["PUBLIC_NATIVE_FFI_LEAK"], :>, 0
+  end
+
 
   def packed_vector_contracts
     reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
@@ -290,5 +388,17 @@ class ApiVerifierTest < Minitest::Test
     end
     mapping = Marshal.load(Marshal.dump(CNAApiCompat::LANGUAGE_TYPE_MAPPINGS))
     [{"types" => reference_types}, {"types" => target_types, "languageTypeMappings" => mapping}]
+  end
+
+  def gamepad_contracts
+    reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
+    target = JSON.parse(File.read(File.expand_path("../tools/api_compat/signatures.json", __dir__)))
+    names = %w[
+      Buttons GamePad GamePadButtons GamePadCapabilities GamePadDPad GamePadDeadZone
+      GamePadState GamePadThumbSticks GamePadTriggers GamePadType
+    ].map { |name| "Microsoft.Xna.Framework.Input.#{name}" }
+    reference_types = reference.fetch("types").select { |type| names.include?(type.fetch("name")) }
+    target_types = target.fetch("types").select { |type| names.include?(type.fetch("name")) }
+    [{"types" => reference_types}, {"types" => Marshal.load(Marshal.dump(target_types))}]
   end
 end

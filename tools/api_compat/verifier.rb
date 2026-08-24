@@ -107,6 +107,10 @@ module CNAApiCompat
       result.add("INTERFACE_MAPPING_MISMATCH", name, type: name) unless expected.fetch("interfaces", []) == actual.fetch("interfaces", []) && expected.fetch("directInterfaces", []) == actual.fetch("directInterfaces", [])
       result.add("GENERIC_MAPPING_MISMATCH", "#{name} type generic parameters", type: name) unless expected.fetch("genericParameters", []) == actual.fetch("genericParameters", [])
       result.add("FLAGS_MAPPING_MISMATCH", name, type: name) unless expected.fetch("flags", false) == actual.fetch("flags", false)
+      if expected["kind"] == "enum" && expected["underlyingType"] != actual["underlyingType"]
+        result.add("ENUM_VALUE_MISMATCH", "#{name}: underlying type", type: name)
+        result.add("FLAGS_MAPPING_MISMATCH", "#{name}: flags underlying type", type: name) if expected.fetch("flags", false)
+      end
       expected_ruby_name = NameMapper.runtime_constant_path(name)
       result.add("LANGUAGE_MAPPING_MISMATCH", "#{name}: #{actual["rubyName"].inspect}", type: name) unless actual["rubyName"] == expected_ruby_name
 
@@ -216,6 +220,13 @@ module CNAApiCompat
         result.add("TYPE_KIND_MISMATCH", "runtime #{ruby_name}", type: name) unless object.instance_of?(expected_runtime_kind)
         if type["kind"] == "enum" && object.instance_variable_get(:@enum_flags) != type.fetch("flags", false)
           result.add("FLAGS_MAPPING_MISMATCH", "runtime #{ruby_name}", type: name)
+        end
+        if type["kind"] == "enum" && type.fetch("flags", false)
+          expected_mask = type.fetch("members").select { |member| member["kind"] == "field" }
+                              .reduce(0) { |mask, member| mask | Integer(member.fetch("value")) }
+          if object.instance_variable_get(:@enum_mask) != expected_mask
+            result.add("FLAGS_MAPPING_MISMATCH", "runtime #{ruby_name} combined-value mask", type: name)
+          end
         end
         verify_runtime_base(name, type, object, result)
         verify_runtime_interfaces(name, type, object, target_types, result)

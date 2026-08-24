@@ -10,6 +10,55 @@ module Microsoft
           Pressed: ButtonState
         end
 
+        class Buttons
+          DPadUp: Buttons
+          DPadDown: Buttons
+          DPadLeft: Buttons
+          DPadRight: Buttons
+          Start: Buttons
+          Back: Buttons
+          LeftStick: Buttons
+          RightStick: Buttons
+          LeftShoulder: Buttons
+          RightShoulder: Buttons
+          BigButton: Buttons
+          A: Buttons
+          B: Buttons
+          X: Buttons
+          Y: Buttons
+          RightThumbstickUp: Buttons
+          RightThumbstickDown: Buttons
+          RightThumbstickRight: Buttons
+          RightThumbstickLeft: Buttons
+          LeftThumbstickUp: Buttons
+          LeftThumbstickDown: Buttons
+          LeftThumbstickRight: Buttons
+          LeftThumbstickLeft: Buttons
+          RightTrigger: Buttons
+          LeftTrigger: Buttons
+          def |: (Buttons other) -> Buttons
+          def &: (Buttons other) -> Buttons
+        end
+
+        class GamePadDeadZone
+          None: GamePadDeadZone
+          IndependentAxes: GamePadDeadZone
+          Circular: GamePadDeadZone
+        end
+
+        class GamePadType
+          Unknown: GamePadType
+          GamePad: GamePadType
+          Wheel: GamePadType
+          ArcadeStick: GamePadType
+          FlightStick: GamePadType
+          DancePad: GamePadType
+          Guitar: GamePadType
+          AlternateGuitar: GamePadType
+          DrumKit: GamePadType
+          BigButtonPad: GamePadType
+        end
+
         class Keys
         end
 
@@ -25,6 +74,115 @@ module Microsoft
         class Keyboard
           def self.GetState: () -> KeyboardState
                            | (::Microsoft::Xna::Framework::PlayerIndex player) -> KeyboardState
+        end
+
+        class GamePadButtons
+          def initialize: (Buttons buttons) -> void
+          def A: () -> ButtonState
+          def B: () -> ButtonState
+          def Back: () -> ButtonState
+          def X: () -> ButtonState
+          def Y: () -> ButtonState
+          def Start: () -> ButtonState
+          def LeftShoulder: () -> ButtonState
+          def LeftStick: () -> ButtonState
+          def RightShoulder: () -> ButtonState
+          def RightStick: () -> ButtonState
+          def BigButton: () -> ButtonState
+          def Equals: (Object obj) -> bool
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def ==: (GamePadButtons other) -> bool
+          def !=: (GamePadButtons other) -> bool
+        end
+
+        class GamePadDPad
+          def initialize: (ButtonState upValue, ButtonState downValue, ButtonState leftValue, ButtonState rightValue) -> void
+          def Up: () -> ButtonState
+          def Down: () -> ButtonState
+          def Right: () -> ButtonState
+          def Left: () -> ButtonState
+          def Equals: (Object obj) -> bool
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def ==: (GamePadDPad other) -> bool
+          def !=: (GamePadDPad other) -> bool
+        end
+
+        class GamePadTriggers
+          def initialize: (Float leftTrigger, Float rightTrigger) -> void
+          def Left: () -> Float
+          def Right: () -> Float
+          def Equals: (Object obj) -> bool
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def ==: (GamePadTriggers other) -> bool
+          def !=: (GamePadTriggers other) -> bool
+        end
+
+        class GamePadThumbSticks
+          def initialize: (::Microsoft::Xna::Framework::Vector2 leftThumbstick, ::Microsoft::Xna::Framework::Vector2 rightThumbstick) -> void
+          def Left: () -> ::Microsoft::Xna::Framework::Vector2
+          def Right: () -> ::Microsoft::Xna::Framework::Vector2
+          def Equals: (Object obj) -> bool
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def ==: (GamePadThumbSticks other) -> bool
+          def !=: (GamePadThumbSticks other) -> bool
+        end
+
+        class GamePadCapabilities
+          def GamePadType: () -> GamePadType
+          def IsConnected: () -> bool
+          def HasAButton: () -> bool
+          def HasBackButton: () -> bool
+          def HasBButton: () -> bool
+          def HasDPadDownButton: () -> bool
+          def HasDPadLeftButton: () -> bool
+          def HasDPadRightButton: () -> bool
+          def HasDPadUpButton: () -> bool
+          def HasLeftShoulderButton: () -> bool
+          def HasLeftStickButton: () -> bool
+          def HasRightShoulderButton: () -> bool
+          def HasRightStickButton: () -> bool
+          def HasStartButton: () -> bool
+          def HasXButton: () -> bool
+          def HasYButton: () -> bool
+          def HasBigButton: () -> bool
+          def HasLeftXThumbStick: () -> bool
+          def HasLeftYThumbStick: () -> bool
+          def HasRightXThumbStick: () -> bool
+          def HasRightYThumbStick: () -> bool
+          def HasLeftTrigger: () -> bool
+          def HasRightTrigger: () -> bool
+          def HasLeftVibrationMotor: () -> bool
+          def HasRightVibrationMotor: () -> bool
+          def HasVoiceSupport: () -> bool
+        end
+
+        class GamePadState
+          def initialize: (GamePadThumbSticks thumbSticks, GamePadTriggers triggers, GamePadButtons buttons, GamePadDPad dPad) -> void
+                        | (::Microsoft::Xna::Framework::Vector2 leftThumbStick, ::Microsoft::Xna::Framework::Vector2 rightThumbStick, Float leftTrigger, Float rightTrigger, Array[Buttons] buttons) -> void
+          def IsButtonDown: (Buttons button) -> bool
+          def IsButtonUp: (Buttons button) -> bool
+          def Buttons: () -> GamePadButtons
+          def DPad: () -> GamePadDPad
+          def IsConnected: () -> bool
+          def PacketNumber: () -> Integer
+          def ThumbSticks: () -> GamePadThumbSticks
+          def Triggers: () -> GamePadTriggers
+          def Equals: (Object obj) -> bool
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def ==: (GamePadState other) -> bool
+          def !=: (GamePadState other) -> bool
+        end
+
+        class GamePad
+          def self.GetState: (::Microsoft::Xna::Framework::PlayerIndex playerIndex) -> GamePadState
+                           | (::Microsoft::Xna::Framework::PlayerIndex playerIndex, GamePadDeadZone deadZoneMode) -> GamePadState
+          def self.GetCapabilities: (::Microsoft::Xna::Framework::PlayerIndex playerIndex) -> GamePadCapabilities
+          def self.SetVibration: (::Microsoft::Xna::Framework::PlayerIndex playerIndex, Float leftMotor, Float rightMotor) -> bool
         end
 
         class MouseState

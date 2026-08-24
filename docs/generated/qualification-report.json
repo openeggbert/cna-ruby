@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 6",
+  "milestone": "Foundation 7",
+  "complete": true,
   "date": "2026-08-24",
   "ruby": "ruby 3.3.8 (2025-04-09 revision b200bad6cd) [x86_64-linux-gnu]",
   "rubyEngine": "ruby",
@@ -11,7 +12,7 @@
   "gem": {
     "filename": "cna-ruby-0.1.0.dev0.gem",
     "version": "0.1.0.dev0",
-    "sha256": "b7d5751c36b15f5b1f4f9d02f4574e390c201b26c4150175cc7d17701157126b",
+    "sha256": "2971d2fb1c179639849be041acc7a76ba5da58ea135b8c589db5181f43969694",
     "entries": 35,
     "forbiddenEntries": 0,
     "nativeLibrariesBundled": 0,
@@ -25,55 +26,118 @@
     "renderer": "HEADLESS",
     "audio": "NULL"
   },
-  "tests": {"runs": 136, "assertions": 2759, "failures": 0, "errors": 0, "skips": 0},
+  "tests": {
+    "runs": 161,
+    "assertions": 3677,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
   "strict": {
     "referenceTypes": 257,
     "referenceMembers": 2964,
     "expectedRubyTypes": 257,
     "expectedRubyMembers": 2915,
-    "targetTypes": 61,
-    "targetMembers": 1292,
-    "completeTypes": 54,
+    "targetTypes": 71,
+    "targetMembers": 1418,
+    "totalDiagnostics": 375,
+    "missingType": 186,
+    "missingMember": 135,
+    "completeTypes": 64,
     "partialTypes": 7,
-    "missingTypes": 196,
-    "missingMembers": 135,
-    "totalDiagnostics": 385,
-    "buttonStateLocalDiagnostics": 0,
-    "mouseStateLocalDiagnostics": 0,
-    "mouseLocalDiagnostics": 0
+    "missingTypes": 186,
+    "unexpectedType": 0,
+    "unexpectedMember": 0,
+    "typeKindMismatch": 0,
+    "baseMappingMismatch": 0,
+    "interfaceMappingMismatch": 0,
+    "fieldMappingMismatch": 0,
+    "propertyMappingMismatch": 1,
+    "methodSignatureMappingMismatch": 0,
+    "parameterMappingMismatch": 0,
+    "returnMappingMismatch": 0,
+    "overloadMappingMismatch": 53,
+    "genericMappingMismatch": 0,
+    "enumValueMismatch": 0,
+    "flagsMappingMismatch": 0,
+    "eventMappingMismatch": 0,
+    "operatorMappingMismatch": 0,
+    "languageMappingMismatch": 0,
+    "internalTypeLeak": 0,
+    "rawHandleLeak": 0,
+    "publicNativeFfiLeak": 0,
+    "allowlistEntries": 0,
+    "unmeasuredStructuralCategory": 0
+  },
+  "gamepadClosure": {
+    "sourceTypes": 10,
+    "clrIdentities": 129,
+    "expectedRubyIdentities": 126,
+    "allLocalDiagnostics": 0,
+    "typeMatrix": {
+      "Buttons": [26, 25, 25, "flags enum"],
+      "GamePad": [4, 4, 4, "static sealed class"],
+      "GamePadButtons": [17, 17, 17, "struct"],
+      "GamePadCapabilities": [26, 26, 26, "struct"],
+      "GamePadDPad": [10, 10, 10, "struct"],
+      "GamePadDeadZone": [4, 3, 3, "enum"],
+      "GamePadState": [15, 15, 15, "struct"],
+      "GamePadThumbSticks": [8, 8, 8, "struct"],
+      "GamePadTriggers": [8, 8, 8, "struct"],
+      "GamePadType": [11, 10, 10, "enum"]
+    }
   },
   "behavior": {
     "provenance": "PURE_XNA_DERIVED",
-    "observations": 208,
-    "assertions": 208,
+    "observations": 239,
+    "assertions": 239,
     "failures": 0,
-    "buttonState": 2,
-    "mouseState": 13
+    "gamepadGroups": {
+      "BUTTONS": 4,
+      "GAMEPAD_BUTTONS": 4,
+      "GAMEPAD_DPAD": 4,
+      "GAMEPAD_TRIGGERS": 5,
+      "GAMEPAD_THUMBSTICKS": 5,
+      "GAMEPAD_STATE": 7,
+      "GAMEPAD_ENUMS": 2
+    },
+    "nativeGamePadIncludedInPureTotals": false
   },
   "nativeAbi": {
-    "boundFunctions": 34,
-    "signatureMeasurements": 103,
-    "cLayoutMeasurements": 176,
-    "rubyLayoutMeasurements": 176,
+    "boundFunctions": 38,
+    "signatureMeasurements": 122,
+    "cLayoutMeasurements": 290,
+    "rubyLayoutMeasurements": 290,
     "callbacks": 2,
-    "constants": 17,
+    "constants": 59,
     "missingHeaderSymbols": 0,
     "missingLibrarySymbols": 0,
     "abiMismatches": 0
   },
-  "mouseNative": {
-    "getState": "VERIFIED_NATIVE HEADLESS",
-    "setPosition": "VERIFIED_NATIVE_ROUTE; physical effect BACKEND_BLOCKED",
-    "windowHandleGet": "VERIFIED_NATIVE_ROUTE; zero/same-token qualified",
-    "windowHandleSet": "VERIFIED_NATIVE_ROUTE; nonzero desktop handle PLATFORM_PENDING",
-    "getStateCycles": 50,
+  "gamepadNative": {
+    "getState": "VERIFIED_NATIVE_ROUTE; disconnected HEADLESS path verified; positive state HARDWARE_PENDING",
+    "getStateDeadZones": "VERIFIED_NATIVE_ROUTE for None, IndependentAxes and Circular; positive analog paths HARDWARE_PENDING",
+    "getCapabilities": "VERIFIED_NATIVE_ROUTE; disconnected all-false snapshot verified; positive flags HARDWARE_PENDING",
+    "setVibration": "VERIFIED_NATIVE_ROUTE; safe all-off returned false; physical actuation HARDWARE_PENDING",
+    "controllerConnected": false,
+    "playersQualified": 4,
+    "stateCycles": 50,
+    "capabilityCycles": 20,
     "wrongThread": "PASS",
     "generationReselection": "PASS"
   },
-  "packedVectorExhaustive": {
-    "iterations": 262400,
-    "failures": 0,
-    "seconds": 8.456889
+  "regression": {
+    "mouse": "PASS",
+    "keyboard": "PASS",
+    "gameCycles": 20,
+    "textureCycles": 20,
+    "spriteBatchCycles": 20,
+    "gameRecreationCycles": 20,
+    "mouseGetStateCycles": 50,
+    "nativeCrashes": 0,
+    "observedUaf": 0,
+    "observedDoubleFree": 0,
+    "sanitizer": "NOT_RUN"
   },
   "maintainedTemplate": {
     "sourcePathDevelopmentMode": true,
@@ -84,11 +148,29 @@
     "frames600": {"updates": 600, "draws": 600, "status": "PASS"}
   },
   "isolatedExactGemConsumer": {
+    "gemHome": "fresh",
     "sourceRUBYLIB": false,
+    "sourcePathGem": false,
     "require": "PASS",
     "syntax": "PASS",
     "installedSourceFiles": 27,
     "frames60": {"updates": 60, "draws": 60, "status": "PASS"},
     "frames600": {"updates": 600, "draws": 600, "status": "PASS"}
+  },
+  "remainingPartialTypes": [
+    "Game",
+    "GraphicsDeviceManager",
+    "Viewport",
+    "GraphicsDevice",
+    "GraphicsResource",
+    "Texture2D",
+    "SpriteBatch"
+  ],
+  "nextMilestone": {
+    "types": ["VertexElement", "VertexElementFormat", "VertexElementUsage"],
+    "sourceTypes": 3,
+    "clrIdentities": 37,
+    "expectedRubyIdentities": 35,
+    "started": false
   }
 }

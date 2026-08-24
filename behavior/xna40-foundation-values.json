@@ -197,9 +197,7 @@
     {
       "id": "vector2.zero.copy",
       "operation": "Vector2.ZeroFresh",
-      "args": [
-
-      ],
+      "args": [],
       "expected": true
     },
     {
@@ -386,9 +384,7 @@
     {
       "id": "quaternion.identity",
       "operation": "Quaternion.AxisAngleZero",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         0.0,
         0.0,
@@ -470,9 +466,7 @@
     {
       "id": "matrix.multiply",
       "operation": "Matrix.MultiplyTranslations",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         5.0,
         7.0,
@@ -517,9 +511,7 @@
     {
       "id": "matrix.inverse.singular",
       "operation": "Matrix.SingularInverseNaN",
-      "args": [
-
-      ],
+      "args": [],
       "expected": true
     },
     {
@@ -826,9 +818,7 @@
     {
       "id": "point.zero.copy",
       "operation": "Point.ZeroFresh",
-      "args": [
-
-      ],
+      "args": [],
       "expected": true
     },
     {
@@ -1235,9 +1225,7 @@
     {
       "id": "frustum.corners",
       "operation": "Frustum.Corners",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         8,
         -1.0,
@@ -1247,9 +1235,7 @@
     {
       "id": "vector2.normalize.zero.bits",
       "operation": "Golden.Vector2NormalizeZero",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "FFC00000",
         "FFC00000"
@@ -1258,9 +1244,7 @@
     {
       "id": "vector3.normalize.zero.bits",
       "operation": "Golden.Vector3NormalizeZero",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "FFC00000",
         "FFC00000",
@@ -1270,9 +1254,7 @@
     {
       "id": "vector4.normalize.zero.bits",
       "operation": "Golden.Vector4NormalizeZero",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "FFC00000",
         "FFC00000",
@@ -1283,9 +1265,7 @@
     {
       "id": "vector.scalar.divide.bits",
       "operation": "Golden.VectorDivide",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "3EDB6DB8",
         "40155556",
@@ -1296,9 +1276,7 @@
     {
       "id": "quaternion.zero.nonfinite.bits",
       "operation": "Golden.QuaternionZero",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "FFC00000",
         "FFC00000",
@@ -1313,9 +1291,7 @@
     {
       "id": "quaternion.products.bits",
       "operation": "Golden.QuaternionProducts",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "BE3F1A81",
         "3EAC1068",
@@ -1337,9 +1313,7 @@
     {
       "id": "matrix.vector.transforms.bits",
       "operation": "Golden.MatrixTransforms",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "40FD03FE",
         "00000000",
@@ -1355,9 +1329,7 @@
     {
       "id": "plane.transform.bits",
       "operation": "Golden.PlaneTransform",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "00000000",
         "3F800000",
@@ -1368,9 +1340,7 @@
     {
       "id": "value.nan.equality",
       "operation": "Golden.NaNEquality",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         false,
         false,
@@ -1381,9 +1351,7 @@
     {
       "id": "value.hash.codes",
       "operation": "Golden.HashCodes",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         -1077936128,
         -33554432,
@@ -1394,9 +1362,7 @@
     {
       "id": "mathhelper.edge.bits",
       "operation": "Golden.MathEdges",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "40000000",
         "BFC2E06C",
@@ -1408,9 +1374,7 @@
     {
       "id": "vector3.edge.bits",
       "operation": "Golden.VectorEdges",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "40E00000",
         "FFC00000",
@@ -1423,9 +1387,7 @@
     {
       "id": "quaternion.edge.bits",
       "operation": "Golden.QuaternionEdges",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "BD9A16EC",
         "3E60D7E7",
@@ -1444,9 +1406,7 @@
     {
       "id": "matrix.edge.bits",
       "operation": "Golden.MatrixEdges",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "3D53E807",
         "BF7FA83D",
@@ -1471,9 +1431,7 @@
     {
       "id": "matrix.degenerate.bits",
       "operation": "Golden.MatrixDegenerate",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "BF800000",
         "40000000",
@@ -1505,9 +1463,7 @@
     {
       "id": "plane.edge.bits",
       "operation": "Golden.PlaneEdges",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "FFC00000",
         "FFC00000",
@@ -1523,9 +1479,7 @@
     {
       "id": "geometry.nonfinite.tangent",
       "operation": "Golden.GeometryEdges",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         0,
         true,
@@ -1538,9 +1492,7 @@
     {
       "id": "frustum.planes.corners.bits",
       "operation": "Golden.FrustumPlanesCorners",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "80000000",
         "80000000",
@@ -1561,9 +1513,7 @@
     {
       "id": "frustum.gjk.relations.bits",
       "operation": "Golden.FrustumRelations",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         1,
         0,
@@ -1580,17 +1530,13 @@
     {
       "id": "float32.signed_zero",
       "operation": "Float32.NegativeZero",
-      "args": [
-
-      ],
+      "args": [],
       "expected": true
     },
     {
       "id": "color.float.constructors.bits",
       "operation": "Color.FloatConstructors",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         4286643968,
         16711808,
@@ -1684,9 +1630,7 @@
     {
       "id": "color.palette.complete.fresh",
       "operation": "Color.Palette",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         141,
         "185126baaf495ee47e339aa73dd86c7a4a95d40432c1bc3a44b07f3d32911d1b",
@@ -1696,9 +1640,7 @@
     {
       "id": "color.lerp.edges",
       "operation": "Color.LerpEdges",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         4281518090,
         4281518090,
@@ -1713,9 +1655,7 @@
     {
       "id": "color.multiply.edges",
       "operation": "Color.MultiplyEdges",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         0,
         4291322881,
@@ -1730,9 +1670,7 @@
     {
       "id": "color.value.hash.string.transparent",
       "operation": "Color.ValueSemantics",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         0,
         -16580095,
@@ -1808,9 +1746,7 @@
     {
       "id": "rectangle.int32.overflow",
       "operation": "Rectangle.Overflow",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         -2147483648,
         2147483647,
@@ -1853,9 +1789,7 @@
     {
       "id": "rectangle.union.overflow",
       "operation": "Rectangle.UnionOverflow",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         -2147483648,
         0,
@@ -1890,9 +1824,7 @@
     {
       "id": "curve.key.constructors",
       "operation": "CurveKey.Constructors",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "3EAAAAAB",
         "3F2AAAAB",
@@ -1907,9 +1839,7 @@
     {
       "id": "curve.key.clone",
       "operation": "CurveKey.Clone",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         true,
         true,
@@ -1920,9 +1850,7 @@
     {
       "id": "curve.key.equality",
       "operation": "CurveKey.Equality",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         4194305,
         true,
@@ -1935,9 +1863,7 @@
     {
       "id": "curve.key.compare",
       "operation": "CurveKey.Compare",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         -1,
         0,
@@ -1953,9 +1879,7 @@
     {
       "id": "curve.collection.ordering",
       "operation": "CurveCollection.Ordering",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         [
           0.0,
@@ -1976,9 +1900,7 @@
     {
       "id": "curve.collection.replacement",
       "operation": "CurveCollection.Replacement",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "40000000",
         "40800000",
@@ -1988,9 +1910,7 @@
     {
       "id": "curve.collection.copy_clone",
       "operation": "CurveCollection.CopyClone",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         true,
         true,
@@ -2004,9 +1924,7 @@
     {
       "id": "curve.collection.enumeration",
       "operation": "CurveCollection.Enumeration",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         true,
         "RuntimeError",
@@ -2017,9 +1935,7 @@
     {
       "id": "curve.collection.validation",
       "operation": "CurveCollection.Validation",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "IndexError",
         "IndexError",
@@ -2031,9 +1947,7 @@
     {
       "id": "curve.evaluate.defaults",
       "operation": "CurveEvaluate.Defaults",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         0,
         0,
@@ -2047,9 +1961,7 @@
     {
       "id": "curve.evaluate.hermite",
       "operation": "CurveEvaluate.Hermite",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "3FC80000",
         "40B80000"
@@ -2058,9 +1970,7 @@
     {
       "id": "curve.evaluate.step",
       "operation": "CurveEvaluate.Step",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "40000000",
         "41100000"
@@ -2069,9 +1979,7 @@
     {
       "id": "curve.evaluate.duplicates",
       "operation": "CurveEvaluate.Duplicates",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "41200000",
         "41200000",
@@ -2082,9 +1990,7 @@
     {
       "id": "curve.tangents.modes",
       "operation": "CurveTangents.Modes",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "00000000",
         "41200000",
@@ -2095,9 +2001,7 @@
     {
       "id": "curve.tangents.mixed",
       "operation": "CurveTangents.Mixed",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "00000000",
         "41F00000",
@@ -2108,9 +2012,7 @@
     {
       "id": "curve.tangents.epsilon",
       "operation": "CurveTangents.Epsilon",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "00000000",
         "00000000"
@@ -2119,9 +2021,7 @@
     {
       "id": "curve.tangents.duplicate",
       "operation": "CurveTangents.Duplicate",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         true,
         true,
@@ -2132,9 +2032,7 @@
     {
       "id": "curve.loops.all",
       "operation": "CurveLoops.All",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "00000000",
         "41200000",
@@ -2151,9 +2049,7 @@
     {
       "id": "curve.loops.negative_exact",
       "operation": "CurveLoops.NegativeExact",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "41200000",
         "C1200000",
@@ -2163,9 +2059,7 @@
     {
       "id": "curve.loops.normalized_boundaries",
       "operation": "CurveLoops.NormalizedBoundaries",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         10.0,
         20.0,
@@ -2178,9 +2072,7 @@
     {
       "id": "curve.loops.formulas",
       "operation": "CurveLoops.Formulas",
-      "args": [
-
-      ],
+      "args": [],
       "expected": [
         "80000000",
         "7FC00000",
@@ -2790,10 +2682,10 @@
       "args": [
         "NormalizedShort4",
         [
-          1.5259254737998596e-05,
-          4.577776421485031e-05,
-          -1.5259254737998596e-05,
-          -4.577776421485031e-05
+          0.000015259254737998596,
+          0.00004577776421485031,
+          -0.000015259254737998596,
+          -0.00004577776421485031
         ]
       ],
       "expected": 18446181123756261376
@@ -3147,96 +3039,775 @@
       "id": "button_state.values",
       "operation": "ButtonState.Values",
       "args": [],
-      "expected": [0, 1, true, true]
+      "expected": [
+        0,
+        1,
+        true,
+        true
+      ]
     },
     {
       "id": "button_state.validation",
       "operation": "ButtonState.Validation",
       "args": [],
-      "expected": ["RangeError", "TypeError", "TypeError"]
+      "expected": [
+        "RangeError",
+        "TypeError",
+        "TypeError"
+      ]
     },
     {
       "id": "mouse_state.properties.asymmetric",
       "operation": "MouseState.Properties",
-      "args": [-17, 203, -120, 1, 0, 1, 1, 0],
-      "expected": [-17, 203, 1, 1, 0, 1, 0, -120]
+      "args": [
+        -17,
+        203,
+        -120,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "expected": [
+        -17,
+        203,
+        1,
+        1,
+        0,
+        1,
+        0,
+        -120
+      ]
     },
     {
       "id": "mouse_state.equals.equal",
       "operation": "MouseState.Equals",
-      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, 203, -120, 1, 0, 1, 1, 0]],
-      "expected": [true, true, false]
+      "args": [
+        [
+          -17,
+          203,
+          -120,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        [
+          -17,
+          203,
+          -120,
+          1,
+          0,
+          1,
+          1,
+          0
+        ]
+      ],
+      "expected": [
+        true,
+        true,
+        false
+      ]
     },
     {
       "id": "mouse_state.equals.x",
       "operation": "MouseState.Equals",
-      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [18, 203, -120, 1, 0, 1, 1, 0]],
-      "expected": [false, false, true]
+      "args": [
+        [
+          -17,
+          203,
+          -120,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        [
+          18,
+          203,
+          -120,
+          1,
+          0,
+          1,
+          1,
+          0
+        ]
+      ],
+      "expected": [
+        false,
+        false,
+        true
+      ]
     },
     {
       "id": "mouse_state.equals.y",
       "operation": "MouseState.Equals",
-      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, -204, -120, 1, 0, 1, 1, 0]],
-      "expected": [false, false, true]
+      "args": [
+        [
+          -17,
+          203,
+          -120,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        [
+          -17,
+          -204,
+          -120,
+          1,
+          0,
+          1,
+          1,
+          0
+        ]
+      ],
+      "expected": [
+        false,
+        false,
+        true
+      ]
     },
     {
       "id": "mouse_state.equals.scroll",
       "operation": "MouseState.Equals",
-      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, 203, 121, 1, 0, 1, 1, 0]],
-      "expected": [false, false, true]
+      "args": [
+        [
+          -17,
+          203,
+          -120,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        [
+          -17,
+          203,
+          121,
+          1,
+          0,
+          1,
+          1,
+          0
+        ]
+      ],
+      "expected": [
+        false,
+        false,
+        true
+      ]
     },
     {
       "id": "mouse_state.equals.left",
       "operation": "MouseState.Equals",
-      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, 203, -120, 0, 0, 1, 1, 0]],
-      "expected": [false, false, true]
+      "args": [
+        [
+          -17,
+          203,
+          -120,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        [
+          -17,
+          203,
+          -120,
+          0,
+          0,
+          1,
+          1,
+          0
+        ]
+      ],
+      "expected": [
+        false,
+        false,
+        true
+      ]
     },
     {
       "id": "mouse_state.equals.middle",
       "operation": "MouseState.Equals",
-      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, 203, -120, 1, 1, 1, 1, 0]],
-      "expected": [false, false, true]
+      "args": [
+        [
+          -17,
+          203,
+          -120,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        [
+          -17,
+          203,
+          -120,
+          1,
+          1,
+          1,
+          1,
+          0
+        ]
+      ],
+      "expected": [
+        false,
+        false,
+        true
+      ]
     },
     {
       "id": "mouse_state.equals.right",
       "operation": "MouseState.Equals",
-      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, 203, -120, 1, 0, 0, 1, 0]],
-      "expected": [false, false, true]
+      "args": [
+        [
+          -17,
+          203,
+          -120,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        [
+          -17,
+          203,
+          -120,
+          1,
+          0,
+          0,
+          1,
+          0
+        ]
+      ],
+      "expected": [
+        false,
+        false,
+        true
+      ]
     },
     {
       "id": "mouse_state.equals.xbutton1",
       "operation": "MouseState.Equals",
-      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, 203, -120, 1, 0, 1, 0, 0]],
-      "expected": [false, false, true]
+      "args": [
+        [
+          -17,
+          203,
+          -120,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        [
+          -17,
+          203,
+          -120,
+          1,
+          0,
+          1,
+          0,
+          0
+        ]
+      ],
+      "expected": [
+        false,
+        false,
+        true
+      ]
     },
     {
       "id": "mouse_state.equals.xbutton2",
       "operation": "MouseState.Equals",
-      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, 203, -120, 1, 0, 1, 1, 1]],
-      "expected": [false, false, true]
+      "args": [
+        [
+          -17,
+          203,
+          -120,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        [
+          -17,
+          203,
+          -120,
+          1,
+          0,
+          1,
+          1,
+          1
+        ]
+      ],
+      "expected": [
+        false,
+        false,
+        true
+      ]
     },
     {
       "id": "mouse_state.hash_string",
       "operation": "MouseState.HashString",
-      "args": [12, -3, 120, 1, 0, 1, 1, 0],
-      "expected": [-120, "{X:12 Y:-3 Buttons:Left Right XButton1 Wheel:120}"]
+      "args": [
+        12,
+        -3,
+        120,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "expected": [
+        -120,
+        "{X:12 Y:-3 Buttons:Left Right XButton1 Wheel:120}"
+      ]
     },
     {
       "id": "mouse_state.int32_extremes",
       "operation": "MouseState.Extremes",
       "args": [],
-      "expected": [2147483647, "{X:-2147483648 Y:2147483647 Buttons:None Wheel:-2147483648}", -2147483647, "{X:2147483647 Y:-2147483648 Buttons:Left Right Middle XButton1 XButton2 Wheel:2147483647}"]
+      "expected": [
+        2147483647,
+        "{X:-2147483648 Y:2147483647 Buttons:None Wheel:-2147483648}",
+        -2147483647,
+        "{X:2147483647 Y:-2147483648 Buttons:Left Right Middle XButton1 XButton2 Wheel:2147483647}"
+      ]
     },
     {
       "id": "mouse_state.value_semantics",
       "operation": "MouseState.ValueSemantics",
-      "args": [-17, 203, -120, 1, 0, 1, 1, 0],
-      "expected": [true, true, -17, 44, true]
+      "args": [
+        -17,
+        203,
+        -120,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "expected": [
+        true,
+        true,
+        -17,
+        44,
+        true
+      ]
+    },
+    {
+      "id": "gamepad_enums.values",
+      "operation": "GamePad.Enums",
+      "args": [],
+      "expected": [
+        [
+          0,
+          1,
+          2
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          768
+        ]
+      ]
+    },
+    {
+      "id": "gamepad_enums.validation",
+      "operation": "GamePad.EnumsValidation",
+      "args": [],
+      "expected": [
+        "RangeError",
+        "RangeError",
+        "TypeError"
+      ]
+    },
+    {
+      "id": "buttons.values",
+      "operation": "Buttons.Values",
+      "args": [],
+      "expected": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        2048,
+        4096,
+        8192,
+        16384,
+        32768,
+        16777216,
+        33554432,
+        67108864,
+        134217728,
+        268435456,
+        536870912,
+        1073741824,
+        2097152,
+        4194304,
+        8388608
+      ]
+    },
+    {
+      "id": "buttons.composition",
+      "operation": "Buttons.Composition",
+      "args": [],
+      "expected": [
+        1073754112,
+        8192,
+        0,
+        2145451007
+      ]
+    },
+    {
+      "id": "buttons.validation",
+      "operation": "Buttons.Validation",
+      "args": [],
+      "expected": [
+        "RangeError",
+        "RangeError",
+        "TypeError"
+      ]
+    },
+    {
+      "id": "buttons.high_bits",
+      "operation": "Buttons.HighBits",
+      "args": [],
+      "expected": [
+        1342177280,
+        142606336,
+        1073741824
+      ]
+    },
+    {
+      "id": "gamepad_buttons.properties",
+      "operation": "GamePadButtons.Properties",
+      "args": [
+        8395297
+      ],
+      "expected": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "gamepad_buttons.hash_string",
+      "operation": "GamePadButtons.HashString",
+      "args": [],
+      "expected": [
+        2147483647,
+        "{Buttons:None}",
+        1,
+        "{Buttons:A}",
+        2147483647,
+        "{Buttons:A B}",
+        1,
+        "{Buttons:A B X Y LeftShoulder RightShoulder LeftStick RightStick Start Back BigButton}"
+      ]
+    },
+    {
+      "id": "gamepad_buttons.virtual_non_surface",
+      "operation": "GamePadButtons.VirtualSurface",
+      "args": [],
+      "expected": [
+        true,
+        false,
+        false,
+        "{Buttons:None}"
+      ]
+    },
+    {
+      "id": "gamepad_buttons.equality_copy",
+      "operation": "GamePadButtons.EqualityCopy",
+      "args": [],
+      "expected": [
+        true,
+        true,
+        false,
+        true,
+        false
+      ]
+    },
+    {
+      "id": "gamepad_dpad.asymmetric_properties",
+      "operation": "GamePadDPad.Properties",
+      "args": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "expected": [
+        1,
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "gamepad_dpad.hash_string",
+      "operation": "GamePadDPad.HashString",
+      "args": [],
+      "expected": [
+        2147483647,
+        "{DPad:None}",
+        1,
+        "{DPad:Up}",
+        2147483647,
+        "{DPad:Up Left}",
+        2147483647,
+        "{DPad:Up Down Left Right}"
+      ]
+    },
+    {
+      "id": "gamepad_dpad.equality_copy",
+      "operation": "GamePadDPad.EqualityCopy",
+      "args": [],
+      "expected": [
+        true,
+        true,
+        false,
+        true,
+        false
+      ]
+    },
+    {
+      "id": "gamepad_dpad.validation",
+      "operation": "GamePadDPad.Validation",
+      "args": [],
+      "expected": [
+        "TypeError",
+        "ArgumentError"
+      ]
+    },
+    {
+      "id": "gamepad_triggers.clamp",
+      "operation": "GamePadTriggers.Clamp",
+      "args": [],
+      "expected": [
+        "00000000",
+        "3F800000",
+        "00000000",
+        "3F000000",
+        "3F800000",
+        "3F800000"
+      ]
+    },
+    {
+      "id": "gamepad_triggers.special_values",
+      "operation": "GamePadTriggers.Special",
+      "args": [],
+      "expected": [
+        "00000000",
+        true,
+        "00000000",
+        "3F800000"
+      ]
+    },
+    {
+      "id": "gamepad_triggers.hash_string",
+      "operation": "GamePadTriggers.HashString",
+      "args": [],
+      "expected": [
+        29360128,
+        "{Left:0.25 Right:0.75}",
+        2147483647,
+        "{Left:0 Right:0}"
+      ]
+    },
+    {
+      "id": "gamepad_triggers.equality",
+      "operation": "GamePadTriggers.Equality",
+      "args": [],
+      "expected": [
+        true,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "id": "gamepad_triggers.copy",
+      "operation": "GamePadTriggers.Copy",
+      "args": [],
+      "expected": [
+        true,
+        0.25,
+        1.0
+      ]
+    },
+    {
+      "id": "gamepad_thumbsticks.square_clamp",
+      "operation": "GamePadThumbSticks.Clamp",
+      "args": [],
+      "expected": [
+        "3F800000",
+        "BF800000",
+        "3E800000",
+        "BF000000"
+      ]
+    },
+    {
+      "id": "gamepad_thumbsticks.nan_infinity",
+      "operation": "GamePadThumbSticks.Special",
+      "args": [],
+      "expected": [
+        "3F800000",
+        "3F800000",
+        "BF800000",
+        "80000000"
+      ]
+    },
+    {
+      "id": "gamepad_thumbsticks.hash_string",
+      "operation": "GamePadThumbSticks.HashString",
+      "args": [],
+      "expected": [
+        20971520,
+        "{Left:{X:0.25 Y:-0.5} Right:{X:0.75 Y:-1}}",
+        2147483647
+      ]
+    },
+    {
+      "id": "gamepad_thumbsticks.copy",
+      "operation": "GamePadThumbSticks.Copy",
+      "args": [],
+      "expected": [
+        true,
+        1.0,
+        0.25,
+        true
+      ]
+    },
+    {
+      "id": "gamepad_thumbsticks.equality",
+      "operation": "GamePadThumbSticks.Equality",
+      "args": [],
+      "expected": [
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "gamepad_state.component_constructor",
+      "operation": "GamePadState.ComponentConstructor",
+      "args": [],
+      "expected": [
+        true,
+        0,
+        1,
+        1,
+        0.5,
+        0.25
+      ]
+    },
+    {
+      "id": "gamepad_state.array_constructor",
+      "operation": "GamePadState.ArrayConstructor",
+      "args": [],
+      "expected": [
+        true,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "id": "gamepad_state.virtual_thresholds",
+      "operation": "GamePadState.Thresholds",
+      "args": [],
+      "expected": [
+        false,
+        false,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "gamepad_state.combined_flags",
+      "operation": "GamePadState.CombinedFlags",
+      "args": [],
+      "expected": [
+        true,
+        false,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "id": "gamepad_state.hash_string",
+      "operation": "GamePadState.HashString",
+      "args": [],
+      "expected": [
+        1,
+        "{IsConnected:True}"
+      ]
+    },
+    {
+      "id": "gamepad_state.equality_copy",
+      "operation": "GamePadState.EqualityCopy",
+      "args": [],
+      "expected": [
+        true,
+        true,
+        false,
+        true,
+        false
+      ]
+    },
+    {
+      "id": "gamepad_state.nested_copies",
+      "operation": "GamePadState.NestedCopies",
+      "args": [],
+      "expected": [
+        true,
+        0.5,
+        -1.0
+      ]
     }
   ],
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
   "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
   "milestone4SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
   "milestone5SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
-  "milestone6SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130"
+  "milestone6SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+  "milestone7SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130"
 }

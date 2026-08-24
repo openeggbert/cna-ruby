@@ -1,14 +1,15 @@
 {
   "schemaVersion": 1,
   "provenance": "PURE_XNA_DERIVED retained observations: XNA 4.0 reference metadata and IL/algorithm analysis; never CNA output",
-  "OBSERVATIONS": 208,
-  "ASSERTIONS": 208,
+  "OBSERVATIONS": 239,
+  "ASSERTIONS": 239,
   "FAILURES": 0,
   "groupCounts": {
     "BINARY32": 2,
     "BOUNDING_BOX": 3,
     "BOUNDING_FRUSTUM": 8,
     "BOUNDING_SPHERE": 3,
+    "BUTTONS": 4,
     "BUTTON_STATE": 2,
     "COLOR": 13,
     "CROSS_GEOMETRY": 3,
@@ -17,6 +18,12 @@
     "CURVE_KEY_COLLECTION": 5,
     "CURVE_LOOPS": 4,
     "CURVE_TANGENTS": 4,
+    "GAMEPAD_BUTTONS": 4,
+    "GAMEPAD_DPAD": 4,
+    "GAMEPAD_ENUMS": 2,
+    "GAMEPAD_STATE": 7,
+    "GAMEPAD_THUMBSTICKS": 5,
+    "GAMEPAD_TRIGGERS": 5,
     "MATHHELPER": 9,
     "MATRIX": 12,
     "MOUSE_STATE": 13,
@@ -36,16 +43,28 @@
     "VECTOR3": 7,
     "VECTOR4": 4
   },
-  "nativeEvidence": {
-    "group": "MOUSE_NATIVE",
-    "provenance": "CNA_NATIVE_INTEGRATION",
-    "includedInPureTotals": false,
-    "evidence": [
-      "test/test_native_integration.rb",
-      "docs/generated/native-stress-report.json",
-      "docs/generated/qualification-report.json"
-    ]
-  },
+  "nativeEvidence": [
+    {
+      "group": "MOUSE_NATIVE",
+      "provenance": "CNA_NATIVE_INTEGRATION",
+      "includedInPureTotals": false,
+      "evidence": [
+        "test/test_native_integration.rb",
+        "docs/generated/native-stress-report.json",
+        "docs/generated/qualification-report.json"
+      ]
+    },
+    {
+      "group": "GAMEPAD_NATIVE",
+      "provenance": "CNA_NATIVE_INTEGRATION",
+      "includedInPureTotals": false,
+      "evidence": [
+        "docs/generated/gamepad-native-report.json",
+        "test/test_native_integration.rb",
+        "docs/generated/native-stress-report.json"
+      ]
+    }
+  ],
   "failures": [
 
   ]

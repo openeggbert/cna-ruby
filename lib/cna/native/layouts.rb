@@ -255,6 +255,91 @@ module CNA
         end
       end
 
+      class Vector2 < Structure
+        layout size: 8, alignment: 4, fields: [
+          Layouts.field("x", "float", 0, 4),
+          Layouts.field("y", "float", 4, 4)
+        ]
+      end
+
+      class GamePadAnalogState < Structure
+        layout size: 24, alignment: 4, fields: [
+          Layouts.field("left_thumb_stick", "CNA_Vector2", 0, 8),
+          Layouts.field("right_thumb_stick", "CNA_Vector2", 8, 8),
+          Layouts.field("left_trigger", "float", 16, 4),
+          Layouts.field("right_trigger", "float", 20, 4)
+        ]
+      end
+
+      class GamePadState < Structure
+        layout size: 48, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4),
+          Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("is_connected", "CNA_Bool", 8, 1),
+          Layouts.field("reserved0", "uint8_t[3]", 9, 3),
+          Layouts.field("packet_number", "int32_t", 12, 4),
+          Layouts.field("pressed_buttons", "CNA_GamePadButtonFlags", 16, 4),
+          Layouts.field("reserved1", "uint32_t", 20, 4),
+          Layouts.field("analog", "CNA_GamePadAnalogState", 24, 24)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class GamePadCapabilities < Structure
+        layout size: 48, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4),
+          Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("gamepad_type", "CNA_GamePadType", 8, 4),
+          Layouts.field("is_connected", "CNA_Bool", 12, 1),
+          Layouts.field("has_a_button", "CNA_Bool", 13, 1),
+          Layouts.field("has_b_button", "CNA_Bool", 14, 1),
+          Layouts.field("has_x_button", "CNA_Bool", 15, 1),
+          Layouts.field("has_y_button", "CNA_Bool", 16, 1),
+          Layouts.field("has_back_button", "CNA_Bool", 17, 1),
+          Layouts.field("has_start_button", "CNA_Bool", 18, 1),
+          Layouts.field("has_big_button", "CNA_Bool", 19, 1),
+          Layouts.field("has_dpad_up_button", "CNA_Bool", 20, 1),
+          Layouts.field("has_dpad_down_button", "CNA_Bool", 21, 1),
+          Layouts.field("has_dpad_left_button", "CNA_Bool", 22, 1),
+          Layouts.field("has_dpad_right_button", "CNA_Bool", 23, 1),
+          Layouts.field("has_left_shoulder_button", "CNA_Bool", 24, 1),
+          Layouts.field("has_right_shoulder_button", "CNA_Bool", 25, 1),
+          Layouts.field("has_left_stick_button", "CNA_Bool", 26, 1),
+          Layouts.field("has_right_stick_button", "CNA_Bool", 27, 1),
+          Layouts.field("has_left_x_thumb_stick", "CNA_Bool", 28, 1),
+          Layouts.field("has_left_y_thumb_stick", "CNA_Bool", 29, 1),
+          Layouts.field("has_right_x_thumb_stick", "CNA_Bool", 30, 1),
+          Layouts.field("has_right_y_thumb_stick", "CNA_Bool", 31, 1),
+          Layouts.field("has_left_trigger", "CNA_Bool", 32, 1),
+          Layouts.field("has_right_trigger", "CNA_Bool", 33, 1),
+          Layouts.field("has_left_vibration_motor", "CNA_Bool", 34, 1),
+          Layouts.field("has_right_vibration_motor", "CNA_Bool", 35, 1),
+          Layouts.field("has_voice_support", "CNA_Bool", 36, 1),
+          Layouts.field("has_light_bar_ext", "CNA_Bool", 37, 1),
+          Layouts.field("has_trigger_vibration_motors_ext", "CNA_Bool", 38, 1),
+          Layouts.field("has_misc1_ext", "CNA_Bool", 39, 1),
+          Layouts.field("has_paddle1_ext", "CNA_Bool", 40, 1),
+          Layouts.field("has_paddle2_ext", "CNA_Bool", 41, 1),
+          Layouts.field("has_paddle3_ext", "CNA_Bool", 42, 1),
+          Layouts.field("has_paddle4_ext", "CNA_Bool", 43, 1),
+          Layouts.field("has_touchpad_ext", "CNA_Bool", 44, 1),
+          Layouts.field("has_gyro_ext", "CNA_Bool", 45, 1),
+          Layouts.field("has_accelerometer_ext", "CNA_Bool", 46, 1),
+          Layouts.field("reserved", "uint8_t[1]", 47, 1)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       STRUCTURES = constants(false).filter_map do |name|
         value = const_get(name)
         value if value.is_a?(Class) && value < Structure

@@ -1,0 +1,457 @@
+{
+  "schemaVersion": 1,
+  "group": "GAMEPAD_NATIVE",
+  "provenance": "CNA_NATIVE_INTEGRATION",
+  "includedInPureTotals": false,
+  "library": "/tmp/cna-python-m8-build2/modules/c-api/libcna_c_api.so",
+  "librarySha256": "c62949d23d3745964f5e557a06665875621ed4cb6e2930e3f282afd5911f2dcb",
+  "platform": "x86_64-linux-gnu",
+  "renderer": "HEADLESS",
+  "hardware": {
+    "controllerConnected": false,
+    "positivePathState": "HARDWARE_PENDING",
+    "positivePathCapabilities": "HARDWARE_PENDING",
+    "physicalVibration": "HARDWARE_PENDING"
+  },
+  "players": [
+    {
+      "playerIndex": "One",
+      "nativeSlot": 0,
+      "defaultIndependentAxes": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "none": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "independentAxes": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "circular": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "capabilities": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "gamePadType": "Unknown",
+        "IsConnected": false,
+        "HasAButton": false,
+        "HasBackButton": false,
+        "HasBButton": false,
+        "HasDPadDownButton": false,
+        "HasDPadLeftButton": false,
+        "HasDPadRightButton": false,
+        "HasDPadUpButton": false,
+        "HasLeftShoulderButton": false,
+        "HasLeftStickButton": false,
+        "HasRightShoulderButton": false,
+        "HasRightStickButton": false,
+        "HasStartButton": false,
+        "HasXButton": false,
+        "HasYButton": false,
+        "HasBigButton": false,
+        "HasLeftXThumbStick": false,
+        "HasLeftYThumbStick": false,
+        "HasRightXThumbStick": false,
+        "HasRightYThumbStick": false,
+        "HasLeftTrigger": false,
+        "HasRightTrigger": false,
+        "HasLeftVibrationMotor": false,
+        "HasRightVibrationMotor": false,
+        "HasVoiceSupport": false
+      }
+    },
+    {
+      "playerIndex": "Two",
+      "nativeSlot": 1,
+      "defaultIndependentAxes": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "none": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "independentAxes": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "circular": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "capabilities": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "gamePadType": "Unknown",
+        "IsConnected": false,
+        "HasAButton": false,
+        "HasBackButton": false,
+        "HasBButton": false,
+        "HasDPadDownButton": false,
+        "HasDPadLeftButton": false,
+        "HasDPadRightButton": false,
+        "HasDPadUpButton": false,
+        "HasLeftShoulderButton": false,
+        "HasLeftStickButton": false,
+        "HasRightShoulderButton": false,
+        "HasRightStickButton": false,
+        "HasStartButton": false,
+        "HasXButton": false,
+        "HasYButton": false,
+        "HasBigButton": false,
+        "HasLeftXThumbStick": false,
+        "HasLeftYThumbStick": false,
+        "HasRightXThumbStick": false,
+        "HasRightYThumbStick": false,
+        "HasLeftTrigger": false,
+        "HasRightTrigger": false,
+        "HasLeftVibrationMotor": false,
+        "HasRightVibrationMotor": false,
+        "HasVoiceSupport": false
+      }
+    },
+    {
+      "playerIndex": "Three",
+      "nativeSlot": 2,
+      "defaultIndependentAxes": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "none": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "independentAxes": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "circular": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "capabilities": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "gamePadType": "Unknown",
+        "IsConnected": false,
+        "HasAButton": false,
+        "HasBackButton": false,
+        "HasBButton": false,
+        "HasDPadDownButton": false,
+        "HasDPadLeftButton": false,
+        "HasDPadRightButton": false,
+        "HasDPadUpButton": false,
+        "HasLeftShoulderButton": false,
+        "HasLeftStickButton": false,
+        "HasRightShoulderButton": false,
+        "HasRightStickButton": false,
+        "HasStartButton": false,
+        "HasXButton": false,
+        "HasYButton": false,
+        "HasBigButton": false,
+        "HasLeftXThumbStick": false,
+        "HasLeftYThumbStick": false,
+        "HasRightXThumbStick": false,
+        "HasRightYThumbStick": false,
+        "HasLeftTrigger": false,
+        "HasRightTrigger": false,
+        "HasLeftVibrationMotor": false,
+        "HasRightVibrationMotor": false,
+        "HasVoiceSupport": false
+      }
+    },
+    {
+      "playerIndex": "Four",
+      "nativeSlot": 3,
+      "defaultIndependentAxes": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "none": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "independentAxes": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "circular": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "isConnected": false,
+        "packetNumber": 0,
+        "pressed": [
+
+        ],
+        "leftThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "rightThumbStick": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "leftTrigger": 0.0,
+        "rightTrigger": 0.0
+      },
+      "capabilities": {
+        "cnaResult": "CNA_RESULT_SUCCESS",
+        "gamePadType": "Unknown",
+        "IsConnected": false,
+        "HasAButton": false,
+        "HasBackButton": false,
+        "HasBButton": false,
+        "HasDPadDownButton": false,
+        "HasDPadLeftButton": false,
+        "HasDPadRightButton": false,
+        "HasDPadUpButton": false,
+        "HasLeftShoulderButton": false,
+        "HasLeftStickButton": false,
+        "HasRightShoulderButton": false,
+        "HasRightStickButton": false,
+        "HasStartButton": false,
+        "HasXButton": false,
+        "HasYButton": false,
+        "HasBigButton": false,
+        "HasLeftXThumbStick": false,
+        "HasLeftYThumbStick": false,
+        "HasRightXThumbStick": false,
+        "HasRightYThumbStick": false,
+        "HasLeftTrigger": false,
+        "HasRightTrigger": false,
+        "HasLeftVibrationMotor": false,
+        "HasRightVibrationMotor": false,
+        "HasVoiceSupport": false
+      }
+    }
+  ],
+  "setVibration": {
+    "playerIndex": "One",
+    "leftMotor": 0.0,
+    "rightMotor": 0.0,
+    "cnaResult": "CNA_RESULT_SUCCESS",
+    "applied": false,
+    "qualification": "route-only all-off request; no physical-rumble claim"
+  },
+  "proves": [
+    "all four canonical player-slot routes return managed snapshots",
+    "default, None, IndependentAxes and Circular native calls execute",
+    "capability snapshots are returned by CNA rather than synthesized in Ruby",
+    "the canonical vibration route returns the backend Boolean"
+  ],
+  "doesNotProve": [
+    "positive connected-controller state",
+    "positive capability flags",
+    "physical motor actuation"
+  ]
+}

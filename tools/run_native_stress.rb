@@ -81,6 +81,21 @@ rescue Exception => error
 end.value
 raise "wrong-thread Mouse.GetState was not rejected" unless mouse_thread_error.instance_of?(CNA::OwnerThreadError)
 raise "owner-thread Mouse retry failed" unless I::Mouse.GetState.instance_of?(I::MouseState)
+
+gamepad_thread_errors = Thread.new do
+  [lambda { I::GamePad.GetState(F::PlayerIndex::One) },
+   lambda { I::GamePad.GetCapabilities(F::PlayerIndex::One) },
+   lambda { I::GamePad.SetVibration(F::PlayerIndex::One, 0.0, 0.0) }].map do |operation|
+    operation.call
+    nil
+  rescue Exception => error
+    error
+  end
+end.value
+unless gamepad_thread_errors.all? { |error| error.instance_of?(CNA::OwnerThreadError) }
+  raise "wrong-thread GamePad route was not rejected"
+end
+raise "owner-thread GamePad retry failed" unless I::GamePad.GetState(F::PlayerIndex::One).instance_of?(I::GamePadState)
 retry_game.Dispose
 
 mouse_get_state_cycles = Integer(ENV.fetch("CNA_MOUSE_GET_STATE_CYCLES", "50"))
@@ -96,6 +111,29 @@ begin
   end
 ensure
   mouse_game.Dispose
+end
+
+gamepad_get_state_cycles = Integer(ENV.fetch("CNA_GAMEPAD_GET_STATE_CYCLES", "50"))
+abort "CNA_GAMEPAD_GET_STATE_CYCLES must be at least 50" if gamepad_get_state_cycles < 50
+gamepad_capabilities_cycles = Integer(ENV.fetch("CNA_GAMEPAD_CAPABILITIES_CYCLES", "20"))
+abort "CNA_GAMEPAD_CAPABILITIES_CYCLES must be at least 20" if gamepad_capabilities_cycles < 20
+gamepad_game = F::Game.new
+begin
+  gamepad_game.RunOneFrame
+  previous = nil
+  gamepad_get_state_cycles.times do
+    snapshot = I::GamePad.GetState(F::PlayerIndex::One)
+    raise "GamePad.GetState reused a managed snapshot" if previous&.equal?(snapshot)
+    previous = snapshot
+  end
+  previous = nil
+  gamepad_capabilities_cycles.times do
+    snapshot = I::GamePad.GetCapabilities(F::PlayerIndex::One)
+    raise "GamePad.GetCapabilities reused a managed snapshot" if previous&.equal?(snapshot)
+    previous = snapshot
+  end
+ensure
+  gamepad_game.Dispose
 end
 
 active_game = F::Game.new
@@ -130,6 +168,9 @@ report = {
   "NATIVE_CRASHES" => native_crashes, "OBSERVED_UAF" => 0,
   "OBSERVED_DOUBLE_FREE" => 0, "OWNER_THREAD_RETRY" => "PASS",
   "MOUSE_GET_STATE_CYCLES" => mouse_get_state_cycles, "MOUSE_WRONG_THREAD" => "PASS",
+  "GAMEPAD_GET_STATE_CYCLES" => gamepad_get_state_cycles,
+  "GAMEPAD_CAPABILITIES_CYCLES" => gamepad_capabilities_cycles,
+  "GAMEPAD_WRONG_THREAD" => "PASS", "GAMEPAD_VIBRATION_STRESS" => "NOT_RUN_UNKNOWN_HARDWARE",
   "FAILED_NATIVE_CREATION" => "PASS", "CALLBACK_EXCEPTION" => "PASS",
   "SANITIZER_STATUS" => "NOT_RUN"
 }

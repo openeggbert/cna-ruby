@@ -99,7 +99,11 @@ module CNA
         signature("cna_mouse_get_state", T[:result], [T[:handle], pointer("CNA_MouseState")], ownership: "borrows Game; caller MANAGED_VALUE snapshot output"),
         signature("cna_mouse_set_position", T[:result], [T[:handle], T[:i32], T[:i32]], ownership: "borrows Game; PROCESS_GLOBAL mouse; no retained state"),
         signature("cna_mouse_get_window_handle", T[:result], [T[:handle], pointer("uint64_t")], ownership: "borrows Game; caller output BORROWED_EXTERNAL_SCALAR"),
-        signature("cna_mouse_set_window_handle", T[:result], [T[:handle], T[:u64]], ownership: "borrows Game and BORROWED_EXTERNAL_SCALAR; never frees window")
+        signature("cna_mouse_set_window_handle", T[:result], [T[:handle], T[:u64]], ownership: "borrows Game and BORROWED_EXTERNAL_SCALAR; never frees window"),
+        signature("cna_gamepad_get_state", T[:result], [T[:handle], enum("CNA_PlayerIndex"), pointer("CNA_GamePadState")], ownership: "borrows Game; caller MANAGED_VALUE snapshot output"),
+        signature("cna_gamepad_get_state_with_dead_zone", T[:result], [T[:handle], enum("CNA_PlayerIndex"), enum("CNA_GamePadDeadZone"), pointer("CNA_GamePadState")], ownership: "borrows Game; caller MANAGED_VALUE snapshot output"),
+        signature("cna_gamepad_get_capabilities", T[:result], [T[:handle], enum("CNA_PlayerIndex"), pointer("CNA_GamePadCapabilities")], ownership: "borrows Game; caller MANAGED_VALUE snapshot output"),
+        signature("cna_gamepad_set_vibration", T[:result], [T[:handle], enum("CNA_PlayerIndex"), T[:float], T[:float], pointer("CNA_Bool")], ownership: "borrows Game; writes selected controller actuator; caller Boolean output")
       ].freeze
 
       CALLBACKS = [
@@ -121,7 +125,49 @@ module CNA
         "CNA_MOUSE_BUTTON_MIDDLE" => 2,
         "CNA_MOUSE_BUTTON_RIGHT" => 4,
         "CNA_MOUSE_BUTTON_X1" => 8,
-        "CNA_MOUSE_BUTTON_X2" => 16
+        "CNA_MOUSE_BUTTON_X2" => 16,
+        "CNA_PLAYER_INDEX_ONE" => 0,
+        "CNA_PLAYER_INDEX_TWO" => 1,
+        "CNA_PLAYER_INDEX_THREE" => 2,
+        "CNA_PLAYER_INDEX_FOUR" => 3,
+        "CNA_GAMEPAD_DEAD_ZONE_NONE" => 0,
+        "CNA_GAMEPAD_DEAD_ZONE_INDEPENDENT_AXES" => 1,
+        "CNA_GAMEPAD_DEAD_ZONE_CIRCULAR" => 2,
+        "CNA_GAMEPAD_BUTTON_DPAD_UP" => 0x0000_0001,
+        "CNA_GAMEPAD_BUTTON_DPAD_DOWN" => 0x0000_0002,
+        "CNA_GAMEPAD_BUTTON_DPAD_LEFT" => 0x0000_0004,
+        "CNA_GAMEPAD_BUTTON_DPAD_RIGHT" => 0x0000_0008,
+        "CNA_GAMEPAD_BUTTON_START" => 0x0000_0010,
+        "CNA_GAMEPAD_BUTTON_BACK" => 0x0000_0020,
+        "CNA_GAMEPAD_BUTTON_LEFT_STICK" => 0x0000_0040,
+        "CNA_GAMEPAD_BUTTON_RIGHT_STICK" => 0x0000_0080,
+        "CNA_GAMEPAD_BUTTON_LEFT_SHOULDER" => 0x0000_0100,
+        "CNA_GAMEPAD_BUTTON_RIGHT_SHOULDER" => 0x0000_0200,
+        "CNA_GAMEPAD_BUTTON_BIG_BUTTON" => 0x0000_0800,
+        "CNA_GAMEPAD_BUTTON_A" => 0x0000_1000,
+        "CNA_GAMEPAD_BUTTON_B" => 0x0000_2000,
+        "CNA_GAMEPAD_BUTTON_X" => 0x0000_4000,
+        "CNA_GAMEPAD_BUTTON_Y" => 0x0000_8000,
+        "CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_LEFT" => 0x0020_0000,
+        "CNA_GAMEPAD_BUTTON_RIGHT_TRIGGER" => 0x0040_0000,
+        "CNA_GAMEPAD_BUTTON_LEFT_TRIGGER" => 0x0080_0000,
+        "CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_UP" => 0x0100_0000,
+        "CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_DOWN" => 0x0200_0000,
+        "CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_RIGHT" => 0x0400_0000,
+        "CNA_GAMEPAD_BUTTON_RIGHT_THUMBSTICK_LEFT" => 0x0800_0000,
+        "CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_UP" => 0x1000_0000,
+        "CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_DOWN" => 0x2000_0000,
+        "CNA_GAMEPAD_BUTTON_LEFT_THUMBSTICK_RIGHT" => 0x4000_0000,
+        "CNA_GAMEPAD_TYPE_UNKNOWN" => 0,
+        "CNA_GAMEPAD_TYPE_GAMEPAD" => 1,
+        "CNA_GAMEPAD_TYPE_WHEEL" => 2,
+        "CNA_GAMEPAD_TYPE_ARCADE_STICK" => 3,
+        "CNA_GAMEPAD_TYPE_FLIGHT_STICK" => 4,
+        "CNA_GAMEPAD_TYPE_DANCE_PAD" => 5,
+        "CNA_GAMEPAD_TYPE_GUITAR" => 6,
+        "CNA_GAMEPAD_TYPE_ALTERNATE_GUITAR" => 7,
+        "CNA_GAMEPAD_TYPE_DRUM_KIT" => 8,
+        "CNA_GAMEPAD_TYPE_BIG_BUTTON_PAD" => 9
       }.freeze
     end
   end

@@ -34,6 +34,7 @@ def hex_values(values) = values.map { |value| hex32(value) }
 def float_from_bits(value) = [value].pack("L").unpack1("f")
 def packed_type(name) = PV.const_get(name, false)
 def button(value) = I::ButtonState.coerce(value)
+def buttons(value) = I::Buttons.coerce(value)
 def mouse_state(value)
   I::MouseState.new(value[0], value[1], value[2], button(value[3]), button(value[4]),
                     button(value[5]), button(value[6]), button(value[7]))
@@ -81,6 +82,13 @@ def behavior_group(item)
   return "PACKED_HALF" if id.start_with?("packed.half.")
   return "PACKED_RGBA" if id.start_with?("packed.rgba.")
   return "PACKED_INTERFACE" if id.start_with?("packed.interface.")
+  return "BUTTONS" if id.start_with?("buttons.")
+  return "GAMEPAD_BUTTONS" if id.start_with?("gamepad_buttons.")
+  return "GAMEPAD_DPAD" if id.start_with?("gamepad_dpad.")
+  return "GAMEPAD_TRIGGERS" if id.start_with?("gamepad_triggers.")
+  return "GAMEPAD_THUMBSTICKS" if id.start_with?("gamepad_thumbsticks.")
+  return "GAMEPAD_STATE" if id.start_with?("gamepad_state.")
+  return "GAMEPAD_ENUMS" if id.start_with?("gamepad_enums.")
 
   id.split(".").first.upcase
 end
@@ -113,6 +121,152 @@ def execute(item)
     value = mouse_state(args); copy = value.dup; equal_before = value.Equals(copy)
     copy.instance_variable_set(:@X, 44)
     [equal_before, !value.equal?(copy), value.X, copy.X, value.LeftButton.frozen?]
+  when "GamePad.Enums"
+    [[I::GamePadDeadZone::None, I::GamePadDeadZone::IndependentAxes, I::GamePadDeadZone::Circular].map(&:to_i),
+     [I::GamePadType::Unknown, I::GamePadType::GamePad, I::GamePadType::Wheel,
+      I::GamePadType::ArcadeStick, I::GamePadType::FlightStick, I::GamePadType::DancePad,
+      I::GamePadType::Guitar, I::GamePadType::AlternateGuitar,
+      I::GamePadType::DrumKit, I::GamePadType::BigButtonPad].map(&:to_i)]
+  when "GamePad.EnumsValidation"
+    [error_name { I::GamePadDeadZone.coerce(3) }, error_name { I::GamePadType.coerce(9) },
+     error_name { I::GamePadDeadZone::None | I::GamePadDeadZone::Circular }]
+  when "Buttons.Values"
+    %i[DPadUp DPadDown DPadLeft DPadRight Start Back LeftStick RightStick LeftShoulder
+       RightShoulder BigButton A B X Y RightThumbstickUp RightThumbstickDown
+       RightThumbstickRight RightThumbstickLeft LeftThumbstickUp LeftThumbstickDown
+       LeftThumbstickRight LeftThumbstickLeft RightTrigger LeftTrigger]
+      .map { |name| I::Buttons.const_get(name).to_i }
+  when "Buttons.Composition"
+    combined = I::Buttons::A | I::Buttons::B | I::Buttons::LeftThumbstickRight
+    [combined.to_i, (combined & I::Buttons::B).to_i, I::Buttons.coerce(0).to_i,
+     I::Buttons.coerce(0x7fe0_fbff).to_i]
+  when "Buttons.Validation"
+    [error_name { I::Buttons.coerce(0x400) }, error_name { I::Buttons.coerce(0x8000_0000) },
+     error_name { I::Buttons.coerce(true) }]
+  when "Buttons.HighBits"
+    [(I::Buttons::LeftThumbstickRight | I::Buttons::LeftThumbstickUp).to_i,
+     (I::Buttons::RightThumbstickLeft | I::Buttons::LeftTrigger).to_i,
+     (I::Buttons::LeftThumbstickRight & I::Buttons::LeftThumbstickRight).to_i]
+  when "GamePadButtons.Properties"
+    value = I::GamePadButtons.new(buttons(args[0]))
+    %i[A B Back X Y Start LeftShoulder LeftStick RightShoulder RightStick BigButton]
+      .map { |property| value.public_send(property).to_i }
+  when "GamePadButtons.HashString"
+    values = [0, I::Buttons::A.to_i, (I::Buttons::A | I::Buttons::B).to_i, 0x0000_fbf0]
+    values.flat_map do |mask|
+      value = I::GamePadButtons.new(buttons(mask)); [value.GetHashCode, value.ToString]
+    end
+  when "GamePadButtons.VirtualSurface"
+    value = I::GamePadButtons.new(I::Buttons::LeftTrigger | I::Buttons::LeftThumbstickLeft)
+    [value == I::GamePadButtons.new(buttons(0)), value.respond_to?(:LeftTrigger),
+     value.respond_to?(:LeftThumbstickLeft), value.ToString]
+  when "GamePadButtons.EqualityCopy"
+    value = I::GamePadButtons.new(I::Buttons::A | I::Buttons::Back); copy = value.dup
+    [value.Equals(copy), value == copy, value != copy, !value.equal?(copy), value.Equals(Object.new)]
+  when "GamePadDPad.Properties"
+    value = I::GamePadDPad.new(*args.map { |entry| button(entry) })
+    [value.Up.to_i, value.Down.to_i, value.Right.to_i, value.Left.to_i]
+  when "GamePadDPad.HashString"
+    values = [[0, 0, 0, 0], [1, 0, 0, 0], [1, 0, 1, 0], [1, 1, 1, 1]]
+    values.flat_map do |states|
+      value = I::GamePadDPad.new(*states.map { |entry| button(entry) })
+      [value.GetHashCode, value.ToString]
+    end
+  when "GamePadDPad.EqualityCopy"
+    value = I::GamePadDPad.new(button(1), button(0), button(0), button(1)); copy = value.dup
+    [value.Equals(copy), value == copy, value != copy, !value.equal?(copy), value.Equals(Object.new)]
+  when "GamePadDPad.Validation"
+    [error_name { I::GamePadDPad.new(true, button(0), button(0), button(0)) },
+     error_name { I::GamePadDPad.new(button(0), button(0), button(0)) }]
+  when "GamePadTriggers.Clamp"
+    [[-1.0, 2.0], [0.0, 0.5], [1.0, 1.5]].flat_map do |pair|
+      value = I::GamePadTriggers.new(*pair); hex_values([value.Left, value.Right])
+    end
+  when "GamePadTriggers.Special"
+    value = I::GamePadTriggers.new(-0.0, Float::NAN)
+    infinity = I::GamePadTriggers.new(-Float::INFINITY, Float::INFINITY)
+    [hex32(value.Left), value.Right.nan?, hex32(infinity.Left), hex32(infinity.Right)]
+  when "GamePadTriggers.HashString"
+    value = I::GamePadTriggers.new(0.25, 0.75); zero = I::GamePadTriggers.new(0, 0)
+    [value.GetHashCode, value.ToString, zero.GetHashCode, zero.ToString]
+  when "GamePadTriggers.Equality"
+    value = I::GamePadTriggers.new(0.25, 0.75); nan = I::GamePadTriggers.new(Float::NAN, 0)
+    [value.Equals(value.dup), value == value.dup, value != I::GamePadTriggers.new(0.25, 0.5),
+     nan.Equals(nan)]
+  when "GamePadTriggers.Copy"
+    value = I::GamePadTriggers.new(0.25, 0.75); copy = value.dup
+    copy.instance_variable_set(:@Left, 1.0)
+    [!value.equal?(copy), value.Left, copy.Left]
+  when "GamePadThumbSticks.Clamp"
+    value = I::GamePadThumbSticks.new(F::Vector2.new(2, -2), F::Vector2.new(0.25, -0.5))
+    hex_values([value.Left.X, value.Left.Y, value.Right.X, value.Right.Y])
+  when "GamePadThumbSticks.Special"
+    value = I::GamePadThumbSticks.new(F::Vector2.new(Float::NAN, Float::INFINITY),
+                                      F::Vector2.new(-Float::INFINITY, -0.0))
+    hex_values([value.Left.X, value.Left.Y, value.Right.X, value.Right.Y])
+  when "GamePadThumbSticks.HashString"
+    value = I::GamePadThumbSticks.new(F::Vector2.new(0.25, -0.5), F::Vector2.new(0.75, -1))
+    zero = I::GamePadThumbSticks.new(F::Vector2.Zero, F::Vector2.Zero)
+    [value.GetHashCode, value.ToString, zero.GetHashCode]
+  when "GamePadThumbSticks.Copy"
+    value = I::GamePadThumbSticks.new(F::Vector2.new(0.25, 0.5), F::Vector2.Zero)
+    left = value.Left; left.X = 1.0
+    [!left.equal?(value.Left), left.X, value.Left.X, !value.dup.equal?(value)]
+  when "GamePadThumbSticks.Equality"
+    value = I::GamePadThumbSticks.new(F::Vector2.new(0.25, 0.5), F::Vector2.new(0.75, 1))
+    [value.Equals(value.dup), value == value.dup,
+     value != I::GamePadThumbSticks.new(F::Vector2.new(0.25, 0.5), F::Vector2.Zero)]
+  when "GamePadState.ComponentConstructor"
+    value = I::GamePadState.new(
+      I::GamePadThumbSticks.new(F::Vector2.new(0.5, 0), F::Vector2.Zero),
+      I::GamePadTriggers.new(0.25, 0), I::GamePadButtons.new(I::Buttons::A),
+      I::GamePadDPad.new(button(1), button(0), button(0), button(0))
+    )
+    [value.IsConnected, value.PacketNumber, value.Buttons.A.to_i, value.DPad.Up.to_i,
+     value.ThumbSticks.Left.X, value.Triggers.Left]
+  when "GamePadState.ArrayConstructor"
+    zero = F::Vector2.Zero
+    empty = I::GamePadState.new(zero, zero, 0, 0, []); null = I::GamePadState.new(zero, zero, 0, 0, nil)
+    repeated = I::GamePadState.new(zero, zero, 0, 0, [I::Buttons::A, I::Buttons::A])
+    combined = I::GamePadState.new(zero, zero, 0, 0, [I::Buttons::A | I::Buttons::B, I::Buttons::DPadRight])
+    virtual = I::GamePadState.new(zero, zero, 0, 0, [I::Buttons::LeftTrigger])
+    [empty == null, repeated.IsButtonDown(I::Buttons::A),
+     combined.IsButtonDown(I::Buttons::A | I::Buttons::B | I::Buttons::DPadRight),
+     virtual.IsButtonDown(I::Buttons::LeftTrigger)]
+  when "GamePadState.Thresholds"
+    numeric = CNA::Runtime::Numeric
+    at = I::GamePadState.new(F::Vector2.new(numeric.div32(7_849, 32_767), 0), F::Vector2.Zero,
+                             numeric.div32(30, 255), 0, [])
+    over = I::GamePadState.new(F::Vector2.new(numeric.div32(7_850, 32_767), 0), F::Vector2.Zero,
+                               numeric.div32(31, 255), 0, [])
+    [at.IsButtonDown(I::Buttons::LeftThumbstickRight), at.IsButtonDown(I::Buttons::LeftTrigger),
+     over.IsButtonDown(I::Buttons::LeftThumbstickRight), over.IsButtonDown(I::Buttons::LeftTrigger)]
+  when "GamePadState.CombinedFlags"
+    value = I::GamePadState.new(F::Vector2.new(0.5, 0), F::Vector2.Zero, 0.5, 0,
+                                [I::Buttons::A, I::Buttons::DPadUp])
+    [value.IsButtonDown(I::Buttons::A | I::Buttons::DPadUp | I::Buttons::LeftTrigger |
+                        I::Buttons::LeftThumbstickRight),
+     value.IsButtonDown(I::Buttons::A | I::Buttons::B),
+     value.IsButtonUp(I::Buttons::A | I::Buttons::B),
+     value.IsButtonDown(buttons(0)), value.IsButtonUp(buttons(0))]
+  when "GamePadState.HashString"
+    value = I::GamePadState.new(
+      I::GamePadThumbSticks.new(F::Vector2.Zero, F::Vector2.Zero),
+      I::GamePadTriggers.new(0, 0), I::GamePadButtons.new(I::Buttons::A),
+      I::GamePadDPad.new(button(1), button(0), button(0), button(0))
+    )
+    [value.GetHashCode, value.ToString]
+  when "GamePadState.EqualityCopy"
+    args = [F::Vector2.new(0.5, 0), F::Vector2.Zero, 0.25, 0.75, [I::Buttons::A]]
+    value = I::GamePadState.new(*args); copy = value.dup
+    [value.Equals(copy), value == copy, value != copy, !value.equal?(copy), value.Equals(Object.new)]
+  when "GamePadState.NestedCopies"
+    value = I::GamePadState.new(F::Vector2.new(0.5, 0), F::Vector2.Zero, 0.25, 0.75, [I::Buttons::A])
+    first = [value.ThumbSticks, value.Triggers, value.Buttons, value.DPad]
+    second = [value.ThumbSticks, value.Triggers, value.Buttons, value.DPad]
+    first[0].instance_variable_get(:@Left).X = -1.0
+    [first.zip(second).all? { |left, right| !left.equal?(right) }, value.ThumbSticks.Left.X,
+     first[0].Left.X]
   when "PackedVector.PackedValue"
     type_name, values = args
     packed_type(type_name).new(*values).PackedValue
@@ -468,13 +622,20 @@ report = {
   "ASSERTIONS" => corpus.fetch("observations").length,
   "FAILURES" => failures.length,
   "groupCounts" => corpus.fetch("observations").group_by { |item| behavior_group(item) }.transform_values(&:length).sort.to_h,
-  "nativeEvidence" => {
-    "group" => "MOUSE_NATIVE",
-    "provenance" => "CNA_NATIVE_INTEGRATION",
-    "includedInPureTotals" => false,
-    "evidence" => ["test/test_native_integration.rb", "docs/generated/native-stress-report.json",
-                   "docs/generated/qualification-report.json"]
-  },
+  "nativeEvidence" => [
+    {
+      "group" => "MOUSE_NATIVE", "provenance" => "CNA_NATIVE_INTEGRATION",
+      "includedInPureTotals" => false,
+      "evidence" => ["test/test_native_integration.rb", "docs/generated/native-stress-report.json",
+                     "docs/generated/qualification-report.json"]
+    },
+    {
+      "group" => "GAMEPAD_NATIVE", "provenance" => "CNA_NATIVE_INTEGRATION",
+      "includedInPureTotals" => false,
+      "evidence" => ["docs/generated/gamepad-native-report.json", "test/test_native_integration.rb",
+                     "docs/generated/native-stress-report.json"]
+    }
+  ],
   "failures" => failures
 }
 destination = File.expand_path("../docs/generated/behavior-corpus-report.json", __dir__)

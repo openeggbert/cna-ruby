@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "category": "PURE_XNA_DERIVED",
+  "provenance": "Pinned XNA 4.0 Windows Microsoft.Xna.Framework.dll metadata, decompilation and IL review; never CNA output",
+  "sourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+  "observations": [
+    {"id":"gamepad_enums.values","operation":"GamePad.Enums","args":[],"expected":[[0,1,2],[0,1,2,3,4,5,6,7,8,768]]},
+    {"id":"gamepad_enums.validation","operation":"GamePad.EnumsValidation","args":[],"expected":["RangeError","RangeError","TypeError"]},
+
+    {"id":"buttons.values","operation":"Buttons.Values","args":[],"expected":[1,2,4,8,16,32,64,128,256,512,2048,4096,8192,16384,32768,16777216,33554432,67108864,134217728,268435456,536870912,1073741824,2097152,4194304,8388608]},
+    {"id":"buttons.composition","operation":"Buttons.Composition","args":[],"expected":[1073754112,8192,0,2145451007]},
+    {"id":"buttons.validation","operation":"Buttons.Validation","args":[],"expected":["RangeError","RangeError","TypeError"]},
+    {"id":"buttons.high_bits","operation":"Buttons.HighBits","args":[],"expected":[1342177280,142606336,1073741824]},
+
+    {"id":"gamepad_buttons.properties","operation":"GamePadButtons.Properties","args":[8395297],"expected":[1,0,1,0,0,0,0,0,1,0,1]},
+    {"id":"gamepad_buttons.hash_string","operation":"GamePadButtons.HashString","args":[],"expected":[2147483647,"{Buttons:None}",1,"{Buttons:A}",2147483647,"{Buttons:A B}",1,"{Buttons:A B X Y LeftShoulder RightShoulder LeftStick RightStick Start Back BigButton}"]},
+    {"id":"gamepad_buttons.virtual_non_surface","operation":"GamePadButtons.VirtualSurface","args":[],"expected":[true,false,false,"{Buttons:None}"]},
+    {"id":"gamepad_buttons.equality_copy","operation":"GamePadButtons.EqualityCopy","args":[],"expected":[true,true,false,true,false]},
+
+    {"id":"gamepad_dpad.asymmetric_properties","operation":"GamePadDPad.Properties","args":[1,0,1,0],"expected":[1,0,0,1]},
+    {"id":"gamepad_dpad.hash_string","operation":"GamePadDPad.HashString","args":[],"expected":[2147483647,"{DPad:None}",1,"{DPad:Up}",2147483647,"{DPad:Up Left}",2147483647,"{DPad:Up Down Left Right}"]},
+    {"id":"gamepad_dpad.equality_copy","operation":"GamePadDPad.EqualityCopy","args":[],"expected":[true,true,false,true,false]},
+    {"id":"gamepad_dpad.validation","operation":"GamePadDPad.Validation","args":[],"expected":["TypeError","ArgumentError"]},
+
+    {"id":"gamepad_triggers.clamp","operation":"GamePadTriggers.Clamp","args":[],"expected":["00000000","3F800000","00000000","3F000000","3F800000","3F800000"]},
+    {"id":"gamepad_triggers.special_values","operation":"GamePadTriggers.Special","args":[],"expected":["00000000",true,"00000000","3F800000"]},
+    {"id":"gamepad_triggers.hash_string","operation":"GamePadTriggers.HashString","args":[],"expected":[29360128,"{Left:0.25 Right:0.75}",2147483647,"{Left:0 Right:0}"]},
+    {"id":"gamepad_triggers.equality","operation":"GamePadTriggers.Equality","args":[],"expected":[true,true,true,false]},
+    {"id":"gamepad_triggers.copy","operation":"GamePadTriggers.Copy","args":[],"expected":[true,0.25,1.0]},
+
+    {"id":"gamepad_thumbsticks.square_clamp","operation":"GamePadThumbSticks.Clamp","args":[],"expected":["3F800000","BF800000","3E800000","BF000000"]},
+    {"id":"gamepad_thumbsticks.nan_infinity","operation":"GamePadThumbSticks.Special","args":[],"expected":["3F800000","3F800000","BF800000","80000000"]},
+    {"id":"gamepad_thumbsticks.hash_string","operation":"GamePadThumbSticks.HashString","args":[],"expected":[20971520,"{Left:{X:0.25 Y:-0.5} Right:{X:0.75 Y:-1}}",2147483647]},
+    {"id":"gamepad_thumbsticks.copy","operation":"GamePadThumbSticks.Copy","args":[],"expected":[true,1.0,0.25,true]},
+    {"id":"gamepad_thumbsticks.equality","operation":"GamePadThumbSticks.Equality","args":[],"expected":[true,true,true]},
+
+    {"id":"gamepad_state.component_constructor","operation":"GamePadState.ComponentConstructor","args":[],"expected":[true,0,1,1,0.5,0.25]},
+    {"id":"gamepad_state.array_constructor","operation":"GamePadState.ArrayConstructor","args":[],"expected":[true,true,true,false]},
+    {"id":"gamepad_state.virtual_thresholds","operation":"GamePadState.Thresholds","args":[],"expected":[false,false,true,true]},
+    {"id":"gamepad_state.combined_flags","operation":"GamePadState.CombinedFlags","args":[],"expected":[true,false,true,true,false]},
+    {"id":"gamepad_state.hash_string","operation":"GamePadState.HashString","args":[],"expected":[1,"{IsConnected:True}"]},
+    {"id":"gamepad_state.equality_copy","operation":"GamePadState.EqualityCopy","args":[],"expected":[true,true,false,true,false]},
+    {"id":"gamepad_state.nested_copies","operation":"GamePadState.NestedCopies","args":[],"expected":[true,0.5,-1.0]}
+  ]
+}

@@ -212,6 +212,26 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     assert_includes source, "def self.WindowHandle=: (Integer value) -> Integer"
   end
 
+  def test_gamepad_rbs_retains_exact_126_identity_cluster_and_array_overloads
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    names = %w[
+      Buttons GamePad GamePadButtons GamePadCapabilities GamePadDPad GamePadDeadZone
+      GamePadState GamePadThumbSticks GamePadTriggers GamePadType
+    ].map { |name| "Microsoft.Xna.Framework.Input.#{name}" }
+    selected = contract.fetch("types").select { |type| names.include?(type.fetch("name")) }
+    assert_equal 10, selected.length
+    assert_equal 126, selected.sum { |type| type.fetch("members").length }
+
+    source = File.read(SIGNATURE_ROOT.join("microsoft", "xna", "framework", "input.rbs"))
+    refute_includes source, "untyped"
+    refute_includes source, "class GamePadCapabilities\n          def initialize"
+    assert_includes source, "| (::Microsoft::Xna::Framework::Vector2 leftThumbStick, ::Microsoft::Xna::Framework::Vector2 rightThumbStick, Float leftTrigger, Float rightTrigger, Array[Buttons] buttons) -> void"
+    assert_includes source, "def self.GetState: (::Microsoft::Xna::Framework::PlayerIndex playerIndex) -> GamePadState"
+    assert_includes source, "| (::Microsoft::Xna::Framework::PlayerIndex playerIndex, GamePadDeadZone deadZoneMode) -> GamePadState"
+    refute_match(/def Equals: \(GamePad(?:Buttons|DPad|State|ThumbSticks|Triggers)/, source)
+    assert_includes source, "def self.SetVibration: (::Microsoft::Xna::Framework::PlayerIndex playerIndex, Float leftMotor, Float rightMotor) -> bool"
+  end
+
   private
 
   def load_environment

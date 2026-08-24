@@ -221,4 +221,133 @@ class NativeIntegrationTest < Minitest::Test
     assert_raises(CNA::NativeError) { library.call("cna_mouse_get_window_handle", 0, window) }
     assert_raises(CNA::NativeError) { library.call("cna_mouse_set_window_handle", 0, 0) }
   end
+
+  def test_real_gamepad_state_dead_zones_capabilities_and_safe_vibration_routes
+    game = F::Game.new
+    begin
+      game.RunOneFrame
+      players = [F::PlayerIndex::One, F::PlayerIndex::Two,
+                 F::PlayerIndex::Three, F::PlayerIndex::Four]
+      players.each do |player|
+        default = I::GamePad.GetState(player)
+        independent = I::GamePad.GetState(player, I::GamePadDeadZone::IndependentAxes)
+        none = I::GamePad.GetState(player, I::GamePadDeadZone::None)
+        circular = I::GamePad.GetState(player, I::GamePadDeadZone::Circular)
+        [default, independent, none, circular].each do |state|
+          assert_instance_of I::GamePadState, state
+          assert_instance_of Integer, state.PacketNumber
+          assert_includes [true, false], state.IsConnected
+          assert_includes(-1.0..1.0, state.ThumbSticks.Left.X)
+          assert_includes(-1.0..1.0, state.ThumbSticks.Left.Y)
+          assert_includes(-1.0..1.0, state.ThumbSticks.Right.X)
+          assert_includes(-1.0..1.0, state.ThumbSticks.Right.Y)
+          assert_includes(0.0..1.0, state.Triggers.Left)
+          assert_includes(0.0..1.0, state.Triggers.Right)
+        end
+        refute_same default, I::GamePad.GetState(player)
+
+        capabilities = I::GamePad.GetCapabilities(player)
+        assert_instance_of I::GamePadCapabilities, capabilities
+        assert_equal default.IsConnected, capabilities.IsConnected
+        assert_instance_of I::GamePadType, capabilities.GamePadType
+        %i[
+          IsConnected HasAButton HasBackButton HasBButton HasDPadDownButton HasDPadLeftButton
+          HasDPadRightButton HasDPadUpButton HasLeftShoulderButton HasLeftStickButton
+          HasRightShoulderButton HasRightStickButton HasStartButton HasXButton HasYButton
+          HasBigButton HasLeftXThumbStick HasLeftYThumbStick HasRightXThumbStick
+          HasRightYThumbStick HasLeftTrigger HasRightTrigger HasLeftVibrationMotor
+          HasRightVibrationMotor HasVoiceSupport
+        ].each { |property| assert_includes [true, false], capabilities.public_send(property) }
+      end
+
+      # A single all-off request exercises the real actuator route without producing rumble on
+      # unknown hardware. The Boolean is the CNA/backend answer and is deliberately not forced.
+      assert_includes [true, false], I::GamePad.SetVibration(F::PlayerIndex::One, 0.0, 0.0)
+    ensure
+      game.Dispose
+    end
+  end
+
+  class GamePadCallbackGame < F::Game
+    attr_reader :state, :capabilities, :vibration_applied
+
+    protected
+
+    def Update(_time)
+      @state = I::GamePad.GetState(F::PlayerIndex::One)
+      @capabilities = I::GamePad.GetCapabilities(F::PlayerIndex::One)
+      @vibration_applied = I::GamePad.SetVibration(F::PlayerIndex::One, 0.0, 0.0)
+    end
+  end
+
+  def test_gamepad_routes_work_during_native_callback
+    game = GamePadCallbackGame.new
+    begin
+      game.RunOneFrame
+      assert_instance_of I::GamePadState, game.state
+      assert_instance_of I::GamePadCapabilities, game.capabilities
+      assert_includes [true, false], game.vibration_applied
+    ensure
+      game.Dispose
+    end
+  end
+
+  def test_gamepad_owner_thread_shutdown_ambiguity_and_generation_reselection
+    first_uninitialized = F::Game.new
+    second_uninitialized = F::Game.new
+    assert_raises(CNA::InvalidBindingStateError) { I::GamePad.GetState(F::PlayerIndex::One) }
+    second_uninitialized.Dispose
+    assert_raises(CNA::InvalidBindingStateError) { I::GamePad.GetCapabilities(F::PlayerIndex::One) }
+    first_uninitialized.Dispose
+
+    first_game = F::Game.new
+    first_game.RunOneFrame
+    errors = Thread.new do
+      [lambda { I::GamePad.GetState(F::PlayerIndex::One) },
+       lambda { I::GamePad.GetCapabilities(F::PlayerIndex::One) },
+       lambda { I::GamePad.SetVibration(F::PlayerIndex::One, 0.0, 0.0) }].map do |operation|
+        operation.call
+        nil
+      rescue Exception => error
+        error
+      end
+    end.value
+    assert errors.all? { |error| error.instance_of?(CNA::OwnerThreadError) }
+    assert_instance_of I::GamePadState, I::GamePad.GetState(F::PlayerIndex::One)
+    first_game.Dispose
+    assert_raises(CNA::InvalidBindingStateError) { I::GamePad.GetState(F::PlayerIndex::One) }
+
+    second_game = F::Game.new
+    begin
+      second_game.RunOneFrame
+      assert_instance_of I::GamePadState, I::GamePad.GetState(F::PlayerIndex::One)
+      assert_instance_of I::GamePadCapabilities, I::GamePad.GetCapabilities(F::PlayerIndex::One)
+    ensure
+      second_game.Dispose
+    end
+  ensure
+    second_game&.Dispose
+    first_game&.Dispose
+    second_uninitialized&.Dispose
+    first_uninitialized&.Dispose
+  end
+
+  def test_gamepad_native_failures_cross_the_central_error_boundary
+    library = CNA::Native.library
+    state = CNA::Native::Layouts::GamePadState.new
+    capabilities = CNA::Native::Layouts::GamePadCapabilities.new
+    applied = library.pointer_for("C", 0)
+    assert_raises(CNA::NativeError) do
+      library.call("cna_gamepad_get_state", 0, 0, state.pointer)
+    end
+    assert_raises(CNA::NativeError) do
+      library.call("cna_gamepad_get_state_with_dead_zone", 0, 0, 1, state.pointer)
+    end
+    assert_raises(CNA::NativeError) do
+      library.call("cna_gamepad_get_capabilities", 0, 0, capabilities.pointer)
+    end
+    assert_raises(CNA::NativeError) do
+      library.call("cna_gamepad_set_vibration", 0, 0, 0.0, 0.0, applied)
+    end
+  end
 end

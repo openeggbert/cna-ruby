@@ -49,6 +49,17 @@ packed_vector_path = File.expand_path("../behavior/xna40-packed-vector-values.js
 packed_vector = JSON.parse(File.read(packed_vector_path))
 abort "Milestone 5 behavior evidence is not PURE_XNA_DERIVED" unless packed_vector["category"] == "PURE_XNA_DERIVED"
 observations.concat(packed_vector.fetch("observations"))
+foundation_path = File.expand_path("../behavior/xna40-foundation-values.json", __dir__)
+previous_foundation = JSON.parse(File.read(foundation_path))
+mouse_observations = previous_foundation.fetch("observations").select do |item|
+  item.fetch("id").start_with?("button_state.", "mouse_state.")
+end
+abort "Milestone 6 Mouse behavior selection mismatch" unless mouse_observations.length == 15
+observations.concat(mouse_observations)
+gamepad_path = File.expand_path("../behavior/xna40-gamepad-values.json", __dir__)
+gamepad = JSON.parse(File.read(gamepad_path))
+abort "Milestone 7 behavior evidence is not PURE_XNA_DERIVED" unless gamepad["category"] == "PURE_XNA_DERIVED"
+observations.concat(gamepad.fetch("observations"))
 abort "duplicate behavior observation id" unless observations.map { |item| item.fetch("id") }.uniq.length == observations.length
 result = source_corpus.merge(
   "provenance" => "PURE_XNA_DERIVED retained observations: XNA 4.0 reference metadata and IL/algorithm analysis; never CNA output",
@@ -57,6 +68,8 @@ result = source_corpus.merge(
   "milestone3SourceAssemblySha256" => milestone.fetch("sourceAssemblySha256"),
   "milestone4SourceAssemblySha256" => curve.fetch("sourceAssemblySha256"),
   "milestone5SourceAssemblySha256" => packed_vector.fetch("sourceAssemblySha256"),
+  "milestone6SourceAssemblySha256" => previous_foundation.fetch("milestone6SourceAssemblySha256"),
+  "milestone7SourceAssemblySha256" => gamepad.fetch("sourceAssemblySha256"),
   "observations" => observations
 )
 destination = File.expand_path("../behavior/xna40-foundation-values.json", __dir__)

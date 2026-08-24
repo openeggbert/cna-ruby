@@ -3184,6 +3184,2049 @@
       "rubyName": "Microsoft::Xna::Framework::Input::Mouse"
     },
     {
+      "name": "Microsoft.Xna.Framework.Input.Buttons",
+      "kind": "enum",
+      "flags": true,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "A",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "4096"
+        },
+        {
+          "kind": "field",
+          "name": "B",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "8192"
+        },
+        {
+          "kind": "field",
+          "name": "X",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "16384"
+        },
+        {
+          "kind": "field",
+          "name": "Y",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "32768"
+        },
+        {
+          "kind": "field",
+          "name": "Back",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "32"
+        },
+        {
+          "kind": "field",
+          "name": "Start",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "16"
+        },
+        {
+          "kind": "field",
+          "name": "DPadUp",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "DPadDown",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "DPadLeft",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        },
+        {
+          "kind": "field",
+          "name": "DPadRight",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "8"
+        },
+        {
+          "kind": "field",
+          "name": "LeftShoulder",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "256"
+        },
+        {
+          "kind": "field",
+          "name": "RightShoulder",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "512"
+        },
+        {
+          "kind": "field",
+          "name": "LeftStick",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "64"
+        },
+        {
+          "kind": "field",
+          "name": "RightStick",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "128"
+        },
+        {
+          "kind": "field",
+          "name": "BigButton",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "2048"
+        },
+        {
+          "kind": "field",
+          "name": "LeftThumbstickLeft",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "2097152"
+        },
+        {
+          "kind": "field",
+          "name": "LeftThumbstickRight",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "1073741824"
+        },
+        {
+          "kind": "field",
+          "name": "LeftThumbstickDown",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "536870912"
+        },
+        {
+          "kind": "field",
+          "name": "LeftThumbstickUp",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "268435456"
+        },
+        {
+          "kind": "field",
+          "name": "RightThumbstickLeft",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "134217728"
+        },
+        {
+          "kind": "field",
+          "name": "RightThumbstickRight",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "67108864"
+        },
+        {
+          "kind": "field",
+          "name": "RightThumbstickDown",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "33554432"
+        },
+        {
+          "kind": "field",
+          "name": "RightThumbstickUp",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "16777216"
+        },
+        {
+          "kind": "field",
+          "name": "LeftTrigger",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "8388608"
+        },
+        {
+          "kind": "field",
+          "name": "RightTrigger",
+          "type": "Microsoft.Xna.Framework.Input.Buttons",
+          "static": true,
+          "constant": true,
+          "value": "4194304"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::Buttons"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePad",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "GetState",
+          "static": true,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Input.GamePadState",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "playerIndex",
+              "type": "Microsoft.Xna.Framework.PlayerIndex",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetState",
+          "static": true,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Input.GamePadState",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "playerIndex",
+              "type": "Microsoft.Xna.Framework.PlayerIndex",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "deadZoneMode",
+              "type": "Microsoft.Xna.Framework.Input.GamePadDeadZone",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetCapabilities",
+          "static": true,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Input.GamePadCapabilities",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "playerIndex",
+              "type": "Microsoft.Xna.Framework.PlayerIndex",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetVibration",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "playerIndex",
+              "type": "Microsoft.Xna.Framework.PlayerIndex",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "leftMotor",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "rightMotor",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::GamePad"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadButtons",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "buttons",
+              "type": "Microsoft.Xna.Framework.Input.Buttons",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Input.GamePadButtons",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Input.GamePadButtons",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Input.GamePadButtons",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Input.GamePadButtons",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "A",
+          "type": "Microsoft.Xna.Framework.Input.ButtonState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "B",
+          "type": "Microsoft.Xna.Framework.Input.ButtonState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Back",
+          "type": "Microsoft.Xna.Framework.Input.ButtonState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "X",
+          "type": "Microsoft.Xna.Framework.Input.ButtonState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Y",
+          "type": "Microsoft.Xna.Framework.Input.ButtonState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Start",
+          "type": "Microsoft.Xna.Framework.Input.ButtonState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LeftShoulder",
+          "type": "Microsoft.Xna.Framework.Input.ButtonState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LeftStick",
+          "type": "Microsoft.Xna.Framework.Input.ButtonState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "RightShoulder",
+          "type": "Microsoft.Xna.Framework.Input.ButtonState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "RightStick",
+          "type": "Microsoft.Xna.Framework.Input.ButtonState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "BigButton",
+          "type": "Microsoft.Xna.Framework.Input.ButtonState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::GamePadButtons"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadCapabilities",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "property",
+          "name": "GamePadType",
+          "type": "Microsoft.Xna.Framework.Input.GamePadType",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "IsConnected",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasAButton",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasBackButton",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasBButton",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasDPadDownButton",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasDPadLeftButton",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasDPadRightButton",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasDPadUpButton",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasLeftShoulderButton",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasLeftStickButton",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasRightShoulderButton",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasRightStickButton",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasStartButton",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasXButton",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasYButton",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasBigButton",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasLeftXThumbStick",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasLeftYThumbStick",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasRightXThumbStick",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasRightYThumbStick",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasLeftTrigger",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasRightTrigger",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasLeftVibrationMotor",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasRightVibrationMotor",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasVoiceSupport",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::GamePadCapabilities"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadDPad",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "upValue",
+              "type": "Microsoft.Xna.Framework.Input.ButtonState",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "downValue",
+              "type": "Microsoft.Xna.Framework.Input.ButtonState",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "leftValue",
+              "type": "Microsoft.Xna.Framework.Input.ButtonState",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "rightValue",
+              "type": "Microsoft.Xna.Framework.Input.ButtonState",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Input.GamePadDPad",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Input.GamePadDPad",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Input.GamePadDPad",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Input.GamePadDPad",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Up",
+          "type": "Microsoft.Xna.Framework.Input.ButtonState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Down",
+          "type": "Microsoft.Xna.Framework.Input.ButtonState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Right",
+          "type": "Microsoft.Xna.Framework.Input.ButtonState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Left",
+          "type": "Microsoft.Xna.Framework.Input.ButtonState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::GamePadDPad"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadDeadZone",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "None",
+          "type": "Microsoft.Xna.Framework.Input.GamePadDeadZone",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "IndependentAxes",
+          "type": "Microsoft.Xna.Framework.Input.GamePadDeadZone",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "Circular",
+          "type": "Microsoft.Xna.Framework.Input.GamePadDeadZone",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::GamePadDeadZone"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadState",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "thumbSticks",
+              "type": "Microsoft.Xna.Framework.Input.GamePadThumbSticks",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "triggers",
+              "type": "Microsoft.Xna.Framework.Input.GamePadTriggers",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "buttons",
+              "type": "Microsoft.Xna.Framework.Input.GamePadButtons",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "dPad",
+              "type": "Microsoft.Xna.Framework.Input.GamePadDPad",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "leftThumbStick",
+              "type": "Microsoft.Xna.Framework.Vector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "rightThumbStick",
+              "type": "Microsoft.Xna.Framework.Vector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "leftTrigger",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "rightTrigger",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "buttons",
+              "type": "Microsoft.Xna.Framework.Input.Buttons[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "IsButtonDown",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "button",
+              "type": "Microsoft.Xna.Framework.Input.Buttons",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "IsButtonUp",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "button",
+              "type": "Microsoft.Xna.Framework.Input.Buttons",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Input.GamePadState",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Input.GamePadState",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Input.GamePadState",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Input.GamePadState",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Buttons",
+          "type": "Microsoft.Xna.Framework.Input.GamePadButtons",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DPad",
+          "type": "Microsoft.Xna.Framework.Input.GamePadDPad",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "IsConnected",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PacketNumber",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "ThumbSticks",
+          "type": "Microsoft.Xna.Framework.Input.GamePadThumbSticks",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Triggers",
+          "type": "Microsoft.Xna.Framework.Input.GamePadTriggers",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::GamePadState"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadThumbSticks",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "leftThumbstick",
+              "type": "Microsoft.Xna.Framework.Vector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "rightThumbstick",
+              "type": "Microsoft.Xna.Framework.Vector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Input.GamePadThumbSticks",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Input.GamePadThumbSticks",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Input.GamePadThumbSticks",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Input.GamePadThumbSticks",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Left",
+          "type": "Microsoft.Xna.Framework.Vector2",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Right",
+          "type": "Microsoft.Xna.Framework.Vector2",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::GamePadThumbSticks"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadTriggers",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "leftTrigger",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "rightTrigger",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Input.GamePadTriggers",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Input.GamePadTriggers",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Input.GamePadTriggers",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Input.GamePadTriggers",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Left",
+          "type": "System.Single",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Right",
+          "type": "System.Single",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::GamePadTriggers"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadType",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Unknown",
+          "type": "Microsoft.Xna.Framework.Input.GamePadType",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "ArcadeStick",
+          "type": "Microsoft.Xna.Framework.Input.GamePadType",
+          "static": true,
+          "constant": true,
+          "value": "3"
+        },
+        {
+          "kind": "field",
+          "name": "DancePad",
+          "type": "Microsoft.Xna.Framework.Input.GamePadType",
+          "static": true,
+          "constant": true,
+          "value": "5"
+        },
+        {
+          "kind": "field",
+          "name": "FlightStick",
+          "type": "Microsoft.Xna.Framework.Input.GamePadType",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        },
+        {
+          "kind": "field",
+          "name": "GamePad",
+          "type": "Microsoft.Xna.Framework.Input.GamePadType",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "Wheel",
+          "type": "Microsoft.Xna.Framework.Input.GamePadType",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "Guitar",
+          "type": "Microsoft.Xna.Framework.Input.GamePadType",
+          "static": true,
+          "constant": true,
+          "value": "6"
+        },
+        {
+          "kind": "field",
+          "name": "DrumKit",
+          "type": "Microsoft.Xna.Framework.Input.GamePadType",
+          "static": true,
+          "constant": true,
+          "value": "8"
+        },
+        {
+          "kind": "field",
+          "name": "AlternateGuitar",
+          "type": "Microsoft.Xna.Framework.Input.GamePadType",
+          "static": true,
+          "constant": true,
+          "value": "7"
+        },
+        {
+          "kind": "field",
+          "name": "BigButtonPad",
+          "type": "Microsoft.Xna.Framework.Input.GamePadType",
+          "static": true,
+          "constant": true,
+          "value": "768"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::GamePadType"
+    },
+    {
       "name": "Microsoft.Xna.Framework.Vector2",
       "kind": "struct",
       "flags": false,

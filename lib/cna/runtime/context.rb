@@ -89,6 +89,17 @@ module CNA
         candidates.first
       end
 
+      def native_host(operation)
+        game = current_game(operation)
+        game.__send__(:assert_owner_thread!)
+        host = game.instance_variable_get(:@host)
+        unless host && !host.handle.zero?
+          raise CNA::InvalidBindingStateError, "#{operation} requires an initialized CNA Game"
+        end
+
+        host
+      end
+
       def register(game)
         @lock.synchronize do
           @live_games.reject! { |value| value.equal?(game) || value.__send__(:disposed?) }
