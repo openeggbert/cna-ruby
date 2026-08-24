@@ -1,0 +1,81 @@
+module Microsoft
+  module Xna
+    module Framework
+      class MathHelper
+        def self.ToRadians: (Float degrees) -> Float
+        def self.ToDegrees: (Float radians) -> Float
+        def self.Distance: (Float value1, Float value2) -> Float
+        def self.Min: (Float value1, Float value2) -> Float
+        def self.Max: (Float value1, Float value2) -> Float
+        def self.Clamp: (Float value, Float minimum, Float maximum) -> Float
+        def self.Lerp: (Float value1, Float value2, Float amount) -> Float
+        def self.WrapAngle: (Float angle) -> Float
+      end
+
+      class Point
+        attr_accessor X: Integer
+        attr_accessor Y: Integer
+        def initialize: () -> void
+                      | (Integer x, Integer y) -> void
+        def self.Zero: () -> Point
+      end
+
+      class Rectangle
+        attr_accessor X: Integer
+        attr_accessor Y: Integer
+        attr_accessor Width: Integer
+        attr_accessor Height: Integer
+        def initialize: () -> void
+                      | (Integer x, Integer y, Integer width, Integer height) -> void
+        def Left: () -> Integer
+        def Right: () -> Integer
+        def Top: () -> Integer
+        def Bottom: () -> Integer
+        def Contains: (*untyped arguments) -> bool
+      end
+
+      class Color
+        attr_accessor R: Integer
+        attr_accessor G: Integer
+        attr_accessor B: Integer
+        attr_accessor A: Integer
+        attr_accessor PackedValue: Integer
+        def initialize: () -> void
+                      | (Integer r, Integer g, Integer b) -> void
+                      | (Integer r, Integer g, Integer b, Integer a) -> void
+        def self.Transparent: () -> Color
+        def self.Black: () -> Color
+        def self.CornflowerBlue: () -> Color
+        def self.White: () -> Color
+      end
+
+      class GameTime
+        attr_reader TotalGameTime: Float
+        attr_reader ElapsedGameTime: Float
+        attr_reader IsRunningSlowly: bool
+        def initialize: () -> void
+                      | (Numeric total, Numeric elapsed) -> void
+                      | (Numeric total, Numeric elapsed, bool running_slowly) -> void
+      end
+
+      class PlayerIndex
+      end
+
+      class Game
+        attr_reader GraphicsDevice: Graphics::GraphicsDevice?
+        def initialize: () -> void
+        def Run: () -> nil
+        def RunOneFrame: () -> nil
+        def Exit: () -> nil
+        def Dispose: () -> nil
+      end
+
+      class GraphicsDeviceManager
+        DefaultBackBufferWidth: Integer
+        DefaultBackBufferHeight: Integer
+        attr_reader GraphicsDevice: Graphics::GraphicsDevice
+        def initialize: (Game game) -> void
+      end
+    end
+  end
+end

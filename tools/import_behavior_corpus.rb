@@ -1,0 +1,49 @@
+# frozen_string_literal: true
+
+require "digest"
+require "fileutils"
+require "json"
+
+EXPECTED_SHA256 = "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855"
+SUPPORTED_IDS = %w[
+  math.clamp.low math.lerp math.barycentric math.catmullrom math.hermite math.smoothstep
+  math.wrapangle math.to_degrees vector2.add vector2.dot vector2.normalize vector2.reflect
+  vector2.barycentric vector2.transform vector2.zero.copy
+  vector3.cross vector3.distance vector3.reflect vector3.transform_normal vector3.smoothstep
+  vector4.dot vector4.hermite vector4.transform
+  quaternion.identity quaternion.yaw quaternion.concatenate.identity quaternion.slerp quaternion.from_matrix.identity
+  matrix.translation matrix.multiply matrix.inverse.product matrix.inverse.singular matrix.rotation.y
+  matrix.perspective.infinity matrix.decompose matrix.billboard matrix.orthographic
+  color.clamp color.packed color.lerp color.multiply
+  rectangle.contains.inclusive_min rectangle.contains.exclusive_max rectangle.intersect
+  rectangle.union rectangle.inflate rectangle.offset point.value_equality point.zero.copy
+  plane.normalize plane.dot.coordinate plane.box.back plane.sphere.tangent
+  ray.box ray.sphere.tangent ray.plane.behind
+  box.contains.point.edge box.contains.sphere box.merge
+  sphere.contains.point.surface sphere.merge sphere.transform
+  frustum.contains.point frustum.disjoint.point frustum.contains.box frustum.disjoint.sphere
+  frustum.ray.entry frustum.corners
+  vector2.normalize.zero.bits vector3.normalize.zero.bits vector4.normalize.zero.bits
+  vector.scalar.divide.bits quaternion.zero.nonfinite.bits quaternion.products.bits
+  matrix.vector.transforms.bits plane.transform.bits value.nan.equality value.hash.codes
+  mathhelper.edge.bits vector3.edge.bits quaternion.edge.bits matrix.edge.bits matrix.degenerate.bits
+  plane.edge.bits geometry.nonfinite.tangent frustum.planes.corners.bits frustum.gjk.relations.bits
+  float32.signed_zero
+].freeze
+
+source = ARGV.fetch(0) { abort "usage: import_behavior_corpus.rb PATH" }
+bytes = File.binread(source)
+abort "behavior source SHA-256 mismatch" unless Digest::SHA256.hexdigest(bytes) == EXPECTED_SHA256
+source_corpus = JSON.parse(bytes)
+observations = source_corpus.fetch("observations").select { |item| SUPPORTED_IDS.include?(item.fetch("id")) }
+abort "behavior selection mismatch" unless observations.length == SUPPORTED_IDS.length
+result = source_corpus.merge(
+  "provenance" => "PURE_XNA_DERIVED retained observations: XNA 4.0 reference metadata and IL/algorithm analysis; never CNA output",
+  "category" => "PURE_XNA_DERIVED",
+  "sourceSha256" => EXPECTED_SHA256,
+  "observations" => observations
+)
+destination = File.expand_path("../behavior/xna40-foundation-values.json", __dir__)
+FileUtils.mkdir_p(File.dirname(destination))
+File.write(destination, JSON.pretty_generate(result) + "\n")
+puts "OBSERVATIONS=#{observations.length}"

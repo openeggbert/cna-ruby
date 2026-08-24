@@ -1,0 +1,27 @@
+module Microsoft
+  module Xna
+    module Framework
+      module Input
+        class KeyState
+        end
+
+        class Keys
+        end
+
+        class KeyboardState
+          def initialize: (?Array[Keys] keys) -> void
+          def IsKeyDown: (Keys key) -> bool
+          def IsKeyUp: (Keys key) -> bool
+          def GetPressedKeys: () -> Array[Keys]
+          def GetHashCode: () -> Integer
+          def []: (Keys key) -> KeyState
+        end
+
+        class Keyboard
+          def self.GetState: () -> KeyboardState
+                           | (::Microsoft::Xna::Framework::PlayerIndex player) -> KeyboardState
+        end
+      end
+    end
+  end
+end

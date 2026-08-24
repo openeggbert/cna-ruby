@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "profile": "XNA 4.0 Windows runtime",
+  "namespaceSeparator": "::",
+  "preservePublicCasing": true,
+  "types": "one CLR public type identity maps to one Ruby constant identity",
+  "constructors": "retain every .ctor identity; dispatch through initialize",
+  "overloads": "retain every CLR signature identity in the static contract",
+  "refOut": {
+    "refInput": "ordinary typed Ruby value input copied at value boundaries",
+    "singleOut": "ordinary return value",
+    "multipleOut": "ordered Array following any non-void CLR return"
+  },
+  "arrayTransforms": "caller-owned source/destination Arrays; whole and indexed range forms preserve forward overlap order",
+  "properties": {"getter": "Name", "setter": "Name=", "preserveMutability": true},
+  "staticMembers": "class methods; struct-valued members return fresh objects",
+  "enums": {"representation": "typed frozen Ruby objects", "excludeMetadataMembers": ["value__"], "flags": "declared bits only"},
+  "structs": "Ruby classes with boundary copies and dup/clone; assignment aliasing is documented",
+  "operators": "map to Ruby syntax where available and retain op_* identity in static contract",
+  "events": "retain identity; explicit subscription mapping when implemented",
+  "generics": "retain CLR arity/signature and reject ambiguous runtime dispatch",
+  "expectedTypeFormula": "reference public types",
+  "expectedMemberFormula": "reference public members minus enum value__ metadata storage"
+}

@@ -1,0 +1,56 @@
+module Microsoft
+  module Xna
+    module Framework
+      module Graphics
+        class SurfaceFormat
+        end
+
+        class Viewport
+          attr_accessor X: Integer
+          attr_accessor Y: Integer
+          attr_accessor Width: Integer
+          attr_accessor Height: Integer
+          attr_accessor MinDepth: Float
+          attr_accessor MaxDepth: Float
+          attr_accessor Bounds: Rectangle
+          attr_reader AspectRatio: Float
+          def initialize: (Rectangle bounds) -> void
+                        | (Integer x, Integer y, Integer width, Integer height) -> void
+        end
+
+        class GraphicsDevice
+          attr_reader IsDisposed: bool
+          attr_reader Viewport: Viewport
+          def Clear: (Color color) -> nil
+        end
+
+        class GraphicsResource
+          attr_reader IsDisposed: bool
+          attr_accessor Tag: untyped
+          attr_accessor Name: String?
+          attr_reader GraphicsDevice: GraphicsDevice
+          def Dispose: () -> nil
+        end
+
+        class Texture < GraphicsResource
+          attr_reader LevelCount: Integer
+          attr_reader Format: SurfaceFormat
+        end
+
+        class Texture2D < Texture
+          attr_reader Width: Integer
+          attr_reader Height: Integer
+          attr_reader Bounds: Rectangle
+          def self.FromStream: (GraphicsDevice graphics_device, IO stream) -> Texture2D
+        end
+
+        class SpriteBatch < GraphicsResource
+          def initialize: (GraphicsDevice graphics_device) -> void
+          def Begin: () -> nil
+          def Draw: (*untyped arguments) -> nil
+          def End: () -> nil
+        end
+      end
+    end
+  end
+end

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "milestone": "Foundation 2",
+  "platform": "Linux x86-64 MRI Ruby 3.3.8",
+  "cnaAbi": "0.7.0",
+  "capabilities": [
+    {"id": "managed.mathhelper-point-gametime", "category": "VERIFIED_MANAGED", "status": "verified", "evidence": "behavior corpus and structural verifier"},
+    {"id": "managed.geometry-transform", "category": "VERIFIED_MANAGED", "status": "verified complete cluster", "evidence": "Vector2/3/4, Quaternion, Matrix, Plane, Ray, bounds/frustum and dependency enums locally strict-zero"},
+    {"id": "managed.rectangle-color", "category": "VERIFIED_MANAGED", "status": "verified partial types", "evidence": "exact missing members reported; unchanged in Foundation 2"},
+    {"id": "managed.binary32", "category": "VERIFIED_MANAGED", "status": "verified selected operations", "evidence": "88 PURE_XNA_DERIVED observations including signed zero, NaN sign, transform order and degenerate geometry"},
+    {"id": "native.abi-0.7", "category": "VERIFIED_NATIVE", "status": "verified", "evidence": "30 exports, 90 signatures, 158+158 layout measurements, 2 callbacks, 12 constants"},
+    {"id": "native.game-lifecycle", "category": "VERIFIED_NATIVE", "status": "verified", "evidence": "Initialize/LoadContent/BeginRun/Update/Draw/EndRun/UnloadContent native ordering"},
+    {"id": "native.callback-exceptions", "category": "VERIFIED_NATIVE", "status": "verified", "evidence": "Initialize, LoadContent, Update, Draw containment tests"},
+    {"id": "native.graphics-clear", "category": "VERIFIED_NATIVE", "status": "verified HEADLESS", "evidence": "real callback-borrowed device Clear"},
+    {"id": "native.texture2d-stream", "category": "VERIFIED_NATIVE", "status": "verified HEADLESS", "evidence": "project PNG decoded as measured 128x128 Texture2D"},
+    {"id": "native.spritebatch-draw", "category": "VERIFIED_NATIVE", "status": "verified HEADLESS", "evidence": "real Begin/scaled Draw/End"},
+    {"id": "native.keyboard", "category": "VERIFIED_NATIVE", "status": "verified HEADLESS", "evidence": "CNA state capture and typed key queries"},
+    {"id": "native.lifecycle-stress", "category": "VERIFIED_NATIVE", "status": "verified", "evidence": "20 Game/Texture/SpriteBatch/recreation cycles, zero observed crash/UAF/double-free"},
+    {"id": "renderer.visible-output", "category": "BACKEND_BLOCKED", "status": "not verified", "evidence": "qualified artifact uses HEADLESS renderer"},
+    {"id": "graphics.viewport-setter", "category": "UPSTREAM_CNA_BLOCKED", "status": "unbound", "evidence": "CNA prototype passes CNA_Viewport by value; Fiddle foundation declines unsafe declaration"},
+    {"id": "struct.assignment-copy", "category": "LANGUAGE_MAPPING_LIMITATION", "status": "documented", "evidence": "Ruby assignment aliases; copies enforced at binding boundaries"},
+    {"id": "content.xnb", "category": "UNIMPLEMENTED_CNA_RUBY", "status": "deferred", "evidence": "fake ContentManager removed"},
+    {"id": "effects.3d-model", "category": "UNIMPLEMENTED_CNA_RUBY", "status": "deferred", "evidence": "managed Matrix is qualified; fake BasicEffect/cube support remains removed"},
+    {"id": "audio-media", "category": "UNIMPLEMENTED_CNA_RUBY", "status": "deferred", "evidence": "outside Foundation 2"},
+    {"id": "platform.windows", "category": "PLATFORM_PENDING", "status": "not qualified", "evidence": null},
+    {"id": "platform.macos", "category": "PLATFORM_PENDING", "status": "not qualified", "evidence": null},
+    {"id": "platform.browser-wasm", "category": "PLATFORM_PENDING", "status": "unsupported", "evidence": "no CNA C-ABI Wasm/Ruby-Wasm architecture"},
+    {"id": "platform.android-mruby", "category": "PLATFORM_PENDING", "status": "unsupported", "evidence": "not part of MRI desktop qualification"},
+    {"id": "hardware.visible-renderer", "category": "HARDWARE_PENDING", "status": "not run", "evidence": null},
+    {"id": "assets.content-pipeline", "category": "ASSET_PENDING", "status": "not started", "evidence": "only project-owned PNG stream path qualified"}
+  ]
+}

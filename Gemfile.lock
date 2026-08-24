@@ -1,0 +1,18 @@
+PATH
+  remote: .
+  specs:
+    cna-ruby (0.1.0.dev0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+
+PLATFORMS
+  ruby
+  x86_64-linux-gnu
+
+DEPENDENCIES
+  cna-ruby!
+
+BUNDLED WITH
+   2.6.7

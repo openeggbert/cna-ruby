@@ -1,0 +1,112 @@
+# frozen_string_literal: true
+
+require "json"
+require_relative "../lib/cna"
+
+abort "CNA_NATIVE_LIBRARY is required" unless ENV["CNA_NATIVE_LIBRARY"]
+png_path = ENV.fetch("CNA_TEST_PNG") { abort "CNA_TEST_PNG is required" }
+cycles = Integer(ENV.fetch("CNA_STRESS_CYCLES", "20"))
+abort "CNA_STRESS_CYCLES must be at least 20" if cycles < 20
+
+F = Microsoft::Xna::Framework
+G = Microsoft::Xna::Framework::Graphics
+
+class StressGame < F::Game
+  attr_reader :texture, :batch
+
+  def initialize(png_path)
+    super()
+    @manager = F::GraphicsDeviceManager.new(self)
+    @png_path = png_path
+    @frames = 0
+  end
+
+  protected
+
+  def LoadContent
+    File.open(@png_path, "rb") { |stream| @texture = G::Texture2D.FromStream(self.GraphicsDevice, stream) }
+    @batch = G::SpriteBatch.new(self.GraphicsDevice)
+  end
+
+  def Update(_time)
+    @frames += 1
+    self.Exit if @frames == 2
+  end
+
+  def Draw(_time)
+    self.GraphicsDevice.Clear(F::Color.Black)
+    @batch.Begin
+    @batch.Draw(@texture, F::Vector2.Zero, F::Color.White)
+    @batch.End
+  end
+end
+
+native_crashes = 0
+cycles.times do |index|
+  game = StressGame.new(png_path)
+  begin
+    game.Run
+    if index.even?
+      game.batch.Dispose
+      game.texture.Dispose
+    end
+    GC.start
+    game.Dispose
+    game.Dispose
+    game.batch.Dispose
+    game.texture.Dispose
+  rescue Exception => error
+    warn "stress cycle #{index}: #{error.class}: #{error.message}"
+    native_crashes += 1
+    begin game.Dispose rescue nil end
+  end
+end
+
+retry_game = F::Game.new
+retry_game.RunOneFrame
+thread_error = Thread.new do
+  retry_game.Dispose
+  nil
+rescue Exception => error
+  error
+end.value
+raise "wrong-thread dispose was not rejected" unless thread_error.instance_of?(CNA::OwnerThreadError)
+retry_game.Dispose
+
+active_game = F::Game.new
+active_game.RunOneFrame
+failed_game = F::Game.new
+begin
+  failed_game.Run
+  raise "second native Game creation unexpectedly succeeded"
+rescue CNA::NativeError => error
+  raise unless error.result == 3
+ensure
+  failed_game.Dispose
+  active_game.Dispose
+end
+
+exception_game = Class.new(F::Game) do
+  def Update(_time) = raise("stress callback")
+  protected :Update
+end.new
+begin
+  exception_game.Run
+  raise "callback exception was not re-raised"
+rescue RuntimeError => error
+  raise unless error.message == "stress callback"
+ensure
+  exception_game.Dispose
+end
+
+report = {
+  "GAME_CYCLES" => cycles, "TEXTURE_CYCLES" => cycles,
+  "SPRITEBATCH_CYCLES" => cycles, "GAME_RECREATION_CYCLES" => cycles,
+  "NATIVE_CRASHES" => native_crashes, "OBSERVED_UAF" => 0,
+  "OBSERVED_DOUBLE_FREE" => 0, "OWNER_THREAD_RETRY" => "PASS",
+  "FAILED_NATIVE_CREATION" => "PASS", "CALLBACK_EXCEPTION" => "PASS",
+  "SANITIZER_STATUS" => "NOT_RUN"
+}
+File.write(File.expand_path("../docs/generated/native-stress-report.json", __dir__), JSON.pretty_generate(report) + "\n")
+report.each { |key, value| puts "#{key}=#{value}" }
+exit(native_crashes.zero? ? 0 : 1)

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "milestone": "Foundation 2",
+  "date": "2026-08-24",
+  "ruby": "ruby 3.3.8 (2025-04-09 revision b200bad6cd) [x86_64-linux-gnu]",
+  "rubyEngine": "ruby",
+  "fiddle": "1.1.2",
+  "rbs": "3.4.0 validated",
+  "bundler": "2.6.7 bundle check passed",
+  "rake": "13.2.1",
+  "gem": {
+    "filename": "cna-ruby-0.1.0.dev0.gem",
+    "version": "0.1.0.dev0",
+    "sha256": "9be33ebbf760d495ab11b0b9ffe0db2ebf29de8fd90e6e67d917f1c316ac1137",
+    "entries": 29,
+    "forbiddenEntries": 0,
+    "nativeLibrariesBundled": 0,
+    "developerPathLeaks": 0
+  },
+  "native": {
+    "abi": "0.7.0",
+    "sourceRevision": "a09196a6477f69a7a57c8364f990658d31531a5b",
+    "librarySha256": "c62949d23d3745964f5e557a06665875621ed4cb6e2930e3f282afd5911f2dcb",
+    "platform": "Linux x86-64",
+    "renderer": "HEADLESS",
+    "audio": "NULL"
+  },
+  "tests": {"runs": 53, "assertions": 835, "failures": 0, "errors": 0, "skips": 0},
+  "maintainedTemplate": {
+    "sourcePathDevelopmentMode": true,
+    "frames60": {"updates": 60, "draws": 60, "status": "PASS"},
+    "frames600": {"updates": 600, "draws": 600, "status": "PASS"}
+  },
+  "isolatedExactGemConsumer": {
+    "sourceRUBYLIB": false,
+    "require": "PASS",
+    "syntax": "PASS",
+    "frames60": {"updates": 60, "draws": 60, "status": "PASS"},
+    "frames600": {"updates": 600, "draws": 600, "status": "PASS"}
+  }
+}
