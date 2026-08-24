@@ -269,7 +269,12 @@ module Microsoft
           self.X = value.X; self.Y = value.Y
         end
 
-        def Center = Point.new(N.wrap_int32(@X + (@Width / 2.0).truncate), N.wrap_int32(@Y + (@Height / 2.0).truncate))
+        def Center
+          Point.new(
+            N.wrap_int32(@X + truncating_half(@Width)),
+            N.wrap_int32(@Y + truncating_half(@Height))
+          )
+        end
         def self.Empty = new
         def IsEmpty = @X.zero? && @Y.zero? && @Width.zero? && @Height.zero?
 
@@ -315,14 +320,14 @@ module Microsoft
           raise TypeError, "Intersect expects Rectangle values" unless a.instance_of?(self) && b.instance_of?(self)
           left = [a.Left, b.Left].max; top = [a.Top, b.Top].max
           right = [a.Right, b.Right].min; bottom = [a.Bottom, b.Bottom].min
-          right > left && bottom > top ? new(left, top, right - left, bottom - top) : self.Empty
+          right > left && bottom > top ? new(left, top, N.wrap_int32(right - left), N.wrap_int32(bottom - top)) : self.Empty
         end
 
         def self.Union(a, b)
           raise TypeError, "Union expects Rectangle values" unless a.instance_of?(self) && b.instance_of?(self)
           left = [a.Left, b.Left].min; top = [a.Top, b.Top].min
           right = [a.Right, b.Right].max; bottom = [a.Bottom, b.Bottom].max
-          new(left, top, right - left, bottom - top)
+          new(left, top, N.wrap_int32(right - left), N.wrap_int32(bottom - top))
         end
 
         def GetHashCode = N.wrap_int32(@X + @Y + @Width + @Height)
@@ -332,6 +337,7 @@ module Microsoft
         private
 
         def value_components = [@X, @Y, @Width, @Height]
+        def truncating_half(value) = value.negative? ? -((-value) / 2) : value / 2
       end
 
       class Color
@@ -339,16 +345,160 @@ module Microsoft
         N = CNA::Runtime::Numeric
         private_constant :N
 
+        # Exact packed UInt32 values from the pinned XNA 4.0 Windows runtime
+        # Color property bodies. Each public property constructs a fresh value.
+        NAMED_COLORS = {
+          "Transparent" => 0,
+          "AliceBlue" => 4_294_965_488,
+          "AntiqueWhite" => 4_292_340_730,
+          "Aqua" => 4_294_967_040,
+          "Aquamarine" => 4_292_149_119,
+          "Azure" => 4_294_967_280,
+          "Beige" => 4_292_670_965,
+          "Bisque" => 4_291_093_759,
+          "Black" => 4_278_190_080,
+          "BlanchedAlmond" => 4_291_685_375,
+          "Blue" => 4_294_901_760,
+          "BlueViolet" => 4_293_012_362,
+          "Brown" => 4_280_953_509,
+          "BurlyWood" => 4_287_084_766,
+          "CadetBlue" => 4_288_716_383,
+          "Chartreuse" => 4_278_255_487,
+          "Chocolate" => 4_280_183_250,
+          "Coral" => 4_283_465_727,
+          "CornflowerBlue" => 4_293_760_356,
+          "Cornsilk" => 4_292_671_743,
+          "Crimson" => 4_282_127_580,
+          "Cyan" => 4_294_967_040,
+          "DarkBlue" => 4_287_299_584,
+          "DarkCyan" => 4_287_335_168,
+          "DarkGoldenrod" => 4_278_945_464,
+          "DarkGray" => 4_289_309_097,
+          "DarkGreen" => 4_278_215_680,
+          "DarkKhaki" => 4_285_249_469,
+          "DarkMagenta" => 4_287_299_723,
+          "DarkOliveGreen" => 4_281_297_749,
+          "DarkOrange" => 4_278_226_175,
+          "DarkOrchid" => 4_291_572_377,
+          "DarkRed" => 4_278_190_219,
+          "DarkSalmon" => 4_286_224_105,
+          "DarkSeaGreen" => 4_287_347_855,
+          "DarkSlateBlue" => 4_287_315_272,
+          "DarkSlateGray" => 4_283_387_695,
+          "DarkTurquoise" => 4_291_939_840,
+          "DarkViolet" => 4_292_018_324,
+          "DeepPink" => 4_287_829_247,
+          "DeepSkyBlue" => 4_294_950_656,
+          "DimGray" => 4_285_098_345,
+          "DodgerBlue" => 4_294_938_654,
+          "Firebrick" => 4_280_427_186,
+          "FloralWhite" => 4_293_982_975,
+          "ForestGreen" => 4_280_453_922,
+          "Fuchsia" => 4_294_902_015,
+          "Gainsboro" => 4_292_664_540,
+          "GhostWhite" => 4_294_965_496,
+          "Gold" => 4_278_245_375,
+          "Goldenrod" => 4_280_329_690,
+          "Gray" => 4_286_611_584,
+          "Green" => 4_278_222_848,
+          "GreenYellow" => 4_281_335_725,
+          "Honeydew" => 4_293_984_240,
+          "HotPink" => 4_290_013_695,
+          "IndianRed" => 4_284_243_149,
+          "Indigo" => 4_286_709_835,
+          "Ivory" => 4_293_984_255,
+          "Khaki" => 4_287_424_240,
+          "Lavender" => 4_294_633_190,
+          "LavenderBlush" => 4_294_308_095,
+          "LawnGreen" => 4_278_254_716,
+          "LemonChiffon" => 4_291_689_215,
+          "LightBlue" => 4_293_318_829,
+          "LightCoral" => 4_286_611_696,
+          "LightCyan" => 4_294_967_264,
+          "LightGoldenrodYellow" => 4_292_016_890,
+          "LightGreen" => 4_287_688_336,
+          "LightGray" => 4_292_072_403,
+          "LightPink" => 4_290_885_375,
+          "LightSalmon" => 4_286_226_687,
+          "LightSeaGreen" => 4_289_376_800,
+          "LightSkyBlue" => 4_294_626_951,
+          "LightSlateGray" => 4_288_252_023,
+          "LightSteelBlue" => 4_292_789_424,
+          "LightYellow" => 4_292_935_679,
+          "Lime" => 4_278_255_360,
+          "LimeGreen" => 4_281_519_410,
+          "Linen" => 4_293_325_050,
+          "Magenta" => 4_294_902_015,
+          "Maroon" => 4_278_190_208,
+          "MediumAquamarine" => 4_289_383_782,
+          "MediumBlue" => 4_291_624_960,
+          "MediumOrchid" => 4_292_040_122,
+          "MediumPurple" => 4_292_571_283,
+          "MediumSeaGreen" => 4_285_641_532,
+          "MediumSlateBlue" => 4_293_814_395,
+          "MediumSpringGreen" => 4_288_346_624,
+          "MediumTurquoise" => 4_291_613_000,
+          "MediumVioletRed" => 4_286_911_943,
+          "MidnightBlue" => 4_285_536_537,
+          "MintCream" => 4_294_639_605,
+          "MistyRose" => 4_292_994_303,
+          "Moccasin" => 4_290_110_719,
+          "NavajoWhite" => 4_289_584_895,
+          "Navy" => 4_286_578_688,
+          "OldLace" => 4_293_326_333,
+          "Olive" => 4_278_222_976,
+          "OliveDrab" => 4_280_520_299,
+          "Orange" => 4_278_232_575,
+          "OrangeRed" => 4_278_207_999,
+          "Orchid" => 4_292_243_674,
+          "PaleGoldenrod" => 4_289_390_830,
+          "PaleGreen" => 4_288_215_960,
+          "PaleTurquoise" => 4_293_848_751,
+          "PaleVioletRed" => 4_287_852_763,
+          "PapayaWhip" => 4_292_210_687,
+          "PeachPuff" => 4_290_370_303,
+          "Peru" => 4_282_353_101,
+          "Pink" => 4_291_543_295,
+          "Plum" => 4_292_714_717,
+          "PowderBlue" => 4_293_320_880,
+          "Purple" => 4_286_578_816,
+          "Red" => 4_278_190_335,
+          "RosyBrown" => 4_287_598_524,
+          "RoyalBlue" => 4_292_962_625,
+          "SaddleBrown" => 4_279_453_067,
+          "Salmon" => 4_285_694_202,
+          "SandyBrown" => 4_284_523_764,
+          "SeaGreen" => 4_283_927_342,
+          "SeaShell" => 4_293_850_623,
+          "Sienna" => 4_281_160_352,
+          "Silver" => 4_290_822_336,
+          "SkyBlue" => 4_293_643_911,
+          "SlateBlue" => 4_291_648_106,
+          "SlateGray" => 4_287_660_144,
+          "Snow" => 4_294_638_335,
+          "SpringGreen" => 4_286_578_432,
+          "SteelBlue" => 4_290_019_910,
+          "Tan" => 4_287_411_410,
+          "Teal" => 4_286_611_456,
+          "Thistle" => 4_292_394_968,
+          "Tomato" => 4_282_868_735,
+          "Turquoise" => 4_291_878_976,
+          "Violet" => 4_293_821_166,
+          "Wheat" => 4_289_978_101,
+          "White" => 4_294_967_295,
+          "WhiteSmoke" => 4_294_309_365,
+          "Yellow" => 4_278_255_615,
+          "YellowGreen" => 4_281_519_514
+        }.freeze
+        private_constant :NAMED_COLORS
+
         def initialize(*arguments)
-          values = case arguments.length
-                   when 0 then [0, 0, 0, 0]
-                   when 3 then [*arguments, 255]
-                   when 4 then arguments
-                   else raise ArgumentError, "Foundation Color.new expects (), (r, g, b), or (r, g, b, a)"
-                   end
-          raise TypeError, "Color channel constructors require Int32" unless values.all? { |value| value.instance_of?(Integer) }
-          @packed = 0
-          self.R, self.G, self.B, self.A = values
+          @packed = case arguments.length
+                    when 0 then 0
+                    when 1 then pack_vector(arguments[0])
+                    when 3, 4 then pack_channels(arguments)
+                    else raise ArgumentError, "Color.new expects (), Vector3, Vector4, or three/four homogeneous channel values"
+                    end
         end
 
         def R = @packed & 0xff
@@ -356,19 +506,19 @@ module Microsoft
         def B = (@packed >> 16) & 0xff
         def A = (@packed >> 24) & 0xff
         def R=(value)
-          @packed = (@packed & 0xffff_ff00) | [[N.int32(value), 0].max, 255].min
+          @packed = (@packed & 0xffff_ff00) | N.uint8(value, "R")
         end
 
         def G=(value)
-          @packed = (@packed & 0xffff_00ff) | ([[N.int32(value), 0].max, 255].min << 8)
+          @packed = (@packed & 0xffff_00ff) | (N.uint8(value, "G") << 8)
         end
 
         def B=(value)
-          @packed = (@packed & 0xff00_ffff) | ([[N.int32(value), 0].max, 255].min << 16)
+          @packed = (@packed & 0xff00_ffff) | (N.uint8(value, "B") << 16)
         end
 
         def A=(value)
-          @packed = (@packed & 0x00ff_ffff) | ([[N.int32(value), 0].max, 255].min << 24)
+          @packed = (@packed & 0x00ff_ffff) | (N.uint8(value, "A") << 24)
         end
         def PackedValue = @packed
         def PackedValue=(value)
@@ -380,24 +530,87 @@ module Microsoft
             new.tap { |color| color.PackedValue = value }
           end
           private :from_packed
-          def Transparent = from_packed(0x00ff_ffff)
-          def Black = from_packed(0xff00_0000)
-          def CornflowerBlue = from_packed(0xffed_9564)
-          def White = from_packed(0xffff_ffff)
+
+          NAMED_COLORS.each do |name, packed|
+            define_method(name) { from_packed(packed) }
+          end
+
+          def FromNonPremultiplied(*arguments)
+            if arguments.length == 1 && arguments[0].instance_of?(Vector4)
+              vector = arguments[0]
+              return from_packed(pack_unorm_channels(
+                N.mul32(vector.X, vector.W), N.mul32(vector.Y, vector.W),
+                N.mul32(vector.Z, vector.W), vector.W
+              ))
+            end
+            if arguments.length == 4 && arguments.all? { |value| value.instance_of?(Integer) }
+              r, g, b, a = arguments.map.with_index { |value, index| N.int32(value, %w[r g b a][index]) }
+              return from_packed(pack_bytes(
+                clamp_byte(truncating_divide(r * a, 255)),
+                clamp_byte(truncating_divide(g * a, 255)),
+                clamp_byte(truncating_divide(b * a, 255)),
+                clamp_byte(a)
+              ))
+            end
+            raise TypeError, "FromNonPremultiplied expects Vector4 or four Int32 values"
+          end
 
           def Lerp(value1, value2, amount)
             raise TypeError, "Lerp expects Color values" unless value1.instance_of?(self) && value2.instance_of?(self)
-            fraction = [[(N.f32(amount) * 65_536.0).round, 0].max, 65_536].min
-            new(*[value1.R, value1.G, value1.B, value1.A].zip([value2.R, value2.G, value2.B, value2.A]).map { |a, b| a + (((b - a) * fraction) >> 16) })
+            fraction = pack_unorm(65_536.0, amount)
+            channels = [value1.R, value1.G, value1.B, value1.A]
+            targets = [value2.R, value2.G, value2.B, value2.A]
+            from_packed(pack_bytes(*channels.zip(targets).map { |a, b| a + (((b - a) * fraction) >> 16) }))
           end
 
           def Multiply(value, scale)
             raise TypeError, "Multiply expects Color" unless value.instance_of?(self)
             scaled = N.mul32(scale, 65_536.0)
-            fixed = scaled.nan? || scaled <= 0 ? 0 : [scaled.to_i, 16_777_215].min
-            new(*[value.R, value.G, value.B, value.A].map { |channel| [255, (channel * fixed) >> 16].min })
+            fixed = if scaled.nan? || scaled < 0.0
+                      0
+                    elsif scaled > 16_777_215.0
+                      16_777_215
+                    else
+                      scaled.to_i
+                    end
+            channels = [value.R, value.G, value.B, value.A].map { |channel| [255, (channel * fixed) >> 16].min }
+            from_packed(pack_bytes(*channels))
+          end
+
+          private
+
+          def pack_bytes(r, g, b, a) = r | (g << 8) | (b << 16) | (a << 24)
+
+          def clamp_byte(value)
+            return 0 if value < 0
+            return 255 if value > 255
+
+            value
+          end
+
+          def truncating_divide(value, divisor)
+            quotient = value.abs / divisor
+            value.negative? ? -quotient : quotient
+          end
+
+          def pack_unorm(bitmask, value)
+            scaled = N.mul32(value, bitmask)
+            return 0 if scaled.nan? || scaled < 0.0
+            return bitmask.to_i if scaled.infinite? || scaled > bitmask
+
+            scaled.round(half: :even).to_i
+          end
+
+          def pack_unorm_channels(r, g, b, a)
+            pack_bytes(
+              pack_unorm(255.0, r), pack_unorm(255.0, g),
+              pack_unorm(255.0, b), pack_unorm(255.0, a)
+            )
           end
         end
+
+        def ToVector3 = Vector3.new(N.div32(self.R, 255.0), N.div32(self.G, 255.0), N.div32(self.B, 255.0))
+        def ToVector4 = Vector4.new(N.div32(self.R, 255.0), N.div32(self.G, 255.0), N.div32(self.B, 255.0), N.div32(self.A, 255.0))
 
         def *(scale) = self.class.Multiply(self, scale)
         def GetHashCode = N.wrap_int32(@packed)
@@ -407,6 +620,32 @@ module Microsoft
         private
 
         def value_components = [self.R, self.G, self.B, self.A]
+
+        def pack_vector(value)
+          if value.instance_of?(Vector3)
+            return self.class.__send__(:pack_unorm_channels, value.X, value.Y, value.Z, 1.0)
+          end
+          if value.instance_of?(Vector4)
+            return self.class.__send__(:pack_unorm_channels, value.X, value.Y, value.Z, value.W)
+          end
+
+          raise TypeError, "Color vector constructor expects Vector3 or Vector4"
+        end
+
+        def pack_channels(arguments)
+          values = arguments.length == 3 ? [*arguments, arguments.first.instance_of?(Integer) ? 255 : 1.0] : arguments
+          if values.all? { |value| value.instance_of?(Integer) }
+            channels = values.map.with_index do |value, index|
+              self.class.__send__(:clamp_byte, N.int32(value, %w[r g b a][index]))
+            end
+            return self.class.__send__(:pack_bytes, *channels)
+          end
+          if values.all? { |value| value.instance_of?(Float) }
+            return self.class.__send__(:pack_unorm_channels, *values)
+          end
+
+          raise TypeError, "Color channel constructors require all Int32 or all Single values"
+        end
       end
 
       class GameTime

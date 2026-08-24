@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "GEM_FILENAME": "cna-ruby-0.1.0.dev0.gem",
   "VERSION": "0.1.0.dev0",
-  "GEM_SHA256": "9be33ebbf760d495ab11b0b9ffe0db2ebf29de8fd90e6e67d917f1c316ac1137",
-  "GEM_ENTRIES": 29,
+  "GEM_SHA256": "e5bac66a205bdd91a0c8ce75a2b861538e1ea9826b5ffd83f6a823a49506b9fa",
+  "GEM_ENTRIES": 30,
   "FORBIDDEN_ENTRIES": [
 
   ],
@@ -42,6 +42,7 @@
     "sig/microsoft/xna/framework.rbs",
     "sig/microsoft/xna/framework/graphics.rbs",
     "sig/microsoft/xna/framework/input.rbs",
-    "sig/microsoft/xna/geometry.rbs"
+    "sig/microsoft/xna/geometry.rbs",
+    "sig/microsoft/xna/presentation_values.rbs"
   ]
 }

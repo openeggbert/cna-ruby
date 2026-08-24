@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "provenance": "PURE_XNA_DERIVED retained observations: XNA 4.0 reference metadata and IL/algorithm analysis; never CNA output",
-  "OBSERVATIONS": 88,
-  "ASSERTIONS": 88,
+  "OBSERVATIONS": 104,
+  "ASSERTIONS": 104,
   "FAILURES": 0,
   "groupCounts": {
     "BINARY32": 2,
     "BOUNDING_BOX": 3,
     "BOUNDING_FRUSTUM": 8,
     "BOUNDING_SPHERE": 3,
-    "COLOR": 4,
+    "COLOR": 13,
     "CROSS_GEOMETRY": 3,
     "MATHHELPER": 9,
     "MATRIX": 12,
@@ -17,7 +17,7 @@
     "POINT": 2,
     "QUATERNION": 8,
     "RAY": 3,
-    "RECTANGLE": 6,
+    "RECTANGLE": 13,
     "VECTOR2": 8,
     "VECTOR3": 7,
     "VECTOR4": 4

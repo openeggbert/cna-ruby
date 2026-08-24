@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "digest"
 require "json"
 require_relative "../lib/cna"
 
@@ -114,6 +115,44 @@ def execute(item)
   when "Color.Packed" then color(args).PackedValue
   when "Color.Lerp" then color_result(F::Color.Lerp(color(args[0]), color(args[1]), args[2]))
   when "Color.Multiply" then color_result(F::Color.Multiply(color(args[0]), args[1]))
+  when "Color.FloatConstructors"
+    tie_zero = CNA::Runtime::Numeric.div32(0.5, 255.0)
+    tie_two = CNA::Runtime::Numeric.div32(2.5, 255.0)
+    [F::Color.new(0.0, 1.0, 0.5).PackedValue,
+     F::Color.new(0.5, Float::NAN, Float::INFINITY, -Float::INFINITY).PackedValue,
+     F::Color.new(tie_zero, tie_two, tie_zero, tie_two).PackedValue]
+  when "Color.VectorConstructors"
+    [F::Color.new(vector3(args[0])).PackedValue, F::Color.new(vector4(args[1])).PackedValue]
+  when "Color.FromNonPremultipliedVector"
+    [F::Color.FromNonPremultiplied(vector4(args[0])).PackedValue,
+     F::Color.FromNonPremultiplied(F::Vector4.new(Float::NAN, Float::INFINITY, -Float::INFINITY, Float::INFINITY)).PackedValue]
+  when "Color.FromNonPremultipliedInt"
+    args.map { |alpha| F::Color.FromNonPremultiplied(255, 128, 64, alpha).PackedValue }
+  when "Color.ToVectorBits"
+    value3 = F::Color.new(*args[0]).ToVector3
+    value4 = F::Color.new(*args[1]).ToVector4
+    hex_values([*vector3_result(value3), *vector4_result(value4)])
+  when "Color.Palette"
+    contract = JSON.parse(File.read(File.expand_path("api_compat/signatures.json", __dir__)))
+    type = contract.fetch("types").find { |candidate| candidate["name"] == "Microsoft.Xna.Framework.Color" }
+    names = type.fetch("members").filter_map do |member|
+      member["name"] if member["kind"] == "property" && member["static"]
+    end
+    text = names.map { |name| "#{name}=#{F::Color.public_send(name).PackedValue}\n" }.join
+    [names.length, Digest::SHA256.hexdigest(text), names.all? { |name| !F::Color.public_send(name).equal?(F::Color.public_send(name)) }]
+  when "Color.LerpEdges"
+    low = F::Color.new(10, 200, 50, 255); high = F::Color.new(110, 0, 250, 0)
+    [-1.0, 0.0, 0.5, 1.0, 2.0, Float::NAN, Float::INFINITY, -Float::INFINITY].map do |amount|
+      F::Color.Lerp(low, high, amount).PackedValue
+    end
+  when "Color.MultiplyEdges"
+    value = F::Color.new(1, 100, 200, 255)
+    [0.0, 1.0, 0.5, -1.0, 2.0, Float::NAN, Float::INFINITY, -Float::INFINITY].map do |scale|
+      F::Color.Multiply(value, scale).PackedValue
+    end
+  when "Color.ValueSemantics"
+    value = F::Color.new(1, 2, 3, 255); copy = value.dup; copy.R = 9
+    [F::Color.Transparent.PackedValue, value.GetHashCode, value.ToString, value == F::Color.new(1, 2, 3, 255), value.R, copy.R]
   when "Rectangle.Contains" then F::Rectangle.new(*args[0, 4]).Contains(args[4], args[5])
   when "Rectangle.Intersect" then rectangle_result(F::Rectangle.Intersect(rectangle(args[0]), rectangle(args[1])))
   when "Rectangle.Union" then rectangle_result(F::Rectangle.Union(rectangle(args[0]), rectangle(args[1])))
@@ -121,6 +160,39 @@ def execute(item)
     value = rectangle(args[0]); value.Inflate(*args[1]); rectangle_result(value)
   when "Rectangle.Offset"
     value = rectangle(args[0]); value.Offset(*args[1]); rectangle_result(value)
+  when "Rectangle.Boundaries"
+    value = rectangle(args)
+    [value.Contains(value.Left, value.Top), value.Contains(value.Right, value.Top),
+     value.Contains(value.Left, value.Bottom), value.Contains(value.Right - 1, value.Bottom - 1)]
+  when "Rectangle.Degenerate"
+    value = rectangle(args)
+    [value.Intersects(F::Rectangle.new(5, 5, 0, 0)),
+     value.Intersects(F::Rectangle.new(5, 5, -1, -1)),
+     value.Intersects(F::Rectangle.Empty), value.Contains(F::Rectangle.new(5, 5, -1, -1))]
+  when "Rectangle.RefOutProjection"
+    value = rectangle(args[0]); other = rectangle(args[1])
+    [value.Contains(F::Point.new(other.X, other.Y)), value.Contains(other), value.Intersects(other),
+     *rectangle_result(F::Rectangle.Intersect(value, other)), *rectangle_result(F::Rectangle.Union(value, other))]
+  when "Rectangle.Overflow"
+    maximum = 2_147_483_647; minimum = -2_147_483_648
+    value = F::Rectangle.new(maximum, minimum, 1, -1)
+    before = [value.Right, value.Bottom, value.Center.X, value.Center.Y]
+    value.Offset(1, -1)
+    inflated = F::Rectangle.new(minimum, maximum, maximum, minimum); inflated.Inflate(1, -1)
+    [*before, *rectangle_result(value), *rectangle_result(inflated)]
+  when "Rectangle.IntersectionEdges"
+    base = rectangle(args)
+    [*rectangle_result(F::Rectangle.Intersect(base, F::Rectangle.new(10, 0, 5, 5))),
+     *rectangle_result(F::Rectangle.Intersect(base, F::Rectangle.new(9, 9, 5, 5))),
+     *rectangle_result(F::Rectangle.Intersect(base, F::Rectangle.new(2, 2, 3, 3)))]
+  when "Rectangle.UnionOverflow"
+    maximum = 2_147_483_647; minimum = -2_147_483_648
+    [*rectangle_result(F::Rectangle.Union(F::Rectangle.new(maximum, 0, 2, 1), F::Rectangle.new(minimum, 0, 1, 1))),
+     *rectangle_result(F::Rectangle.Union(F::Rectangle.new(minimum, minimum, 0, 0), F::Rectangle.new(maximum, maximum, 0, 0)))]
+  when "Rectangle.ValueSemantics"
+    value = rectangle(args); copy = value.dup; copy.X = 9
+    [value.GetHashCode, value.ToString, value == rectangle(args), value.X, copy.X,
+     !value.Location.equal?(value.Location), !value.Center.equal?(value.Center), !F::Rectangle.Empty.equal?(F::Rectangle.Empty)]
   when "Point.Equal" then F::Point.new(args[0], args[1]) == F::Point.new(args[2], args[3])
   when "Point.ZeroFresh" then !F::Point.Zero.equal?(F::Point.Zero)
   when "Plane.Normalize"

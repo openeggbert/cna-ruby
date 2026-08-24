@@ -25,15 +25,8 @@
     {"name": "Microsoft.Xna.Framework.BoundingFrustum", "complete": true},
     {"name": "Microsoft.Xna.Framework.ContainmentType", "complete": true},
     {"name": "Microsoft.Xna.Framework.PlaneIntersectionType", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Rectangle", "includeNonRefOut": true},
-    {"name": "Microsoft.Xna.Framework.Color", "include": [
-      {"kind": "constructor", "parameters": ["System.Int32", "System.Int32", "System.Int32"]},
-      {"kind": "constructor", "parameters": ["System.Int32", "System.Int32", "System.Int32", "System.Int32"]},
-      {"name": "Lerp"}, {"name": "Multiply"}, {"name": "op_Multiply"}, {"name": "ToString"},
-      {"name": "GetHashCode"}, {"name": "Equals"}, {"name": "op_Equality"}, {"name": "op_Inequality"},
-      {"name": "R"}, {"name": "G"}, {"name": "B"}, {"name": "A"}, {"name": "PackedValue"},
-      {"name": "Transparent"}, {"name": "Black"}, {"name": "CornflowerBlue"}, {"name": "White"}
-    ]},
+    {"name": "Microsoft.Xna.Framework.Rectangle", "complete": true},
+    {"name": "Microsoft.Xna.Framework.Color", "complete": true},
     {"name": "Microsoft.Xna.Framework.Game", "include": [
       {"kind": "constructor", "parameters": []}, {"name": "Run"}, {"name": "RunOneFrame"}, {"name": "Exit"},
       {"name": "BeginRun"}, {"name": "EndRun"}, {"name": "Update"}, {"name": "BeginDraw"}, {"name": "Draw"},

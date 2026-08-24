@@ -37,10 +37,16 @@ abort "behavior source SHA-256 mismatch" unless Digest::SHA256.hexdigest(bytes) 
 source_corpus = JSON.parse(bytes)
 observations = source_corpus.fetch("observations").select { |item| SUPPORTED_IDS.include?(item.fetch("id")) }
 abort "behavior selection mismatch" unless observations.length == SUPPORTED_IDS.length
+milestone_path = File.expand_path("../behavior/xna40-color-rectangle-values.json", __dir__)
+milestone = JSON.parse(File.read(milestone_path))
+abort "Milestone 3 behavior evidence is not PURE_XNA_DERIVED" unless milestone["category"] == "PURE_XNA_DERIVED"
+observations.concat(milestone.fetch("observations"))
+abort "duplicate behavior observation id" unless observations.map { |item| item.fetch("id") }.uniq.length == observations.length
 result = source_corpus.merge(
   "provenance" => "PURE_XNA_DERIVED retained observations: XNA 4.0 reference metadata and IL/algorithm analysis; never CNA output",
   "category" => "PURE_XNA_DERIVED",
   "sourceSha256" => EXPECTED_SHA256,
+  "milestone3SourceAssemblySha256" => milestone.fetch("sourceAssemblySha256"),
   "observations" => observations
 )
 destination = File.expand_path("../behavior/xna40-foundation-values.json", __dir__)

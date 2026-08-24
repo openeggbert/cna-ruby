@@ -18525,6 +18525,34 @@
           "name": "Contains",
           "static": false,
           "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "value",
+              "type": "Microsoft.Xna.Framework.Point&",
+              "ref": true,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "result",
+              "type": "System.Boolean&",
+              "ref": true,
+              "out": true,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Contains",
+          "static": false,
+          "access": "public",
           "returnType": "System.Boolean",
           "genericParameters": [
 
@@ -18535,6 +18563,34 @@
               "type": "Microsoft.Xna.Framework.Rectangle",
               "ref": false,
               "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Contains",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "value",
+              "type": "Microsoft.Xna.Framework.Rectangle&",
+              "ref": true,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "result",
+              "type": "System.Boolean&",
+              "ref": true,
+              "out": true,
               "in": false,
               "optional": false
             }
@@ -18555,6 +18611,34 @@
               "type": "Microsoft.Xna.Framework.Rectangle",
               "ref": false,
               "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Intersects",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "value",
+              "type": "Microsoft.Xna.Framework.Rectangle&",
+              "ref": true,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "result",
+              "type": "System.Boolean&",
+              "ref": true,
+              "out": true,
               "in": false,
               "optional": false
             }
@@ -18590,6 +18674,42 @@
         },
         {
           "kind": "method",
+          "name": "Intersect",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "value1",
+              "type": "Microsoft.Xna.Framework.Rectangle&",
+              "ref": true,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "value2",
+              "type": "Microsoft.Xna.Framework.Rectangle&",
+              "ref": true,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "result",
+              "type": "Microsoft.Xna.Framework.Rectangle&",
+              "ref": true,
+              "out": true,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
           "name": "Union",
           "static": true,
           "access": "public",
@@ -18611,6 +18731,42 @@
               "type": "Microsoft.Xna.Framework.Rectangle",
               "ref": false,
               "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Union",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "value1",
+              "type": "Microsoft.Xna.Framework.Rectangle&",
+              "ref": true,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "value2",
+              "type": "Microsoft.Xna.Framework.Rectangle&",
+              "ref": true,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "result",
+              "type": "Microsoft.Xna.Framework.Rectangle&",
+              "ref": true,
+              "out": true,
               "in": false,
               "optional": false
             }
@@ -18978,6 +19134,216 @@
           ]
         },
         {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "r",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "g",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "r",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "g",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "a",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector3",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "FromNonPremultiplied",
+          "static": true,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Color",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vector",
+              "type": "Microsoft.Xna.Framework.Vector4",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "FromNonPremultiplied",
+          "static": true,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Color",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "r",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "g",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "b",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "a",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector3",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector3",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToVector4",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector4",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
           "kind": "method",
           "name": "Lerp",
           "static": true,
@@ -19271,7 +19637,215 @@
         },
         {
           "kind": "property",
+          "name": "AliceBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "AntiqueWhite",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Aqua",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Aquamarine",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Azure",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Beige",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Bisque",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
           "name": "Black",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "BlanchedAlmond",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Blue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "BlueViolet",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Brown",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "BurlyWood",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "CadetBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Chartreuse",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Chocolate",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Coral",
           "type": "Microsoft.Xna.Framework.Color",
           "static": true,
           "get": true,
@@ -19297,7 +19871,1580 @@
         },
         {
           "kind": "property",
+          "name": "Cornsilk",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Crimson",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Cyan",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkCyan",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkGoldenrod",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkGray",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkGreen",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkKhaki",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkMagenta",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkOliveGreen",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkOrange",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkOrchid",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkRed",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkSalmon",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkSeaGreen",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkSlateBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkSlateGray",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkTurquoise",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DarkViolet",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DeepPink",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DeepSkyBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DimGray",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DodgerBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Firebrick",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "FloralWhite",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "ForestGreen",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Fuchsia",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Gainsboro",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "GhostWhite",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Gold",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Goldenrod",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Gray",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Green",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "GreenYellow",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Honeydew",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HotPink",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "IndianRed",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Indigo",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Ivory",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Khaki",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Lavender",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LavenderBlush",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LawnGreen",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LemonChiffon",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LightBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LightCoral",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LightCyan",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LightGoldenrodYellow",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LightGreen",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LightGray",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LightPink",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LightSalmon",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LightSeaGreen",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LightSkyBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LightSlateGray",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LightSteelBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LightYellow",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Lime",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LimeGreen",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Linen",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Magenta",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Maroon",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MediumAquamarine",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MediumBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MediumOrchid",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MediumPurple",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MediumSeaGreen",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MediumSlateBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MediumSpringGreen",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MediumTurquoise",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MediumVioletRed",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MidnightBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MintCream",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MistyRose",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Moccasin",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "NavajoWhite",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Navy",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "OldLace",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Olive",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "OliveDrab",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Orange",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "OrangeRed",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Orchid",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PaleGoldenrod",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PaleGreen",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PaleTurquoise",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PaleVioletRed",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PapayaWhip",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PeachPuff",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Peru",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Pink",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Plum",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PowderBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Purple",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Red",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "RosyBrown",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "RoyalBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "SaddleBrown",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Salmon",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "SandyBrown",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "SeaGreen",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "SeaShell",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Sienna",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Silver",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "SkyBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "SlateBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "SlateGray",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Snow",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "SpringGreen",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "SteelBlue",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Tan",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Teal",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Thistle",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Tomato",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Turquoise",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Violet",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Wheat",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
           "name": "White",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "WhiteSmoke",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Yellow",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "YellowGreen",
           "type": "Microsoft.Xna.Framework.Color",
           "static": true,
           "get": true,

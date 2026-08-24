@@ -68,6 +68,35 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     refute_includes File.read(SIGNATURE_ROOT.join("microsoft", "xna", "geometry.rbs")), "untyped"
   end
 
+  def test_presentation_value_rbs_retains_every_static_contract_identity
+    environment = load_environment
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    selected = contract.fetch("types").select do |type|
+      %w[Microsoft.Xna.Framework.Color Microsoft.Xna.Framework.Rectangle].include?(type.fetch("name"))
+    end
+    operators = {"op_Equality" => "==", "op_Inequality" => "!=", "op_Multiply" => "*"}
+
+    assert_equal 2, selected.length
+    selected.each do |type|
+      _name, entry = environment.class_decls.find { |candidate, _value| candidate.to_s == "::#{type.fetch("rubyName")}" }
+      refute_nil entry, type.fetch("rubyName")
+      definitions = entry.decls.flat_map do |declaration|
+        declaration.decl.members.grep(RBS::AST::Members::MethodDefinition)
+      end.group_by { |member| member.name.to_s }
+      expected = type.fetch("members").select { |member| %w[constructor method].include?(member["kind"]) }.group_by do |member|
+        member["kind"] == "constructor" ? "initialize" : operators.fetch(member["name"], member["name"])
+      end
+      expected.each do |method_name, identities|
+        actual = definitions.fetch(method_name).sum { |definition| definition.overloads.length }
+        projected_default = method_name == "initialize" ? 1 : 0
+        assert_equal identities.length + projected_default, actual, "#{type.fetch("name")}##{method_name}"
+      end
+    end
+    assert_equal 19, selected.find { |type| type["name"].end_with?(".Color") }.fetch("members").count { |member| %w[constructor method].include?(member["kind"]) }
+    assert_equal 21, selected.find { |type| type["name"].end_with?(".Rectangle") }.fetch("members").count { |member| %w[constructor method].include?(member["kind"]) }
+    refute_includes File.read(SIGNATURE_ROOT.join("microsoft", "xna", "presentation_values.rbs")), "untyped"
+  end
+
   private
 
   def load_environment

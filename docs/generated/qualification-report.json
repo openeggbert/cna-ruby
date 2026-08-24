@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 2",
+  "milestone": "Foundation 3",
   "date": "2026-08-24",
   "ruby": "ruby 3.3.8 (2025-04-09 revision b200bad6cd) [x86_64-linux-gnu]",
   "rubyEngine": "ruby",
   "fiddle": "1.1.2",
   "rbs": "3.4.0 validated",
-  "bundler": "2.6.7 bundle check passed",
-  "rake": "13.2.1",
+  "bundler": "2.5.22 bundle check passed",
+  "rake": "13.4.2",
   "gem": {
     "filename": "cna-ruby-0.1.0.dev0.gem",
     "version": "0.1.0.dev0",
-    "sha256": "9be33ebbf760d495ab11b0b9ffe0db2ebf29de8fd90e6e67d917f1c316ac1137",
-    "entries": 29,
+    "sha256": "e5bac66a205bdd91a0c8ce75a2b861538e1ea9826b5ffd83f6a823a49506b9fa",
+    "entries": 30,
     "forbiddenEntries": 0,
     "nativeLibrariesBundled": 0,
     "developerPathLeaks": 0
@@ -25,9 +25,12 @@
     "renderer": "HEADLESS",
     "audio": "NULL"
   },
-  "tests": {"runs": 53, "assertions": 835, "failures": 0, "errors": 0, "skips": 0},
+  "tests": {"runs": 77, "assertions": 1483, "failures": 0, "errors": 0, "skips": 0},
   "maintainedTemplate": {
     "sourcePathDevelopmentMode": true,
+    "sourceChanged": false,
+    "head": "42ae209b8b4fd175b7b1e5de43d895083b81877b",
+    "indexSha256": "9b2bbabce838d3e48b09816fa10c2aa72a2c8e2eaf2d64e62f494db12a1dd303",
     "frames60": {"updates": 60, "draws": 60, "status": "PASS"},
     "frames600": {"updates": 600, "draws": 600, "status": "PASS"}
   },
@@ -35,6 +38,7 @@
     "sourceRUBYLIB": false,
     "require": "PASS",
     "syntax": "PASS",
+    "installedSourceFiles": 24,
     "frames60": {"updates": 60, "draws": 60, "status": "PASS"},
     "frames600": {"updates": 600, "draws": 600, "status": "PASS"}
   }

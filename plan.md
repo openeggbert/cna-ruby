@@ -6,11 +6,11 @@ This file is the normative description of the current architecture and milestone
 
 The only native boundary is `Ruby XNA facade -> CNA private runtime -> CNA C ABI 0.7.0 -> CNA`. The binding never resolves C++ symbols and never loads another language binding. MRI Ruby and Fiddle are the only qualified Ruby/native combination.
 
-## Foundation 2 surface
+## Foundation 3 surface
 
-The runtime exposes real, measured implementations for the types recorded by `tools/api_compat/signatures.json`. Missing XNA types and overloads remain absent. ContentManager, BasicEffect, and the old 3D demo surface remain absent rather than simulated. Matrix is now a complete managed XNA value type and does not imply 3D rendering support.
+The runtime exposes real, measured implementations for the types recorded by `tools/api_compat/signatures.json`. Missing XNA types and overloads remain absent. ContentManager, BasicEffect, and the old 3D demo surface remain absent rather than simulated. Matrix is a complete managed XNA value type and does not imply 3D rendering support.
 
-Managed value work covers complete MathHelper, Vector2, Vector3, Vector4, Quaternion, Matrix, Plane, Ray, BoundingBox, BoundingSphere, BoundingFrustum, Point, GameTime, ContainmentType, PlaneIntersectionType, and selected enum dependencies. Rectangle and Color remain explicitly measured partial types. Native work is unchanged from Foundation 1: Game callbacks, GraphicsDeviceManager, callback-borrowed GraphicsDevice, Viewport, Texture2D encoded-stream loading, SpriteBatch's qualified scaled-draw subset, and Keyboard state.
+Managed value work covers complete MathHelper, Vector2, Vector3, Vector4, Quaternion, Matrix, Plane, Ray, BoundingBox, BoundingSphere, BoundingFrustum, Rectangle, Color, Point, GameTime, ContainmentType, PlaneIntersectionType, and selected enum dependencies. Color includes all XNA constructors and conversions, exact packed/fixed-point behavior, and all 141 predefined properties. Rectangle includes all five collapsed ref/out projections and unchecked Int32 behavior. Native work is unchanged from Foundation 1: Game callbacks, GraphicsDeviceManager, callback-borrowed GraphicsDevice, Viewport, Texture2D encoded-stream loading, SpriteBatch's qualified scaled-draw subset, and Keyboard state.
 
 ## Admission and safety
 
@@ -29,4 +29,4 @@ Normal API strict mode is expected to remain red until the full selected XNA pro
 
 ## Deferred boundaries
 
-Content/XNB, Effects/BasicEffect, 3D rendering/Model, audio, media, packed vectors, Windows, macOS, browser/Wasm, Android, JRuby, TruffleRuby, MRuby, and Opal are not Foundation 2 support.
+Curve, Content/XNB, Effects/BasicEffect, 3D rendering/Model, audio, media, packed vectors, Windows, macOS, browser/Wasm, Android, JRuby, TruffleRuby, MRuby, and Opal are not Foundation 3 support.

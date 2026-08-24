@@ -20,35 +20,6 @@ module Microsoft
         def self.Zero: () -> Point
       end
 
-      class Rectangle
-        attr_accessor X: Integer
-        attr_accessor Y: Integer
-        attr_accessor Width: Integer
-        attr_accessor Height: Integer
-        def initialize: () -> void
-                      | (Integer x, Integer y, Integer width, Integer height) -> void
-        def Left: () -> Integer
-        def Right: () -> Integer
-        def Top: () -> Integer
-        def Bottom: () -> Integer
-        def Contains: (*untyped arguments) -> bool
-      end
-
-      class Color
-        attr_accessor R: Integer
-        attr_accessor G: Integer
-        attr_accessor B: Integer
-        attr_accessor A: Integer
-        attr_accessor PackedValue: Integer
-        def initialize: () -> void
-                      | (Integer r, Integer g, Integer b) -> void
-                      | (Integer r, Integer g, Integer b, Integer a) -> void
-        def self.Transparent: () -> Color
-        def self.Black: () -> Color
-        def self.CornflowerBlue: () -> Color
-        def self.White: () -> Color
-      end
-
       class GameTime
         attr_reader TotalGameTime: Float
         attr_reader ElapsedGameTime: Float
