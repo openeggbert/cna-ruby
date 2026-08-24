@@ -302,6 +302,33 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     refute_includes source, "def HasFlag"
   end
 
+  def test_graphics_device_status_rbs_retains_exact_three_identity_non_flags_projection
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    selected = contract.fetch("types").find do |type|
+      type.fetch("name") == "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus"
+    end
+    refute_nil selected
+    assert_equal 3, selected.fetch("members").length
+    assert_equal "enum", selected.fetch("kind")
+    assert_equal false, selected.fetch("flags")
+    assert_equal "System.Int32", selected.fetch("underlyingType")
+
+    source = File.read(SIGNATURE_ROOT.join("microsoft", "xna", "framework", "graphics.rbs"))
+    match = source.match(/^        class GraphicsDeviceStatus\n(?<body>.*?)^        end$/m)
+    refute_nil match
+    section = match[:body]
+    %w[Normal Lost NotReset].each do |name|
+      assert_includes section, "#{name}: GraphicsDeviceStatus"
+    end
+    refute_includes section, "untyped"
+    refute_match(/\*\w*/, section)
+    refute_includes section, "def |:"
+    refute_includes section, "def &:"
+    refute_includes section, "def ToString"
+    refute_includes source, "attr_reader GraphicsDeviceStatus:"
+    refute_match(/def GraphicsDeviceStatus:/, source)
+  end
+
   private
 
   def load_environment

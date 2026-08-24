@@ -500,6 +500,73 @@ class ApiVerifierTest < Minitest::Test
     orientation&.instance_variable_set(:@enum_mask, original) if original
   end
 
+  def test_graphics_device_status_missing_type_and_wrong_namespace_are_detected
+    reference, target = graphics_device_status_contracts
+    target.fetch("types").clear
+    assert_operator verify(reference, target).counts["MISSING_TYPE"], :>, 0
+
+    reference, target = graphics_device_status_contracts
+    status = target.fetch("types").first
+    status["name"] = "Microsoft.Xna.Framework.GraphicsDeviceStatus"
+    status["rubyName"] = "Microsoft::Xna::Framework::GraphicsDeviceStatus"
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_TYPE"], :>, 0
+    assert_operator result.counts["UNEXPECTED_TYPE"], :>, 0
+  end
+
+  def test_graphics_device_status_kind_underlying_type_and_flags_are_detected
+    reference, target = graphics_device_status_contracts
+    status = target.fetch("types").first
+    status["kind"] = "class"
+    status["underlyingType"] = "System.UInt32"
+    status["flags"] = true
+    result = verify(reference, target)
+    assert_operator result.counts["TYPE_KIND_MISMATCH"], :>, 0
+    assert_operator result.counts["ENUM_VALUE_MISMATCH"], :>, 0
+    assert_operator result.counts["FLAGS_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_graphics_device_status_each_wrong_raw_value_is_detected
+    reference, target = graphics_device_status_contracts
+    wrong_values = {"Normal" => "1", "Lost" => "2", "NotReset" => "0"}
+    target.fetch("types").first.fetch("members").each do |member|
+      member["value"] = wrong_values.fetch(member.fetch("name"))
+    end
+    assert_operator verify(reference, target).counts["ENUM_VALUE_MISMATCH"], :>=, 3
+  end
+
+  def test_graphics_device_status_missing_not_reset_storage_and_extra_member_are_detected
+    reference, target = graphics_device_status_contracts
+    status = target.fetch("types").first
+    status.fetch("members").reject! { |member| member["name"] == "NotReset" }
+    storage = reference.fetch("types").first.fetch("members").find { |member| member["name"] == "value__" }
+    status.fetch("members") << Marshal.load(Marshal.dump(storage))
+    status.fetch("members") << {
+      "kind" => "field", "name" => "DeviceLost", "type" => status.fetch("name"),
+      "static" => true, "constant" => true, "value" => "1"
+    }
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_MEMBER"], :>, 0
+    assert_operator result.counts["UNEXPECTED_MEMBER"], :>=, 2
+  end
+
+  def test_graphics_device_status_selected_surface_rejects_accidental_device_property
+    reference, target = graphics_device_status_selected_surface_contracts
+    full_reference = reference_contract
+    property = full_reference.fetch("types").find do |type|
+      type.fetch("name") == "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+    end.fetch("members").find { |member| member["kind"] == "property" && member["name"] == "GraphicsDeviceStatus" }
+    target.fetch("types").find do |type|
+      type.fetch("name") == "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+    end.fetch("members") << Marshal.load(Marshal.dump(property))
+
+    assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0
+    selected_device = JSON.parse(File.read(File.expand_path("../tools/api_compat/signatures.json", __dir__))).fetch("types").find do |type|
+      type.fetch("name") == "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+    end
+    refute selected_device.fetch("members").any? { |member| member["name"] == "GraphicsDeviceStatus" }
+  end
+
 
   def packed_vector_contracts
     reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
@@ -557,11 +624,37 @@ class ApiVerifierTest < Minitest::Test
   end
 
   def display_orientation_contracts
-    reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
-    target = JSON.parse(File.read(File.expand_path("../tools/api_compat/signatures.json", __dir__)))
+    reference = reference_contract
+    target = signature_contract
     name = "Microsoft.Xna.Framework.DisplayOrientation"
     reference_types = reference.fetch("types").select { |type| type.fetch("name") == name }
     target_types = target.fetch("types").select { |type| type.fetch("name") == name }
     [{"types" => reference_types}, {"types" => Marshal.load(Marshal.dump(target_types))}]
+  end
+
+  def graphics_device_status_contracts
+    reference = reference_contract
+    target = signature_contract
+    name = "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus"
+    reference_types = reference.fetch("types").select { |type| type.fetch("name") == name }
+    target_types = target.fetch("types").select { |type| type.fetch("name") == name }
+    [{"types" => reference_types}, {"types" => Marshal.load(Marshal.dump(target_types))}]
+  end
+
+  def graphics_device_status_selected_surface_contracts
+    reference, target = graphics_device_status_contracts
+    device_name = "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+    selected_device = signature_contract.fetch("types").find { |type| type.fetch("name") == device_name }
+    reference.fetch("types") << Marshal.load(Marshal.dump(selected_device))
+    target.fetch("types") << Marshal.load(Marshal.dump(selected_device))
+    [reference, target]
+  end
+
+  def reference_contract
+    JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
+  end
+
+  def signature_contract
+    JSON.parse(File.read(File.expand_path("../tools/api_compat/signatures.json", __dir__)))
   end
 end

@@ -1229,6 +1229,52 @@
       "rubyName": "Microsoft::Xna::Framework::Graphics::SurfaceFormat"
     },
     {
+      "name": "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Normal",
+          "type": "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Lost",
+          "type": "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "NotReset",
+          "type": "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::GraphicsDeviceStatus"
+    },
+    {
       "name": "Microsoft.Xna.Framework.Input.KeyState",
       "kind": "enum",
       "flags": false,

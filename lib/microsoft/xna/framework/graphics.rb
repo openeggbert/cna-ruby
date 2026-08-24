@@ -30,6 +30,15 @@ module Microsoft
           })
         end
 
+        class GraphicsDeviceStatus < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "Normal" => 0,
+            "Lost" => 1,
+            "NotReset" => 2
+          })
+        end
+
         class Viewport
           include CNA::Runtime::ValueSemantics
           N = CNA::Runtime::Numeric

@@ -70,9 +70,15 @@ unless display_orientation["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
   abort "Milestone 9 DisplayOrientation evidence lacks observation-level provenance"
 end
 observations.concat(display_orientation.fetch("observations"))
+graphics_device_status_path = File.expand_path("../behavior/xna40-graphics-device-status-values.json", __dir__)
+graphics_device_status = JSON.parse(File.read(graphics_device_status_path))
+unless graphics_device_status["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
+  abort "Milestone 10 GraphicsDeviceStatus evidence lacks observation-level provenance"
+end
+observations.concat(graphics_device_status.fetch("observations"))
 abort "duplicate behavior observation id" unless observations.map { |item| item.fetch("id") }.uniq.length == observations.length
 result = source_corpus.merge(
-  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation separates XNA metadata facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation and GraphicsDeviceStatus separate XNA metadata facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category" => "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256" => EXPECTED_SHA256,
   "milestone3SourceAssemblySha256" => milestone.fetch("sourceAssemblySha256"),
@@ -82,6 +88,7 @@ result = source_corpus.merge(
   "milestone7SourceAssemblySha256" => gamepad.fetch("sourceAssemblySha256"),
   "milestone8SourceAssemblySha256" => vertex_element.fetch("sourceAssemblySha256"),
   "milestone9SourceAssemblySha256" => display_orientation.fetch("sourceAssemblySha256"),
+  "milestone10SourceAssemblySha256" => graphics_device_status.fetch("sourceAssemblySha256"),
   "observations" => observations
 )
 destination = File.expand_path("../behavior/xna40-foundation-values.json", __dir__)

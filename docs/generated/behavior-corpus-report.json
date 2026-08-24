@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation separates XNA metadata facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
-  "OBSERVATIONS": 255,
-  "ASSERTIONS": 255,
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation and GraphicsDeviceStatus separate XNA metadata facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "OBSERVATIONS": 257,
+  "ASSERTIONS": 257,
   "FAILURES": 0,
   "provenanceCounts": {
-    "PURE_XNA_DERIVED": 254,
-    "RUBY_MAPPING_QUALIFICATION": 1
+    "PURE_XNA_DERIVED": 255,
+    "RUBY_MAPPING_QUALIFICATION": 2
   },
   "groupCounts": {
     "BINARY32": 2,
@@ -29,6 +29,7 @@
     "GAMEPAD_STATE": 7,
     "GAMEPAD_THUMBSTICKS": 5,
     "GAMEPAD_TRIGGERS": 5,
+    "GRAPHICS_DEVICE_STATUS": 2,
     "MATHHELPER": 9,
     "MATRIX": 12,
     "MOUSE_STATE": 13,

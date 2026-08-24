@@ -8,6 +8,11 @@ F = Microsoft::Xna::Framework
 PV = F::Graphics::PackedVector
 I = F::Input
 G = F::Graphics
+GRAPHICS_DEVICE_STATUS_SIGNATURE = JSON.parse(
+  File.read(File.expand_path("api_compat/signatures.json", __dir__))
+).fetch("types").find do |type|
+  type.fetch("name") == "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus"
+end
 
 def vector(value) = F::Vector2.new(*value)
 def vector3(value) = F::Vector3.new(*value)
@@ -93,6 +98,7 @@ def behavior_group(item)
   return "VERTEX_ELEMENT_ENUMS" if id.start_with?("vertex_element_enums.")
   return "VERTEX_ELEMENT" if id.start_with?("vertex_element.")
   return "DISPLAY_ORIENTATION" if id.start_with?("display_orientation.")
+  return "GRAPHICS_DEVICE_STATUS" if id.start_with?("graphics_device_status.")
 
   id.split(".").first.upcase
 end
@@ -100,6 +106,37 @@ end
 def execute(item)
   args = item.fetch("args")
   case item.fetch("operation")
+  when "GraphicsDeviceStatus.Contract"
+    status = G::GraphicsDeviceStatus
+    values = [status::Normal, status::Lost, status::NotReset]
+    [GRAPHICS_DEVICE_STATUS_SIGNATURE.fetch("kind"),
+     GRAPHICS_DEVICE_STATUS_SIGNATURE.fetch("underlyingType"),
+     status.instance_variable_get(:@enum_flags), values.map(&:to_i)]
+  when "GraphicsDeviceStatus.RubyEnumMapping"
+    status = G::GraphicsDeviceStatus
+    values = [status::Normal, status::Lost, status::NotReset]
+    foreign = [F::DisplayOrientation::Default, G::SpriteEffects::None, I::Buttons::DPadUp,
+               G::SurfaceFormat::Color, F::PlayerIndex::One]
+    [
+      values.all? { |value| value.instance_of?(status) },
+      values.all?(&:frozen?),
+      status.coerce(0).equal?(status::Normal),
+      status.coerce(1).equal?(status::Lost),
+      status.coerce(2).equal?(status::NotReset),
+      status.coerce(status::NotReset).equal?(status::NotReset),
+      error_name { status.coerce(3) },
+      foreign.map { |value| error_name { status.coerce(value) } },
+      error_name { status::Normal | status::Lost },
+      error_name { status::NotReset & status::Lost },
+      foreign.map { |value| status::Normal == value },
+      foreign.map { |value| status::Normal <=> value },
+      values.map(&:to_s),
+      status::Lost.inspect,
+      status.constants(false).map(&:to_s).sort,
+      status.constants(false).include?(:value__),
+      status::Normal.respond_to?(:ToString),
+      status.instance_variable_get(:@enum_mask)
+    ]
   when "DisplayOrientation.Contract"
     values = [F::DisplayOrientation::Default, F::DisplayOrientation::LandscapeLeft,
               F::DisplayOrientation::LandscapeRight, F::DisplayOrientation::Portrait]

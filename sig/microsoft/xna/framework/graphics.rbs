@@ -5,6 +5,12 @@ module Microsoft
         class SurfaceFormat
         end
 
+        class GraphicsDeviceStatus
+          Normal: GraphicsDeviceStatus
+          Lost: GraphicsDeviceStatus
+          NotReset: GraphicsDeviceStatus
+        end
+
         class Viewport
           attr_accessor X: Integer
           attr_accessor Y: Integer
