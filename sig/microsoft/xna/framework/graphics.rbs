@@ -16,6 +16,14 @@ module Microsoft
           HiDef: GraphicsProfile
         end
 
+        class ClearOptions
+          Target: ClearOptions
+          DepthBuffer: ClearOptions
+          Stencil: ClearOptions
+          def |: (ClearOptions other) -> ClearOptions
+          def &: (ClearOptions other) -> ClearOptions
+        end
+
         class Viewport
           attr_accessor X: Integer
           attr_accessor Y: Integer

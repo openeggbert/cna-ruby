@@ -1047,6 +1047,52 @@
       "rubyName": "Microsoft::Xna::Framework::Graphics::SpriteEffects"
     },
     {
+      "name": "Microsoft.Xna.Framework.Graphics.ClearOptions",
+      "kind": "enum",
+      "flags": true,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Target",
+          "type": "Microsoft.Xna.Framework.Graphics.ClearOptions",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "DepthBuffer",
+          "type": "Microsoft.Xna.Framework.Graphics.ClearOptions",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "Stencil",
+          "type": "Microsoft.Xna.Framework.Graphics.ClearOptions",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::ClearOptions"
+    },
+    {
       "name": "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
       "kind": "enum",
       "flags": false,

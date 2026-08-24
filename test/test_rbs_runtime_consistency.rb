@@ -356,6 +356,38 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     refute_match(/def GraphicsProfile:/, source)
   end
 
+  def test_clear_options_rbs_retains_exact_three_identity_flags_projection_without_named_zero
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    selected = contract.fetch("types").find do |type|
+      type.fetch("name") == "Microsoft.Xna.Framework.Graphics.ClearOptions"
+    end
+    refute_nil selected
+    assert_equal 3, selected.fetch("members").length
+    assert_equal "enum", selected.fetch("kind")
+    assert_equal true, selected.fetch("flags")
+    assert_equal "System.Int32", selected.fetch("underlyingType")
+    assert_equal({"Target" => "1", "DepthBuffer" => "2", "Stencil" => "4"},
+                 selected.fetch("members").to_h { |member| [member.fetch("name"), member.fetch("value")] })
+
+    source = File.read(SIGNATURE_ROOT.join("microsoft", "xna", "framework", "graphics.rbs"))
+    match = source.match(/^        class ClearOptions\n(?<body>.*?)^        end$/m)
+    refute_nil match
+    section = match[:body]
+    %w[Target DepthBuffer Stencil].each do |name|
+      assert_includes section, "#{name}: ClearOptions"
+    end
+    %w[None Default Empty All value__].each do |name|
+      refute_includes section, "#{name}:"
+    end
+    assert_includes section, "def |: (ClearOptions other) -> ClearOptions"
+    assert_includes section, "def &: (ClearOptions other) -> ClearOptions"
+    refute_includes section, "untyped"
+    refute_match(/\*\w*/, section)
+    refute_includes section, "def ToString"
+    refute_includes source, "def Clear: (ClearOptions"
+    assert_includes source, "def Clear: (Color color) -> nil"
+  end
+
   def test_viewport_rbs_retains_exact_complete_fourteen_identity_projection
     contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
     selected = contract.fetch("types").find do |type|

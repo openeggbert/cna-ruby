@@ -8,6 +8,11 @@ F = Microsoft::Xna::Framework
 PV = F::Graphics::PackedVector
 I = F::Input
 G = F::Graphics
+CLEAR_OPTIONS_SIGNATURE = JSON.parse(
+  File.read(File.expand_path("api_compat/signatures.json", __dir__))
+).fetch("types").find do |type|
+  type.fetch("name") == "Microsoft.Xna.Framework.Graphics.ClearOptions"
+end
 GRAPHICS_DEVICE_STATUS_SIGNATURE = JSON.parse(
   File.read(File.expand_path("api_compat/signatures.json", __dir__))
 ).fetch("types").find do |type|
@@ -135,6 +140,7 @@ def behavior_group(item)
   return "VIEWPORT_PROJECT" if id.start_with?("viewport_project.")
   return "VIEWPORT_UNPROJECT" if id.start_with?("viewport_unproject.")
   return "VIEWPORT_TITLE_SAFE_AREA" if id.start_with?("viewport_title_safe_area.")
+  return "CLEAR_OPTIONS" if id.start_with?("clear_options.")
 
   id.split(".").first.upcase
 end
@@ -236,6 +242,63 @@ def execute(item)
        error_name { viewport.Project(source, projection, [], world) },
        error_name { viewport.Project(source, projection, view, []) }],
       before == after, !first.equal?(second), rectangle_result(second_title) == [13, -7, 641, 479]
+    ]
+  when "ClearOptions.Contract"
+    members = CLEAR_OPTIONS_SIGNATURE.fetch("members")
+    [CLEAR_OPTIONS_SIGNATURE.fetch("kind"), CLEAR_OPTIONS_SIGNATURE.fetch("underlyingType"),
+     CLEAR_OPTIONS_SIGNATURE.fetch("flags"),
+     members.map { |member| [member.fetch("name"), Integer(member.fetch("value"))] },
+     members.any? { |member| Integer(member.fetch("value")).zero? },
+     members.any? { |member| member.fetch("name") == "All" }]
+  when "ClearOptions.RubyFlagsMapping"
+    options = G::ClearOptions
+    named = [options::Target, options::DepthBuffer, options::Stencil]
+    valid = (0..7).map { |raw| options.coerce(raw) }
+    combinations = [
+      options::Target | options::DepthBuffer,
+      options::Target | options::Stencil,
+      options::DepthBuffer | options::Stencil,
+      options::Target | options::DepthBuffer | options::Stencil
+    ]
+    zero = options.coerce(0)
+    intersection = options::Target & options::DepthBuffer
+    foreign = [F::DisplayOrientation::LandscapeLeft, G::SpriteEffects::FlipHorizontally,
+               I::Buttons::A, G::GraphicsDeviceStatus::Normal, G::GraphicsProfile::Reach,
+               G::SurfaceFormat::Color]
+    cross_flags = foreign.first(3)
+    [
+      named.all? { |value| value.instance_of?(options) },
+      named.all?(&:frozen?),
+      named.map(&:to_i),
+      [options.coerce(1).equal?(options::Target), options.coerce(2).equal?(options::DepthBuffer),
+       options.coerce(4).equal?(options::Stencil), options.coerce(options::Target).equal?(options::Target)],
+      valid.map(&:to_i), valid.all? { |value| value.instance_of?(options) }, valid.all?(&:frozen?),
+      valid.all? { |value| options.coerce(value.to_i).equal?(value) },
+      [zero.instance_of?(options), zero.frozen?, zero.to_i, zero.to_s, zero.inspect,
+       options.coerce(0).equal?(zero)],
+      combinations.map(&:to_i), combinations.all? { |value| value.instance_of?(options) },
+      combinations.all?(&:frozen?),
+      [(combinations[0] & options::Target).equal?(options::Target),
+       (combinations[1] & options::Stencil).equal?(options::Stencil),
+       (combinations[3] & options::DepthBuffer).equal?(options::DepthBuffer)],
+      [intersection.instance_of?(options), intersection.frozen?, intersection.equal?(zero),
+       intersection.to_i, intersection.to_s],
+      [8, 9, 0x100, -1].map { |raw| error_name { options.coerce(raw) } },
+      [nil, true, false, 1.0, "1", Object.new].map { |value| error_name { options.coerce(value) } },
+      foreign.map { |value| error_name { options.coerce(value) } },
+      cross_flags.map { |value| error_name { options::Target | value } },
+      cross_flags.map { |value| error_name { options::Target & value } },
+      foreign.map { |value| options::Target == value },
+      options.constants(false).map(&:to_s).sort,
+      %i[None Default All value__].map { |name| options.constants(false).include?(name) },
+      %i[ToString HasFlag Contains Includes Target? DepthBuffer? Stencil? None? All? Mask ValidBits]
+        .map { |name| options::Target.respond_to?(name) },
+      named.map(&:to_s), [zero, options.coerce(3), options.coerce(7)].map(&:to_s),
+      [options::Target, zero, options.coerce(7)].map(&:inspect),
+      [options::Target, zero, options.coerce(7)].map(&:to_i),
+      options.instance_variable_get(:@enum_mask), G::GraphicsDevice.instance_method(:Clear).arity,
+      G::GraphicsDevice.public_method_defined?(:Viewport=),
+      CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("CLEAR_OPTIONS") }
     ]
   when "GraphicsProfile.Contract"
     profile = G::GraphicsProfile

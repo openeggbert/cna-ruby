@@ -18,6 +18,15 @@ module Microsoft
           define_values({ "None" => 0, "FlipHorizontally" => 1, "FlipVertically" => 2 }, flags: true)
         end
 
+        class ClearOptions < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "Target" => 1,
+            "DepthBuffer" => 2,
+            "Stencil" => 4
+          }, flags: true)
+        end
+
         class SurfaceFormat < CNA::Runtime::EnumValue
           extend CNA::Runtime::EnumType
           define_values({

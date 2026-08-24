@@ -8,6 +8,7 @@
     {"name": "Microsoft.Xna.Framework.DisplayOrientation", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.SpriteSortMode", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.SpriteEffects", "complete": true},
+    {"name": "Microsoft.Xna.Framework.Graphics.ClearOptions", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.SurfaceFormat", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.GraphicsProfile", "complete": true},

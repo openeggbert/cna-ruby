@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, and Viewport separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, and ClearOptions separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "observations": [
     {
@@ -4493,6 +4493,183 @@
         true,
         true
       ]
+    },
+    {
+      "id": "clear_options.contract",
+      "operation": "ClearOptions.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "enum",
+        "System.Int32",
+        true,
+        [
+          [
+            "Target",
+            1
+          ],
+          [
+            "DepthBuffer",
+            2
+          ],
+          [
+            "Stencil",
+            4
+          ]
+        ],
+        false,
+        false
+      ]
+    },
+    {
+      "id": "clear_options.ruby_flags_mapping",
+      "operation": "ClearOptions.RubyFlagsMapping",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        true,
+        [
+          1,
+          2,
+          4
+        ],
+        [
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        true,
+        true,
+        true,
+        [
+          true,
+          true,
+          0,
+          "0",
+          "Microsoft::Xna::Framework::Graphics::ClearOptions::0",
+          true
+        ],
+        [
+          3,
+          5,
+          6,
+          7
+        ],
+        true,
+        true,
+        [
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          0,
+          "0"
+        ],
+        [
+          "RangeError",
+          "RangeError",
+          "RangeError",
+          "RangeError"
+        ],
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
+        [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "DepthBuffer",
+          "Stencil",
+          "Target"
+        ],
+        [
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "Target",
+          "DepthBuffer",
+          "Stencil"
+        ],
+        [
+          "0",
+          "3",
+          "7"
+        ],
+        [
+          "Microsoft::Xna::Framework::Graphics::ClearOptions::Target",
+          "Microsoft::Xna::Framework::Graphics::ClearOptions::0",
+          "Microsoft::Xna::Framework::Graphics::ClearOptions::7"
+        ],
+        [
+          1,
+          0,
+          7
+        ],
+        7,
+        1,
+        false,
+        false
+      ]
     }
   ],
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
@@ -4505,5 +4682,6 @@
   "milestone9SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
   "milestone10SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
   "milestone11SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
-  "milestone12SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55"
+  "milestone12SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+  "milestone13SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55"
 }

@@ -119,6 +119,32 @@ class ApiVerifierTest < Minitest::Test
     assert_operator result.counts["ENUM_VALUE_MISMATCH"], :>, 0
   end
 
+  def test_flags_enum_without_declared_zero_is_structurally_valid
+    name = "Microsoft.Xna.Framework.SampleMask"
+    reference_type = {
+      "name" => name, "kind" => "enum", "flags" => true, "sealed" => true,
+      "underlyingType" => "System.Int32", "baseType" => "System.Enum",
+      "interfaces" => [], "directInterfaces" => [], "genericParameters" => [],
+      "members" => [
+        {"kind" => "field", "name" => "value__", "type" => "System.Int32", "static" => false,
+         "access" => "public", "constant" => false, "value" => nil},
+        {"kind" => "field", "name" => "One", "type" => name, "static" => true,
+         "access" => "public", "constant" => true, "value" => "1"},
+        {"kind" => "field", "name" => "Two", "type" => name, "static" => true,
+         "access" => "public", "constant" => true, "value" => "2"},
+        {"kind" => "field", "name" => "Four", "type" => name, "static" => true,
+         "access" => "public", "constant" => true, "value" => "4"}
+      ]
+    }
+    target_type = Marshal.load(Marshal.dump(reference_type))
+    target_type["members"].reject! { |member| member["name"] == "value__" }
+    target_type["rubyName"] = "Microsoft::Xna::Framework::SampleMask"
+    result = verify({"types" => [reference_type]}, {"types" => [target_type]})
+
+    assert_equal 0, result.counts.values.sum
+    assert_equal [name], result.complete_types
+  end
+
   def test_raw_handle_and_public_ffi_leaks
     reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
     target = JSON.parse(File.read(File.expand_path("../tools/api_compat/signatures.json", __dir__)))
@@ -657,6 +683,127 @@ class ApiVerifierTest < Minitest::Test
                    .any? { |member| member["name"] == "GraphicsProfile" }
   end
 
+  def test_clear_options_missing_type_and_wrong_namespace_are_detected
+    reference, target = clear_options_contracts
+    target.fetch("types").clear
+    assert_operator verify(reference, target).counts["MISSING_TYPE"], :>, 0
+
+    reference, target = clear_options_contracts
+    options = target.fetch("types").first
+    options["name"] = "Microsoft.Xna.Framework.ClearOptions"
+    options["rubyName"] = "Microsoft::Xna::Framework::ClearOptions"
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_TYPE"], :>, 0
+    assert_operator result.counts["UNEXPECTED_TYPE"], :>, 0
+  end
+
+  def test_clear_options_wrong_kind_underlying_type_and_flags_are_detected
+    reference, target = clear_options_contracts
+    target.fetch("types").first["kind"] = "class"
+    assert_operator verify(reference, target).counts["TYPE_KIND_MISMATCH"], :>, 0
+
+    reference, target = clear_options_contracts
+    target.fetch("types").first["underlyingType"] = "System.UInt32"
+    result = verify(reference, target)
+    assert_operator result.counts["ENUM_VALUE_MISMATCH"], :>, 0
+    assert_operator result.counts["FLAGS_MAPPING_MISMATCH"], :>, 0
+
+    reference, target = clear_options_contracts
+    target.fetch("types").first["flags"] = false
+    assert_operator verify(reference, target).counts["FLAGS_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_clear_options_each_wrong_raw_value_is_detected
+    reference, target = clear_options_contracts
+    wrong_values = {"Target" => "2", "DepthBuffer" => "4", "Stencil" => "8"}
+    target.fetch("types").first.fetch("members").each do |member|
+      member["value"] = wrong_values.fetch(member.fetch("name"))
+    end
+    assert_operator verify(reference, target).counts["ENUM_VALUE_MISMATCH"], :>=, 3
+  end
+
+  def test_clear_options_missing_stencil_exposed_storage_and_invented_values_are_detected
+    reference, target = clear_options_contracts
+    options = target.fetch("types").first
+    options.fetch("members").reject! { |member| member["name"] == "Stencil" }
+    storage = reference.fetch("types").first.fetch("members").find { |member| member["name"] == "value__" }
+    options.fetch("members") << Marshal.load(Marshal.dump(storage))
+    %w[None Default All].zip(%w[0 0 7]).each do |name, raw|
+      options.fetch("members") << {
+        "kind" => "field", "name" => name, "type" => options.fetch("name"),
+        "static" => true, "constant" => true, "value" => raw
+      }
+    end
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_MEMBER"], :>, 0
+    assert_operator result.counts["UNEXPECTED_MEMBER"], :>=, 4
+  end
+
+  def test_clear_options_unexpected_xna_member_and_public_helper_are_detected
+    reference, target = clear_options_contracts
+    options = target.fetch("types").first
+    options.fetch("members") << {
+      "kind" => "method", "name" => "HasFlag", "static" => false, "access" => "public",
+      "returnType" => "System.Boolean", "genericParameters" => [], "parameters" => []
+    }
+    assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0
+
+    options_class = Microsoft::Xna::Framework::Graphics::ClearOptions
+    options_class.class_eval { def Target? = false }
+    assert_operator verify(reference, target, runtime: true).counts["UNEXPECTED_MEMBER"], :>, 0
+  ensure
+    options_class&.__send__(:remove_method, :Target?) if options_class&.public_method_defined?(:Target?)
+  end
+
+  def test_clear_options_runtime_flags_mask_is_measured
+    reference, target = clear_options_contracts
+    options = Microsoft::Xna::Framework::Graphics::ClearOptions
+    original = options.instance_variable_get(:@enum_mask)
+    options.instance_variable_set(:@enum_mask, original ^ 0x4)
+    assert_operator verify(reference, target, runtime: true).counts["FLAGS_MAPPING_MISMATCH"], :>, 0
+  ensure
+    options&.instance_variable_set(:@enum_mask, original) if original
+  end
+
+  def test_clear_options_runtime_ordinary_enum_classification_is_detected
+    reference, target = clear_options_contracts
+    options = Microsoft::Xna::Framework::Graphics::ClearOptions
+    original = options.instance_variable_get(:@enum_flags)
+    options.instance_variable_set(:@enum_flags, false)
+    assert_operator verify(reference, target, runtime: true).counts["FLAGS_MAPPING_MISMATCH"], :>, 0
+  ensure
+    options&.instance_variable_set(:@enum_flags, original) unless original.nil?
+  end
+
+  def test_clear_options_selected_surface_rejects_both_accidental_clear_overloads
+    %w[Microsoft.Xna.Framework.Color Microsoft.Xna.Framework.Vector4].each do |color_type|
+      reference, target = clear_options_selected_surface_contracts
+      full_device = reference_contract.fetch("types").find do |type|
+        type.fetch("name") == "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+      end
+      overload = full_device.fetch("members").find do |member|
+        member["name"] == "Clear" && member.fetch("parameters").map { |parameter| parameter.fetch("type") } == [
+          "Microsoft.Xna.Framework.Graphics.ClearOptions", color_type, "System.Single", "System.Int32"
+        ]
+      end
+      refute_nil overload, color_type
+      target.fetch("types").find do |type|
+        type.fetch("name") == "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+      end.fetch("members") << Marshal.load(Marshal.dump(overload))
+      result = verify(reference, target)
+      assert_operator result.counts["UNEXPECTED_MEMBER"], :>, 0, color_type
+      assert_operator result.counts["OVERLOAD_MAPPING_MISMATCH"], :>, 0, color_type
+    end
+
+    selected_device = signature_contract.fetch("types").find do |type|
+      type.fetch("name") == "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+    end
+    clear_members = selected_device.fetch("members").select { |member| member["name"] == "Clear" }
+    assert_equal 1, clear_members.length
+    assert_equal ["Microsoft.Xna.Framework.Color"],
+                 clear_members.first.fetch("parameters").map { |parameter| parameter.fetch("type") }
+  end
+
   def test_viewport_missing_project_and_unproject_are_detected
     %w[Project Unproject].each do |name|
       reference, target = viewport_contracts
@@ -873,6 +1020,27 @@ class ApiVerifierTest < Minitest::Test
       reference.fetch("types") << Marshal.load(Marshal.dump(selected))
       target.fetch("types") << Marshal.load(Marshal.dump(selected))
     end
+    [reference, target]
+  end
+
+  def clear_options_name
+    "Microsoft.Xna.Framework.Graphics.ClearOptions"
+  end
+
+  def clear_options_contracts
+    reference = reference_contract
+    target = signature_contract
+    reference_type = reference.fetch("types").find { |type| type.fetch("name") == clear_options_name }
+    target_type = target.fetch("types").find { |type| type.fetch("name") == clear_options_name }
+    [{"types" => [reference_type]}, {"types" => [Marshal.load(Marshal.dump(target_type))]}]
+  end
+
+  def clear_options_selected_surface_contracts
+    reference, target = clear_options_contracts
+    device_name = "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+    selected_device = signature_contract.fetch("types").find { |type| type.fetch("name") == device_name }
+    reference.fetch("types") << Marshal.load(Marshal.dump(selected_device))
+    target.fetch("types") << Marshal.load(Marshal.dump(selected_device))
     [reference, target]
   end
 

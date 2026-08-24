@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, and Viewport separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
-  "OBSERVATIONS": 271,
-  "ASSERTIONS": 271,
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, and ClearOptions separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "OBSERVATIONS": 273,
+  "ASSERTIONS": 273,
   "FAILURES": 0,
   "provenanceCounts": {
-    "PURE_XNA_DERIVED": 267,
-    "RUBY_MAPPING_QUALIFICATION": 4
+    "PURE_XNA_DERIVED": 268,
+    "RUBY_MAPPING_QUALIFICATION": 5
   },
   "groupCounts": {
     "BINARY32": 2,
@@ -15,6 +15,7 @@
     "BOUNDING_SPHERE": 3,
     "BUTTONS": 4,
     "BUTTON_STATE": 2,
+    "CLEAR_OPTIONS": 2,
     "COLOR": 13,
     "CROSS_GEOMETRY": 3,
     "CURVE_EVALUATE": 4,

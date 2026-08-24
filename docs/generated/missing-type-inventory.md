@@ -58,7 +58,6 @@
 - `Microsoft.Xna.Framework.Graphics.BlendFunction`
 - `Microsoft.Xna.Framework.Graphics.BlendState`
 - `Microsoft.Xna.Framework.Graphics.BufferUsage`
-- `Microsoft.Xna.Framework.Graphics.ClearOptions`
 - `Microsoft.Xna.Framework.Graphics.ColorWriteChannels`
 - `Microsoft.Xna.Framework.Graphics.CompareFunction`
 - `Microsoft.Xna.Framework.Graphics.CubeMapFace`
