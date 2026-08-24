@@ -885,6 +885,60 @@
       "rubyName": "Microsoft::Xna::Framework::PlayerIndex"
     },
     {
+      "name": "Microsoft.Xna.Framework.DisplayOrientation",
+      "kind": "enum",
+      "flags": true,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Default",
+          "type": "Microsoft.Xna.Framework.DisplayOrientation",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "LandscapeLeft",
+          "type": "Microsoft.Xna.Framework.DisplayOrientation",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "LandscapeRight",
+          "type": "Microsoft.Xna.Framework.DisplayOrientation",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "Portrait",
+          "type": "Microsoft.Xna.Framework.DisplayOrientation",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::DisplayOrientation"
+    },
+    {
       "name": "Microsoft.Xna.Framework.Graphics.SpriteSortMode",
       "kind": "enum",
       "flags": false,

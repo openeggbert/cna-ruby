@@ -2,15 +2,15 @@
 
 CNA-Ruby is implementing a formally measured Ruby projection of the selected Microsoft XNA Framework 4.0 Windows runtime API over the CNA C ABI.
 
-Foundation 8 is functional on the qualified Linux x86-64 desktop MRI runtime, but the selected XNA profile is intentionally incomplete. The strict scoreboard targets 74 types and 1453 members from the 257-type / 2915-member Ruby projection; it remains red for genuine deferred work. See `docs/generated/api-compat-report.json` for authoritative counts.
+Foundation 9 is functional on the qualified Linux x86-64 desktop MRI runtime, but the selected XNA profile is intentionally incomplete. The strict scoreboard targets 75 types and 1457 members from the 257-type / 2915-member Ruby projection; it remains red for genuine deferred work. See `docs/generated/api-compat-report.json` for authoritative counts.
 
 ## Qualified foundation
 
 - MRI Ruby 3.3.8 and Fiddle 1.1.2
 - exact CNA C ABI 0.7.0 admission
 - centralized native resolver, signature manifest, layouts, result translation, ownership, generation/thread checks, and callback exception containment
-- complete mapped MathHelper, Vector2/3/4, Quaternion, Matrix, Plane, Ray, BoundingBox, BoundingSphere, BoundingFrustum, Rectangle, Color, Curve family, the full 19-type `Graphics.PackedVector` family, the managed three-type `VertexElement` descriptor closure, ContainmentType, PlaneIntersectionType, Point, GameTime, PlayerIndex, SpriteSortMode, SpriteEffects, SurfaceFormat, KeyState, Keys, KeyboardState, Keyboard, ButtonState, MouseState, Mouse, the exact ten-type GamePad family, and Texture contract types
-- 253 green PURE_XNA_DERIVED managed observations, including exact binary32 geometry, Color, Rectangle, Curve, packed integer bits, XNA half conversion, normalized formats, explicit packed-interface behavior, ButtonState, MouseState, GamePad values, and VertexElement equality/hash/string behavior
+- complete mapped MathHelper, Vector2/3/4, Quaternion, Matrix, Plane, Ray, BoundingBox, BoundingSphere, BoundingFrustum, Rectangle, Color, Curve family, the full 19-type `Graphics.PackedVector` family, the managed three-type `VertexElement` descriptor closure, DisplayOrientation, ContainmentType, PlaneIntersectionType, Point, GameTime, PlayerIndex, SpriteSortMode, SpriteEffects, SurfaceFormat, KeyState, Keys, KeyboardState, Keyboard, ButtonState, MouseState, Mouse, the exact ten-type GamePad family, and Texture contract types
+- 255 green managed observations: 254 explicitly or legacy-defaulted `PURE_XNA_DERIVED` facts and one `RUBY_MAPPING_QUALIFICATION` observation for DisplayOrientation flags coercion/composition safety
 - measured partial Game, GraphicsDeviceManager, Viewport, GraphicsDevice, GraphicsResource, Texture2D, and SpriteBatch types
 - real native Game lifecycle and GameTime callbacks
 - real HEADLESS-qualified viewport, Clear, PNG Texture2D stream decode, SpriteBatch scaled draw, keyboard state capture, canonical Mouse state/position/window-handle routes, and all four canonical GamePad state/capability/vibration routes
@@ -41,7 +41,7 @@ require "microsoft/xna/framework/graphics"
 require "microsoft/xna/framework/input"
 ```
 
-There is intentionally no `microsoft/xna/framework/content` implementation in Foundation 8.
+There is intentionally no `microsoft/xna/framework/content` implementation in Foundation 9.
 
 ## Evidence
 
@@ -57,11 +57,12 @@ There is intentionally no `microsoft/xna/framework/content` implementation in Fo
 - `docs/mouse-evidence.md` — Foundation 6 managed MouseState and canonical native Mouse evidence
 - `docs/gamepad-evidence.md` — Foundation 7 managed GamePad-family and canonical native controller evidence
 - `docs/vertex-element-evidence.md` — Foundation 8 managed vertex-element descriptor closure
+- `docs/display-orientation-evidence.md` — Foundation 9 managed DisplayOrientation flags enum
 - `tools/api_compat/verify.rb` — structural report/strict/leak-only modes
 - `tools/native_abi/verify.rb` — compiler-backed header/manifest/export verification
-- `tools/run_behavior_corpus.rb` — PURE_XNA_DERIVED managed observations
+- `tools/run_behavior_corpus.rb` — observation-level XNA-fact and Ruby-mapping qualification corpus
 - `tools/run_native_stress.rb` — explicit lifecycle/GC/thread stress
 
-No physical controller was attached to the qualified host. Disconnected native paths are qualified; positive state/capability flags and physical vibration remain hardware-pending rather than simulated. VertexElement support is managed descriptor behavior only and does not claim vertex declarations, buffers, shaders, or drawing.
+No physical controller was attached to the qualified host. Disconnected native paths are qualified; positive state/capability flags and physical vibration remain hardware-pending rather than simulated. DisplayOrientation is only a managed flags enum and does not claim GraphicsDeviceManager, GameWindow, display rotation, or platform orientation. VertexElement support remains managed descriptor behavior only and does not claim vertex declarations, buffers, shaders, or drawing.
 
 Not qualified: Windows, macOS, JRuby, TruffleRuby, MRuby, Opal/browser/Wasm, Android, visible rendering, connected-controller positive paths, Content/XNB, Effects/3D/Model, audio, media, and the remaining XNA families.

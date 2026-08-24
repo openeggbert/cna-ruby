@@ -44,7 +44,6 @@
 - `Microsoft.Xna.Framework.Design.Vector2Converter`
 - `Microsoft.Xna.Framework.Design.Vector3Converter`
 - `Microsoft.Xna.Framework.Design.Vector4Converter`
-- `Microsoft.Xna.Framework.DisplayOrientation`
 - `Microsoft.Xna.Framework.DrawableGameComponent`
 - `Microsoft.Xna.Framework.FrameworkDispatcher`
 - `Microsoft.Xna.Framework.GameComponent`

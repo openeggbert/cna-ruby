@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "PURE_XNA_DERIVED retained observations: XNA 4.0 reference metadata and IL/algorithm analysis; never CNA output",
-  "category": "PURE_XNA_DERIVED",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation separates XNA metadata facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "observations": [
     {
       "id": "math.clamp.low",
@@ -4050,6 +4050,55 @@
         false,
         false
       ]
+    },
+    {
+      "id": "display_orientation.contract",
+      "operation": "DisplayOrientation.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          0,
+          1,
+          2,
+          4
+        ],
+        true
+      ]
+    },
+    {
+      "id": "display_orientation.ruby_flags_mapping",
+      "operation": "DisplayOrientation.RubyFlagsMapping",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        [
+          3,
+          5,
+          6,
+          7
+        ],
+        true,
+        true,
+        true,
+        true,
+        true,
+        "RangeError",
+        "RangeError",
+        "RangeError",
+        "TypeError",
+        "TypeError",
+        "TypeError",
+        "TypeError",
+        false,
+        false,
+        7
+      ]
     }
   ],
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
@@ -4058,5 +4107,6 @@
   "milestone5SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
   "milestone6SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
   "milestone7SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
-  "milestone8SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55"
+  "milestone8SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+  "milestone9SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130"
 }

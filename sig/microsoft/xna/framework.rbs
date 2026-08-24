@@ -32,6 +32,15 @@ module Microsoft
       class PlayerIndex
       end
 
+      class DisplayOrientation
+        Default: DisplayOrientation
+        LandscapeLeft: DisplayOrientation
+        LandscapeRight: DisplayOrientation
+        Portrait: DisplayOrientation
+        def |: (DisplayOrientation other) -> DisplayOrientation
+        def &: (DisplayOrientation other) -> DisplayOrientation
+      end
+
       class Game
         attr_reader GraphicsDevice: Graphics::GraphicsDevice?
         def initialize: () -> void

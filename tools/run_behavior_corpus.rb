@@ -92,6 +92,7 @@ def behavior_group(item)
   return "GAMEPAD_ENUMS" if id.start_with?("gamepad_enums.")
   return "VERTEX_ELEMENT_ENUMS" if id.start_with?("vertex_element_enums.")
   return "VERTEX_ELEMENT" if id.start_with?("vertex_element.")
+  return "DISPLAY_ORIENTATION" if id.start_with?("display_orientation.")
 
   id.split(".").first.upcase
 end
@@ -99,6 +100,42 @@ end
 def execute(item)
   args = item.fetch("args")
   case item.fetch("operation")
+  when "DisplayOrientation.Contract"
+    values = [F::DisplayOrientation::Default, F::DisplayOrientation::LandscapeLeft,
+              F::DisplayOrientation::LandscapeRight, F::DisplayOrientation::Portrait]
+    [values.map(&:to_i), F::DisplayOrientation.instance_variable_get(:@enum_flags)]
+  when "DisplayOrientation.RubyFlagsMapping"
+    orientation = F::DisplayOrientation
+    combinations = [
+      orientation::LandscapeLeft | orientation::LandscapeRight,
+      orientation::LandscapeLeft | orientation::Portrait,
+      orientation::LandscapeRight | orientation::Portrait,
+      orientation::LandscapeLeft | orientation::LandscapeRight | orientation::Portrait
+    ]
+    left_portrait = combinations[1]
+    [
+      orientation.coerce(0).equal?(orientation::Default),
+      orientation.coerce(1).equal?(orientation::LandscapeLeft),
+      orientation.coerce(2).equal?(orientation::LandscapeRight),
+      orientation.coerce(4).equal?(orientation::Portrait),
+      orientation.coerce(orientation::Portrait).equal?(orientation::Portrait),
+      combinations.map(&:to_i),
+      combinations.all? { |value| value.instance_of?(orientation) },
+      combinations.all?(&:frozen?),
+      (left_portrait & orientation::LandscapeLeft).equal?(orientation::LandscapeLeft),
+      (left_portrait & orientation::LandscapeRight).equal?(orientation::Default),
+      (combinations[3] & orientation::Portrait).equal?(orientation::Portrait),
+      error_name { orientation.coerce(8) },
+      error_name { orientation.coerce(9) },
+      error_name { orientation.coerce(0x100) },
+      error_name { orientation.coerce(nil) },
+      error_name { orientation::LandscapeLeft | G::SpriteEffects::FlipHorizontally },
+      error_name { orientation::LandscapeLeft | I::Buttons::DPadUp },
+      error_name { orientation::LandscapeLeft | F::PlayerIndex::One },
+      orientation::Portrait.respond_to?(:ToString),
+      orientation::Portrait.respond_to?(:HasFlag),
+      orientation.instance_variable_get(:@enum_mask)
+    ]
   when "VertexElement.Enums"
     formats = %i[Single Vector2 Vector3 Vector4 Color Byte4 Short2 Short4 NormalizedShort2
                  NormalizedShort4 HalfVector2 HalfVector4].map { |name| G::VertexElementFormat.const_get(name) }
@@ -719,7 +756,9 @@ end
 
 corpus_path = File.expand_path("../behavior/xna40-foundation-values.json", __dir__)
 corpus = JSON.parse(File.read(corpus_path))
-abort "behavior corpus is not PURE_XNA_DERIVED" unless corpus["category"] == "PURE_XNA_DERIVED"
+unless corpus["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
+  abort "behavior corpus lacks observation-level provenance"
+end
 failures = []
 corpus.fetch("observations").each do |item|
   actual = execute(item)
@@ -734,6 +773,9 @@ report = {
   "OBSERVATIONS" => corpus.fetch("observations").length,
   "ASSERTIONS" => corpus.fetch("observations").length,
   "FAILURES" => failures.length,
+  "provenanceCounts" => corpus.fetch("observations").group_by do |item|
+    item.fetch("provenance", "PURE_XNA_DERIVED")
+  end.transform_values(&:length).sort.to_h,
   "groupCounts" => corpus.fetch("observations").group_by { |item| behavior_group(item) }.transform_values(&:length).sort.to_h,
   "nativeEvidence" => [
     {

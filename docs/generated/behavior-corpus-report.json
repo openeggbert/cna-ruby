@@ -1,9 +1,13 @@
 {
   "schemaVersion": 1,
-  "provenance": "PURE_XNA_DERIVED retained observations: XNA 4.0 reference metadata and IL/algorithm analysis; never CNA output",
-  "OBSERVATIONS": 253,
-  "ASSERTIONS": 253,
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation separates XNA metadata facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "OBSERVATIONS": 255,
+  "ASSERTIONS": 255,
   "FAILURES": 0,
+  "provenanceCounts": {
+    "PURE_XNA_DERIVED": 254,
+    "RUBY_MAPPING_QUALIFICATION": 1
+  },
   "groupCounts": {
     "BINARY32": 2,
     "BOUNDING_BOX": 3,
@@ -18,6 +22,7 @@
     "CURVE_KEY_COLLECTION": 5,
     "CURVE_LOOPS": 4,
     "CURVE_TANGENTS": 4,
+    "DISPLAY_ORIENTATION": 2,
     "GAMEPAD_BUTTONS": 4,
     "GAMEPAD_DPAD": 4,
     "GAMEPAD_ENUMS": 2,

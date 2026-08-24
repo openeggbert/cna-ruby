@@ -64,10 +64,16 @@ vertex_element_path = File.expand_path("../behavior/xna40-vertex-element-values.
 vertex_element = JSON.parse(File.read(vertex_element_path))
 abort "Milestone 8 VertexElement behavior evidence is not PURE_XNA_DERIVED" unless vertex_element["category"] == "PURE_XNA_DERIVED"
 observations.concat(vertex_element.fetch("observations"))
+display_orientation_path = File.expand_path("../behavior/xna40-display-orientation-values.json", __dir__)
+display_orientation = JSON.parse(File.read(display_orientation_path))
+unless display_orientation["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
+  abort "Milestone 9 DisplayOrientation evidence lacks observation-level provenance"
+end
+observations.concat(display_orientation.fetch("observations"))
 abort "duplicate behavior observation id" unless observations.map { |item| item.fetch("id") }.uniq.length == observations.length
 result = source_corpus.merge(
-  "provenance" => "PURE_XNA_DERIVED retained observations: XNA 4.0 reference metadata and IL/algorithm analysis; never CNA output",
-  "category" => "PURE_XNA_DERIVED",
+  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation separates XNA metadata facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "category" => "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256" => EXPECTED_SHA256,
   "milestone3SourceAssemblySha256" => milestone.fetch("sourceAssemblySha256"),
   "milestone4SourceAssemblySha256" => curve.fetch("sourceAssemblySha256"),
@@ -75,6 +81,7 @@ result = source_corpus.merge(
   "milestone6SourceAssemblySha256" => previous_foundation.fetch("milestone6SourceAssemblySha256"),
   "milestone7SourceAssemblySha256" => gamepad.fetch("sourceAssemblySha256"),
   "milestone8SourceAssemblySha256" => vertex_element.fetch("sourceAssemblySha256"),
+  "milestone9SourceAssemblySha256" => display_orientation.fetch("sourceAssemblySha256"),
   "observations" => observations
 )
 destination = File.expand_path("../behavior/xna40-foundation-values.json", __dir__)

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 8",
+  "milestone": "Foundation 9",
   "complete": true,
   "date": "2026-08-24",
   "ruby": "ruby 3.3.8 (2025-04-09 revision b200bad6cd) [x86_64-linux-gnu]",
@@ -12,7 +12,7 @@
   "gem": {
     "filename": "cna-ruby-0.1.0.dev0.gem",
     "version": "0.1.0.dev0",
-    "sha256": "122d34535f6035ef3bd494c85be2d6b48918ed10d8f454dcc062bde3a2e8d48a",
+    "sha256": "61b1b52996b5905815caca02c1334b8ab0d37d928eb124ecd49e86d5801a40ff",
     "entries": 37,
     "forbiddenEntries": 0,
     "nativeLibrariesBundled": 0,
@@ -27,8 +27,8 @@
     "audio": "NULL"
   },
   "tests": {
-    "runs": 180,
-    "assertions": 4135,
+    "runs": 190,
+    "assertions": 4273,
     "failures": 0,
     "errors": 0,
     "skips": 0
@@ -38,14 +38,14 @@
     "referenceMembers": 2964,
     "expectedRubyTypes": 257,
     "expectedRubyMembers": 2915,
-    "targetTypes": 74,
-    "targetMembers": 1453,
-    "totalDiagnostics": 372,
-    "missingType": 183,
+    "targetTypes": 75,
+    "targetMembers": 1457,
+    "totalDiagnostics": 371,
+    "missingType": 182,
     "missingMember": 135,
-    "completeTypes": 67,
+    "completeTypes": 68,
     "partialTypes": 7,
-    "missingTypes": 183,
+    "missingTypes": 182,
     "unexpectedType": 0,
     "unexpectedMember": 0,
     "typeKindMismatch": 0,
@@ -98,10 +98,22 @@
       "VertexElementUsage": [14, 13, 13, "non-flags Int32 enum"]
     }
   },
+  "displayOrientationClosure": {
+    "sourceTypes": 1,
+    "clrIdentities": 5,
+    "expectedRubyIdentities": 4,
+    "targetRubyIdentities": 4,
+    "localDiagnostics": 0,
+    "kind": "flags enum",
+    "underlyingType": "System.Int32",
+    "validMask": "0x7"
+  },
   "behavior": {
-    "provenance": "PURE_XNA_DERIVED",
-    "observations": 253,
-    "assertions": 253,
+    "provenance": "OBSERVATION_LEVEL",
+    "pureXnaDerived": 254,
+    "rubyMappingQualification": 1,
+    "observations": 255,
+    "assertions": 255,
     "failures": 0,
     "gamepadGroups": {
       "BUTTONS": 4,
@@ -116,6 +128,7 @@
       "VERTEX_ELEMENT": 11,
       "VERTEX_ELEMENT_ENUMS": 3
     },
+    "displayOrientationGroup": 2,
     "nativeGamePadIncludedInPureTotals": false
   },
   "nativeAbi": {
@@ -184,10 +197,10 @@
     "SpriteBatch"
   ],
   "nextMilestone": {
-    "types": ["DisplayOrientation"],
+    "types": ["GraphicsDeviceStatus"],
     "sourceTypes": 1,
-    "clrIdentities": 5,
-    "expectedRubyIdentities": 4,
+    "clrIdentities": 4,
+    "expectedRubyIdentities": 3,
     "started": false
   }
 }

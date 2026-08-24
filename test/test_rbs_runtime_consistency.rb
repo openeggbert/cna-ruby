@@ -280,6 +280,28 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     assert_equal 13, selected.find { |type| type["name"].end_with?(".VertexElementUsage") }.fetch("members").length
   end
 
+  def test_display_orientation_rbs_retains_exact_four_identity_flags_projection
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    selected = contract.fetch("types").find do |type|
+      type.fetch("name") == "Microsoft.Xna.Framework.DisplayOrientation"
+    end
+    refute_nil selected
+    assert_equal 4, selected.fetch("members").length
+    assert_equal true, selected.fetch("flags")
+    assert_equal "System.Int32", selected.fetch("underlyingType")
+
+    source = File.read(SIGNATURE_ROOT.join("microsoft", "xna", "framework.rbs"))
+    refute_includes source, "untyped"
+    refute_match(/\*\w*/, source)
+    %w[Default LandscapeLeft LandscapeRight Portrait].each do |name|
+      assert_includes source, "#{name}: DisplayOrientation"
+    end
+    assert_includes source, "def |: (DisplayOrientation other) -> DisplayOrientation"
+    assert_includes source, "def &: (DisplayOrientation other) -> DisplayOrientation"
+    refute_includes source, "def ToString"
+    refute_includes source, "def HasFlag"
+  end
+
   private
 
   def load_environment

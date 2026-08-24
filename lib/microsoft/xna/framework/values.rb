@@ -673,6 +673,16 @@ module Microsoft
         extend CNA::Runtime::EnumType
         define_values({ "One" => 0, "Two" => 1, "Three" => 2, "Four" => 3 })
       end
+
+      class DisplayOrientation < CNA::Runtime::EnumValue
+        extend CNA::Runtime::EnumType
+        define_values({
+          "Default" => 0,
+          "LandscapeLeft" => 1,
+          "LandscapeRight" => 2,
+          "Portrait" => 4
+        }, flags: true)
+      end
     end
   end
 end

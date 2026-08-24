@@ -446,6 +446,60 @@ class ApiVerifierTest < Minitest::Test
     vertex&.__send__(:remove_method, :SizeInBytes) if vertex&.public_method_defined?(:SizeInBytes)
   end
 
+  def test_display_orientation_missing_type_and_wrong_namespace_are_detected
+    reference, target = display_orientation_contracts
+    target["types"].clear
+    assert_operator verify(reference, target).counts["MISSING_TYPE"], :>, 0
+
+    reference, target = display_orientation_contracts
+    orientation = target.fetch("types").first
+    orientation["name"] = "Microsoft.Xna.Framework.Graphics.DisplayOrientation"
+    orientation["rubyName"] = "Microsoft::Xna::Framework::Graphics::DisplayOrientation"
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_TYPE"], :>, 0
+    assert_operator result.counts["UNEXPECTED_TYPE"], :>, 0
+  end
+
+  def test_display_orientation_kind_base_underlying_flags_and_values_are_detected
+    reference, target = display_orientation_contracts
+    orientation = target.fetch("types").first
+    orientation["kind"] = "class"
+    orientation["baseType"] = "System.Object"
+    orientation["underlyingType"] = "System.UInt32"
+    orientation["flags"] = false
+    orientation.fetch("members").each { |member| member["value"] = (Integer(member.fetch("value")) + 8).to_s }
+    result = verify(reference, target)
+    assert_operator result.counts["TYPE_KIND_MISMATCH"], :>, 0
+    assert_operator result.counts["BASE_MAPPING_MISMATCH"], :>, 0
+    assert_operator result.counts["ENUM_VALUE_MISMATCH"], :>=, 5
+    assert_operator result.counts["FLAGS_MAPPING_MISMATCH"], :>=, 2
+  end
+
+  def test_display_orientation_missing_portrait_exposed_storage_and_extra_member_are_detected
+    reference, target = display_orientation_contracts
+    orientation = target.fetch("types").first
+    orientation.fetch("members").reject! { |member| member["name"] == "Portrait" }
+    storage = reference.fetch("types").first.fetch("members").find { |member| member["name"] == "value__" }
+    orientation.fetch("members") << Marshal.load(Marshal.dump(storage))
+    orientation.fetch("members") << {
+      "kind" => "field", "name" => "Landscape", "type" => orientation.fetch("name"),
+      "static" => true, "constant" => true, "value" => "3"
+    }
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_MEMBER"], :>, 0
+    assert_operator result.counts["UNEXPECTED_MEMBER"], :>=, 2
+  end
+
+  def test_display_orientation_runtime_flags_mask_is_measured
+    reference, target = display_orientation_contracts
+    orientation = Microsoft::Xna::Framework::DisplayOrientation
+    original = orientation.instance_variable_get(:@enum_mask)
+    orientation.instance_variable_set(:@enum_mask, original ^ 0x4)
+    assert_operator verify(reference, target, runtime: true).counts["FLAGS_MAPPING_MISMATCH"], :>, 0
+  ensure
+    orientation&.instance_variable_set(:@enum_mask, original) if original
+  end
+
 
   def packed_vector_contracts
     reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
@@ -499,6 +553,15 @@ class ApiVerifierTest < Minitest::Test
     end
     reference_types = reference.fetch("types").select { |type| names.include?(type.fetch("name")) }
     target_types = target.fetch("types").select { |type| names.include?(type.fetch("name")) }
+    [{"types" => reference_types}, {"types" => Marshal.load(Marshal.dump(target_types))}]
+  end
+
+  def display_orientation_contracts
+    reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
+    target = JSON.parse(File.read(File.expand_path("../tools/api_compat/signatures.json", __dir__)))
+    name = "Microsoft.Xna.Framework.DisplayOrientation"
+    reference_types = reference.fetch("types").select { |type| type.fetch("name") == name }
+    target_types = target.fetch("types").select { |type| type.fetch("name") == name }
     [{"types" => reference_types}, {"types" => Marshal.load(Marshal.dump(target_types))}]
   end
 end

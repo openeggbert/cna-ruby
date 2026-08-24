@@ -5,6 +5,7 @@
     {"name": "Microsoft.Xna.Framework.Point", "complete": true},
     {"name": "Microsoft.Xna.Framework.GameTime", "complete": true},
     {"name": "Microsoft.Xna.Framework.PlayerIndex", "complete": true},
+    {"name": "Microsoft.Xna.Framework.DisplayOrientation", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.SpriteSortMode", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.SpriteEffects", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.SurfaceFormat", "complete": true},
