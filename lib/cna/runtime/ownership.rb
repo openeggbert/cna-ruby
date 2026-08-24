@@ -8,7 +8,9 @@ module CNA
       PARENT_OWNED = :parent_owned
       PROCESS_GLOBAL = :process_global
       MANAGED_VALUE = :managed_value
-      ALL = [OWNED, BORROWED, PARENT_OWNED, PROCESS_GLOBAL, MANAGED_VALUE].freeze
+      BORROWED_EXTERNAL_SCALAR = :borrowed_external_scalar
+      ALL = [OWNED, BORROWED, PARENT_OWNED, PROCESS_GLOBAL, MANAGED_VALUE,
+             BORROWED_EXTERNAL_SCALAR].freeze
     end
 
     class NativeHandle

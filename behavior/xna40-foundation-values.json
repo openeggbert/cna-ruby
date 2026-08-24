@@ -3142,10 +3142,101 @@
         false,
         true
       ]
+    },
+    {
+      "id": "button_state.values",
+      "operation": "ButtonState.Values",
+      "args": [],
+      "expected": [0, 1, true, true]
+    },
+    {
+      "id": "button_state.validation",
+      "operation": "ButtonState.Validation",
+      "args": [],
+      "expected": ["RangeError", "TypeError", "TypeError"]
+    },
+    {
+      "id": "mouse_state.properties.asymmetric",
+      "operation": "MouseState.Properties",
+      "args": [-17, 203, -120, 1, 0, 1, 1, 0],
+      "expected": [-17, 203, 1, 1, 0, 1, 0, -120]
+    },
+    {
+      "id": "mouse_state.equals.equal",
+      "operation": "MouseState.Equals",
+      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, 203, -120, 1, 0, 1, 1, 0]],
+      "expected": [true, true, false]
+    },
+    {
+      "id": "mouse_state.equals.x",
+      "operation": "MouseState.Equals",
+      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [18, 203, -120, 1, 0, 1, 1, 0]],
+      "expected": [false, false, true]
+    },
+    {
+      "id": "mouse_state.equals.y",
+      "operation": "MouseState.Equals",
+      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, -204, -120, 1, 0, 1, 1, 0]],
+      "expected": [false, false, true]
+    },
+    {
+      "id": "mouse_state.equals.scroll",
+      "operation": "MouseState.Equals",
+      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, 203, 121, 1, 0, 1, 1, 0]],
+      "expected": [false, false, true]
+    },
+    {
+      "id": "mouse_state.equals.left",
+      "operation": "MouseState.Equals",
+      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, 203, -120, 0, 0, 1, 1, 0]],
+      "expected": [false, false, true]
+    },
+    {
+      "id": "mouse_state.equals.middle",
+      "operation": "MouseState.Equals",
+      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, 203, -120, 1, 1, 1, 1, 0]],
+      "expected": [false, false, true]
+    },
+    {
+      "id": "mouse_state.equals.right",
+      "operation": "MouseState.Equals",
+      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, 203, -120, 1, 0, 0, 1, 0]],
+      "expected": [false, false, true]
+    },
+    {
+      "id": "mouse_state.equals.xbutton1",
+      "operation": "MouseState.Equals",
+      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, 203, -120, 1, 0, 1, 0, 0]],
+      "expected": [false, false, true]
+    },
+    {
+      "id": "mouse_state.equals.xbutton2",
+      "operation": "MouseState.Equals",
+      "args": [[-17, 203, -120, 1, 0, 1, 1, 0], [-17, 203, -120, 1, 0, 1, 1, 1]],
+      "expected": [false, false, true]
+    },
+    {
+      "id": "mouse_state.hash_string",
+      "operation": "MouseState.HashString",
+      "args": [12, -3, 120, 1, 0, 1, 1, 0],
+      "expected": [-120, "{X:12 Y:-3 Buttons:Left Right XButton1 Wheel:120}"]
+    },
+    {
+      "id": "mouse_state.int32_extremes",
+      "operation": "MouseState.Extremes",
+      "args": [],
+      "expected": [2147483647, "{X:-2147483648 Y:2147483647 Buttons:None Wheel:-2147483648}", -2147483647, "{X:2147483647 Y:-2147483648 Buttons:Left Right Middle XButton1 XButton2 Wheel:2147483647}"]
+    },
+    {
+      "id": "mouse_state.value_semantics",
+      "operation": "MouseState.ValueSemantics",
+      "args": [-17, 203, -120, 1, 0, 1, 1, 0],
+      "expected": [true, true, -17, 44, true]
     }
   ],
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
   "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
   "milestone4SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
-  "milestone5SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130"
+  "milestone5SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+  "milestone6SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130"
 }

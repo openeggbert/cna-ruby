@@ -6,6 +6,7 @@ require_relative "../lib/cna"
 
 F = Microsoft::Xna::Framework
 PV = F::Graphics::PackedVector
+I = F::Input
 
 def vector(value) = F::Vector2.new(*value)
 def vector3(value) = F::Vector3.new(*value)
@@ -32,6 +33,11 @@ end
 def hex_values(values) = values.map { |value| hex32(value) }
 def float_from_bits(value) = [value].pack("L").unpack1("f")
 def packed_type(name) = PV.const_get(name, false)
+def button(value) = I::ButtonState.coerce(value)
+def mouse_state(value)
+  I::MouseState.new(value[0], value[1], value[2], button(value[3]), button(value[4]),
+                    button(value[5]), button(value[6]), button(value[7]))
+end
 def error_name
   yield
   "none"
@@ -82,6 +88,31 @@ end
 def execute(item)
   args = item.fetch("args")
   case item.fetch("operation")
+  when "ButtonState.Values"
+    [I::ButtonState::Released.to_i, I::ButtonState::Pressed.to_i,
+     I::ButtonState::Released.instance_of?(I::ButtonState), I::ButtonState::Pressed.frozen?]
+  when "ButtonState.Validation"
+    [error_name { I::ButtonState.coerce(2) }, error_name { I::ButtonState.coerce(true) },
+     error_name { I::ButtonState::Released | I::ButtonState::Pressed }]
+  when "MouseState.Properties"
+    value = mouse_state(args)
+    [value.X, value.Y, value.LeftButton.to_i, value.RightButton.to_i, value.MiddleButton.to_i,
+     value.XButton1.to_i, value.XButton2.to_i, value.ScrollWheelValue]
+  when "MouseState.Equals"
+    left = mouse_state(args[0]); right = mouse_state(args[1])
+    [left.Equals(right), left == right, left != right]
+  when "MouseState.HashString"
+    value = mouse_state(args)
+    [value.GetHashCode, value.ToString]
+  when "MouseState.Extremes"
+    minimum = -2_147_483_648; maximum = 2_147_483_647
+    low = mouse_state([minimum, maximum, minimum, 0, 0, 0, 0, 0])
+    high = mouse_state([maximum, minimum, maximum, 1, 1, 1, 1, 1])
+    [low.GetHashCode, low.ToString, high.GetHashCode, high.ToString]
+  when "MouseState.ValueSemantics"
+    value = mouse_state(args); copy = value.dup; equal_before = value.Equals(copy)
+    copy.instance_variable_set(:@X, 44)
+    [equal_before, !value.equal?(copy), value.X, copy.X, value.LeftButton.frozen?]
   when "PackedVector.PackedValue"
     type_name, values = args
     packed_type(type_name).new(*values).PackedValue
@@ -437,6 +468,13 @@ report = {
   "ASSERTIONS" => corpus.fetch("observations").length,
   "FAILURES" => failures.length,
   "groupCounts" => corpus.fetch("observations").group_by { |item| behavior_group(item) }.transform_values(&:length).sort.to_h,
+  "nativeEvidence" => {
+    "group" => "MOUSE_NATIVE",
+    "provenance" => "CNA_NATIVE_INTEGRATION",
+    "includedInPureTotals" => false,
+    "evidence" => ["test/test_native_integration.rb", "docs/generated/native-stress-report.json",
+                   "docs/generated/qualification-report.json"]
+  },
   "failures" => failures
 }
 destination = File.expand_path("../docs/generated/behavior-corpus-report.json", __dir__)

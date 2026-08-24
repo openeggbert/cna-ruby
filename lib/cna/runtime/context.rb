@@ -76,8 +76,12 @@ module CNA
         game = Thread.current[THREAD_KEY]
         return game if game
 
-        candidates = @lock.synchronize do
-          @live_games.select { |value| !value.__send__(:disposed?) && value.__send__(:owner_thread).equal?(Thread.current) }
+        live_games = @lock.synchronize do
+          @live_games.select { |value| !value.__send__(:disposed?) }
+        end
+        candidates = live_games.select { |value| value.__send__(:owner_thread).equal?(Thread.current) }
+        if candidates.empty? && live_games.length == 1
+          raise CNA::OwnerThreadError, "#{operation} belongs to the live CNA Game owner thread"
         end
         raise CNA::InvalidBindingStateError, "#{operation} requires a live CNA Game on its owner thread" if candidates.empty?
         raise CNA::InvalidBindingStateError, "#{operation} cannot select between Game generations" if candidates.length > 1

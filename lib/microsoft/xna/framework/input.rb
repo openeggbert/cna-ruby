@@ -11,6 +11,11 @@ module Microsoft
           define_values({ "Down" => 1, "Up" => 0 })
         end
 
+        class ButtonState < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({ "Released" => 0, "Pressed" => 1 })
+        end
+
         class Keys < CNA::Runtime::EnumValue
           extend CNA::Runtime::EnumType
           values = {
@@ -129,6 +134,120 @@ module Microsoft
                 raise ArgumentError, "Keyboard.GetState expects () or (PlayerIndex)"
               end
               KeyboardState.__send__(:from_native_bytes, native.pointer[0, native.class.size])
+            end
+          end
+          private_class_method :new
+        end
+
+        class MouseState
+          include CNA::Runtime::ValueSemantics
+
+          attr_reader :X, :Y, :LeftButton, :RightButton, :MiddleButton,
+                      :XButton1, :XButton2, :ScrollWheelValue
+
+          def initialize(x, y, scroll_wheel, left_button, middle_button, right_button, x_button1, x_button2)
+            @X = CNA::Runtime::Numeric.int32(x, "x")
+            @Y = CNA::Runtime::Numeric.int32(y, "y")
+            @ScrollWheelValue = CNA::Runtime::Numeric.int32(scroll_wheel, "scrollWheel")
+            @LeftButton = ButtonState.coerce(left_button)
+            @MiddleButton = ButtonState.coerce(middle_button)
+            @RightButton = ButtonState.coerce(right_button)
+            @XButton1 = ButtonState.coerce(x_button1)
+            @XButton2 = ButtonState.coerce(x_button2)
+          end
+
+          def Equals(other) = other.instance_of?(MouseState) && self == other
+          def !=(other) = !(self == other)
+
+          def GetHashCode
+            CNA::Runtime::Numeric.wrap_int32(
+              @X ^ @Y ^ @LeftButton.to_i ^ @RightButton.to_i ^ @MiddleButton.to_i ^
+                @XButton1.to_i ^ @XButton2.to_i ^ @ScrollWheelValue
+            )
+          end
+
+          def ToString
+            buttons = []
+            buttons << "Left" if @LeftButton == ButtonState::Pressed
+            buttons << "Right" if @RightButton == ButtonState::Pressed
+            buttons << "Middle" if @MiddleButton == ButtonState::Pressed
+            buttons << "XButton1" if @XButton1 == ButtonState::Pressed
+            buttons << "XButton2" if @XButton2 == ButtonState::Pressed
+            "{X:#{@X} Y:#{@Y} Buttons:#{buttons.empty? ? "None" : buttons.join(" ")} Wheel:#{@ScrollWheelValue}}"
+          end
+
+          alias hash GetHashCode
+          alias to_s ToString
+
+          private
+
+          def value_components
+            [@X, @Y, @ScrollWheelValue, @LeftButton, @MiddleButton, @RightButton, @XButton1, @XButton2]
+          end
+
+          def self.from_native(native)
+            buttons = native.read_u32(24)
+            button = lambda do |mask|
+              (buttons & mask).zero? ? ButtonState::Released : ButtonState::Pressed
+            end
+            new(
+              native.read_i32(8), native.read_i32(12), native.read_i32(16),
+              button.call(CNA::Native::Manifest::CONSTANTS.fetch("CNA_MOUSE_BUTTON_LEFT")),
+              button.call(CNA::Native::Manifest::CONSTANTS.fetch("CNA_MOUSE_BUTTON_MIDDLE")),
+              button.call(CNA::Native::Manifest::CONSTANTS.fetch("CNA_MOUSE_BUTTON_RIGHT")),
+              button.call(CNA::Native::Manifest::CONSTANTS.fetch("CNA_MOUSE_BUTTON_X1")),
+              button.call(CNA::Native::Manifest::CONSTANTS.fetch("CNA_MOUSE_BUTTON_X2"))
+            )
+          end
+
+          class << self
+            private :from_native
+          end
+        end
+
+        class Mouse
+          class << self
+            def new(*) = raise(TypeError, "Mouse is static")
+
+            def GetState
+              host = native_host("Mouse.GetState")
+              native = CNA::Native::Layouts::MouseState.new
+              CNA::Native.library.call("cna_mouse_get_state", host.handle, native.pointer)
+              MouseState.__send__(:from_native, native)
+            end
+
+            def SetPosition(x, y)
+              native_x = CNA::Runtime::Numeric.int32(x, "x")
+              native_y = CNA::Runtime::Numeric.int32(y, "y")
+              host = native_host("Mouse.SetPosition")
+              CNA::Native.library.call("cna_mouse_set_position", host.handle, native_x, native_y)
+              nil
+            end
+
+            def WindowHandle
+              host = native_host("Mouse.WindowHandle")
+              output = CNA::Native.library.pointer_for("Q", 0)
+              CNA::Native.library.call("cna_mouse_get_window_handle", host.handle, output)
+              CNA::Runtime::Numeric.intptr_from_uint64_bits(output[0, 8].unpack1("Q"))
+            end
+
+            def WindowHandle=(value)
+              bits = CNA::Runtime::Numeric.intptr_to_uint64_bits(value, "WindowHandle")
+              host = native_host("Mouse.WindowHandle=")
+              CNA::Native.library.call("cna_mouse_set_window_handle", host.handle, bits)
+              nil
+            end
+
+            private
+
+            def native_host(operation)
+              game = CNA::Runtime::Context.current_game(operation)
+              game.__send__(:assert_owner_thread!)
+              host = game.instance_variable_get(:@host)
+              unless host && !host.handle.zero?
+                raise CNA::InvalidBindingStateError, "#{operation} requires an initialized CNA Game"
+              end
+              host
             end
           end
           private_class_method :new

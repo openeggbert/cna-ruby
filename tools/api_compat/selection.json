@@ -12,6 +12,9 @@
     {"name": "Microsoft.Xna.Framework.Input.Keys", "complete": true},
     {"name": "Microsoft.Xna.Framework.Input.KeyboardState", "complete": true},
     {"name": "Microsoft.Xna.Framework.Input.Keyboard", "complete": true},
+    {"name": "Microsoft.Xna.Framework.Input.ButtonState", "complete": true},
+    {"name": "Microsoft.Xna.Framework.Input.MouseState", "complete": true},
+    {"name": "Microsoft.Xna.Framework.Input.Mouse", "complete": true},
 
     {"name": "Microsoft.Xna.Framework.Vector2", "complete": true},
     {"name": "Microsoft.Xna.Framework.Vector3", "complete": true},

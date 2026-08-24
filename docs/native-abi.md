@@ -1,6 +1,6 @@
 # Native ABI Qualification
 
-The Foundation 1 admission policy retained unchanged through Foundation 5 admits exactly CNA C ABI 0.7.0 (`0x00000700`). Newer 0.x and same-major versions are rejected until separately reviewed.
+The Foundation 1 admission policy retained unchanged through Foundation 6 admits exactly CNA C ABI 0.7.0 (`0x00000700`). Newer 0.x and same-major versions are rejected until separately reviewed.
 
 The retained qualification artifact used for this milestone is:
 
@@ -14,5 +14,7 @@ The retained qualification artifact used for this milestone is:
 It is not bundled and its temporary qualification location is not a runtime default. Consumers set `CNA_NATIVE_LIBRARY` to an absolute path. Production resolution then considers a future package-native directory and platform dynamic-loader names; it never searches developer sibling repositories.
 
 The reviewed manifest records exact C type names, pointer depth, constness, fixed width, signedness, CNA_Bool/enum representation, ownership, result lifetime, and callbacks. `tools/native_abi/verify.rb` compiles an independent C probe against canonical headers, compares structure size/alignment/offsets and constants with Ruby declarations, type-checks every function/callback prototype, and checks exports in the actually loaded library.
+
+Foundation 6 binds four already-existing reviewed functions and no adjacent input API: `cna_mouse_get_state`, `cna_mouse_set_position`, `cna_mouse_get_window_handle`, and `cna_mouse_set_window_handle`. It measures the complete `CNA_MouseState` layout and the five consumed button-bit constants. The compiler-backed delta is 30 -> 34 bound functions, 90 -> 103 signature measurements, 158 -> 176 C layout measurements, 158 -> 176 Ruby layout measurements, 2 -> 2 callbacks, and 12 -> 17 constants. Missing header symbols, missing library symbols, and ABI mismatches remain zero.
 
 `cna_viewport_get_title_safe_area` is intentionally not bound: its canonical prototype passes `CNA_Viewport` by value, a contract this Fiddle-only foundation does not claim to marshal portably.

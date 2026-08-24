@@ -38,6 +38,10 @@ CHECK_FN(cna_keyboard_state_is_key_down, CNA_Result, (const CNA_KeyboardState*, 
 CHECK_FN(cna_keyboard_state_is_key_up, CNA_Result, (const CNA_KeyboardState*, CNA_Key, CNA_Bool*));
 CHECK_FN(cna_keyboard_state_get_pressed_key_count, CNA_Result, (const CNA_KeyboardState*, uint32_t*));
 CHECK_FN(cna_keyboard_state_copy_pressed_keys, CNA_Result, (const CNA_KeyboardState*, CNA_Key*, uint64_t, uint32_t*));
+CHECK_FN(cna_mouse_get_state, CNA_Result, (CNA_Handle, CNA_MouseState*));
+CHECK_FN(cna_mouse_set_position, CNA_Result, (CNA_Handle, int32_t, int32_t));
+CHECK_FN(cna_mouse_get_window_handle, CNA_Result, (CNA_Handle, uint64_t*));
+CHECK_FN(cna_mouse_set_window_handle, CNA_Result, (CNA_Handle, uint64_t));
 
 typedef CNA_Result (*expected_lifecycle)(CNA_Handle, const CNA_GameTime*, void*, CNA_CallbackError*);
 typedef CNA_Result (*expected_begin_draw)(CNA_Handle, const CNA_GameTime*, void*, CNA_Bool*, CNA_CallbackError*);
@@ -80,6 +84,10 @@ int main(void) {
     SIGNATURE(cna_keyboard_state_is_key_up, "CNA_Result|const CNA_KeyboardState*,CNA_Key,CNA_Bool*");
     SIGNATURE(cna_keyboard_state_get_pressed_key_count, "CNA_Result|const CNA_KeyboardState*,uint32_t*");
     SIGNATURE(cna_keyboard_state_copy_pressed_keys, "CNA_Result|const CNA_KeyboardState*,CNA_Key*,uint64_t,uint32_t*");
+    SIGNATURE(cna_mouse_get_state, "CNA_Result|CNA_Handle,CNA_MouseState*");
+    SIGNATURE(cna_mouse_set_position, "CNA_Result|CNA_Handle,int32_t,int32_t");
+    SIGNATURE(cna_mouse_get_window_handle, "CNA_Result|CNA_Handle,uint64_t*");
+    SIGNATURE(cna_mouse_set_window_handle, "CNA_Result|CNA_Handle,uint64_t");
 
     STRUCT(CNA_StringView); FIELD(CNA_StringView, data); FIELD(CNA_StringView, byte_length);
     STRUCT(CNA_ErrorInfo); FIELD(CNA_ErrorInfo, struct_size); FIELD(CNA_ErrorInfo, struct_version); FIELD(CNA_ErrorInfo, result); FIELD(CNA_ErrorInfo, category); FIELD(CNA_ErrorInfo, message_byte_length);
@@ -93,10 +101,12 @@ int main(void) {
     STRUCT(CNA_SpriteBatchBeginInfo); FIELD(CNA_SpriteBatchBeginInfo, struct_size); FIELD(CNA_SpriteBatchBeginInfo, struct_version); FIELD(CNA_SpriteBatchBeginInfo, sort_mode); FIELD(CNA_SpriteBatchBeginInfo, reserved);
     STRUCT(CNA_SpriteScaledCommand); FIELD(CNA_SpriteScaledCommand, struct_size); FIELD(CNA_SpriteScaledCommand, struct_version); FIELD(CNA_SpriteScaledCommand, texture); FIELD(CNA_SpriteScaledCommand, position); FIELD(CNA_SpriteScaledCommand, source); FIELD(CNA_SpriteScaledCommand, color); FIELD(CNA_SpriteScaledCommand, rotation); FIELD(CNA_SpriteScaledCommand, origin); FIELD(CNA_SpriteScaledCommand, scale); FIELD(CNA_SpriteScaledCommand, effects); FIELD(CNA_SpriteScaledCommand, layer_depth);
     STRUCT(CNA_KeyboardState); FIELD(CNA_KeyboardState, struct_size); FIELD(CNA_KeyboardState, struct_version); FIELD(CNA_KeyboardState, pressed_key_words);
+    STRUCT(CNA_MouseState); FIELD(CNA_MouseState, struct_size); FIELD(CNA_MouseState, struct_version); FIELD(CNA_MouseState, x); FIELD(CNA_MouseState, y); FIELD(CNA_MouseState, scroll_wheel); FIELD(CNA_MouseState, horizontal_scroll_wheel); FIELD(CNA_MouseState, pressed_buttons); FIELD(CNA_MouseState, reserved);
 
     CONSTANT(CNA_ABI_VERSION); CONSTANT(CNA_FALSE); CONSTANT(CNA_TRUE);
     CONSTANT(CNA_RESULT_SUCCESS); CONSTANT(CNA_RESULT_NOT_SUPPORTED); CONSTANT(CNA_RESULT_THREAD); CONSTANT(CNA_RESULT_CALLBACK);
     CONSTANT(CNA_SPRITE_SORT_MODE_DEFERRED); CONSTANT(CNA_SPRITE_EFFECT_NONE); CONSTANT(CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY); CONSTANT(CNA_SPRITE_EFFECT_FLIP_VERTICALLY);
     CONSTANT(CNA_SURFACE_FORMAT_COLOR);
+    CONSTANT(CNA_MOUSE_BUTTON_LEFT); CONSTANT(CNA_MOUSE_BUTTON_MIDDLE); CONSTANT(CNA_MOUSE_BUTTON_RIGHT); CONSTANT(CNA_MOUSE_BUTTON_X1); CONSTANT(CNA_MOUSE_BUTTON_X2);
     return 0;
 }

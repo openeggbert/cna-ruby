@@ -178,6 +178,87 @@ class ApiVerifierTest < Minitest::Test
     assert_operator verify(reference, target).counts["ENUM_VALUE_MISMATCH"], :>, 0
   end
 
+  def test_mouse_state_wrong_kind_constructor_order_and_missing_x_buttons_are_detected
+    reference, target = mouse_contracts
+    state = target["types"].find { |type| type["name"].end_with?(".MouseState") }
+    state["kind"] = "class"
+    constructor = state["members"].find { |member| member["kind"] == "constructor" }
+    constructor["parameters"][4], constructor["parameters"][5] =
+      constructor["parameters"][5], constructor["parameters"][4]
+    state["members"].reject! { |member| %w[XButton1 XButton2].include?(member["name"]) }
+    result = verify(reference, target)
+    assert_operator result.counts["TYPE_KIND_MISMATCH"], :>, 0
+    assert_operator result.counts["PARAMETER_MAPPING_MISMATCH"], :>, 0
+    assert_operator result.counts["MISSING_MEMBER"], :>=, 2
+  end
+
+  def test_mouse_state_mutable_x_extra_typed_equals_and_missing_operator_are_detected
+    reference, target = mouse_contracts
+    state = target["types"].find { |type| type["name"].end_with?(".MouseState") }
+    state["members"].find { |member| member["name"] == "X" }["set"] = true
+    object_equals = state["members"].find { |member| member["name"] == "Equals" }
+    typed_equals = Marshal.load(Marshal.dump(object_equals))
+    typed_equals["parameters"][0]["type"] = state["name"]
+    state["members"] << typed_equals
+    state["members"].reject! { |member| member["name"] == "op_Inequality" }
+    result = verify(reference, target)
+    assert_operator result.counts["PROPERTY_MAPPING_MISMATCH"], :>, 0
+    assert_operator result.counts["UNEXPECTED_MEMBER"], :>, 0
+    assert_operator result.counts["MISSING_MEMBER"], :>, 0
+  end
+
+  def test_mouse_button_state_wrong_enum_value_is_detected
+    reference, target = mouse_contracts
+    button = target["types"].find { |type| type["name"].end_with?(".ButtonState") }
+    button["members"].find { |member| member["name"] == "Pressed" }["value"] = "2"
+    assert_operator verify(reference, target).counts["ENUM_VALUE_MISMATCH"], :>, 0
+  end
+
+  def test_mouse_constructibility_static_members_and_set_position_width_are_detected
+    reference, target = mouse_contracts
+    mouse = target["types"].find { |type| type["name"].end_with?(".Mouse") }
+    mouse["members"] << {
+      "kind" => "constructor", "name" => ".ctor", "static" => false, "access" => "public",
+      "returnType" => nil, "genericParameters" => [], "parameters" => []
+    }
+    mouse["members"].find { |member| member["name"] == "GetState" }["static"] = false
+    mouse["members"].find { |member| member["name"] == "SetPosition" }["parameters"][0]["type"] = "System.Int64"
+    result = verify(reference, target)
+    assert_operator result.counts["UNEXPECTED_MEMBER"], :>, 0
+    assert_operator result.counts["MISSING_MEMBER"], :>, 0
+    assert_operator result.counts["PARAMETER_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_mouse_window_handle_mutability_type_and_intptr_mapping_are_detected
+    reference, target = mouse_contracts
+    property = target["types"].find { |type| type["name"].end_with?(".Mouse") }["members"].find do |member|
+      member["name"] == "WindowHandle"
+    end
+    property["set"] = false
+    property["type"] = "System.UInt64"
+    target["languageTypeMappings"]["System.IntPtr"]["rubyType"] = "String"
+    result = verify(reference, target)
+    assert_operator result.counts["PROPERTY_MAPPING_MISMATCH"], :>, 0
+    # Retain System.IntPtr on a second member so the formal mapping remains required.
+    property["type"] = "System.IntPtr"
+    assert_operator verify(reference, target).counts["LANGUAGE_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_mouse_raw_pointer_mapping_and_extra_native_handle_are_detected
+    reference, target = mouse_contracts
+    mouse = target["types"].find { |type| type["name"].end_with?(".Mouse") }
+    mouse["members"].find { |member| member["name"] == "WindowHandle" }["type"] = "Fiddle::Pointer"
+    mouse["members"] << {
+      "kind" => "method", "name" => "NativeHandle", "static" => true, "access" => "public",
+      "returnType" => "CNA_Handle", "genericParameters" => [], "parameters" => []
+    }
+    target["languageTypeMappings"]["System.IntPtr"]["rubyType"] = "Fiddle::Pointer"
+    result = verify(reference, target, runtime: true)
+    assert_operator result.counts["UNEXPECTED_MEMBER"], :>, 0
+    assert_operator result.counts["RAW_HANDLE_LEAK"], :>, 0
+    assert_operator result.counts["PUBLIC_NATIVE_FFI_LEAK"], :>, 0
+  end
+
 
   def packed_vector_contracts
     reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
@@ -192,5 +273,22 @@ class ApiVerifierTest < Minitest::Test
       type["rubyName"] = CNAApiCompat::NameMapper.runtime_constant_path(type.fetch("name"))
     end
     [{"types" => reference_types}, {"types" => target_types}]
+  end
+
+  def mouse_contracts
+    reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
+    names = %w[
+      Microsoft.Xna.Framework.Input.ButtonState
+      Microsoft.Xna.Framework.Input.MouseState
+      Microsoft.Xna.Framework.Input.Mouse
+    ]
+    reference_types = reference.fetch("types").select { |type| names.include?(type.fetch("name")) }
+    target_types = Marshal.load(Marshal.dump(reference_types))
+    target_types.each do |type|
+      type["members"].reject! { |member| type["kind"] == "enum" && member["name"] == "value__" }
+      type["rubyName"] = CNAApiCompat::NameMapper.runtime_constant_path(type.fetch("name"))
+    end
+    mapping = Marshal.load(Marshal.dump(CNAApiCompat::LANGUAGE_TYPE_MAPPINGS))
+    [{"types" => reference_types}, {"types" => target_types, "languageTypeMappings" => mapping}]
   end
 end

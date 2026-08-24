@@ -19,6 +19,15 @@
     "enumerationMutation": "fail-fast when the backing collection version changes"
   },
   "staticMembers": "class methods; struct-valued members return fresh objects",
+  "primitiveTypes": {
+    "System.IntPtr": {
+      "rubyType": "Integer",
+      "signed": true,
+      "width": "native-pointer",
+      "validation": "inclusive signed range derived from Fiddle::SIZEOF_VOIDP",
+      "nativeBoundary": "two's-complement bit pattern in the canonical fixed-width C carrier; never Fiddle::Pointer"
+    }
+  },
   "enums": {"representation": "typed frozen Ruby objects", "excludeMetadataMembers": ["value__"], "flags": "declared bits only"},
   "structs": "Ruby classes with boundary copies and dup/clone; assignment aliasing is documented",
   "operators": "map to Ruby syntax where available and retain op_* identity in static contract",

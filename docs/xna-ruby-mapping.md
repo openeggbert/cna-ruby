@@ -11,6 +11,7 @@ The selected authority is the Microsoft XNA Framework 4.0 Windows runtime metada
 | method/property | exact XNA spelling; getter `X`, setter `X=` only when writable |
 | indexed `Item[index]` property | `collection[index]` and `collection[index] = value`; getter/setter identity and mutability remain measured |
 | static method/property | class method such as `Vector2.Zero`, returning a fresh value where XNA returns a struct |
+| `System.IntPtr` | signed native-pointer-width Ruby `Integer`; width is `Fiddle::SIZEOF_VOIDP * 8`, with exact range validation and two's-complement conversion only at the private fixed-width C carrier boundary |
 | field | exact reader and, for mutable struct fields, writer; field identity remains distinct in the static contract |
 | operator | mapped Ruby operator where syntax exists; original `op_*` identity remains measured |
 | `ref` input | ordinary typed Ruby value input, copied at value boundaries; caller mutation is never simulated |
@@ -33,5 +34,11 @@ Ruby objects cannot reproduce CLR struct assignment copying: `b = a` aliases. Va
 Geometry array transforms retain caller-owned destination storage. Whole-array calls map to `(source, transform, destination)` and range calls to `(source, source_index, transform, destination, destination_index, length)`. XNA's forward write order is preserved, including observable overlap behavior. A negative length performs no iteration; invalid indices are observed only when at least one element is processed. Every collapsed Ruby call shape still has one entry per CLR overload in `tools/api_compat/signatures.json` and the generated geometry RBS.
 
 Uppercase methods are legal in Ruby but bare uppercase tokens are parsed as constants in several contexts. Ported code uses an explicit receiver (`self.Exit`, `Color.White`). Idiomatic snake_case aliases are excluded from the strict surface.
+
+`System.IntPtr` never maps to `Fiddle::Pointer`, `CNA_Handle`, or `void*` in the public API. On the
+qualified x86-64 host it accepts `-9223372036854775808..9223372036854775807`. A negative value is
+carried through a canonical unsigned C integer as the same-width two's-complement bit pattern and
+is sign-extended back to Ruby on return. The scalar is externally owned: Ruby never dereferences,
+frees, closes, or otherwise assumes ownership of it.
 
 `CurveKeyCollection` deliberately does not mix in Ruby `Enumerable`, because that would add a broad helper surface unrelated to XNA. Its mapped `Enumerator` preserves XNA order, independent cursors, and `List<CurveKey>`-style fail-fast mutation detection. Invalid strict collection indices, including negative indices, map to `IndexError`; null/wrong typed values map to `TypeError`, destination-capacity failures map to `ArgumentError`, and enumerator invalidation maps to `RuntimeError`.

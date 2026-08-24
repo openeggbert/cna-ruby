@@ -5,6 +5,11 @@ module Microsoft
         class KeyState
         end
 
+        class ButtonState
+          Released: ButtonState
+          Pressed: ButtonState
+        end
+
         class Keys
         end
 
@@ -20,6 +25,30 @@ module Microsoft
         class Keyboard
           def self.GetState: () -> KeyboardState
                            | (::Microsoft::Xna::Framework::PlayerIndex player) -> KeyboardState
+        end
+
+        class MouseState
+          def initialize: (Integer x, Integer y, Integer scrollWheel, ButtonState leftButton, ButtonState middleButton, ButtonState rightButton, ButtonState xButton1, ButtonState xButton2) -> void
+          def X: () -> Integer
+          def Y: () -> Integer
+          def LeftButton: () -> ButtonState
+          def RightButton: () -> ButtonState
+          def MiddleButton: () -> ButtonState
+          def XButton1: () -> ButtonState
+          def XButton2: () -> ButtonState
+          def ScrollWheelValue: () -> Integer
+          def Equals: (Object obj) -> bool
+          def ==: (MouseState other) -> bool
+          def !=: (MouseState other) -> bool
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+        end
+
+        class Mouse
+          def self.GetState: () -> MouseState
+          def self.SetPosition: (Integer x, Integer y) -> nil
+          def self.WindowHandle: () -> Integer
+          def self.WindowHandle=: (Integer value) -> Integer
         end
       end
     end

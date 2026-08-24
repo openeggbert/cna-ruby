@@ -128,4 +128,97 @@ class NativeIntegrationTest < Minitest::Test
     assert_equal 3, game.updates
     assert_equal 2, game.draws
   end
+
+  def test_real_mouse_snapshot_position_and_window_handle_routes
+    game = F::Game.new
+    begin
+      game.RunOneFrame
+      first = I::Mouse.GetState
+      second = I::Mouse.GetState
+      assert_instance_of I::MouseState, first
+      assert_instance_of I::MouseState, second
+      refute_same first, second
+      [first.LeftButton, first.MiddleButton, first.RightButton,
+       first.XButton1, first.XButton2].each { |button| assert_instance_of I::ButtonState, button }
+      assert [first.X, first.Y, first.ScrollWheelValue].all? { |value| value.instance_of?(Integer) }
+
+      # HEADLESS may be unable to move a physical cursor. This proves only that the canonical CNA
+      # window-relative operation executes successfully; no synthetic round trip is asserted.
+      assert_nil I::Mouse.SetPosition(0, 0)
+      handle = I::Mouse.WindowHandle
+      assert_instance_of Integer, handle
+      assert_nil I::Mouse.__send__(:"WindowHandle=", handle)
+      assert_equal handle, I::Mouse.WindowHandle
+    ensure
+      game.Dispose
+    end
+  end
+
+  class MouseCallbackGame < F::Game
+    attr_reader :mouse_state, :window_handle
+
+    protected
+
+    def Update(_time)
+      @mouse_state = I::Mouse.GetState
+      @window_handle = I::Mouse.WindowHandle
+      I::Mouse.SetPosition(0, 0)
+      I::Mouse.__send__(:"WindowHandle=", @window_handle)
+    end
+  end
+
+  def test_mouse_routes_work_during_native_callback
+    game = MouseCallbackGame.new
+    begin
+      game.RunOneFrame
+      assert_instance_of I::MouseState, game.mouse_state
+      assert_instance_of Integer, game.window_handle
+    ensure
+      game.Dispose
+    end
+  end
+
+  def test_mouse_owner_thread_shutdown_and_generation_reselection
+    uninitialized = F::Game.new
+    assert_raises(CNA::InvalidBindingStateError) { I::Mouse.GetState }
+    uninitialized.Dispose
+
+    first_game = F::Game.new
+    first_game.RunOneFrame
+    handle = I::Mouse.WindowHandle
+    errors = Thread.new do
+      [lambda { I::Mouse.GetState }, lambda { I::Mouse.SetPosition(0, 0) },
+       lambda { I::Mouse.WindowHandle }, lambda { I::Mouse.__send__(:"WindowHandle=", handle) }].map do |operation|
+        operation.call
+        nil
+      rescue Exception => error
+        error
+      end
+    end.value
+    assert errors.all? { |error| error.instance_of?(CNA::OwnerThreadError) }
+    assert_instance_of I::MouseState, I::Mouse.GetState
+    first_game.Dispose
+    assert_raises(CNA::InvalidBindingStateError) { I::Mouse.GetState }
+
+    second_game = F::Game.new
+    begin
+      second_game.RunOneFrame
+      assert_instance_of I::MouseState, I::Mouse.GetState
+    ensure
+      second_game.Dispose
+    end
+  ensure
+    first_game&.Dispose
+    uninitialized&.Dispose
+  end
+
+  def test_mouse_native_failures_cross_the_central_error_boundary
+    library = CNA::Native.library
+    state = CNA::Native::Layouts::MouseState.new
+    window = library.pointer_for("Q", 0)
+    assert_raises(CNA::NativeError) { library.call("cna_mouse_get_state", 0, state.pointer) }
+    assert_raises(CNA::NativeError) { library.call("cna_mouse_set_position", 0, 0, 0) }
+    assert_raises(CNA::NativeError) { library.call("cna_mouse_get_window_handle", 0, window) }
+    assert_raises(CNA::NativeError) { library.call("cna_mouse_set_window_handle", 0, 0) }
+  end
 end

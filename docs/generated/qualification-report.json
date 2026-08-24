@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 5",
+  "milestone": "Foundation 6",
   "date": "2026-08-24",
   "ruby": "ruby 3.3.8 (2025-04-09 revision b200bad6cd) [x86_64-linux-gnu]",
   "rubyEngine": "ruby",
   "fiddle": "1.1.2",
   "rbs": "3.4.0 validated",
-  "bundler": "2.5.22 bundle check passed",
-  "rake": "13.1.0",
+  "bundler": "2.6.7 bundle check passed",
+  "rake": "13.2.1",
   "gem": {
     "filename": "cna-ruby-0.1.0.dev0.gem",
     "version": "0.1.0.dev0",
-    "sha256": "6d538f59b9b79b7cb56d06d8c9e209ec897ffb74a8c8f0e69458902baf008250",
+    "sha256": "b7d5751c36b15f5b1f4f9d02f4574e390c201b26c4150175cc7d17701157126b",
     "entries": 35,
     "forbiddenEntries": 0,
     "nativeLibrariesBundled": 0,
@@ -25,21 +25,50 @@
     "renderer": "HEADLESS",
     "audio": "NULL"
   },
-  "tests": {"runs": 116, "assertions": 2578, "failures": 0, "errors": 0, "skips": 0},
+  "tests": {"runs": 136, "assertions": 2759, "failures": 0, "errors": 0, "skips": 0},
   "strict": {
-    "targetTypes": 58,
-    "targetMembers": 1273,
-    "completeTypes": 51,
+    "referenceTypes": 257,
+    "referenceMembers": 2964,
+    "expectedRubyTypes": 257,
+    "expectedRubyMembers": 2915,
+    "targetTypes": 61,
+    "targetMembers": 1292,
+    "completeTypes": 54,
     "partialTypes": 7,
-    "missingTypes": 199,
-    "totalDiagnostics": 388,
-    "packedVectorLocalDiagnostics": 0
+    "missingTypes": 196,
+    "missingMembers": 135,
+    "totalDiagnostics": 385,
+    "buttonStateLocalDiagnostics": 0,
+    "mouseStateLocalDiagnostics": 0,
+    "mouseLocalDiagnostics": 0
   },
   "behavior": {
     "provenance": "PURE_XNA_DERIVED",
-    "observations": 193,
-    "assertions": 193,
-    "failures": 0
+    "observations": 208,
+    "assertions": 208,
+    "failures": 0,
+    "buttonState": 2,
+    "mouseState": 13
+  },
+  "nativeAbi": {
+    "boundFunctions": 34,
+    "signatureMeasurements": 103,
+    "cLayoutMeasurements": 176,
+    "rubyLayoutMeasurements": 176,
+    "callbacks": 2,
+    "constants": 17,
+    "missingHeaderSymbols": 0,
+    "missingLibrarySymbols": 0,
+    "abiMismatches": 0
+  },
+  "mouseNative": {
+    "getState": "VERIFIED_NATIVE HEADLESS",
+    "setPosition": "VERIFIED_NATIVE_ROUTE; physical effect BACKEND_BLOCKED",
+    "windowHandleGet": "VERIFIED_NATIVE_ROUTE; zero/same-token qualified",
+    "windowHandleSet": "VERIFIED_NATIVE_ROUTE; nonzero desktop handle PLATFORM_PENDING",
+    "getStateCycles": 50,
+    "wrongThread": "PASS",
+    "generationReselection": "PASS"
   },
   "packedVectorExhaustive": {
     "iterations": 262400,
@@ -50,7 +79,7 @@
     "sourcePathDevelopmentMode": true,
     "sourceChanged": false,
     "head": "42ae209b8b4fd175b7b1e5de43d895083b81877b",
-    "indexSha256": "fd522c27c12f332eb76a8076f2b22b727cae429fd627a0308eeeba83ad083edc",
+    "sourceTreeSha256": "1365fa309f84673c4f932039010cb1c75c31ec4fd4e2433fdc2f93efe64d43f1",
     "frames60": {"updates": 60, "draws": 60, "status": "PASS"},
     "frames600": {"updates": 600, "draws": 600, "status": "PASS"}
   },

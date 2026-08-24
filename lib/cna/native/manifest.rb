@@ -95,7 +95,11 @@ module CNA
         signature("cna_keyboard_state_is_key_down", T[:result], [pointer("CNA_KeyboardState", const: true), enum("CNA_Key"), pointer("CNA_Bool")], ownership: "caller output"),
         signature("cna_keyboard_state_is_key_up", T[:result], [pointer("CNA_KeyboardState", const: true), enum("CNA_Key"), pointer("CNA_Bool")], ownership: "caller output"),
         signature("cna_keyboard_state_get_pressed_key_count", T[:result], [pointer("CNA_KeyboardState", const: true), pointer("uint32_t")], ownership: "caller output"),
-        signature("cna_keyboard_state_copy_pressed_keys", T[:result], [pointer("CNA_KeyboardState", const: true), pointer("CNA_Key"), T[:u64], pointer("uint32_t")], ownership: "caller output")
+        signature("cna_keyboard_state_copy_pressed_keys", T[:result], [pointer("CNA_KeyboardState", const: true), pointer("CNA_Key"), T[:u64], pointer("uint32_t")], ownership: "caller output"),
+        signature("cna_mouse_get_state", T[:result], [T[:handle], pointer("CNA_MouseState")], ownership: "borrows Game; caller MANAGED_VALUE snapshot output"),
+        signature("cna_mouse_set_position", T[:result], [T[:handle], T[:i32], T[:i32]], ownership: "borrows Game; PROCESS_GLOBAL mouse; no retained state"),
+        signature("cna_mouse_get_window_handle", T[:result], [T[:handle], pointer("uint64_t")], ownership: "borrows Game; caller output BORROWED_EXTERNAL_SCALAR"),
+        signature("cna_mouse_set_window_handle", T[:result], [T[:handle], T[:u64]], ownership: "borrows Game and BORROWED_EXTERNAL_SCALAR; never frees window")
       ].freeze
 
       CALLBACKS = [
@@ -112,7 +116,12 @@ module CNA
         "CNA_SPRITE_EFFECT_NONE" => 0,
         "CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY" => 1,
         "CNA_SPRITE_EFFECT_FLIP_VERTICALLY" => 2,
-        "CNA_SURFACE_FORMAT_COLOR" => 0
+        "CNA_SURFACE_FORMAT_COLOR" => 0,
+        "CNA_MOUSE_BUTTON_LEFT" => 1,
+        "CNA_MOUSE_BUTTON_MIDDLE" => 2,
+        "CNA_MOUSE_BUTTON_RIGHT" => 4,
+        "CNA_MOUSE_BUTTON_X1" => 8,
+        "CNA_MOUSE_BUTTON_X2" => 16
       }.freeze
     end
   end

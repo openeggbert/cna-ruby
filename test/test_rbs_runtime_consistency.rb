@@ -5,6 +5,7 @@ require "pathname"
 require "json"
 require "rbs"
 require_relative "../lib/cna"
+require_relative "../tools/api_compat/verifier"
 
 class RbsRuntimeConsistencyTest < Minitest::Test
   SIGNATURE_ROOT = Pathname(__dir__).join("..", "sig").expand_path
@@ -186,6 +187,29 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     refute_includes source, "untyped"
     refute_match(/\*\w*/, source)
     assert_includes source, "module IPackedVectorOfT[TPacked]"
+  end
+
+  def test_mouse_rbs_retains_exact_cluster_and_signed_intptr_integer_projection
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    names = %w[
+      Microsoft.Xna.Framework.Input.ButtonState
+      Microsoft.Xna.Framework.Input.MouseState
+      Microsoft.Xna.Framework.Input.Mouse
+    ]
+    selected = contract.fetch("types").select { |type| names.include?(type.fetch("name")) }
+    assert_equal 3, selected.length
+    assert_equal 19, selected.sum { |type| type.fetch("members").length }
+    assert_equal CNAApiCompat::LANGUAGE_TYPE_MAPPINGS.fetch("System.IntPtr"),
+                 contract.fetch("languageTypeMappings").fetch("System.IntPtr")
+
+    source = File.read(SIGNATURE_ROOT.join("microsoft", "xna", "framework", "input.rbs"))
+    refute_includes source, "untyped"
+    refute_match(/\*\w*/, source)
+    assert_includes source, "def initialize: (Integer x, Integer y, Integer scrollWheel, ButtonState leftButton, ButtonState middleButton, ButtonState rightButton, ButtonState xButton1, ButtonState xButton2) -> void"
+    assert_includes source, "def Equals: (Object obj) -> bool"
+    refute_includes source, "def Equals: (MouseState"
+    assert_includes source, "def self.WindowHandle: () -> Integer"
+    assert_includes source, "def self.WindowHandle=: (Integer value) -> Integer"
   end
 
   private

@@ -62,6 +62,12 @@ result = {
   "schemaVersion" => 1,
   "profile" => reference.fetch("profile"),
   "sourceReferenceSha256" => "7207908eb7926cc90a156d0370c907add4dda465421cea1cbec51afba2f97fdc",
+  "languageTypeMappings" => {
+    "System.IntPtr" => {
+      "rubyType" => "Integer", "signed" => true, "width" => "native-pointer",
+      "nativeBoundary" => "fixed-width unsigned C carrier containing the signed pointer bit pattern"
+    }
+  },
   "types" => target_types
 }
 File.write(File.expand_path("signatures.json", __dir__), JSON.pretty_generate(result) + "\n")

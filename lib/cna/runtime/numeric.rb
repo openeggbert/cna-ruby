@@ -132,6 +132,29 @@ module CNA
         value
       end
 
+      def pointer_width_bits = Fiddle::SIZEOF_VOIDP * 8
+
+      def intptr(value, name = "value")
+        raise TypeError, "#{name} must be an Integer" unless value.instance_of?(Integer)
+        bits = pointer_width_bits
+        minimum = -(1 << (bits - 1))
+        maximum = (1 << (bits - 1)) - 1
+        raise RangeError, "#{name} is outside IntPtr" unless (minimum..maximum).cover?(value)
+
+        value
+      end
+
+      def intptr_to_uint64_bits(value, name = "value")
+        number = intptr(value, name)
+        number & ((1 << pointer_width_bits) - 1)
+      end
+
+      def intptr_from_uint64_bits(value)
+        bits = pointer_width_bits
+        narrowed = uint64(value, "native IntPtr") & ((1 << bits) - 1)
+        sign_extend(narrowed, bits)
+      end
+
       def sign_extend(value, bits)
         mask = (1 << bits) - 1
         narrowed = value & mask

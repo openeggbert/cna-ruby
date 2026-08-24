@@ -236,6 +236,25 @@ module CNA
         end
       end
 
+      class MouseState < Structure
+        layout size: 32, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4),
+          Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("x", "int32_t", 8, 4),
+          Layouts.field("y", "int32_t", 12, 4),
+          Layouts.field("scroll_wheel", "int32_t", 16, 4),
+          Layouts.field("horizontal_scroll_wheel", "int32_t", 20, 4),
+          Layouts.field("pressed_buttons", "CNA_MouseButtonFlags", 24, 4),
+          Layouts.field("reserved", "uint32_t", 28, 4)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       STRUCTURES = constants(false).filter_map do |name|
         value = const_get(name)
         value if value.is_a?(Class) && value < Structure

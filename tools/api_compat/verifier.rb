@@ -19,6 +19,13 @@ module CNAApiCompat
     "op_Addition" => "+", "op_Subtraction" => "-", "op_Multiply" => "*", "op_Division" => "/"
   }.freeze
 
+  LANGUAGE_TYPE_MAPPINGS = {
+    "System.IntPtr" => {
+      "rubyType" => "Integer", "signed" => true, "width" => "native-pointer",
+      "nativeBoundary" => "fixed-width unsigned C carrier containing the signed pointer bit pattern"
+    }
+  }.freeze
+
   class Result
     attr_reader :counts, :details, :complete_types, :partial_types, :missing_types
 
@@ -69,6 +76,7 @@ module CNAApiCompat
       (reference_types.keys & target_types.keys).sort.each do |name|
         compare_type(reference_types.fetch(name), target_types.fetch(name), result)
       end
+      verify_language_type_mappings(target_types, result)
       verify_runtime(target_types, result) if runtime
       verify_public_leaks(target_types, result) if runtime
 
@@ -138,6 +146,28 @@ module CNAApiCompat
     end
 
     def parameters(member) = member.fetch("parameters", [])
+
+    def member_types(member)
+      [member["type"], member["returnType"], *parameters(member).map { |parameter| parameter["type"] }].compact
+    end
+
+    def verify_language_type_mappings(target_types, result)
+      mappings = target.fetch("languageTypeMappings", {})
+      LANGUAGE_TYPE_MAPPINGS.each do |source_type, expected|
+        users = target_types.filter_map do |name, type|
+          name if type.fetch("members").any? { |member| member_types(member).include?(source_type) }
+        end
+        next if users.empty? || mappings[source_type] == expected
+
+        users.each do |name|
+          result.add(
+            "LANGUAGE_MAPPING_MISMATCH",
+            "#{name}: #{source_type} expected #{expected.inspect}, got #{mappings[source_type].inspect}",
+            type: name
+          )
+        end
+      end
+    end
 
     def compare_member(type_name, expected, actual, result)
       label = "#{type_name}::#{expected["name"]}"
@@ -315,6 +345,10 @@ module CNAApiCompat
           result.add("PUBLIC_NATIVE_FFI_LEAK", "#{type["name"]}::#{member["name"]}") if signature.match?(/CNA::Native|Fiddle/)
         end
       end
+
+      mapping_signature = JSON.generate(target.fetch("languageTypeMappings", {}))
+      result.add("RAW_HANDLE_LEAK", "language type mapping") if mapping_signature.match?(/CNA_Handle|Fiddle::Pointer|void\*/)
+      result.add("PUBLIC_NATIVE_FFI_LEAK", "language type mapping") if mapping_signature.match?(/CNA::Native|Fiddle/)
     end
 
     def walk_namespace(object, prefix, &block)

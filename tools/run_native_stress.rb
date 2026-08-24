@@ -10,6 +10,7 @@ abort "CNA_STRESS_CYCLES must be at least 20" if cycles < 20
 
 F = Microsoft::Xna::Framework
 G = Microsoft::Xna::Framework::Graphics
+I = Microsoft::Xna::Framework::Input
 
 class StressGame < F::Game
   attr_reader :texture, :batch
@@ -71,7 +72,31 @@ rescue Exception => error
   error
 end.value
 raise "wrong-thread dispose was not rejected" unless thread_error.instance_of?(CNA::OwnerThreadError)
+
+mouse_thread_error = Thread.new do
+  I::Mouse.GetState
+  nil
+rescue Exception => error
+  error
+end.value
+raise "wrong-thread Mouse.GetState was not rejected" unless mouse_thread_error.instance_of?(CNA::OwnerThreadError)
+raise "owner-thread Mouse retry failed" unless I::Mouse.GetState.instance_of?(I::MouseState)
 retry_game.Dispose
+
+mouse_get_state_cycles = Integer(ENV.fetch("CNA_MOUSE_GET_STATE_CYCLES", "50"))
+abort "CNA_MOUSE_GET_STATE_CYCLES must be at least 50" if mouse_get_state_cycles < 50
+mouse_game = F::Game.new
+begin
+  mouse_game.RunOneFrame
+  previous = nil
+  mouse_get_state_cycles.times do
+    snapshot = I::Mouse.GetState
+    raise "Mouse.GetState reused a managed snapshot" if previous&.equal?(snapshot)
+    previous = snapshot
+  end
+ensure
+  mouse_game.Dispose
+end
 
 active_game = F::Game.new
 active_game.RunOneFrame
@@ -104,6 +129,7 @@ report = {
   "SPRITEBATCH_CYCLES" => cycles, "GAME_RECREATION_CYCLES" => cycles,
   "NATIVE_CRASHES" => native_crashes, "OBSERVED_UAF" => 0,
   "OBSERVED_DOUBLE_FREE" => 0, "OWNER_THREAD_RETRY" => "PASS",
+  "MOUSE_GET_STATE_CYCLES" => mouse_get_state_cycles, "MOUSE_WRONG_THREAD" => "PASS",
   "FAILED_NATIVE_CREATION" => "PASS", "CALLBACK_EXCEPTION" => "PASS",
   "SANITIZER_STATUS" => "NOT_RUN"
 }

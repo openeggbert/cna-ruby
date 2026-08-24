@@ -6,11 +6,13 @@ This file is the normative description of the current architecture and milestone
 
 The only native boundary is `Ruby XNA facade -> CNA private runtime -> CNA C ABI 0.7.0 -> CNA`. The binding never resolves C++ symbols and never loads another language binding. MRI Ruby and Fiddle are the only qualified Ruby/native combination.
 
-## Foundation 5 surface
+## Foundation 6 surface
 
 The runtime exposes real, measured implementations for the types recorded by `tools/api_compat/signatures.json`. Missing XNA types and overloads remain absent. ContentManager, BasicEffect, and the old 3D demo surface remain absent rather than simulated. Matrix is a complete managed XNA value type and does not imply 3D rendering support.
 
-Managed work covers complete MathHelper, Vector2, Vector3, Vector4, Quaternion, Matrix, Plane, Ray, BoundingBox, BoundingSphere, BoundingFrustum, Rectangle, Color, Point, GameTime, ContainmentType, PlaneIntersectionType, and selected enum dependencies. Color includes all XNA constructors and conversions, exact packed/fixed-point behavior, and all 141 predefined properties. Rectangle includes all five collapsed ref/out projections and unchecked Int32 behavior. Foundation 4 completes Curve, CurveKey, CurveKeyCollection, CurveContinuity, CurveLoopType, and CurveTangent. Foundation 5 completes both PackedVector interfaces and all 17 packed structs as one managed closure, including fixed-width storage validation, exact XNA tie-to-even packing, signed normalization, XNA half conversion, generic/direct-interface identity, and private explicit-interface projection. Native work is unchanged from Foundation 1: Game callbacks, GraphicsDeviceManager, callback-borrowed GraphicsDevice, Viewport, Texture2D encoded-stream loading, SpriteBatch's qualified scaled-draw subset, and Keyboard state.
+Managed work covers complete MathHelper, Vector2, Vector3, Vector4, Quaternion, Matrix, Plane, Ray, BoundingBox, BoundingSphere, BoundingFrustum, Rectangle, Color, Point, GameTime, ContainmentType, PlaneIntersectionType, and selected enum dependencies. Color includes all XNA constructors and conversions, exact packed/fixed-point behavior, and all 141 predefined properties. Rectangle includes all five collapsed ref/out projections and unchecked Int32 behavior. Foundation 4 completes Curve, CurveKey, CurveKeyCollection, CurveContinuity, CurveLoopType, and CurveTangent. Foundation 5 completes both PackedVector interfaces and all 17 packed structs as one managed closure. Foundation 6 completes ButtonState and the managed MouseState value contract, and exposes the process-global Mouse facade through four reviewed CNA 0.7.0 routes. Mouse snapshots are copied out of the measured native POD layout; SetPosition and WindowHandle never use Ruby-side synthetic state.
+
+The strict surface is now 61 types / 1292 Ruby member identities. All three Foundation 6 types are locally strict-zero. The seven pre-existing partial native/runtime types remain unchanged.
 
 ## Admission and safety
 
@@ -18,7 +20,7 @@ Managed work covers complete MathHelper, Vector2, Vector3, Vector4, Quaternion, 
 - `CNA_NATIVE_LIBRARY` must be an absolute file path when used.
 - All Fiddle functions come from one manifest.
 - Native errors cross one translation boundary.
-- Handles have one of OWNED, BORROWED, PARENT_OWNED, PROCESS_GLOBAL, or MANAGED_VALUE ownership.
+- Handles and values have one of OWNED, BORROWED, PARENT_OWNED, PROCESS_GLOBAL, MANAGED_VALUE, or BORROWED_EXTERNAL_SCALAR ownership.
 - Game generations bind children to one owner thread and one native Game lifetime.
 - Destruction is explicit; no GC finalizer destroys native state.
 - Callback closures are retained for the registration lifetime. Ruby exceptions are captured in the callback and re-raised after the C call returns.
@@ -29,4 +31,4 @@ Normal API strict mode is expected to remain red until the full selected XNA pro
 
 ## Deferred boundaries
 
-Content/XNB, Effects/BasicEffect, 3D rendering/Model, audio, media, Mouse/GamePad/Touch, Design converters, Windows, macOS, browser/Wasm, Android, JRuby, TruffleRuby, MRuby, and Opal are not Foundation 5 support.
+Content/XNB, Effects/BasicEffect, 3D rendering/Model, audio, media, GamePad/Touch, Design converters, Windows, macOS, browser/Wasm, Android, JRuby, TruffleRuby, MRuby, and Opal are not Foundation 6 support. HEADLESS qualifies the canonical Mouse routes and the returned backend state, but not a physical cursor, visible cursor movement, or a nonzero desktop window handle.

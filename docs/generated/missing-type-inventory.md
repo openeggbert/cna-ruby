@@ -148,7 +148,6 @@
 - `Microsoft.Xna.Framework.IGameComponent`
 - `Microsoft.Xna.Framework.IGraphicsDeviceManager`
 - `Microsoft.Xna.Framework.IUpdateable`
-- `Microsoft.Xna.Framework.Input.ButtonState`
 - `Microsoft.Xna.Framework.Input.Buttons`
 - `Microsoft.Xna.Framework.Input.GamePad`
 - `Microsoft.Xna.Framework.Input.GamePadButtons`
@@ -159,8 +158,6 @@
 - `Microsoft.Xna.Framework.Input.GamePadThumbSticks`
 - `Microsoft.Xna.Framework.Input.GamePadTriggers`
 - `Microsoft.Xna.Framework.Input.GamePadType`
-- `Microsoft.Xna.Framework.Input.Mouse`
-- `Microsoft.Xna.Framework.Input.MouseState`
 - `Microsoft.Xna.Framework.Input.Touch.GestureSample`
 - `Microsoft.Xna.Framework.Input.Touch.GestureType`
 - `Microsoft.Xna.Framework.Input.Touch.TouchCollection`
