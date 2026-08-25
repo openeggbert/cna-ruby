@@ -163,16 +163,22 @@ class FrameworkDispatcherTest < Minitest::Test
                  strict.fetch("localDiagnostics").fetch("Microsoft.Xna.Framework.FrameworkDispatcher")
   end
 
-  # XNA's own Windows body reaches no native entry point: `PollForEvents` is `{ ret }` in the
-  # pinned assembly. The projection is native only because CNA owns the queue this binding drains,
-  # and the measured inventory must keep saying so rather than being talked into agreeing.
-  def test_the_pinned_il_records_the_type_as_not_native_reachable
+  # Native frontier 1 recorded that "PollForEvents is `{ ret }` in the pinned assembly, so Update
+  # reaches no native entry point at all". The first half is true and the conclusion was not:
+  # Native frontier 3 fixed a `modopt(...)` blind spot in the extractor, and the drain reaches
+  # native through `SoundEffect.RecycleStoppedFireAndForgetInstances`, which XACT owns. So XNA's own
+  # Update really does end in native work, and this projection forwarding to a native pump is the
+  # closer analogue rather than the looser one.
+  def test_the_pinned_il_records_the_drain_as_native_reachable_through_xact
     inventory = JSON.parse(
       Pathname(__dir__).join("..", "docs", "generated", "xna-il-inventory.json").read
     )
     entry = inventory.fetch("types").fetch("Microsoft.Xna.Framework.FrameworkDispatcher")
-    refute entry.fetch("nativeReachable")
+    assert entry.fetch("nativeReachable")
+    assert_equal ["Update"], entry.fetch("nativeReachableMethods")
+    # It declares no native entry point of its own; the reachability is transitive.
     refute entry.fetch("declaresNativeEntryPoint")
+    assert_empty entry.fetch("nativeInteropMarkers")
     assert_empty entry.fetch("constructors")
   end
 

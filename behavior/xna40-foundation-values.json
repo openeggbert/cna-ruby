@@ -11116,7 +11116,7 @@
         ],
         257,
         257,
-        61
+        77
       ]
     },
     {
@@ -13045,5 +13045,6 @@
   "milestone32CorpusCorrection": "touch_closure.touch_panel_capabilities.default_value ended with TOUCH.const_defined?(:TouchPanel), which pinned the absence of a type Foundation 32 added from its own IL rather than from anything TouchPanelCapabilities implies. That one slot was dropped so the row asserts only what the Foundation 17 closure still establishes about the capabilities struct itself; the replay proved every other element of the row, and every other row, unchanged.",
   "milestone33SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
   "milestone33MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 166b4bfdbb5c1f97a579b620329b2973ccfcd9f59b72a7f40e8b387910b139df, 433 observations) was proved before appending 2 additive observations",
-  "milestone33CorpusCorrection": "the three BclProjection.Register rows each carried one slot asserting that System.Type stays unprojected, which Foundation 33 legitimately ended by projecting it to a Ruby Module. That slot was dropped from the operation and from all three rows, so each asserts only the identities it was written to pin plus the standing rule that no ::System namespace exists; the replay proved every other element of those rows, and every other row, unchanged."
+  "milestone33CorpusCorrection": "the three BclProjection.Register rows each carried one slot asserting that System.Type stays unprojected, which Foundation 33 legitimately ended by projecting it to a Ruby Module. That slot was dropped from the operation and from all three rows, so each asserts only the identities it was written to pin plus the standing rule that no ::System namespace exists; the replay proved every other element of those rows, and every other row, unchanged.",
+  "nativeFrontier3CorpusCorrection": "il_provenance.assemblies pinned this project's own measurement of typesNativeReachable, which Native frontier 3 corrected from 61 to 77 by removing a modopt blind spot in the extractor: a mixed-mode C++/CLI thunk is declared `.method ... int32 modopt([mscorlib]...IsLong) Play(uint32)`, so every such method was recorded under the name modopt while every call site resolved to its real name, and every edge into XNA's native-methods classes dangled. That one element was updated. Unlike the Native frontier 2 correction, a re-serialisation replay is available again and was used: byte-preserving serialisation of the pre-correction corpus (SHA-256 581063d14669d2b53f07a6a2089a9860c823e0eb7707d525d1ae71b8fb709630, 435 observations) was proved first, and exactly one observation differs afterwards."
 }

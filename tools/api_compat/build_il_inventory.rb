@@ -66,6 +66,19 @@ METHOD_NAME = /([A-Za-z_.<>][A-Za-z0-9_.<>`]*)\s*\(/.freeze
 # comment.
 GENERIC_SUFFIX = /<[^<>]*>\z/.freeze
 
+# Everything in a `.method` header that carries a parenthesis *before* the method name, so a
+# leading-identifier search cannot mistake it for the name.
+#
+# `pinvokeimpl("LIB" winapi)` and `marshal(...)` were always here. `modopt(...)` and `modreq(...)`
+# were not, and their absence silently cost native reachability across the whole mixed-mode C++/CLI
+# surface: XNA's native-methods classes declare their thunks as
+# `.method public hidebysig static int32 modopt([mscorlib]...IsLong) Play(uint32)`, so every one of
+# them was recorded under the name `modopt` while every call site resolved to `::Play`, and every
+# edge into them dangled. Both sides now agree.
+HEADER_NOISE = /(?:pinvokeimpl|marshal|modopt|modreq)\s*\([^)]*\)/.freeze
+
+def sanitise_header(text) = text.gsub(HEADER_NOISE, " ")
+
 inventory = {}
 bodies = {}
 calls = Hash.new { |hash, key| hash[key] = [] }
@@ -137,9 +150,7 @@ assemblies.each do |name, path, sha256, size|
     end
     if header
       header << " " << stripped
-      # `pinvokeimpl("LIB" winapi)` and `marshal(...)` both carry a parenthesis that precedes the
-      # method name, so they are removed before the name is read.
-      searchable = header.gsub(/pinvokeimpl\s*\([^)]*\)/, " ").gsub(/marshal\s*\([^)]*\)/, " ")
+      searchable = sanitise_header(header)
       if (match = METHOD_NAME.match(searchable))
         method = "#{current}::#{match[1]}"
         pinvoke[method] = true if header.include?("pinvokeimpl")
@@ -193,7 +204,7 @@ def constructor_facts(body)
     if stripped.lstrip.start_with?(".method ") || (current && current[:header])
       current = {header: true, access: nil, parameters: 0, ops: [], text: +""} unless current&.dig(:header)
       current[:text] << " " << stripped
-      searchable = current[:text].gsub(/pinvokeimpl\s*\([^)]*\)/, " ").gsub(/marshal\s*\([^)]*\)/, " ")
+      searchable = sanitise_header(current[:text])
       if (match = /([A-Za-z_.<>][A-Za-z0-9_.<>`]*)\s*\(/.match(searchable))
         current[:header] = false
         current[:name] = match[1]
@@ -265,6 +276,10 @@ report = {
   "TYPES_WITH_IL" => covered.length,
   "TYPES_WITHOUT_IL" => reference_names.length - covered.length,
   "TYPES_NATIVE_REACHABLE" => covered.count { |name| inventory.fetch(name).fetch("nativeReachable") },
+  # The number the reachability fixpoint starts from: methods that are themselves a P/Invoke or an
+  # unmanaged calli. It was printed but never written, so nothing could pin it; Native frontier 3
+  # moved it from 214 to 254 and that had to be measurable rather than only observable in a log.
+  "NATIVE_ENTRY_POINT_METHODS" => pinvoke.length,
   "typesWithoutIl" => (reference_names - covered).sort,
   "types" => covered.sort.to_h { |name| [name, inventory.fetch(name)] }
 }
@@ -276,4 +291,4 @@ puts "REFERENCE_TYPES=#{report["REFERENCE_TYPES"]}"
 puts "TYPES_WITH_IL=#{report["TYPES_WITH_IL"]}"
 puts "TYPES_WITHOUT_IL=#{report["TYPES_WITHOUT_IL"]}"
 puts "TYPES_NATIVE_REACHABLE=#{report["TYPES_NATIVE_REACHABLE"]}"
-puts "NATIVE_ENTRY_POINT_METHODS=#{pinvoke.length}"
+puts "NATIVE_ENTRY_POINT_METHODS=#{report["NATIVE_ENTRY_POINT_METHODS"]}"

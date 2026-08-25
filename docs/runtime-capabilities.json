@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 33",
+  "milestone": "Native frontier 3",
   "platform": "Linux x86-64 MRI Ruby 3.3.8",
   "cnaAbi": "0.7.0",
   "capabilities": [
@@ -152,7 +152,7 @@
       "id": "reference.native-reachability",
       "category": "VERIFIED_MANAGED",
       "status": "verified measurement",
-      "evidence": "The Framework and Graphics assemblies are mixed-mode C++/CLI, so a native entry point is a P/Invoke declaration or an indirect calli through an unmanaged calling convention. 214 such methods make 61 of 257 reference types native-reachable over the assemblies own call graph. Foundation 22 measured 205 and 55 of 250; Native frontier 2 corrected both by teaching the extractor to read a nested type declaration, which ikdasm indents inside its parent and closes with the short name, and a generic definition, which it declares as Name`1<T> and closes as Name`1. Seven reference types had been reported as carrying no IL and five others had counted their childrens fields and methods as their own. Every reference type now has IL and no type lost native reachability. The rule validates against the shipped boundary: every partial runtime type but GraphicsResource is native, and of the complete types exactly Input.Mouse, Input.GamePad and Graphics.Texture are. BEHAVIOR_EVIDENCE was retired and replaced by IL_UNAVAILABLE, NATIVE_RUNTIME and RUNTIME_DATA, which name what is genuinely absent"
+      "evidence": "The Framework and Graphics assemblies are mixed-mode C++/CLI, so a native entry point is a P/Invoke declaration or an indirect calli through an unmanaged calling convention. 254 such methods make 77 of 257 reference types native-reachable over the assemblies own call graph. Foundation 22 measured 205 and 55 of 250 and Native frontier 2 corrected that to 214 and 61 of 257, by teaching the extractor to read a nested type declaration, which ikdasm indents inside its parent and closes with the short name, and a generic definition, which it declares as Name`1<T> and closes as Name`1. Native frontier 3 corrected it again, to 254 and 77, by removing a modopt blind spot: a mixed-mode C++/CLI thunk is declared .method public hidebysig static int32 modopt([mscorlib]...IsLong) Play(uint32), and the name reader took the first identifier before a parenthesis, so every such method was recorded as modopt while every call site resolved to its real name and every edge into it dangled. Sixteen reference types gained native reachability and none lost it, and no other measured number moved. The rule validates against the shipped boundary: every partial runtime type but GraphicsResource is native, and of the complete types exactly Input.Mouse, Input.GamePad, Graphics.Texture and FrameworkDispatcher are, each one a type whose native route this binding really implements. BEHAVIOR_EVIDENCE was retired and replaced by IL_UNAVAILABLE, NATIVE_RUNTIME and RUNTIME_DATA, which name what is genuinely absent"
     },
     {
       "id": "managed.touch-value-types",
@@ -386,7 +386,7 @@
       "id": "native.framework-dispatcher",
       "category": "VERIFIED_NATIVE_ROUTE",
       "status": "verified canonical route",
-      "evidence": "real cna_framework_dispatcher_update executed inside Update and Draw callbacks and outside any callback, repeated without accumulation; documented preconditions qualified (no live Game and off-owner-thread both refuse before the native entry, disposed Game refuses). The pinned XNA Windows IL reaches no native entry point of its own here: PollForEvents is an empty method, so this route is native because CNA owns the queue being drained. No managed sink observes the drain, because none of the five the IL dispatches to has a Ruby projection"
+      "evidence": "real cna_framework_dispatcher_update executed inside Update and Draw callbacks and outside any callback, repeated without accumulation; documented preconditions qualified (no live Game and off-owner-thread both refuse before the native entry, disposed Game refuses). Native frontier 1 recorded that the pinned XNA Windows IL reaches no native entry point here, because PollForEvents is an empty method. The premise was right and the conclusion wrong: Native frontier 3 removed a modopt blind spot in the extractor and the drain is native-reachable after all, through SoundEffect.RecycleStoppedFireAndForgetInstances into XACT, so Update ends in native work in XNA too and forwarding to the canonical CNA pump is the closer analogue rather than the looser one. The type declares no native entry point of its own; the reachability is transitive. No managed sink observes the drain, because none of the five the IL dispatches to has a Ruby projection"
     },
     {
       "id": "native.lifecycle-stress",

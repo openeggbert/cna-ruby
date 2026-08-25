@@ -45,10 +45,23 @@ code.
 }
 ```
 
-In this Windows assembly `PollForEvents` does nothing, so `Update` reaches no native entry point
-at all. That is measured independently by `docs/generated/xna-il-inventory.json`, which records
-this type as `nativeReachable: false` and `declaresNativeEntryPoint: false`, and
-`test_the_pinned_il_records_the_type_as_not_native_reachable` keeps the inventory saying so.
+In this Windows assembly `PollForEvents` does nothing.
+
+> **Corrected by Native frontier 3.** This section originally concluded from that fact that "`Update`
+> reaches no native entry point at all", and cited the IL inventory's `nativeReachable: false` as
+> independent confirmation. The premise is right and the conclusion was not. The inventory was
+> under-reporting: a mixed-mode C++/CLI thunk is declared
+> `.method public hidebysig static int32 modopt([mscorlib]…IsLong) Play(uint32)`, and the extractor's
+> name reader took the first identifier before a parenthesis, so every such method was recorded as
+> `modopt` while every call site resolved to its real name — and every edge into XNA's native-methods
+> classes dangled. With that fixed, `Update` **is** native-reachable, transitively, through
+> `SoundEffect.RecycleStoppedFireAndForgetInstances` into XACT, and the inventory now records
+> `nativeReachable: true` with `nativeReachableMethods: ["Update"]` while still recording
+> `declaresNativeEntryPoint: false`, because the reachability is transitive rather than declared.
+>
+> This makes the decision below *stronger*, not weaker. XNA's own `Update` ends in native work, so a
+> projection that forwards to the canonical CNA pump is the closer analogue rather than the looser
+> one. See `docs/native-frontier-3-modopt-evidence.md`.
 
 ## Why the recorded deferral was wrong
 

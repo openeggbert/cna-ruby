@@ -177,6 +177,55 @@ class DependencyFrontierTest < Minitest::Test
     assert_equal ["assembly"], enumerator.fetch("constructors").map { |ctor| ctor.fetch("access") }
   end
 
+  # Native frontier 3 — the extractor reads a method name past a `modopt(...)`/`modreq(...)` return
+  # modifier, which is how every mixed-mode C++/CLI thunk in these assemblies is declared.
+  #
+  # The defect was silent and expensive: `.method public hidebysig static int32
+  # modopt([mscorlib]...IsLong) Play(uint32)` was recorded under the name `modopt`, while every call
+  # site resolved to `...::Play`, so every edge into XNA's native-methods classes dangled and the
+  # types that call them looked pure managed. This pins both halves — the name rule itself, and the
+  # reachability it restores.
+  def test_the_extractor_reads_a_method_name_past_a_return_type_modifier
+    name_of = lambda do |header|
+      searchable = header.gsub(/(?:pinvokeimpl|marshal|modopt|modreq)\s*\([^)]*\)/, " ")
+      searchable[/([A-Za-z_.<>][A-Za-z0-9_.<>`]*)\s*\(/, 1]
+    end
+    assert_equal "Play",
+                 name_of.call("public hidebysig static int32 " \
+                              "modopt([mscorlib]System.Runtime.CompilerServices.IsLong) Play(uint32 h)")
+    assert_equal "Apply3D",
+                 name_of.call("public hidebysig static int32 modreq([mscorlib]System.Object) " \
+                              "Apply3D(uint32 h, float32 x)")
+    # The two forms the extractor always handled still work.
+    assert_equal "GetKeyboardState",
+                 name_of.call('public hidebysig static pinvokeimpl("user32.dll" winapi) ' \
+                              "int32 GetKeyboardState(uint8[] state)")
+    assert_equal "Ordinary", name_of.call("public hidebysig instance void Ordinary(int32 value)")
+
+    # And the reachability it restores, on the type that exposed it. SoundEffectInstance's own IL
+    # calls SoundEffectUnsafeNativeMethods::Play/Stop/Pause/SetVolume, whose bodies are
+    # `calli unmanaged thiscall`.
+    entry = IL.fetch("types").fetch("Microsoft.Xna.Framework.Audio.SoundEffectInstance")
+    assert entry.fetch("nativeReachable")
+    refute_empty entry.fetch("nativeReachableMethods")
+    assert_equal 254, IL.fetch("NATIVE_ENTRY_POINT_METHODS") if IL.key?("NATIVE_ENTRY_POINT_METHODS")
+    assert_equal 77, IL.fetch("TYPES_NATIVE_REACHABLE")
+    # The correction added reachability and took none away.
+    %w[
+      Microsoft.Xna.Framework.Graphics.Texture
+      Microsoft.Xna.Framework.Input.GamePad
+      Microsoft.Xna.Framework.Input.Mouse
+      Microsoft.Xna.Framework.Graphics.GraphicsDevice
+    ].each { |name| assert IL.fetch("types").fetch(name).fetch("nativeReachable"), name }
+    # Nothing in the pure-managed families gained it.
+    %w[
+      Microsoft.Xna.Framework.Vector2
+      Microsoft.Xna.Framework.Matrix
+      Microsoft.Xna.Framework.Input.Touch.TouchPanel
+      Microsoft.Xna.Framework.GameServiceContainer
+    ].each { |name| refute IL.fetch("types").fetch(name).fetch("nativeReachable"), name }
+  end
+
   # Foundation 22 — the pinned original assemblies were located by hash, so the IL inventory is
   # real evidence rather than an assumption.
   def test_the_il_inventory_is_hash_pinned_and_covers_the_reference_surface
@@ -222,13 +271,26 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.SpriteBatch
     ].each { |name| assert_includes native, name, name }
 
-    # The only complete types that are native-reachable are the three whose native routes this
-    # binding really implements; every other complete type is pure managed.
+    # The only complete types that are native-reachable are the four whose native routes this
+    # binding really implements; every other complete type is pure managed. FrameworkDispatcher
+    # joined them in Native frontier 3, which is the honest reading: its drain reaches XACT through
+    # SoundEffect.RecycleStoppedFireAndForgetInstances, and this binding's projection forwards to
+    # the canonical CNA pump.
     assert_equal %w[
+      Microsoft.Xna.Framework.FrameworkDispatcher
       Microsoft.Xna.Framework.Graphics.Texture
       Microsoft.Xna.Framework.Input.GamePad
       Microsoft.Xna.Framework.Input.Mouse
     ], (STRICT.fetch("completeTypeNames") & native).sort
+    %w[
+      Microsoft.Xna.Framework.FrameworkDispatcher
+      Microsoft.Xna.Framework.Graphics.Texture
+      Microsoft.Xna.Framework.Input.GamePad
+      Microsoft.Xna.Framework.Input.Mouse
+    ].each do |name|
+      assert(CNA::Native::Manifest::FUNCTIONS.any? { |signature| signature.symbol.start_with?("cna_") },
+             name)
+    end
 
     assert_operator IL.fetch("TYPES_NATIVE_REACHABLE"), :>, 0
     assert_operator IL.fetch("TYPES_NATIVE_REACHABLE"), :<, IL.fetch("TYPES_WITH_IL")

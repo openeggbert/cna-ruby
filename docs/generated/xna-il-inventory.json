@@ -68,7 +68,8 @@
   "REFERENCE_TYPES": 257,
   "TYPES_WITH_IL": 257,
   "TYPES_WITHOUT_IL": 0,
-  "TYPES_NATIVE_REACHABLE": 61,
+  "TYPES_NATIVE_REACHABLE": 77,
+  "NATIVE_ENTRY_POINT_METHODS": 254,
   "typesWithoutIl": [
 
   ],
@@ -287,7 +288,14 @@
       ],
       "methodNodes": 17,
       "nativeReachableMethods": [
-        ".cctor"
+        ".cctor",
+        ".ctor",
+        "AllocateData",
+        "Dispose",
+        "GetPendingBufferCount",
+        "Play",
+        "SubmitBuffer",
+        "get_PendingBufferCount"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": false,
@@ -355,7 +363,10 @@
       ],
       "methodNodes": 24,
       "nativeReachableMethods": [
-        ".cctor"
+        ".cctor",
+        "Finalize",
+        "get_All",
+        "get_Default"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": false,
@@ -541,7 +552,18 @@
       ],
       "methodNodes": 33,
       "nativeReachableMethods": [
-        ".cctor"
+        ".cctor",
+        ".ctor",
+        "AddToInstancePool",
+        "AllocateFormatAndData",
+        "Create",
+        "CreateInstance",
+        "Dispose",
+        "Finalize",
+        "FromBuffer",
+        "FromStream",
+        "Play",
+        "RecycleStoppedFireAndForgetInstances"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": false,
@@ -584,9 +606,22 @@
       ],
       "methodNodes": 28,
       "nativeReachableMethods": [
-
+        ".ctor",
+        "Apply3D",
+        "DeallocateVoice",
+        "Dispose",
+        "Finalize",
+        "Pause",
+        "Play",
+        "Resume",
+        "SafeApply3D",
+        "Stop",
+        "UnsafeApply3D",
+        "set_Pan",
+        "set_Pitch",
+        "set_Volume"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 12,
       "constructors": [
@@ -1674,9 +1709,9 @@
       ],
       "methodNodes": 5,
       "nativeReachableMethods": [
-
+        "Update"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 3,
       "constructors": [
@@ -1695,7 +1730,13 @@
       "methodNodes": 69,
       "nativeReachableMethods": [
         ".ctor",
-        "EnsureHost"
+        "EnsureHost",
+        "HostIdle",
+        "Run",
+        "RunGame",
+        "StartGameLoop",
+        "Tick",
+        "Update"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": false,
@@ -2432,11 +2473,11 @@
       "nativeInteropMarkers": [
         "System.Runtime.InteropServices.Marshal"
       ],
-      "methodNodes": 8,
+      "methodNodes": 9,
       "nativeReachableMethods": [
         ".ctor",
-        "get_IsContentLost",
-        "modopt"
+        "RecreateAndPopulateObject",
+        "get_IsContentLost"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": true,
@@ -2465,11 +2506,11 @@
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 8,
+      "methodNodes": 9,
       "nativeReachableMethods": [
         ".ctor",
-        "get_IsContentLost",
-        "modopt"
+        "RecreateAndPopulateObject",
+        "get_IsContentLost"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": true,
@@ -2498,7 +2539,7 @@
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 20,
+      "methodNodes": 21,
       "nativeReachableMethods": [
         ".ctor",
         "Clone",
@@ -2508,8 +2549,9 @@
         "OnLostDevice",
         "OnObjectCreation",
         "OnResetDevice",
+        "RecreateAndPopulateObject",
         "ReleaseNativeObject",
-        "modopt",
+        "SaveDataForRecreation",
         "set_CurrentTechnique"
       ],
       "nativeReachable": true,
@@ -2962,7 +3004,7 @@
         "System.Runtime.InteropServices.Marshal",
         "System.Runtime.InteropServices.GCHandle"
       ],
-      "methodNodes": 86,
+      "methodNodes": 88,
       "nativeReachableMethods": [
         ".ctor",
         ".locals",
@@ -2970,6 +3012,7 @@
         "Clear",
         "ClearDirtyBuffers",
         "ConvertPresentationParametersToNative",
+        "CopySurface",
         "CreateDevice",
         "CreateHelperClasses",
         "DrawIndexedPrimitives",
@@ -2991,7 +3034,6 @@
         "get_GraphicsDeviceStatus",
         "get_IsDeviceLost",
         "get_ScissorRectangle",
-        "modopt",
         "set_BlendFactor",
         "set_BlendState",
         "set_DepthStencilState",
@@ -3212,15 +3254,16 @@
       "nativeInteropMarkers": [
         "System.Runtime.InteropServices.Marshal"
       ],
-      "methodNodes": 13,
+      "methodNodes": 14,
       "nativeReachableMethods": [
         ".ctor",
         ".locals",
         "CreateBuffer",
         "GetManagedObject",
+        "RecreateAndPopulateObject",
         "ReleaseNativeObject",
-        "T>",
-        "modopt"
+        "SaveDataForRecreation",
+        "T>"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": true,
@@ -3624,16 +3667,16 @@
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 10,
+      "methodNodes": 11,
       "nativeReachableMethods": [
         ".ctor",
         "Begin",
         "End",
         "GetManagedObject",
+        "RecreateAndPopulateObject",
         "ReleaseNativeObject",
         "get_IsComplete",
-        "get_PixelCount",
-        "modopt"
+        "get_PixelCount"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": true,
@@ -4313,13 +4356,13 @@
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 13,
+      "methodNodes": 14,
       "nativeReachableMethods": [
         ".ctor",
         "CreateRenderTarget",
+        "RecreateAndPopulateObject",
         "ReleaseNativeObject",
-        "get_IsContentLost",
-        "modopt"
+        "get_IsContentLost"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": false,
@@ -4385,13 +4428,13 @@
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 13,
+      "methodNodes": 14,
       "nativeReachableMethods": [
         ".ctor",
         "CreateRenderTarget",
+        "RecreateAndPopulateObject",
         "ReleaseNativeObject",
-        "get_IsContentLost",
-        "modopt"
+        "get_IsContentLost"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": false,
@@ -4791,17 +4834,22 @@
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 20,
+      "methodNodes": 22,
       "nativeReachableMethods": [
         ".ctor",
+        "CopyOrRestoreData",
         "CreateTexture",
         "FromStream",
         "GetManagedObject",
         "InitializeDescription",
         "OnObjectCreation",
+        "RecreateAndPopulateObject",
         "ReleaseNativeObject",
-        "T>",
-        "modopt"
+        "SaveAsImage",
+        "SaveAsJpeg",
+        "SaveAsPng",
+        "SaveDataForRecreation",
+        "T>"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": true,
@@ -4860,16 +4908,18 @@
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 16,
+      "methodNodes": 18,
       "nativeReachableMethods": [
         ".ctor",
+        "CopyOrRestoreData",
         "CreateTexture",
         "GetManagedObject",
         "InitializeDescription",
         "OnObjectCreation",
+        "RecreateAndPopulateObject",
         "ReleaseNativeObject",
-        "T>",
-        "modopt"
+        "SaveDataForRecreation",
+        "T>"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": true,
@@ -4945,16 +4995,18 @@
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 13,
+      "methodNodes": 15,
       "nativeReachableMethods": [
         ".ctor",
+        "CopyOrRestoreData",
         "CreateTexture",
         "GetManagedObject",
         "InitializeDescription",
         "OnObjectCreation",
+        "RecreateAndPopulateObject",
         "ReleaseNativeObject",
-        "T>",
-        "modopt"
+        "SaveDataForRecreation",
+        "T>"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": true,
@@ -5009,15 +5061,16 @@
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 13,
+      "methodNodes": 14,
       "nativeReachableMethods": [
         ".ctor",
         ".locals",
         "CreateBuffer",
         "GetManagedObject",
+        "RecreateAndPopulateObject",
         "ReleaseNativeObject",
-        "T>",
-        "modopt"
+        "SaveDataForRecreation",
+        "T>"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": true,
@@ -6131,9 +6184,17 @@
       ],
       "methodNodes": 22,
       "nativeReachableMethods": [
-
+        ".cctor",
+        ".ctor",
+        "Dispose",
+        "Equals",
+        "Finalize",
+        "get_Artist",
+        "get_Duration",
+        "get_Genre",
+        "get_Songs"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 10,
       "constructors": [
@@ -6162,9 +6223,10 @@
       ],
       "methodNodes": 12,
       "nativeReachableMethods": [
-
+        "Dispose",
+        "Finalize"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 4,
       "constructors": [
@@ -6193,9 +6255,15 @@
       ],
       "methodNodes": 16,
       "nativeReachableMethods": [
-
+        ".cctor",
+        ".ctor",
+        "Dispose",
+        "Equals",
+        "Finalize",
+        "get_Albums",
+        "get_Songs"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 7,
       "constructors": [
@@ -6224,9 +6292,10 @@
       ],
       "methodNodes": 12,
       "nativeReachableMethods": [
-
+        "Dispose",
+        "Finalize"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 4,
       "constructors": [
@@ -6255,9 +6324,15 @@
       ],
       "methodNodes": 16,
       "nativeReachableMethods": [
-
+        ".cctor",
+        ".ctor",
+        "Dispose",
+        "Equals",
+        "Finalize",
+        "get_Albums",
+        "get_Songs"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 7,
       "constructors": [
@@ -6286,9 +6361,10 @@
       ],
       "methodNodes": 12,
       "nativeReachableMethods": [
-
+        "Dispose",
+        "Finalize"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 4,
       "constructors": [
@@ -6317,7 +6393,12 @@
       ],
       "methodNodes": 17,
       "nativeReachableMethods": [
-        ".cctor"
+        ".cctor",
+        "get_Albums",
+        "get_Artists",
+        "get_Genres",
+        "get_Playlists",
+        "get_Songs"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": false,
@@ -6348,7 +6429,24 @@
       ],
       "methodNodes": 28,
       "nativeReachableMethods": [
-        ".cctor"
+        ".cctor",
+        "GetVisualizationData",
+        "MoveNext",
+        "MovePrevious",
+        "Pause",
+        "Play",
+        "Resume",
+        "Stop",
+        "get_IsMuted",
+        "get_IsVisualizationEnabled",
+        "get_PlayPosition",
+        "get_State",
+        "get_Volume",
+        "set_IsMuted",
+        "set_IsRepeating",
+        "set_IsShuffled",
+        "set_IsVisualizationEnabled",
+        "set_Volume"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": false,
@@ -6368,9 +6466,17 @@
       ],
       "methodNodes": 10,
       "nativeReachableMethods": [
-
+        "MoveNext",
+        "MovePrevious",
+        "Play",
+        "get_ActiveSong",
+        "get_ActiveSongIndex",
+        "get_Count",
+        "get_Item",
+        "get_PlayPosition",
+        "set_ActiveSongIndex"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 0,
       "constructors": [
@@ -6458,9 +6564,14 @@
       ],
       "methodNodes": 21,
       "nativeReachableMethods": [
-
+        "Dispose",
+        "Equals",
+        "Finalize",
+        "GetHashCode",
+        "ToString",
+        "get_Name"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 9,
       "constructors": [
@@ -6489,9 +6600,14 @@
       ],
       "methodNodes": 17,
       "nativeReachableMethods": [
-
+        "Dispose",
+        "Equals",
+        "Finalize",
+        "GetHashCode",
+        "ToString",
+        "get_Name"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 8,
       "constructors": [
@@ -6520,9 +6636,10 @@
       ],
       "methodNodes": 12,
       "nativeReachableMethods": [
-
+        "Dispose",
+        "Finalize"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 4,
       "constructors": [
@@ -6551,9 +6668,10 @@
       ],
       "methodNodes": 12,
       "nativeReachableMethods": [
-
+        "Dispose",
+        "Finalize"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 4,
       "constructors": [
@@ -6582,9 +6700,15 @@
       ],
       "methodNodes": 16,
       "nativeReachableMethods": [
-
+        ".cctor",
+        ".ctor",
+        "Dispose",
+        "Equals",
+        "Finalize",
+        "get_Duration",
+        "get_Songs"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 7,
       "constructors": [
@@ -6613,9 +6737,10 @@
       ],
       "methodNodes": 12,
       "nativeReachableMethods": [
-
+        "Dispose",
+        "Finalize"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 4,
       "constructors": [
@@ -6644,7 +6769,17 @@
       ],
       "methodNodes": 24,
       "nativeReachableMethods": [
-        ".cctor"
+        ".cctor",
+        ".ctor",
+        "Dispose",
+        "Equals",
+        "Finalize",
+        "FromUri",
+        "get_Album",
+        "get_Artist",
+        "get_Genre",
+        "get_IsProtected",
+        "get_PlayCount"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": false,
@@ -6687,9 +6822,10 @@
       ],
       "methodNodes": 12,
       "nativeReachableMethods": [
-
+        "Dispose",
+        "Finalize"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 4,
       "constructors": [
@@ -6743,8 +6879,21 @@
       ],
       "methodNodes": 22,
       "nativeReachableMethods": [
+        ".ctor",
         "AllocateTextures",
-        "Play"
+        "DestroyDecoder",
+        "Dispose",
+        "Finalize",
+        "GetTexture",
+        "Pause",
+        "Play",
+        "Resume",
+        "Stop",
+        "get_PlayPosition",
+        "get_State",
+        "set_IsLooped",
+        "set_IsMuted",
+        "set_Volume"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": false,
