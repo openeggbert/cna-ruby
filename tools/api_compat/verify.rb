@@ -38,12 +38,14 @@ report = {
   "EVENT_OWNER_TYPES" => event_owners,
   "EVENT_SUPPORT_TYPE" => CNAApiCompat::EVENT_SUPPORT_TYPE,
   "BCL_PROJECTED_IDENTITIES" => CNA::Runtime::BclProjection.identities.length,
-  "BCL_EXCEPTION_BASES" => CNA::Runtime::BclProjection::EXCEPTION_BASES.length
+  "BCL_EXCEPTION_BASES" => CNA::Runtime::BclProjection::EXCEPTION_BASES.length,
+  "BCL_THROWN_EXCEPTIONS" => CNA::Runtime::BclProjection::THROWN_EXCEPTIONS.length
 }.merge(result.counts).merge(
   "eventIdentities" => event_members,
   "bclProjection" => {
     "types" => CNA::Runtime::BclProjection::TYPES,
-    "exceptionBases" => CNA::Runtime::BclProjection::EXCEPTION_BASES
+    "exceptionBases" => CNA::Runtime::BclProjection::EXCEPTION_BASES,
+    "thrownExceptions" => CNA::Runtime::BclProjection::THROWN_EXCEPTIONS
   },
   "completeTypeNames" => result.complete_types,
   "partialTypes" => result.partial_types,

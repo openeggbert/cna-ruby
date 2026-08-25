@@ -269,6 +269,32 @@ module CNAApiCompat
 
         result.add("LANGUAGE_MAPPING_MISMATCH", "BCL exception base #{clr_identity}: #{ruby_path} is not a Ruby StandardError class")
       end
+      verify_thrown_exceptions(result)
+    end
+
+    # A CLR exception a projected member throws must raise a Ruby exception an ordinary `rescue`
+    # catches, because a CLR `catch (Exception)` is exactly that. Ruby's NotImplementedError is the
+    # trap this check exists for: it reads like the right name and descends from ScriptError, so a
+    # bare rescue misses it and a routine, recoverable CLR failure would escape the caller's error
+    # handling entirely.
+    def verify_thrown_exceptions(result)
+      CNA::Runtime::BclProjection::THROWN_EXCEPTIONS.each do |clr_identity, ruby_path|
+        raised = begin
+          resolve_ruby_type(ruby_path)
+        rescue NameError
+          result.add("LANGUAGE_MAPPING_MISMATCH", "BCL thrown exception #{clr_identity}: #{ruby_path} does not resolve")
+          next
+        end
+        unless raised.instance_of?(Class) && raised <= ::StandardError
+          result.add("LANGUAGE_MAPPING_MISMATCH",
+                     "BCL thrown exception #{clr_identity}: #{ruby_path} is not a Ruby StandardError class")
+          next
+        end
+        next unless raised <= ::ScriptError || raised.equal?(::NotImplementedError)
+
+        result.add("LANGUAGE_MAPPING_MISMATCH",
+                   "BCL thrown exception #{clr_identity}: #{ruby_path} escapes an ordinary rescue")
+      end
     end
 
     def verify_runtime_base(name, type, object, result)

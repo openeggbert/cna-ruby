@@ -17,6 +17,7 @@
   "EVENT_SUPPORT_TYPE": "CNA::Runtime::Event",
   "BCL_PROJECTED_IDENTITIES": 6,
   "BCL_EXCEPTION_BASES": 2,
+  "BCL_THROWN_EXCEPTIONS": 5,
   "MISSING_TYPE": 122,
   "MISSING_MEMBER": 132,
   "UNEXPECTED_TYPE": 0,
@@ -56,6 +57,13 @@
     "exceptionBases": {
       "System.Exception": "StandardError",
       "System.Runtime.InteropServices.ExternalException": "StandardError"
+    },
+    "thrownExceptions": {
+      "System.ArgumentNullException": "ArgumentError",
+      "System.ArgumentOutOfRangeException": "RangeError",
+      "System.ArgumentException": "ArgumentError",
+      "System.IndexOutOfRangeException": "IndexError",
+      "System.NotSupportedException": "CNA::Runtime::NotSupportedError"
     }
   },
   "completeTypeNames": [

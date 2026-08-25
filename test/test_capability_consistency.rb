@@ -68,7 +68,7 @@ class CapabilityConsistencyTest < Minitest::Test
   # ------------------------------------------------------- the three resolved blockers, by name
 
   def test_the_retired_mapping_blockers_are_gone_and_their_verified_successors_stand_alone
-    %w[event-projection bcl-projection readonly-collection].each do |subject|
+    %w[event-projection bcl-projection readonly-collection not-supported-exception].each do |subject|
       assert_nil row(REGISTRY, "mapping.#{subject}"), "mapping.#{subject} was resolved and must not stand"
       successor = row(REGISTRY, "managed.#{subject}")
       refute_nil successor, subject
@@ -76,14 +76,16 @@ class CapabilityConsistencyTest < Minitest::Test
     end
     # The category itself is not retired -- the checker classifies it as unresolved precisely so a
     # real undecided mapping can be recorded. What must not come back is any blocker named above.
-    # Foundation 29 retired mapping.readonly-collection: Foundation 28 admitted an mscorlib to
-    # measure the type against, and the measurement settled the design. One decision legitimately
-    # stands, NotSupportedException, which six TouchCollection identities throw.
+    # Foundation 29 retired mapping.readonly-collection and Foundation 30
+    # mapping.not-supported-exception: Foundation 28 admitted an mscorlib to measure both against,
+    # and the measurements settled both designs. No mapping decision stands open, which is a state
+    # the checker must accept rather than a state it may assume -- the category stays classified
+    # precisely so a future genuinely-undecided mapping can be recorded again.
     undecided = rows(REGISTRY).select do |capability|
       capability.fetch("category") == "UNRESOLVED_MAPPING_DECISION"
     end
-    assert_equal %w[mapping.not-supported-exception],
-                 undecided.map { |capability| capability.fetch("id") }.sort
+    assert_empty undecided.map { |capability| capability.fetch("id") }
+    assert_includes CapabilityConsistency::UNRESOLVED_CATEGORIES, "UNRESOLVED_MAPPING_DECISION"
   end
 
   def test_the_retained_assembly_blocker_is_replaced_by_measured_provenance
@@ -123,10 +125,7 @@ class CapabilityConsistencyTest < Minitest::Test
       refute_includes document, stale
     end
     # UNRESOLVED_MAPPING_DECISION may appear, but only for a decision that is genuinely open.
-    undecided = document.lines.grep(/UNRESOLVED_MAPPING_DECISION/)
-    assert_equal 1, undecided.length
-    assert_equal %w[mapping.not-supported-exception],
-                 undecided.map { |line| line[/`([^`]+)`/, 1] }.sort
+    assert_empty document.lines.grep(/UNRESOLVED_MAPPING_DECISION/)
     # The one row that legitimately still reports an unavailable input is the corpus source.
     unavailable = document.lines.grep(/not available on this host/)
     assert_equal 1, unavailable.length

@@ -84,6 +84,7 @@ There is intentionally no `microsoft/xna/framework/content` implementation in Fo
 - `docs/il-inventory-nesting-evidence.md` — Native frontier 2, the nested- and generic-aware IL extractor and the declaring-type dependency it exposed
 - `docs/bcl-reference-authority-evidence.md` — Foundation 28, the Microsoft .NET Framework mscorlib admitted as a separate BCL authority, the derived identity and pairing proof, and what its IL settles about `ReadOnlyCollection<T>`
 - `docs/read-only-collection-evidence.md` — Foundation 29, the `ReadOnlyCollection<T>` projection, its view-not-snapshot semantics, the generic element metadata rule, and exactly what it moved on the frontier
+- `docs/not-supported-error-evidence.md` — Foundation 30, why `System.NotSupportedException` maps to a dedicated `StandardError` subclass and not to Ruby's `NotImplementedError`, and the separate thrown-exception register
 - `tools/api_compat/build_il_inventory.rb` — hash-admitted `ikdasm` disassembly into the Microsoft-free IL inventory
 - `tools/api_compat/build_bcl_inventory.rb` — hash-admitted `ikdasm` disassembly of the pinned mscorlib into the Microsoft-free, demand-driven BCL inventory
 - `tools/api_compat/verify.rb` — structural report/strict/leak-only modes

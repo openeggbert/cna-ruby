@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 29",
+  "milestone": "Foundation 30",
   "platform": "Linux x86-64 MRI Ruby 3.3.8",
   "cnaAbi": "0.7.0",
   "capabilities": [
@@ -509,10 +509,10 @@
       "evidence": "The canonical C ABI already exposes the whole GraphicsAdapter surface (count, info, description, device name, current mode, supported modes, device preferences, profile support and both format negotiations), so no ABI expansion is needed to reach it. What the qualified artifact cannot supply is truthful data: libcna_c_api.so 0.7.0 was linked with the HEADLESS platform, carrying no SDL2 or SDL3 platform, so CNA GetDisplays answers nothing and the native adapter falls back to a synthetic entry described as Default Display with a single 800x480 mode. Binding a Ruby GraphicsAdapter to that would publish invented hardware. The C ABI additionally refuses the native monitor handle by design, returning CNA_RESULT_NOT_SUPPORTED, and answers every adapter query only through a callback-scoped graphics-device handle, while XNA Adapters and DefaultAdapter are statics usable before any device exists"
     },
     {
-      "id": "mapping.not-supported-exception",
-      "category": "UNRESOLVED_MAPPING_DECISION",
-      "status": "not designed",
-      "evidence": "System.NotSupportedException has no Ruby mapping in mapping-rules.json. TouchCollection is a read-only IList and its IL throws it from Insert, RemoveAt, Add, Clear, Remove and the Item setter, so six of its fifteen identities wait on the decision, and closing it plus TouchCollection+Enumerator is 18 identities. The thrown-exception policy is settled — the nearest Ruby exception with the same meaning, one CLR exception to exactly one Ruby exception — but the nearest is contested: NotImplementedError is closest in meaning and is a ScriptError, which this project already documents as a trap because a bare rescue does not catch it, while RuntimeError and FrozenError are each defensible and each say something the CLR exception does not"
+      "id": "managed.not-supported-exception",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified projection",
+      "evidence": "Foundation 30 resolved the decision mapping.not-supported-exception recorded. System.NotSupportedException maps to CNA::Runtime::NotSupportedError, a dedicated language-support class descending from StandardError. Ruby NotImplementedError is deliberately refused: it descends from ScriptError, not StandardError, so a bare rescue -- the analogue of a CLR catch (Exception) -- does not catch it, and a routine recoverable CLR failure would escape ordinary Ruby error handling; RuntimeError and ArgumentError are catchable but each say something the CLR exception does not and neither carries a distinct identity a caller can rescue by name. The admitted mscorlib settles the hierarchy, NotSupportedException under SystemException under System.Exception, which the register already roots at StandardError, and the three public constructor shapes, with the message forwarded and never synthesised; the parameterless form's CLR message is the localized framework resource Arg_NotSupportedException, which is not reproduced, so a NotSupportedError raised without a message carries Ruby's own default. The mapping lives in a third register, BclProjection::THROWN_EXCEPTIONS, kept separate from TYPES and EXCEPTION_BASES because a thrown exception is never named by an XNA public signature and must not count as a mapped BCL identity on the dependency frontier. The API verifier resolves every entry and reports LANGUAGE_MAPPING_MISMATCH for one that is not a class, is not a StandardError, or descends from ScriptError; five mutations are covered by test, including the NotImplementedError substitution"
     }
   ]
 }

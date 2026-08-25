@@ -67,6 +67,26 @@ module CNA
         "System.Runtime.InteropServices.ExternalException" => "StandardError"
       }.freeze
 
+      # A CLR exception a projected member *throws*, and the Ruby exception it raises instead.
+      #
+      # This is a different register from EXCEPTION_BASES, and the difference is load-bearing. An
+      # entry there is a CLR base an XNA exception type *derives from*, so it is named by the
+      # reference contract's public signatures. An entry here is never named by a signature at all:
+      # it appears only inside a member's IL, as an `ldstr` naming a parameter followed by a
+      # `newobj`, or as a call into a throw helper. Mixing the two would let a thrown exception be
+      # counted as a mapped BCL identity the XNA surface names, which it is not.
+      #
+      # One CLR exception maps to exactly one Ruby exception. Every entry must be a real class, must
+      # descend from StandardError so a bare `rescue` catches it as a CLR `catch (Exception)` would,
+      # and must not descend from ScriptError; the API verifier enforces all three.
+      THROWN_EXCEPTIONS = {
+        "System.ArgumentNullException" => "ArgumentError",
+        "System.ArgumentOutOfRangeException" => "RangeError",
+        "System.ArgumentException" => "ArgumentError",
+        "System.IndexOutOfRangeException" => "IndexError",
+        "System.NotSupportedException" => "CNA::Runtime::NotSupportedError"
+      }.freeze
+
       module_function
 
       def ruby_type(clr_identity)
@@ -110,6 +130,12 @@ module CNA
       def exception_base?(clr_identity) = EXCEPTION_BASES.key?(clr_identity)
 
       def identities = (TYPES.keys + EXCEPTION_BASES.keys).uniq.sort
+
+      # Deliberately not part of `identities`: a thrown exception is not an identity the XNA public
+      # surface names, so it must never count as a mapped BCL type on the dependency frontier.
+      def thrown_identities = THROWN_EXCEPTIONS.keys.sort
+
+      def thrown_exception(clr_identity) = THROWN_EXCEPTIONS[clr_identity]
 
       # The one validation the TimeSpan projection performs: seconds must be numeric.
       def time_span(value)

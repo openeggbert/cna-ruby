@@ -51,6 +51,15 @@ module CNA
       def self?.definition: (String?) -> String
       def self?.element_types: (String?) -> Array[String]
       def self?.generic_projection?: (String?) -> bool
+      THROWN_EXCEPTIONS: Hash[String, String]
+      def self?.thrown_identities: () -> Array[String]
+      def self?.thrown_exception: (String?) -> String?
+    end
+
+    # The Ruby projection of System.NotSupportedException: a real StandardError subclass, never
+    # NotImplementedError, which is a ScriptError a bare rescue does not catch.
+    class NotSupportedError < ::StandardError
+      def initialize: (?String? message, ?::Exception? inner) -> void
     end
 
     # Shared construction for the projected XNA exception types.

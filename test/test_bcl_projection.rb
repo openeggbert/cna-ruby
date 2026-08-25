@@ -83,8 +83,10 @@ class BclProjectionTest < Minitest::Test
   def test_the_strict_report_measures_the_register
     assert_equal 6, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal 2, STRICT.fetch("BCL_EXCEPTION_BASES")
-    assert_equal({"types" => B::TYPES, "exceptionBases" => B::EXCEPTION_BASES},
+    assert_equal({"types" => B::TYPES, "exceptionBases" => B::EXCEPTION_BASES,
+                  "thrownExceptions" => B::THROWN_EXCEPTIONS},
                  STRICT.fetch("bclProjection"))
+    assert_equal 5, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
     assert_equal 0, STRICT.fetch("LANGUAGE_MAPPING_MISMATCH")
     assert_equal 0, STRICT.fetch("BASE_MAPPING_MISMATCH")
   end
@@ -130,10 +132,15 @@ class BclProjectionTest < Minitest::Test
     # names it, so no Ruby class is invented for it, and the two XNA types that derive from it take
     # StandardError directly.
     refute Object.const_defined?(:System, false)
-    assert_empty CNA::Runtime.constants(false).select { |name|
+    # No Ruby constant is invented for an XNA exception *base*. The one exception class the CNA
+    # runtime carries is CNA::Runtime::NotSupportedError, added by Foundation 30, and it is a
+    # projection of a CLR exception XNA members *throw*, never a base any XNA type derives from.
+    assert_equal [:NotSupportedError], CNA::Runtime.constants(false).select { |name|
       value = CNA::Runtime.const_get(name, false)
       value.instance_of?(Class) && value <= ::Exception
     }
+    refute_includes B::EXCEPTION_BASES.values, "CNA::Runtime::NotSupportedError"
+    refute_includes B::TYPES.values, "CNA::Runtime::NotSupportedError"
     [Microsoft::Xna::Framework::Audio::InstancePlayLimitException,
      Microsoft::Xna::Framework::Audio::NoAudioHardwareException].each do |klass|
       assert_equal StandardError, klass.superclass, klass.name
