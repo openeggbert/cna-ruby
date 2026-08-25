@@ -50,6 +50,7 @@
     "System.EventHandler`1[System.EventArgs]",
     "System.Exception",
     "System.IComparable`1",
+    "System.IDisposable",
     "System.IEquatable`1",
     "System.IServiceProvider",
     "System.Int32",
@@ -84,8 +85,8 @@
   },
   "blockerSummary": {
     "BCL_PROJECTION": 5,
-    "BCL_PROJECTION+NATIVE_RUNTIME": 5,
-    "NATIVE_RUNTIME": 3,
+    "BCL_PROJECTION+NATIVE_RUNTIME": 3,
+    "NATIVE_RUNTIME": 5,
     "NATIVE_RUNTIME+RUNTIME_DATA": 1,
     "RUNTIME_DATA": 5
   },
@@ -510,7 +511,6 @@
         "!!0",
         "System.Action`1",
         "System.Action`1[System.IDisposable]",
-        "System.IDisposable",
         "System.IO.Stream"
       ],
       "eventMembers": [
@@ -693,11 +693,10 @@
       ],
       "dependencyComplete": true,
       "blockers": [
-        "BCL_PROJECTION",
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
-        "System.IDisposable"
+
       ],
       "eventMembers": [
 
@@ -806,11 +805,10 @@
       ],
       "dependencyComplete": true,
       "blockers": [
-        "BCL_PROJECTION",
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
-        "System.IDisposable"
+
       ],
       "eventMembers": [
         "Disposing"

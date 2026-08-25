@@ -13203,6 +13203,68 @@
         "Microsoft::Xna::Framework::GameComponentCollectionEventArgs",
         false
       ]
+    },
+    {
+      "id": "disposable_collapse.interface_contract",
+      "operation": "DisposableCollapse.InterfaceContract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        29,
+        28,
+        1,
+        "Microsoft.Xna.Framework.GraphicsDeviceManager",
+        false
+      ]
+    },
+    {
+      "id": "disposable_collapse.register",
+      "operation": "DisposableCollapse.Register",
+      "args": [
+        "System.IDisposable"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": "disposable_collapse.no_invented_conventions",
+      "operation": "DisposableCollapse.NoInventedConventions",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        0,
+        0,
+        0,
+        false
+      ]
+    },
+    {
+      "id": "disposable_collapse.frontier_effect",
+      "operation": "DisposableCollapse.FrontierEffect",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          "NATIVE_RUNTIME"
+        ],
+        [
+          "NATIVE_RUNTIME"
+        ],
+        true,
+        true,
+        0,
+        true
+      ]
     }
   ],
   "milestone31SourceAssemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
@@ -13216,5 +13278,7 @@
   "nativeFrontier3CorpusCorrection": "il_provenance.assemblies pinned this project's own measurement of typesNativeReachable, which Native frontier 3 corrected from 61 to 77 by removing a modopt blind spot in the extractor: a mixed-mode C++/CLI thunk is declared `.method ... int32 modopt([mscorlib]...IsLong) Play(uint32)`, so every such method was recorded under the name modopt while every call site resolved to its real name, and every edge into XNA's native-methods classes dangled. That one element was updated. Unlike the Native frontier 2 correction, a re-serialisation replay is available again and was used: byte-preserving serialisation of the pre-correction corpus (SHA-256 581063d14669d2b53f07a6a2089a9860c823e0eb7707d525d1ae71b8fb709630, 435 observations) was proved first, and exactly one observation differs afterwards.",
   "milestone35MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 08d3a3f5aff4a5fd08bbb78ef3d572b9ef97622dd7dfccb29f6eaae62f2eb6f2, 435 observations) was proved before correcting two rows and appending 10 additive observations",
   "milestone35CorpusCorrection": "two Foundation 20 event_projection rows censused this binding's own selection, which Foundation 35 legitimately grew by selecting GameComponentCollection. event_projection.deferred_family.contract carried, per type, one slot asserting the type was not selected -- the same over-reach the Foundation 22, 32 and 33 corrections removed -- so that slot was dropped from the operation and from all three rows, leaving only the pure XNA metadata about each type's events. event_projection.support_type.contract snapshotted the whole selected event census, so like Foundation 23's bcl_projection.register it could not survive the census legitimately growing; it now pins the four identities Foundation 20 established, passed as args, plus the standing shape rule that every selected event is an EventHandler`1. The replay proved every other element of those rows, and every other row, unchanged.",
-  "milestone35SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0"
+  "milestone35SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "milestone36MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 e49be457f9e60ec9947576bc090ad775ef837c20817963e18ac68abd154d1cd5, 445 observations) was proved before appending 4 additive observations",
+  "milestone36SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0"
 }

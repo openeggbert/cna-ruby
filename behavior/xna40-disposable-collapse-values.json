@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "derivation": "Foundation 36 System.IDisposable structural collapse. The contract rows are read from the pinned XNA 4.0 Windows metadata and from the admitted Microsoft .NET Framework 4.0 mscorlib (SHA-256 5634668d4775b0113f08ea31093b281fea69bfc4e99227f5ca761b4ed98acc63), whose System.IDisposable declares exactly one member -- `.method public hidebysig newslot abstract virtual instance void Dispose()` -- and nothing else. Twenty-nine XNA reference types declare the interface; twenty-eight declare a public parameterless Dispose of their own, and Microsoft.Xna.Framework.GraphicsDeviceManager implements it explicitly, its Game.dll IL carrying `.method private ... System.IDisposable.Dispose() ... .override [mscorlib]System.IDisposable::Dispose`. The RUBY_MAPPING_QUALIFICATION rows record the decision not to invent a constant and the conventions that are deliberately absent; neither is snapshotted from the cna-ruby implementation.",
+  "observations": [
+    {
+      "id": "disposable_collapse.interface_contract",
+      "operation": "DisposableCollapse.InterfaceContract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [29, 28, 1, "Microsoft.Xna.Framework.GraphicsDeviceManager", false]
+    },
+    {
+      "id": "disposable_collapse.register",
+      "operation": "DisposableCollapse.Register",
+      "args": ["System.IDisposable"],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [true, false, false, false, true, false, false, false, false]
+    },
+    {
+      "id": "disposable_collapse.no_invented_conventions",
+      "operation": "DisposableCollapse.NoInventedConventions",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [0, 0, 0, false]
+    },
+    {
+      "id": "disposable_collapse.frontier_effect",
+      "operation": "DisposableCollapse.FrontierEffect",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        ["NATIVE_RUNTIME"],
+        ["NATIVE_RUNTIME"],
+        true,
+        true,
+        0,
+        true
+      ]
+    }
+  ]
+}

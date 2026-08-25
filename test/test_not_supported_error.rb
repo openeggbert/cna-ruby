@@ -65,7 +65,7 @@ class NotSupportedErrorTest < Minitest::Test
   def test_thrown_exceptions_are_a_separate_register_from_the_named_identities
     B::THROWN_EXCEPTIONS.each_key { |identity| refute_includes B.identities, identity }
     assert_equal B::THROWN_EXCEPTIONS.keys.sort, B.thrown_identities
-    assert_equal 9, STRICT.fetch("BCL_PROJECTED_IDENTITIES"), "unchanged by the thrown-exception register"
+    assert_equal 10, STRICT.fetch("BCL_PROJECTED_IDENTITIES"), "unchanged by the thrown-exception register"
 
     frontier = JSON.parse(ROOT.join("docs", "generated", "public-signature-dependency-report.json").read)
     B::THROWN_EXCEPTIONS.each_key { |identity| refute_includes frontier.fetch("mappedBclTypes"), identity }

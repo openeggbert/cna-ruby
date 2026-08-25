@@ -200,6 +200,7 @@ def behavior_group(item)
   return "CONSTRUCTOR_FREE" if id.start_with?("constructor_free.")
   return "CONTENT_ATTRIBUTE" if id.start_with?("content_attribute.")
   return "GAME_COMPONENT_COLLECTION" if id.start_with?("game_component_collection.")
+  return "DISPOSABLE_COLLAPSE" if id.start_with?("disposable_collapse.")
 
   id.split(".").first.upcase
 end
@@ -1943,6 +1944,59 @@ def execute(item)
   when "Golden.FrustumRelations"
     projection = F::Matrix.CreatePerspectiveFieldOfView(F::MathHelper::PiOver4, 4.0 / 3.0, 1, 10); frustum = F::BoundingFrustum.new(F::Matrix.CreateLookAt(F::Vector3.new(0, 0, 5), F::Vector3.Zero, F::Vector3.Up) * projection); distant = F::BoundingFrustum.new(F::Matrix.CreateLookAt(F::Vector3.new(100, 0, 5), F::Vector3.new(100, 0, 0), F::Vector3.Up) * projection)
     [frustum.Contains(F::Vector3.Zero).to_i, frustum.Contains(F::Vector3.new(0, 0, 6)).to_i, frustum.Contains(F::BoundingBox.new(F::Vector3.new(-0.5), F::Vector3.new(0.5))).to_i, frustum.Contains(F::BoundingSphere.new(F::Vector3.Zero, 0.5)).to_i, frustum.Intersects(F::BoundingBox.new(F::Vector3.new(-0.5), F::Vector3.new(0.5))), frustum.Intersects(F::BoundingBox.new(F::Vector3.new(100), F::Vector3.new(101))), frustum.Intersects(F::BoundingSphere.new(F::Vector3.Zero, 0.5)), frustum.Intersects(F::BoundingSphere.new(F::Vector3.new(100), 0.5)), frustum.Intersects(distant), hex32(frustum.Intersects(F::Ray.new(F::Vector3.new(0, 0, 20), F::Vector3.Forward)))]
+  when "DisposableCollapse.InterfaceContract"
+    implementors = BATCH_REFERENCE.values.select do |type|
+      type.fetch("directInterfaces", []).include?("System.IDisposable")
+    end
+    public_dispose = implementors.select do |type|
+      type.fetch("members").any? do |member|
+        member.fetch("name") == "Dispose" && member.fetch("parameters", []).empty? &&
+          member["access"] == "public"
+      end
+    end
+    explicit = implementors - public_dispose
+    [implementors.length, public_dispose.length, explicit.length,
+     explicit.map { |type| type.fetch("name") }.first,
+     # System.IDisposable is a BCL type, so the XNA profile does not declare it.
+     BATCH_REFERENCE.key?("System.IDisposable")]
+  when "DisposableCollapse.Register"
+    identity = item.fetch("args").fetch(0)
+    register = CNA::Runtime::BclProjection
+    short = identity.split(".").last.to_sym
+    [register.structural_collapse?(identity),
+     register::TYPES.key?(identity),
+     register::EXCEPTION_BASES.key?(identity),
+     register::THROWN_EXCEPTIONS.key?(identity),
+     register.identities.include?(identity),
+     Object.const_defined?(short, false),
+     CNA::Runtime.const_defined?(short, false),
+     F.const_defined?(short, false),
+     Object.const_defined?(:System, false)]
+  when "DisposableCollapse.NoInventedConventions"
+    disposing = BATCH_SIGNATURES.values.select do |type|
+      type.fetch("members").any? { |member| member.fetch("name") == "Dispose" }
+    end
+    invented = %i[Close close Finalize finalize dispose! release Release using owned?]
+    leaks = disposing.sum do |type|
+      klass = type.fetch("rubyName").split("::").reduce(Object) { |scope, part| scope.const_get(part, false) }
+      invented.count { |name| klass.public_method_defined?(name) || klass.protected_method_defined?(name) }
+    end
+    [leaks, disposing.count { |type| type.fetch("rubyName").include?("Disposable") },
+     CNA::Runtime::BclProjection::TYPES.keys.count { |key| key.include?("IDisposable") },
+     CNA::Runtime.const_defined?(:Disposable, false)]
+  when "DisposableCollapse.FrontierEffect"
+    frontier = JSON.parse(File.read(File.expand_path("../docs/generated/public-signature-dependency-report.json", __dir__)))
+    by_name = frontier.fetch("dependencyCompleteCandidates").to_h { |entry| [entry.fetch("name"), entry] }
+    instance = by_name.fetch("Microsoft.Xna.Framework.Audio.SoundEffectInstance")
+    cue = by_name.fetch("Microsoft.Xna.Framework.Audio.Cue")
+    content = by_name.fetch("Microsoft.Xna.Framework.Content.ContentManager")
+    # Both audio types lose the BCL blocker and keep NATIVE_RUNTIME, so neither is consumable;
+    # ContentManager named more than this one identity and keeps BCL_PROJECTION.
+    [instance.fetch("blockers"), cue.fetch("blockers"),
+     instance.fetch("unmappedBclTypes").empty? && cue.fetch("unmappedBclTypes").empty?,
+     content.fetch("blockers").include?("BCL_PROJECTION"),
+     frontier.fetch("consumableCandidates").length,
+     frontier.fetch("mappedBclTypes").include?("System.IDisposable")]
   when "GameComponentCollection.Contract"
     type = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.GameComponentCollection")
     methods = type.fetch("members").select { |member| member.fetch("kind") == "method" }

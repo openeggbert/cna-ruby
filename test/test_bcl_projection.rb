@@ -51,14 +51,16 @@ class BclProjectionTest < Minitest::Test
                   # Foundation 33: a type token, and Ruby's is a Module.
                   "System.Type" => "Module"},
                  B::TYPES)
-    # Foundation 33 also records a decision *not* to invent a constant.
-    assert_equal ["System.IServiceProvider"], B::STRUCTURAL_COLLAPSE.keys
+    # Foundation 33 also records a decision *not* to invent a constant, and Foundation 36 adds
+    # the second such decision.
+    assert_equal %w[System.IDisposable System.IServiceProvider], B::STRUCTURAL_COLLAPSE.keys.sort
     assert_equal({"System.Exception" => "StandardError",
                   "System.Runtime.InteropServices.ExternalException" => "StandardError"},
                  B::EXCEPTION_BASES)
     assert_equal ["System.Attribute", "System.Collections.ObjectModel.Collection`1",
                   "System.Collections.ObjectModel.ReadOnlyCollection`1",
-                  "System.EventArgs", "System.Exception", "System.IServiceProvider",
+                  "System.EventArgs", "System.Exception", "System.IDisposable",
+                  "System.IServiceProvider",
                   "System.Runtime.InteropServices.ExternalException", "System.TimeSpan",
                   "System.Type"], B.identities
 
@@ -88,7 +90,7 @@ class BclProjectionTest < Minitest::Test
   end
 
   def test_the_strict_report_measures_the_register
-    assert_equal 9, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal 10, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal 2, STRICT.fetch("BCL_EXCEPTION_BASES")
     assert_equal({"types" => B::TYPES, "exceptionBases" => B::EXCEPTION_BASES,
                   "thrownExceptions" => B::THROWN_EXCEPTIONS},

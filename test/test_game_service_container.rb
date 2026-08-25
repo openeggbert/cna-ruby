@@ -73,7 +73,7 @@ class GameServiceContainerTest < Minitest::Test
   end
 
   def test_system_i_service_provider_collapses_to_the_member_it_declares
-    assert_equal ["System.IServiceProvider"], B::STRUCTURAL_COLLAPSE.keys
+    assert_includes B::STRUCTURAL_COLLAPSE.keys, "System.IServiceProvider"
     assert B.structural_collapse?("System.IServiceProvider")
     assert_includes B::STRUCTURAL_COLLAPSE.fetch("System.IServiceProvider"), "GetService"
     # No constant was invented for it, anywhere.

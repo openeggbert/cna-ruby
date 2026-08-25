@@ -119,9 +119,16 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   # The same two halves the tool uses, restated independently: types that are already complete, plus
-  # the runtime's measured BCL projection register.
+  # the runtime's measured BCL projection register. The register is all three of its parts -- a
+  # projected type, an exception base and a *structural collapse* each settle an identity, and a
+  # collapse settles it precisely by deciding no constant is needed. Until Foundation 36 the one
+  # collapsed identity was also reachable from a complete type's signatures, so leaving it out here
+  # happened to agree; System.IDisposable is declared only by types that are missing or partial, so
+  # it no longer does.
   def mapped_bcl_from_complete_types
-    register = CNA::Runtime::BclProjection::TYPES.keys + CNA::Runtime::BclProjection::EXCEPTION_BASES.keys
+    register = CNA::Runtime::BclProjection::TYPES.keys +
+               CNA::Runtime::BclProjection::EXCEPTION_BASES.keys +
+               CNA::Runtime::BclProjection::STRUCTURAL_COLLAPSE.keys
     SIGNATURES.fetch("types").each_with_object(register.uniq.sort) do |type, found|
       next unless STRICT.fetch("completeTypeNames").include?(type.fetch("name"))
 

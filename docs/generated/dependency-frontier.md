@@ -27,20 +27,20 @@ rather than missing input. Native reachability is measured from that IL:
 | `Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException` | class | 4 | unmapped BCL: System.Runtime.Serialization.SerializationInfo, System.Runtime.Serialization.StreamingContext; IL to derive: .ctor |
 | `Microsoft.Xna.Framework.TitleContainer` | class | 1 | unmapped BCL: System.IO.Stream; IL to derive: OpenStream |
 
-## BCL_PROJECTION + NATIVE_RUNTIME (5)
+## BCL_PROJECTION + NATIVE_RUNTIME (3)
 
 | Type | Kind | Ruby identities | Detail |
 | --- | --- | --- | --- |
-| `Microsoft.Xna.Framework.Audio.Cue` | class | 19 | events: Disposing; unmapped BCL: System.IDisposable; native: Dispose, Finalize, GetVariable, Pause; IL to derive: Play, Pause, Resume, Stop, GetVariable, SetVariable |
 | `Microsoft.Xna.Framework.Audio.Microphone` | class | 15 | events: BufferReady; unmapped BCL: System.Byte[]; native: .cctor, Finalize, get_All, get_Default; IL to derive: Finalize, GetSampleSizeInBytes, GetSampleDuration, Start, Stop, GetData |
-| `Microsoft.Xna.Framework.Audio.SoundEffectInstance` | class | 16 | unmapped BCL: System.IDisposable; native: .ctor, Apply3D, DeallocateVoice, Dispose; IL to derive: Finalize, Dispose, Play, Stop, Pause, Resume |
-| `Microsoft.Xna.Framework.Content.ContentManager` | class | 10 | unmapped BCL: !!0, System.Action`1, System.Action`1[System.IDisposable], System.IDisposable, System.IO.Stream; native: ReadAsset<T>; IL to derive: .ctor, Dispose, Unload, Load, ReadAsset, OpenStream |
+| `Microsoft.Xna.Framework.Content.ContentManager` | class | 10 | unmapped BCL: !!0, System.Action`1, System.Action`1[System.IDisposable], System.IO.Stream; native: ReadAsset<T>; IL to derive: .ctor, Dispose, Unload, Load, ReadAsset, OpenStream |
 | `Microsoft.Xna.Framework.Graphics.SpriteFont` | class | 6 | unmapped BCL: System.Char, System.Nullable`1[System.Char], System.Text.StringBuilder; native: InternalDraw; IL to derive: MeasureString |
 
-## NATIVE_RUNTIME (3)
+## NATIVE_RUNTIME (5)
 
 | Type | Kind | Ruby identities | Detail |
 | --- | --- | --- | --- |
+| `Microsoft.Xna.Framework.Audio.Cue` | class | 19 | events: Disposing; native: Dispose, Finalize, GetVariable, Pause; IL to derive: Play, Pause, Resume, Stop, GetVariable, SetVariable |
+| `Microsoft.Xna.Framework.Audio.SoundEffectInstance` | class | 16 | native: .ctor, Apply3D, DeallocateVoice, Dispose; IL to derive: Finalize, Dispose, Play, Stop, Pause, Resume |
 | `Microsoft.Xna.Framework.Graphics.EffectAnnotation` | class | 14 | native: .ctor, GetValueBoolean, GetValueInt32, GetValueMatrix; IL to derive: GetValueBoolean, GetValueInt32, GetValueSingle, GetValueVector2, GetValueVector3, GetValueVector4 |
 | `Microsoft.Xna.Framework.Graphics.GraphicsAdapter` | class | 18 | native: .cctor, .ctor, InitializeAdapterList, IsProfileSupported; IL to derive: QueryBackBufferFormat, QueryRenderTargetFormat, IsProfileSupported |
 | `Microsoft.Xna.Framework.Graphics.TextureCollection` | class | 1 | native: ResetState, get_Item, set_Item |

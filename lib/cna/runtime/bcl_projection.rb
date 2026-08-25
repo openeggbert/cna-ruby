@@ -77,7 +77,19 @@ module CNA
       # frontier can count the identity as decided, and so the API verifier can assert that no
       # constant was invented after all.
       STRUCTURAL_COLLAPSE = {
-        "System.IServiceProvider" => "declares one member, GetService(Type), which GameServiceContainer declares publicly; the contract survives as that member and no Ruby constant is invented"
+        "System.IServiceProvider" => "declares one member, GetService(Type), which GameServiceContainer declares publicly; the contract survives as that member and no Ruby constant is invented",
+        # The admitted mscorlib says `System.IDisposable` declares exactly one member --
+        # `void Dispose()` -- and nothing else. No Close, no IsDisposed, no finalizer contract, no
+        # ownership protocol: those are conventions built on top of it, not part of it. Twenty-nine
+        # XNA types declare it; twenty-eight declare a public parameterless Dispose() of their own,
+        # and the twenty-ninth, GraphicsDeviceManager, implements it as an explicit interface
+        # implementation, which projects to no member at all under the rule ReadOnlyCollection's
+        # twelve and Collection's fourteen already follow. So the contract survives as the members
+        # the implementing types already declare, and inventing a Ruby module -- or a Close alias,
+        # or a finalizer API, or an ownership wrapper -- would add identities the CLR contract does
+        # not have and that nothing could measure. Mapping the identity says nothing whatever about
+        # whether a given type's disposal is implemented: that stays each type's own measured work.
+        "System.IDisposable" => "declares one member, Dispose(), which every implementing XNA type either declares publicly or implements explicitly; the contract survives as those members and no Ruby constant, Close alias, finalizer API or ownership wrapper is invented"
       }.freeze
 
       # CLR exception base identity => the Ruby exception class an XNA type deriving from it takes
