@@ -993,8 +993,24 @@ module Microsoft
           raise
         end
 
+        # A disposed manager has no device to borrow, so it attaches none.
+        #
+        # This is reached during disposal, not only during a run: `Game#Dispose` releases the
+        # manager before it destroys the host, because `cna_graphics_device_manager_create`
+        # documents "release it before the game" and the runtime keeps the object alive until the
+        # game is destroyed. Destroying the game then delivers one last `unload_content` callback,
+        # and that callback arrives after the manager handle is already gone. Dereferencing it
+        # there raised `CNA::DisposedObjectError` out of `Dispose` on every Game that owned a
+        # manager and had actually run.
+        #
+        # Returning early is the truthful answer rather than a guard over a broken state: the
+        # device wrapper has been invalidated by the same disposal, and attaching a handle to it
+        # would resurrect it. It is also the behaviour this method already had for the live case
+        # where CNA answers `CNA_RESULT_INVALID_STATE` -- documented as "outside a lifecycle
+        # callback **or when no device exists**" -- which is exactly the situation a disposed
+        # manager is in.
         def begin_native_callback
-          return unless @native_handle
+          return if @native_handle.nil? || @native_handle.disposed?
           output = CNA::Native.library.pointer_for("Q", 0)
           result = CNA::Native.library.function("cna_graphics_device_manager_get_graphics_device").call(@native_handle.value, output)
           if result.zero?

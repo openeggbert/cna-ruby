@@ -54,6 +54,55 @@ class NativeIntegrationTest < Minitest::Test
     assert_equal %i[initialize load begin_run update draw update draw update end_run unload], game.events
   end
 
+  # A Game that owns a GraphicsDeviceManager. The manager is what makes disposal ordering
+  # observable: Game#Dispose releases it before it destroys the host, and destroying the host
+  # delivers one last unload_content callback afterwards.
+  class ManagedLifecycleGame < LifecycleGame
+    def initialize(frame_limit = 3)
+      super
+      @manager = F::GraphicsDeviceManager.new(self)
+    end
+
+    attr_reader :manager
+  end
+
+  # Regression: disposing a Game that owns a manager and has actually run raised
+  # CNA::DisposedObjectError. Game#Dispose releases the manager first -- correctly, because
+  # cna_graphics_device_manager_create documents "release it before the game" -- and cna_game_destroy
+  # then delivers unload_content, whose callback prologue borrowed the manager's device through the
+  # handle that had just been released. A disposed manager now attaches no device, which is the same
+  # answer it already gave when CNA reports CNA_RESULT_INVALID_STATE for "no device exists".
+  def test_disposing_a_game_that_owns_a_manager_after_running_is_clean
+    game = ManagedLifecycleGame.new
+    begin
+      game.RunOneFrame
+    ensure
+      game.Dispose
+      game.Dispose
+    end
+    assert_includes game.events, :unload, "the last unload_content must still be delivered"
+    # RunOneFrame delivers no begin_run, matching XNA's RunGame(false).
+    assert_equal %i[initialize load update draw unload], game.events
+    # The manager's own device wrapper survives disposal as an object and reports itself disposed
+    # rather than raising, and it never resurrects a borrowed handle.
+    assert game.manager.GraphicsDevice.IsDisposed
+    assert_equal 0, game.manager.GraphicsDevice.instance_variable_get(:@callback_handle)
+  end
+
+  # The same path under a full blocking Run, which delivers end_run before the destroy-time unload.
+  def test_disposing_a_managed_game_after_a_full_run_is_clean
+    game = ManagedLifecycleGame.new
+    begin
+      game.Run
+    ensure
+      game.Dispose
+    end
+    assert_equal %i[initialize load begin_run update draw update draw update end_run unload],
+                 game.events
+    assert_equal 3, game.updates
+    assert_equal 2, game.draws
+  end
+
   %w[Initialize LoadContent Update Draw].each do |callback|
     define_method("test_#{callback.downcase}_exception_is_contained") do
       callback_name = callback
