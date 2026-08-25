@@ -675,12 +675,9 @@
       "kind": "class",
       "baseType": "System.Object",
       "interfaceDeclarations": [
-        "class System.Collections.Generic.IDictionary`2<!TKey",
-        "!TValue>",
-        "class System.Collections.Generic.ICollection`1<valuetype System.Collections.Generic.KeyValuePair`2<!TKey",
-        "!TValue>>",
-        "class System.Collections.Generic.IEnumerable`1<valuetype System.Collections.Generic.KeyValuePair`2<!TKey",
-        "!TValue>>",
+        "class System.Collections.Generic.IDictionary`2<!TKey,!TValue>",
+        "class System.Collections.Generic.ICollection`1<valuetype System.Collections.Generic.KeyValuePair`2<!TKey,!TValue>>",
+        "class System.Collections.Generic.IEnumerable`1<valuetype System.Collections.Generic.KeyValuePair`2<!TKey,!TValue>>",
         "System.Collections.IDictionary",
         "System.Collections.ICollection",
         "System.Collections.IEnumerable",
@@ -689,11 +686,8 @@
       ],
       "interfaces": [
         "System.Collections.Generic.IDictionary`2",
-        "!TValue",
         "System.Collections.Generic.ICollection`1",
-        "!TValue",
         "System.Collections.Generic.IEnumerable`1",
-        "!TValue",
         "System.Collections.IDictionary",
         "System.Collections.ICollection",
         "System.Collections.IEnumerable",
@@ -1546,15 +1540,13 @@
       "kind": "class",
       "baseType": "System.ValueType",
       "interfaceDeclarations": [
-        "class System.Collections.Generic.IEnumerator`1<valuetype System.Collections.Generic.KeyValuePair`2<!TKey",
-        "!TValue>>",
+        "class System.Collections.Generic.IEnumerator`1<valuetype System.Collections.Generic.KeyValuePair`2<!TKey,!TValue>>",
         "System.IDisposable",
         "System.Collections.IDictionaryEnumerator",
         "System.Collections.IEnumerator"
       ],
       "interfaces": [
         "System.Collections.Generic.IEnumerator`1",
-        "!TValue",
         "System.IDisposable",
         "System.Collections.IDictionaryEnumerator",
         "System.Collections.IEnumerator"

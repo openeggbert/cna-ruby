@@ -536,9 +536,33 @@ def surface?(member)
   member[:kind] == "method" && member[:name].to_s.include?(".")
 end
 
+def split_top_level(text)
+  parts = []
+  buffer = +""
+  depth = 0
+  text.to_s.each_char do |char|
+    case char
+    when "<", "[", "(" then depth += 1
+    when ">", "]", ")" then depth -= 1
+    end
+    if char == "," && depth.zero?
+      parts << buffer
+      buffer = +""
+    else
+      buffer << char
+    end
+  end
+  parts << buffer
+  parts
+end
+
 def declaration_of(frame)
   header = frame[:header]
-  declared = header[/implements\s+(.*?)\n\{/m, 1].to_s.split(",").map { |item| item.strip.gsub(/\s+/, " ") }.reject(&:empty?)
+  # `implements` is a comma-separated list, but a constructed generic carries commas of its own:
+  # `IDictionary`2<!TKey,!TValue>` is one entry, not two. Splitting only at depth zero is what keeps
+  # `!TValue` from being recorded as an interface.
+  declared = split_top_level(header[/implements\s+(.*?)\n\{/m, 1].to_s)
+                .map { |item| item.strip.gsub(/\s+/, " ") }.reject(&:empty?)
   {"kind" => header.include?(" interface ") ? "interface" : header.include?("extends System.Enum") ? "enum" : "class",
    "baseType" => header[/extends\s+([^\n]+)/, 1]&.strip&.sub(/\s*implements.*/, ""),
    # As declared, so the element projection `<!T>` stays visible, and reduced to the CLR generic

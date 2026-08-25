@@ -193,6 +193,27 @@ class BclInventoryTest < Minitest::Test
   # type into its parent here. Dictionary`2 proves both halves at once: a generic definition that
   # `ikdasm` declares as ``Name`2<K,V>`` and closes as ``Name`2``, carrying nested types two levels
   # deep, addressed the way the reference contract spells them — Parent+Child, never Parent/Child.
+  # `implements` is a comma-separated list, but a constructed generic carries commas of its own:
+  # `IDictionary`2<!TKey,!TValue>` is one entry, and splitting naively recorded `!TValue` as an
+  # interface of its own.
+  def test_a_constructed_generic_interface_is_one_entry_and_not_split_at_its_type_arguments
+    dictionary = type(DICTIONARY)
+    assert_equal %w[
+      System.Collections.Generic.IDictionary`2 System.Collections.Generic.ICollection`1
+      System.Collections.Generic.IEnumerable`1 System.Collections.IDictionary
+      System.Collections.ICollection System.Collections.IEnumerable
+      System.Runtime.Serialization.ISerializable System.Runtime.Serialization.IDeserializationCallback
+    ], dictionary.fetch("interfaces")
+    types.each do |identity, entry|
+      entry.fetch("interfaces").each do |interface|
+        refute interface.start_with?("!"), "#{identity}: #{interface}"
+        refute_empty interface, identity
+      end
+      # The declared form keeps its type arguments; the reduced form never does.
+      assert_equal entry.fetch("interfaces").length, entry.fetch("interfaceDeclarations").length, identity
+    end
+  end
+
   def test_nested_and_generic_declarations_are_discovered_two_levels_deep
     %W[
       #{DICTIONARY}+Enumerator
