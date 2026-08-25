@@ -49,6 +49,10 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException
       Microsoft.Xna.Framework.Input.Touch.TouchLocation
       Microsoft.Xna.Framework.Input.Touch.GestureSample
+      Microsoft.Xna.Framework.Audio.AudioListener
+      Microsoft.Xna.Framework.Audio.AudioEmitter
+      Microsoft.Xna.Framework.Graphics.PresentationParameters
+      Microsoft.Xna.Framework.GameComponentCollectionEventArgs
     ]
   ).compact.uniq.freeze
 
@@ -179,9 +183,9 @@ class DependencyFrontierTest < Minitest::Test
     end
   end
 
-  def test_every_type_completed_in_foundations_16_to_23_classifies_as_consumable
+  def test_every_type_completed_in_foundations_16_to_24_classifies_as_consumable
     mapped = mapped_bcl_from_complete_types
-    assert_equal 41, CONSUMED.length
+    assert_equal 45, CONSUMED.length
 
     CONSUMED.each do |name|
       type = BY_NAME.fetch(name)
@@ -192,10 +196,10 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 31, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 29, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
-    assert_equal 5, REPORT.fetch("consumableCandidates").length
+    assert_equal 1, REPORT.fetch("consumableCandidates").length
     assert_equal REPORT.fetch("consumableCandidates").length, REPORT.fetch("blockerSummary").fetch("NONE")
     assert_equal "global-consumable-rank", REPORT.fetch("selectionRoute")
     refute_nil REPORT["selectedNext"]
@@ -223,11 +227,7 @@ class DependencyFrontierTest < Minitest::Test
   # Every consumable candidate really is pure managed, hash-pinned and dependency-complete.
   def test_every_consumable_candidate_is_pure_managed_with_available_il
     assert_equal %w[
-      Microsoft.Xna.Framework.Audio.AudioEmitter
-      Microsoft.Xna.Framework.Audio.AudioListener
-      Microsoft.Xna.Framework.GameComponentCollectionEventArgs
       Microsoft.Xna.Framework.Graphics.DisplayMode
-      Microsoft.Xna.Framework.Graphics.PresentationParameters
     ], REPORT.fetch("consumableCandidates").map { |candidate| candidate.fetch("name") }.sort
 
     REPORT.fetch("consumableCandidates").each do |candidate|
@@ -274,8 +274,12 @@ class DependencyFrontierTest < Minitest::Test
 
   def test_the_event_args_projection_is_visible_to_the_frontier
     assert_includes REPORT.fetch("mappedBclTypes"), "System.EventArgs"
+    # Foundation 24 consumed the one EventArgs subclass with a public constructor.
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.GameComponentCollectionEventArgs"
+    assert_equal CNA::Runtime::EventArgs,
+                 Microsoft::Xna::Framework::GameComponentCollectionEventArgs.superclass
+
     %w[
-      Microsoft.Xna.Framework.GameComponentCollectionEventArgs
       Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs
       Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs
     ].each do |name|
@@ -289,7 +293,9 @@ class DependencyFrontierTest < Minitest::Test
   # An event-declaring type is now blocked only for reasons that have nothing to do with events.
   def test_event_declaring_candidates_are_no_longer_blocked_by_their_events
     events = REPORT.fetch("dependencyCompleteCandidates").reject { |item| item.fetch("eventMembers").empty? }
-    assert_equal ["Microsoft.Xna.Framework.Audio.Microphone", "Microsoft.Xna.Framework.GameWindow"],
+    # Audio.Cue joined the list when AudioEmitter and AudioListener completed its dependencies.
+    assert_equal ["Microsoft.Xna.Framework.Audio.Cue", "Microsoft.Xna.Framework.Audio.Microphone",
+                  "Microsoft.Xna.Framework.GameWindow"],
                  events.map { |item| item.fetch("name") }.sort
 
     window = events.find { |item| item.fetch("name") == "Microsoft.Xna.Framework.GameWindow" }
@@ -313,7 +319,6 @@ class DependencyFrontierTest < Minitest::Test
       ],
       "Microsoft.Xna.Framework.GameComponentCollection" => %w[
         Microsoft.Xna.Framework.Game Microsoft.Xna.Framework.GameComponent
-        Microsoft.Xna.Framework.GameComponentCollectionEventArgs
       ]
     }.each do |name, unmet|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }

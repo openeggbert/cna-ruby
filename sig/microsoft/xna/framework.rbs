@@ -20,6 +20,11 @@ module Microsoft
         def self.Zero: () -> Point
       end
 
+      class GameComponentCollectionEventArgs < CNA::Runtime::EventArgs
+        def initialize: (IGameComponent? gameComponent) -> void
+        attr_reader GameComponent: IGameComponent?
+      end
+
       class GameTime
         attr_reader TotalGameTime: Float
         attr_reader ElapsedGameTime: Float

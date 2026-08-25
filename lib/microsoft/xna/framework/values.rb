@@ -669,6 +669,23 @@ module Microsoft
         def value_components = [@TotalGameTime, @ElapsedGameTime, @IsRunningSlowly]
       end
 
+      # Derived from the pinned Microsoft.Xna.Framework.Game.dll IL (SHA-256 b5dffdd8…): the
+      # constructor is `base()` followed by one field store, and GameComponent is a single field
+      # read. XNA validates nothing, so null is accepted. Nothing in this binding raises the
+      # GameComponentCollection events that carry this type.
+      class GameComponentCollectionEventArgs < CNA::Runtime::EventArgs
+        attr_reader :GameComponent
+
+        def initialize(gameComponent)
+          super()
+          unless gameComponent.nil? || gameComponent.is_a?(IGameComponent)
+            raise TypeError, "gameComponent must be an IGameComponent"
+          end
+
+          @GameComponent = gameComponent
+        end
+      end
+
       class PlayerIndex < CNA::Runtime::EnumValue
         extend CNA::Runtime::EnumType
         define_values({ "One" => 0, "Two" => 1, "Three" => 2, "Four" => 3 })

@@ -1031,6 +1031,59 @@
       "rubyName": "Microsoft::Xna::Framework::IGraphicsDeviceManager"
     },
     {
+      "name": "Microsoft.Xna.Framework.GameComponentCollectionEventArgs",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "System.EventArgs",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "gameComponent",
+              "type": "Microsoft.Xna.Framework.IGameComponent",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "GameComponent",
+          "type": "Microsoft.Xna.Framework.IGameComponent",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::GameComponentCollectionEventArgs"
+    },
+    {
       "name": "Microsoft.Xna.Framework.IUpdateable",
       "kind": "interface",
       "flags": false,
@@ -1599,6 +1652,189 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Audio::NoMicrophoneConnectedException"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.AudioListener",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Position",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Velocity",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Forward",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Up",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Audio::AudioListener"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.AudioEmitter",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Position",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Velocity",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Forward",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Up",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DopplerScale",
+          "type": "System.Single",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Audio::AudioEmitter"
     },
     {
       "name": "Microsoft.Xna.Framework.Media.MediaSourceType",
@@ -4401,6 +4637,195 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::NoSuitableGraphicsDeviceException"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PresentationParameters",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Clone",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Graphics.PresentationParameters",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "BackBufferWidth",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "BackBufferHeight",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "BackBufferFormat",
+          "type": "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DepthStencilFormat",
+          "type": "Microsoft.Xna.Framework.Graphics.DepthFormat",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MultiSampleCount",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DisplayOrientation",
+          "type": "Microsoft.Xna.Framework.DisplayOrientation",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PresentationInterval",
+          "type": "Microsoft.Xna.Framework.Graphics.PresentInterval",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "RenderTargetUsage",
+          "type": "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DeviceWindowHandle",
+          "type": "System.IntPtr",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "IsFullScreen",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Bounds",
+          "type": "Microsoft.Xna.Framework.Rectangle",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PresentationParameters"
     },
     {
       "name": "Microsoft.Xna.Framework.Input.KeyState",

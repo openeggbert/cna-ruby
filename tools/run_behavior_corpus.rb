@@ -184,6 +184,7 @@ def behavior_group(item)
   return "XNA_EXCEPTION" if id.start_with?("xna_exception.")
   return "IL_PROVENANCE" if id.start_with?("il_provenance.")
   return "TOUCH_VALUE" if id.start_with?("touch_value.")
+  return "MANAGED_DESCRIPTOR" if id.start_with?("managed_descriptor.")
 
   id.split(".").first.upcase
 end
@@ -380,7 +381,9 @@ def execute(item)
       %i[ToString HasFlag HasStencil DepthBits StencilBits IsDepthOnly NativeFormat Parse]
         .map { |name| format::Depth24.respond_to?(name) },
       F::GraphicsDeviceManager.public_method_defined?(:PreferredDepthStencilFormat),
-      %i[DepthStencilState PresentationParameters RenderTarget2D RenderTargetCube GraphicsAdapter]
+      # PresentationParameters arrived in Foundation 24 from its own IL, not from DepthFormat, so
+      # this row asserts only the device and render-target surface DepthFormat still does not imply.
+      %i[DepthStencilState RenderTarget2D RenderTargetCube GraphicsAdapter]
         .map { |name| G.const_defined?(name, false) },
       CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("DEPTH_FORMAT") }
     ]
@@ -419,6 +422,99 @@ def execute(item)
       interface.protected_instance_methods(false) + interface.private_instance_methods(false),
       BATCH_SIGNATURES.fetch(clr_name).fetch("members").any? { |member| member.fetch("kind") == "event" }
     ]
+  when "ManagedDescriptor.IlContract"
+    clr_name = item.fetch("args").fetch(0)
+    entry = IL_INVENTORY.fetch("types").fetch(clr_name)
+    pinned = BATCH_REFERENCE.fetch(clr_name)
+    [pinned.fetch("kind"), pinned.fetch("baseType"), pinned.fetch("members").length,
+     entry.fetch("assembly"), entry.fetch("assemblySha256"),
+     entry.fetch("declaredFields"), entry.fetch("nativeReachable"), entry.fetch("declaresNativeEntryPoint"),
+     entry.fetch("constructors").map { |ctor| [ctor.fetch("access"), ctor.fetch("pureBaseForward")] }]
+  when "XactSpatial.Defaults"
+    A::AudioListener.new.then do |listener|
+      A::AudioEmitter.new.then do |emitter|
+        [listener, emitter].flat_map do |value|
+          [vector3_result(value.Position), format("%08x", CNA::Runtime::Numeric.f32_bits(value.Position.Z)),
+           vector3_result(value.Velocity), format("%08x", CNA::Runtime::Numeric.f32_bits(value.Velocity.Z)),
+           vector3_result(value.Forward), format("%08x", CNA::Runtime::Numeric.f32_bits(value.Forward.Z)),
+           vector3_result(value.Up), format("%08x", CNA::Runtime::Numeric.f32_bits(value.Up.Z))]
+        end
+      end
+    end
+  when "XactSpatial.RoundTrip"
+    source = F::Vector3.new(1.5, -2.25, 3.75)
+    [A::AudioListener.new, A::AudioEmitter.new].flat_map do |value|
+      %i[Position Velocity Forward Up].flat_map do |name|
+        value.public_send(:"#{name}=", source)
+        [vector3_result(value.public_send(name)),
+         value.public_send(name).equal?(value.public_send(name)),
+         error_name { value.public_send(:"#{name}=", :not_a_vector) }]
+      end
+    end
+  when "XactSpatial.DopplerScale"
+    emitter = A::AudioEmitter.new
+    initial = emitter.DopplerScale
+    accepted = [0.0, -0.0, 1.5, Float::INFINITY].map do |candidate|
+      emitter.DopplerScale = candidate
+      hex32(emitter.DopplerScale)
+    end
+    emitter.DopplerScale = Float::NAN
+    nan_accepted = emitter.DopplerScale.nan?
+    rejected = [-1.0, -Float::INFINITY].map { |candidate| error_name { emitter.DopplerScale = candidate } }
+    [initial, accepted, nan_accepted, rejected, emitter.DopplerScale.nan?,
+     A::AudioEmitter.public_instance_methods(false).map(&:to_s).sort,
+     %w[ChannelCount ChannelRadius CurveDistanceScaler].map { |name| A::AudioEmitter.method_defined?(name) }]
+  when "PresentationParameters.Defaults"
+    parameters = G::PresentationParameters.new
+    [parameters.BackBufferWidth, parameters.BackBufferHeight,
+     parameters.BackBufferFormat.to_s, parameters.DepthStencilFormat.to_s,
+     parameters.MultiSampleCount, parameters.DisplayOrientation.to_s,
+     parameters.PresentationInterval.to_s, parameters.RenderTargetUsage.to_s,
+     parameters.DeviceWindowHandle, parameters.IsFullScreen,
+     rectangle_result(parameters.Bounds), parameters.Bounds.equal?(parameters.Bounds)]
+  when "PresentationParameters.Mutation"
+    parameters = G::PresentationParameters.new
+    parameters.BackBufferWidth = -5
+    parameters.BackBufferHeight = -7
+    parameters.MultiSampleCount = -1
+    parameters.DeviceWindowHandle = -1
+    parameters.IsFullScreen = false
+    [parameters.BackBufferWidth, parameters.BackBufferHeight, parameters.MultiSampleCount,
+     parameters.DeviceWindowHandle, parameters.IsFullScreen, rectangle_result(parameters.Bounds),
+     error_name { parameters.BackBufferWidth = 2**31 },
+     error_name { parameters.BackBufferFormat = 9999 },
+     error_name { parameters.IsFullScreen = 1 },
+     error_name { parameters.DeviceWindowHandle = 2**(CNA::Runtime::Numeric.pointer_width_bits - 1) }]
+  when "PresentationParameters.Clone"
+    parameters = G::PresentationParameters.new
+    parameters.BackBufferWidth = 800
+    parameters.BackBufferHeight = 600
+    parameters.BackBufferFormat = G::SurfaceFormat::Bgra4444
+    parameters.DepthStencilFormat = G::DepthFormat::Depth24Stencil8
+    parameters.MultiSampleCount = 4
+    parameters.DisplayOrientation = F::DisplayOrientation::LandscapeLeft
+    parameters.PresentationInterval = G::PresentInterval::Two
+    parameters.RenderTargetUsage = G::RenderTargetUsage::PreserveContents
+    parameters.DeviceWindowHandle = 4242
+    parameters.IsFullScreen = false
+    copy = parameters.Clone
+    copy.BackBufferWidth = 1
+    [copy.equal?(parameters), copy.instance_of?(G::PresentationParameters),
+     [copy.BackBufferHeight, copy.BackBufferFormat.to_s, copy.DepthStencilFormat.to_s,
+      copy.MultiSampleCount, copy.DisplayOrientation.to_s, copy.PresentationInterval.to_s,
+      copy.RenderTargetUsage.to_s, copy.DeviceWindowHandle, copy.IsFullScreen],
+     parameters.BackBufferWidth, copy.BackBufferWidth]
+  when "GameComponentCollectionEventArgs.Storage"
+    host = Class.new { include F::IGameComponent }
+    component = host.new
+    args = F::GameComponentCollectionEventArgs.new(component)
+    [args.GameComponent.equal?(component),
+     F::GameComponentCollectionEventArgs.superclass.name,
+     args.is_a?(CNA::Runtime::EventArgs),
+     F::GameComponentCollectionEventArgs.new(nil).GameComponent.nil?,
+     error_name { F::GameComponentCollectionEventArgs.new(5) },
+     error_name { F::GameComponentCollectionEventArgs.new },
+     F::GameComponentCollectionEventArgs.public_instance_methods(false).map(&:to_s).sort]
   when "TouchValue.IlContract"
     clr_name = item.fetch("args").fetch(0)
     entry = IL_INVENTORY.fetch("types").fetch(clr_name)

@@ -2,6 +2,32 @@ module Microsoft
   module Xna
     module Framework
       module Graphics
+        class PresentationParameters
+          def initialize: () -> void
+          attr_reader BackBufferWidth: Integer
+          attr_reader BackBufferHeight: Integer
+          attr_reader BackBufferFormat: SurfaceFormat
+          attr_reader DepthStencilFormat: DepthFormat
+          attr_reader MultiSampleCount: Integer
+          attr_reader DisplayOrientation: Microsoft::Xna::Framework::DisplayOrientation
+          attr_reader PresentationInterval: PresentInterval
+          attr_reader RenderTargetUsage: RenderTargetUsage
+          attr_reader DeviceWindowHandle: Integer
+          attr_reader IsFullScreen: bool
+          def BackBufferWidth=: (Integer value) -> Integer
+          def BackBufferHeight=: (Integer value) -> Integer
+          def BackBufferFormat=: (SurfaceFormat | Integer value) -> SurfaceFormat
+          def DepthStencilFormat=: (DepthFormat | Integer value) -> DepthFormat
+          def MultiSampleCount=: (Integer value) -> Integer
+          def DisplayOrientation=: (Microsoft::Xna::Framework::DisplayOrientation | Integer value) -> Microsoft::Xna::Framework::DisplayOrientation
+          def PresentationInterval=: (PresentInterval | Integer value) -> PresentInterval
+          def RenderTargetUsage=: (RenderTargetUsage | Integer value) -> RenderTargetUsage
+          def DeviceWindowHandle=: (Integer value) -> Integer
+          def IsFullScreen=: (bool value) -> bool
+          def Bounds: () -> Microsoft::Xna::Framework::Rectangle
+          def Clone: () -> PresentationParameters
+        end
+
         # Three exception types whose whole declared surface is the standard constructor trio,
         # every one of which forwards straight to System.Exception in the pinned XNA IL.
         class DeviceLostException < ::StandardError

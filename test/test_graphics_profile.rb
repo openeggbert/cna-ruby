@@ -79,7 +79,8 @@ class GraphicsProfileTest < Minitest::Test
     refute_includes F::GraphicsDeviceManager.public_instance_methods(false), :GraphicsProfile
     refute G.const_defined?(:GraphicsAdapter, false)
     refute G.const_defined?(:DisplayMode, false)
-    refute G.const_defined?(:PresentationParameters, false)
+    # Foundation 24 added PresentationParameters as a managed descriptor; it creates no device.
+    assert G.const_defined?(:PresentationParameters, false)
     refute F.const_defined?(:GraphicsDeviceInformation, false)
     refute F.const_defined?(:PreparingDeviceSettingsEventArgs, false)
   end

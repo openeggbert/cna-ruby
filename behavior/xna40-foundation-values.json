@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, and the Foundation 23 Input.Touch value types separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, and the Foundation 24 managed descriptors separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
   "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
@@ -32,6 +32,9 @@
   "milestone23CorpusCorrection": "bcl_projection.register snapshotted the whole BCL register, so it could not survive the register legitimately growing. It now pins only the three identities Foundation 21 established, passed as args. The replay proved each of those three still maps exactly as the row recorded, that System.Type stays unprojected and that no ::System namespace exists.",
   "milestone23SourceAssemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
   "milestone23MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 ec9075a77771f5bceeb5514859544d20717d579fa7c9e35a837c3565f0a296fc, 382 observations) was proved before appending 9 additive observations",
+  "milestone24CorpusCorrection": "depth_format.ruby_enum_mapping asserted that five Graphics types were absent, including PresentationParameters, which Foundation 24 added from its own IL rather than from anything DepthFormat implies. That one slot was dropped so the row asserts only what DepthFormat still does not imply; the replay proved every other element of the row, and every other row, unchanged.",
+  "milestone24SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+  "milestone24MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 c0d737cae2e6066a2be79390044214e002eee88980f300100005fcf04b69f8f1, 391 observations) was proved before appending 11 additive observations",
   "observations": [
     {
       "id": "math.clamp.low",
@@ -4838,7 +4841,6 @@
         ],
         false,
         [
-          false,
           false,
           false,
           false,
@@ -11869,6 +11871,340 @@
         ],
         null,
         false
+      ]
+    },
+    {
+      "id": "managed_descriptor.audio_listener.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Audio.AudioListener"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Object",
+        5,
+        "Microsoft.Xna.Framework.dll",
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+        1,
+        false,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "managed_descriptor.audio_emitter.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Audio.AudioEmitter"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Object",
+        6,
+        "Microsoft.Xna.Framework.dll",
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+        1,
+        false,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "managed_descriptor.presentation_parameters.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.PresentationParameters"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Object",
+        13,
+        "Microsoft.Xna.Framework.Graphics.dll",
+        "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+        11,
+        false,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "managed_descriptor.game_component_collection_event_args.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.GameComponentCollectionEventArgs"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.EventArgs",
+        2,
+        "Microsoft.Xna.Framework.Game.dll",
+        "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+        1,
+        false,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "managed_descriptor.xact_spatial.defaults",
+      "operation": "XactSpatial.Defaults",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          0.0,
+          0.0,
+          -0.0
+        ],
+        "80000000",
+        [
+          0.0,
+          0.0,
+          -0.0
+        ],
+        "80000000",
+        [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "bf800000",
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "00000000",
+        [
+          0.0,
+          0.0,
+          -0.0
+        ],
+        "80000000",
+        [
+          0.0,
+          0.0,
+          -0.0
+        ],
+        "80000000",
+        [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "bf800000",
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "00000000"
+      ]
+    },
+    {
+      "id": "managed_descriptor.xact_spatial.round_trip",
+      "operation": "XactSpatial.RoundTrip",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          1.5,
+          -2.25,
+          3.75
+        ],
+        false,
+        "TypeError",
+        [
+          1.5,
+          -2.25,
+          3.75
+        ],
+        false,
+        "TypeError",
+        [
+          1.5,
+          -2.25,
+          3.75
+        ],
+        false,
+        "TypeError",
+        [
+          1.5,
+          -2.25,
+          3.75
+        ],
+        false,
+        "TypeError",
+        [
+          1.5,
+          -2.25,
+          3.75
+        ],
+        false,
+        "TypeError",
+        [
+          1.5,
+          -2.25,
+          3.75
+        ],
+        false,
+        "TypeError",
+        [
+          1.5,
+          -2.25,
+          3.75
+        ],
+        false,
+        "TypeError",
+        [
+          1.5,
+          -2.25,
+          3.75
+        ],
+        false,
+        "TypeError"
+      ]
+    },
+    {
+      "id": "managed_descriptor.xact_spatial.doppler_scale",
+      "operation": "XactSpatial.DopplerScale",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        1.0,
+        [
+          "00000000",
+          "80000000",
+          "3FC00000",
+          "7F800000"
+        ],
+        true,
+        [
+          "RangeError",
+          "RangeError"
+        ],
+        true,
+        [
+          "DopplerScale",
+          "DopplerScale="
+        ],
+        [
+          false,
+          false,
+          false
+        ]
+      ]
+    },
+    {
+      "id": "managed_descriptor.presentation_parameters.defaults",
+      "operation": "PresentationParameters.Defaults",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        0,
+        0,
+        "Color",
+        "None",
+        0,
+        "Default",
+        "Default",
+        "DiscardContents",
+        0,
+        true,
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        false
+      ]
+    },
+    {
+      "id": "managed_descriptor.presentation_parameters.mutation",
+      "operation": "PresentationParameters.Mutation",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        -5,
+        -7,
+        -1,
+        -1,
+        false,
+        [
+          0,
+          0,
+          -5,
+          -7
+        ],
+        "RangeError",
+        "RangeError",
+        "TypeError",
+        "RangeError"
+      ]
+    },
+    {
+      "id": "managed_descriptor.presentation_parameters.clone",
+      "operation": "PresentationParameters.Clone",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        false,
+        true,
+        [
+          600,
+          "Bgra4444",
+          "Depth24Stencil8",
+          4,
+          "LandscapeLeft",
+          "Two",
+          "PreserveContents",
+          4242,
+          false
+        ],
+        800,
+        1
+      ]
+    },
+    {
+      "id": "managed_descriptor.game_component_collection_event_args.storage",
+      "operation": "GameComponentCollectionEventArgs.Storage",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        "CNA::Runtime::EventArgs",
+        true,
+        true,
+        "TypeError",
+        "ArgumentError",
+        [
+          "GameComponent"
+        ]
       ]
     }
   ]

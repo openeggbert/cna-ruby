@@ -7,13 +7,32 @@
     {
       "id": "depth_format.contract",
       "operation": "DepthFormat.Contract",
-      "args": [],
+      "args": [
+
+      ],
       "provenance": "PURE_XNA_DERIVED",
       "expected": [
         "enum",
         "System.Int32",
         false,
-        [["None", 0], ["Depth16", 1], ["Depth24", 2], ["Depth24Stencil8", 3]],
+        [
+          [
+            "None",
+            0
+          ],
+          [
+            "Depth16",
+            1
+          ],
+          [
+            "Depth24",
+            2
+          ],
+          [
+            "Depth24Stencil8",
+            3
+          ]
+        ],
         true,
         false
       ]
@@ -21,37 +40,120 @@
     {
       "id": "depth_format.ruby_enum_mapping",
       "operation": "DepthFormat.RubyEnumMapping",
-      "args": [],
+      "args": [
+
+      ],
       "provenance": "RUBY_MAPPING_QUALIFICATION",
       "expected": [
         true,
         true,
-        [0, 1, 2, 3],
-        [true, true, true, true],
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          true,
+          true,
+          true,
+          true
+        ],
         true,
-        ["RangeError", "RangeError", "RangeError", "RangeError"],
-        ["TypeError", "TypeError", "TypeError", "TypeError", "TypeError", "TypeError", "TypeError"],
-        ["TypeError", "TypeError", "TypeError", "TypeError", "TypeError", "TypeError", "TypeError"],
-        [false, false, false, false, false, false, false],
-        [null, null, null, null, null, null, null],
-        ["TypeError", "TypeError", "TypeError"],
+        [
+          "RangeError",
+          "RangeError",
+          "RangeError",
+          "RangeError"
+        ],
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
+        [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
         3,
         false,
         0,
-        ["None", "Depth16", "Depth24", "Depth24Stencil8"],
+        [
+          "None",
+          "Depth16",
+          "Depth24",
+          "Depth24Stencil8"
+        ],
         [
           "Microsoft::Xna::Framework::Graphics::DepthFormat::None",
           "Microsoft::Xna::Framework::Graphics::DepthFormat::Depth16",
           "Microsoft::Xna::Framework::Graphics::DepthFormat::Depth24",
           "Microsoft::Xna::Framework::Graphics::DepthFormat::Depth24Stencil8"
         ],
-        ["Depth16", "Depth24", "Depth24Stencil8", "None"],
-        [false, false, false, false],
-        [false, false, false, false, false, false, false, false],
+        [
+          "Depth16",
+          "Depth24",
+          "Depth24Stencil8",
+          "None"
+        ],
+        [
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
         false,
-        [false, false, false, false, false],
+        [
+          false,
+          false,
+          false,
+          false
+        ],
         false
       ]
     }
-  ]
+  ],
+  "correction": "Foundation 24 dropped the PresentationParameters slot from depth_format.ruby_enum_mapping: that type arrived from its own IL, not from DepthFormat."
 }

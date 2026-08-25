@@ -315,12 +315,12 @@ class PureManagedEnumBatchTest < Minitest::Test
     %i[RenderTarget2D RenderTargetCube TextureCube Texture3D VertexBuffer IndexBuffer
        DynamicVertexBuffer DynamicIndexBuffer VertexDeclaration BlendState DepthStencilState
        RasterizerState SamplerState SamplerStateCollection TextureCollection Effect BasicEffect
-       EffectParameter EffectTechnique DisplayMode GraphicsAdapter PresentationParameters
+       EffectParameter EffectTechnique DisplayMode GraphicsAdapter
        OcclusionQuery ResourceCreatedEventArgs].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
     %i[SoundEffect SoundEffectInstance Microphone AudioEngine WaveBank SoundBank Cue
-       AudioListener AudioEmitter DynamicSoundEffectInstance].each do |name|
+       DynamicSoundEffectInstance].each do |name|
       refute A.const_defined?(name, false), "Audio::#{name}"
     end
     %i[MediaPlayer MediaLibrary MediaSource Song Album Artist Video VideoPlayer Playlist
@@ -349,7 +349,7 @@ class PureManagedEnumBatchTest < Minitest::Test
       # Input::Touch also carries the TouchPanelCapabilities struct and the Foundation 23 value
       # types TouchLocation and GestureSample; Audio carries the three Foundation 22 exception
       # types. None of those is an enum.
-      value_types = %i[TouchPanelCapabilities TouchLocation GestureSample]
+      value_types = %i[TouchPanelCapabilities TouchLocation GestureSample AudioListener AudioEmitter]
       extras = declared & value_types
       extras += declared.grep(/Exception\z/)
       assert_equal (selected + extras).uniq.sort, declared, namespace.name

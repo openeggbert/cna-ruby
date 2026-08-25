@@ -24,6 +24,102 @@ module Microsoft
           include CNA::Runtime::XnaExceptionConstruction
         end
 
+        # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…). The
+        # XNA type keeps every value in a nested internal Settings struct; each public property is a
+        # single field read or write with **no validation of any kind**, so the only checks here are
+        # this binding's ordinary CLR-type boundary checks.
+        #
+        # The constructor is `base()` followed by exactly one store — `set_IsFullScreen(true)`.
+        # Every other field keeps its CLR default of zero, which is BackBufferWidth 0,
+        # BackBufferHeight 0, SurfaceFormat.Color, DepthFormat.None, MultiSampleCount 0,
+        # DisplayOrientation.Default, PresentInterval.Default, RenderTargetUsage.DiscardContents and
+        # IntPtr.Zero. **IsFullScreen therefore defaults to true**, which is what the IL says.
+        #
+        # This is a managed descriptor and nothing more: it creates no GraphicsDevice, looks up no
+        # native window, enumerates no adapter, builds no swap chain and presents nothing.
+        class PresentationParameters
+          N = CNA::Runtime::Numeric
+          private_constant :N
+
+          def initialize
+            @BackBufferWidth = 0
+            @BackBufferHeight = 0
+            @BackBufferFormat = SurfaceFormat.coerce(0)
+            @DepthStencilFormat = DepthFormat.coerce(0)
+            @MultiSampleCount = 0
+            @DisplayOrientation = Framework::DisplayOrientation.coerce(0)
+            @PresentationInterval = PresentInterval.coerce(0)
+            @RenderTargetUsage = Graphics::RenderTargetUsage.coerce(0)
+            @DeviceWindowHandle = 0
+            self.IsFullScreen = true
+          end
+
+          attr_reader :BackBufferWidth, :BackBufferHeight, :BackBufferFormat, :DepthStencilFormat,
+                      :MultiSampleCount, :DisplayOrientation, :PresentationInterval,
+                      :RenderTargetUsage, :DeviceWindowHandle, :IsFullScreen
+
+          def BackBufferWidth=(value)
+            @BackBufferWidth = N.int32(value, "BackBufferWidth")
+          end
+
+          def BackBufferHeight=(value)
+            @BackBufferHeight = N.int32(value, "BackBufferHeight")
+          end
+
+          def BackBufferFormat=(value)
+            @BackBufferFormat = SurfaceFormat.coerce(value)
+          end
+
+          def DepthStencilFormat=(value)
+            @DepthStencilFormat = DepthFormat.coerce(value)
+          end
+
+          def MultiSampleCount=(value)
+            @MultiSampleCount = N.int32(value, "MultiSampleCount")
+          end
+
+          def DisplayOrientation=(value)
+            @DisplayOrientation = Framework::DisplayOrientation.coerce(value)
+          end
+
+          def PresentationInterval=(value)
+            @PresentationInterval = PresentInterval.coerce(value)
+          end
+
+          def RenderTargetUsage=(value)
+            @RenderTargetUsage = Graphics::RenderTargetUsage.coerce(value)
+          end
+
+          # System.IntPtr projects to a signed native-pointer-width Ruby Integer, and never to a
+          # Fiddle::Pointer. Nothing dereferences, owns or closes this scalar.
+          def DeviceWindowHandle=(value)
+            @DeviceWindowHandle = N.intptr(value, "DeviceWindowHandle")
+          end
+
+          # The CLR stores this as an int32 that the setter normalises to 0 or 1 and the getter
+          # reads back as `field != 0`, so the observable value is always exactly true or false.
+          def IsFullScreen=(value)
+            raise TypeError, "IsFullScreen must be true or false" unless value == true || value == false
+
+            @IsFullScreen = value
+          end
+
+          def Bounds = Rectangle.new(0, 0, @BackBufferWidth, @BackBufferHeight)
+
+          # `newobj PresentationParameters()` then one whole-struct copy of settings, so the clone's
+          # constructor default for IsFullScreen is overwritten along with everything else.
+          def Clone
+            copy = self.class.new
+            SETTINGS.each { |name| copy.__send__(:"#{name}=", __send__(name)) }
+            copy
+          end
+
+          SETTINGS = %i[BackBufferWidth BackBufferHeight BackBufferFormat DepthStencilFormat
+                        MultiSampleCount DisplayOrientation PresentationInterval RenderTargetUsage
+                        DeviceWindowHandle IsFullScreen].freeze
+          private_constant :SETTINGS
+        end
+
         class SpriteSortMode < CNA::Runtime::EnumValue
           extend CNA::Runtime::EnumType
           define_values({ "Deferred" => 0, "Immediate" => 1, "Texture" => 2, "BackToFront" => 3, "FrontToBack" => 4 })

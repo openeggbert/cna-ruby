@@ -1,9 +1,7 @@
 # Missing type inventory
 
 - `Microsoft.Xna.Framework.Audio.AudioCategory`
-- `Microsoft.Xna.Framework.Audio.AudioEmitter`
 - `Microsoft.Xna.Framework.Audio.AudioEngine`
-- `Microsoft.Xna.Framework.Audio.AudioListener`
 - `Microsoft.Xna.Framework.Audio.Cue`
 - `Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance`
 - `Microsoft.Xna.Framework.Audio.Microphone`
@@ -41,7 +39,6 @@
 - `Microsoft.Xna.Framework.FrameworkDispatcher`
 - `Microsoft.Xna.Framework.GameComponent`
 - `Microsoft.Xna.Framework.GameComponentCollection`
-- `Microsoft.Xna.Framework.GameComponentCollectionEventArgs`
 - `Microsoft.Xna.Framework.GameServiceContainer`
 - `Microsoft.Xna.Framework.GameWindow`
 - `Microsoft.Xna.Framework.GamerServices.GamerServicesComponent`
@@ -84,7 +81,6 @@
 - `Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection`
 - `Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator`
 - `Microsoft.Xna.Framework.Graphics.OcclusionQuery`
-- `Microsoft.Xna.Framework.Graphics.PresentationParameters`
 - `Microsoft.Xna.Framework.Graphics.RasterizerState`
 - `Microsoft.Xna.Framework.Graphics.RenderTarget2D`
 - `Microsoft.Xna.Framework.Graphics.RenderTargetBinding`

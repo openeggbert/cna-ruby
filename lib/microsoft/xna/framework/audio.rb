@@ -26,6 +26,41 @@ module Microsoft
           include CNA::Runtime::XnaExceptionConstruction
         end
 
+        # Derived from the pinned Microsoft.Xna.Framework.dll IL (SHA-256 38e7093f…). Both types are
+        # pure managed state holders: every property reads or writes a field of a native-layout XACT
+        # struct, and nothing calls into native code. No audio engine, SoundEffect or XACT runtime
+        # exists in this binding, so nothing a consumer sets here is ever heard.
+        class AudioListener
+          include CNA::Runtime::XactSpatialState
+
+          def initialize
+            initialize_xact_spatial_state
+          end
+        end
+
+        class AudioEmitter
+          include CNA::Runtime::XactSpatialState
+
+          def initialize
+            initialize_xact_spatial_state
+            # The constructor also stores DopplerScale 1, and the internal ChannelCount 1,
+            # ChannelRadius 1 and CurveDistanceScaler 1, none of which XNA exposes publicly.
+            @DopplerScale = CNA::Runtime::Numeric.f32(1.0)
+          end
+
+          attr_reader :DopplerScale
+
+          # `ldarg.1; ldc.r4 0.0; bge.un.s` — the branch past the throw is taken when the value is
+          # greater than or equal to zero **or unordered**, so NaN is accepted and only an ordered
+          # negative value raises. Negative zero compares equal to zero and is accepted too.
+          def DopplerScale=(value)
+            scale = CNA::Runtime::Numeric.f32(value)
+            raise RangeError, "DopplerScale must not be negative" unless scale.nan? || scale >= 0.0
+
+            @DopplerScale = scale
+          end
+        end
+
         class AudioChannels < CNA::Runtime::EnumValue
           extend CNA::Runtime::EnumType
           define_values({

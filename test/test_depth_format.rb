@@ -117,7 +117,7 @@ class DepthFormatTest < Minitest::Test
     refute_includes F::GraphicsDeviceManager.public_instance_methods(false), :PreferredDepthStencilFormat
     refute_includes F::GraphicsDeviceManager.public_instance_methods(false), :"PreferredDepthStencilFormat="
     refute_includes G::GraphicsDevice.public_instance_methods(false), :DepthStencilState
-    %i[GraphicsAdapter PresentationParameters RenderTarget2D RenderTargetCube DepthStencilState
+    %i[GraphicsAdapter RenderTarget2D RenderTargetCube DepthStencilState
        DepthFormatConverter].each do |name|
       refute G.const_defined?(name, false), name.to_s
     end

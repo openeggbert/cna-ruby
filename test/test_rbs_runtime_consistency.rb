@@ -729,12 +729,15 @@ class RbsRuntimeConsistencyTest < Minitest::Test
   def test_foundation16_batch_adds_no_deferred_renderer_or_device_signature
     source = SIGNATURE_ROOT.join("microsoft", "xna", "framework", "graphics.rbs").read
     # TextureCube is a declared EffectParameterType literal, so absence is asserted per declaration.
+    # Foundation 24 added the PresentationParameters managed descriptor; the renderer and device
+    # types it names remain absent.
     %w[RenderTarget2D RenderTargetCube TextureCube Texture3D VertexBuffer IndexBuffer
        VertexDeclaration BlendState DepthStencilState RasterizerState SamplerState Effect
-       BasicEffect GraphicsAdapter PresentationParameters DisplayMode].each do |absent|
+       BasicEffect GraphicsAdapter DisplayMode].each do |absent|
       refute_includes source, "class #{absent}\n"
       refute_includes source, "class #{absent} <"
     end
+    assert_includes source, "class PresentationParameters\n"
     %w[SetRenderTarget SetRenderTargets DrawPrimitives DrawIndexedPrimitives GetRenderTargets]
       .each { |absent| refute_includes source, absent }
   end
