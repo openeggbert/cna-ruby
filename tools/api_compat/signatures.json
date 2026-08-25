@@ -4828,6 +4828,183 @@
       "rubyName": "Microsoft::Xna::Framework::Graphics::PresentationParameters"
     },
     {
+      "name": "Microsoft.Xna.Framework.Graphics.DisplayMode",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Format",
+          "type": "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Height",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Width",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "AspectRatio",
+          "type": "System.Single",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "TitleSafeArea",
+          "type": "Microsoft.Xna.Framework.Rectangle",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::DisplayMode"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.EventArgs",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "property",
+          "name": "Resource",
+          "type": "System.Object",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::ResourceCreatedEventArgs"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.EventArgs",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "property",
+          "name": "Name",
+          "type": "System.String",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Tag",
+          "type": "System.Object",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::ResourceDestroyedEventArgs"
+    },
+    {
       "name": "Microsoft.Xna.Framework.Input.KeyState",
       "kind": "enum",
       "flags": false,

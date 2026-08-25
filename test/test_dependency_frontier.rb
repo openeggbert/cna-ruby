@@ -53,6 +53,9 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Audio.AudioEmitter
       Microsoft.Xna.Framework.Graphics.PresentationParameters
       Microsoft.Xna.Framework.GameComponentCollectionEventArgs
+      Microsoft.Xna.Framework.Graphics.DisplayMode
+      Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs
+      Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs
     ]
   ).compact.uniq.freeze
 
@@ -183,9 +186,9 @@ class DependencyFrontierTest < Minitest::Test
     end
   end
 
-  def test_every_type_completed_in_foundations_16_to_24_classifies_as_consumable
+  def test_every_type_completed_in_foundations_16_to_25_classifies_as_consumable
     mapped = mapped_bcl_from_complete_types
-    assert_equal 45, CONSUMED.length
+    assert_equal 48, CONSUMED.length
 
     CONSUMED.each do |name|
       type = BY_NAME.fetch(name)
@@ -196,7 +199,7 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 29, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 27, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     assert_equal 1, REPORT.fetch("consumableCandidates").length
@@ -227,7 +230,7 @@ class DependencyFrontierTest < Minitest::Test
   # Every consumable candidate really is pure managed, hash-pinned and dependency-complete.
   def test_every_consumable_candidate_is_pure_managed_with_available_il
     assert_equal %w[
-      Microsoft.Xna.Framework.Graphics.DisplayMode
+      Microsoft.Xna.Framework.Graphics.DisplayModeCollection
     ], REPORT.fetch("consumableCandidates").map { |candidate| candidate.fetch("name") }.sort
 
     REPORT.fetch("consumableCandidates").each do |candidate|
@@ -279,14 +282,17 @@ class DependencyFrontierTest < Minitest::Test
     assert_equal CNA::Runtime::EventArgs,
                  Microsoft::Xna::Framework::GameComponentCollectionEventArgs.superclass
 
+    # Foundation 25 consumed the remaining EventArgs subclasses, whose only constructor is internal.
     %w[
       Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs
       Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs
     ].each do |name|
-      candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
-      refute_nil candidate, name
-      refute_includes candidate.fetch("unmappedBclTypes"), "System.EventArgs", name
+      assert_includes STRICT.fetch("completeTypeNames"), name, name
       assert_equal "System.EventArgs", BY_NAME.fetch(name).fetch("baseType"), name
+      runtime = name.split(".").reduce(Object) { |scope, part| scope.const_get(part, false) }
+      assert_equal CNA::Runtime::EventArgs, runtime.superclass, name
+      # A CLR class with no public constructor projects with `new` made private.
+      refute runtime.respond_to?(:new), name
     end
   end
 

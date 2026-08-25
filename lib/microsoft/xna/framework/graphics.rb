@@ -24,6 +24,72 @@ module Microsoft
           include CNA::Runtime::XnaExceptionConstruction
         end
 
+        # Three XNA classes whose only constructor is internal: a consumer can never build one, and
+        # the framework member that would produce one — GraphicsAdapter for DisplayMode,
+        # GraphicsDevice.ResourceCreated/ResourceDestroyed for the two EventArgs types — is still
+        # deferred. Each therefore projects with `new` made private, exactly as GraphicsResource and
+        # Texture already do, so the public non-constructibility is part of the contract and a
+        # future producer has the internal path the CLR gives it. No producer is fabricated.
+        #
+        # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…).
+        class DisplayMode
+          N = CNA::Runtime::Numeric
+          private_constant :N
+
+          attr_reader :Width, :Height, :Format
+
+          # `assembly .ctor(int32 width, int32 height, SurfaceFormat format)`: three stores, no
+          # validation. Reachable only as DisplayMode.__send__(:new, width, height, format).
+          def initialize(width, height, format)
+            @Width = N.int32(width, "width")
+            @Height = N.int32(height, "height")
+            @Format = SurfaceFormat.coerce(format)
+          end
+          private_class_method :new
+
+          # `brfalse` on height then `brtrue` on width: a zero in either answers 0, and otherwise
+          # both are converted to Single and divided in Single.
+          def AspectRatio
+            return N.f32(0.0) if @Height.zero? || @Width.zero?
+
+            N.div32(N.f32(@Width), N.f32(@Height))
+          end
+
+          # Viewport::GetTitleSafeArea(x, y, w, h) is `new Rectangle(x, y, w, h)`, called with
+          # (0, 0, width, height).
+          def TitleSafeArea = Rectangle.new(0, 0, @Width, @Height)
+
+          def ToString
+            "{Width:#{@Width} Height:#{@Height} Format:#{@Format} " \
+              "AspectRatio:#{N.single_string(self.AspectRatio)}}"
+          end
+
+          alias to_s ToString
+        end
+
+        # `assembly .ctor(object resource)`: base() then one store.
+        class ResourceCreatedEventArgs < CNA::Runtime::EventArgs
+          attr_reader :Resource
+
+          def initialize(resource)
+            super()
+            @Resource = resource
+          end
+          private_class_method :new
+        end
+
+        # `assembly .ctor(string name, object tag)`: base(), then tag, then name.
+        class ResourceDestroyedEventArgs < CNA::Runtime::EventArgs
+          attr_reader :Name, :Tag
+
+          def initialize(name, tag)
+            super()
+            @Tag = tag
+            @Name = name
+          end
+          private_class_method :new
+        end
+
         # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…). The
         # XNA type keeps every value in a nested internal Settings struct; each public property is a
         # single field read or write with **no validation of any kind**, so the only checks here are

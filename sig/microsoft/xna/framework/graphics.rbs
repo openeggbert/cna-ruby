@@ -2,6 +2,25 @@ module Microsoft
   module Xna
     module Framework
       module Graphics
+        class DisplayMode
+          attr_reader Width: Integer
+          attr_reader Height: Integer
+          attr_reader Format: SurfaceFormat
+          def AspectRatio: () -> Float
+          def TitleSafeArea: () -> Microsoft::Xna::Framework::Rectangle
+          def ToString: () -> String
+          def to_s: () -> String
+        end
+
+        class ResourceCreatedEventArgs < CNA::Runtime::EventArgs
+          attr_reader Resource: untyped
+        end
+
+        class ResourceDestroyedEventArgs < CNA::Runtime::EventArgs
+          attr_reader Name: String?
+          attr_reader Tag: untyped
+        end
+
         class PresentationParameters
           def initialize: () -> void
           attr_reader BackBufferWidth: Integer

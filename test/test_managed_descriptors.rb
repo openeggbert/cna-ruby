@@ -214,7 +214,7 @@ class ManagedDescriptorsTest < Minitest::Test
   end
 
   def test_presentation_parameters_implies_no_device_adapter_or_swap_chain
-    %i[GraphicsAdapter DisplayMode DisplayModeCollection RenderTarget2D RenderTargetCube
+    %i[GraphicsAdapter DisplayModeCollection RenderTarget2D RenderTargetCube
        DepthStencilState].each { |absent| refute G.const_defined?(absent, false), "Graphics::#{absent}" }
     assert_equal %i[IsDisposed Viewport Clear].sort, G::GraphicsDevice.public_instance_methods(false).sort
   end
@@ -234,6 +234,87 @@ class ManagedDescriptorsTest < Minitest::Test
     assert_raises(ArgumentError) { F::GameComponentCollectionEventArgs.new }
     assert_equal %i[GameComponent], F::GameComponentCollectionEventArgs.public_instance_methods(false).sort
     refute F::GameComponentCollectionEventArgs.method_defined?(:GameComponent=)
+  end
+
+  # ------------------------------------------------ Foundation 25: constructor-free classes
+
+  CONSTRUCTOR_FREE = %w[
+    Microsoft.Xna.Framework.Graphics.DisplayMode
+    Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs
+    Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs
+  ].freeze
+
+  def test_a_class_whose_only_constructor_is_internal_projects_with_new_made_private
+    CONSTRUCTOR_FREE.each do |name|
+      runtime = name.split(".").reduce(Object) { |scope, part| scope.const_get(part, false) }
+      refute runtime.respond_to?(:new), "#{name}.new must not be public"
+      assert_raises(NoMethodError, name) { runtime.new }
+      # The internal construction path the CLR gives a future producer stays reachable.
+      assert runtime.respond_to?(:new, true), name
+      assert_includes STRICT.fetch("completeTypeNames"), name, name
+      assert_equal 0, STRICT.fetch("localDiagnostics").fetch(name), name
+      # The pinned IL agrees: exactly one constructor, and it is assembly-scoped.
+      constructors = IL.fetch("types").fetch(name).fetch("constructors")
+      assert_equal 1, constructors.length, name
+      assert_equal "assembly", constructors.first.fetch("access"), name
+    end
+  end
+
+  def display_mode(width, height, format = G::SurfaceFormat::Color)
+    G::DisplayMode.__send__(:new, width, height, format)
+  end
+
+  def test_display_mode_stores_three_values_and_derives_the_rest
+    mode = display_mode(1920, 1080)
+    assert_equal 1920, mode.Width
+    assert_equal 1080, mode.Height
+    assert_equal G::SurfaceFormat::Color, mode.Format
+    assert_equal F::Rectangle.new(0, 0, 1920, 1080), mode.TitleSafeArea
+    refute_same mode.TitleSafeArea, mode.TitleSafeArea
+    refute G::DisplayMode.method_defined?(:Width=)
+  end
+
+  def test_display_mode_aspect_ratio_answers_zero_when_either_extent_is_zero
+    # `brfalse` on height then `brtrue` on width: either zero answers 0, otherwise both convert to
+    # Single and divide in Single.
+    assert_equal 0.0, display_mode(0, 1080).AspectRatio
+    assert_equal 0.0, display_mode(1920, 0).AspectRatio
+    assert_equal 0.0, display_mode(0, 0).AspectRatio
+    assert_equal N.div32(N.f32(1920), N.f32(1080)), display_mode(1920, 1080).AspectRatio
+    assert_equal N.div32(N.f32(1024), N.f32(768)), display_mode(1024, 768).AspectRatio
+    # Nothing validates the extents, so negatives divide as given.
+    assert_equal N.div32(N.f32(-4), N.f32(2)), display_mode(-4, 2).AspectRatio
+  end
+
+  def test_display_mode_to_string_is_the_four_field_format
+    assert_equal "{Width:1920 Height:1080 Format:Color AspectRatio:1.777778}",
+                 display_mode(1920, 1080).ToString
+    assert_equal display_mode(1920, 1080).ToString, display_mode(1920, 1080).to_s
+    assert_equal "{Width:0 Height:0 Format:Color AspectRatio:0}", display_mode(0, 0).ToString
+  end
+
+  def test_the_resource_event_args_store_what_their_internal_constructors_take
+    created = G::ResourceCreatedEventArgs.__send__(:new, :the_resource)
+    assert_same :the_resource, created.Resource
+    assert_equal CNA::Runtime::EventArgs, G::ResourceCreatedEventArgs.superclass
+    assert_equal %i[Resource], G::ResourceCreatedEventArgs.public_instance_methods(false)
+
+    # `.ctor(string name, object tag)` stores tag first, then name; both properties are get-only.
+    destroyed = G::ResourceDestroyedEventArgs.__send__(:new, "surface", :the_tag)
+    assert_equal "surface", destroyed.Name
+    assert_same :the_tag, destroyed.Tag
+    assert_equal %i[Name Tag], G::ResourceDestroyedEventArgs.public_instance_methods(false).sort
+    assert_nil G::ResourceDestroyedEventArgs.__send__(:new, nil, nil).Name
+  end
+
+  def test_no_producer_for_any_constructor_free_class_is_fabricated
+    # GraphicsAdapter would enumerate DisplayMode; GraphicsDevice.ResourceCreated/ResourceDestroyed
+    # would raise the two EventArgs types. All three producers stay absent.
+    %i[GraphicsAdapter DisplayModeCollection].each { |absent| refute G.const_defined?(absent, false), absent.to_s }
+    %i[ResourceCreated ResourceDestroyed].each do |absent|
+      refute G::GraphicsDevice.method_defined?(absent), absent.to_s
+    end
+    assert_equal %i[IsDisposed Viewport Clear].sort, G::GraphicsDevice.public_instance_methods(false).sort
   end
 
   def test_the_event_args_type_implies_no_game_component_family

@@ -14,14 +14,18 @@ il_types = il_inventory.fetch("types")
 # media library or attached hardware can supply. IL availability settles semantics, never the
 # availability of runtime data, and this project does not fabricate capability values. Each entry
 # must name the exact missing input; test/test_dependency_frontier.rb enforces that.
+#
+# Having no public constructor is **not** on its own a reason to be here. Foundation 25 established
+# that such a class projects with `new` made private, the way GraphicsResource and Texture already
+# do, so that its public non-constructibility is part of the contract and a future producer has the
+# internal path the CLR gives it. What keeps a type here is that its values, or the arguments its
+# internal constructor needs, do not exist on this host.
 RUNTIME_DATA = {
   "Microsoft.Xna.Framework.Audio.RendererDetail" => "values come from XACT audio renderer enumeration; no audio engine exists in this binding and no renderer has been enumerated",
   "Microsoft.Xna.Framework.Audio.AudioCategory" => "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have",
   "Microsoft.Xna.Framework.Media.MediaSource" => "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried",
-  "Microsoft.Xna.Framework.Media.Video" => "produced only by the content pipeline or MediaLibrary; no producer exists and the class declares no public constructor",
+  "Microsoft.Xna.Framework.Media.Video" => "its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies; no producer exists",
   "Microsoft.Xna.Framework.Media.VisualizationData" => "filled by MediaPlayer.GetVisualizationData from live playback",
-  "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs" => "raised only by GraphicsDevice.ResourceCreated; the class declares no public constructor and no producer exists",
-  "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs" => "raised only by GraphicsDevice.ResourceDestroyed; the class declares no public constructor and no producer exists",
   "Microsoft.Xna.Framework.GameWindow" => "an abstract window whose concrete implementation is the platform window behind Game; projecting it would require the deferred Game/window runtime",
   "Microsoft.Xna.Framework.FrameworkDispatcher" => "Update pumps the live audio and media services; with neither present it would be a no-op pretending to be a pump"
 }.freeze

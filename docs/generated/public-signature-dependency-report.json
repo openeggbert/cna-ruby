@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 125,
-  "completeTypes": 119,
+  "targetTypes": 128,
+  "completeTypes": 122,
   "partialTypes": [
     "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -11,7 +11,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 132,
+  "missingTypes": 129,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME or RUNTIME_DATA blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -24,10 +24,8 @@
     "Microsoft.Xna.Framework.Audio.RendererDetail": "values come from XACT audio renderer enumeration; no audio engine exists in this binding and no renderer has been enumerated",
     "Microsoft.Xna.Framework.Audio.AudioCategory": "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have",
     "Microsoft.Xna.Framework.Media.MediaSource": "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried",
-    "Microsoft.Xna.Framework.Media.Video": "produced only by the content pipeline or MediaLibrary; no producer exists and the class declares no public constructor",
+    "Microsoft.Xna.Framework.Media.Video": "its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies; no producer exists",
     "Microsoft.Xna.Framework.Media.VisualizationData": "filled by MediaPlayer.GetVisualizationData from live playback",
-    "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs": "raised only by GraphicsDevice.ResourceCreated; the class declares no public constructor and no producer exists",
-    "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs": "raised only by GraphicsDevice.ResourceDestroyed; the class declares no public constructor and no producer exists",
     "Microsoft.Xna.Framework.GameWindow": "an abstract window whose concrete implementation is the platform window behind Game; projecting it would require the deferred Game/window runtime",
     "Microsoft.Xna.Framework.FrameworkDispatcher": "Update pumps the live audio and media services; with neither present it would be a no-op pretending to be a pump"
   },
@@ -75,22 +73,22 @@
     "IL_UNAVAILABLE": 1,
     "NATIVE_RUNTIME": 2,
     "NONE": 1,
-    "RUNTIME_DATA": 8
+    "RUNTIME_DATA": 6
   },
   "consumableCandidates": [
     {
-      "name": "Microsoft.Xna.Framework.Graphics.DisplayMode",
+      "name": "Microsoft.Xna.Framework.Graphics.DisplayModeCollection",
       "kind": "class",
-      "expectedRubyIdentities": 6,
+      "expectedRubyIdentities": 2,
       "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
-        "Microsoft.Xna.Framework.Rectangle"
+        "Microsoft.Xna.Framework.Graphics.DisplayMode",
+        "Microsoft.Xna.Framework.Graphics.SurfaceFormat"
       ],
       "unmetDependencies": [
 
       ],
       "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DisplayMode (1 overload)"
+
       ],
       "dependencyComplete": true,
       "blockers": [
@@ -103,7 +101,7 @@
 
       ],
       "behaviourBearingMembers": [
-        "ToString"
+        "GetEnumerator"
       ],
       "ilDerivationRequired": true,
       "ilAvailable": true,
@@ -182,40 +180,6 @@
 
       ],
       "runtimeDataDetail": "Update pumps the live audio and media services; with neither present it would be a no-op pretending to be a pump"
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs",
-      "kind": "class",
-      "expectedRubyIdentities": 1,
-      "dependencies": [
-
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::ResourceCreated (1 overload)"
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "RUNTIME_DATA"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-
-      ],
-      "ilDerivationRequired": false,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": "raised only by GraphicsDevice.ResourceCreated; the class declares no public constructor and no producer exists"
     },
     {
       "name": "Microsoft.Xna.Framework.Graphics.TextureCollection",
@@ -425,21 +389,22 @@
       "runtimeDataDetail": null
     },
     {
-      "name": "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs",
+      "name": "Microsoft.Xna.Framework.Graphics.DisplayModeCollection",
       "kind": "class",
       "expectedRubyIdentities": 2,
       "dependencies": [
-
+        "Microsoft.Xna.Framework.Graphics.DisplayMode",
+        "Microsoft.Xna.Framework.Graphics.SurfaceFormat"
       ],
       "unmetDependencies": [
 
       ],
       "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::ResourceDestroyed (1 overload)"
+
       ],
       "dependencyComplete": true,
       "blockers": [
-        "RUNTIME_DATA"
+
       ],
       "unmappedBclTypes": [
 
@@ -448,15 +413,15 @@
 
       ],
       "behaviourBearingMembers": [
-
+        "GetEnumerator"
       ],
-      "ilDerivationRequired": false,
+      "ilDerivationRequired": true,
       "ilAvailable": true,
       "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
       "nativeReachableMethods": [
 
       ],
-      "runtimeDataDetail": "raised only by GraphicsDevice.ResourceDestroyed; the class declares no public constructor and no producer exists"
+      "runtimeDataDetail": null
     },
     {
       "name": "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator",
@@ -703,42 +668,7 @@
       "nativeReachableMethods": [
 
       ],
-      "runtimeDataDetail": "produced only by the content pipeline or MediaLibrary; no producer exists and the class declares no public constructor"
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.DisplayMode",
-      "kind": "class",
-      "expectedRubyIdentities": 6,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
-        "Microsoft.Xna.Framework.Rectangle"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DisplayMode (1 overload)"
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        "ToString"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
+      "runtimeDataDetail": "its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies; no producer exists"
     },
     {
       "name": "Microsoft.Xna.Framework.Graphics.SpriteFont",
@@ -1213,18 +1143,18 @@
 
   ],
   "selectedNext": {
-    "name": "Microsoft.Xna.Framework.Graphics.DisplayMode",
+    "name": "Microsoft.Xna.Framework.Graphics.DisplayModeCollection",
     "kind": "class",
-    "expectedRubyIdentities": 6,
+    "expectedRubyIdentities": 2,
     "dependencies": [
-      "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
-      "Microsoft.Xna.Framework.Rectangle"
+      "Microsoft.Xna.Framework.Graphics.DisplayMode",
+      "Microsoft.Xna.Framework.Graphics.SurfaceFormat"
     ],
     "unmetDependencies": [
 
     ],
     "partialRemainderReverseEdges": [
-      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DisplayMode (1 overload)"
+
     ],
     "dependencyComplete": true,
     "blockers": [
@@ -1237,7 +1167,7 @@
 
     ],
     "behaviourBearingMembers": [
-      "ToString"
+      "GetEnumerator"
     ],
     "ilDerivationRequired": true,
     "ilAvailable": true,

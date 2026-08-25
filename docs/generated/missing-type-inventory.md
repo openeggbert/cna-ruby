@@ -47,7 +47,6 @@
 - `Microsoft.Xna.Framework.Graphics.BlendState`
 - `Microsoft.Xna.Framework.Graphics.DepthStencilState`
 - `Microsoft.Xna.Framework.Graphics.DirectionalLight`
-- `Microsoft.Xna.Framework.Graphics.DisplayMode`
 - `Microsoft.Xna.Framework.Graphics.DisplayModeCollection`
 - `Microsoft.Xna.Framework.Graphics.DualTextureEffect`
 - `Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer`
@@ -85,8 +84,6 @@
 - `Microsoft.Xna.Framework.Graphics.RenderTarget2D`
 - `Microsoft.Xna.Framework.Graphics.RenderTargetBinding`
 - `Microsoft.Xna.Framework.Graphics.RenderTargetCube`
-- `Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs`
-- `Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs`
 - `Microsoft.Xna.Framework.Graphics.SamplerState`
 - `Microsoft.Xna.Framework.Graphics.SamplerStateCollection`
 - `Microsoft.Xna.Framework.Graphics.SkinnedEffect`

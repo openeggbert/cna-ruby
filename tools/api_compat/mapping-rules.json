@@ -93,5 +93,6 @@
       "System.Collections.ObjectModel.ReadOnlyCollection`1",
       "System.Collections.Generic.Dictionary`2"
     ]
-  }
+  },
+  "constructorFreeClasses": "a CLR class whose only constructor is internal projects to a Ruby class with `new` made private, as GraphicsResource and Texture already do; its public non-constructibility is part of the contract and the internal construction path stays reachable to a future producer through __send__. No producer is fabricated, and no public Ruby constructor is created that XNA does not expose."
 }

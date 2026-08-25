@@ -315,8 +315,8 @@ class PureManagedEnumBatchTest < Minitest::Test
     %i[RenderTarget2D RenderTargetCube TextureCube Texture3D VertexBuffer IndexBuffer
        DynamicVertexBuffer DynamicIndexBuffer VertexDeclaration BlendState DepthStencilState
        RasterizerState SamplerState SamplerStateCollection TextureCollection Effect BasicEffect
-       EffectParameter EffectTechnique DisplayMode GraphicsAdapter
-       OcclusionQuery ResourceCreatedEventArgs].each do |name|
+       EffectParameter EffectTechnique GraphicsAdapter DisplayModeCollection
+       OcclusionQuery].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
     %i[SoundEffect SoundEffectInstance Microphone AudioEngine WaveBank SoundBank Cue

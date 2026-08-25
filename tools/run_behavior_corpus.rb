@@ -185,6 +185,7 @@ def behavior_group(item)
   return "IL_PROVENANCE" if id.start_with?("il_provenance.")
   return "TOUCH_VALUE" if id.start_with?("touch_value.")
   return "MANAGED_DESCRIPTOR" if id.start_with?("managed_descriptor.")
+  return "CONSTRUCTOR_FREE" if id.start_with?("constructor_free.")
 
   id.split(".").first.upcase
 end
@@ -422,6 +423,35 @@ def execute(item)
       interface.protected_instance_methods(false) + interface.private_instance_methods(false),
       BATCH_SIGNATURES.fetch(clr_name).fetch("members").any? { |member| member.fetch("kind") == "event" }
     ]
+  when "ConstructorFree.Projection"
+    names = item.fetch("args")
+    names.map do |clr_name|
+      runtime = batch_enum_type(clr_name)
+      entry = IL_INVENTORY.fetch("types").fetch(clr_name)
+      [clr_name, runtime.respond_to?(:new), runtime.respond_to?(:new, true),
+       error_name { runtime.new }, entry.fetch("constructors").map { |ctor| ctor.fetch("access") },
+       BATCH_SIGNATURES.fetch(clr_name).fetch("members").any? { |member| member.fetch("kind") == "constructor" }]
+    end
+  when "DisplayMode.Projection"
+    build = ->(width, height) { G::DisplayMode.__send__(:new, width, height, G::SurfaceFormat::Color) }
+    mode = build.call(1920, 1080)
+    [mode.Width, mode.Height, mode.Format.to_s,
+     rectangle_result(mode.TitleSafeArea), mode.TitleSafeArea.equal?(mode.TitleSafeArea),
+     [[1920, 1080], [1024, 768], [0, 1080], [1920, 0], [0, 0], [-4, 2]].map do |width, height|
+       hex32(build.call(width, height).AspectRatio)
+     end,
+     mode.ToString, build.call(0, 0).ToString, mode.to_s == mode.ToString,
+     G::DisplayMode.public_instance_methods(false).map(&:to_s).sort]
+  when "ResourceEventArgs.Projection"
+    created = G::ResourceCreatedEventArgs.__send__(:new, :the_resource)
+    destroyed = G::ResourceDestroyedEventArgs.__send__(:new, "surface", :the_tag)
+    empty = G::ResourceDestroyedEventArgs.__send__(:new, nil, nil)
+    [created.Resource.to_s, created.is_a?(CNA::Runtime::EventArgs),
+     G::ResourceCreatedEventArgs.superclass.name,
+     destroyed.Name, destroyed.Tag.to_s, destroyed.is_a?(CNA::Runtime::EventArgs),
+     empty.Name.nil?, empty.Tag.nil?,
+     G::ResourceCreatedEventArgs.public_instance_methods(false).map(&:to_s).sort,
+     G::ResourceDestroyedEventArgs.public_instance_methods(false).map(&:to_s).sort]
   when "ManagedDescriptor.IlContract"
     clr_name = item.fetch("args").fetch(0)
     entry = IL_INVENTORY.fetch("types").fetch(clr_name)

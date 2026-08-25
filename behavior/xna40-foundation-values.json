@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, and the Foundation 24 managed descriptors separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, and the Foundation 25 constructor-free classes separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
   "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
@@ -35,6 +35,8 @@
   "milestone24CorpusCorrection": "depth_format.ruby_enum_mapping asserted that five Graphics types were absent, including PresentationParameters, which Foundation 24 added from its own IL rather than from anything DepthFormat implies. That one slot was dropped so the row asserts only what DepthFormat still does not imply; the replay proved every other element of the row, and every other row, unchanged.",
   "milestone24SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
   "milestone24MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 c0d737cae2e6066a2be79390044214e002eee88980f300100005fcf04b69f8f1, 391 observations) was proved before appending 11 additive observations",
+  "milestone25SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+  "milestone25MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 9fdd907b24818eedc00f6ea67de59d33017dbb0fae7791e0b26892d97e6dc48b, 402 observations) was proved before appending 6 additive observations",
   "observations": [
     {
       "id": "math.clamp.low",
@@ -12204,6 +12206,181 @@
         "ArgumentError",
         [
           "GameComponent"
+        ]
+      ]
+    },
+    {
+      "id": "constructor_free.display_mode.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.DisplayMode"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Object",
+        6,
+        "Microsoft.Xna.Framework.Graphics.dll",
+        "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+        3,
+        false,
+        false,
+        [
+          [
+            "assembly",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "constructor_free.resource_created_event_args.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.EventArgs",
+        1,
+        "Microsoft.Xna.Framework.Graphics.dll",
+        "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+        1,
+        false,
+        false,
+        [
+          [
+            "assembly",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "constructor_free.resource_destroyed_event_args.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.EventArgs",
+        2,
+        "Microsoft.Xna.Framework.Graphics.dll",
+        "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+        2,
+        false,
+        false,
+        [
+          [
+            "assembly",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "constructor_free.projection",
+      "operation": "ConstructorFree.Projection",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.DisplayMode",
+        "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs",
+        "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          "Microsoft.Xna.Framework.Graphics.DisplayMode",
+          false,
+          true,
+          "NoMethodError",
+          [
+            "assembly"
+          ],
+          false
+        ],
+        [
+          "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs",
+          false,
+          true,
+          "NoMethodError",
+          [
+            "assembly"
+          ],
+          false
+        ],
+        [
+          "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs",
+          false,
+          true,
+          "NoMethodError",
+          [
+            "assembly"
+          ],
+          false
+        ]
+      ]
+    },
+    {
+      "id": "constructor_free.display_mode.projection",
+      "operation": "DisplayMode.Projection",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        1920,
+        1080,
+        "Color",
+        [
+          0,
+          0,
+          1920,
+          1080
+        ],
+        false,
+        [
+          "3FE38E39",
+          "3FAAAAAB",
+          "00000000",
+          "00000000",
+          "00000000",
+          "C0000000"
+        ],
+        "{Width:1920 Height:1080 Format:Color AspectRatio:1.777778}",
+        "{Width:0 Height:0 Format:Color AspectRatio:0}",
+        true,
+        [
+          "AspectRatio",
+          "Format",
+          "Height",
+          "TitleSafeArea",
+          "ToString",
+          "Width",
+          "to_s"
+        ]
+      ]
+    },
+    {
+      "id": "constructor_free.resource_event_args.projection",
+      "operation": "ResourceEventArgs.Projection",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "the_resource",
+        true,
+        "CNA::Runtime::EventArgs",
+        "surface",
+        "the_tag",
+        true,
+        true,
+        true,
+        [
+          "Resource"
+        ],
+        [
+          "Name",
+          "Tag"
         ]
       ]
     }

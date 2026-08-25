@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+  "derivation": "Foundation 25 constructor-free classes. Contract rows come from the pinned public metadata and from docs/generated/xna-il-inventory.json, and record that each type declares exactly one constructor with assembly scope. Mapping rows encode the documented projection — `new` made private so public non-constructibility is part of the contract while the internal path stays reachable — applied to what the pinned Microsoft.Xna.Framework.Graphics.dll IL establishes: DisplayMode stores three values and derives AspectRatio (zero when either extent is zero, otherwise a Single divide), TitleSafeArea (a fresh Rectangle at the origin) and a four-field ToString; ResourceCreatedEventArgs and ResourceDestroyedEventArgs are pure storage over System.EventArgs. None is snapshotted from the cna-ruby implementation.",
+  "observations": [
+    {
+      "id": "constructor_free.display_mode.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.DisplayMode"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Object",
+        6,
+        "Microsoft.Xna.Framework.Graphics.dll",
+        "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+        3,
+        false,
+        false,
+        [
+          [
+            "assembly",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "constructor_free.resource_created_event_args.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.EventArgs",
+        1,
+        "Microsoft.Xna.Framework.Graphics.dll",
+        "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+        1,
+        false,
+        false,
+        [
+          [
+            "assembly",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "constructor_free.resource_destroyed_event_args.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.EventArgs",
+        2,
+        "Microsoft.Xna.Framework.Graphics.dll",
+        "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+        2,
+        false,
+        false,
+        [
+          [
+            "assembly",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "constructor_free.projection",
+      "operation": "ConstructorFree.Projection",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.DisplayMode",
+        "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs",
+        "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          "Microsoft.Xna.Framework.Graphics.DisplayMode",
+          false,
+          true,
+          "NoMethodError",
+          [
+            "assembly"
+          ],
+          false
+        ],
+        [
+          "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs",
+          false,
+          true,
+          "NoMethodError",
+          [
+            "assembly"
+          ],
+          false
+        ],
+        [
+          "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs",
+          false,
+          true,
+          "NoMethodError",
+          [
+            "assembly"
+          ],
+          false
+        ]
+      ]
+    },
+    {
+      "id": "constructor_free.display_mode.projection",
+      "operation": "DisplayMode.Projection",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        1920,
+        1080,
+        "Color",
+        [
+          0,
+          0,
+          1920,
+          1080
+        ],
+        false,
+        [
+          "3FE38E39",
+          "3FAAAAAB",
+          "00000000",
+          "00000000",
+          "00000000",
+          "C0000000"
+        ],
+        "{Width:1920 Height:1080 Format:Color AspectRatio:1.777778}",
+        "{Width:0 Height:0 Format:Color AspectRatio:0}",
+        true,
+        [
+          "AspectRatio",
+          "Format",
+          "Height",
+          "TitleSafeArea",
+          "ToString",
+          "Width",
+          "to_s"
+        ]
+      ]
+    },
+    {
+      "id": "constructor_free.resource_event_args.projection",
+      "operation": "ResourceEventArgs.Projection",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "the_resource",
+        true,
+        "CNA::Runtime::EventArgs",
+        "surface",
+        "the_tag",
+        true,
+        true,
+        true,
+        [
+          "Resource"
+        ],
+        [
+          "Name",
+          "Tag"
+        ]
+      ]
+    }
+  ]
+}
