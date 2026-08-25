@@ -332,11 +332,12 @@ class PureManagedEnumBatchTest < Minitest::Test
     # nothing that reads a touch device is there.
     # Foundation 31 added TouchCollection, whose IL reads nothing.
     assert_equal %i[GestureSample GestureType TouchCollection TouchLocation TouchLocationState
-                    TouchPanelCapabilities],
+                    TouchPanel TouchPanelCapabilities],
                  T.constants(false).sort
     %i[TouchPanel TouchCollection TouchLocation GestureSample TouchLocationState GestureType]
       .each { |name| refute I.const_defined?(name, false), "Input::#{name}" }
-    %i[TouchPanel].each { |name| refute T.const_defined?(name, false), "Input::Touch::#{name}" }
+    # Foundation 32 added TouchPanel, whose IL reads no device on this profile.
+    refute I.const_defined?(:TouchPanel, false), "Input::TouchPanel"
     assert_equal %i[IsDisposed Viewport Clear].sort,
                  G::GraphicsDevice.public_instance_methods(false).sort
   end
@@ -351,7 +352,7 @@ class PureManagedEnumBatchTest < Minitest::Test
       # types TouchLocation and GestureSample; Audio carries the three Foundation 22 exception
       # types. None of those is an enum.
       value_types = %i[TouchPanelCapabilities TouchLocation GestureSample TouchCollection
-                       AudioListener AudioEmitter]
+                       TouchPanel AudioListener AudioEmitter]
       extras = declared & value_types
       extras += declared.grep(/Exception\z/)
       assert_equal (selected + extras).uniq.sort, declared, namespace.name

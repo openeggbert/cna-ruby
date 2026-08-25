@@ -733,6 +733,10 @@
     {
       "name": "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator",
       "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
+      "complete": true
     }
   ]
 }

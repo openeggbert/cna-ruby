@@ -260,15 +260,15 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 21, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 20, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
-    # Foundation 31 completed TouchCollection and its nested Enumerator, which were the last
-    # unmet XNA dependencies of TouchPanel. The queue is not empty again.
-    assert_equal 1, REPORT.fetch("consumableCandidates").length
-    assert_equal 1, REPORT.fetch("blockerSummary").fetch("NONE")
-    assert_equal "global-consumable-rank", REPORT.fetch("selectionRoute")
-    assert_equal "Microsoft.Xna.Framework.Input.Touch.TouchPanel", REPORT.fetch("selectedNext").fetch("name")
+    # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
+    # Foundation 32 consumed it. The queue is empty again and every entry left is blocked.
+    assert_equal 0, REPORT.fetch("consumableCandidates").length
+    refute REPORT.fetch("blockerSummary").key?("NONE")
+    assert_equal "none-consumable", REPORT.fetch("selectionRoute")
+    assert_nil REPORT["selectedNext"]
 
     REPORT.fetch("dependencyCompleteCandidates").each do |candidate|
       %w[EVENT_PROJECTION BEHAVIOR_EVIDENCE].each do |retired|
@@ -292,8 +292,7 @@ class DependencyFrontierTest < Minitest::Test
 
   # Every consumable candidate really is pure managed, hash-pinned and dependency-complete.
   def test_every_consumable_candidate_is_pure_managed_with_available_il
-    assert_equal %w[Microsoft.Xna.Framework.Input.Touch.TouchPanel],
-                 REPORT.fetch("consumableCandidates").map { |candidate| candidate.fetch("name") }
+    assert_empty REPORT.fetch("consumableCandidates")
 
     REPORT.fetch("consumableCandidates").each do |candidate|
       name = candidate.fetch("name")
@@ -443,12 +442,11 @@ class DependencyFrontierTest < Minitest::Test
       assert_equal 0, STRICT.fetch("localDiagnostics").fetch(name), name
       refute REPORT.fetch("dependencyCompleteCandidates").any? { |item| item.fetch("name") == name }, name
     end
-    # TouchPanel is the type that would name a device, and completing the pair made it the first
-    # consumable candidate the frontier has had since Foundation 27.
-    assert_includes STRICT.fetch("missingTypeNames"), "Microsoft.Xna.Framework.Input.Touch.TouchPanel"
-    assert(REPORT.fetch("consumableCandidates").any? { |item|
-      item.fetch("name") == "Microsoft.Xna.Framework.Input.Touch.TouchPanel"
-    })
+    # Completing the pair made TouchPanel the first consumable candidate the frontier had had since
+    # Foundation 27, and Foundation 32 consumed it. The whole Input.Touch namespace is complete.
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Input.Touch.TouchPanel"
+    assert_equal 0, STRICT.fetch("localDiagnostics").fetch("Microsoft.Xna.Framework.Input.Touch.TouchPanel")
+    assert_empty STRICT.fetch("missingTypeNames").grep(/\AMicrosoft\.Xna\.Framework\.Input\.Touch\./)
     # The enumerator was the single IL_UNAVAILABLE entry until Native frontier 2, on the ground
     # that "ikdasm does not emit the nested enumerator under a name the inventory can address". It
     # emits it; the extractor could not read it. With that fixed the classification is honest on

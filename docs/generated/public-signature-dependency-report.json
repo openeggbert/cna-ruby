@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 137,
-  "completeTypes": 131,
+  "targetTypes": 138,
+  "completeTypes": 132,
   "partialTypes": [
     "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -11,7 +11,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 120,
+  "missingTypes": 119,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME or RUNTIME_DATA blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -32,7 +32,7 @@
     "EVENT_PROJECTION": "retired in Foundation 20; one CLR event projects to one Ruby event reader over CNA::Runtime::Event and the API verifier measures it under EVENT_MAPPING_MISMATCH. The residue is BCL_PROJECTION on the EventHandler`1 support type and, for classes, the IL that decides when the event is raised.",
     "BEHAVIOR_EVIDENCE": "retired in Foundation 22; the original hash-pinned XNA 4.0 Windows assemblies are available on this host, so declaring a constructor or method is work to do, not missing input. It is reported as the informational ilDerivationRequired flag and split into the IL_UNAVAILABLE, NATIVE_RUNTIME and RUNTIME_DATA blockers, which name what is genuinely absent."
   },
-  "selectionRoute": "global-consumable-rank",
+  "selectionRoute": "none-consumable",
   "mappedBclTypes": [
     "!0",
     "System.Attribute",
@@ -82,50 +82,10 @@
     "BCL_PROJECTION+NATIVE_RUNTIME": 4,
     "NATIVE_RUNTIME": 3,
     "NATIVE_RUNTIME+RUNTIME_DATA": 1,
-    "NONE": 1,
     "RUNTIME_DATA": 5
   },
   "consumableCandidates": [
-    {
-      "name": "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
-      "kind": "class",
-      "expectedRubyIdentities": 9,
-      "dependencies": [
-        "Microsoft.Xna.Framework.DisplayOrientation",
-        "Microsoft.Xna.Framework.Input.Touch.GestureSample",
-        "Microsoft.Xna.Framework.Input.Touch.GestureType",
-        "Microsoft.Xna.Framework.Input.Touch.TouchCollection",
-        "Microsoft.Xna.Framework.Input.Touch.TouchPanelCapabilities"
-      ],
-      "unmetDependencies": [
 
-      ],
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        "GetCapabilities",
-        "ReadGesture",
-        "GetState"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Input.Touch.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    }
   ],
   "dependencyCompleteCandidates": [
     {
@@ -563,46 +523,6 @@
       "runtimeDataDetail": null
     },
     {
-      "name": "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
-      "kind": "class",
-      "expectedRubyIdentities": 9,
-      "dependencies": [
-        "Microsoft.Xna.Framework.DisplayOrientation",
-        "Microsoft.Xna.Framework.Input.Touch.GestureSample",
-        "Microsoft.Xna.Framework.Input.Touch.GestureType",
-        "Microsoft.Xna.Framework.Input.Touch.TouchCollection",
-        "Microsoft.Xna.Framework.Input.Touch.TouchPanelCapabilities"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        "GetCapabilities",
-        "ReadGesture",
-        "GetState"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Input.Touch.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    },
-    {
       "name": "Microsoft.Xna.Framework.Content.ContentManager",
       "kind": "class",
       "expectedRubyIdentities": 10,
@@ -999,46 +919,5 @@
   "eligibleManagedEnums": [
 
   ],
-  "selectedNext": {
-    "name": "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
-    "kind": "class",
-    "expectedRubyIdentities": 9,
-    "dependencies": [
-      "Microsoft.Xna.Framework.DisplayOrientation",
-      "Microsoft.Xna.Framework.Input.Touch.GestureSample",
-      "Microsoft.Xna.Framework.Input.Touch.GestureType",
-      "Microsoft.Xna.Framework.Input.Touch.TouchCollection",
-      "Microsoft.Xna.Framework.Input.Touch.TouchPanelCapabilities"
-    ],
-    "unmetDependencies": [
-
-    ],
-    "partialRemainderReverseEdges": [
-
-    ],
-    "dependencyComplete": true,
-    "blockers": [
-
-    ],
-    "unmappedBclTypes": [
-
-    ],
-    "eventMembers": [
-
-    ],
-    "behaviourBearingMembers": [
-      "GetCapabilities",
-      "ReadGesture",
-      "GetState"
-    ],
-    "ilDerivationRequired": true,
-    "ilAvailable": true,
-    "ilAssembly": "Microsoft.Xna.Framework.Input.Touch.dll",
-    "nativeReachableMethods": [
-
-    ],
-    "runtimeDataDetail": null,
-    "selectedOnly": true,
-    "started": false
-  }
+  "selectedNext": null
 }

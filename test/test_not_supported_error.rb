@@ -42,9 +42,11 @@ class NotSupportedErrorTest < Minitest::Test
                   "System.ArgumentOutOfRangeException" => "RangeError",
                   "System.ArgumentException" => "ArgumentError",
                   "System.IndexOutOfRangeException" => "IndexError",
-                  "System.NotSupportedException" => "CNA::Runtime::NotSupportedError"},
+                  "System.NotSupportedException" => "CNA::Runtime::NotSupportedError",
+                  # Added by Foundation 32; see test_touch_panel.rb.
+                  "System.InvalidOperationException" => "RuntimeError"},
                  B::THROWN_EXCEPTIONS)
-    assert_equal 5, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
+    assert_equal 6, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
     assert_equal B::THROWN_EXCEPTIONS, STRICT.fetch("bclProjection").fetch("thrownExceptions")
   end
 

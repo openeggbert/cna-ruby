@@ -35110,6 +35110,143 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Input::Touch::TouchCollection::Enumerator"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "GetCapabilities",
+          "static": true,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Input.Touch.TouchPanelCapabilities",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadGesture",
+          "static": true,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Input.Touch.GestureSample",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetState",
+          "static": true,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Input.Touch.TouchCollection",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "EnabledGestures",
+          "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+          "static": true,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "IsGestureAvailable",
+          "type": "System.Boolean",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "WindowHandle",
+          "type": "System.IntPtr",
+          "static": true,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DisplayOrientation",
+          "type": "Microsoft.Xna.Framework.DisplayOrientation",
+          "static": true,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DisplayWidth",
+          "type": "System.Int32",
+          "static": true,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DisplayHeight",
+          "type": "System.Int32",
+          "static": true,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::Touch::TouchPanel"
     }
   ]
 }

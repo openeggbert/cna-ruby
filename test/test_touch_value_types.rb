@@ -232,13 +232,16 @@ class TouchValueTypesTest < Minitest::Test
 
   # ------------------------------------------------------------------------ nothing reads a device
 
-  # Foundation 31 completed TouchCollection and its nested Enumerator, which are the managed value
-  # contract and read nothing. TouchPanel, which is the type that would name a device, is still
-  # absent, and no touch route was bound.
+  # Foundations 31 and 32 completed the whole Input.Touch namespace from IL. Not one member of it
+  # reads a device: TouchPanel.GetCapabilities answers the CLR default struct value, GetState an
+  # empty collection, and no touch route was bound.
   def test_no_touch_device_surface_exists
-    %i[TouchPanel TouchPanelState].each { |name| refute T.const_defined?(name, false), name.to_s }
+    %i[TouchPanelState].each { |name| refute T.const_defined?(name, false), name.to_s }
     assert T.const_defined?(:TouchCollection, false)
     assert T::TouchCollection.const_defined?(:Enumerator, false)
+    refute T::TouchPanel.GetCapabilities.IsConnected
+    assert_equal 0, T::TouchPanel.GetCapabilities.MaximumTouchCount
+    assert_equal 0, T::TouchPanel.GetState.Count
     %i[GetCapabilities ReadGesture IsGestureAvailable GetState EnabledGestures]
       .each { |name| refute TL.respond_to?(name), name.to_s }
     %i[GetCapabilities ReadGesture IsGestureAvailable GetState EnabledGestures]

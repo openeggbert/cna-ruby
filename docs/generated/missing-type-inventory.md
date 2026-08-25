@@ -92,7 +92,6 @@
 - `Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture`
 - `Microsoft.Xna.Framework.Graphics.VertexPositionTexture`
 - `Microsoft.Xna.Framework.GraphicsDeviceInformation`
-- `Microsoft.Xna.Framework.Input.Touch.TouchPanel`
 - `Microsoft.Xna.Framework.LaunchParameters`
 - `Microsoft.Xna.Framework.Media.Album`
 - `Microsoft.Xna.Framework.Media.AlbumCollection`

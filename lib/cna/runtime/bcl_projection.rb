@@ -84,7 +84,15 @@ module CNA
         "System.ArgumentOutOfRangeException" => "RangeError",
         "System.ArgumentException" => "ArgumentError",
         "System.IndexOutOfRangeException" => "IndexError",
-        "System.NotSupportedException" => "CNA::Runtime::NotSupportedError"
+        "System.NotSupportedException" => "CNA::Runtime::NotSupportedError",
+        # RuntimeError is Ruby's generic recoverable failure, the class `raise "message"` produces,
+        # and InvalidOperationException is the CLR's generic wrong-state failure. This binding was
+        # already pairing them before the register existed -- CurveKeyCollection raises RuntimeError
+        # for the fail-fast enumeration the CLR signals with InvalidOperationException, and
+        # ReadOnlyCollection follows it -- so Foundation 32 makes the pairing measured rather than
+        # implicit. FrozenError would say something about frozen objects the CLR does not, and
+        # StandardError itself would lose the identity.
+        "System.InvalidOperationException" => "RuntimeError"
       }.freeze
 
       module_function

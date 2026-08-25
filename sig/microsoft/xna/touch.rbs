@@ -91,6 +91,24 @@ module Microsoft
             attr_reader IsConnected: bool
             attr_reader MaximumTouchCount: Integer
           end
+
+          # A CLR abstract sealed class: every member is static and `new` is private.
+          class TouchPanel
+            def self.GetCapabilities: () -> TouchPanelCapabilities
+            def self.GetState: () -> TouchCollection
+            def self.ReadGesture: () -> GestureSample
+            def self.IsGestureAvailable: () -> bool
+            def self.EnabledGestures: () -> GestureType
+            def self.EnabledGestures=: (untyped value) -> untyped
+            def self.WindowHandle: () -> Integer
+            def self.WindowHandle=: (Integer value) -> Integer
+            def self.DisplayOrientation: () -> Microsoft::Xna::Framework::DisplayOrientation
+            def self.DisplayOrientation=: (untyped value) -> untyped
+            def self.DisplayWidth: () -> Integer
+            def self.DisplayWidth=: (Integer value) -> Integer
+            def self.DisplayHeight: () -> Integer
+            def self.DisplayHeight=: (Integer value) -> Integer
+          end
         end
       end
     end

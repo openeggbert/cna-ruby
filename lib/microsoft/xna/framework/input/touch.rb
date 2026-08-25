@@ -363,6 +363,141 @@ module Microsoft
             end
           end
 
+          # Derived from the pinned Microsoft.Xna.Framework.Input.Touch.dll IL
+          # (SHA-256 b0585224…). `.class public abstract auto ansi sealed` — a C# `static class`,
+          # projected under the established rule: `new` raises TypeError and is private, and every
+          # CLR static member is a Ruby class method.
+          #
+          # **This whole assembly is a stub on the Windows profile.** Not one method in it reaches a
+          # native entry point — the hash-admitted IL inventory measures `nativeReachable: false`
+          # for every type it declares, `Touch::WindowHandle` is a plain static field read, and
+          # `TouchPanelCapabilities::GetCaps` is `initobj; ret`. XNA 4.0's touch support was for
+          # Windows Phone; the Windows assembly keeps the shape and answers constants. So every
+          # member below is settled by IL rather than by a device, which is exactly why the
+          # dependency frontier reports the type consumable once TouchCollection exists.
+          #
+          # `GetState` is the one member where that needs spelling out. Its IL zeroes a local
+          # `XNAINPUT_TOUCH_LOCATION_STATE`, optionally calls the private `OnDisplaySettingsChanged`
+          # — which resets both static state fields and clears the flag — and then calls the
+          # internal `TouchCollection.Update(prevState, newState, connected)` before assigning the
+          # zeroed local back over `prevState`. Because that local is never filled, **both** state
+          # structs are zeroed on every call, for ever: `Update` therefore resets `locationCount` to
+          # 0, adds nothing, and stores the `connected` argument, which the non-throwing path passes
+          # as the literal `true`. The observable result is always an empty, connected collection,
+          # which `TouchCollection.new([])` produces with identical state — same `isConnected`, same
+          # `locationCount` — so this is a projection of the composite behaviour and not a shortcut
+          # past it. The internal `Update` is `assembly`, is not in the selected surface, and takes
+          # a private native-layout struct; nothing here fabricates one.
+          #
+          # Read `GetState().IsConnected == true` beside `GetCapabilities().IsConnected == false`
+          # without alarm. They are different facts: the first is a field of the returned value that
+          # the IL sets from the non-throwing branch, and the second is the member that actually
+          # reports device presence. Both are faithful, and together they are exactly XNA's Windows
+          # answer. Nothing in this binding queries a touch device.
+          class TouchPanel
+            # `Helpers::ValidateOrientation` accepts exactly 0, 1, 2 or 4 — one declared
+            # DisplayOrientation value, never a combination, even though the enum carries [Flags].
+            # This one has to be checked here, because DisplayOrientation.coerce accepts any
+            # combination of declared bits, as a flags enum should.
+            SINGLE_ORIENTATIONS = [0, 1, 2, 4].freeze
+            private_constant :SINGLE_ORIENTATIONS
+
+            class << self
+              def new(*) = raise(TypeError, "TouchPanel is static")
+
+              # `GetCapabilities` forwards to `TouchPanelCapabilities::GetCaps`, whose whole body is
+              # `initobj; ret`: the CLR default struct value, IsConnected false and
+              # MaximumTouchCount 0. It queries nothing.
+              def GetCapabilities = TouchPanelCapabilities.__send__(:new)
+
+              # Always an empty, connected collection. See the derivation on the class above.
+              def GetState = TouchCollection.new([])
+
+              # `get_IsGestureAvailable` throws InvalidOperationException when EnabledGestures has
+              # never been assigned, and otherwise answers the literal `false` — this profile
+              # recognises no gesture, ever.
+              def IsGestureAvailable
+                require_gestures_enabled!
+                false
+              end
+
+              # `ReadGesture` throws on both branches and cannot return: InvalidOperationException
+              # for gestures never enabled, then InvalidOperationException again because none is
+              # available. Both messages are localized FrameworkResources strings —
+              # GesturesNotEnabled and GesturesNotAvailable — which are Microsoft's and are not
+              # reproduced.
+              def ReadGesture
+                require_gestures_enabled!
+                raise RuntimeError
+              end
+
+              def EnabledGestures = @enabled_gestures ||= GestureType.coerce(0)
+
+              # `set_EnabledGestures` tests `value & 0xfffffc00` and throws
+              # ArgumentException("EnabledGestures") for any bit outside the declared GestureType
+              # mask. GestureType.coerce draws that identical boundary — the declared bits sum to
+              # exactly 0x3FF — so the CLR's own guard has no work left to do here and is not
+              # written twice. The one difference is the exception class: an undefined bit raises
+              # RangeError from the enum projection rather than ArgumentError from this setter, a
+              # language-mapping consequence of projecting a CLR enum as a validating typed value
+              # instead of a bare integer.
+              def EnabledGestures=(value)
+                @enabled_gestures = GestureType.coerce(value)
+                @gestures_have_been_enabled = true
+                value
+              end
+
+              # `Touch::WindowHandle` is a private static native int with no reader but this one:
+              # on the Windows profile nothing consumes what is stored here.
+              def WindowHandle = @window_handle ||= 0
+
+              def WindowHandle=(value)
+                @window_handle = CNA::Runtime::Numeric.intptr(value, "value")
+                value
+              end
+
+              def DisplayOrientation = @display_orientation ||= Framework::DisplayOrientation.coerce(0)
+
+              def DisplayOrientation=(value)
+                orientation = Framework::DisplayOrientation.coerce(value)
+                # The message is the localized FrameworkResources.InvalidDisplayOrientation string,
+                # which is not reproduced.
+                raise ArgumentError unless SINGLE_ORIENTATIONS.include?(orientation.value)
+
+                @display_orientation = orientation
+                @display_settings_changed = true
+                value
+              end
+
+              def DisplayWidth = @display_width ||= 0
+
+              def DisplayWidth=(value)
+                @display_width = CNA::Runtime::Numeric.int32(value, "value")
+                @display_settings_changed = true
+                value
+              end
+
+              def DisplayHeight = @display_height ||= 0
+
+              def DisplayHeight=(value)
+                @display_height = CNA::Runtime::Numeric.int32(value, "value")
+                @display_settings_changed = true
+                value
+              end
+
+              private
+
+              # `_haveGestureBeenEnabled` starts false and is set by the EnabledGestures setter and
+              # by nothing else, so a program that never assigns it cannot read a gesture at all.
+              def require_gestures_enabled!
+                return if @gestures_have_been_enabled
+
+                raise RuntimeError
+              end
+            end
+            private_class_method :new
+          end
+
           # The XNA struct declares only two read-only properties and no public constructor, so the
           # only reachable instance is the CLR default value: IsConnected false, MaximumTouchCount 0.
           # Nothing queries a device; TouchPanel.GetCapabilities is deliberately absent.

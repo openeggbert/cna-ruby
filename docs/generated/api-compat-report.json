@@ -5,20 +5,20 @@
   "REFERENCE_MEMBERS": 2964,
   "EXPECTED_RUBY_TYPES": 257,
   "EXPECTED_RUBY_MEMBERS": 2915,
-  "TARGET_TYPES": 137,
-  "TARGET_MEMBERS": 1732,
-  "TOTAL_DIAGNOSTICS": 304,
-  "COMPLETE_TYPES": 131,
+  "TARGET_TYPES": 138,
+  "TARGET_MEMBERS": 1741,
+  "TOTAL_DIAGNOSTICS": 303,
+  "COMPLETE_TYPES": 132,
   "PARTIAL_TYPES": 6,
-  "MISSING_TYPES": 120,
+  "MISSING_TYPES": 119,
   "ALLOWLIST_ENTRIES": 0,
   "EVENT_IDENTITIES": 4,
   "EVENT_OWNER_TYPES": 2,
   "EVENT_SUPPORT_TYPE": "CNA::Runtime::Event",
   "BCL_PROJECTED_IDENTITIES": 6,
   "BCL_EXCEPTION_BASES": 2,
-  "BCL_THROWN_EXCEPTIONS": 5,
-  "MISSING_TYPE": 120,
+  "BCL_THROWN_EXCEPTIONS": 6,
+  "MISSING_TYPE": 119,
   "MISSING_MEMBER": 132,
   "UNEXPECTED_TYPE": 0,
   "UNEXPECTED_MEMBER": 0,
@@ -63,7 +63,8 @@
       "System.ArgumentOutOfRangeException": "RangeError",
       "System.ArgumentException": "ArgumentError",
       "System.IndexOutOfRangeException": "IndexError",
-      "System.NotSupportedException": "CNA::Runtime::NotSupportedError"
+      "System.NotSupportedException": "CNA::Runtime::NotSupportedError",
+      "System.InvalidOperationException": "RuntimeError"
     }
   },
   "completeTypeNames": [
@@ -197,7 +198,8 @@
     "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
     "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
     "Microsoft.Xna.Framework.Input.Touch.TouchCollection",
-    "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator"
+    "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator",
+    "Microsoft.Xna.Framework.Input.Touch.TouchPanel"
   ],
   "partialTypes": {
     "Microsoft.Xna.Framework.Game": [
@@ -410,7 +412,6 @@
     "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
     "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
     "Microsoft.Xna.Framework.GraphicsDeviceInformation",
-    "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
     "Microsoft.Xna.Framework.LaunchParameters",
     "Microsoft.Xna.Framework.Media.Album",
     "Microsoft.Xna.Framework.Media.AlbumCollection",
@@ -576,7 +577,8 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D": 19,
     "Microsoft.Xna.Framework.Graphics.SpriteBatch": 18,
     "Microsoft.Xna.Framework.Input.Touch.TouchCollection": 0,
-    "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator": 0
+    "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator": 0,
+    "Microsoft.Xna.Framework.Input.Touch.TouchPanel": 0
   },
   "details": {
     "MISSING_TYPE": [
@@ -672,7 +674,6 @@
       "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
       "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
       "Microsoft.Xna.Framework.GraphicsDeviceInformation",
-      "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
       "Microsoft.Xna.Framework.LaunchParameters",
       "Microsoft.Xna.Framework.Media.Album",
       "Microsoft.Xna.Framework.Media.AlbumCollection",

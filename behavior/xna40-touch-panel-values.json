@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+  "derivation": "Foundation 32 TouchPanel. Contract rows come from the pinned public metadata and from docs/generated/xna-il-inventory.json, which tools/api_compat/build_il_inventory.rb derives from Microsoft.Xna.Framework.Input.Touch.dll (SHA-256 b0585224…) admitted by exact hash. The stub_contract row records the measurement the whole milestone rests on: all eight types that assembly declares are nativeReachable false with no native entry-point method between them, because XNA 4.0 touch support was for Windows Phone and the Windows assembly answers constants. Mapping rows encode what its IL establishes: GetCapabilities forwards to TouchPanelCapabilities.GetCaps, whose body is initobj followed by ret, so IsConnected is false and MaximumTouchCount 0; GetState passes two structs that are zeroed on every call to the internal TouchCollection.Update, which therefore adds nothing and stores the literal true connected flag, so the result is always an empty connected read-only collection; IsGestureAvailable and ReadGesture throw InvalidOperationException, mapped to RuntimeError, until EnabledGestures has been assigned, after which IsGestureAvailable answers the literal false and ReadGesture throws again because no gesture is ever available; the CLR mask 0xfffffc00 rejects exactly the bits GestureType.coerce rejects, because the declared bits sum to 0x3FF, differing only in the exception class; Helpers.ValidateOrientation accepts exactly one declared DisplayOrientation value and never a combination; and DisplayWidth, DisplayHeight and WindowHandle are plain static fields that validate only their numeric domain. None is snapshotted from the cna-ruby implementation.",
+  "observations": [
+    {
+      "id": "touch_panel.il_contract",
+      "operation": "TouchValue.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Input.Touch.TouchPanel"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        true,
+        "System.Object",
+        [
+
+        ],
+        9,
+        "Microsoft.Xna.Framework.Input.Touch.dll",
+        "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+        10,
+        false,
+        [
+
+        ]
+      ]
+    },
+    {
+      "id": "touch_panel.stub_contract",
+      "operation": "TouchPanel.StubContract",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        false,
+        0,
+        "TouchCollection",
+        0,
+        true,
+        true,
+        8,
+        [
+          false
+        ],
+        [
+
+        ]
+      ]
+    },
+    {
+      "id": "touch_panel.gestures",
+      "operation": "TouchPanel.Gestures",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          "None",
+          "RuntimeError",
+          "RuntimeError"
+        ],
+        [
+          "Tap",
+          false,
+          "RuntimeError"
+        ],
+        1023,
+        "RangeError"
+      ]
+    },
+    {
+      "id": "touch_panel.display_settings",
+      "operation": "TouchPanel.DisplaySettings",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        4660,
+        480,
+        800,
+        "Portrait",
+        "ArgumentError",
+        "Portrait",
+        "TypeError"
+      ]
+    }
+  ]
+}

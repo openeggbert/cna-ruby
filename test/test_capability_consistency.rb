@@ -189,9 +189,12 @@ class CapabilityConsistencyTest < Minitest::Test
   end
 
   def test_a_newly_completed_type_reopens_a_namespace_claim
-    # Simulates the next milestone: a row that enumerates a namespace it no longer describes.
+    # Simulates the next milestone: a row that enumerates a namespace it no longer describes. The
+    # rule reads a deferred subsystem claim, so the fixture keeps that category even though the
+    # live input.touch row became VERIFIED_MANAGED once Foundation 32 closed the namespace.
     understated = row(REGISTRY, "input.touch")
-                  .merge("evidence" => "Input.Touch holds TouchLocationState and GestureType only; " \
+                  .merge("category" => "UNIMPLEMENTED_CNA_RUBY",
+                         "evidence" => "Input.Touch holds TouchLocationState and GestureType only; " \
                                        "everything else remains absent")
     findings = check({"capabilities" => [understated]})
     assert_includes findings.map(&:rule), "UNIMPLEMENTED_WITH_COMPLETE_TYPES"

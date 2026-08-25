@@ -86,7 +86,7 @@ class BclProjectionTest < Minitest::Test
     assert_equal({"types" => B::TYPES, "exceptionBases" => B::EXCEPTION_BASES,
                   "thrownExceptions" => B::THROWN_EXCEPTIONS},
                  STRICT.fetch("bclProjection"))
-    assert_equal 5, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
+    assert_equal 6, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
     assert_equal 0, STRICT.fetch("LANGUAGE_MAPPING_MISMATCH")
     assert_equal 0, STRICT.fetch("BASE_MAPPING_MISMATCH")
   end

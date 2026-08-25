@@ -684,10 +684,8 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     # pair. TouchPanel, the one type that would read a touch device, stays out of the signatures
     # entirely; it is a prefix of the selected TouchPanelCapabilities, so absence is asserted per
     # declaration.
-    %w[TouchPanel].each do |absent|
-      refute_includes source, "class #{absent}\n"
-    end
-    %w[TouchLocation GestureSample TouchCollection].each do |present|
+    # Foundation 32 added TouchPanel, closing the namespace; nothing in Input.Touch is absent now.
+    %w[TouchLocation GestureSample TouchCollection TouchPanel].each do |present|
       assert_includes source, "class #{present}\n"
     end
     # The nested enumerator is declared inside its declaring type, which is how the Ruby nested
@@ -700,7 +698,8 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     expected = names + %w[Microsoft.Xna.Framework.Input.Touch.TouchLocation
                           Microsoft.Xna.Framework.Input.Touch.GestureSample
                           Microsoft.Xna.Framework.Input.Touch.TouchCollection
-                          Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator]
+                          Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator
+                          Microsoft.Xna.Framework.Input.Touch.TouchPanel]
     assert_equal expected.map { |name| "::#{name.split(/[.+]/).join("::")}" }.sort, declared.sort
     declared.each { |name| refute_nil resolve_constant(name) }
   end

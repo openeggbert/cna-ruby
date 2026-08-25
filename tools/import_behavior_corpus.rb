@@ -178,9 +178,15 @@ unless touch_collection["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
   abort "Milestone 31 TouchCollection evidence lacks observation-level provenance"
 end
 observations.concat(touch_collection.fetch("observations"))
+touch_panel_path = File.expand_path("../behavior/xna40-touch-panel-values.json", __dir__)
+touch_panel = JSON.parse(File.read(touch_panel_path))
+unless touch_panel["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
+  abort "Milestone 32 TouchPanel evidence lacks observation-level provenance"
+end
+observations.concat(touch_panel.fetch("observations"))
 abort "duplicate behavior observation id" unless observations.map { |item| item.fetch("id") }.uniq.length == observations.length
 result = source_corpus.merge(
-  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, and the Foundation 31 TouchCollection pair separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, and the Foundation 32 TouchPanel separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category" => "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256" => EXPECTED_SHA256,
   "milestone3SourceAssemblySha256" => milestone.fetch("sourceAssemblySha256"),
@@ -210,6 +216,7 @@ result = source_corpus.merge(
   "milestone26SourceAssemblySha256" => display_modes.fetch("sourceAssemblySha256"),
   "milestone27SourceAssemblySha256" => content_attributes.fetch("sourceAssemblySha256"),
   "milestone31SourceAssemblySha256" => touch_collection.fetch("sourceAssemblySha256"),
+  "milestone32SourceAssemblySha256" => touch_panel.fetch("sourceAssemblySha256"),
   # Foundation 16 was merged by documented deterministic replay because this reconstructed host
   # does not carry the upstream source. Re-running this importer with the real source restores the
   # same observation set; it must not be run against any other artifact.
@@ -217,6 +224,7 @@ result = source_corpus.merge(
   "milestone20MergeMethod" => "deterministic replay; upstream source #{EXPECTED_SHA256} is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 fc87b85cebf2c09de2b0a2ca33051d466f16c87ed57119165ba717c9ff2e3b21, 339 observations) was proved before appending 16 additive observations",
   "milestone21MergeMethod" => "deterministic replay; upstream source #{EXPECTED_SHA256} is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 fab5788ffbaa551b5f3ca6d4381c2c7a64a620810513ff796cad44ce805abb8f, 355 observations) was proved before appending 11 additive observations",
   "milestone31MergeMethod" => "deterministic replay; upstream source #{EXPECTED_SHA256} is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 b2db718e5813c457f93229b1297001a8fa4c4d17587af776261f03eb449b3853, 420 observations) was proved before appending 9 additive observations",
+  "milestone32MergeMethod" => "deterministic replay; upstream source #{EXPECTED_SHA256} is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 e1050871516000c313b57e7610ea8a5c39f00d614696a9349923aa4886c2349f, 429 observations) was proved before appending 4 additive observations",
   "observations" => observations
 )
 destination = File.expand_path("../behavior/xna40-foundation-values.json", __dir__)

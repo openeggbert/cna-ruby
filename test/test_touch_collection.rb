@@ -377,9 +377,11 @@ class TouchCollectionTest < Minitest::Test
 
   # --------------------------------------------------------------- nothing produces one of these
 
-  def test_nothing_in_this_binding_produces_a_touch_collection
-    refute T.const_defined?(:TouchPanel, false)
-    assert_includes STRICT.fetch("missingTypeNames"), "Microsoft.Xna.Framework.Input.Touch.TouchPanel"
+  # Foundation 32 added TouchPanel, whose GetState answers an empty collection derived from IL
+  # rather than from a device. The collection itself still has no producer of its own.
+  def test_nothing_in_this_binding_produces_a_touch_collection_from_a_device
+    assert_equal 0, T::TouchPanel.GetState.Count
+    refute T::TouchPanel.GetCapabilities.IsConnected
     refute C.respond_to?(:GetState)
     refute C.public_method_defined?(:Update)
     refute C.private_method_defined?(:Update)

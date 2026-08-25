@@ -630,6 +630,66 @@ def execute(item)
      entry.fetch("assembly"), entry.fetch("assemblySha256"),
      entry.fetch("declaredFields"), entry.fetch("nativeReachable"),
      entry.fetch("constructors").map { |ctor| [ctor.fetch("access"), ctor.fetch("pureBaseForward")] }]
+  when "TouchPanel.StubContract"
+    capabilities = TOUCH::TouchPanel.GetCapabilities
+    state = TOUCH::TouchPanel.GetState
+    touch_types = IL_INVENTORY.fetch("types").select do |_name, entry|
+      entry.fetch("assembly") == "Microsoft.Xna.Framework.Input.Touch.dll"
+    end
+    [capabilities.IsConnected, capabilities.MaximumTouchCount,
+     state.class.name.split("::").last, state.Count, state.IsConnected, state.IsReadOnly,
+     touch_types.length, touch_types.values.map { |entry| entry.fetch("nativeReachable") }.uniq,
+     touch_types.values.map { |entry| entry.fetch("nativeReachableMethods") }.flatten]
+  when "TouchPanel.Gestures"
+    saved = %i[@enabled_gestures @gestures_have_been_enabled].to_h do |name|
+      [name, TOUCH::TouchPanel.instance_variable_get(name)]
+    end
+    begin
+      TOUCH::TouchPanel.instance_variable_set(:@enabled_gestures, nil)
+      TOUCH::TouchPanel.instance_variable_set(:@gestures_have_been_enabled, nil)
+      guard = lambda do |operation|
+        operation.call
+        "no-raise"
+      rescue StandardError => error
+        error.class.name
+      end
+      before = [TOUCH::TouchPanel.EnabledGestures.name,
+                guard.call(-> { TOUCH::TouchPanel.IsGestureAvailable }),
+                guard.call(-> { TOUCH::TouchPanel.ReadGesture })]
+      TOUCH::TouchPanel.EnabledGestures = TOUCH::GestureType::Tap
+      after = [TOUCH::TouchPanel.EnabledGestures.name, TOUCH::TouchPanel.IsGestureAvailable,
+               guard.call(-> { TOUCH::TouchPanel.ReadGesture })]
+      declared = TOUCH::GestureType.constants(false)
+                                   .map { |name| TOUCH::GestureType.const_get(name, false).value }
+                                   .reduce(0) { |mask, value| mask | value }
+      [before, after, declared, guard.call(-> { TOUCH::TouchPanel.EnabledGestures = 0x400 })]
+    ensure
+      saved.each { |name, value| TOUCH::TouchPanel.instance_variable_set(name, value) }
+    end
+  when "TouchPanel.DisplaySettings"
+    saved = %i[@window_handle @display_orientation @display_width @display_height].to_h do |name|
+      [name, TOUCH::TouchPanel.instance_variable_get(name)]
+    end
+    begin
+      guard = lambda do |operation|
+        operation.call
+        "no-raise"
+      rescue StandardError => error
+        error.class.name
+      end
+      TOUCH::TouchPanel.WindowHandle = 0x1234
+      TOUCH::TouchPanel.DisplayWidth = 480
+      TOUCH::TouchPanel.DisplayHeight = 800
+      TOUCH::TouchPanel.DisplayOrientation = F::DisplayOrientation::Portrait
+      combined = F::DisplayOrientation::LandscapeLeft | F::DisplayOrientation::Portrait
+      [TOUCH::TouchPanel.WindowHandle, TOUCH::TouchPanel.DisplayWidth,
+       TOUCH::TouchPanel.DisplayHeight, TOUCH::TouchPanel.DisplayOrientation.name,
+       guard.call(-> { TOUCH::TouchPanel.DisplayOrientation = combined }),
+       TOUCH::TouchPanel.DisplayOrientation.name,
+       guard.call(-> { TOUCH::TouchPanel.DisplayWidth = 1.5 })]
+    ensure
+      saved.each { |name, value| TOUCH::TouchPanel.instance_variable_set(name, value) }
+    end
   when "TouchCollection.Contract"
     locations = [TOUCH::TouchLocation.new(1, TOUCH::TouchLocationState::Pressed, F::Vector2.new(1.0, 2.0)),
                  TOUCH::TouchLocation.new(2, TOUCH::TouchLocationState::Moved, F::Vector2.new(3.0, 4.0),
@@ -1032,8 +1092,7 @@ def execute(item)
       capabilities.respond_to?(:IsConnected=),
       capabilities.equal?(copy),
       copy.IsConnected == capabilities.IsConnected && copy.MaximumTouchCount == capabilities.MaximumTouchCount,
-      TOUCH::TouchPanelCapabilities.respond_to?(:GetCapabilities),
-      TOUCH.const_defined?(:TouchPanel, false)
+      TOUCH::TouchPanelCapabilities.respond_to?(:GetCapabilities)
     ]
   when "PureManagedEnum.Contract"
     clr_name = item.fetch("args").fetch(0)

@@ -103,13 +103,13 @@ class TouchClosureTest < Minitest::Test
     # Foundation 23 added TouchLocation and GestureSample from pinned IL. Everything that reads a
     # touch device stays absent.
     assert_equal %i[GestureSample GestureType TouchCollection TouchLocation TouchLocationState
-                    TouchPanelCapabilities],
+                    TouchPanel TouchPanelCapabilities],
                  T.constants(false).sort
     assert_same T, I.const_get(:Touch, false)
     assert_instance_of Module, T
     refute_instance_of Class, T
 
-    %i[TouchPanel TouchPanelState].each { |name| refute T.const_defined?(name, false), name.to_s }
+    %i[TouchPanelState].each { |name| refute T.const_defined?(name, false), name.to_s }
     # Touch types must not leak up into Input or Framework.
     %i[TouchLocationState GestureType TouchPanelCapabilities].each do |name|
       refute I.const_defined?(name, false), "Input::#{name}"

@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, and the Foundation 31 TouchCollection pair separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
-  "OBSERVATIONS": 429,
-  "ASSERTIONS": 429,
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, and the Foundation 32 TouchPanel separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "OBSERVATIONS": 433,
+  "ASSERTIONS": 433,
   "FAILURES": 0,
   "provenanceCounts": {
-    "PURE_XNA_DERIVED": 343,
-    "RUBY_MAPPING_QUALIFICATION": 86
+    "PURE_XNA_DERIVED": 344,
+    "RUBY_MAPPING_QUALIFICATION": 89
   },
   "groupCounts": {
     "BCL_PROJECTION": 13,
@@ -60,6 +60,7 @@
     "RECTANGLE": 13,
     "TOUCH_CLOSURE": 2,
     "TOUCH_COLLECTION": 9,
+    "TOUCH_PANEL": 4,
     "TOUCH_VALUE": 7,
     "VECTOR2": 8,
     "VECTOR3": 7,

@@ -1786,13 +1786,15 @@ class ApiVerifierTest < Minitest::Test
       assert_includes strict.fetch("completeTypeNames"), full
     end
 
-    # TouchPanel, the type that would name a device, is still not selected.
+    # Foundation 32 added TouchPanel. On this profile its whole assembly is a stub -- the IL
+    # inventory measures no native reachability anywhere in it -- so nothing here reads a device.
     %w[TouchPanel].each do |short|
       full = "Microsoft.Xna.Framework.Input.Touch.#{short}"
       assert reference.fetch("types").any? { |type| type.fetch("name") == full }, full
-      refute signature_contract.fetch("types").any? { |type| type.fetch("name") == full }, full
-      assert_includes strict.fetch("missingTypeNames"), full
+      assert signature_contract.fetch("types").any? { |type| type.fetch("name") == full }, full
+      assert_includes strict.fetch("completeTypeNames"), full
     end
+    assert_empty strict.fetch("missingTypeNames").grep(/\AMicrosoft\.Xna\.Framework\.Input\.Touch\./)
   end
 
   def test_batch_does_not_expand_the_six_deferred_partial_runtime_types

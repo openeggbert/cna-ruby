@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 31",
+  "milestone": "Foundation 32",
   "platform": "Linux x86-64 MRI Ruby 3.3.8",
   "cnaAbi": "0.7.0",
   "capabilities": [
@@ -165,6 +165,12 @@
       "category": "VERIFIED_MANAGED",
       "status": "verified complete managed value contracts",
       "evidence": "Foundation 31: TouchCollection and its nested TouchCollection+Enumerator, closed together because neither can be closed alone -- the declaring type's GetEnumerator returns the nested one and the nested one's Current and MoveNext call the declaring type's Item and Count; 2 types / 18 Ruby identities. The struct declares eight TouchLocation slots and an int32 count, never a list, which is the whole eight-location ceiling. The constructor throws ArgumentNullException(touches) for null and ArgumentOutOfRangeException(touches) for more than eight, sets isConnected to the literal true, and expands each element through TouchLocation.TryGetPreviousLocation, using TouchLocationState.Invalid and a zero previous position when there is none. IsReadOnly answers the literal true and Insert, RemoveAt, Add, Clear, Remove and the Item setter are each a two-instruction body that throws NotSupportedException, mapped by managed.not-supported-exception to CNA::Runtime::NotSupportedError so an ordinary rescue catches it. The indexer constructs ArgumentOutOfRangeException(index) in its own IL and therefore raises RangeError, unlike a forwarding indexer. IndexOf scans with op_Equality over all seven TouchLocation fields, Contains is that scan negated, CopyTo throws ArgumentNullException(array) and ArgumentOutOfRangeException(arrayIndex) twice over, and FindById answers the ordered pair [found, location] filling the CLR default TouchLocation on the false branch. GetEnumerator copies the collection struct, so the enumerator walks a snapshot; it starts at -1, Current forwards to the indexer with no guard so reading it before the first MoveNext or after exhaustion raises exactly what the indexer raises, MoveNext clamps position to Count, and Dispose has a bare ret body. IEnumerator.Reset is a private explicit interface implementation outside the selected surface and is not projected. Nothing produces a TouchCollection: no TouchPanel, no gesture recognition, no touch device, and the internal Update that XNA's input layer drives is not projected"
+    },
+    {
+      "id": "managed.touch-panel",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified complete static contract",
+      "evidence": "Foundation 32: TouchPanel, 1 type / 14 Ruby identities, closing the Input.Touch namespace. A CLR abstract sealed class, projected under the static-class rule with new raising TypeError and made private, as FrameworkDispatcher already does. The entire pinned Input.Touch assembly is a stub on the Windows profile: not one of its methods reaches a native entry point, Touch.WindowHandle is a plain static field read, and TouchPanelCapabilities.GetCaps is initobj followed by ret, so every member is settled by IL rather than by a device. GetState is the one member that needed deriving: its IL zeroes a local XNAINPUT_TOUCH_LOCATION_STATE, may call the private OnDisplaySettingsChanged, calls the internal TouchCollection.Update, and assigns the never-filled local back over prevState, so both state structs are zeroed on every call for ever, Update adds nothing and stores the literal true connected flag, and the observable result is always an empty connected collection, which TouchCollection.new([]) produces with identical state. GetState().IsConnected true beside GetCapabilities().IsConnected false is not a contradiction: the first is a field of the returned value set by the non-throwing branch and the second is the member that reports device presence, and both are XNA's Windows answer. IsGestureAvailable and ReadGesture throw InvalidOperationException, newly mapped to RuntimeError, until EnabledGestures has been assigned, and ReadGesture throws again afterwards because no gesture is ever available; both messages are localized FrameworkResources strings that are not reproduced. EnabledGestures rejects an undefined bit through GestureType.coerce, which draws the identical boundary to the CLR's 0xfffffc00 mask because the declared bits sum to exactly 0x3FF, differing only in raising RangeError rather than ArgumentException. DisplayOrientation accepts exactly one declared value, never a combination, matching Helpers.ValidateOrientation. WindowHandle is a static IntPtr nothing on this profile consumes"
     },
     {
       "id": "managed.spatial-audio-descriptors",
@@ -456,9 +462,9 @@
     },
     {
       "id": "input.touch",
-      "category": "UNIMPLEMENTED_CNA_RUBY",
-      "status": "deferred",
-      "evidence": "Managed value contracts only. Input.Touch holds TouchLocationState, GestureType, TouchPanelCapabilities, TouchLocation, GestureSample, TouchCollection and TouchCollection+Enumerator, every one of them complete. TouchPanel, gesture recognition and every touch route remain absent; no touch hardware has been measured, nothing queries a touch device, nothing produces a TouchLocation, a GestureSample or a TouchCollection, and TouchPanelCapabilities answers the CLR default struct value rather than a device"
+      "category": "VERIFIED_MANAGED",
+      "status": "verified complete managed namespace",
+      "evidence": "Managed contracts only, and the whole Input.Touch namespace is now complete: TouchLocationState, GestureType, TouchPanelCapabilities, TouchLocation, GestureSample, TouchCollection, TouchCollection+Enumerator and TouchPanel. Nothing in it reads a device, and that is a measurement rather than a policy: the hash-admitted IL inventory records nativeReachable false for every type the pinned Microsoft.Xna.Framework.Input.Touch.dll declares, because XNA 4.0's touch support was for Windows Phone and the Windows assembly answers constants. TouchPanel.GetCapabilities forwards to TouchPanelCapabilities.GetCaps, whose whole body is initobj, so it answers IsConnected false and MaximumTouchCount 0; GetState always answers an empty connected TouchCollection because both native state structs its IL passes to the internal TouchCollection.Update are zeroed on every call; IsGestureAvailable answers the literal false once gestures have been enabled and throws InvalidOperationException before that; and ReadGesture throws on both branches and cannot return. No touch hardware has been measured, nothing queries a touch device, no touch route was bound, and no CNA symbol was added"
     },
     {
       "id": "evidence.behavior-corpus-upstream-source",
