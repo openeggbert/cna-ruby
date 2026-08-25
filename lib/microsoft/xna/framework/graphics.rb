@@ -67,6 +67,33 @@ module Microsoft
           alias to_s ToString
         end
 
+        # `assembly .ctor(List<DisplayMode> displayModes)`: base() then one store. The backing list
+        # is private and the public surface cannot mutate it, so the CLR enumerator's version check
+        # is unobservable and no version tracking is projected.
+        # Like CurveKeyCollection it deliberately does not mix in Ruby Enumerable and exposes no
+        # `each`: that would add a broad helper surface unrelated to XNA.
+        class DisplayModeCollection
+          def initialize(display_modes)
+            unless display_modes.instance_of?(Array) &&
+                   display_modes.all? { |mode| mode.instance_of?(DisplayMode) }
+              raise TypeError, "displayModes must be an Array of DisplayMode"
+            end
+
+            @display_modes = display_modes.dup.freeze
+          end
+          private_class_method :new
+
+          # IEnumerable`1 projects to a fresh Ruby Enumerator, without a fake System namespace.
+          def GetEnumerator = @display_modes.each
+
+          # `Item[format]` walks the backing list in order, collects every mode whose Format equals
+          # the argument into a new list, and answers that materialised sequence.
+          def [](format)
+            wanted = SurfaceFormat.coerce(format)
+            @display_modes.select { |mode| mode.Format == wanted }.each
+          end
+        end
+
         # `assembly .ctor(object resource)`: base() then one store.
         class ResourceCreatedEventArgs < CNA::Runtime::EventArgs
           attr_reader :Resource

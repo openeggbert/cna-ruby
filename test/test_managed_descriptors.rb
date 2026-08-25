@@ -214,7 +214,7 @@ class ManagedDescriptorsTest < Minitest::Test
   end
 
   def test_presentation_parameters_implies_no_device_adapter_or_swap_chain
-    %i[GraphicsAdapter DisplayModeCollection RenderTarget2D RenderTargetCube
+    %i[GraphicsAdapter RenderTarget2D RenderTargetCube
        DepthStencilState].each { |absent| refute G.const_defined?(absent, false), "Graphics::#{absent}" }
     assert_equal %i[IsDisposed Viewport Clear].sort, G::GraphicsDevice.public_instance_methods(false).sort
   end
@@ -307,10 +307,58 @@ class ManagedDescriptorsTest < Minitest::Test
     assert_nil G::ResourceDestroyedEventArgs.__send__(:new, nil, nil).Name
   end
 
+  # ------------------------------------------------------- Foundation 26: DisplayModeCollection
+
+  def collection(*triples)
+    modes = triples.map { |width, height, format| display_mode(width, height, format) }
+    G::DisplayModeCollection.__send__(:new, modes)
+  end
+
+  def test_the_collection_projects_exactly_its_two_declared_identities
+    assert_equal %i[GetEnumerator []].sort, G::DisplayModeCollection.public_instance_methods(false).sort
+    refute G::DisplayModeCollection.respond_to?(:new)
+    # Like CurveKeyCollection it does not mix in Ruby Enumerable, which would add helper surface
+    # unrelated to XNA.
+    refute_includes G::DisplayModeCollection.ancestors, Enumerable
+    refute G::DisplayModeCollection.method_defined?(:each)
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Graphics.DisplayModeCollection"
+    assert_equal 0, STRICT.fetch("localDiagnostics").fetch("Microsoft.Xna.Framework.Graphics.DisplayModeCollection")
+  end
+
+  def test_get_enumerator_walks_the_backing_list_in_order
+    modes = collection([1920, 1080, G::SurfaceFormat::Color], [1280, 720, G::SurfaceFormat::Color],
+                       [800, 600, G::SurfaceFormat::Bgra4444])
+    assert_equal [1920, 1280, 800], modes.GetEnumerator.to_a.map(&:Width)
+    # A fresh Enumerator every call, and no fabricated System namespace.
+    refute_same modes.GetEnumerator, modes.GetEnumerator
+    assert_instance_of Enumerator, modes.GetEnumerator
+    assert_empty collection.GetEnumerator.to_a
+  end
+
+  def test_the_indexer_materialises_the_modes_of_one_format_in_order
+    modes = collection([1920, 1080, G::SurfaceFormat::Color], [800, 600, G::SurfaceFormat::Bgra4444],
+                       [1280, 720, G::SurfaceFormat::Color])
+    assert_equal [1920, 1280], modes[G::SurfaceFormat::Color].to_a.map(&:Width)
+    assert_equal [800], modes[G::SurfaceFormat::Bgra4444].to_a.map(&:Width)
+    # A format nothing matches answers an empty sequence, never nil.
+    assert_empty modes[G::SurfaceFormat::Alpha8].to_a
+    assert_instance_of Enumerator, modes[G::SurfaceFormat::Alpha8]
+    assert_raises(RangeError) { modes[9999] }
+  end
+
+  def test_the_collection_backing_list_is_not_reachable_or_mutable
+    modes = [display_mode(640, 480)]
+    collection = G::DisplayModeCollection.__send__(:new, modes)
+    modes << display_mode(1024, 768)
+    assert_equal 1, collection.GetEnumerator.to_a.length, "the collection copied the list it was given"
+    assert_raises(TypeError) { G::DisplayModeCollection.__send__(:new, [1]) }
+    assert_raises(TypeError) { G::DisplayModeCollection.__send__(:new, :not_an_array) }
+  end
+
   def test_no_producer_for_any_constructor_free_class_is_fabricated
     # GraphicsAdapter would enumerate DisplayMode; GraphicsDevice.ResourceCreated/ResourceDestroyed
     # would raise the two EventArgs types. All three producers stay absent.
-    %i[GraphicsAdapter DisplayModeCollection].each { |absent| refute G.const_defined?(absent, false), absent.to_s }
+    refute G.const_defined?(:GraphicsAdapter, false)
     %i[ResourceCreated ResourceDestroyed].each do |absent|
       refute G::GraphicsDevice.method_defined?(absent), absent.to_s
     end

@@ -56,6 +56,7 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.DisplayMode
       Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs
       Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs
+      Microsoft.Xna.Framework.Graphics.DisplayModeCollection
     ]
   ).compact.uniq.freeze
 
@@ -68,14 +69,21 @@ class DependencyFrontierTest < Minitest::Test
     values.compact
   end
 
-  def unmapped_bcl(type, mapped)
-    signatures_of(type).filter_map do |signature|
-      stripped = signature.sub(/&\z/, "")
-      next if BY_NAME.keys.any? { |name| stripped.include?(name) }
-      next if mapped.include?(stripped)
+  # The same reduction the tool applies: a constructed generic hides its definition behind its type
+  # arguments, so each signature yields the whole string when it names no XNA type, plus the outer
+  # definition whenever there is one.
+  def bcl_identities(signature)
+    stripped = signature.sub(/&\z/, "")
+    identities = []
+    identities << stripped unless BY_NAME.keys.any? { |name| stripped.include?(name) }
+    outer = stripped.split("[", 2).first
+    identities << outer if outer != stripped && !BY_NAME.key?(outer)
+    identities.uniq
+  end
 
-      stripped
-    end.uniq.sort
+  def unmapped_bcl(type, mapped)
+    signatures_of(type).flat_map { |signature| bcl_identities(signature) }
+                       .reject { |identity| mapped.include?(identity) }.uniq.sort
   end
 
   # The same rule the tool applies, restated independently here. Declaring a CLR event is not a
@@ -103,10 +111,7 @@ class DependencyFrontierTest < Minitest::Test
     SIGNATURES.fetch("types").each_with_object(register.uniq.sort) do |type, found|
       next unless STRICT.fetch("completeTypeNames").include?(type.fetch("name"))
 
-      signatures_of(type).each do |signature|
-        stripped = signature.sub(/&\z/, "")
-        found << stripped unless BY_NAME.keys.any? { |name| stripped.include?(name) }
-      end
+      signatures_of(type).each { |signature| found.concat(bcl_identities(signature)) }
     end.uniq.sort
   end
 
@@ -186,9 +191,9 @@ class DependencyFrontierTest < Minitest::Test
     end
   end
 
-  def test_every_type_completed_in_foundations_16_to_25_classifies_as_consumable
+  def test_every_type_completed_in_foundations_16_to_26_classifies_as_consumable
     mapped = mapped_bcl_from_complete_types
-    assert_equal 48, CONSUMED.length
+    assert_equal 49, CONSUMED.length
 
     CONSUMED.each do |name|
       type = BY_NAME.fetch(name)
@@ -202,10 +207,10 @@ class DependencyFrontierTest < Minitest::Test
     assert_equal 27, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
-    assert_equal 1, REPORT.fetch("consumableCandidates").length
-    assert_equal REPORT.fetch("consumableCandidates").length, REPORT.fetch("blockerSummary").fetch("NONE")
-    assert_equal "global-consumable-rank", REPORT.fetch("selectionRoute")
-    refute_nil REPORT["selectedNext"]
+    assert_equal 0, REPORT.fetch("consumableCandidates").length
+    refute REPORT.fetch("blockerSummary").key?("NONE")
+    assert_equal "none-consumable", REPORT.fetch("selectionRoute")
+    assert_nil REPORT["selectedNext"]
 
     REPORT.fetch("dependencyCompleteCandidates").each do |candidate|
       %w[EVENT_PROJECTION BEHAVIOR_EVIDENCE].each do |retired|
@@ -229,9 +234,7 @@ class DependencyFrontierTest < Minitest::Test
 
   # Every consumable candidate really is pure managed, hash-pinned and dependency-complete.
   def test_every_consumable_candidate_is_pure_managed_with_available_il
-    assert_equal %w[
-      Microsoft.Xna.Framework.Graphics.DisplayModeCollection
-    ], REPORT.fetch("consumableCandidates").map { |candidate| candidate.fetch("name") }.sort
+    assert_empty REPORT.fetch("consumableCandidates")
 
     REPORT.fetch("consumableCandidates").each do |candidate|
       name = candidate.fetch("name")

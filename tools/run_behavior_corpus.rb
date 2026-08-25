@@ -423,6 +423,28 @@ def execute(item)
       interface.protected_instance_methods(false) + interface.private_instance_methods(false),
       BATCH_SIGNATURES.fetch(clr_name).fetch("members").any? { |member| member.fetch("kind") == "event" }
     ]
+  when "DisplayModeCollection.Projection"
+    build = ->(width, height, format) { G::DisplayMode.__send__(:new, width, height, format) }
+    modes = [build.call(1920, 1080, G::SurfaceFormat::Color),
+             build.call(800, 600, G::SurfaceFormat::Bgra4444),
+             build.call(1280, 720, G::SurfaceFormat::Color)]
+    collection = G::DisplayModeCollection.__send__(:new, modes)
+    empty = G::DisplayModeCollection.__send__(:new, [])
+    source = [build.call(640, 480, G::SurfaceFormat::Color)]
+    copied = G::DisplayModeCollection.__send__(:new, source)
+    source << build.call(1024, 768, G::SurfaceFormat::Color)
+    [collection.GetEnumerator.to_a.map(&:Width),
+     collection.GetEnumerator.equal?(collection.GetEnumerator),
+     collection.GetEnumerator.instance_of?(Enumerator),
+     collection[G::SurfaceFormat::Color].to_a.map(&:Width),
+     collection[G::SurfaceFormat::Bgra4444].to_a.map(&:Width),
+     collection[G::SurfaceFormat::Alpha8].to_a,
+     empty.GetEnumerator.to_a, copied.GetEnumerator.to_a.length,
+     G::DisplayModeCollection.respond_to?(:new),
+     G::DisplayModeCollection.public_instance_methods(false).map(&:to_s).sort,
+     G::DisplayModeCollection.ancestors.include?(Enumerable),
+     error_name { collection[9999] },
+     error_name { G::DisplayModeCollection.__send__(:new, [1]) }]
   when "ConstructorFree.Projection"
     names = item.fetch("args")
     names.map do |clr_name|

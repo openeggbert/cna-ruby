@@ -159,7 +159,7 @@ class XnaExceptionsTest < Minitest::Test
     %i[SoundEffect Microphone AudioEngine WaveBank SoundBank Cue].each do |name|
       refute F::Audio.const_defined?(name, false), "Audio::#{name}"
     end
-    %i[GraphicsAdapter DisplayModeCollection RenderTarget2D Effect].each do |name|
+    %i[GraphicsAdapter RenderTarget2D Effect].each do |name|
       refute F::Graphics.const_defined?(name, false), "Graphics::#{name}"
     end
     refute F.const_defined?(:Storage, false)

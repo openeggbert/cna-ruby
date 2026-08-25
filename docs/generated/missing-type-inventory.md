@@ -47,7 +47,6 @@
 - `Microsoft.Xna.Framework.Graphics.BlendState`
 - `Microsoft.Xna.Framework.Graphics.DepthStencilState`
 - `Microsoft.Xna.Framework.Graphics.DirectionalLight`
-- `Microsoft.Xna.Framework.Graphics.DisplayModeCollection`
 - `Microsoft.Xna.Framework.Graphics.DualTextureEffect`
 - `Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer`
 - `Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer`

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, and the Foundation 25 constructor-free classes separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, and the Foundation 26 DisplayModeCollection separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
   "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
@@ -37,6 +37,8 @@
   "milestone24MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 c0d737cae2e6066a2be79390044214e002eee88980f300100005fcf04b69f8f1, 391 observations) was proved before appending 11 additive observations",
   "milestone25SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
   "milestone25MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 9fdd907b24818eedc00f6ea67de59d33017dbb0fae7791e0b26892d97e6dc48b, 402 observations) was proved before appending 6 additive observations",
+  "milestone26SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+  "milestone26MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 2726fde56ce90fbc471bd7a1c2319bbea07469f789210b007a93c91218e54e3f, 408 observations) was proved before appending 2 additive observations",
   "observations": [
     {
       "id": "math.clamp.low",
@@ -12382,6 +12384,63 @@
           "Name",
           "Tag"
         ]
+      ]
+    },
+    {
+      "id": "constructor_free.display_mode_collection.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.DisplayModeCollection"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Object",
+        2,
+        "Microsoft.Xna.Framework.Graphics.dll",
+        "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+        1,
+        false,
+        false,
+        [
+          [
+            "assembly",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "constructor_free.display_mode_collection.projection",
+      "operation": "DisplayModeCollection.Projection",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          1920,
+          800,
+          1280
+        ],
+        false,
+        true,
+        [
+          1920,
+          1280
+        ],
+        [
+          800
+        ],
+        [],
+        [],
+        1,
+        false,
+        [
+          "GetEnumerator",
+          "[]"
+        ],
+        false,
+        "RangeError",
+        "TypeError"
       ]
     }
   ]

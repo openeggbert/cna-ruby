@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 128,
-  "completeTypes": 122,
+  "targetTypes": 129,
+  "completeTypes": 123,
   "partialTypes": [
     "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -11,7 +11,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 129,
+  "missingTypes": 128,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME or RUNTIME_DATA blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -33,17 +33,24 @@
     "EVENT_PROJECTION": "retired in Foundation 20; one CLR event projects to one Ruby event reader over CNA::Runtime::Event and the API verifier measures it under EVENT_MAPPING_MISMATCH. The residue is BCL_PROJECTION on the EventHandler`1 support type and, for classes, the IL that decides when the event is raised.",
     "BEHAVIOR_EVIDENCE": "retired in Foundation 22; the original hash-pinned XNA 4.0 Windows assemblies are available on this host, so declaring a constructor or method is work to do, not missing input. It is reported as the informational ilDerivationRequired flag and split into the IL_UNAVAILABLE, NATIVE_RUNTIME and RUNTIME_DATA blockers, which name what is genuinely absent."
   },
-  "selectionRoute": "global-consumable-rank",
+  "selectionRoute": "none-consumable",
   "mappedBclTypes": [
     "!0",
     "System.Boolean",
     "System.Byte",
+    "System.Collections.Generic.ICollection`1",
+    "System.Collections.Generic.IEnumerable`1",
+    "System.Collections.Generic.IEnumerator`1",
     "System.Enum",
     "System.EventArgs",
+    "System.EventHandler`1",
     "System.EventHandler`1[System.EventArgs]",
     "System.Exception",
+    "System.IComparable`1",
+    "System.IEquatable`1",
     "System.Int32",
     "System.IntPtr",
+    "System.Nullable`1",
     "System.Nullable`1[System.Single]",
     "System.Object",
     "System.Runtime.InteropServices.ExternalException",
@@ -68,49 +75,14 @@
   },
   "blockerSummary": {
     "BCL_PROJECTION": 13,
-    "BCL_PROJECTION+NATIVE_RUNTIME": 3,
-    "BCL_PROJECTION+RUNTIME_DATA": 1,
+    "BCL_PROJECTION+NATIVE_RUNTIME": 4,
+    "BCL_PROJECTION+RUNTIME_DATA": 2,
     "IL_UNAVAILABLE": 1,
     "NATIVE_RUNTIME": 2,
-    "NONE": 1,
-    "RUNTIME_DATA": 6
+    "RUNTIME_DATA": 5
   },
   "consumableCandidates": [
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.DisplayModeCollection",
-      "kind": "class",
-      "expectedRubyIdentities": 2,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.DisplayMode",
-        "Microsoft.Xna.Framework.Graphics.SurfaceFormat"
-      ],
-      "unmetDependencies": [
 
-      ],
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        "GetEnumerator"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    }
   ],
   "dependencyCompleteCandidates": [
     {
@@ -236,6 +208,7 @@
         "BCL_PROJECTION"
       ],
       "unmappedBclTypes": [
+        "System.Collections.Generic.Dictionary`2",
         "System.Collections.Generic.Dictionary`2[System.String,System.String]"
       ],
       "eventMembers": [
@@ -389,41 +362,6 @@
       "runtimeDataDetail": null
     },
     {
-      "name": "Microsoft.Xna.Framework.Graphics.DisplayModeCollection",
-      "kind": "class",
-      "expectedRubyIdentities": 2,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.DisplayMode",
-        "Microsoft.Xna.Framework.Graphics.SurfaceFormat"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        "GetEnumerator"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    },
-    {
       "name": "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator",
       "kind": "struct",
       "expectedRubyIdentities": 3,
@@ -477,6 +415,7 @@
         "RUNTIME_DATA"
       ],
       "unmappedBclTypes": [
+        "System.Collections.ObjectModel.ReadOnlyCollection`1",
         "System.Collections.ObjectModel.ReadOnlyCollection`1[System.Single]"
       ],
       "eventMembers": [
@@ -581,10 +520,11 @@
       ],
       "dependencyComplete": true,
       "blockers": [
+        "BCL_PROJECTION",
         "RUNTIME_DATA"
       ],
       "unmappedBclTypes": [
-
+        "System.Collections.Generic.IList`1"
       ],
       "eventMembers": [
 
@@ -689,6 +629,7 @@
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
+        "System.Collections.ObjectModel.ReadOnlyCollection`1",
         "System.Collections.ObjectModel.ReadOnlyCollection`1[System.Char]",
         "System.Nullable`1[System.Char]",
         "System.Text.StringBuilder"
@@ -763,6 +704,7 @@
         "BCL_PROJECTION"
       ],
       "unmappedBclTypes": [
+        "System.Attribute",
         "System.Attribute[]",
         "System.ComponentModel.ExpandableObjectConverter",
         "System.ComponentModel.ITypeDescriptorContext",
@@ -843,6 +785,7 @@
       ],
       "unmappedBclTypes": [
         "!!0",
+        "System.Action`1",
         "System.Action`1[System.IDisposable]",
         "System.IDisposable",
         "System.IO.Stream",
@@ -982,7 +925,8 @@
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
-        "System.Byte[]"
+        "System.Byte[]",
+        "System.Collections.ObjectModel.ReadOnlyCollection`1"
       ],
       "eventMembers": [
         "BufferReady"
@@ -1042,6 +986,65 @@
       "ilAssembly": "Microsoft.Xna.Framework.dll",
       "nativeReachableMethods": [
 
+      ],
+      "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
+      "kind": "class",
+      "expectedRubyIdentities": 18,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.DepthFormat",
+        "Microsoft.Xna.Framework.Graphics.DisplayMode",
+        "Microsoft.Xna.Framework.Graphics.DisplayModeCollection",
+        "Microsoft.Xna.Framework.Graphics.GraphicsProfile",
+        "Microsoft.Xna.Framework.Graphics.SurfaceFormat"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::.ctor (1 overload)",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Adapter (1 overload)",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Reset (3 overloads)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+        "System.Collections.ObjectModel.ReadOnlyCollection`1"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        "QueryBackBufferFormat",
+        "QueryRenderTargetFormat",
+        "IsProfileSupported"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+        ".cctor",
+        ".ctor",
+        ".locals",
+        "InitializeAdapterList",
+        "IsProfileSupported",
+        "IsValidDepthFormat",
+        "IsValidSurfaceFormat",
+        "QueryBackBufferFormat",
+        "QueryDepthFormat",
+        "QueryFormat",
+        "QueryMultiSampleCount",
+        "QueryRenderTargetFormat",
+        "QuerySurfaceFormat",
+        "get_CurrentDisplayMode",
+        "get_IsWideScreen",
+        "get_MonitorHandle",
+        "get_SupportedDisplayModes"
       ],
       "runtimeDataDetail": null
     },
@@ -1142,41 +1145,5 @@
   "eligibleManagedEnums": [
 
   ],
-  "selectedNext": {
-    "name": "Microsoft.Xna.Framework.Graphics.DisplayModeCollection",
-    "kind": "class",
-    "expectedRubyIdentities": 2,
-    "dependencies": [
-      "Microsoft.Xna.Framework.Graphics.DisplayMode",
-      "Microsoft.Xna.Framework.Graphics.SurfaceFormat"
-    ],
-    "unmetDependencies": [
-
-    ],
-    "partialRemainderReverseEdges": [
-
-    ],
-    "dependencyComplete": true,
-    "blockers": [
-
-    ],
-    "unmappedBclTypes": [
-
-    ],
-    "eventMembers": [
-
-    ],
-    "behaviourBearingMembers": [
-      "GetEnumerator"
-    ],
-    "ilDerivationRequired": true,
-    "ilAvailable": true,
-    "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-    "nativeReachableMethods": [
-
-    ],
-    "runtimeDataDetail": null,
-    "selectedOnly": true,
-    "started": false
-  }
+  "selectedNext": null
 }

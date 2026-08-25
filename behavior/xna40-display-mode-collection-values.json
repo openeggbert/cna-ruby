@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+  "derivation": "Foundation 26 DisplayModeCollection. The contract row comes from the pinned public metadata and docs/generated/xna-il-inventory.json. The mapping row encodes what the pinned Microsoft.Xna.Framework.Graphics.dll IL establishes: GetEnumerator walks the backing list in order, and Item[format] walks it in order collecting every mode whose Format equals the argument into a materialised list. IEnumerable`1 and IEnumerator`1 project to fresh Ruby Enumerators, as mapping-rules.json already required, and Ruby Enumerable is deliberately not mixed in.",
+  "observations": [
+    {
+      "id": "constructor_free.display_mode_collection.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.DisplayModeCollection"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Object",
+        2,
+        "Microsoft.Xna.Framework.Graphics.dll",
+        "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+        1,
+        false,
+        false,
+        [
+          [
+            "assembly",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "constructor_free.display_mode_collection.projection",
+      "operation": "DisplayModeCollection.Projection",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          1920,
+          800,
+          1280
+        ],
+        false,
+        true,
+        [
+          1920,
+          1280
+        ],
+        [
+          800
+        ],
+        [
+
+        ],
+        [
+
+        ],
+        1,
+        false,
+        [
+          "GetEnumerator",
+          "[]"
+        ],
+        false,
+        "RangeError",
+        "TypeError"
+      ]
+    }
+  ]
+}

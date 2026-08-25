@@ -733,12 +733,13 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     # types it names remain absent.
     %w[RenderTarget2D RenderTargetCube TextureCube Texture3D VertexBuffer IndexBuffer
        VertexDeclaration BlendState DepthStencilState RasterizerState SamplerState Effect
-       BasicEffect GraphicsAdapter DisplayModeCollection].each do |absent|
+       BasicEffect GraphicsAdapter].each do |absent|
       refute_includes source, "class #{absent}\n"
       refute_includes source, "class #{absent} <"
     end
     # Foundation 24 and 25 added these managed descriptors.
-    %w[PresentationParameters DisplayMode].each { |present| assert_includes source, "class #{present}\n" }
+    %w[PresentationParameters DisplayMode DisplayModeCollection]
+      .each { |present| assert_includes source, "class #{present}\n" }
     %w[ResourceCreatedEventArgs ResourceDestroyedEventArgs]
       .each { |present| assert_includes source, "class #{present} <" }
     %w[SetRenderTarget SetRenderTargets DrawPrimitives DrawIndexedPrimitives GetRenderTargets]

@@ -60,6 +60,7 @@
     {"name": "Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.PresentationParameters", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.DisplayMode", "complete": true},
+    {"name": "Microsoft.Xna.Framework.Graphics.DisplayModeCollection", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs", "complete": true},
     {"name": "Microsoft.Xna.Framework.Input.KeyState", "complete": true},

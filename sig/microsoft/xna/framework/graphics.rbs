@@ -12,6 +12,11 @@ module Microsoft
           def to_s: () -> String
         end
 
+        class DisplayModeCollection
+          def GetEnumerator: () -> Enumerator[DisplayMode, untyped]
+          def []: (SurfaceFormat | Integer format) -> Enumerator[DisplayMode, untyped]
+        end
+
         class ResourceCreatedEventArgs < CNA::Runtime::EventArgs
           attr_reader Resource: untyped
         end

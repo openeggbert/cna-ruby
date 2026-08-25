@@ -4926,6 +4926,60 @@
       "rubyName": "Microsoft::Xna::Framework::Graphics::DisplayMode"
     },
     {
+      "name": "Microsoft.Xna.Framework.Graphics.DisplayModeCollection",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+        "System.Collections.Generic.IEnumerable`1[Microsoft.Xna.Framework.Graphics.DisplayMode]",
+        "System.Collections.IEnumerable"
+      ],
+      "directInterfaces": [
+        "System.Collections.Generic.IEnumerable`1[Microsoft.Xna.Framework.Graphics.DisplayMode]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "GetEnumerator",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Collections.Generic.IEnumerator`1[Microsoft.Xna.Framework.Graphics.DisplayMode]",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Item",
+          "type": "System.Collections.Generic.IEnumerable`1[Microsoft.Xna.Framework.Graphics.DisplayMode]",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+            {
+              "name": "format",
+              "type": "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::DisplayModeCollection"
+    },
+    {
       "name": "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs",
       "kind": "class",
       "flags": false,

@@ -315,7 +315,7 @@ class PureManagedEnumBatchTest < Minitest::Test
     %i[RenderTarget2D RenderTargetCube TextureCube Texture3D VertexBuffer IndexBuffer
        DynamicVertexBuffer DynamicIndexBuffer VertexDeclaration BlendState DepthStencilState
        RasterizerState SamplerState SamplerStateCollection TextureCollection Effect BasicEffect
-       EffectParameter EffectTechnique GraphicsAdapter DisplayModeCollection
+       EffectParameter EffectTechnique GraphicsAdapter
        OcclusionQuery].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end

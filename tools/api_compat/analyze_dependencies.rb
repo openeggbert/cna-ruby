@@ -91,6 +91,21 @@ rank = lambda do |candidate|
   [candidate.fetch("expectedRubyIdentities"), candidate.fetch("name")]
 end
 
+# A constructed generic hides its definition behind its type arguments: the signature
+# `System.Collections.Generic.List`1[Microsoft.Xna.Framework.Graphics.DisplayMode]` names an XNA
+# type, but what it actually requires is a projection of `List`1`. Every signature is therefore
+# reduced to the BCL identities it really names — the outer definition, plus the whole signature
+# when it names no XNA type at all — and the same reduction is applied on both sides, so a generic
+# definition a complete type already projects counts as mapped.
+bcl_identities = lambda do |signature|
+  stripped = signature.sub(/&\z/, "")
+  identities = []
+  identities << stripped unless reference_by_name.keys.any? { |name| stripped.include?(name) }
+  outer = stripped.split("[", 2).first
+  identities << outer if outer != stripped && !reference_by_name.key?(outer)
+  identities.uniq
+end
+
 # A BCL type counts as mapped when a type that is already complete projects it, or when the
 # runtime's BCL projection register declares it. Both halves stay derived from measured work rather
 # than an aspirational hand-maintained list: the register is resolved and shape-checked by the API
@@ -104,10 +119,7 @@ mapped_bcl = target.fetch("types").each_with_object(register_bcl.dup) do |type, 
     signatures.concat([member["type"], member["returnType"]])
     signatures.concat(member.fetch("parameters", []).map { |parameter| parameter["type"] })
   end
-  signatures.compact.each do |signature|
-    stripped = signature.sub(/&\z/, "")
-    found << stripped unless reference_by_name.keys.any? { |name| stripped.include?(name) }
-  end
+  signatures.compact.each { |signature| found.concat(bcl_identities.call(signature)) }
 end.uniq.sort
 
 unmapped_bcl = lambda do |type|
@@ -116,13 +128,8 @@ unmapped_bcl = lambda do |type|
     signatures.concat([member["type"], member["returnType"]])
     signatures.concat(member.fetch("parameters", []).map { |parameter| parameter["type"] })
   end
-  signatures.compact.filter_map do |signature|
-    stripped = signature.sub(/&\z/, "")
-    next if reference_by_name.keys.any? { |name| stripped.include?(name) }
-    next if mapped_bcl.include?(stripped)
-
-    stripped
-  end.uniq.sort
+  signatures.compact.flat_map { |signature| bcl_identities.call(signature) }
+            .reject { |identity| mapped_bcl.include?(identity) }.uniq.sort
 end
 
 # Why a dependency-complete candidate still cannot be consumed safely.
