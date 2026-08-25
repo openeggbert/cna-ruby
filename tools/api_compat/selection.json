@@ -23,6 +23,8 @@
     {"name": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState", "complete": true},
     {"name": "Microsoft.Xna.Framework.Input.Touch.GestureType", "complete": true},
     {"name": "Microsoft.Xna.Framework.Input.Touch.TouchPanelCapabilities", "complete": true},
+    {"name": "Microsoft.Xna.Framework.Input.Touch.TouchLocation", "complete": true},
+    {"name": "Microsoft.Xna.Framework.Input.Touch.GestureSample", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.SpriteSortMode", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.SpriteEffects", "complete": true},
     {"name": "Microsoft.Xna.Framework.Graphics.ClearOptions", "complete": true},

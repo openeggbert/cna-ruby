@@ -47,6 +47,8 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.DeviceLostException
       Microsoft.Xna.Framework.Graphics.DeviceNotResetException
       Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException
+      Microsoft.Xna.Framework.Input.Touch.TouchLocation
+      Microsoft.Xna.Framework.Input.Touch.GestureSample
     ]
   ).compact.uniq.freeze
 
@@ -177,9 +179,9 @@ class DependencyFrontierTest < Minitest::Test
     end
   end
 
-  def test_every_type_completed_in_foundations_16_to_22_classifies_as_consumable
+  def test_every_type_completed_in_foundations_16_to_23_classifies_as_consumable
     mapped = mapped_bcl_from_complete_types
-    assert_equal 39, CONSUMED.length
+    assert_equal 41, CONSUMED.length
 
     CONSUMED.each do |name|
       type = BY_NAME.fetch(name)
@@ -190,10 +192,10 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 32, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 31, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
-    assert_equal 7, REPORT.fetch("consumableCandidates").length
+    assert_equal 5, REPORT.fetch("consumableCandidates").length
     assert_equal REPORT.fetch("consumableCandidates").length, REPORT.fetch("blockerSummary").fetch("NONE")
     assert_equal "global-consumable-rank", REPORT.fetch("selectionRoute")
     refute_nil REPORT["selectedNext"]
@@ -226,8 +228,6 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.GameComponentCollectionEventArgs
       Microsoft.Xna.Framework.Graphics.DisplayMode
       Microsoft.Xna.Framework.Graphics.PresentationParameters
-      Microsoft.Xna.Framework.Input.Touch.GestureSample
-      Microsoft.Xna.Framework.Input.Touch.TouchLocation
     ], REPORT.fetch("consumableCandidates").map { |candidate| candidate.fetch("name") }.sort
 
     REPORT.fetch("consumableCandidates").each do |candidate|
@@ -346,21 +346,32 @@ class DependencyFrontierTest < Minitest::Test
     end
   end
 
-  def test_touch_location_is_now_consumable_from_pinned_il
+  def test_touch_location_and_gesture_sample_were_consumed_from_pinned_il
     # It was deferred only because the retained assemblies were believed absent. They are not: the
     # Input.Touch assembly is hash-pinned, its IL carries every member, and none of it is native.
-    candidate = REPORT.fetch("dependencyCompleteCandidates")
-                      .find { |item| item.fetch("name") == "Microsoft.Xna.Framework.Input.Touch.TouchLocation" }
-    refute_nil candidate
-    assert_empty candidate.fetch("blockers")
-    assert_empty candidate.fetch("unmappedBclTypes")
-    assert_empty candidate.fetch("eventMembers")
-    assert_includes candidate.fetch("dependencies"), "Microsoft.Xna.Framework.Input.Touch.TouchLocationState"
-    assert_includes candidate.fetch("behaviourBearingMembers"), "TryGetPreviousLocation"
-    assert_includes candidate.fetch("behaviourBearingMembers"), "GetHashCode"
-    assert candidate.fetch("ilDerivationRequired")
-    assert candidate.fetch("ilAvailable")
-    assert_equal "Microsoft.Xna.Framework.Input.Touch.dll", candidate.fetch("ilAssembly")
-    refute IL.fetch("types").fetch("Microsoft.Xna.Framework.Input.Touch.TouchLocation").fetch("nativeReachable")
+    %w[Microsoft.Xna.Framework.Input.Touch.TouchLocation
+       Microsoft.Xna.Framework.Input.Touch.GestureSample].each do |name|
+      assert_includes STRICT.fetch("completeTypeNames"), name, name
+      assert_equal 0, STRICT.fetch("localDiagnostics").fetch(name), name
+      refute REPORT.fetch("dependencyCompleteCandidates").any? { |item| item.fetch("name") == name }, name
+      entry = IL.fetch("types").fetch(name)
+      assert_equal "Microsoft.Xna.Framework.Input.Touch.dll", entry.fetch("assembly"), name
+      assert_equal "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+                   entry.fetch("assemblySha256"), name
+      refute entry.fetch("nativeReachable"), name
+    end
+    # TouchPanel and TouchCollection are what read a device. Neither is dependency-complete — the
+    # collection's nested enumerator has no IL under a name the disassembler emits — so neither
+    # reaches the frontier at all, and both stay missing.
+    %w[Microsoft.Xna.Framework.Input.Touch.TouchPanel
+       Microsoft.Xna.Framework.Input.Touch.TouchCollection].each do |name|
+      assert_includes STRICT.fetch("missingTypeNames"), name
+      refute REPORT.fetch("dependencyCompleteCandidates").any? { |item| item.fetch("name") == name }, name
+    end
+    enumerator = REPORT.fetch("dependencyCompleteCandidates")
+                       .find { |item| item.fetch("name") == "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator" }
+    refute_nil enumerator
+    assert_equal ["IL_UNAVAILABLE"], enumerator.fetch("blockers")
+    refute enumerator.fetch("ilAvailable")
   end
 end

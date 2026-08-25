@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, and the Foundation 22 XNA exception cluster separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, and the Foundation 23 Input.Touch value types separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
   "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
@@ -29,6 +29,9 @@
   "milestone22SourceGraphicsAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
   "milestone22MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 33968ec017e5cd7427765aefac23db0fa82ccb53ebadbe4209bab1466381430b, 366 observations) was proved before appending 16 observations",
   "milestone22CorpusCorrection": "the 9 Foundation 21 bcl_projection.exception.* rows are PURE_XNA_DERIVED but each carried one mapping fact — whether the binding had selected the type. That element was removed; the replay proved every retained element of every corrected row unchanged, and no other row was touched. Selection is now recorded by the Foundation 22 RUBY_MAPPING_QUALIFICATION rows.",
+  "milestone23CorpusCorrection": "bcl_projection.register snapshotted the whole BCL register, so it could not survive the register legitimately growing. It now pins only the three identities Foundation 21 established, passed as args. The replay proved each of those three still maps exactly as the row recorded, that System.Type stays unprojected and that no ::System namespace exists.",
+  "milestone23SourceAssemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+  "milestone23MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 ec9075a77771f5bceeb5514859544d20717d579fa7c9e35a837c3565f0a296fc, 382 observations) was proved before appending 9 additive observations",
   "observations": [
     {
       "id": "math.clamp.low",
@@ -10985,30 +10988,32 @@
     {
       "id": "bcl_projection.register",
       "operation": "BclProjection.Register",
-      "args": [],
+      "args": [
+        "System.EventArgs",
+        "System.Exception",
+        "System.Runtime.InteropServices.ExternalException"
+      ],
       "provenance": "RUBY_MAPPING_QUALIFICATION",
       "expected": [
-        {
-          "System.EventArgs": "CNA::Runtime::EventArgs"
-        },
-        {
-          "System.Exception": "StandardError",
-          "System.Runtime.InteropServices.ExternalException": "StandardError"
-        },
         [
-          "System.EventArgs",
-          "System.Exception",
-          "System.Runtime.InteropServices.ExternalException"
-        ],
-        [
-          "CNA::Runtime::EventArgs",
-          "StandardError",
-          "StandardError"
-        ],
-        [
-          false,
-          true,
-          true
+          [
+            "System.EventArgs",
+            "CNA::Runtime::EventArgs",
+            false,
+            true
+          ],
+          [
+            "System.Exception",
+            "StandardError",
+            true,
+            false
+          ],
+          [
+            "System.Runtime.InteropServices.ExternalException",
+            "StandardError",
+            true,
+            false
+          ]
         ],
         null,
         false
@@ -11634,6 +11639,236 @@
           "raised"
         ],
         "TypeError"
+      ]
+    },
+    {
+      "id": "touch_value.touch_location.il_contract",
+      "operation": "TouchValue.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Input.Touch.TouchLocation"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "struct",
+        true,
+        "System.ValueType",
+        [
+          "System.IEquatable`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]"
+        ],
+        12,
+        "Microsoft.Xna.Framework.Input.Touch.dll",
+        "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+        7,
+        false,
+        [
+          [
+            "public",
+            false
+          ],
+          [
+            "public",
+            false
+          ],
+          [
+            "assembly",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "touch_value.gesture_sample.il_contract",
+      "operation": "TouchValue.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Input.Touch.GestureSample"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "struct",
+        true,
+        "System.ValueType",
+        [],
+        7,
+        "Microsoft.Xna.Framework.Input.Touch.dll",
+        "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+        6,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "touch_value.touch_location.construction",
+      "operation": "TouchLocation.Construction",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        3,
+        "Moved",
+        [
+          1.5,
+          -2.25
+        ],
+        3,
+        "Moved",
+        [
+          1.5,
+          -2.25
+        ],
+        false,
+        "ArgumentError",
+        "TypeError",
+        "RangeError"
+      ]
+    },
+    {
+      "id": "touch_value.touch_location.previous_location",
+      "operation": "TouchLocation.PreviousLocation",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        false,
+        -1,
+        "Invalid",
+        [
+          0.0,
+          0.0
+        ],
+        true,
+        3,
+        "Pressed",
+        [
+          0.5,
+          0.25
+        ],
+        false,
+        [
+          false,
+          true,
+          true,
+          true
+        ]
+      ]
+    },
+    {
+      "id": "touch_value.touch_location.equality",
+      "operation": "TouchLocation.Equality",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "id": "touch_value.touch_location.hash_string",
+      "operation": "TouchLocation.HashString",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        -3145725,
+        -3145725,
+        -3145725,
+        -3145724,
+        0,
+        "{Position:{X:1.5 Y:-2.25}}",
+        "{Position:{X:1.5 Y:-2.25}}",
+        true
+      ]
+    },
+    {
+      "id": "touch_value.gesture_sample.storage",
+      "operation": "GestureSample.Storage",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        5,
+        1.25,
+        [
+          1.0,
+          2.0
+        ],
+        [
+          3.0,
+          4.0
+        ],
+        [
+          5.0,
+          6.0
+        ],
+        [
+          7.0,
+          8.0
+        ],
+        false,
+        false,
+        [
+          "Delta",
+          "Delta2",
+          "GestureType",
+          "Position",
+          "Position2",
+          "Timestamp",
+          "clone",
+          "dup"
+        ],
+        "TypeError",
+        "TypeError",
+        "ArgumentError"
+      ]
+    },
+    {
+      "id": "bcl_projection.time_span",
+      "operation": "BclProjection.TimeSpan",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "Float",
+        1.25,
+        true,
+        "TypeError",
+        "TypeError",
+        1.5,
+        0.25
+      ]
+    },
+    {
+      "id": "bcl_projection.register_time_span",
+      "operation": "BclProjection.Register",
+      "args": [
+        "System.TimeSpan"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          [
+            "System.TimeSpan",
+            "Float",
+            false,
+            true
+          ]
+        ],
+        null,
+        false
       ]
     }
   ]

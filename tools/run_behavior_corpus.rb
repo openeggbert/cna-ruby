@@ -183,6 +183,7 @@ def behavior_group(item)
   return "BCL_PROJECTION" if id.start_with?("bcl_projection.")
   return "XNA_EXCEPTION" if id.start_with?("xna_exception.")
   return "IL_PROVENANCE" if id.start_with?("il_provenance.")
+  return "TOUCH_VALUE" if id.start_with?("touch_value.")
 
   id.split(".").first.upcase
 end
@@ -418,6 +419,87 @@ def execute(item)
       interface.protected_instance_methods(false) + interface.private_instance_methods(false),
       BATCH_SIGNATURES.fetch(clr_name).fetch("members").any? { |member| member.fetch("kind") == "event" }
     ]
+  when "TouchValue.IlContract"
+    clr_name = item.fetch("args").fetch(0)
+    entry = IL_INVENTORY.fetch("types").fetch(clr_name)
+    pinned = BATCH_REFERENCE.fetch(clr_name)
+    [pinned.fetch("kind"), pinned.fetch("sealed"), pinned.fetch("baseType"),
+     pinned.fetch("directInterfaces"), pinned.fetch("members").length,
+     entry.fetch("assembly"), entry.fetch("assemblySha256"),
+     entry.fetch("declaredFields"), entry.fetch("nativeReachable"),
+     entry.fetch("constructors").map { |ctor| [ctor.fetch("access"), ctor.fetch("pureBaseForward")] }]
+  when "TouchLocation.Construction"
+    plain = TOUCH::TouchLocation.new(3, TOUCH::TouchLocationState::Moved, F::Vector2.new(1.5, -2.25))
+    chained = TOUCH::TouchLocation.new(3, TOUCH::TouchLocationState::Moved, F::Vector2.new(1.5, -2.25),
+                                       TOUCH::TouchLocationState::Pressed, F::Vector2.new(0.5, 0.25))
+    [plain.Id, plain.State.to_s, vector_result(plain.Position),
+     chained.Id, chained.State.to_s, vector_result(chained.Position),
+     plain.Position.equal?(plain.Position),
+     error_name { TOUCH::TouchLocation.new(1, TOUCH::TouchLocationState::Moved) },
+     error_name { TOUCH::TouchLocation.new(1, TOUCH::TouchLocationState::Moved, 5) },
+     error_name { TOUCH::TouchLocation.new(2**31, TOUCH::TouchLocationState::Moved, F::Vector2.new(0, 0)) }]
+  when "TouchLocation.PreviousLocation"
+    plain = TOUCH::TouchLocation.new(3, TOUCH::TouchLocationState::Moved, F::Vector2.new(1.5, -2.25))
+    chained = TOUCH::TouchLocation.new(3, TOUCH::TouchLocationState::Moved, F::Vector2.new(1.5, -2.25),
+                                       TOUCH::TouchLocationState::Pressed, F::Vector2.new(0.5, 0.25))
+    empty_found, empty = plain.TryGetPreviousLocation
+    found, previous = chained.TryGetPreviousLocation
+    [empty_found, empty.Id, empty.State.to_s, vector_result(empty.Position),
+     found, previous.Id, previous.State.to_s, vector_result(previous.Position),
+     previous.TryGetPreviousLocation.first,
+     %w[Invalid Released Pressed Moved].map do |state|
+       TOUCH::TouchLocation.new(1, TOUCH::TouchLocationState::Moved, F::Vector2.new(0, 0),
+                                TOUCH::TouchLocationState.const_get(state), F::Vector2.new(1, 1))
+                           .TryGetPreviousLocation.first
+     end]
+  when "TouchLocation.Equality"
+    base = TOUCH::TouchLocation.new(3, TOUCH::TouchLocationState::Moved, F::Vector2.new(1.5, -2.25))
+    other_state = TOUCH::TouchLocation.new(3, TOUCH::TouchLocationState::Released, F::Vector2.new(1.5, -2.25))
+    other_id = TOUCH::TouchLocation.new(4, TOUCH::TouchLocationState::Moved, F::Vector2.new(1.5, -2.25))
+    other_x = TOUCH::TouchLocation.new(3, TOUCH::TouchLocationState::Moved, F::Vector2.new(9.0, -2.25))
+    prev_a = TOUCH::TouchLocation.new(3, TOUCH::TouchLocationState::Moved, F::Vector2.new(1.5, -2.25),
+                                      TOUCH::TouchLocationState::Pressed, F::Vector2.new(0.5, 0.25))
+    prev_b = TOUCH::TouchLocation.new(3, TOUCH::TouchLocationState::Moved, F::Vector2.new(1.5, -2.25),
+                                      TOUCH::TouchLocationState::Released, F::Vector2.new(0.5, 0.25))
+    nan = TOUCH::TouchLocation.new(1, TOUCH::TouchLocationState::Pressed, F::Vector2.new(Float::NAN, 0.0))
+    # Equals ignores state and prevState; op_Equality compares all seven fields.
+    [base.Equals(other_state), base == other_state,
+     prev_a.Equals(prev_b), prev_a == prev_b,
+     base.Equals(other_id), base == other_id,
+     base.Equals(other_x), base == other_x,
+     base.Equals(prev_a), base == prev_a,
+     base.Equals(:not_a_location), base == :not_a_location,
+     base == base.dup, base != base.dup, base != other_id,
+     nan == nan.dup, nan.Equals(nan.dup)]
+  when "TouchLocation.HashString"
+    base = TOUCH::TouchLocation.new(3, TOUCH::TouchLocationState::Moved, F::Vector2.new(1.5, -2.25))
+    chained = TOUCH::TouchLocation.new(3, TOUCH::TouchLocationState::Moved, F::Vector2.new(1.5, -2.25),
+                                       TOUCH::TouchLocationState::Pressed, F::Vector2.new(0.5, 0.25))
+    [base.GetHashCode, chained.GetHashCode,
+     TOUCH::TouchLocation.new(3, TOUCH::TouchLocationState::Released, F::Vector2.new(1.5, -2.25)).GetHashCode,
+     TOUCH::TouchLocation.new(4, TOUCH::TouchLocationState::Moved, F::Vector2.new(1.5, -2.25)).GetHashCode,
+     TOUCH::TouchLocation.new(0, TOUCH::TouchLocationState::Invalid, F::Vector2.new(0.0, -0.0)).GetHashCode,
+     base.ToString, chained.ToString, base.to_s == base.ToString]
+  when "GestureSample.Storage"
+    shared = F::Vector2.new(1, 2)
+    sample = TOUCH::GestureSample.new(TOUCH::GestureType::Tap | TOUCH::GestureType::Hold, 1.25,
+                                      F::Vector2.new(1, 2), F::Vector2.new(3, 4),
+                                      F::Vector2.new(5, 6), F::Vector2.new(7, 8))
+    copies = TOUCH::GestureSample.new(TOUCH::GestureType::Tap, 0.0, shared, shared, shared, shared)
+    [sample.GestureType.to_i, sample.Timestamp,
+     vector_result(sample.Position), vector_result(sample.Position2),
+     vector_result(sample.Delta), vector_result(sample.Delta2),
+     copies.Position.equal?(copies.Position), copies.Position.equal?(copies.Position2),
+     TOUCH::GestureSample.public_instance_methods(false).map(&:to_s).sort,
+     error_name { TOUCH::GestureSample.new(TOUCH::GestureType::Tap, "x", shared, shared, shared, shared) },
+     error_name { TOUCH::GestureSample.new(TOUCH::GestureType::Tap, 0.0, 1, 2, 3, 4) },
+     error_name { TOUCH::GestureSample.new(TOUCH::GestureType::Tap, 0.0) }]
+  when "BclProjection.TimeSpan"
+    register = CNA::Runtime::BclProjection
+    [register::TYPES.fetch("System.TimeSpan"),
+     register.time_span(1.25), register.time_span(2).instance_of?(Float),
+     error_name { register.time_span("1.25") }, error_name { register.time_span(nil) },
+     F::GameTime.new(1.5, 0.25).TotalGameTime, F::GameTime.new(1.5, 0.25).ElapsedGameTime]
   when "XnaException.IlContract"
     clr_name = item.fetch("args").fetch(0)
     entry = IL_INVENTORY.fetch("types").fetch(clr_name)
@@ -458,10 +540,14 @@ def execute(item)
     names = item.fetch("args")
     names.map { |name| [name, IL_INVENTORY.fetch("types").fetch(name).fetch("nativeReachable")] }
   when "BclProjection.Register"
+    # Each milestone pins the identities it established rather than a whole-register snapshot, so
+    # a later milestone adding an entry never rewrites an earlier row.
     register = CNA::Runtime::BclProjection
-    [register::TYPES, register::EXCEPTION_BASES, register.identities,
-     register.identities.map { |identity| register.ruby_type(identity) },
-     register.identities.map { |identity| register.exception_base?(identity) },
+    identities = item.fetch("args")
+    [identities.map do |identity|
+       [identity, register.ruby_type(identity), register.exception_base?(identity),
+        register::TYPES.key?(identity)]
+     end,
      register.ruby_type("System.Type"), Object.const_defined?(:System, false)]
   when "BclProjection.ExceptionBaseRule"
     roots = CNA::Runtime::BclProjection::EXCEPTION_BASES.values.uniq

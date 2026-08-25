@@ -142,9 +142,15 @@ unless exceptions["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
   abort "Milestone 22 XNA exception evidence lacks observation-level provenance"
 end
 observations.concat(exceptions.fetch("observations"))
+touch_value_path = File.expand_path("../behavior/xna40-touch-value-values.json", __dir__)
+touch_values = JSON.parse(File.read(touch_value_path))
+unless touch_values["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
+  abort "Milestone 23 Input.Touch value evidence lacks observation-level provenance"
+end
+observations.concat(touch_values.fetch("observations"))
 abort "duplicate behavior observation id" unless observations.map { |item| item.fetch("id") }.uniq.length == observations.length
 result = source_corpus.merge(
-  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, and the Foundation 22 XNA exception cluster separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, and the Foundation 23 Input.Touch value types separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category" => "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256" => EXPECTED_SHA256,
   "milestone3SourceAssemblySha256" => milestone.fetch("sourceAssemblySha256"),
@@ -167,6 +173,7 @@ result = source_corpus.merge(
   "milestone21SourceAssemblySha256" => bcl.fetch("sourceAssemblySha256"),
   "milestone22SourceAssemblySha256" => exceptions.fetch("sourceAssemblySha256"),
   "milestone22SourceGraphicsAssemblySha256" => exceptions.fetch("sourceGraphicsAssemblySha256"),
+  "milestone23SourceAssemblySha256" => touch_values.fetch("sourceAssemblySha256"),
   # Foundation 16 was merged by documented deterministic replay because this reconstructed host
   # does not carry the upstream source. Re-running this importer with the real source restores the
   # same observation set; it must not be run against any other artifact.

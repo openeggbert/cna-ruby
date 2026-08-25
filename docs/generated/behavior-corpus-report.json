@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, and the Foundation 22 XNA exception cluster separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
-  "OBSERVATIONS": 382,
-  "ASSERTIONS": 382,
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, and the Foundation 23 Input.Touch value types separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "OBSERVATIONS": 391,
+  "ASSERTIONS": 391,
   "FAILURES": 0,
   "provenanceCounts": {
-    "PURE_XNA_DERIVED": 326,
-    "RUBY_MAPPING_QUALIFICATION": 56
+    "PURE_XNA_DERIVED": 328,
+    "RUBY_MAPPING_QUALIFICATION": 63
   },
   "groupCounts": {
-    "BCL_PROJECTION": 11,
+    "BCL_PROJECTION": 13,
     "BINARY32": 2,
     "BOUNDING_BOX": 3,
     "BOUNDING_FRUSTUM": 8,
@@ -56,6 +56,7 @@
     "RAY": 3,
     "RECTANGLE": 13,
     "TOUCH_CLOSURE": 2,
+    "TOUCH_VALUE": 7,
     "VECTOR2": 8,
     "VECTOR3": 7,
     "VECTOR4": 4,

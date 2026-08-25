@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 119,
-  "completeTypes": 113,
+  "targetTypes": 121,
+  "completeTypes": 115,
   "partialTypes": [
     "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -11,7 +11,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 138,
+  "missingTypes": 136,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME or RUNTIME_DATA blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -60,7 +60,8 @@
   ],
   "bclProjectionRegister": {
     "types": {
-      "System.EventArgs": "CNA::Runtime::EventArgs"
+      "System.EventArgs": "CNA::Runtime::EventArgs",
+      "System.TimeSpan": "Float"
     },
     "exceptionBases": {
       "System.Exception": "StandardError",
@@ -71,8 +72,9 @@
     "BCL_PROJECTION": 11,
     "BCL_PROJECTION+NATIVE_RUNTIME": 3,
     "BCL_PROJECTION+RUNTIME_DATA": 1,
+    "IL_UNAVAILABLE": 1,
     "NATIVE_RUNTIME": 2,
-    "NONE": 7,
+    "NONE": 5,
     "RUNTIME_DATA": 8
   },
   "consumableCandidates": [
@@ -208,82 +210,6 @@
       "ilDerivationRequired": true,
       "ilAvailable": true,
       "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Input.Touch.GestureSample",
-      "kind": "struct",
-      "expectedRubyIdentities": 7,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Input.Touch.GestureType",
-        "Microsoft.Xna.Framework.Vector2"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Input.Touch.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
-      "kind": "struct",
-      "expectedRubyIdentities": 12,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
-        "Microsoft.Xna.Framework.Vector2"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "TryGetPreviousLocation",
-        "ToString",
-        "Equals",
-        "GetHashCode",
-        "op_Equality",
-        "op_Inequality"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Input.Touch.dll",
       "nativeReachableMethods": [
 
       ],
@@ -711,6 +637,41 @@
       "runtimeDataDetail": "raised only by GraphicsDevice.ResourceDestroyed; the class declares no public constructor and no producer exists"
     },
     {
+      "name": "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator",
+      "kind": "struct",
+      "expectedRubyIdentities": 3,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Input.Touch.TouchLocation"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "IL_UNAVAILABLE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        "MoveNext",
+        "Dispose"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": false,
+      "ilAssembly": null,
+      "nativeReachableMethods": [
+
+      ],
+      "runtimeDataDetail": null
+    },
+    {
       "name": "Microsoft.Xna.Framework.Media.VisualizationData",
       "kind": "class",
       "expectedRubyIdentities": 3,
@@ -1101,41 +1062,6 @@
       "runtimeDataDetail": "values come from XACT audio renderer enumeration; no audio engine exists in this binding and no renderer has been enumerated"
     },
     {
-      "name": "Microsoft.Xna.Framework.Input.Touch.GestureSample",
-      "kind": "struct",
-      "expectedRubyIdentities": 7,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Input.Touch.GestureType",
-        "Microsoft.Xna.Framework.Vector2"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Input.Touch.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    },
-    {
       "name": "Microsoft.Xna.Framework.Design.MathTypeConverter",
       "kind": "class",
       "expectedRubyIdentities": 8,
@@ -1298,47 +1224,6 @@
 
       ],
       "runtimeDataDetail": "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have"
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
-      "kind": "struct",
-      "expectedRubyIdentities": 12,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
-        "Microsoft.Xna.Framework.Vector2"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "TryGetPreviousLocation",
-        "ToString",
-        "Equals",
-        "GetHashCode",
-        "op_Equality",
-        "op_Inequality"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Input.Touch.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
     },
     {
       "name": "Microsoft.Xna.Framework.Graphics.PresentationParameters",

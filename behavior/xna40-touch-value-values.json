@@ -1,0 +1,253 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+  "derivation": "Foundation 23 Input.Touch value types. Contract rows come from the pinned public metadata and from docs/generated/xna-il-inventory.json, which tools/api_compat/build_il_inventory.rb derives from Microsoft.Xna.Framework.Input.Touch.dll (SHA-256 b0585224…) admitted by exact hash. Mapping rows encode what that assembly's IL establishes: both constructors are pure storage with no validation; the three-argument form leaves prevState at the literal 0 (Invalid) and prevX/prevY at 0; TryGetPreviousLocation fills its out value on both branches, answering id -1 and zeros when there is none; Equals compares id, x, y, prevX and prevY while op_Equality compares all seven fields; GetHashCode sums only id, x and y; ToString is the position-only format; and every comparison is bne.un so NaN is never equal to itself. None is snapshotted from the cna-ruby implementation.",
+  "observations": [
+    {
+      "id": "touch_value.touch_location.il_contract",
+      "operation": "TouchValue.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Input.Touch.TouchLocation"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "struct",
+        true,
+        "System.ValueType",
+        [
+          "System.IEquatable`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]"
+        ],
+        12,
+        "Microsoft.Xna.Framework.Input.Touch.dll",
+        "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+        7,
+        false,
+        [
+          [
+            "public",
+            false
+          ],
+          [
+            "public",
+            false
+          ],
+          [
+            "assembly",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "touch_value.gesture_sample.il_contract",
+      "operation": "TouchValue.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Input.Touch.GestureSample"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "struct",
+        true,
+        "System.ValueType",
+        [
+
+        ],
+        7,
+        "Microsoft.Xna.Framework.Input.Touch.dll",
+        "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+        6,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "touch_value.touch_location.construction",
+      "operation": "TouchLocation.Construction",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        3,
+        "Moved",
+        [
+          1.5,
+          -2.25
+        ],
+        3,
+        "Moved",
+        [
+          1.5,
+          -2.25
+        ],
+        false,
+        "ArgumentError",
+        "TypeError",
+        "RangeError"
+      ]
+    },
+    {
+      "id": "touch_value.touch_location.previous_location",
+      "operation": "TouchLocation.PreviousLocation",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        false,
+        -1,
+        "Invalid",
+        [
+          0.0,
+          0.0
+        ],
+        true,
+        3,
+        "Pressed",
+        [
+          0.5,
+          0.25
+        ],
+        false,
+        [
+          false,
+          true,
+          true,
+          true
+        ]
+      ]
+    },
+    {
+      "id": "touch_value.touch_location.equality",
+      "operation": "TouchLocation.Equality",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "id": "touch_value.touch_location.hash_string",
+      "operation": "TouchLocation.HashString",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        -3145725,
+        -3145725,
+        -3145725,
+        -3145724,
+        0,
+        "{Position:{X:1.5 Y:-2.25}}",
+        "{Position:{X:1.5 Y:-2.25}}",
+        true
+      ]
+    },
+    {
+      "id": "touch_value.gesture_sample.storage",
+      "operation": "GestureSample.Storage",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        5,
+        1.25,
+        [
+          1.0,
+          2.0
+        ],
+        [
+          3.0,
+          4.0
+        ],
+        [
+          5.0,
+          6.0
+        ],
+        [
+          7.0,
+          8.0
+        ],
+        false,
+        false,
+        [
+          "Delta",
+          "Delta2",
+          "GestureType",
+          "Position",
+          "Position2",
+          "Timestamp",
+          "clone",
+          "dup"
+        ],
+        "TypeError",
+        "TypeError",
+        "ArgumentError"
+      ]
+    },
+    {
+      "id": "bcl_projection.time_span",
+      "operation": "BclProjection.TimeSpan",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "Float",
+        1.25,
+        true,
+        "TypeError",
+        "TypeError",
+        1.5,
+        0.25
+      ]
+    },
+    {
+      "id": "bcl_projection.register_time_span",
+      "operation": "BclProjection.Register",
+      "args": [
+        "System.TimeSpan"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          [
+            "System.TimeSpan",
+            "Float",
+            false,
+            true
+          ]
+        ],
+        null,
+        false
+      ]
+    }
+  ]
+}

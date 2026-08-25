@@ -1768,16 +1768,23 @@ class ApiVerifierTest < Minitest::Test
     end
   end
 
-  def test_touch_closure_adds_no_touch_panel_surface
+  def test_touch_value_types_are_selected_but_no_touch_panel_surface_is
     reference = reference_contract
-    %w[TouchPanel TouchCollection TouchLocation GestureSample].each do |short|
+    strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
+
+    # Foundation 23 completed the two publicly constructible value types from pinned IL.
+    %w[TouchLocation GestureSample].each do |short|
+      full = "Microsoft.Xna.Framework.Input.Touch.#{short}"
+      assert signature_contract.fetch("types").any? { |type| type.fetch("name") == full }, full
+      assert_includes strict.fetch("completeTypeNames"), full
+    end
+
+    # Nothing that reads a touch device is selected.
+    %w[TouchPanel TouchCollection].each do |short|
       full = "Microsoft.Xna.Framework.Input.Touch.#{short}"
       assert reference.fetch("types").any? { |type| type.fetch("name") == full }, full
       refute signature_contract.fetch("types").any? { |type| type.fetch("name") == full }, full
-    end
-    strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
-    %w[TouchPanel TouchCollection TouchLocation GestureSample].each do |short|
-      assert_includes strict.fetch("missingTypeNames"), "Microsoft.Xna.Framework.Input.Touch.#{short}"
+      assert_includes strict.fetch("missingTypeNames"), full
     end
   end
 

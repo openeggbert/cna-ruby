@@ -394,31 +394,31 @@
       "id": "bcl_projection.register",
       "operation": "BclProjection.Register",
       "args": [
-
+        "System.EventArgs",
+        "System.Exception",
+        "System.Runtime.InteropServices.ExternalException"
       ],
       "provenance": "RUBY_MAPPING_QUALIFICATION",
       "expected": [
-        {
-          "System.EventArgs": "CNA::Runtime::EventArgs"
-        },
-        {
-          "System.Exception": "StandardError",
-          "System.Runtime.InteropServices.ExternalException": "StandardError"
-        },
         [
-          "System.EventArgs",
-          "System.Exception",
-          "System.Runtime.InteropServices.ExternalException"
-        ],
-        [
-          "CNA::Runtime::EventArgs",
-          "StandardError",
-          "StandardError"
-        ],
-        [
-          false,
-          true,
-          true
+          [
+            "System.EventArgs",
+            "CNA::Runtime::EventArgs",
+            false,
+            true
+          ],
+          [
+            "System.Exception",
+            "StandardError",
+            true,
+            false
+          ],
+          [
+            "System.Runtime.InteropServices.ExternalException",
+            "StandardError",
+            true,
+            false
+          ]
         ],
         null,
         false
@@ -456,5 +456,5 @@
       ]
     }
   ],
-  "correction": "Foundation 22 removed one mapping fact (whether the binding had selected the type) from these PURE_XNA_DERIVED rows; every XNA fact they record is unchanged."
+  "correction": "Foundation 22 removed one mapping fact (whether the binding had selected the type) from these PURE_XNA_DERIVED rows; every XNA fact they record is unchanged. Foundation 23 made bcl_projection.register pin only the identities Foundation 21 established, so a growing register never rewrites it."
 }

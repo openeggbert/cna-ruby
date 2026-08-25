@@ -26,6 +26,36 @@ module Microsoft
             def &: (GestureType other) -> GestureType
           end
 
+          class TouchLocation
+            attr_reader Id: Integer
+            attr_reader State: TouchLocationState
+            def Position: () -> Microsoft::Xna::Framework::Vector2
+            def TryGetPreviousLocation: () -> [ bool, TouchLocation ]
+            def Equals: (untyped other) -> bool
+            def GetHashCode: () -> Integer
+            def ToString: () -> String
+            def to_s: () -> String
+            def ==: (untyped other) -> bool
+            def dup: () -> TouchLocation
+            def clone: (?freeze: bool) -> TouchLocation
+          end
+
+          class GestureSample
+            def initialize: (GestureType gestureType, Float timestamp,
+                             Microsoft::Xna::Framework::Vector2 position,
+                             Microsoft::Xna::Framework::Vector2 position2,
+                             Microsoft::Xna::Framework::Vector2 delta,
+                             Microsoft::Xna::Framework::Vector2 delta2) -> void
+            attr_reader GestureType: GestureType
+            attr_reader Timestamp: Float
+            def Position: () -> Microsoft::Xna::Framework::Vector2
+            def Position2: () -> Microsoft::Xna::Framework::Vector2
+            def Delta: () -> Microsoft::Xna::Framework::Vector2
+            def Delta2: () -> Microsoft::Xna::Framework::Vector2
+            def dup: () -> GestureSample
+            def clone: (?freeze: bool) -> GestureSample
+          end
+
           class TouchPanelCapabilities
             attr_reader IsConnected: bool
             attr_reader MaximumTouchCount: Integer

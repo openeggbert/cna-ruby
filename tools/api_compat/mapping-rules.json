@@ -9,7 +9,8 @@
   "refOut": {
     "refInput": "ordinary typed Ruby value input copied at value boundaries",
     "singleOut": "ordinary return value",
-    "multipleOut": "ordered Array following any non-void CLR return"
+    "multipleOut": "ordered Array following any non-void CLR return",
+    "singleOutWithReturn": "ordered Array of [return value, out value]; the CLR fills its out parameter on every branch, so neither half of the result is dropped"
   },
   "arrayTransforms": "caller-owned source/destination Arrays; whole and indexed range forms preserve forward overlap order",
   "properties": {

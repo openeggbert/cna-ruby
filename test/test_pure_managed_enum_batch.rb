@@ -328,11 +328,13 @@ class PureManagedEnumBatchTest < Minitest::Test
       refute M.const_defined?(name, false), "Media::#{name}"
     end
     # Keyboard, KeyboardState and Keys predate these batches. Input::Touch was opened by
-    # Foundation 17 and holds exactly its three managed value contracts and nothing else.
-    assert_equal %i[GestureType TouchLocationState TouchPanelCapabilities], T.constants(false).sort
+    # Foundation 17 and extended by Foundation 23 with the two publicly constructible value types;
+    # nothing that reads a touch device is there.
+    assert_equal %i[GestureSample GestureType TouchLocation TouchLocationState TouchPanelCapabilities],
+                 T.constants(false).sort
     %i[TouchPanel TouchCollection TouchLocation GestureSample TouchLocationState GestureType]
       .each { |name| refute I.const_defined?(name, false), "Input::#{name}" }
-    %i[TouchPanel TouchCollection TouchLocation GestureSample]
+    %i[TouchPanel TouchCollection]
       .each { |name| refute T.const_defined?(name, false), "Input::Touch::#{name}" }
     assert_equal %i[IsDisposed Viewport Clear].sort,
                  G::GraphicsDevice.public_instance_methods(false).sort
@@ -344,12 +346,15 @@ class PureManagedEnumBatchTest < Minitest::Test
      T => %i[GestureType TouchLocationState]}.each do |namespace, expected|
       declared = namespace.constants(false).sort
       selected = expected.select { |name| BATCH.any? { |clr, _, _| clr.end_with?(".#{name}") } }.sort
-      # Input::Touch also carries the TouchPanelCapabilities struct, and Audio carries the three
-      # Foundation 22 exception types; neither is an enum.
-      extras = declared.grep(/Capabilities\z/) + declared.grep(/Exception\z/)
+      # Input::Touch also carries the TouchPanelCapabilities struct and the Foundation 23 value
+      # types TouchLocation and GestureSample; Audio carries the three Foundation 22 exception
+      # types. None of those is an enum.
+      value_types = %i[TouchPanelCapabilities TouchLocation GestureSample]
+      extras = declared & value_types
+      extras += declared.grep(/Exception\z/)
       assert_equal (selected + extras).uniq.sort, declared, namespace.name
       declared.each do |name|
-        next if name == :TouchPanelCapabilities
+        next if value_types.include?(name)
         next if name.to_s.end_with?("Exception")
 
         assert_operator namespace.const_get(name, false), :<, CNA::Runtime::EnumValue
