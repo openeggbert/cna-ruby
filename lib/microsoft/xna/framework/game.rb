@@ -135,7 +135,43 @@ module Microsoft
       class Game
         attr_reader :GraphicsDevice
 
+        # The construction order below is the one the pinned Game.dll `.ctor` performs, in its own
+        # sequence. Two of its steps are field initialisers, which the CLR runs *before* the base
+        # constructor, and the rest run after; what matters to a consumer is the relative order, and
+        # it is preserved exactly:
+        #
+        #   1. the five private component lists                        (field initialiser)
+        #   2. `gameServices = new GameServiceContainer()`             (field initialiser)
+        #   3. `Object..ctor()`
+        #   4. `FrameworkDispatcher.Update()`                          -- see below
+        #   5. `EnsureHost()`                                          -- deferred here
+        #   6. `launchParameters = new LaunchParameters()`             -- LaunchParameters missing
+        #   7. `gameComponents = new GameComponentCollection()`
+        #   8. `gameComponents.ComponentAdded += GameComponentAdded`
+        #   9. `gameComponents.ComponentRemoved += GameComponentRemoved`
+        #  10. `content = new ContentManager(gameServices)`            -- ContentManager missing
+        #  11. `host.Window.Paint += Paint`                            -- GameWindow missing
+        #  12. the clock and the four TimeSpan fields                  -- native timing here
+        #
+        # So **Services exists before Components**, and both exist by the time the constructor
+        # returns. The steps this binding does not perform are each blocked on a type that is
+        # missing or on lifecycle CNA owns, and none of them touches component state.
+        #
+        # Step 4 is the one worth naming. XNA pumps `FrameworkDispatcher.Update()` here and again
+        # from `Game.Update`. The canonical CNA C ABI documents `cna_framework_dispatcher_update` as
+        # pumping "the framework-wide per-frame work **the game loop normally drives**", so the CNA
+        # host this Game delegates its loop to already performs it; and this binding's projection of
+        # the dispatcher carries a recorded deviation -- it needs a live CNA Game on its owner
+        # thread, which XNA's pure static does not. Calling it from here would therefore both pump
+        # the same queue twice and fail on a Game that has not been run, which XNA's constructor
+        # does not. Recorded rather than faked, in both places it appears.
         def initialize
+          @updateable_components = []
+          @currently_updating_components = []
+          @drawable_components = []
+          @currently_drawing_components = []
+          @not_yet_initialized = []
+          @gameServices = GameServiceContainer.new
           @owner_thread = Thread.current
           @generation = CNA::Runtime::Generation.new(@owner_thread)
           @host = nil
@@ -144,9 +180,23 @@ module Microsoft
           @native_children = []
           @disposed = false
           @has_run = false
+          @in_run = false
           @exit_requested = false
           @inside_native_callback = false
+          @gameComponents = GameComponentCollection.new
+          @gameComponents.ComponentAdded.add(method(:game_component_added))
+          @gameComponents.ComponentRemoved.add(method(:game_component_removed))
+          @updateable_order_changed = method(:updateable_update_order_changed)
+          @drawable_order_changed = method(:drawable_draw_order_changed)
         end
+
+        # `get_Components` and `get_Services` are each one `ldfld` and nothing else, so both answer
+        # the same object for the life of the Game. Neither is fallible: the collection and the
+        # container are ordinary managed objects that exist from the moment the constructor returns,
+        # and neither goes through the native host or needs one.
+        def Components = @gameComponents
+
+        def Services = @gameServices
 
         def Run
           raise CNA::DisposedObjectError, "Game is disposed" if disposed?
@@ -172,16 +222,124 @@ module Microsoft
           nil
         end
 
-        # Canonical overridable lifecycle hooks. Their base XNA behavior is no
-        # user work; the real lifecycle and timing are driven by CNA callbacks.
-        def Initialize = nil
+        # The overridable lifecycle hooks, each carrying the base behaviour its pinned IL really
+        # has. Ruby has class inheritance, so `super` *is* the analogue of `base.Initialize()` --
+        # a subclass chooses whether, when and how many times to run the base, exactly as a CLR
+        # override does, and this binding introduces no parallel base-call API. The native host
+        # invokes the virtual Ruby method once and never runs the base itself.
+
+        # `Game.Initialize()`:
+        #
+        #   1. `HookDeviceEvents()` -- reads `Services.GetService(typeof(IGraphicsDeviceService))`
+        #      and subscribes four device events when it answers non-null. `IGraphicsDeviceService`
+        #      is a missing type in this binding, so no Ruby key for it exists, nothing can register
+        #      one, and the whole method is unreachably conditional. It touches no component state.
+        #   2. the drain loop below.
+        #   3. `if (graphicsDeviceService != null && graphicsDeviceService.GraphicsDevice != null)
+        #      LoadContent();` -- guarded by the same service, so false here for the same reason.
+        #      The CNA host delivers `load_content` as its own callback immediately after
+        #      `initialize`, which is the canonical order its header documents and the order the
+        #      audit measured, so nothing is called twice and nothing is skipped.
+        #
+        # The drain loop is exact: `Initialize` is called on the element at index 0 and the element
+        # is removed **after** it returns, and `Count` is re-read every iteration. So a component
+        # added by another component's `Initialize` is picked up by the same loop, and a component
+        # whose `Initialize` raises stays at the head of the queue.
+        def Initialize
+          until @not_yet_initialized.empty?
+            @not_yet_initialized[0].Initialize
+            @not_yet_initialized.delete_at(0)
+          end
+          nil
+        end
+
         def LoadContent = nil
         def UnloadContent = nil
+
+        # Both are `{ ret }` in the pinned IL -- genuinely no user work, not a placeholder.
         def BeginRun = nil
         def EndRun = nil
-        def Update(game_time) = require_game_time(game_time)
-        def Draw(game_time) = require_game_time(game_time)
+
+        # `Game.Update(GameTime)`:
+        #
+        #   1. copy `updateableComponents` into the reusable `currentlyUpdatingComponents`
+        #   2. for each of those, `if (u.Enabled) u.Update(gameTime)`
+        #   3. `currentlyUpdatingComponents.Clear()`
+        #   4. `FrameworkDispatcher.Update()`
+        #   5. `doneFirstUpdate = true`
+        #
+        # Step 1 is what makes mutation during the pass safe: the iteration walks a snapshot, so a
+        # component added or removed by another component's `Update` takes effect from the next
+        # frame. `Enabled` is *not* snapshotted -- it is read immediately before each call, so a
+        # component disabled earlier in the same pass is skipped in that pass.
+        #
+        # Step 3 has no try/finally in the IL, so a component whose `Update` raises leaves the
+        # snapshot list populated and the next pass appends to it. That is XNA's behaviour and it is
+        # reproduced rather than corrected.
+        #
+        # Step 4 is not performed. The canonical CNA C ABI documents
+        # `cna_framework_dispatcher_update` as pumping "the framework-wide per-frame work the game
+        # loop normally drives", and the CNA host this Game delegates its loop to already drives it
+        # every frame, so a managed call here would pump the same queue a second time. It would also
+        # impose this binding's recorded `FrameworkDispatcher` deviation -- a live CNA Game on its
+        # owner thread -- on `Game.Update`, which XNA's does not have, so `super` would fail on a
+        # Game that has never run. Recorded, not faked.
+        #
+        # Step 5 sets a private field whose only readers, `Tick` and `DrawFrame`, are the native
+        # timing loop CNA owns here, so it would be state nothing reads.
+        def Update(game_time)
+          require_game_time(game_time)
+          index = 0
+          while index < @updateable_components.length
+            @currently_updating_components.push(@updateable_components[index])
+            index += 1
+          end
+          index = 0
+          while index < @currently_updating_components.length
+            updateable = @currently_updating_components[index]
+            updateable.Update(game_time) if updateable.Enabled
+            index += 1
+          end
+          @currently_updating_components.clear
+          nil
+        end
+
+        # `Game.BeginDraw()`: `if (graphicsDeviceManager != null && !graphicsDeviceManager.BeginDraw())
+        # return false;` then a log event, then `true`. `GraphicsDeviceManager` is a deferred partial
+        # whose `IGraphicsDeviceManager.BeginDraw` is an explicit interface implementation and so
+        # projects to no member, and the logger is XNA-internal, so the base answers the `true` the
+        # IL's only other exit answers.
         def BeginDraw = true
+
+        # `Game.Draw(GameTime)` is `Game.Update`'s shape over the drawable list, and shorter: no
+        # dispatcher pump and no first-frame flag.
+        #
+        #   1. copy `drawableComponents` into `currentlyDrawingComponents`
+        #   2. for each, `if (d.Visible) d.Draw(gameTime)`
+        #   3. `currentlyDrawingComponents.Clear()`
+        #
+        # Nothing here requires a device: the base decides which components to visit and each
+        # component's own `Draw` decides what, if anything, it renders. No GraphicsDevice behaviour
+        # is fabricated and none is required to observe the ordering.
+        def Draw(game_time)
+          require_game_time(game_time)
+          index = 0
+          while index < @drawable_components.length
+            @currently_drawing_components.push(@drawable_components[index])
+            index += 1
+          end
+          index = 0
+          while index < @currently_drawing_components.length
+            drawable = @currently_drawing_components[index]
+            drawable.Draw(game_time) if drawable.Visible
+            index += 1
+          end
+          @currently_drawing_components.clear
+          nil
+        end
+
+        # `Game.EndDraw()`: `if (graphicsDeviceManager != null) graphicsDeviceManager.EndDraw();`
+        # then a log event. Same two absences as BeginDraw, so the base does nothing.
         def EndDraw = nil
 
         def Dispose
@@ -267,6 +425,162 @@ module Microsoft
 
         def unregister_native_child(child)
           @native_children.reject! { |value| value.equal?(child) }
+        end
+
+
+        # ------------------------------------------------------------------ the component engine
+        #
+        # Four private handlers and two ordered lists, all derived from the pinned Game.dll IL.
+        # None of them is an XNA identity: `GameComponentAdded`, `GameComponentRemoved`,
+        # `UpdateableUpdateOrderChanged` and `DrawableDrawOrderChanged` are `private` in the CLR
+        # too, and the four lists they maintain are private fields. What a consumer observes is the
+        # order `Game.Update` and `Game.Draw` visit components in, and nothing else.
+
+        # `GameComponentAdded(sender, e)`, in its exact order:
+        #
+        #   1. `inRun ? e.GameComponent.Initialize() : notYetInitialized.Add(e.GameComponent)`
+        #   2. if it is an IUpdateable: BinarySearch, and **skip everything** when the search
+        #      succeeds; otherwise insert at the upper bound of its UpdateOrder run and subscribe
+        #      to UpdateOrderChanged.
+        #   3. the same for IDrawable, DrawOrder and DrawOrderChanged.
+        #
+        # Step 1 runs for every component, including one that is neither updateable nor drawable.
+        def game_component_added(_sender, args)
+          component = args.GameComponent
+          if @in_run
+            component.Initialize
+          else
+            @not_yet_initialized.push(component)
+          end
+          if component.is_a?(IUpdateable)
+            insert_ordered(@updateable_components, component, :UpdateOrder) do
+              component.UpdateOrderChanged.add(@updateable_order_changed)
+            end
+          end
+          return unless component.is_a?(IDrawable)
+
+          insert_ordered(@drawable_components, component, :DrawOrder) do
+            component.DrawOrderChanged.add(@drawable_order_changed)
+          end
+        end
+
+        # `GameComponentRemoved(sender, e)`:
+        #
+        #   1. `if (!inRun) notYetInitialized.Remove(e.GameComponent)` -- the result is popped, so a
+        #      component that was never queued is removed harmlessly.
+        #   2. remove from updateableComponents and unsubscribe UpdateOrderChanged.
+        #   3. the same for drawableComponents and DrawOrderChanged.
+        #
+        # Both removals pop their result too, so removing a component that is not in the list is
+        # harmless, and the unsubscribe happens whether or not the removal found anything.
+        def game_component_removed(_sender, args)
+          component = args.GameComponent
+          remove_first(@not_yet_initialized, component) unless @in_run
+          if component.is_a?(IUpdateable)
+            remove_first(@updateable_components, component)
+            component.UpdateOrderChanged.remove(@updateable_order_changed)
+          end
+          return unless component.is_a?(IDrawable)
+
+          remove_first(@drawable_components, component)
+          component.DrawOrderChanged.remove(@drawable_order_changed)
+        end
+
+        # `UpdateableUpdateOrderChanged(sender, e)` and `DrawableDrawOrderChanged(sender, e)`: the
+        # component is taken from **`sender`**, not from the args, then removed and reinserted at
+        # its new position. The reinsertion is the same BinarySearch and upper-bound walk the add
+        # path uses, so a component whose order changes lands after every component that already
+        # has the new order.
+        #
+        # The `i >= 0` early return is reachable here in principle -- it means the search found a
+        # component the removal did not, which requires an equality that is not identity -- and it
+        # would drop the component from the list. That is XNA's behaviour and it is reproduced
+        # rather than corrected.
+        def updateable_update_order_changed(sender, _args)
+          remove_first(@updateable_components, sender)
+          insert_ordered(@updateable_components, sender, :UpdateOrder)
+        end
+
+        def drawable_draw_order_changed(sender, _args)
+          remove_first(@drawable_components, sender)
+          insert_ordered(@drawable_components, sender, :DrawOrder)
+        end
+
+        # `List<T>.Remove` pops its result and removes the **first** match by
+        # EqualityComparer<T>.Default, which for a reference type is Object.Equals -- Ruby `==`.
+        def remove_first(list, value)
+          index = list.index { |candidate| candidate == value }
+          list.delete_at(index) unless index.nil?
+          nil
+        end
+
+        # The shared shape of all four insertion sites:
+        #
+        #     i = list.BinarySearch(item, Comparer.Default);
+        #     if (i >= 0) return;                                   // already there: do nothing
+        #     i = ~i;
+        #     while (i < list.Count && list[i].Order == item.Order) i++;
+        #     list.Insert(i, item);
+        #
+        # The `~i` is the CLR's own complement of the insertion point, and the walk that follows
+        # moves it past every element sharing the new element's order -- so insertion is stable and
+        # a component added later with an equal order runs later. The optional block runs only when
+        # the insertion really happened, which is where the order-changed subscription lives.
+        def insert_ordered(list, item, order)
+          index = component_binary_search(list, item, order)
+          return nil unless index.negative?
+
+          index = ~index
+          value = item.public_send(order)
+          index += 1 while index < list.length && list[index].public_send(order) == value
+          list.insert(index, item)
+          yield if block_given?
+          nil
+        end
+
+        # `UpdateOrderComparer.Compare` and `DrawOrderComparer.Compare` are the same five branches
+        # over different properties:
+        #
+        #     x == null && y == null -> 0;  x == null -> 1;  y == null -> -1
+        #     x.Equals(y)            -> 0
+        #     x.Order < y.Order      -> -1
+        #     otherwise              -> 1
+        #
+        # It answers 0 **only** for equal objects, never for two different components that share an
+        # order, so it is not a consistent total order -- and that is load-bearing. It makes
+        # BinarySearch behave as a lower bound over the order, which is exactly what the walk above
+        # then turns into an upper bound.
+        def compare_component_order(left, right, order)
+          return 0 if left.nil? && right.nil?
+          return 1 if left.nil?
+          return -1 if right.nil?
+          return 0 if left == right
+
+          left.public_send(order) < right.public_send(order) ? -1 : 1
+        end
+
+        # `List<T>.BinarySearch` -> `ArraySortHelper<T>.BinarySearch`, whose body is the loop below
+        # wrapped in a `try`/`catch (Exception)` that rethrows as
+        # `InvalidOperationException("InvalidOperation_IComparerFailed", inner)`. The message is a
+        # localized framework resource and is not reproduced; the CLR exception maps to RuntimeError
+        # and the original is kept as the Ruby cause.
+        def component_binary_search(list, item, order)
+          low = 0
+          high = list.length - 1
+          while low <= high
+            middle = low + ((high - low) >> 1)
+            result = compare_component_order(list[middle], item, order)
+            return middle if result.zero?
+
+            if result.negative?
+              low = middle + 1
+            else
+              high = middle - 1
+            end
+          end
+          ~low
+        rescue StandardError
+          raise RuntimeError, "a component comparer failed"
         end
 
         def assert_owner_thread! = @generation.assert_owner_thread!

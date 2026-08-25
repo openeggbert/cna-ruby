@@ -65,6 +65,9 @@ module Microsoft
         def RunOneFrame: () -> nil
         def Exit: () -> nil
         def Dispose: () -> nil
+        # Both answer the same object for the life of the Game, and neither needs a native host.
+        def Components: () -> GameComponentCollection
+        def Services: () -> GameServiceContainer
       end
 
       class GraphicsDeviceManager

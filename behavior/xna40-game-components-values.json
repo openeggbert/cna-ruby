@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "derivation": "Foundation 37 Game.Components, Game.Services and the managed component engine. Every ordering row is read from the pinned Microsoft.Xna.Framework.Game.dll IL. The .ctor allocates the five component lists and gameServices as field initialisers and gameComponents after the base constructor, subscribing GameComponentAdded and GameComponentRemoved immediately afterwards; get_Components and get_Services are one ldfld each. GameComponentAdded initialises the component when inRun and queues it otherwise, then for each of IUpdateable and IDrawable performs List.BinarySearch with UpdateOrderComparer.Default / DrawOrderComparer.Default, skips entirely on a non-negative result, and otherwise walks the complement forward past every element sharing the new element's order before inserting and subscribing the order-changed handler. Both comparers answer 0 only when x.Equals(y), never for two different components sharing an order, which is what makes the search a lower bound. Game.Initialize drains notYetInitialized by calling Initialize on index 0 and removing it afterwards, re-reading Count each iteration. Game.Update copies updateableComponents into currentlyUpdatingComponents, calls Update on each whose Enabled reads true at that moment, then clears the copy; Game.Draw is the same shape over drawableComponents and Visible. The RUBY_MAPPING_QUALIFICATION rows record what Ruby class inheritance makes of the protected virtual base methods, and are not snapshotted from the cna-ruby implementation.",
+  "observations": [
+    {
+      "id": "game_components.property_contract",
+      "operation": "GameComponents.PropertyContract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "Microsoft.Xna.Framework.GameComponentCollection",
+        true,
+        false,
+        "Microsoft.Xna.Framework.GameServiceContainer",
+        true,
+        false
+      ]
+    },
+    {
+      "id": "game_components.stable_identity",
+      "operation": "GameComponents.StableIdentity",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [true, true, false, false, 0, true]
+    },
+    {
+      "id": "game_components.construction_order",
+      "operation": "GameComponents.ConstructionOrder",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": ["services", "components", 0, 0, true]
+    },
+    {
+      "id": "game_components.ordered_insertion",
+      "operation": "GameComponents.OrderedInsertion",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [["low", "first", "second", "third", "high"], ["b", "a"], ["c", "b", "a"]]
+    },
+    {
+      "id": "game_components.initialisation_queue",
+      "operation": "GameComponents.InitialisationQueue",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [1, 0, ["first", "late"], 0, ["early"]]
+    },
+    {
+      "id": "game_components.update_pass",
+      "operation": "GameComponents.UpdatePass",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [["b", "a"], ["first"], ["first", "late"], ["a"]]
+    },
+    {
+      "id": "game_components.draw_pass",
+      "operation": "GameComponents.DrawPass",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [["b", "a"], ["first"], true]
+    },
+    {
+      "id": "game_components.ruby_super_semantics",
+      "operation": "GameComponents.RubySuperSemantics",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [[], ["a"], ["a", "a"], false, false, true]
+    },
+    {
+      "id": "game_components.native_callback_order",
+      "operation": "GameComponents.NativeCallbackOrder",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        ["Initialize", "LoadContent", "BeginRun", "Update", "BeginDraw", "Draw", "EndDraw", "Update", "EndRun"],
+        false,
+        false,
+        true,
+        false
+      ]
+    }
+  ]
+}

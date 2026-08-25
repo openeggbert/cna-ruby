@@ -126,6 +126,63 @@ def corpus_component(label = nil)
   end.new
 end
 
+# Component fixtures for the Foundation 37 rows: the XNA contracts and nothing else, so the rows
+# depend on no later milestone.
+class CorpusUpdateable
+  extend CNA::Runtime::EventOwner
+  include Microsoft::Xna::Framework::IGameComponent
+  include Microsoft::Xna::Framework::IUpdateable
+
+  xna_event :EnabledChanged
+  xna_event :UpdateOrderChanged
+
+  attr_reader :label, :log, :Enabled, :UpdateOrder
+
+  def initialize(label, log = [], order: 0, enabled: true)
+    @label = label
+    @log = log
+    @UpdateOrder = order
+    @Enabled = enabled
+  end
+
+  def Initialize = @log << ["initialize", @label]
+  def Update(_game_time) = @log << ["update", @label]
+
+  def UpdateOrder=(value)
+    return if @UpdateOrder == value
+
+    @UpdateOrder = value
+    self.UpdateOrderChanged.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+  end
+end
+
+class CorpusDrawable < CorpusUpdateable
+  extend CNA::Runtime::EventOwner
+  include Microsoft::Xna::Framework::IDrawable
+
+  xna_event :VisibleChanged
+  xna_event :DrawOrderChanged
+
+  attr_reader :Visible, :DrawOrder
+
+  def initialize(label, log = [], order: 0, draw_order: 0, visible: true)
+    super(label, log, order: order)
+    @DrawOrder = draw_order
+    @Visible = visible
+  end
+
+  def Draw(_game_time) = @log << ["draw", @label]
+
+  def Visible=(value)
+    return if @Visible == value
+
+    @Visible = value
+    self.VisibleChanged.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+  end
+end
+
+def corpus_labels(log, kind) = log.select { |entry| entry.first == kind }.map(&:last)
+
 def error_name
   yield
   "none"
@@ -201,6 +258,7 @@ def behavior_group(item)
   return "CONTENT_ATTRIBUTE" if id.start_with?("content_attribute.")
   return "GAME_COMPONENT_COLLECTION" if id.start_with?("game_component_collection.")
   return "DISPOSABLE_COLLAPSE" if id.start_with?("disposable_collapse.")
+  return "GAME_COMPONENTS" if id.start_with?("game_components.")
 
   id.split(".").first.upcase
 end
@@ -1944,6 +2002,214 @@ def execute(item)
   when "Golden.FrustumRelations"
     projection = F::Matrix.CreatePerspectiveFieldOfView(F::MathHelper::PiOver4, 4.0 / 3.0, 1, 10); frustum = F::BoundingFrustum.new(F::Matrix.CreateLookAt(F::Vector3.new(0, 0, 5), F::Vector3.Zero, F::Vector3.Up) * projection); distant = F::BoundingFrustum.new(F::Matrix.CreateLookAt(F::Vector3.new(100, 0, 5), F::Vector3.new(100, 0, 0), F::Vector3.Up) * projection)
     [frustum.Contains(F::Vector3.Zero).to_i, frustum.Contains(F::Vector3.new(0, 0, 6)).to_i, frustum.Contains(F::BoundingBox.new(F::Vector3.new(-0.5), F::Vector3.new(0.5))).to_i, frustum.Contains(F::BoundingSphere.new(F::Vector3.Zero, 0.5)).to_i, frustum.Intersects(F::BoundingBox.new(F::Vector3.new(-0.5), F::Vector3.new(0.5))), frustum.Intersects(F::BoundingBox.new(F::Vector3.new(100), F::Vector3.new(101))), frustum.Intersects(F::BoundingSphere.new(F::Vector3.Zero, 0.5)), frustum.Intersects(F::BoundingSphere.new(F::Vector3.new(100), 0.5)), frustum.Intersects(distant), hex32(frustum.Intersects(F::Ray.new(F::Vector3.new(0, 0, 20), F::Vector3.Forward)))]
+  when "GameComponents.PropertyContract"
+    game = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.Game")
+    %w[Components Services].flat_map do |name|
+      member = game.fetch("members").find { |entry| entry.fetch("name") == name }
+      [member.fetch("type"), member.fetch("get"), member.fetch("set")]
+    end
+  when "GameComponents.StableIdentity"
+    game = F::Game.new
+    other = F::Game.new
+    begin
+      [game.Components.equal?(game.Components),
+       game.Services.equal?(game.Services),
+       game.Components.equal?(other.Components),
+       game.Services.equal?(other.Services),
+       game.Components.Count,
+       game.instance_variable_get(:@host).nil?]
+    ensure
+      game.Dispose
+      other.Dispose
+    end
+  when "GameComponents.ConstructionOrder"
+    order = []
+    services = F::GameServiceContainer
+    collection = F::GameComponentCollection
+    services.define_singleton_method(:new) { |*| order << "services"; super() }
+    collection.define_singleton_method(:new) { |*| order << "components"; super() }
+    game = F::Game.new
+    begin
+      [order[0], order[1], game.Components.Count,
+       game.instance_variable_get(:@not_yet_initialized).length,
+       game.Services.instance_variable_get(:@services).empty?]
+    ensure
+      services.singleton_class.__send__(:remove_method, :new)
+      collection.singleton_class.__send__(:remove_method, :new)
+      game.Dispose
+    end
+  when "GameComponents.OrderedInsertion"
+    game = F::Game.new
+    begin
+      %w[first second third].each { |label| game.Components.Add(CorpusUpdateable.new(label, [], order: 5)) }
+      game.Components.Add(CorpusUpdateable.new("high", [], order: 9))
+      game.Components.Add(CorpusUpdateable.new("low", [], order: 1))
+      stable = game.instance_variable_get(:@updateable_components).map(&:label)
+
+      mixed = F::Game.new
+      a = CorpusDrawable.new("a", [], order: 9, draw_order: 1)
+      b = CorpusDrawable.new("b", [], order: 1, draw_order: 9)
+      mixed.Components.Add(a)
+      mixed.Components.Add(b)
+      by_update = mixed.instance_variable_get(:@updateable_components).map(&:label)
+
+      reorder = F::Game.new
+      components = %w[a b c].each_with_index.map { |label, index| CorpusUpdateable.new(label, [], order: index + 1) }
+      components.each { |component| reorder.Components.Add(component) }
+      components[0].UpdateOrder = 10
+      components[2].UpdateOrder = 0
+      reordered = reorder.instance_variable_get(:@updateable_components).map(&:label)
+      mixed.Dispose
+      reorder.Dispose
+      [stable, by_update, reordered]
+    ensure
+      game.Dispose
+    end
+  when "GameComponents.InitialisationQueue"
+    log = []
+    game = F::Game.new
+    begin
+      early = CorpusUpdateable.new("early", log)
+      game.Components.Add(early)
+      queued = game.instance_variable_get(:@not_yet_initialized).length
+      before = corpus_labels(log, "initialize").length
+
+      chained = F::Game.new
+      chain_log = []
+      late = CorpusUpdateable.new("late", chain_log)
+      first = CorpusUpdateable.new("first", chain_log)
+      first.define_singleton_method(:Initialize) do
+        chain_log << ["initialize", "first"]
+        chained.Components.Add(late)
+      end
+      chained.Components.Add(first)
+      chained.__send__(:Initialize)
+      drained = corpus_labels(chain_log, "initialize")
+      remaining = chained.instance_variable_get(:@not_yet_initialized).length
+      chained.Dispose
+
+      game.__send__(:Initialize)
+      [queued, before, drained, remaining, corpus_labels(log, "initialize")]
+    ensure
+      game.Dispose
+    end
+  when "GameComponents.UpdatePass"
+    log = []
+    game = F::Game.new
+    begin
+      game.Components.Add(CorpusUpdateable.new("a", log, order: 2))
+      game.Components.Add(CorpusUpdateable.new("b", log, order: 1))
+      game.__send__(:Update, F::GameTime.new)
+      ordered = corpus_labels(log, "update")
+
+      mutating = F::Game.new
+      mutate_log = []
+      late = CorpusUpdateable.new("late", mutate_log, order: 9)
+      first = CorpusUpdateable.new("first", mutate_log, order: 1)
+      first.define_singleton_method(:Update) do |_time|
+        mutate_log << ["update", "first"]
+        mutating.Components.Add(late) unless mutating.Components.Contains(late)
+      end
+      mutating.Components.Add(first)
+      mutating.__send__(:Update, F::GameTime.new)
+      first_pass = corpus_labels(mutate_log, "update")
+      mutate_log.clear
+      mutating.__send__(:Update, F::GameTime.new)
+      second_pass = corpus_labels(mutate_log, "update")
+      mutating.Dispose
+
+      disabled = F::Game.new
+      disabled_log = []
+      component = CorpusUpdateable.new("a", disabled_log, enabled: false)
+      disabled.Components.Add(component)
+      disabled.__send__(:Update, F::GameTime.new)
+      component.instance_variable_set(:@Enabled, true)
+      disabled.__send__(:Update, F::GameTime.new)
+      after_enable = corpus_labels(disabled_log, "update")
+      disabled.Dispose
+
+      [ordered, first_pass, second_pass, after_enable]
+    ensure
+      game.Dispose
+    end
+  when "GameComponents.DrawPass"
+    log = []
+    game = F::Game.new
+    begin
+      game.Components.Add(CorpusDrawable.new("a", log, draw_order: 2))
+      game.Components.Add(CorpusDrawable.new("b", log, draw_order: 1))
+      game.__send__(:Draw, F::GameTime.new)
+      ordered = corpus_labels(log, "draw")
+
+      hidden = F::Game.new
+      hidden_log = []
+      later = CorpusDrawable.new("later", hidden_log, draw_order: 2)
+      first = CorpusDrawable.new("first", hidden_log, draw_order: 1)
+      first.define_singleton_method(:Draw) do |_time|
+        hidden_log << ["draw", "first"]
+        later.Visible = false
+      end
+      hidden.Components.Add(first)
+      hidden.Components.Add(later)
+      hidden.__send__(:Draw, F::GameTime.new)
+      visible_at_call_time = corpus_labels(hidden_log, "draw")
+      no_device = hidden.GraphicsDevice.nil?
+      hidden.Dispose
+
+      [ordered, visible_at_call_time, no_device]
+    ensure
+      game.Dispose
+    end
+  when "GameComponents.RubySuperSemantics"
+    suppressing = Class.new(F::Game) { def Update(game_time) = nil }
+    calling = Class.new(F::Game) { def Update(game_time) = super }
+    twice = Class.new(F::Game) do
+      def Update(game_time)
+        super
+        super
+      end
+    end
+    results = [suppressing, calling, twice].map do |klass|
+      game = klass.new
+      log = []
+      game.Components.Add(CorpusUpdateable.new("a", log))
+      game.__send__(:Update, F::GameTime.new)
+      game.Dispose
+      corpus_labels(log, "update")
+    end
+    results + [F::Game.method_defined?(:GameBaseUpdate),
+               F::Game.respond_to?(:GameBaseUpdate),
+               F::Game.protected_method_defined?(:Update)]
+  when "GameComponents.NativeCallbackOrder"
+    order = []
+    klass = Class.new(F::Game) do
+      define_method(:initialize) { super(); @frames = 0 }
+      define_method(:Initialize) { order << "Initialize"; super() }
+      define_method(:LoadContent) { order << "LoadContent"; super() }
+      define_method(:BeginRun) { order << "BeginRun"; super() }
+      define_method(:BeginDraw) { order << "BeginDraw"; super() }
+      define_method(:Draw) { |time| order << "Draw"; super(time) }
+      define_method(:EndDraw) { order << "EndDraw"; super() }
+      define_method(:EndRun) { order << "EndRun"; super() }
+      define_method(:Update) do |time|
+        order << "Update"
+        super(time)
+        @frames += 1
+        self.Exit if @frames >= 2
+      end
+    end
+    game = klass.new
+    before = game.instance_variable_get(:@in_run)
+    flags = {}
+    game.define_singleton_method(:record_flag) { |name| flags[name] = instance_variable_get(:@in_run) }
+    game.Run
+    after = game.instance_variable_get(:@in_run)
+    game.Dispose
+    # The flag is false through Initialize and LoadContent, true from BeginRun, and cleared once the
+    # run is over.
+    [order, before, after,
+     order.index("Initialize") < order.index("LoadContent"),
+     order.include?("UnloadContent")]
   when "DisposableCollapse.InterfaceContract"
     implementors = BATCH_REFERENCE.values.select do |type|
       type.fetch("directInterfaces", []).include?("System.IDisposable")

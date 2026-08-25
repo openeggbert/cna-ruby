@@ -13265,6 +13265,169 @@
         0,
         true
       ]
+    },
+    {
+      "id": "game_components.property_contract",
+      "operation": "GameComponents.PropertyContract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "Microsoft.Xna.Framework.GameComponentCollection",
+        true,
+        false,
+        "Microsoft.Xna.Framework.GameServiceContainer",
+        true,
+        false
+      ]
+    },
+    {
+      "id": "game_components.stable_identity",
+      "operation": "GameComponents.StableIdentity",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        true,
+        true,
+        false,
+        false,
+        0,
+        true
+      ]
+    },
+    {
+      "id": "game_components.construction_order",
+      "operation": "GameComponents.ConstructionOrder",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "services",
+        "components",
+        0,
+        0,
+        true
+      ]
+    },
+    {
+      "id": "game_components.ordered_insertion",
+      "operation": "GameComponents.OrderedInsertion",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          "low",
+          "first",
+          "second",
+          "third",
+          "high"
+        ],
+        [
+          "b",
+          "a"
+        ],
+        [
+          "c",
+          "b",
+          "a"
+        ]
+      ]
+    },
+    {
+      "id": "game_components.initialisation_queue",
+      "operation": "GameComponents.InitialisationQueue",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        1,
+        0,
+        [
+          "first",
+          "late"
+        ],
+        0,
+        [
+          "early"
+        ]
+      ]
+    },
+    {
+      "id": "game_components.update_pass",
+      "operation": "GameComponents.UpdatePass",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          "b",
+          "a"
+        ],
+        [
+          "first"
+        ],
+        [
+          "first",
+          "late"
+        ],
+        [
+          "a"
+        ]
+      ]
+    },
+    {
+      "id": "game_components.draw_pass",
+      "operation": "GameComponents.DrawPass",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          "b",
+          "a"
+        ],
+        [
+          "first"
+        ],
+        true
+      ]
+    },
+    {
+      "id": "game_components.ruby_super_semantics",
+      "operation": "GameComponents.RubySuperSemantics",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [],
+        [
+          "a"
+        ],
+        [
+          "a",
+          "a"
+        ],
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "id": "game_components.native_callback_order",
+      "operation": "GameComponents.NativeCallbackOrder",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          "Initialize",
+          "LoadContent",
+          "BeginRun",
+          "Update",
+          "BeginDraw",
+          "Draw",
+          "EndDraw",
+          "Update",
+          "EndRun"
+        ],
+        false,
+        false,
+        true,
+        false
+      ]
     }
   ],
   "milestone31SourceAssemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
@@ -13280,5 +13443,7 @@
   "milestone35CorpusCorrection": "two Foundation 20 event_projection rows censused this binding's own selection, which Foundation 35 legitimately grew by selecting GameComponentCollection. event_projection.deferred_family.contract carried, per type, one slot asserting the type was not selected -- the same over-reach the Foundation 22, 32 and 33 corrections removed -- so that slot was dropped from the operation and from all three rows, leaving only the pure XNA metadata about each type's events. event_projection.support_type.contract snapshotted the whole selected event census, so like Foundation 23's bcl_projection.register it could not survive the census legitimately growing; it now pins the four identities Foundation 20 established, passed as args, plus the standing shape rule that every selected event is an EventHandler`1. The replay proved every other element of those rows, and every other row, unchanged.",
   "milestone35SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
   "milestone36MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 e49be457f9e60ec9947576bc090ad775ef837c20817963e18ac68abd154d1cd5, 445 observations) was proved before appending 4 additive observations",
-  "milestone36SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0"
+  "milestone36SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "milestone37MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 d005bd8fbff9d1a90c60748baf5bba4ed5b1b4ad40d848eab2cf997a18f71ed2, 449 observations) was proved before appending 9 additive observations",
+  "milestone37SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0"
 }

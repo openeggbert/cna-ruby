@@ -1821,7 +1821,9 @@ class ApiVerifierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.SpriteBatch
       Microsoft.Xna.Framework.Graphics.Texture2D
     ].sort, partial.keys.sort
-    assert_equal 132, strict.fetch("MISSING_MEMBER")
+    # 132 until Foundation 37 closed Game::Components and Game::Services. The set of partial types
+    # is what this test guards, and it is unchanged.
+    assert_equal 130, strict.fetch("MISSING_MEMBER")
     assert_equal 1, strict.fetch("PROPERTY_MAPPING_MISMATCH")
     assert_equal 51, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
 

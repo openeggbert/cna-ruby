@@ -475,6 +475,12 @@
         },
         {
           "name": "GraphicsDevice"
+        },
+        {
+          "name": "Components"
+        },
+        {
+          "name": "Services"
         }
       ]
     },

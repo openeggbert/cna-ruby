@@ -160,7 +160,9 @@ class InterfaceContractsTest < Minitest::Test
     assert_equal %i[IsDisposed Viewport Clear].sort, G::GraphicsDevice.public_instance_methods(false).sort
 
     strict = JSON.parse(Pathname(__dir__).join("..", "docs", "generated", "api-compat-report.json").read)
-    assert_equal 132, strict.fetch("MISSING_MEMBER")
+    # Foundation 37 closed Game::Components and Game::Services, the first two members any deferred
+    # partial has lost. Both are pure managed state and neither needed an interface contract.
+    assert_equal 130, strict.fetch("MISSING_MEMBER")
     assert_equal 6, strict.fetch("PARTIAL_TYPES")
   end
 

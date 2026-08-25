@@ -71,19 +71,41 @@ module CNA
         @library.check(result, operation)
       end
 
-      def lifecycle(name, takes_time: false)
+      # Each callback invokes the **virtual** Ruby method once. A subclass override runs; the base
+      # runs only if that override calls `super`, exactly as a CLR override chooses whether and when
+      # to call `base.Update(gameTime)`. The host never runs the base implementation itself, so a
+      # subclass that omits `super` really does suppress the base component pass.
+      #
+      # `after:` carries the one piece of driver bookkeeping XNA's `RunGame` performs around a
+      # lifecycle call rather than inside it -- see `in_run` below.
+      def lifecycle(name, takes_time: false, after: nil)
         callback = Fiddle::Closure::BlockCaller.new(
           Fiddle::TYPE_UINT32_T,
           [Fiddle::TYPE_UINT64_T, Fiddle::TYPE_VOIDP, Fiddle::TYPE_VOIDP, Fiddle::TYPE_VOIDP]
         ) do |_game_handle, time_pointer, _context, _error|
-          safely(name) do
+          result = safely(name) do
             argument = takes_time ? game_time(time_pointer) : nil
             takes_time ? @game.__send__(name, argument) : @game.__send__(name)
           end
+          after&.call if result.zero?
+          result
         end
         @callbacks_keepalive << callback
         callback
       end
+
+      # XNA's `RunGame` owns the in-run flag, not `Game.Initialize`: it sets `inRun = true` after
+      # `Initialize()` returns and clears it in a `finally` once the run is over. Keeping it here
+      # rather than in the base method is what makes it survive a subclass that overrides
+      # `Initialize` without calling `super`, which is exactly what XNA does.
+      #
+      # The position is measured rather than transcribed. In XNA `Initialize()`'s own body ends by
+      # calling `LoadContent()`, so both managed steps happen while `inRun` is still false; the CNA
+      # host delivers `load_content` as a separate callback right after `initialize`, so the
+      # faithful place to raise the flag is after **LoadContent** returns. A component added during
+      # either step is therefore queued rather than initialised on the spot, as in XNA, and a
+      # component added after them is initialised immediately.
+      def set_in_run(value) = -> { @game.instance_variable_set(:@in_run, value) }
 
       def begin_draw
         callback = Fiddle::Closure::BlockCaller.new(
@@ -131,7 +153,7 @@ module CNA
       end
 
       def build_callback_tables
-        load_content = lifecycle("LoadContent")
+        load_content = lifecycle("LoadContent", after: set_in_run(true))
         update = lifecycle("Update", takes_time: true)
         draw = lifecycle("Draw", takes_time: true)
         unload_content = lifecycle("UnloadContent")
@@ -140,7 +162,8 @@ module CNA
           [load_content, update, draw, unload_content, exiting]
         )
         @hooks = CNA::Native::Layouts::GameFrameHooks.new(
-          [lifecycle("Initialize"), lifecycle("BeginRun"), lifecycle("EndRun"), begin_draw, lifecycle("EndDraw")]
+          [lifecycle("Initialize"), lifecycle("BeginRun"),
+           lifecycle("EndRun", after: set_in_run(false)), begin_draw, lifecycle("EndDraw")]
         )
       end
     end

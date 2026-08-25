@@ -209,12 +209,25 @@ class GameServiceContainerTest < Minitest::Test
 
   # -------------------------------------------------------------------- nothing populates one
 
+  # Foundation 37 gave the type its producer: every Game now owns one. What has not changed is
+  # that nothing *registers* anything in it -- a freshly constructed Game answers nil for every key,
+  # and no member of this binding calls AddService.
   def test_nothing_in_this_binding_registers_a_service
     assert_nil container.GetService(F::IGraphicsDeviceManager)
-    # Game.Services is the producer, and Game is one of the six deferred partial runtime types.
-    refute F::Game.public_method_defined?(:Services)
     assert_includes STRICT.fetch("partialTypes").keys, "Microsoft.Xna.Framework.Game"
-    source = ROOT.join("lib", "microsoft", "xna", "framework", "game.rb").read
-    refute_includes source, "GameServiceContainer.new"
+
+    game = F::Game.new
+    assert_instance_of F::GameServiceContainer, game.Services
+    assert_nil game.Services.GetService(F::IGraphicsDeviceManager)
+    assert_empty game.Services.instance_variable_get(:@services)
+
+    # No member of this binding calls AddService on anything: the type declares it and nothing
+    # anywhere invokes it.
+    calls = ROOT.glob("lib/**/*.rb").flat_map do |path|
+      path.read.lines.grep(/\.AddService\b/)
+    end
+    assert_empty calls
+  ensure
+    game&.Dispose
   end
 end

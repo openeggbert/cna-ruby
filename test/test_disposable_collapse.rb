@@ -273,7 +273,7 @@ class DisposableCollapseTest < Minitest::Test
   # runtime type whose Dispose(Boolean) is still missing, and mapping the interface did not move it.
   def test_it_completes_no_type_and_moves_no_missing_member
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
-    assert_equal 132, STRICT.fetch("MISSING_MEMBER")
+    assert_equal 130, STRICT.fetch("MISSING_MEMBER")
     assert_equal 134, STRICT.fetch("COMPLETE_TYPES")
     assert(STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
                  .any? { |entry| entry.include?("::Dispose") })

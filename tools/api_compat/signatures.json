@@ -29516,6 +29516,32 @@
           "parameters": [
 
           ]
+        },
+        {
+          "kind": "property",
+          "name": "Components",
+          "type": "Microsoft.Xna.Framework.GameComponentCollection",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Services",
+          "type": "Microsoft.Xna.Framework.GameServiceContainer",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Game"
