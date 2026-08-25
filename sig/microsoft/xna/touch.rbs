@@ -56,6 +56,37 @@ module Microsoft
             def clone: (?freeze: bool) -> GestureSample
           end
 
+          class TouchCollection
+            include ::Enumerable[TouchLocation]
+
+            def initialize: (Array[TouchLocation] touches) -> void
+            def Count: () -> Integer
+            def IsConnected: () -> bool
+            def IsReadOnly: () -> bool
+            def []: (Integer index) -> TouchLocation
+            def []=: (Integer index, TouchLocation value) -> untyped
+            def Insert: (Integer index, TouchLocation item) -> untyped
+            def RemoveAt: (Integer index) -> untyped
+            def Add: (TouchLocation item) -> untyped
+            def Clear: () -> untyped
+            def Remove: (TouchLocation item) -> untyped
+            def IndexOf: (TouchLocation item) -> Integer
+            def Contains: (TouchLocation item) -> bool
+            def CopyTo: (Array[TouchLocation] array, Integer arrayIndex) -> nil
+            def FindById: (Integer id) -> [ bool, TouchLocation ]
+            def GetEnumerator: () -> TouchCollection::Enumerator
+            def each: () { (TouchLocation) -> void } -> TouchCollection
+                    | () -> ::Enumerator[TouchLocation, TouchCollection]
+            def dup: () -> TouchCollection
+            def clone: (?freeze: bool) -> TouchCollection
+
+            class Enumerator
+              def Current: () -> TouchLocation
+              def MoveNext: () -> bool
+              def Dispose: () -> nil
+            end
+          end
+
           class TouchPanelCapabilities
             attr_reader IsConnected: bool
             attr_reader MaximumTouchCount: Integer

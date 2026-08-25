@@ -630,6 +630,109 @@ def execute(item)
      entry.fetch("assembly"), entry.fetch("assemblySha256"),
      entry.fetch("declaredFields"), entry.fetch("nativeReachable"),
      entry.fetch("constructors").map { |ctor| [ctor.fetch("access"), ctor.fetch("pureBaseForward")] }]
+  when "TouchCollection.Contract"
+    locations = [TOUCH::TouchLocation.new(1, TOUCH::TouchLocationState::Pressed, F::Vector2.new(1.0, 2.0)),
+                 TOUCH::TouchLocation.new(2, TOUCH::TouchLocationState::Moved, F::Vector2.new(3.0, 4.0),
+                                          TOUCH::TouchLocationState::Pressed, F::Vector2.new(0.5, 0.25))]
+    touches = TOUCH::TouchCollection.new(locations)
+    empty = TOUCH::TouchCollection.new([])
+    [touches.Count, touches.IsConnected, touches.IsReadOnly,
+     touches[0].Id, touches[1].Id, touches[1].State.name,
+     touches[1].TryGetPreviousLocation.first, touches[1].TryGetPreviousLocation.last.State.name,
+     touches[0].TryGetPreviousLocation.first, touches[0].TryGetPreviousLocation.last.State.name,
+     empty.Count, empty.IsConnected, empty.IsReadOnly]
+  when "TouchCollection.Ceiling"
+    build = lambda do |count|
+      TOUCH::TouchCollection.new(Array.new(count) do |index|
+        TOUCH::TouchLocation.new(index, TOUCH::TouchLocationState::Pressed, F::Vector2.new(0.0, 0.0))
+      end).Count
+    rescue StandardError => error
+      [error.class.name, error.message]
+    end
+    [build.call(0), build.call(7), build.call(8), build.call(9),
+     (begin
+        TOUCH::TouchCollection.new(nil)
+      rescue StandardError => error
+        [error.class.name, error.message]
+      end)]
+  when "TouchCollection.Bounds"
+    touches = TOUCH::TouchCollection.new([
+      TOUCH::TouchLocation.new(1, TOUCH::TouchLocationState::Pressed, F::Vector2.new(1.0, 2.0))
+    ])
+    read = lambda do |index|
+      touches[index].Id
+    rescue StandardError => error
+      [error.class.name, error.message]
+    end
+    [read.call(0), read.call(-1), read.call(1), read.call(8), read.call(nil)]
+  when "TouchCollection.ReadOnly"
+    touches = TOUCH::TouchCollection.new([
+      TOUCH::TouchLocation.new(1, TOUCH::TouchLocationState::Pressed, F::Vector2.new(1.0, 2.0))
+    ])
+    item = touches[0]
+    refusals = [-> { touches.Add(item) }, -> { touches.Clear }, -> { touches.Insert(0, item) },
+                -> { touches.Remove(item) }, -> { touches.RemoveAt(0) }, -> { touches[0] = item }]
+    classes = refusals.map do |mutation|
+      mutation.call
+      "no-raise"
+    rescue StandardError => error
+      error.class.name
+    end
+    [touches.IsReadOnly, classes, touches.Count,
+     CNA::Runtime::NotSupportedError < StandardError,
+     CNA::Runtime::NotSupportedError.ancestors.include?(ScriptError)]
+  when "TouchCollection.Search"
+    touches = TOUCH::TouchCollection.new([
+      TOUCH::TouchLocation.new(5, TOUCH::TouchLocationState::Pressed, F::Vector2.new(1.0, 2.0)),
+      TOUCH::TouchLocation.new(9, TOUCH::TouchLocationState::Moved, F::Vector2.new(3.0, 4.0))
+    ])
+    differing = TOUCH::TouchLocation.new(5, TOUCH::TouchLocationState::Moved, F::Vector2.new(1.0, 2.0))
+    found, located = touches.FindById(9)
+    missing, default = touches.FindById(1234)
+    [touches.IndexOf(touches[0]), touches.IndexOf(touches[1]),
+     touches.IndexOf(TOUCH::TouchLocation.new(77, TOUCH::TouchLocationState::Pressed, F::Vector2.new(0.0, 0.0))),
+     differing.Equals(touches[0]), touches.IndexOf(differing),
+     touches.Contains(touches[1]), touches.Contains(differing),
+     found, located.Id, missing, default.Id, default.State.name, vector_result(default.Position)]
+  when "TouchCollection.CopyTo"
+    touches = TOUCH::TouchCollection.new([
+      TOUCH::TouchLocation.new(1, TOUCH::TouchLocationState::Pressed, F::Vector2.new(1.0, 2.0)),
+      TOUCH::TouchLocation.new(2, TOUCH::TouchLocationState::Pressed, F::Vector2.new(3.0, 4.0))
+    ])
+    destination = Array.new(4)
+    touches.CopyTo(destination, 1)
+    guard = lambda do |array, index|
+      touches.CopyTo(array, index)
+      "no-raise"
+    rescue StandardError => error
+      [error.class.name, error.message]
+    end
+    [destination.map { |value| value.nil? ? nil : value.Id },
+     guard.call(nil, 0), guard.call(destination, -1), guard.call(Array.new(2), 1), guard.call(Array.new(2), 0)]
+  when "TouchCollection.Enumeration"
+    touches = TOUCH::TouchCollection.new([
+      TOUCH::TouchLocation.new(1, TOUCH::TouchLocationState::Pressed, F::Vector2.new(1.0, 2.0)),
+      TOUCH::TouchLocation.new(2, TOUCH::TouchLocationState::Moved, F::Vector2.new(3.0, 4.0))
+    ])
+    enumerator = touches.GetEnumerator
+    before = begin
+      enumerator.Current
+      "no-raise"
+    rescue StandardError => error
+      [error.class.name, error.message]
+    end
+    walked = []
+    walked << enumerator.Current.Id while enumerator.MoveNext
+    after = begin
+      enumerator.Current
+      "no-raise"
+    rescue StandardError => error
+      [error.class.name, error.message]
+    end
+    [enumerator.class.name.split("::").last, before, walked, enumerator.MoveNext, after,
+     enumerator.Dispose.nil?, touches.GetEnumerator.equal?(touches.GetEnumerator),
+     TOUCH::TouchCollection.new([]).GetEnumerator.MoveNext,
+     touches.map(&:Id), touches.each.to_a.length]
   when "TouchLocation.Construction"
     plain = TOUCH::TouchLocation.new(3, TOUCH::TouchLocationState::Moved, F::Vector2.new(1.5, -2.25))
     chained = TOUCH::TouchLocation.new(3, TOUCH::TouchLocationState::Moved, F::Vector2.new(1.5, -2.25),

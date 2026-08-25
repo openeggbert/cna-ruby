@@ -5,12 +5,12 @@
   "REFERENCE_MEMBERS": 2964,
   "EXPECTED_RUBY_TYPES": 257,
   "EXPECTED_RUBY_MEMBERS": 2915,
-  "TARGET_TYPES": 135,
-  "TARGET_MEMBERS": 1714,
-  "TOTAL_DIAGNOSTICS": 306,
-  "COMPLETE_TYPES": 129,
+  "TARGET_TYPES": 137,
+  "TARGET_MEMBERS": 1732,
+  "TOTAL_DIAGNOSTICS": 304,
+  "COMPLETE_TYPES": 131,
   "PARTIAL_TYPES": 6,
-  "MISSING_TYPES": 122,
+  "MISSING_TYPES": 120,
   "ALLOWLIST_ENTRIES": 0,
   "EVENT_IDENTITIES": 4,
   "EVENT_OWNER_TYPES": 2,
@@ -18,7 +18,7 @@
   "BCL_PROJECTED_IDENTITIES": 6,
   "BCL_EXCEPTION_BASES": 2,
   "BCL_THROWN_EXCEPTIONS": 5,
-  "MISSING_TYPE": 122,
+  "MISSING_TYPE": 120,
   "MISSING_MEMBER": 132,
   "UNEXPECTED_TYPE": 0,
   "UNEXPECTED_MEMBER": 0,
@@ -195,7 +195,9 @@
     "Microsoft.Xna.Framework.Graphics.PackedVector.Short4",
     "Microsoft.Xna.Framework.Graphics.VertexElement",
     "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
-    "Microsoft.Xna.Framework.Graphics.VertexElementUsage"
+    "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+    "Microsoft.Xna.Framework.Input.Touch.TouchCollection",
+    "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator"
   ],
   "partialTypes": {
     "Microsoft.Xna.Framework.Game": [
@@ -408,8 +410,6 @@
     "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
     "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
     "Microsoft.Xna.Framework.GraphicsDeviceInformation",
-    "Microsoft.Xna.Framework.Input.Touch.TouchCollection",
-    "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator",
     "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
     "Microsoft.Xna.Framework.LaunchParameters",
     "Microsoft.Xna.Framework.Media.Album",
@@ -574,7 +574,9 @@
     "Microsoft.Xna.Framework.Graphics.VertexElementFormat": 0,
     "Microsoft.Xna.Framework.Graphics.VertexElementUsage": 0,
     "Microsoft.Xna.Framework.Graphics.Texture2D": 19,
-    "Microsoft.Xna.Framework.Graphics.SpriteBatch": 18
+    "Microsoft.Xna.Framework.Graphics.SpriteBatch": 18,
+    "Microsoft.Xna.Framework.Input.Touch.TouchCollection": 0,
+    "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator": 0
   },
   "details": {
     "MISSING_TYPE": [
@@ -670,8 +672,6 @@
       "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
       "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
       "Microsoft.Xna.Framework.GraphicsDeviceInformation",
-      "Microsoft.Xna.Framework.Input.Touch.TouchCollection",
-      "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator",
       "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
       "Microsoft.Xna.Framework.LaunchParameters",
       "Microsoft.Xna.Framework.Media.Album",

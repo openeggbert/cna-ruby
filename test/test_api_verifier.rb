@@ -1779,8 +1779,15 @@ class ApiVerifierTest < Minitest::Test
       assert_includes strict.fetch("completeTypeNames"), full
     end
 
-    # Nothing that reads a touch device is selected.
-    %w[TouchPanel TouchCollection].each do |short|
+    # Foundation 31 added TouchCollection and its nested Enumerator, whose IL reads nothing.
+    %w[TouchCollection TouchCollection+Enumerator].each do |short|
+      full = "Microsoft.Xna.Framework.Input.Touch.#{short}"
+      assert signature_contract.fetch("types").any? { |type| type.fetch("name") == full }, full
+      assert_includes strict.fetch("completeTypeNames"), full
+    end
+
+    # TouchPanel, the type that would name a device, is still not selected.
+    %w[TouchPanel].each do |short|
       full = "Microsoft.Xna.Framework.Input.Touch.#{short}"
       assert reference.fetch("types").any? { |type| type.fetch("name") == full }, full
       refute signature_contract.fetch("types").any? { |type| type.fetch("name") == full }, full

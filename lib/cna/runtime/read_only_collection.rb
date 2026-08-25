@@ -54,9 +54,9 @@ module CNA
       CLR_PROTECTED_SURFACE = %i[Items].freeze
 
       # Ruby language support: the iteration primitive plus everything Enumerable derives from it.
-      # None of these is an XNA identity and none may stand in for one. The two sets can never
-      # collide because a CLR identity is PascalCase or an operator and language support is not.
-      LANGUAGE_SUPPORT = ([:each] + ::Enumerable.instance_methods).uniq.freeze
+      # None of these is an XNA identity and none may stand in for one. The register is shared with
+      # every projected type, so one rule governs both this support class and an XNA collection.
+      LANGUAGE_SUPPORT = CNA::Runtime::LanguageSupport.identities.freeze
 
       class << self
         # A Ruby class is not statically generic, so the CLR type argument a subclass closes the

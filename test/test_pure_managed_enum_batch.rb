@@ -330,12 +330,13 @@ class PureManagedEnumBatchTest < Minitest::Test
     # Keyboard, KeyboardState and Keys predate these batches. Input::Touch was opened by
     # Foundation 17 and extended by Foundation 23 with the two publicly constructible value types;
     # nothing that reads a touch device is there.
-    assert_equal %i[GestureSample GestureType TouchLocation TouchLocationState TouchPanelCapabilities],
+    # Foundation 31 added TouchCollection, whose IL reads nothing.
+    assert_equal %i[GestureSample GestureType TouchCollection TouchLocation TouchLocationState
+                    TouchPanelCapabilities],
                  T.constants(false).sort
     %i[TouchPanel TouchCollection TouchLocation GestureSample TouchLocationState GestureType]
       .each { |name| refute I.const_defined?(name, false), "Input::#{name}" }
-    %i[TouchPanel TouchCollection]
-      .each { |name| refute T.const_defined?(name, false), "Input::Touch::#{name}" }
+    %i[TouchPanel].each { |name| refute T.const_defined?(name, false), "Input::Touch::#{name}" }
     assert_equal %i[IsDisposed Viewport Clear].sort,
                  G::GraphicsDevice.public_instance_methods(false).sort
   end
@@ -349,7 +350,8 @@ class PureManagedEnumBatchTest < Minitest::Test
       # Input::Touch also carries the TouchPanelCapabilities struct and the Foundation 23 value
       # types TouchLocation and GestureSample; Audio carries the three Foundation 22 exception
       # types. None of those is an enum.
-      value_types = %i[TouchPanelCapabilities TouchLocation GestureSample AudioListener AudioEmitter]
+      value_types = %i[TouchPanelCapabilities TouchLocation GestureSample TouchCollection
+                       AudioListener AudioEmitter]
       extras = declared & value_types
       extras += declared.grep(/Exception\z/)
       assert_equal (selected + extras).uniq.sort, declared, namespace.name

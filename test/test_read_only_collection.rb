@@ -398,8 +398,12 @@ class ReadOnlyCollectionTest < Minitest::Test
              entry.fetch("name"))
     end
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
-    assert_equal 0, FRONTIER.fetch("consumableCandidates").length
-    assert_equal 20, FRONTIER.fetch("dependencyCompleteCandidates").length
+    # No candidate became consumable *because of this projection*: neither of the two types whose
+    # BCL blocker it cleared is consumable now, and the one candidate that is became so in
+    # Foundation 31 for an unrelated reason.
+    consumable = FRONTIER.fetch("consumableCandidates").map { |entry| entry.fetch("name") }
+    refute_includes consumable, "Microsoft.Xna.Framework.Graphics.GraphicsAdapter"
+    refute_includes consumable, "Microsoft.Xna.Framework.Media.VisualizationData"
   end
 
   # A constructed form over a BCL-only type argument is no longer opaque now that the definition is
@@ -414,11 +418,26 @@ class ReadOnlyCollectionTest < Minitest::Test
                             .fetch("unmappedBclTypes"), "System.Char"
   end
 
-  def test_no_xna_type_became_complete_and_no_xna_metric_moved
-    assert_equal 129, STRICT.fetch("COMPLETE_TYPES")
-    assert_equal 135, STRICT.fetch("TARGET_TYPES")
-    assert_equal 1714, STRICT.fetch("TARGET_MEMBERS")
-    assert_equal 306, STRICT.fetch("TOTAL_DIAGNOSTICS")
+  # No XNA type was completed *by this projection*. The four types that name ReadOnlyCollection`1
+  # are all still missing, and no completed type inherits from the support class, so the
+  # inheritance rule is proved by verifier fixtures rather than by a shipped type.
+  def test_no_xna_type_became_complete_because_of_this_projection
+    %w[
+      Microsoft.Xna.Framework.Graphics.GraphicsAdapter
+      Microsoft.Xna.Framework.Graphics.SpriteFont
+      Microsoft.Xna.Framework.Audio.Microphone
+      Microsoft.Xna.Framework.Media.VisualizationData
+      Microsoft.Xna.Framework.Graphics.ModelBoneCollection
+      Microsoft.Xna.Framework.Graphics.ModelEffectCollection
+      Microsoft.Xna.Framework.Graphics.ModelMeshCollection
+      Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection
+    ].each { |name| assert_includes STRICT.fetch("missingTypeNames"), name }
+
+    signatures = JSON.parse(ROOT.join("tools", "api_compat", "signatures.json").read)
+    inheriting = signatures.fetch("types").select do |entry|
+      entry["baseType"].to_s.start_with?(CLR)
+    end
+    assert_empty inheriting
     assert_equal 0, STRICT.fetch("GENERIC_MAPPING_MISMATCH")
     assert_equal 0, STRICT.fetch("BASE_MAPPING_MISMATCH")
     assert_equal 0, STRICT.fetch("LANGUAGE_MAPPING_MISMATCH")

@@ -680,22 +680,28 @@ class RbsRuntimeConsistencyTest < Minitest::Test
       end
     end
 
-    # Foundation 23 added TouchLocation and GestureSample; everything that reads a touch device
-    # stays out of the signatures entirely. TouchPanel is a prefix of the selected
-    # TouchPanelCapabilities, so absence is asserted per declaration.
-    %w[TouchPanel TouchCollection].each do |absent|
+    # Foundation 23 added TouchLocation and GestureSample and Foundation 31 the TouchCollection
+    # pair. TouchPanel, the one type that would read a touch device, stays out of the signatures
+    # entirely; it is a prefix of the selected TouchPanelCapabilities, so absence is asserted per
+    # declaration.
+    %w[TouchPanel].each do |absent|
       refute_includes source, "class #{absent}\n"
     end
-    %w[TouchLocation GestureSample].each do |present|
+    %w[TouchLocation GestureSample TouchCollection].each do |present|
       assert_includes source, "class #{present}\n"
     end
+    # The nested enumerator is declared inside its declaring type, which is how the Ruby nested
+    # naming policy spells `TouchCollection+Enumerator`.
+    assert_includes source, "            class Enumerator\n"
 
     environment = load_environment
     declared = environment.class_decls.keys.map(&:to_s)
                           .select { |name| name.start_with?("::Microsoft::Xna::Framework::Input::Touch::") }
     expected = names + %w[Microsoft.Xna.Framework.Input.Touch.TouchLocation
-                          Microsoft.Xna.Framework.Input.Touch.GestureSample]
-    assert_equal expected.map { |name| "::#{name.split(".").join("::")}" }.sort, declared.sort
+                          Microsoft.Xna.Framework.Input.Touch.GestureSample
+                          Microsoft.Xna.Framework.Input.Touch.TouchCollection
+                          Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator]
+    assert_equal expected.map { |name| "::#{name.split(/[.+]/).join("::")}" }.sort, declared.sort
     declared.each { |name| refute_nil resolve_constant(name) }
   end
 

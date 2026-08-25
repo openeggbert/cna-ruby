@@ -260,13 +260,15 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 20, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 21, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
-    assert_equal 0, REPORT.fetch("consumableCandidates").length
-    refute REPORT.fetch("blockerSummary").key?("NONE")
-    assert_equal "none-consumable", REPORT.fetch("selectionRoute")
-    assert_nil REPORT["selectedNext"]
+    # Foundation 31 completed TouchCollection and its nested Enumerator, which were the last
+    # unmet XNA dependencies of TouchPanel. The queue is not empty again.
+    assert_equal 1, REPORT.fetch("consumableCandidates").length
+    assert_equal 1, REPORT.fetch("blockerSummary").fetch("NONE")
+    assert_equal "global-consumable-rank", REPORT.fetch("selectionRoute")
+    assert_equal "Microsoft.Xna.Framework.Input.Touch.TouchPanel", REPORT.fetch("selectedNext").fetch("name")
 
     REPORT.fetch("dependencyCompleteCandidates").each do |candidate|
       %w[EVENT_PROJECTION BEHAVIOR_EVIDENCE].each do |retired|
@@ -290,7 +292,8 @@ class DependencyFrontierTest < Minitest::Test
 
   # Every consumable candidate really is pure managed, hash-pinned and dependency-complete.
   def test_every_consumable_candidate_is_pure_managed_with_available_il
-    assert_empty REPORT.fetch("consumableCandidates")
+    assert_equal %w[Microsoft.Xna.Framework.Input.Touch.TouchPanel],
+                 REPORT.fetch("consumableCandidates").map { |candidate| candidate.fetch("name") }
 
     REPORT.fetch("consumableCandidates").each do |candidate|
       name = candidate.fetch("name")
@@ -430,14 +433,22 @@ class DependencyFrontierTest < Minitest::Test
                    entry.fetch("assemblySha256"), name
       refute entry.fetch("nativeReachable"), name
     end
-    # TouchPanel and TouchCollection are what read a device. Neither is dependency-complete — the
-    # collection's nested enumerator has no IL under a name the disassembler emits — so neither
-    # reaches the frontier at all, and both stay missing.
-    %w[Microsoft.Xna.Framework.Input.Touch.TouchPanel
-       Microsoft.Xna.Framework.Input.Touch.TouchCollection].each do |name|
-      assert_includes STRICT.fetch("missingTypeNames"), name
+    # TouchCollection and its nested Enumerator were mutually blocked until Foundation 31 closed
+    # the pair together; neither could ever have been selected alone, because a nested type cannot
+    # be named or read without its declaring type and the declaring type's GetEnumerator returns
+    # the nested one. Both are complete now.
+    %w[Microsoft.Xna.Framework.Input.Touch.TouchCollection
+       Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator].each do |name|
+      assert_includes STRICT.fetch("completeTypeNames"), name
+      assert_equal 0, STRICT.fetch("localDiagnostics").fetch(name), name
       refute REPORT.fetch("dependencyCompleteCandidates").any? { |item| item.fetch("name") == name }, name
     end
+    # TouchPanel is the type that would name a device, and completing the pair made it the first
+    # consumable candidate the frontier has had since Foundation 27.
+    assert_includes STRICT.fetch("missingTypeNames"), "Microsoft.Xna.Framework.Input.Touch.TouchPanel"
+    assert(REPORT.fetch("consumableCandidates").any? { |item|
+      item.fetch("name") == "Microsoft.Xna.Framework.Input.Touch.TouchPanel"
+    })
     # The enumerator was the single IL_UNAVAILABLE entry until Native frontier 2, on the ground
     # that "ikdasm does not emit the nested enumerator under a name the inventory can address". It
     # emits it; the extractor could not read it. With that fixed the classification is honest on

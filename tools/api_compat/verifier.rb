@@ -512,6 +512,13 @@ module CNAApiCompat
         allowed.concat(%i[eql? hash to_s dup clone inspect to_i name value])
         direct = object.public_instance_methods(false) + object.protected_instance_methods(false)
         (direct.uniq - allowed).each do |method_name|
+          # A Ruby language-support identity is not an XNA identity, and it is admitted by rule
+          # rather than by name: it may exist only on a type that also projects the CLR identity it
+          # is derived from. `each` is permitted where `GetEnumerator` is projected and nowhere
+          # else, so it can never quietly stand in for a missing XNA member.
+          derived = CNA::Runtime::LanguageSupport.derived_from(method_name)
+          next if derived && type.fetch("members").any? { |member| member["name"] == derived }
+
           result.add("UNEXPECTED_MEMBER", "#{name}::#{method_name} runtime", type: name)
         end
       end

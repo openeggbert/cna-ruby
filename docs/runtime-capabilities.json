@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 30",
+  "milestone": "Foundation 31",
   "platform": "Linux x86-64 MRI Ruby 3.3.8",
   "cnaAbi": "0.7.0",
   "capabilities": [
@@ -104,7 +104,7 @@
       "id": "managed.touch-closure",
       "category": "VERIFIED_MANAGED",
       "status": "verified complete managed value contracts",
-      "evidence": "Foundation 17: TouchLocationState (Invalid=0..Moved=3), GestureType (flags, declared None=0, mask 0x3FF, no invented aggregate), TouchPanelCapabilities (get-only IsConnected/MaximumTouchCount projecting the CLR default struct value, because XNA declares no public constructor); 3 types / 17 Ruby identities. Managed contract only: no TouchPanel, TouchCollection, gesture recognition, touch route or touch hardware is implemented or claimed, and nothing queries a touch device. Foundation 23 later added the TouchLocation and GestureSample value contracts; see managed.touch-value-types"
+      "evidence": "Foundation 17: TouchLocationState (Invalid=0..Moved=3), GestureType (flags, declared None=0, mask 0x3FF, no invented aggregate), TouchPanelCapabilities (get-only IsConnected/MaximumTouchCount projecting the CLR default struct value, because XNA declares no public constructor); 3 types / 17 Ruby identities. Managed contract only: that milestone implemented and claimed no TouchPanel, no TouchCollection, no gesture recognition, no touch route and no touch hardware, and queried no touch device. Foundation 23 later added the TouchLocation and GestureSample value contracts; see managed.touch-value-types, and Foundation 31 the TouchCollection pair; see managed.touch-collection"
     },
     {
       "id": "managed.interface-contracts",
@@ -159,6 +159,12 @@
       "category": "VERIFIED_MANAGED",
       "status": "verified complete value contracts",
       "evidence": "Foundation 23: TouchLocation and GestureSample; 2 types / 19 Ruby identities. Both constructors are pure storage with no validation; the three-argument TouchLocation form leaves prevState at the literal 0, which is Invalid; TryGetPreviousLocation fills its out value on both branches and answers [found, previousLocation]; Equals compares id, x, y, prevX and prevY while op_Equality compares all seven fields, a divergence preserved rather than normalised; every comparison is bne.un so NaN is never equal to itself; GetHashCode sums only id, x and y. GestureSample declares no Equals, GetHashCode, ToString or operator, so none is projected. No TouchPanel, TouchCollection, gesture recognition or touch device, and nothing produces either type"
+    },
+    {
+      "id": "managed.touch-collection",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified complete managed value contracts",
+      "evidence": "Foundation 31: TouchCollection and its nested TouchCollection+Enumerator, closed together because neither can be closed alone -- the declaring type's GetEnumerator returns the nested one and the nested one's Current and MoveNext call the declaring type's Item and Count; 2 types / 18 Ruby identities. The struct declares eight TouchLocation slots and an int32 count, never a list, which is the whole eight-location ceiling. The constructor throws ArgumentNullException(touches) for null and ArgumentOutOfRangeException(touches) for more than eight, sets isConnected to the literal true, and expands each element through TouchLocation.TryGetPreviousLocation, using TouchLocationState.Invalid and a zero previous position when there is none. IsReadOnly answers the literal true and Insert, RemoveAt, Add, Clear, Remove and the Item setter are each a two-instruction body that throws NotSupportedException, mapped by managed.not-supported-exception to CNA::Runtime::NotSupportedError so an ordinary rescue catches it. The indexer constructs ArgumentOutOfRangeException(index) in its own IL and therefore raises RangeError, unlike a forwarding indexer. IndexOf scans with op_Equality over all seven TouchLocation fields, Contains is that scan negated, CopyTo throws ArgumentNullException(array) and ArgumentOutOfRangeException(arrayIndex) twice over, and FindById answers the ordered pair [found, location] filling the CLR default TouchLocation on the false branch. GetEnumerator copies the collection struct, so the enumerator walks a snapshot; it starts at -1, Current forwards to the indexer with no guard so reading it before the first MoveNext or after exhaustion raises exactly what the indexer raises, MoveNext clamps position to Count, and Dispose has a bare ret body. IEnumerator.Reset is a private explicit interface implementation outside the selected surface and is not projected. Nothing produces a TouchCollection: no TouchPanel, no gesture recognition, no touch device, and the internal Update that XNA's input layer drives is not projected"
     },
     {
       "id": "managed.spatial-audio-descriptors",
@@ -452,7 +458,7 @@
       "id": "input.touch",
       "category": "UNIMPLEMENTED_CNA_RUBY",
       "status": "deferred",
-      "evidence": "Managed value contracts only. Input.Touch holds TouchLocationState, GestureType, TouchPanelCapabilities, TouchLocation and GestureSample, every one of them complete. TouchPanel, TouchCollection, gesture recognition and every touch route remain absent; no touch hardware has been measured, nothing queries a touch device, nothing produces a TouchLocation or a GestureSample, and TouchPanelCapabilities answers the CLR default struct value rather than a device"
+      "evidence": "Managed value contracts only. Input.Touch holds TouchLocationState, GestureType, TouchPanelCapabilities, TouchLocation, GestureSample, TouchCollection and TouchCollection+Enumerator, every one of them complete. TouchPanel, gesture recognition and every touch route remain absent; no touch hardware has been measured, nothing queries a touch device, nothing produces a TouchLocation, a GestureSample or a TouchCollection, and TouchPanelCapabilities answers the CLR default struct value rather than a device"
     },
     {
       "id": "evidence.behavior-corpus-upstream-source",

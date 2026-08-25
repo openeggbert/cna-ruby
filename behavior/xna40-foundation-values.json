@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, and the Foundation 27 ContentSerializer attributes separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, and the Foundation 31 TouchCollection pair separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
   "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
@@ -12687,6 +12687,228 @@
         [],
         "Object"
       ]
+    },
+    {
+      "id": "touch_collection.collection.il_contract",
+      "operation": "TouchValue.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Input.Touch.TouchCollection"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "struct",
+        true,
+        "System.ValueType",
+        [
+          "System.Collections.Generic.IList`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]"
+        ],
+        15,
+        "Microsoft.Xna.Framework.Input.Touch.dll",
+        "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+        11,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "touch_collection.enumerator.il_contract",
+      "operation": "TouchValue.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "struct",
+        true,
+        "System.ValueType",
+        [
+          "System.Collections.Generic.IEnumerator`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]"
+        ],
+        3,
+        "Microsoft.Xna.Framework.Input.Touch.dll",
+        "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+        2,
+        false,
+        [
+          [
+            "assembly",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "touch_collection.contract",
+      "operation": "TouchCollection.Contract",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        2,
+        true,
+        true,
+        1,
+        2,
+        "Moved",
+        true,
+        "Pressed",
+        false,
+        "Invalid",
+        0,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "touch_collection.ceiling",
+      "operation": "TouchCollection.Ceiling",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        0,
+        7,
+        8,
+        [
+          "RangeError",
+          "touches"
+        ],
+        [
+          "ArgumentError",
+          "touches"
+        ]
+      ]
+    },
+    {
+      "id": "touch_collection.bounds",
+      "operation": "TouchCollection.Bounds",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        1,
+        [
+          "RangeError",
+          "index"
+        ],
+        [
+          "RangeError",
+          "index"
+        ],
+        [
+          "RangeError",
+          "index"
+        ],
+        [
+          "TypeError",
+          "index must be an Integer"
+        ]
+      ]
+    },
+    {
+      "id": "touch_collection.read_only",
+      "operation": "TouchCollection.ReadOnly",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        [
+          "CNA::Runtime::NotSupportedError",
+          "CNA::Runtime::NotSupportedError",
+          "CNA::Runtime::NotSupportedError",
+          "CNA::Runtime::NotSupportedError",
+          "CNA::Runtime::NotSupportedError",
+          "CNA::Runtime::NotSupportedError"
+        ],
+        1,
+        true,
+        false
+      ]
+    },
+    {
+      "id": "touch_collection.search",
+      "operation": "TouchCollection.Search",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        0,
+        1,
+        -1,
+        true,
+        -1,
+        true,
+        false,
+        true,
+        9,
+        false,
+        0,
+        "Invalid",
+        [
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "touch_collection.copy_to",
+      "operation": "TouchCollection.CopyTo",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          null,
+          1,
+          2,
+          null
+        ],
+        [
+          "ArgumentError",
+          "array"
+        ],
+        [
+          "RangeError",
+          "arrayIndex"
+        ],
+        [
+          "RangeError",
+          "arrayIndex"
+        ],
+        "no-raise"
+      ]
+    },
+    {
+      "id": "touch_collection.enumeration",
+      "operation": "TouchCollection.Enumeration",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "Enumerator",
+        [
+          "RangeError",
+          "index"
+        ],
+        [
+          1,
+          2
+        ],
+        false,
+        [
+          "RangeError",
+          "index"
+        ],
+        true,
+        false,
+        false,
+        [
+          1,
+          2
+        ],
+        2
+      ]
     }
-  ]
+  ],
+  "milestone31SourceAssemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+  "milestone31MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 b2db718e5813c457f93229b1297001a8fa4c4d17587af776261f03eb449b3853, 420 observations) was proved before appending 9 additive observations"
 }

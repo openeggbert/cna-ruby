@@ -232,10 +232,17 @@ class TouchValueTypesTest < Minitest::Test
 
   # ------------------------------------------------------------------------ nothing reads a device
 
+  # Foundation 31 completed TouchCollection and its nested Enumerator, which are the managed value
+  # contract and read nothing. TouchPanel, which is the type that would name a device, is still
+  # absent, and no touch route was bound.
   def test_no_touch_device_surface_exists
-    %i[TouchPanel TouchCollection TouchPanelState].each { |name| refute T.const_defined?(name, false), name.to_s }
+    %i[TouchPanel TouchPanelState].each { |name| refute T.const_defined?(name, false), name.to_s }
+    assert T.const_defined?(:TouchCollection, false)
+    assert T::TouchCollection.const_defined?(:Enumerator, false)
     %i[GetCapabilities ReadGesture IsGestureAvailable GetState EnabledGestures]
       .each { |name| refute TL.respond_to?(name), name.to_s }
+    %i[GetCapabilities ReadGesture IsGestureAvailable GetState EnabledGestures]
+      .each { |name| refute T::TouchCollection.respond_to?(name), name.to_s }
     assert_equal 39, CNA::Native::Manifest::FUNCTIONS.length
     assert_equal 59, CNA::Native::Manifest::CONSTANTS.length
   end

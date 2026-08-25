@@ -34737,6 +34737,379 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::SpriteBatch"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.TouchCollection",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "System.Collections.Generic.ICollection`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]",
+        "System.Collections.Generic.IEnumerable`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]",
+        "System.Collections.Generic.IList`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]",
+        "System.Collections.IEnumerable"
+      ],
+      "directInterfaces": [
+        "System.Collections.Generic.IList`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "touches",
+              "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "FindById",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "touchLocation",
+              "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation&",
+              "ref": true,
+              "out": true,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "IndexOf",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "item",
+              "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Insert",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "index",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "item",
+              "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "RemoveAt",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "index",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Add",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "item",
+              "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Clear",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Contains",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "item",
+              "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "CopyTo",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "array",
+              "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "arrayIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Remove",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "item",
+              "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetEnumerator",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "IsConnected",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Item",
+          "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+            {
+              "name": "index",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Count",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "IsReadOnly",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::Touch::TouchCollection"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "System.Collections.Generic.IEnumerator`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]",
+        "System.Collections.IEnumerator",
+        "System.IDisposable"
+      ],
+      "directInterfaces": [
+        "System.Collections.Generic.IEnumerator`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "MoveNext",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Current",
+          "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::Touch::TouchCollection::Enumerator"
     }
   ]
 }

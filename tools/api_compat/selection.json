@@ -1,166 +1,738 @@
 {
   "schemaVersion": 1,
   "types": [
-    {"name": "Microsoft.Xna.Framework.MathHelper", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Point", "complete": true},
-    {"name": "Microsoft.Xna.Framework.GameTime", "complete": true},
-    {"name": "Microsoft.Xna.Framework.PlayerIndex", "complete": true},
-    {"name": "Microsoft.Xna.Framework.DisplayOrientation", "complete": true},
-    {"name": "Microsoft.Xna.Framework.IGameComponent", "complete": true},
-    {"name": "Microsoft.Xna.Framework.IGraphicsDeviceManager", "complete": true},
-    {"name": "Microsoft.Xna.Framework.GameComponentCollectionEventArgs", "complete": true},
-    {"name": "Microsoft.Xna.Framework.FrameworkDispatcher", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Content.ContentSerializerAttribute", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Content.ContentSerializerCollectionItemNameAttribute", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Content.ContentSerializerIgnoreAttribute", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Content.ContentSerializerRuntimeTypeAttribute", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Content.ContentSerializerTypeVersionAttribute", "complete": true},
-    {"name": "Microsoft.Xna.Framework.IUpdateable", "complete": true},
-    {"name": "Microsoft.Xna.Framework.IDrawable", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Audio.AudioChannels", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Audio.AudioStopOptions", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Audio.MicrophoneState", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Audio.SoundState", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Audio.InstancePlayLimitException", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Audio.NoAudioHardwareException", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Audio.NoMicrophoneConnectedException", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Audio.AudioListener", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Audio.AudioEmitter", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Media.MediaSourceType", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Media.MediaState", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Media.VideoSoundtrackType", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.Touch.GestureType", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.Touch.TouchPanelCapabilities", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.Touch.TouchLocation", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.Touch.GestureSample", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.SpriteSortMode", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.SpriteEffects", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.ClearOptions", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.DepthFormat", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PrimitiveType", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.CubeMapFace", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.BufferUsage", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.FillMode", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.IndexElementSize", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.CullMode", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.RenderTargetUsage", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.SetDataOptions", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.TextureAddressMode", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PresentInterval", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.BlendFunction", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.EffectParameterClass", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.CompareFunction", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.StencilOperation", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.TextureFilter", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.EffectParameterType", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.Blend", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.IEffectMatrices", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.IEffectFog", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.SurfaceFormat", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.GraphicsProfile", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.DeviceLostException", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.DeviceNotResetException", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PresentationParameters", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.DisplayMode", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.DisplayModeCollection", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.KeyState", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.Keys", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.KeyboardState", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.Keyboard", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.ButtonState", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.MouseState", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.Mouse", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.Buttons", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.GamePad", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.GamePadButtons", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.GamePadCapabilities", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.GamePadDPad", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.GamePadDeadZone", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.GamePadState", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.GamePadThumbSticks", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.GamePadTriggers", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Input.GamePadType", "complete": true},
-
-    {"name": "Microsoft.Xna.Framework.Vector2", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Vector3", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Vector4", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Quaternion", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Matrix", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Plane", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Ray", "complete": true},
-    {"name": "Microsoft.Xna.Framework.BoundingBox", "complete": true},
-    {"name": "Microsoft.Xna.Framework.BoundingSphere", "complete": true},
-    {"name": "Microsoft.Xna.Framework.BoundingFrustum", "complete": true},
-    {"name": "Microsoft.Xna.Framework.ContainmentType", "complete": true},
-    {"name": "Microsoft.Xna.Framework.PlaneIntersectionType", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Rectangle", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Color", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Curve", "complete": true},
-    {"name": "Microsoft.Xna.Framework.CurveKey", "complete": true},
-    {"name": "Microsoft.Xna.Framework.CurveKeyCollection", "complete": true},
-    {"name": "Microsoft.Xna.Framework.CurveContinuity", "complete": true},
-    {"name": "Microsoft.Xna.Framework.CurveLoopType", "complete": true},
-    {"name": "Microsoft.Xna.Framework.CurveTangent", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Game", "include": [
-      {"kind": "constructor", "parameters": []}, {"name": "Run"}, {"name": "RunOneFrame"}, {"name": "Exit"},
-      {"name": "BeginRun"}, {"name": "EndRun"}, {"name": "Update"}, {"name": "BeginDraw"}, {"name": "Draw"},
-      {"name": "EndDraw"}, {"name": "Initialize"}, {"name": "LoadContent"}, {"name": "UnloadContent"},
-      {"kind": "method", "name": "Dispose", "parameters": []}, {"name": "GraphicsDevice"}
-    ]},
-    {"name": "Microsoft.Xna.Framework.GraphicsDeviceManager", "include": [
-      {"kind": "constructor", "parameters": ["Microsoft.Xna.Framework.Game"]},
-      {"name": "GraphicsDevice"},
-      {"name": "DefaultBackBufferWidth"}, {"name": "DefaultBackBufferHeight"}
-    ]},
-    {"name": "Microsoft.Xna.Framework.Graphics.Viewport", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.GraphicsDevice", "include": [
-      {"kind": "method", "name": "Clear", "parameters": ["Microsoft.Xna.Framework.Color"]},
-      {"name": "IsDisposed"}, {"name": "Viewport", "override": {"set": false}}
-    ]},
-    {"name": "Microsoft.Xna.Framework.Graphics.GraphicsResource", "include": [
-      {"name": "ToString"}, {"kind": "method", "name": "Dispose", "parameters": []},
-      {"name": "IsDisposed"}, {"name": "Tag"}, {"name": "Name"}, {"name": "GraphicsDevice"}
-    ]},
-    {"name": "Microsoft.Xna.Framework.Graphics.Texture", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra5551", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.Byte4", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector2", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector4", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte4", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort2", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort4", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.Rg32", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba1010102", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba64", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.Short2", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.PackedVector.Short4", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.VertexElement", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.VertexElementFormat", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.VertexElementUsage", "complete": true},
-    {"name": "Microsoft.Xna.Framework.Graphics.Texture2D", "include": [
-      {"kind": "method", "name": "FromStream", "parameters": ["Microsoft.Xna.Framework.Graphics.GraphicsDevice", "System.IO.Stream"]},
-      {"name": "Bounds"}, {"name": "Height"}, {"name": "Width"}
-    ]},
-    {"name": "Microsoft.Xna.Framework.Graphics.SpriteBatch", "include": [
-      {"kind": "constructor", "parameters": ["Microsoft.Xna.Framework.Graphics.GraphicsDevice"]},
-      {"kind": "method", "name": "Begin", "parameters": []}, {"name": "End"},
-      {"kind": "method", "name": "Draw", "parameters": ["Microsoft.Xna.Framework.Graphics.Texture2D", "Microsoft.Xna.Framework.Vector2", "Microsoft.Xna.Framework.Color"]},
-      {"kind": "method", "name": "Draw", "parameters": ["Microsoft.Xna.Framework.Graphics.Texture2D", "Microsoft.Xna.Framework.Vector2", "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]", "Microsoft.Xna.Framework.Color"]},
-      {"kind": "method", "name": "Draw", "parameters": ["Microsoft.Xna.Framework.Graphics.Texture2D", "Microsoft.Xna.Framework.Vector2", "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]", "Microsoft.Xna.Framework.Color", "System.Single", "Microsoft.Xna.Framework.Vector2", "System.Single", "Microsoft.Xna.Framework.Graphics.SpriteEffects", "System.Single"]},
-      {"kind": "method", "name": "Draw", "parameters": ["Microsoft.Xna.Framework.Graphics.Texture2D", "Microsoft.Xna.Framework.Vector2", "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]", "Microsoft.Xna.Framework.Color", "System.Single", "Microsoft.Xna.Framework.Vector2", "Microsoft.Xna.Framework.Vector2", "Microsoft.Xna.Framework.Graphics.SpriteEffects", "System.Single"]}
-    ]}
+    {
+      "name": "Microsoft.Xna.Framework.MathHelper",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Point",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.GameTime",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.PlayerIndex",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.DisplayOrientation",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.IGameComponent",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.IGraphicsDeviceManager",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.GameComponentCollectionEventArgs",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.FrameworkDispatcher",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentSerializerAttribute",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentSerializerCollectionItemNameAttribute",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentSerializerIgnoreAttribute",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentSerializerRuntimeTypeAttribute",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentSerializerTypeVersionAttribute",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.IUpdateable",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.IDrawable",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.AudioChannels",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.AudioStopOptions",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.MicrophoneState",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.SoundState",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.InstancePlayLimitException",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.NoAudioHardwareException",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.NoMicrophoneConnectedException",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.AudioListener",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.AudioEmitter",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.MediaSourceType",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.MediaState",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.VideoSoundtrackType",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.TouchPanelCapabilities",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.GestureSample",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.SpriteSortMode",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.SpriteEffects",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ClearOptions",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DepthFormat",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.FillMode",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.IndexElementSize",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.CullMode",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.SetDataOptions",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PresentInterval",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.EffectParameterClass",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.EffectParameterType",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.Blend",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.IEffectMatrices",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.IEffectFog",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.GraphicsProfile",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DeviceLostException",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DeviceNotResetException",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PresentationParameters",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DisplayMode",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DisplayModeCollection",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.KeyState",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Keys",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.KeyboardState",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Keyboard",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.ButtonState",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.MouseState",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Mouse",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Buttons",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePad",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadButtons",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadCapabilities",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadDPad",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadDeadZone",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadState",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadThumbSticks",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadTriggers",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.GamePadType",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Vector2",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Vector3",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Vector4",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Quaternion",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Matrix",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Plane",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Ray",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.BoundingBox",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.BoundingSphere",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.BoundingFrustum",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.ContainmentType",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.PlaneIntersectionType",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Rectangle",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Color",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Curve",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.CurveKey",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.CurveKeyCollection",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.CurveContinuity",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.CurveLoopType",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.CurveTangent",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Game",
+      "include": [
+        {
+          "kind": "constructor",
+          "parameters": []
+        },
+        {
+          "name": "Run"
+        },
+        {
+          "name": "RunOneFrame"
+        },
+        {
+          "name": "Exit"
+        },
+        {
+          "name": "BeginRun"
+        },
+        {
+          "name": "EndRun"
+        },
+        {
+          "name": "Update"
+        },
+        {
+          "name": "BeginDraw"
+        },
+        {
+          "name": "Draw"
+        },
+        {
+          "name": "EndDraw"
+        },
+        {
+          "name": "Initialize"
+        },
+        {
+          "name": "LoadContent"
+        },
+        {
+          "name": "UnloadContent"
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "parameters": []
+        },
+        {
+          "name": "GraphicsDevice"
+        }
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.GraphicsDeviceManager",
+      "include": [
+        {
+          "kind": "constructor",
+          "parameters": [
+            "Microsoft.Xna.Framework.Game"
+          ]
+        },
+        {
+          "name": "GraphicsDevice"
+        },
+        {
+          "name": "DefaultBackBufferWidth"
+        },
+        {
+          "name": "DefaultBackBufferHeight"
+        }
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.Viewport",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+      "include": [
+        {
+          "kind": "method",
+          "name": "Clear",
+          "parameters": [
+            "Microsoft.Xna.Framework.Color"
+          ]
+        },
+        {
+          "name": "IsDisposed"
+        },
+        {
+          "name": "Viewport",
+          "override": {
+            "set": false
+          }
+        }
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+      "include": [
+        {
+          "name": "ToString"
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "parameters": []
+        },
+        {
+          "name": "IsDisposed"
+        },
+        {
+          "name": "Tag"
+        },
+        {
+          "name": "Name"
+        },
+        {
+          "name": "GraphicsDevice"
+        }
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.Texture",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra5551",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Byte4",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector2",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector4",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte4",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort2",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort4",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Rg32",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba1010102",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba64",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Short2",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PackedVector.Short4",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexElement",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexElementFormat",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.Texture2D",
+      "include": [
+        {
+          "kind": "method",
+          "name": "FromStream",
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+            "System.IO.Stream"
+          ]
+        },
+        {
+          "name": "Bounds"
+        },
+        {
+          "name": "Height"
+        },
+        {
+          "name": "Width"
+        }
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.SpriteBatch",
+      "include": [
+        {
+          "kind": "constructor",
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Begin",
+          "parameters": []
+        },
+        {
+          "name": "End"
+        },
+        {
+          "kind": "method",
+          "name": "Draw",
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.Texture2D",
+            "Microsoft.Xna.Framework.Vector2",
+            "Microsoft.Xna.Framework.Color"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Draw",
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.Texture2D",
+            "Microsoft.Xna.Framework.Vector2",
+            "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+            "Microsoft.Xna.Framework.Color"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Draw",
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.Texture2D",
+            "Microsoft.Xna.Framework.Vector2",
+            "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+            "Microsoft.Xna.Framework.Color",
+            "System.Single",
+            "Microsoft.Xna.Framework.Vector2",
+            "System.Single",
+            "Microsoft.Xna.Framework.Graphics.SpriteEffects",
+            "System.Single"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Draw",
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.Texture2D",
+            "Microsoft.Xna.Framework.Vector2",
+            "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+            "Microsoft.Xna.Framework.Color",
+            "System.Single",
+            "Microsoft.Xna.Framework.Vector2",
+            "Microsoft.Xna.Framework.Vector2",
+            "Microsoft.Xna.Framework.Graphics.SpriteEffects",
+            "System.Single"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.TouchCollection",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator",
+      "complete": true
+    }
   ]
 }

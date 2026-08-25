@@ -1,0 +1,243 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+  "derivation": "Foundation 31 TouchCollection and its nested Enumerator. Contract rows come from the pinned public metadata and from docs/generated/xna-il-inventory.json, which tools/api_compat/build_il_inventory.rb derives from Microsoft.Xna.Framework.Input.Touch.dll (SHA-256 b0585224…) admitted by exact hash. Mapping rows encode what that assembly IL establishes: the struct declares eight TouchLocation slots and an int32 count, so the constructor accepts eight elements and throws ArgumentOutOfRangeException(touches) for nine and ArgumentNullException(touches) for null; isConnected is the literal true; each element is expanded through TouchLocation.TryGetPreviousLocation, using TouchLocationState.Invalid and a zero previous position when there is none; IsReadOnly is the literal true and six members are a two-instruction newobj NotSupportedException; throw, projected to CNA::Runtime::NotSupportedError, which is a StandardError and not a ScriptError; the indexer constructs ArgumentOutOfRangeException(index) in its own IL, which maps to RangeError; IndexOf scans with op_Equality over all seven fields, so a TouchLocation that Equals answers true for is still not found; Contains is that scan negated; CopyTo throws ArgumentNullException(array) once and ArgumentOutOfRangeException(arrayIndex) twice; FindById fills the CLR default TouchLocation on the false branch; and the enumerator starts at -1, forwards Current to the indexer with no guard, clamps position to Count, and has a bare-ret Dispose. None is snapshotted from the cna-ruby implementation.",
+  "observations": [
+    {
+      "id": "touch_collection.collection.il_contract",
+      "operation": "TouchValue.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Input.Touch.TouchCollection"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "struct",
+        true,
+        "System.ValueType",
+        [
+          "System.Collections.Generic.IList`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]"
+        ],
+        15,
+        "Microsoft.Xna.Framework.Input.Touch.dll",
+        "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+        11,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "touch_collection.enumerator.il_contract",
+      "operation": "TouchValue.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "struct",
+        true,
+        "System.ValueType",
+        [
+          "System.Collections.Generic.IEnumerator`1[Microsoft.Xna.Framework.Input.Touch.TouchLocation]"
+        ],
+        3,
+        "Microsoft.Xna.Framework.Input.Touch.dll",
+        "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+        2,
+        false,
+        [
+          [
+            "assembly",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "touch_collection.contract",
+      "operation": "TouchCollection.Contract",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        2,
+        true,
+        true,
+        1,
+        2,
+        "Moved",
+        true,
+        "Pressed",
+        false,
+        "Invalid",
+        0,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "touch_collection.ceiling",
+      "operation": "TouchCollection.Ceiling",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        0,
+        7,
+        8,
+        [
+          "RangeError",
+          "touches"
+        ],
+        [
+          "ArgumentError",
+          "touches"
+        ]
+      ]
+    },
+    {
+      "id": "touch_collection.bounds",
+      "operation": "TouchCollection.Bounds",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        1,
+        [
+          "RangeError",
+          "index"
+        ],
+        [
+          "RangeError",
+          "index"
+        ],
+        [
+          "RangeError",
+          "index"
+        ],
+        [
+          "TypeError",
+          "index must be an Integer"
+        ]
+      ]
+    },
+    {
+      "id": "touch_collection.read_only",
+      "operation": "TouchCollection.ReadOnly",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        [
+          "CNA::Runtime::NotSupportedError",
+          "CNA::Runtime::NotSupportedError",
+          "CNA::Runtime::NotSupportedError",
+          "CNA::Runtime::NotSupportedError",
+          "CNA::Runtime::NotSupportedError",
+          "CNA::Runtime::NotSupportedError"
+        ],
+        1,
+        true,
+        false
+      ]
+    },
+    {
+      "id": "touch_collection.search",
+      "operation": "TouchCollection.Search",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        0,
+        1,
+        -1,
+        true,
+        -1,
+        true,
+        false,
+        true,
+        9,
+        false,
+        0,
+        "Invalid",
+        [
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "touch_collection.copy_to",
+      "operation": "TouchCollection.CopyTo",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          null,
+          1,
+          2,
+          null
+        ],
+        [
+          "ArgumentError",
+          "array"
+        ],
+        [
+          "RangeError",
+          "arrayIndex"
+        ],
+        [
+          "RangeError",
+          "arrayIndex"
+        ],
+        "no-raise"
+      ]
+    },
+    {
+      "id": "touch_collection.enumeration",
+      "operation": "TouchCollection.Enumeration",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "Enumerator",
+        [
+          "RangeError",
+          "index"
+        ],
+        [
+          1,
+          2
+        ],
+        false,
+        [
+          "RangeError",
+          "index"
+        ],
+        true,
+        false,
+        false,
+        [
+          1,
+          2
+        ],
+        2
+      ]
+    }
+  ]
+}
