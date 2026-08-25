@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 21",
+  "milestone": "Foundation 27",
   "complete": true,
   "date": "2026-08-25",
   "ruby": "ruby 3.3.8 (2025-04-09 revision b200bad6cd) [x86_64-linux-gnu]",
@@ -33,21 +33,22 @@
   "gem": {
     "filename": "cna-ruby-0.1.0.dev0.gem",
     "version": "0.1.0.dev0",
-    "sha256": "4c10ce3b35286533cb604b02df05951d55066c5084c5a9b7db43f39d76d9431c",
-    "entries": 48,
-    "rubySources": 34,
-    "rbsSignatures": 13,
+    "sha256": "7f9ed5c38519a5f3e06cde742ad082db9f3c0b49f8836046a6a5e36f4c28db97",
+    "entries": 52,
+    "rubySources": 37,
+    "rbsSignatures": 14,
     "forbiddenEntries": 0,
     "nativeLibrariesBundled": 0,
     "developerPathLeaks": 0,
-    "previousMilestoneSha256": "d3c44a0d208de614c972ecd0e9b56cafd6255f4dcec7362d5a94d80ac2572b49",
+    "previousMilestoneSha256": "4c10ce3b35286533cb604b02df05951d55066c5084c5a9b7db43f39d76d9431c",
     "packagedEntriesMatchWorktree": true,
     "packageWorktreeMismatches": 0,
     "newEntries": [
       "lib/cna/runtime/event.rb",
       "lib/cna/runtime/bcl_projection.rb",
       "sig/cna/runtime_event.rbs"
-    ]
+    ],
+    "microsoftBinariesPackaged": 0
   },
   "native": {
     "abi": "0.7.0",
@@ -58,8 +59,8 @@
     "audio": "NULL"
   },
   "tests": {
-    "runs": 564,
-    "assertions": 19543,
+    "runs": 635,
+    "assertions": 20701,
     "failures": 0,
     "errors": 0,
     "skips": 0
@@ -69,25 +70,19 @@
     "referenceMembers": 2964,
     "expectedRubyTypes": 257,
     "expectedRubyMembers": 2915,
-    "targetTypes": 113,
-    "targetMembers": 1623,
-    "totalDiagnostics": 328,
-    "completeTypes": 107,
+    "targetTypes": 134,
+    "targetMembers": 1713,
+    "totalDiagnostics": 307,
+    "completeTypes": 128,
     "partialTypes": 6,
-    "missingTypes": 144,
+    "missingTypes": 123,
     "allowlistEntries": 0,
     "eventIdentities": 4,
-    "eventIdentityNames": [
-      "Microsoft.Xna.Framework.IUpdateable::EnabledChanged",
-      "Microsoft.Xna.Framework.IUpdateable::UpdateOrderChanged",
-      "Microsoft.Xna.Framework.IDrawable::VisibleChanged",
-      "Microsoft.Xna.Framework.IDrawable::DrawOrderChanged"
-    ],
     "eventOwnerTypes": 2,
     "eventSupportType": "CNA::Runtime::Event",
-    "bclProjectedIdentities": 3,
+    "bclProjectedIdentities": 5,
     "bclExceptionBases": 2,
-    "missingType": 144,
+    "missingType": 123,
     "missingMember": 132,
     "unexpectedType": 0,
     "unexpectedMember": 0,
@@ -110,9 +105,17 @@
     "rawHandleLeak": 0,
     "publicNativeFfiLeak": 0,
     "unmeasuredStructuralCategory": 0,
+    "eventIdentityNames": [
+      "Microsoft.Xna.Framework.IUpdateable::EnabledChanged",
+      "Microsoft.Xna.Framework.IUpdateable::UpdateOrderChanged",
+      "Microsoft.Xna.Framework.IDrawable::VisibleChanged",
+      "Microsoft.Xna.Framework.IDrawable::DrawOrderChanged"
+    ],
     "bclProjection": {
       "types": {
-        "System.EventArgs": "CNA::Runtime::EventArgs"
+        "System.EventArgs": "CNA::Runtime::EventArgs",
+        "System.TimeSpan": "Float",
+        "System.Attribute": "CNA::Runtime::Attribute"
       },
       "exceptionBases": {
         "System.Exception": "StandardError",
@@ -390,27 +393,24 @@
   },
   "verifier": {
     "runs": 113,
-    "assertions": 2214,
-    "failures": 0,
-    "batchFixtures": 9,
-    "touchStructFixtures": 2,
-    "interfaceFixtures": 6
+    "assertions": 2212,
+    "failures": 0
   },
   "rbsRuntimeConsistency": {
     "runs": 21,
-    "assertions": 3239,
+    "assertions": 3477,
     "failures": 0,
     "rbsValidate": "PASS"
   },
   "behavior": {
     "provenance": "OBSERVATION_LEVEL",
-    "pureXnaDerived": 316,
-    "rubyMappingQualification": 50,
-    "observations": 366,
-    "assertions": 366,
+    "pureXnaDerived": 341,
+    "rubyMappingQualification": 79,
+    "observations": 420,
+    "assertions": 420,
     "failures": 0,
     "groupCounts": {
-      "BCL_PROJECTION": 11,
+      "BCL_PROJECTION": 13,
       "BINARY32": 2,
       "BOUNDING_BOX": 3,
       "BOUNDING_FRUSTUM": 8,
@@ -419,6 +419,8 @@
       "BUTTON_STATE": 2,
       "CLEAR_OPTIONS": 2,
       "COLOR": 13,
+      "CONSTRUCTOR_FREE": 8,
+      "CONTENT_ATTRIBUTE": 10,
       "CROSS_GEOMETRY": 3,
       "CURVE_EVALUATE": 4,
       "CURVE_KEY": 4,
@@ -437,7 +439,9 @@
       "GAMEPAD_TRIGGERS": 5,
       "GRAPHICS_DEVICE_STATUS": 2,
       "GRAPHICS_PROFILE": 2,
+      "IL_PROVENANCE": 2,
       "INTERFACE_CONTRACT": 12,
+      "MANAGED_DESCRIPTOR": 11,
       "MATHHELPER": 9,
       "MATRIX": 12,
       "MOUSE_STATE": 13,
@@ -456,6 +460,7 @@
       "RAY": 3,
       "RECTANGLE": 13,
       "TOUCH_CLOSURE": 2,
+      "TOUCH_VALUE": 7,
       "VECTOR2": 8,
       "VECTOR3": 7,
       "VECTOR4": 4,
@@ -463,11 +468,14 @@
       "VERTEX_ELEMENT_ENUMS": 3,
       "VIEWPORT_PROJECT": 5,
       "VIEWPORT_TITLE_SAFE_AREA": 2,
-      "VIEWPORT_UNPROJECT": 5
+      "VIEWPORT_UNPROJECT": 5,
+      "XNA_EXCEPTION": 14
     },
     "nativeGamePadIncludedInPureTotals": false,
     "upstreamSourcePresent": false,
-    "mergeMethod": "deterministic replay; byte-preserving re-serialisation of each pre-merge corpus proved before appending; purely additive"
+    "mergeMethod": "deterministic replay; byte-preserving re-serialisation of each pre-merge corpus proved before appending; purely additive",
+    "corrections": 4,
+    "correctionMethod": "each correction was applied by deterministic replay that proved every retained element of every corrected row, and every other row, unchanged"
   },
   "nativeAbi": {
     "boundFunctions": 38,
@@ -542,8 +550,8 @@
     "gemHome": "~/deps/cna-ruby-iso-f16",
     "reusedExistingGemHome": true,
     "installedGems": 1,
-    "rubySources": 34,
-    "rbsSignatures": 13,
+    "rubySources": 37,
+    "rbsSignatures": 14,
     "bundledNativeLibraries": 0,
     "developmentRubylib": false,
     "pathGem": false,
@@ -567,22 +575,42 @@
       "Framework::Content",
       "Framework::Storage",
       "::System"
+    ],
+    "microsoftBinaries": 0,
+    "foundation22To27ChecksFromInstalledGem": [
+      "DeviceLostException(message, inner) binds cause and roots at StandardError",
+      "TouchLocation ToString and TryGetPreviousLocation",
+      "GestureSample Timestamp as Float seconds",
+      "AudioListener default Position.Z is negative zero and Forward reads back exactly",
+      "AudioEmitter.DopplerScale accepts NaN",
+      "PresentationParameters defaults IsFullScreen true and DeviceWindowHandle is an Integer",
+      "DisplayMode ToString and DisplayModeCollection filtering",
+      "ResourceCreatedEventArgs.new is private and roots at CNA::Runtime::EventArgs",
+      "ContentSerializerAttribute AllowNull true, CollectionItemName \"Item\", roots at CNA::Runtime::Attribute",
+      "the five projected BCL identities and no ::System namespace"
     ]
   },
   "git": {
     "branch": "develop",
-    "head": "ffa056e66682a837cf7d714835ba4d0f6075d8ce",
+    "head": "the eighth commit is this documentation commit itself, whose hash it cannot contain; git log records it",
     "originDevelop": "ffa056e66682a837cf7d714835ba4d0f6075d8ce",
+    "localCommitsAhead": 8,
     "startingWorktree": "dirty; Foundations 16 to 19 complete and qualified but uncommitted",
-    "modified": 30,
-    "untracked": 30,
-    "staged": 0,
     "diffCheck": "PASS",
-    "committed": false,
+    "committed": true,
     "pushed": false,
-    "foundations16to21": "uncommitted",
     "cnaRepositoryDiffCheck": "PASS",
-    "cnaRepositoryChanged": false
+    "cnaRepositoryChanged": false,
+    "commits": [
+      "951b60f feat: complete managed foundations 16-21",
+      "2306d44 feat: complete the XNA exception cluster from pinned IL",
+      "ca508b3 feat: complete TouchLocation and GestureSample from pinned IL",
+      "fd38fb1 feat: complete the managed descriptors from pinned IL",
+      "79af6d3 feat: project constructor-free classes and complete three of them",
+      "602b02f feat: complete DisplayModeCollection and fix a generic-definition blind spot",
+      "5fb5689 feat: complete the ContentSerializer attributes and project System.Attribute",
+      "docs: record the Foundation 27 qualified state"
+    ]
   },
   "remainingPartialTypes": {
     "types": [
@@ -608,11 +636,11 @@
     "selectedOnly": true,
     "started": false,
     "selectionRoute": "none-consumable",
-    "reason": "all 38 dependency-complete missing types are blocked on XNA IL this host does not carry; 15 additionally name a BCL cluster no otherwise-unblocked type needs. No candidate is blocked on a decision this project has failed to make.",
+    "reason": "22 dependency-complete missing types remain and none is consumable: each needs native or platform support this managed sequence does not add, device or media values that have not been queried, IL the disassembler does not emit under an addressable name, or a BCL cluster no otherwise-unblocked type needs.",
     "decisionsRequired": [
 
     ],
-    "missingExternalInput": "retained Microsoft XNA Framework 4.0 Windows assemblies (proprietary reference data, not a tool or a package). tools/touch_location_reference_probe.cs is ready to run against a real Windows XNA runtime."
+    "missingExternalInput": "none for managed work; the original XNA 4.0 Windows assemblies are present and hash-pinned. Further progress needs CNA ABI expansion or real device/media runtime."
   },
   "batchName": "PURE_MANAGED_BATCH_A",
   "pureManagedEnumBatchClosure": {
@@ -1076,16 +1104,40 @@
   },
   "milestonesInThisRun": [
     {
-      "id": "Foundation 20",
-      "name": "EVENT_PROJECTION",
-      "types": 2,
-      "identities": 10
+      "id": "Foundation 22",
+      "name": "XNA_IL_PROVENANCE_AND_EXCEPTIONS",
+      "types": 6,
+      "identities": 18
     },
     {
-      "id": "Foundation 21",
-      "name": "BCL_PROJECTION_REGISTER",
-      "types": 0,
-      "identities": 0
+      "id": "Foundation 23",
+      "name": "INPUT_TOUCH_VALUE_TYPES",
+      "types": 2,
+      "identities": 19
+    },
+    {
+      "id": "Foundation 24",
+      "name": "MANAGED_DESCRIPTORS",
+      "types": 4,
+      "identities": 26
+    },
+    {
+      "id": "Foundation 25",
+      "name": "CONSTRUCTOR_FREE_CLASSES",
+      "types": 3,
+      "identities": 9
+    },
+    {
+      "id": "Foundation 26",
+      "name": "DISPLAY_MODE_COLLECTION",
+      "types": 1,
+      "identities": 2
+    },
+    {
+      "id": "Foundation 27",
+      "name": "CONTENT_SERIALIZER_ATTRIBUTES",
+      "types": 5,
+      "identities": 16
     }
   ],
   "touchClosure": {
@@ -1131,17 +1183,31 @@
   },
   "dependencyFrontier": {
     "schemaVersion": 3,
-    "dependencyCompleteCandidates": 38,
+    "dependencyCompleteCandidates": 22,
     "consumableCandidates": 0,
     "selectionRoute": "none-consumable",
     "blockerSummary": {
-      "BCL_PROJECTION+BEHAVIOR_EVIDENCE": 15,
-      "BEHAVIOR_EVIDENCE": 23
+      "BCL_PROJECTION": 8,
+      "BCL_PROJECTION+NATIVE_RUNTIME": 4,
+      "BCL_PROJECTION+RUNTIME_DATA": 2,
+      "IL_UNAVAILABLE": 1,
+      "NATIVE_RUNTIME": 2,
+      "RUNTIME_DATA": 5
     },
     "retiredBlockers": [
-      "EVENT_PROJECTION"
+      "EVENT_PROJECTION",
+      "BEHAVIOR_EVIDENCE"
     ],
-    "classifierValidatedAgainstShippedTypes": 33,
+    "runtimeDataRegister": [
+      "Microsoft.Xna.Framework.Audio.RendererDetail",
+      "Microsoft.Xna.Framework.Audio.AudioCategory",
+      "Microsoft.Xna.Framework.Media.MediaSource",
+      "Microsoft.Xna.Framework.Media.Video",
+      "Microsoft.Xna.Framework.Media.VisualizationData",
+      "Microsoft.Xna.Framework.GameWindow",
+      "Microsoft.Xna.Framework.FrameworkDispatcher"
+    ],
+    "classifierValidatedAgainstShippedTypes": 54,
     "register": "docs/generated/dependency-frontier.md"
   },
   "eventProjection": {
@@ -1183,7 +1249,9 @@
     "register": "CNA::Runtime::BclProjection",
     "measured": "the API verifier resolves every entry and shape-checks every exception base under LANGUAGE_MAPPING_MISMATCH; the dependency frontier consumes the same register",
     "types": {
-      "System.EventArgs": "CNA::Runtime::EventArgs"
+      "System.EventArgs": "CNA::Runtime::EventArgs",
+      "System.TimeSpan": "Float",
+      "System.Attribute": "CNA::Runtime::Attribute"
     },
     "exceptionBases": {
       "System.Exception": "StandardError",
@@ -1192,43 +1260,147 @@
     "exceptionRoot": "StandardError, because a CLR catch (Exception) is the analogue of a bare Ruby rescue",
     "intermediateBases": "an intermediate BCL exception class the selected XNA surface never names collapses to the nearest projected ancestor; no Ruby constant is invented for it",
     "fabricatedSystemNamespace": false,
-    "xnaExceptionTypesCompleted": 0,
-    "xnaExceptionTypesDeferred": 8,
-    "deferralReason": "every declared member of every XNA exception type is a constructor whose behaviour lives in XNA IL this host does not carry; ContentLoadException and StorageDeviceNotConnectedException additionally need SerializationInfo/StreamingContext",
+    "xnaExceptionTypesCompleted": 6,
+    "xnaExceptionTypesDeferred": 2,
+    "deferralReason": "ContentLoadException and StorageDeviceNotConnectedException list the protected (SerializationInfo, StreamingContext) constructor as a selected member; .NET binary serialization has no Ruby analogue and no other consumer",
     "notYetDesigned": [
       "System.Type",
       "System.IServiceProvider",
       "System.IO.Stream",
-      "System.TimeSpan",
-      "System.Attribute",
       "System.Text.StringBuilder",
       "System.Runtime.Serialization.SerializationInfo",
       "System.Collections.ObjectModel.ReadOnlyCollection`1",
       "System.Collections.Generic.Dictionary`2"
+    ],
+    "thrownExceptions": {
+      "System.ArgumentNullException": "ArgumentError",
+      "System.ArgumentOutOfRangeException": "RangeError",
+      "System.ArgumentException": "ArgumentError",
+      "System.IndexOutOfRangeException": "IndexError"
+    }
+  },
+  "ilProvenance": {
+    "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
+    "inventory": "docs/generated/xna-il-inventory.json",
+    "tool": "tools/api_compat/build_il_inventory.rb",
+    "disassembler": "ikdasm",
+    "admission": "by exact SHA-256, never by filename; the tool refuses to run on any mismatch",
+    "assemblies": [
+      {
+        "name": "Microsoft.Xna.Framework.dll",
+        "sha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+        "bytes": 679424,
+        "version": "4.0.0.0"
+      },
+      {
+        "name": "Microsoft.Xna.Framework.Graphics.dll",
+        "sha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+        "bytes": 427520,
+        "version": "4.0.0.0"
+      },
+      {
+        "name": "Microsoft.Xna.Framework.Game.dll",
+        "sha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+        "bytes": 74752,
+        "version": "4.0.0.0"
+      },
+      {
+        "name": "Microsoft.Xna.Framework.Input.Touch.dll",
+        "sha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+        "bytes": 23040,
+        "version": "4.0.0.0"
+      },
+      {
+        "name": "Microsoft.Xna.Framework.Xact.dll",
+        "sha256": "a14d5364dca7cf49fb90639e87ba04d52b59a700dc9198efa5707ce8eae28f0a",
+        "bytes": 75776,
+        "version": "4.0.0.0"
+      },
+      {
+        "name": "Microsoft.Xna.Framework.Storage.dll",
+        "sha256": "798f678e9ae3d9afc3bed66c30123bc9634fb923b6d200188344b618e608cbb8",
+        "bytes": 20992,
+        "version": "4.0.0.0"
+      },
+      {
+        "name": "Microsoft.Xna.Framework.Video.dll",
+        "sha256": "17538b1ca9d48a993e2cd88c96b436df08e7abb4aec5d4758eb21feb580d6e06",
+        "bytes": 17920,
+        "version": "4.0.0.0"
+      },
+      {
+        "name": "Microsoft.Xna.Framework.Net.dll",
+        "sha256": "39739dbf5f6ba02e1d0b02ed404f6fe0692497848bc1a6a25be132d47ed9c151",
+        "bytes": 54272,
+        "version": "4.0.0.0"
+      },
+      {
+        "name": "Microsoft.Xna.Framework.GamerServices.dll",
+        "sha256": "7c6effed97aa25a95c5e095d9c261f5581e402180cc073271a367b9eef79c8af",
+        "bytes": 73728,
+        "version": "4.0.0.0"
+      },
+      {
+        "name": "Microsoft.Xna.Framework.Avatar.dll",
+        "sha256": "b3c70bbe469000b9e11507cc63b88d54a4e0bc5c27afc826d66e0aee51640871",
+        "bytes": 26624,
+        "version": "4.0.0.0"
+      }
+    ],
+    "referenceTypes": 257,
+    "typesWithIl": 250,
+    "typesWithoutIl": 7,
+    "typesNativeReachable": 55,
+    "microsoftBytesCommitted": 0,
+    "durableCopy": "sibling repository openeggbert/xna4-decomp at reference/xna4/original/windows/",
+    "authorityOrder": [
+      "exact original binary plus ikdasm IL",
+      "hash-proven ILSpy C# for readability only",
+      "FNA, MonoGame, CNA and the other CNA bindings as comparators only"
     ]
   },
-  "uncommittedMilestonesCarriedIn": [
+  "constructorFreeClasses": {
+    "rule": "a CLR class whose only constructor is internal projects with new made private; public non-constructibility is part of the contract and the internal path stays reachable through __send__",
+    "precedent": [
+      "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+      "Microsoft.Xna.Framework.Graphics.Texture"
+    ],
+    "completed": [
+      "Microsoft.Xna.Framework.Graphics.DisplayMode",
+      "Microsoft.Xna.Framework.Graphics.DisplayModeCollection",
+      "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs",
+      "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs"
+    ],
+    "producersFabricated": 0
+  },
+  "committedMilestonesCarriedIn": [
     {
       "id": "Foundation 16",
-      "name": "PURE_MANAGED_BATCH_A",
       "types": 24,
       "identities": 109
     },
     {
       "id": "Foundation 17",
-      "name": "INPUT_TOUCH_CLOSURE",
       "types": 3,
       "identities": 17
     },
     {
       "id": "Foundation 18",
-      "name": "MANAGED_INTERFACE_CONTRACTS",
       "types": 4,
       "identities": 11
     },
     {
       "id": "Foundation 19",
-      "name": "DEPENDENCY_FRONTIER_REGISTER",
+      "types": 0,
+      "identities": 0
+    },
+    {
+      "id": "Foundation 20",
+      "types": 2,
+      "identities": 10
+    },
+    {
+      "id": "Foundation 21",
       "types": 0,
       "identities": 0
     }

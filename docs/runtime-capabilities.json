@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 21",
+  "milestone": "Foundation 27",
   "platform": "Linux x86-64 MRI Ruby 3.3.8",
   "cnaAbi": "0.7.0",
   "capabilities": [
@@ -132,9 +132,51 @@
     },
     {
       "id": "managed.xna-exception-types",
-      "category": "EVIDENCE_PENDING",
-      "status": "not started",
-      "evidence": "All eight XNA exception types stay absent. The Ruby base mapping exists, but every declared member of every one of them is a constructor whose behaviour lives in XNA IL that this host does not carry: the message the parameterless constructor produces, whether the message/innerException forms forward unchanged, and whether any validates its arguments. ContentLoadException and StorageDeviceNotConnectedException additionally need System.Runtime.Serialization.SerializationInfo and StreamingContext. The missing input is retained XNA 4.0 Windows IL, not a tool or a package"
+      "category": "VERIFIED_MANAGED",
+      "status": "verified complete cluster",
+      "evidence": "Foundation 22: six XNA exception types as real Ruby exceptions rooted at StandardError - Audio InstancePlayLimitException, NoAudioHardwareException, NoMicrophoneConnectedException; Graphics DeviceLostException, DeviceNotResetException, NoSuitableGraphicsDeviceException; 6 types / 18 Ruby identities. The pinned IL shows all eight XNA exception types declare zero fields, zero methods and four constructors whose entire body is a pure forward to the CLR exception base, with no message synthesis and no validation. The inner exception maps to Ruby Exception#cause, bound at construction with the backtrace cleared, so an unraised exception matches the CLR's InnerException set and StackTrace null. ContentLoadException and StorageDeviceNotConnectedException stay deferred on System.Runtime.Serialization. Nothing in this binding raises any of them, and no audio engine, Content or Storage namespace is added"
+    },
+    {
+      "id": "reference.xna-il-provenance",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified hash-pinned",
+      "evidence": "Foundation 22: the original Microsoft XNA Framework 4.0 Windows assemblies are on this host and are located by exact SHA-256, never by filename. tools/api_compat/reference/XNA_IL_PROVENANCE.md pins ten of them by hash, size and version, including the two the behaviour corpus had cited since Milestone 3. tools/api_compat/build_il_inventory.rb admits each by hash, refuses to run on any mismatch, disassembles with ikdasm and writes docs/generated/xna-il-inventory.json: declaring assembly, IL size, declared field and method counts, per-constructor access and pure-base-forward proof, and native reachability. 250 of 257 reference types have IL. No Microsoft-owned bytes and no machine-local path is committed, and the gem packages zero Microsoft binaries"
+    },
+    {
+      "id": "reference.native-reachability",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified measurement",
+      "evidence": "Foundation 22: the Framework and Graphics assemblies are mixed-mode C++/CLI, so a native entry point is a P/Invoke declaration or an indirect calli through an unmanaged calling convention. 205 such methods make 55 of 250 reference types native-reachable over the assemblies' own call graph. The rule validates against the shipped boundary: every partial runtime type but GraphicsResource is native, and of the complete types exactly Input.Mouse, Input.GamePad and Graphics.Texture are. BEHAVIOR_EVIDENCE was retired and replaced by IL_UNAVAILABLE, NATIVE_RUNTIME and RUNTIME_DATA, which name what is genuinely absent"
+    },
+    {
+      "id": "managed.touch-value-types",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified complete value contracts",
+      "evidence": "Foundation 23: TouchLocation and GestureSample; 2 types / 19 Ruby identities. Both constructors are pure storage with no validation; the three-argument TouchLocation form leaves prevState at the literal 0, which is Invalid; TryGetPreviousLocation fills its out value on both branches and answers [found, previousLocation]; Equals compares id, x, y, prevX and prevY while op_Equality compares all seven fields, a divergence preserved rather than normalised; every comparison is bne.un so NaN is never equal to itself; GetHashCode sums only id, x and y. GestureSample declares no Equals, GetHashCode, ToString or operator, so none is projected. No TouchPanel, TouchCollection, gesture recognition or touch device, and nothing produces either type"
+    },
+    {
+      "id": "managed.spatial-audio-descriptors",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified complete descriptors",
+      "evidence": "Foundation 24: AudioListener and AudioEmitter; 2 types / 11 Ruby identities. Both keep state in a native-layout XACT struct but call no native code. Every Vector3 passes through FlipHandedness, which is (X, Y, -Z), on both getter and setter; the constructor stores Position and Velocity unflipped so their first read answers a negative-zero Z, while Forward and Up are flipped at construction and read back exactly. DopplerScale is guarded by bge.un, so NaN is accepted and only an ordered negative value raises. No audio engine, SoundEffect, Microphone or XACT runtime is added and nothing set here is ever heard"
+    },
+    {
+      "id": "managed.presentation-parameters",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified complete descriptor",
+      "evidence": "Foundation 24: PresentationParameters; 13 Ruby identities. The constructor is base() plus exactly one store, set_IsFullScreen(true), so IsFullScreen defaults to true and every other field keeps its CLR default. No setter validates anything; Bounds is a fresh Rectangle derived from the back buffer; Clone copies the whole settings struct. DeviceWindowHandle keeps the existing System.IntPtr rule - a signed native-pointer-width Ruby Integer, never a Fiddle::Pointer. It creates no GraphicsDevice, looks up no native window, enumerates no adapter, builds no swap chain and presents nothing"
+    },
+    {
+      "id": "managed.constructor-free-classes",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified general mapping",
+      "evidence": "Foundations 25 and 26: a CLR class whose only constructor is internal projects with new made private, as GraphicsResource and Texture already did, so public non-constructibility is part of the contract while the internal path stays reachable through __send__. DisplayMode, DisplayModeCollection, ResourceCreatedEventArgs and ResourceDestroyedEventArgs completed on that rule; 4 types / 11 Ruby identities. DisplayMode derives AspectRatio, which answers zero when either extent is zero, plus TitleSafeArea and a four-field ToString; DisplayModeCollection enumerates in order and Item[format] materialises a filtered list, without mixing in Ruby Enumerable. No producer is fabricated: GraphicsAdapter and the GraphicsDevice resource events stay absent"
+    },
+    {
+      "id": "managed.content-serializer-attributes",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified complete cluster",
+      "evidence": "Foundation 27: the five ContentSerializer attributes; 16 Ruby identities. System.Attribute projects to the CNA::Runtime::Attribute marker base, designed because five otherwise unblocked types needed it. ContentSerializerAttribute stores allowNull true before calling the base constructor; CollectionItemName answers the literal Item whenever the raw field is null or empty and its setter throws ArgumentNullException, mapped to ArgumentError, for null or empty; HasCollectionItemName is the negation of that test; Clone copies the six raw fields. The Content namespace holds exactly these five types: no ContentManager, ContentReader, ContentTypeReader, XNB support or content pipeline, and nothing reads an attribute"
     },
     {
       "id": "managed.button-state",
