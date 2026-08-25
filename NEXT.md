@@ -2,19 +2,37 @@
 
 ## Exact current boundary
 
-Foundations 16 to 33, Native frontiers 1 to 3 and one evidence fix are published on
-`origin/develop`, whose tip is `80c51c2`. **Foundations 34 to 43, one defect fix, one producer audit
-and this handoff are local only** — thirteen commits ahead of `origin/develop`, none pushed.
+**Session start HEAD = `88e160e7`**, which was also `origin/develop`. That baseline already carries
+Foundations 16 to 39, Native frontiers 1 to 3, and the evidence and publication-state corrections
+that followed them — including the Foundations 34 to 39 publication sequence, which is published
+history and no longer local to anything.
+
+The sequence this session added on top of that baseline is **Foundations 40 to 43 plus the
+associated producer-audit, defect-fix and handoff commits**. Resolve where it currently sits with
+
+```sh
+git rev-parse HEAD
+git rev-parse origin/develop
+git log --oneline origin/develop..HEAD    # empty once the sequence is published
+```
+
+rather than from a count written down here.
 
 | Milestone | What it added | Types | Identities |
 | --- | --- | --- | --- |
 | 16–33, NF1–NF3 | see the published history | 51 | 268 |
 | 34–39 | `Collection<T>`, `GameComponentCollection`, `IDisposable` collapse, the component engine, `GameComponent`, member-level dependency edges | 2 | 23 |
-| **40** | **`Graphics.IGraphicsDeviceService` + the interface-producer rule** | **1** | **5** |
-| **—** | **`Game#Dispose` defect fix; `GraphicsDeviceManager` producer audit** | 0 | 0 |
-| **41** | **the four canonical `Game` events + three raisers** | 0 | **7** |
-| **42** | **`Game`'s four timing/presentation properties** | 0 | **4** |
-| **43** | **`Game.SuppressDraw` and `Game.ResetElapsedTime`** | 0 | **2** |
+| 40 | `Graphics.IGraphicsDeviceService` + the interface-producer rule | 1 | 5 |
+| — | `Game#Dispose` defect fix; `GraphicsDeviceManager` producer audit | 0 | 0 |
+| 41 | the four canonical `Game` events + three raisers | 0 | 7 |
+| 42 | `Game`'s four timing/presentation properties | 0 | 4 |
+| 43 | `Game.SuppressDraw` and `Game.ResetElapsedTime` | 0 | 2 |
+
+The rows are what each milestone added, not what is or is not published. Earlier revisions of this
+file encoded publication state in the prose and in bolded rows, and it went stale twice — once
+already corrected on `origin/develop` by the commit this session started from. A handoff outlives
+the push that follows it, so state the **session-start baseline**, which never moves, and let git
+answer everything that does.
 
 Strict target **142 types / 1786 member identities**: **136 complete**, six partial native/runtime
 types, 115 missing, **279 deferred diagnostics**. `MISSING_MEMBER` **117**, `PARTIAL_TYPES` 6,
