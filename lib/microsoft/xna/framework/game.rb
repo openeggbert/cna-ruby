@@ -145,6 +145,76 @@ module Microsoft
           raise TypeError, "game_time must be GameTime" unless value.instance_of?(GameTime)
         end
       end
+
+      # Derived from the pinned Microsoft.Xna.Framework.Game.dll IL (SHA-256 b5dffdd8…).
+      #
+      # A four-identity managed container over one private `Dictionary<Type, object>`. It reaches no
+      # native entry point, holds no unmanaged resource and needs no `Game`: its constructor is
+      # public, so unlike most of the Game family a caller can make one and use it directly. What it
+      # is *for* is `Game.Services`, which is one of the six deferred partial runtime types, so
+      # nothing in this binding populates one.
+      #
+      # `System.Type` is a service key here, and in every one of the twenty-four places the XNA
+      # surface names it, so it projects to a Ruby `Module` — a `Class` is one. The single operation
+      # the IL performs on it, `type.IsAssignableFrom(provider.GetType())`, is exactly Ruby's
+      # `provider.is_a?(type)`, and the dictionary's default comparer is reference equality, which
+      # is what a Ruby Hash gives a Module key.
+      #
+      # `System.IServiceProvider` declares one member, `GetService(Type)`, which this type already
+      # declares publicly. Ruby has no interfaces, so no constant is invented for it and the contract
+      # survives as that member — the same collapse `ExternalException` takes, for the same reason:
+      # inventing a Ruby identity the CLR surface never names would be unmeasurable.
+      #
+      # All four exception messages in the IL are localized `Resources` strings, so none is
+      # reproduced; the Ruby message is the CLR's parameter name, as everywhere else in this
+      # binding. `AddService`'s assignability failure names no parameter at all, and its CLR message
+      # carries a Microsoft bug worth recording rather than copying: the second format argument is
+      # `type.GetType().FullName`, the type *of the Type object*, where every reading of the message
+      # expects `type.FullName`.
+      class GameServiceContainer
+        def initialize
+          @services = {}
+        end
+
+        # `type == null` -> ArgumentNullException("type"); `provider == null` ->
+        # ArgumentNullException("provider"); an already-registered key -> ArgumentException naming
+        # "type"; a provider the key is not assignable from -> ArgumentException naming nothing.
+        # Then one `Dictionary.Add`.
+        def AddService(type, provider)
+          require_service_type!(type)
+          raise ArgumentError, "provider" if provider.nil?
+          raise ArgumentError, "type" if @services.key?(type)
+          raise ArgumentError unless provider.is_a?(type)
+
+          @services[type] = provider
+          nil
+        end
+
+        # `Dictionary.Remove` and the result is popped, so removing a key that was never added is
+        # harmless and answers nothing.
+        def RemoveService(type)
+          require_service_type!(type)
+          @services.delete(type)
+          nil
+        end
+
+        # `ContainsKey` then the indexer, else `ldnull`: an absent service answers nil rather than
+        # raising, which is the one place this type differs from the dictionary it wraps.
+        def GetService(type)
+          require_service_type!(type)
+          @services[type]
+        end
+
+        private
+
+        # Every one of the three members opens with the same null check on the same parameter.
+        def require_service_type!(type)
+          raise ArgumentError, "type" if type.nil?
+          raise TypeError, "type must be a Module" unless type.is_a?(::Module)
+
+          type
+        end
+      end
     end
   end
 end

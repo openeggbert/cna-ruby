@@ -45,7 +45,7 @@ class ReadOnlyCollectionTest < Minitest::Test
     assert_equal "CNA::Runtime::ReadOnlyCollection", B::TYPES.fetch(CLR)
     assert_equal R, Object.const_get(B::TYPES.fetch(CLR), false)
     assert_includes B.identities, CLR
-    assert_equal 6, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal 8, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal B::TYPES, STRICT.fetch("bclProjection").fetch("types")
 
     # It is a class of its own, not any of the shapes that were plausible before it was measured.
@@ -59,8 +59,9 @@ class ReadOnlyCollectionTest < Minitest::Test
 
     # And it left the not-yet-designed list without dragging anything else off it.
     refute_includes RULES.fetch("bclProjection").fetch("notYetDesigned"), CLR
-    assert_equal ["System.Type", "System.IServiceProvider", "System.IO.Stream",
-                  "System.Text.StringBuilder", "System.Runtime.Serialization.SerializationInfo",
+    # Foundation 33 took System.Type and System.IServiceProvider off this list.
+    assert_equal ["System.IO.Stream", "System.Text.StringBuilder",
+                  "System.Runtime.Serialization.SerializationInfo",
                   "System.Collections.Generic.Dictionary`2"],
                  RULES.fetch("bclProjection").fetch("notYetDesigned")
   end

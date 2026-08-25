@@ -630,6 +630,30 @@ def execute(item)
      entry.fetch("assembly"), entry.fetch("assemblySha256"),
      entry.fetch("declaredFields"), entry.fetch("nativeReachable"),
      entry.fetch("constructors").map { |ctor| [ctor.fetch("access"), ctor.fetch("pureBaseForward")] }]
+  when "GameServiceContainer.Contract"
+    services = F::GameServiceContainer.new
+    contract = Module.new
+    provider = Object.new
+    provider.extend(contract)
+    unrelated = Module.new
+    guard = lambda do |operation|
+      operation.call
+      "no-raise"
+    rescue StandardError => error
+      [error.class.name, error.message]
+    end
+    before = services.GetService(contract)
+    services.AddService(contract, provider)
+    [before.nil?, services.GetService(contract).equal?(provider),
+     guard.call(-> { services.AddService(contract, provider) }),
+     guard.call(-> { services.AddService(nil, provider) }),
+     guard.call(-> { services.AddService(contract.class, nil) }),
+     guard.call(-> { services.AddService(unrelated, provider) }),
+     guard.call(-> { services.GetService(nil) }),
+     services.GetService(unrelated).nil?,
+     services.RemoveService(contract).nil?, services.GetService(contract).nil?,
+     services.RemoveService(contract).nil?,
+     F::GameServiceContainer.new.GetService(contract).nil?]
   when "TouchPanel.StubContract"
     capabilities = TOUCH::TouchPanel.GetCapabilities
     state = TOUCH::TouchPanel.GetState
@@ -913,7 +937,7 @@ def execute(item)
        [identity, register.ruby_type(identity), register.exception_base?(identity),
         register::TYPES.key?(identity)]
      end,
-     register.ruby_type("System.Type"), Object.const_defined?(:System, false)]
+     Object.const_defined?(:System, false)]
   when "BclProjection.ExceptionBaseRule"
     roots = CNA::Runtime::BclProjection::EXCEPTION_BASES.values.uniq
     resolved = roots.map { |root| Object.const_get(root, false) }

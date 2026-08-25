@@ -5,20 +5,20 @@
   "REFERENCE_MEMBERS": 2964,
   "EXPECTED_RUBY_TYPES": 257,
   "EXPECTED_RUBY_MEMBERS": 2915,
-  "TARGET_TYPES": 138,
-  "TARGET_MEMBERS": 1741,
-  "TOTAL_DIAGNOSTICS": 303,
-  "COMPLETE_TYPES": 132,
+  "TARGET_TYPES": 139,
+  "TARGET_MEMBERS": 1745,
+  "TOTAL_DIAGNOSTICS": 302,
+  "COMPLETE_TYPES": 133,
   "PARTIAL_TYPES": 6,
-  "MISSING_TYPES": 119,
+  "MISSING_TYPES": 118,
   "ALLOWLIST_ENTRIES": 0,
   "EVENT_IDENTITIES": 4,
   "EVENT_OWNER_TYPES": 2,
   "EVENT_SUPPORT_TYPE": "CNA::Runtime::Event",
-  "BCL_PROJECTED_IDENTITIES": 6,
+  "BCL_PROJECTED_IDENTITIES": 8,
   "BCL_EXCEPTION_BASES": 2,
   "BCL_THROWN_EXCEPTIONS": 6,
-  "MISSING_TYPE": 119,
+  "MISSING_TYPE": 118,
   "MISSING_MEMBER": 132,
   "UNEXPECTED_TYPE": 0,
   "UNEXPECTED_MEMBER": 0,
@@ -52,7 +52,8 @@
       "System.EventArgs": "CNA::Runtime::EventArgs",
       "System.TimeSpan": "Float",
       "System.Attribute": "CNA::Runtime::Attribute",
-      "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection"
+      "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection",
+      "System.Type": "Module"
     },
     "exceptionBases": {
       "System.Exception": "StandardError",
@@ -199,7 +200,8 @@
     "Microsoft.Xna.Framework.Graphics.VertexElementUsage",
     "Microsoft.Xna.Framework.Input.Touch.TouchCollection",
     "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator",
-    "Microsoft.Xna.Framework.Input.Touch.TouchPanel"
+    "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
+    "Microsoft.Xna.Framework.GameServiceContainer"
   ],
   "partialTypes": {
     "Microsoft.Xna.Framework.Game": [
@@ -353,7 +355,6 @@
     "Microsoft.Xna.Framework.DrawableGameComponent",
     "Microsoft.Xna.Framework.GameComponent",
     "Microsoft.Xna.Framework.GameComponentCollection",
-    "Microsoft.Xna.Framework.GameServiceContainer",
     "Microsoft.Xna.Framework.GameWindow",
     "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent",
     "Microsoft.Xna.Framework.Graphics.AlphaTestEffect",
@@ -578,7 +579,8 @@
     "Microsoft.Xna.Framework.Graphics.SpriteBatch": 18,
     "Microsoft.Xna.Framework.Input.Touch.TouchCollection": 0,
     "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator": 0,
-    "Microsoft.Xna.Framework.Input.Touch.TouchPanel": 0
+    "Microsoft.Xna.Framework.Input.Touch.TouchPanel": 0,
+    "Microsoft.Xna.Framework.GameServiceContainer": 0
   },
   "details": {
     "MISSING_TYPE": [
@@ -615,7 +617,6 @@
       "Microsoft.Xna.Framework.DrawableGameComponent",
       "Microsoft.Xna.Framework.GameComponent",
       "Microsoft.Xna.Framework.GameComponentCollection",
-      "Microsoft.Xna.Framework.GameServiceContainer",
       "Microsoft.Xna.Framework.GameWindow",
       "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent",
       "Microsoft.Xna.Framework.Graphics.AlphaTestEffect",

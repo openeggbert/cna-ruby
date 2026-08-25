@@ -87,6 +87,7 @@ There is intentionally no `microsoft/xna/framework/content` implementation in Fo
 - `docs/not-supported-error-evidence.md` — Foundation 30, why `System.NotSupportedException` maps to a dedicated `StandardError` subclass and not to Ruby's `NotImplementedError`, and the separate thrown-exception register
 - `docs/touch-collection-evidence.md` — Foundation 31, the mutually-dependent `TouchCollection`/`Enumerator` pair, its read-only refusal, and the language-support rule the verifier now applies
 - `docs/touch-panel-evidence.md` — Foundation 32, `TouchPanel` and the closing of `Input.Touch`: the measured stub assembly, the `GetState` derivation, and the `InvalidOperationException` mapping
+- `docs/game-service-container-evidence.md` — Foundation 33, `GameServiceContainer`, `System.Type` as a Ruby `Module`, and the structural-collapse register that records a decision not to invent a constant
 - `tools/api_compat/build_il_inventory.rb` — hash-admitted `ikdasm` disassembly into the Microsoft-free IL inventory
 - `tools/api_compat/build_bcl_inventory.rb` — hash-admitted `ikdasm` disassembly of the pinned mscorlib into the Microsoft-free, demand-driven BCL inventory
 - `tools/api_compat/verify.rb` — structural report/strict/leak-only modes

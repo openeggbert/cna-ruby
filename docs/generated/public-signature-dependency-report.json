@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 138,
-  "completeTypes": 132,
+  "targetTypes": 139,
+  "completeTypes": 133,
   "partialTypes": [
     "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -11,7 +11,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 119,
+  "missingTypes": 118,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME or RUNTIME_DATA blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -50,6 +50,7 @@
     "System.Exception",
     "System.IComparable`1",
     "System.IEquatable`1",
+    "System.IServiceProvider",
     "System.Int32",
     "System.IntPtr",
     "System.Nullable`1",
@@ -59,6 +60,7 @@
     "System.Single",
     "System.String",
     "System.TimeSpan",
+    "System.Type",
     "System.UInt16",
     "System.UInt32",
     "System.UInt64",
@@ -70,7 +72,8 @@
       "System.EventArgs": "CNA::Runtime::EventArgs",
       "System.TimeSpan": "Float",
       "System.Attribute": "CNA::Runtime::Attribute",
-      "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection"
+      "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection",
+      "System.Type": "Module"
     },
     "exceptionBases": {
       "System.Exception": "StandardError",
@@ -78,7 +81,7 @@
     }
   },
   "blockerSummary": {
-    "BCL_PROJECTION": 7,
+    "BCL_PROJECTION": 6,
     "BCL_PROJECTION+NATIVE_RUNTIME": 4,
     "NATIVE_RUNTIME": 3,
     "NATIVE_RUNTIME+RUNTIME_DATA": 1,
@@ -258,44 +261,6 @@
       "ilDerivationRequired": true,
       "ilAvailable": true,
       "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.GameServiceContainer",
-      "kind": "class",
-      "expectedRubyIdentities": 4,
-      "dependencies": [
-
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Game::Services (1 overload)"
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "BCL_PROJECTION"
-      ],
-      "unmappedBclTypes": [
-        "System.IServiceProvider",
-        "System.Type"
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "AddService",
-        "RemoveService",
-        "GetService"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Game.dll",
       "nativeReachableMethods": [
 
       ],
@@ -500,8 +465,7 @@
       "unmappedBclTypes": [
         "System.ComponentModel.ExpandableObjectConverter",
         "System.ComponentModel.ITypeDescriptorContext",
-        "System.ComponentModel.PropertyDescriptorCollection",
-        "System.Type"
+        "System.ComponentModel.PropertyDescriptorCollection"
       ],
       "eventMembers": [
 
@@ -545,8 +509,7 @@
         "System.Action`1",
         "System.Action`1[System.IDisposable]",
         "System.IDisposable",
-        "System.IO.Stream",
-        "System.IServiceProvider"
+        "System.IO.Stream"
       ],
       "eventMembers": [
 

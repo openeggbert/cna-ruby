@@ -186,9 +186,12 @@ class InterfaceContractsTest < Minitest::Test
   end
 
   def test_interfaces_imply_no_component_effect_or_device_runtime
-    %i[GameComponent DrawableGameComponent GameComponentCollection GameServiceContainer
+    # GameServiceContainer arrived in Foundation 33 from its own IL rather than from anything these
+    # interfaces imply, and it starts empty: nothing registers a service in it.
+    %i[GameComponent DrawableGameComponent GameComponentCollection
        IGraphicsDeviceService LaunchParameters GameWindow]
       .each { |name| refute F.const_defined?(name, false), "Framework::#{name}" }
+    assert_nil F::GameServiceContainer.new.GetService(F::IGraphicsDeviceManager)
     %i[Effect BasicEffect EffectParameter EffectTechnique DirectionalLight IEffectLights
        IEffectSkinning IVertexType VertexDeclaration].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"

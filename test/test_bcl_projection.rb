@@ -45,14 +45,19 @@ class BclProjectionTest < Minitest::Test
     # is why Foundation 28 had to admit a BCL authority to measure it against.
     assert_equal({"System.EventArgs" => "CNA::Runtime::EventArgs", "System.TimeSpan" => "Float",
                   "System.Attribute" => "CNA::Runtime::Attribute",
-                  "System.Collections.ObjectModel.ReadOnlyCollection`1" => "CNA::Runtime::ReadOnlyCollection"},
+                  "System.Collections.ObjectModel.ReadOnlyCollection`1" => "CNA::Runtime::ReadOnlyCollection",
+                  # Foundation 33: a type token, and Ruby's is a Module.
+                  "System.Type" => "Module"},
                  B::TYPES)
+    # Foundation 33 also records a decision *not* to invent a constant.
+    assert_equal ["System.IServiceProvider"], B::STRUCTURAL_COLLAPSE.keys
     assert_equal({"System.Exception" => "StandardError",
                   "System.Runtime.InteropServices.ExternalException" => "StandardError"},
                  B::EXCEPTION_BASES)
     assert_equal ["System.Attribute", "System.Collections.ObjectModel.ReadOnlyCollection`1",
-                  "System.EventArgs", "System.Exception",
-                  "System.Runtime.InteropServices.ExternalException", "System.TimeSpan"], B.identities
+                  "System.EventArgs", "System.Exception", "System.IServiceProvider",
+                  "System.Runtime.InteropServices.ExternalException", "System.TimeSpan",
+                  "System.Type"], B.identities
 
     B::TYPES.merge(B::EXCEPTION_BASES).each_value do |path|
       resolved = path.split("::").reduce(Object) { |scope, part| scope.const_get(part, false) }
@@ -60,9 +65,8 @@ class BclProjectionTest < Minitest::Test
     end
 
     # Deliberately not designed yet.
-    %w[System.Type System.IServiceProvider System.IO.Stream
-       System.Text.StringBuilder System.Runtime.Serialization.SerializationInfo
-       System.Collections.Generic.Dictionary`2]
+    %w[System.IO.Stream System.Text.StringBuilder
+       System.Runtime.Serialization.SerializationInfo System.Collections.Generic.Dictionary`2]
       .each { |absent| refute_includes B.identities, absent }
   end
 
@@ -81,7 +85,7 @@ class BclProjectionTest < Minitest::Test
   end
 
   def test_the_strict_report_measures_the_register
-    assert_equal 6, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal 8, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal 2, STRICT.fetch("BCL_EXCEPTION_BASES")
     assert_equal({"types" => B::TYPES, "exceptionBases" => B::EXCEPTION_BASES,
                   "thrownExceptions" => B::THROWN_EXCEPTIONS},

@@ -65,6 +65,14 @@ module Microsoft
         attr_reader GraphicsDevice: Graphics::GraphicsDevice
         def initialize: (Game game) -> void
       end
+
+      # System.Type projects to a Ruby Module, which is what a service key is here.
+      class GameServiceContainer
+        def initialize: () -> void
+        def AddService: (Module type, Object provider) -> nil
+        def RemoveService: (Module type) -> nil
+        def GetService: (Module type) -> Object?
+      end
     end
   end
 end

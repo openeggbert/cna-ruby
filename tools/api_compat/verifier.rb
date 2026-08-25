@@ -270,6 +270,27 @@ module CNAApiCompat
         result.add("LANGUAGE_MAPPING_MISMATCH", "BCL exception base #{clr_identity}: #{ruby_path} is not a Ruby StandardError class")
       end
       verify_thrown_exceptions(result)
+      verify_structural_collapse(result)
+    end
+
+    # A structurally collapsed BCL identity must really have no Ruby constant. The register records
+    # a decision *not* to invent one, and this is what stops that decision from quietly turning into
+    # an invented module later: neither a fabricated ::System namespace nor a CNA runtime constant
+    # named after the CLR identity may exist.
+    def verify_structural_collapse(result)
+      CNA::Runtime::BclProjection::STRUCTURAL_COLLAPSE.each_key do |clr_identity|
+        short = clr_identity.split(".").last.to_sym
+        [Object, CNA::Runtime].each do |scope|
+          next unless scope.const_defined?(short, false)
+
+          result.add("LANGUAGE_MAPPING_MISMATCH",
+                     "BCL structural collapse #{clr_identity}: #{scope}::#{short} was invented")
+        end
+        next unless clr_identity.include?(".") && Object.const_defined?(clr_identity.split(".").first.to_sym, false)
+
+        result.add("LANGUAGE_MAPPING_MISMATCH",
+                   "BCL structural collapse #{clr_identity}: a fabricated #{clr_identity.split(".").first} namespace exists")
+      end
     end
 
     # A CLR exception a projected member throws must raise a Ruby exception an ordinary `rescue`

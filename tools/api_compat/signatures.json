@@ -35247,6 +35247,107 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Input::Touch::TouchPanel"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.GameServiceContainer",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+        "System.IServiceProvider"
+      ],
+      "directInterfaces": [
+        "System.IServiceProvider"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "AddService",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "type",
+              "type": "System.Type",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "provider",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "RemoveService",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "type",
+              "type": "System.Type",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetService",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Object",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "type",
+              "type": "System.Type",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::GameServiceContainer"
     }
   ]
 }

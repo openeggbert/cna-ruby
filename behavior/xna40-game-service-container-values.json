@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "derivation": "Foundation 33 GameServiceContainer. The contract row comes from the pinned public metadata and from docs/generated/xna-il-inventory.json, which tools/api_compat/build_il_inventory.rb derives from Microsoft.Xna.Framework.Game.dll (SHA-256 b5dffdd8…) admitted by exact hash: one public constructor, one private field, four members and no native reachability. The mapping row encodes what that assembly IL establishes: the constructor allocates one Dictionary<Type, object>; all three members open with the same null check on the same parameter, throwing ArgumentNullException(\"type\"); AddService then throws ArgumentNullException(\"provider\") for a null provider, ArgumentException naming \"type\" for a key already present, and ArgumentException naming no parameter at all when type.IsAssignableFrom(provider.GetType()) is false; RemoveService pops the Dictionary.Remove result, so removing an absent key is harmless and the key can be added again; and GetService tests ContainsKey and otherwise loads null, so an absent service answers nil rather than raising. System.Type projects to a Ruby Module and IsAssignableFrom to is_a?; all four CLR messages are localized Resources strings and none is reproduced, so the Ruby message is the CLR parameter name where the IL names one. None is snapshotted from the cna-ruby implementation.",
+  "observations": [
+    {
+      "id": "game_service_container.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.GameServiceContainer"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Object",
+        4,
+        "Microsoft.Xna.Framework.Game.dll",
+        "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+        1,
+        false,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "game_service_container.contract",
+      "operation": "GameServiceContainer.Contract",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        true,
+        [
+          "ArgumentError",
+          "type"
+        ],
+        [
+          "ArgumentError",
+          "type"
+        ],
+        [
+          "ArgumentError",
+          "provider"
+        ],
+        [
+          "ArgumentError",
+          "ArgumentError"
+        ],
+        [
+          "ArgumentError",
+          "type"
+        ],
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  ]
+}

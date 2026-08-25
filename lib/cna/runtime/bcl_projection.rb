@@ -45,7 +45,29 @@ module CNA
         "System.EventArgs" => "CNA::Runtime::EventArgs",
         "System.TimeSpan" => "Float",
         "System.Attribute" => "CNA::Runtime::Attribute",
-        "System.Collections.ObjectModel.ReadOnlyCollection`1" => "CNA::Runtime::ReadOnlyCollection"
+        "System.Collections.ObjectModel.ReadOnlyCollection`1" => "CNA::Runtime::ReadOnlyCollection",
+        # System.Type is a *type token* everywhere the selected XNA surface names it -- a service
+        # key, a content reader's target type, an index element type, a converter's destination --
+        # in all twenty-four places. Ruby's type token is a Module, and a Class is one. The single
+        # operation any of those members performs on it, IsAssignableFrom(value.GetType()), is
+        # exactly `value.is_a?(type)`, and a Module used as a Hash key compares by identity, which
+        # is what Dictionary<Type, ...>'s default comparer does. Nothing here claims the CLR Type
+        # reflection surface; the register records what the XNA surface actually uses.
+        "System.Type" => "Module"
+      }.freeze
+
+      # A BCL identity the selected XNA surface names that projects to **no Ruby constant at all**,
+      # and the measured reason.
+      #
+      # Ruby has no interfaces. A BCL interface whose whole declared surface the implementing XNA
+      # type already exposes publicly therefore survives as those members, and inventing a Ruby
+      # module for it would add an identity the CLR contract does not have and that nothing could
+      # measure. This is the same collapse ExternalException takes, applied to a shape that has no
+      # ancestor to collapse *to*: the entry is recorded rather than left silent so the dependency
+      # frontier can count the identity as decided, and so the API verifier can assert that no
+      # constant was invented after all.
+      STRUCTURAL_COLLAPSE = {
+        "System.IServiceProvider" => "declares one member, GetService(Type), which GameServiceContainer declares publicly; the contract survives as that member and no Ruby constant is invented"
       }.freeze
 
       # CLR exception base identity => the Ruby exception class an XNA type deriving from it takes
@@ -97,6 +119,7 @@ module CNA
 
       module_function
 
+      # A structurally collapsed identity deliberately answers nil: there is no Ruby type to name.
       def ruby_type(clr_identity)
         TYPES[clr_identity] || EXCEPTION_BASES[clr_identity] ||
           TYPES[definition(clr_identity)] || EXCEPTION_BASES[definition(clr_identity)]
@@ -137,7 +160,9 @@ module CNA
 
       def exception_base?(clr_identity) = EXCEPTION_BASES.key?(clr_identity)
 
-      def identities = (TYPES.keys + EXCEPTION_BASES.keys).uniq.sort
+      def identities = (TYPES.keys + EXCEPTION_BASES.keys + STRUCTURAL_COLLAPSE.keys).uniq.sort
+
+      def structural_collapse?(clr_identity) = STRUCTURAL_COLLAPSE.key?(clr_identity)
 
       # Deliberately not part of `identities`: a thrown exception is not an identity the XNA public
       # surface names, so it must never count as a mapped BCL type on the dependency frontier.
