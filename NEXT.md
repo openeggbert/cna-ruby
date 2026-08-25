@@ -2,9 +2,10 @@
 
 ## Exact current boundary
 
-Foundations 16 to 27 and Native frontiers 1 and 2 are published on `origin/develop`.
-**Foundations 28 to 39, Native frontier 3, one evidence fix and this handoff are local only** —
-fifteen commits ahead of `origin/develop`, none pushed.
+Foundations 16 to 33, Native frontiers 1 to 3 and one evidence fix are published on
+`origin/develop`, whose tip is `80c51c2` — the Foundation 33 / Native frontier 3 handoff.
+**Foundations 34 to 39 and this handoff are local only** — seven commits ahead of
+`origin/develop`, none pushed. The unpublished rows are the bold ones below.
 
 | Milestone | What it added | Types | Identities |
 | --- | --- | --- | --- |
