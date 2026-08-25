@@ -804,6 +804,136 @@ class ApiVerifierTest < Minitest::Test
                  clear_members.first.fetch("parameters").map { |parameter| parameter.fetch("type") }
   end
 
+  def test_depth_format_missing_type_and_wrong_namespace_are_detected
+    reference, target = depth_format_contracts
+    target.fetch("types").clear
+    assert_operator verify(reference, target).counts["MISSING_TYPE"], :>, 0
+
+    reference, target = depth_format_contracts
+    format = target.fetch("types").first
+    format["name"] = "Microsoft.Xna.Framework.DepthFormat"
+    format["rubyName"] = "Microsoft::Xna::Framework::DepthFormat"
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_TYPE"], :>, 0
+    assert_operator result.counts["UNEXPECTED_TYPE"], :>, 0
+  end
+
+  def test_depth_format_wrong_kind_underlying_type_and_flags_are_detected
+    reference, target = depth_format_contracts
+    target.fetch("types").first["kind"] = "class"
+    assert_operator verify(reference, target).counts["TYPE_KIND_MISMATCH"], :>, 0
+
+    reference, target = depth_format_contracts
+    target.fetch("types").first["underlyingType"] = "System.UInt32"
+    assert_operator verify(reference, target).counts["ENUM_VALUE_MISMATCH"], :>, 0
+
+    reference, target = depth_format_contracts
+    target.fetch("types").first["flags"] = true
+    assert_operator verify(reference, target).counts["FLAGS_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_depth_format_each_wrong_raw_value_is_detected
+    {"None" => "1", "Depth16" => "0", "Depth24" => "3", "Depth24Stencil8" => "2"}.each do |name, raw|
+      reference, target = depth_format_contracts
+      target.fetch("types").first.fetch("members").find { |member| member["name"] == name }["value"] = raw
+      assert_operator verify(reference, target).counts["ENUM_VALUE_MISMATCH"], :>, 0, name
+    end
+  end
+
+  def test_depth_format_missing_middle_and_final_values_are_detected
+    %w[Depth24 Depth24Stencil8].each do |name|
+      reference, target = depth_format_contracts
+      target.fetch("types").first.fetch("members").reject! { |member| member["name"] == name }
+      result = verify(reference, target)
+      assert_operator result.counts["MISSING_MEMBER"], :>, 0, name
+      refute_includes result.complete_types, depth_format_name, name
+    end
+  end
+
+  def test_depth_format_exposed_storage_extra_value_and_renamed_final_value_are_detected
+    reference, target = depth_format_contracts
+    storage = reference.fetch("types").first.fetch("members").find { |member| member["name"] == "value__" }
+    target.fetch("types").first.fetch("members") << Marshal.load(Marshal.dump(storage))
+    assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0
+
+    reference, target = depth_format_contracts
+    target.fetch("types").first.fetch("members") << {
+      "kind" => "field", "name" => "Depth32", "type" => depth_format_name,
+      "static" => true, "constant" => true, "value" => "4"
+    }
+    assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0
+
+    reference, target = depth_format_contracts
+    target.fetch("types").first.fetch("members")
+          .find { |member| member["name"] == "Depth24Stencil8" }["name"] = "Depth24Stencil"
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_MEMBER"], :>, 0
+    assert_operator result.counts["UNEXPECTED_MEMBER"], :>, 0
+  end
+
+  def test_depth_format_unexpected_xna_member_and_public_helper_are_detected
+    reference, target = depth_format_contracts
+    target.fetch("types").first.fetch("members") << {
+      "kind" => "method", "name" => "HasStencil", "static" => false, "access" => "public",
+      "returnType" => "System.Boolean", "genericParameters" => [], "parameters" => []
+    }
+    assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0
+
+    format_class = Microsoft::Xna::Framework::Graphics::DepthFormat
+    format_class.class_eval { def HasStencil? = false }
+    assert_operator verify(reference, target, runtime: true).counts["UNEXPECTED_MEMBER"], :>, 0
+  ensure
+    format_class&.__send__(:remove_method, :HasStencil?) if format_class&.public_method_defined?(:HasStencil?)
+  end
+
+  def test_depth_format_is_never_accepted_as_a_flags_enum
+    # Depth24Stencil8 = 3 is one declared ordinary literal, not Depth16 | Depth24.
+    pinned = reference_contract.fetch("types").find { |type| type.fetch("name") == depth_format_name }
+    selected = signature_contract.fetch("types").find { |type| type.fetch("name") == depth_format_name }
+    assert_equal false, pinned.fetch("flags")
+    assert_equal false, selected.fetch("flags")
+    combined = selected.fetch("members").reduce(0) { |mask, member| mask | Integer(member.fetch("value")) }
+    assert_equal 3, combined
+    assert_equal 3, Integer(selected.fetch("members").find { |member| member["name"] == "Depth24Stencil8" }.fetch("value"))
+
+    reference, target = depth_format_contracts
+    format = Microsoft::Xna::Framework::Graphics::DepthFormat
+    original_flags = format.instance_variable_get(:@enum_flags)
+    format.instance_variable_set(:@enum_flags, true)
+    assert_operator verify(reference, target, runtime: true).counts["FLAGS_MAPPING_MISMATCH"], :>, 0
+    format.instance_variable_set(:@enum_flags, original_flags)
+
+    reference, target = depth_format_contracts
+    reference.fetch("types").first["flags"] = true
+    target.fetch("types").first["flags"] = true
+    result = verify(reference, target, runtime: true)
+    assert_operator result.counts["FLAGS_MAPPING_MISMATCH"], :>, 0
+    assert_equal 0, format.instance_variable_get(:@enum_mask)
+    assert_raises(TypeError) { format::Depth16 | format::Depth24 }
+    assert_raises(TypeError) { format::Depth24Stencil8 & format::Depth24 }
+  ensure
+    format&.instance_variable_set(:@enum_flags, original_flags) unless original_flags.nil?
+  end
+
+  def test_depth_format_selected_surface_rejects_accidental_manager_property
+    manager_name = "Microsoft.Xna.Framework.GraphicsDeviceManager"
+    reference, target = depth_format_selected_surface_contracts
+    property = reference_contract.fetch("types").find { |type| type.fetch("name") == manager_name }
+                                 .fetch("members").find do |member|
+      member["kind"] == "property" && member["name"] == "PreferredDepthStencilFormat"
+    end
+    refute_nil property
+    assert_equal depth_format_name, property.fetch("type")
+    target.fetch("types").find { |type| type.fetch("name") == manager_name }
+          .fetch("members") << Marshal.load(Marshal.dump(property))
+    assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0
+
+    selected_manager = signature_contract.fetch("types").find { |type| type.fetch("name") == manager_name }
+    refute selected_manager.fetch("members").any? { |member| member["name"] == "PreferredDepthStencilFormat" }
+    refute Microsoft::Xna::Framework::GraphicsDeviceManager.public_method_defined?(:PreferredDepthStencilFormat)
+    refute Microsoft::Xna::Framework::GraphicsDeviceManager.public_method_defined?(:"PreferredDepthStencilFormat=")
+  end
+
   def test_viewport_missing_project_and_unproject_are_detected
     %w[Project Unproject].each do |name|
       reference, target = viewport_contracts
@@ -1041,6 +1171,27 @@ class ApiVerifierTest < Minitest::Test
     selected_device = signature_contract.fetch("types").find { |type| type.fetch("name") == device_name }
     reference.fetch("types") << Marshal.load(Marshal.dump(selected_device))
     target.fetch("types") << Marshal.load(Marshal.dump(selected_device))
+    [reference, target]
+  end
+
+  def depth_format_name
+    "Microsoft.Xna.Framework.Graphics.DepthFormat"
+  end
+
+  def depth_format_contracts
+    reference = reference_contract
+    target = signature_contract
+    reference_type = reference.fetch("types").find { |type| type.fetch("name") == depth_format_name }
+    target_type = target.fetch("types").find { |type| type.fetch("name") == depth_format_name }
+    [{"types" => [reference_type]}, {"types" => [Marshal.load(Marshal.dump(target_type))]}]
+  end
+
+  def depth_format_selected_surface_contracts
+    reference, target = depth_format_contracts
+    manager_name = "Microsoft.Xna.Framework.GraphicsDeviceManager"
+    selected_manager = signature_contract.fetch("types").find { |type| type.fetch("name") == manager_name }
+    reference.fetch("types") << Marshal.load(Marshal.dump(selected_manager))
+    target.fetch("types") << Marshal.load(Marshal.dump(selected_manager))
     [reference, target]
   end
 

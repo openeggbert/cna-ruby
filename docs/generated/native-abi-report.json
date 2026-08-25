@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "abiVersion": "0x00000700",
-  "library": "/tmp/cna-python-m8-build2/modules/c-api/libcna_c_api.so",
+  "library": "/home/robertvokac/deps/cna-c-abi-0.7.0/libcna_c_api.so",
   "BOUND_FUNCTIONS": 38,
   "SIGNATURE_MEASUREMENTS": 122,
   "C_LAYOUT_MEASUREMENTS": 290,

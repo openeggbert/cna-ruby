@@ -27,6 +27,16 @@ module Microsoft
           }, flags: true)
         end
 
+        class DepthFormat < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "None" => 0,
+            "Depth16" => 1,
+            "Depth24" => 2,
+            "Depth24Stencil8" => 3
+          })
+        end
+
         class SurfaceFormat < CNA::Runtime::EnumValue
           extend CNA::Runtime::EnumType
           define_values({

@@ -2,15 +2,15 @@
 
 CNA-Ruby is implementing a formally measured Ruby projection of the selected Microsoft XNA Framework 4.0 Windows runtime API over the CNA C ABI.
 
-Foundation 13 is functional on the qualified Linux x86-64 desktop MRI runtime, but the selected XNA profile is intentionally incomplete. The strict scoreboard targets 78 types and 1468 members from the 257-type / 2915-member Ruby projection; it remains red for genuine deferred work. See `docs/generated/api-compat-report.json` for authoritative counts.
+Foundation 14 is functional on the qualified Linux x86-64 desktop MRI runtime, but the selected XNA profile is intentionally incomplete. The strict scoreboard targets 79 types and 1472 members from the 257-type / 2915-member Ruby projection; it remains red for genuine deferred work. See `docs/generated/api-compat-report.json` for authoritative counts.
 
 ## Qualified foundation
 
 - MRI Ruby 3.3.8 and Fiddle 1.1.2
 - exact CNA C ABI 0.7.0 admission
 - centralized native resolver, signature manifest, layouts, result translation, ownership, generation/thread checks, and callback exception containment
-- complete mapped MathHelper, Vector2/3/4, Quaternion, Matrix, Plane, Ray, BoundingBox, BoundingSphere, BoundingFrustum, Rectangle, Color, Curve family, the full 19-type `Graphics.PackedVector` family, the managed three-type `VertexElement` descriptor closure, Viewport, DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, ClearOptions, ContainmentType, PlaneIntersectionType, Point, GameTime, PlayerIndex, SpriteSortMode, SpriteEffects, SurfaceFormat, KeyState, Keys, KeyboardState, Keyboard, ButtonState, MouseState, Mouse, the exact ten-type GamePad family, and Texture contract types
-- 273 green managed observations: 268 explicitly or legacy-defaulted `PURE_XNA_DERIVED` facts and five `RUBY_MAPPING_QUALIFICATION` observations, including direct Windows XNA Viewport Project/Unproject bit goldens and the exact ClearOptions no-named-zero flags shape
+- complete mapped MathHelper, Vector2/3/4, Quaternion, Matrix, Plane, Ray, BoundingBox, BoundingSphere, BoundingFrustum, Rectangle, Color, Curve family, the full 19-type `Graphics.PackedVector` family, the managed three-type `VertexElement` descriptor closure, Viewport, DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, ClearOptions, DepthFormat, ContainmentType, PlaneIntersectionType, Point, GameTime, PlayerIndex, SpriteSortMode, SpriteEffects, SurfaceFormat, KeyState, Keys, KeyboardState, Keyboard, ButtonState, MouseState, Mouse, the exact ten-type GamePad family, and Texture contract types
+- 275 green managed observations: 269 explicitly or legacy-defaulted `PURE_XNA_DERIVED` facts and six `RUBY_MAPPING_QUALIFICATION` observations, including direct Windows XNA Viewport Project/Unproject bit goldens, the exact ClearOptions no-named-zero flags shape, and the DepthFormat ordinary-enum shape
 - measured partial Game, GraphicsDeviceManager, GraphicsDevice, GraphicsResource, Texture2D, and SpriteBatch types
 - real native Game lifecycle and GameTime callbacks
 - real HEADLESS-qualified viewport, Clear, PNG Texture2D stream decode, SpriteBatch scaled draw, keyboard state capture, canonical Mouse state/position/window-handle routes, and all four canonical GamePad state/capability/vibration routes
@@ -41,7 +41,7 @@ require "microsoft/xna/framework/graphics"
 require "microsoft/xna/framework/input"
 ```
 
-There is intentionally no `microsoft/xna/framework/content` implementation in Foundation 13.
+There is intentionally no `microsoft/xna/framework/content` implementation in Foundation 14.
 
 ## Evidence
 
@@ -62,11 +62,12 @@ There is intentionally no `microsoft/xna/framework/content` implementation in Fo
 - `docs/graphics-profile-evidence.md` — Foundation 11 managed GraphicsProfile non-flags enum
 - `docs/viewport-evidence.md` — Foundation 12 exact managed Viewport projection/unprojection closure
 - `docs/clear-options-evidence.md` — Foundation 13 exact managed ClearOptions flags-enum closure
+- `docs/depth-format-evidence.md` — Foundation 14 exact managed DepthFormat non-flags-enum closure
 - `tools/api_compat/verify.rb` — structural report/strict/leak-only modes
 - `tools/native_abi/verify.rb` — compiler-backed header/manifest/export verification
 - `tools/run_behavior_corpus.rb` — observation-level XNA-fact and Ruby-mapping qualification corpus
 - `tools/run_native_stress.rb` — explicit lifecycle/GC/thread stress
 
-No physical controller was attached to the qualified host. Disconnected native paths are qualified; positive state/capability flags and physical vibration remain hardware-pending rather than simulated. ClearOptions is only a managed flags enum and does not implement either deferred four-argument `GraphicsDevice.Clear` overload, a native enum, or renderer clear-mask support. Viewport Project/Unproject are managed Single-domain calculations and do not claim native projection, camera, GPU, renderer, or `GraphicsDevice.Viewport=` support. GraphicsProfile is only a managed non-flags enum and does not claim either deferred device property, constructor work, profile selection, hardware capability, or feature-level detection. GraphicsDeviceStatus is only a managed non-flags enum and does not claim its deferred GraphicsDevice property, device-loss polling, or reset behavior. DisplayOrientation is only a managed flags enum and does not claim GraphicsDeviceManager, GameWindow, display rotation, or platform orientation. VertexElement support remains managed descriptor behavior only and does not claim vertex declarations, buffers, shaders, or drawing.
+No physical controller was attached to the qualified host. Disconnected native paths are qualified; positive state/capability flags and physical vibration remain hardware-pending rather than simulated. DepthFormat is only a managed non-flags enum: `Depth24Stencil8=3` is one ordinary XNA literal rather than `Depth16 | Depth24`, and it claims no GPU depth format, no stencil support, no native mapping, no `DepthStencilState`, no `PresentationParameters`/`RenderTarget`, and no `GraphicsDeviceManager.PreferredDepthStencilFormat`. ClearOptions is only a managed flags enum and does not implement either deferred four-argument `GraphicsDevice.Clear` overload, a native enum, or renderer clear-mask support. Viewport Project/Unproject are managed Single-domain calculations and do not claim native projection, camera, GPU, renderer, or `GraphicsDevice.Viewport=` support. GraphicsProfile is only a managed non-flags enum and does not claim either deferred device property, constructor work, profile selection, hardware capability, or feature-level detection. GraphicsDeviceStatus is only a managed non-flags enum and does not claim its deferred GraphicsDevice property, device-loss polling, or reset behavior. DisplayOrientation is only a managed flags enum and does not claim GraphicsDeviceManager, GameWindow, display rotation, or platform orientation. VertexElement support remains managed descriptor behavior only and does not claim vertex declarations, buffers, shaders, or drawing.
 
 Not qualified: Windows, macOS, JRuby, TruffleRuby, MRuby, Opal/browser/Wasm, Android, visible rendering, connected-controller positive paths, Content/XNB, Effects/3D/Model, audio, media, and the remaining XNA families.

@@ -94,9 +94,15 @@ unless clear_options["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
   abort "Milestone 13 ClearOptions evidence lacks observation-level provenance"
 end
 observations.concat(clear_options.fetch("observations"))
+depth_format_path = File.expand_path("../behavior/xna40-depth-format-values.json", __dir__)
+depth_format = JSON.parse(File.read(depth_format_path))
+unless depth_format["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
+  abort "Milestone 14 DepthFormat evidence lacks observation-level provenance"
+end
+observations.concat(depth_format.fetch("observations"))
 abort "duplicate behavior observation id" unless observations.map { |item| item.fetch("id") }.uniq.length == observations.length
 result = source_corpus.merge(
-  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, and ClearOptions separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, and DepthFormat separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category" => "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256" => EXPECTED_SHA256,
   "milestone3SourceAssemblySha256" => milestone.fetch("sourceAssemblySha256"),
@@ -110,6 +116,7 @@ result = source_corpus.merge(
   "milestone11SourceAssemblySha256" => graphics_profile.fetch("sourceAssemblySha256"),
   "milestone12SourceAssemblySha256" => viewport.fetch("sourceAssemblySha256"),
   "milestone13SourceAssemblySha256" => clear_options.fetch("sourceAssemblySha256"),
+  "milestone14SourceAssemblySha256" => depth_format.fetch("sourceAssemblySha256"),
   "observations" => observations
 )
 destination = File.expand_path("../behavior/xna40-foundation-values.json", __dir__)

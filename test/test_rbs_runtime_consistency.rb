@@ -388,6 +388,38 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     assert_includes source, "def Clear: (Color color) -> nil"
   end
 
+  def test_depth_format_rbs_retains_exact_four_identity_non_flags_projection
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    selected = contract.fetch("types").find do |type|
+      type.fetch("name") == "Microsoft.Xna.Framework.Graphics.DepthFormat"
+    end
+    refute_nil selected
+    assert_equal 4, selected.fetch("members").length
+    assert_equal "enum", selected.fetch("kind")
+    assert_equal false, selected.fetch("flags")
+    assert_equal "System.Int32", selected.fetch("underlyingType")
+    assert_equal({"None" => "0", "Depth16" => "1", "Depth24" => "2", "Depth24Stencil8" => "3"},
+                 selected.fetch("members").to_h { |member| [member.fetch("name"), member.fetch("value")] })
+
+    source = File.read(SIGNATURE_ROOT.join("microsoft", "xna", "framework", "graphics.rbs"))
+    match = source.match(/^        class DepthFormat\n(?<body>.*?)^        end$/m)
+    refute_nil match
+    section = match[:body]
+    %w[None Depth16 Depth24 Depth24Stencil8].each do |name|
+      assert_includes section, "#{name}: DepthFormat"
+    end
+    declared = section.lines.filter_map { |line| line[/\A\s+(\w+):/, 1] }
+    assert_equal %w[None Depth16 Depth24 Depth24Stencil8], declared
+    %w[Default Depth32 Stencil8 D24S8 value__].each { |name| refute_includes declared, name }
+    refute_includes section, "untyped"
+    refute_match(/\*\w*/, section)
+    refute_includes section, "def |:"
+    refute_includes section, "def &:"
+    refute_includes section, "def ToString"
+    refute_includes source, "PreferredDepthStencilFormat"
+    refute_includes source, "DepthStencilState"
+  end
+
   def test_viewport_rbs_retains_exact_complete_fourteen_identity_projection
     contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
     selected = contract.fetch("types").find do |type|

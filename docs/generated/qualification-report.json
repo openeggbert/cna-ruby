@@ -1,22 +1,35 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 13",
+  "milestone": "Foundation 14",
   "complete": true,
-  "date": "2026-08-24",
+  "date": "2026-08-25",
   "ruby": "ruby 3.3.8 (2025-04-09 revision b200bad6cd) [x86_64-linux-gnu]",
   "rubyEngine": "ruby",
   "fiddle": "1.1.2",
   "rbs": "3.4.0 validated",
   "bundler": "2.6.7 bundle check passed",
   "rake": "13.2.1",
+  "environment": {
+    "systemRubyPresent": false,
+    "interpreterSource": "relocated pinned Debian ruby3.3 3.3.8-2 packages under ~/deps/ruby-3.3-debian",
+    "interpreterMatchesPreviousMilestone": true,
+    "nativeLibraryPreservedFrom": "/tmp/cna-python-m8-build2/modules/c-api/libcna_c_api.so",
+    "nativeLibraryPath": "/home/robertvokac/deps/cna-c-abi-0.7.0/libcna_c_api.so",
+    "nativeLibraryContentUnchanged": true,
+    "headersVerifiedAgainstCnaRevision": "a09196a6477f69a7a57c8364f990658d31531a5b",
+    "headerFilesCompared": 59,
+    "headerMismatches": 0,
+    "projectSourceOnRubylib": false
+  },
   "gem": {
     "filename": "cna-ruby-0.1.0.dev0.gem",
     "version": "0.1.0.dev0",
-    "sha256": "eee6fde53cadb145d2b9326be5e7c892fe275cb46106fd133a05ad05ae5963eb",
+    "sha256": "bd278da518904cc8c514ec23fae99531ff21e0495ce42d13f1c0e1c48f982dbc",
     "entries": 37,
     "forbiddenEntries": 0,
     "nativeLibrariesBundled": 0,
-    "developerPathLeaks": 0
+    "developerPathLeaks": 0,
+    "previousMilestoneSha256": "eee6fde53cadb145d2b9326be5e7c892fe275cb46106fd133a05ad05ae5963eb"
   },
   "native": {
     "abi": "0.7.0",
@@ -27,8 +40,8 @@
     "audio": "NULL"
   },
   "tests": {
-    "runs": 249,
-    "assertions": 4796,
+    "runs": 267,
+    "assertions": 5034,
     "failures": 0,
     "errors": 0,
     "skips": 0
@@ -38,14 +51,14 @@
     "referenceMembers": 2964,
     "expectedRubyTypes": 257,
     "expectedRubyMembers": 2915,
-    "targetTypes": 78,
-    "targetMembers": 1468,
-    "totalDiagnostics": 363,
-    "missingType": 179,
+    "targetTypes": 79,
+    "targetMembers": 1472,
+    "totalDiagnostics": 362,
+    "missingType": 178,
     "missingMember": 132,
-    "completeTypes": 72,
+    "completeTypes": 73,
     "partialTypes": 6,
-    "missingTypes": 179,
+    "missingTypes": 178,
     "unexpectedType": 0,
     "unexpectedMember": 0,
     "typeKindMismatch": 0,
@@ -75,16 +88,66 @@
     "expectedRubyIdentities": 126,
     "allLocalDiagnostics": 0,
     "typeMatrix": {
-      "Buttons": [26, 25, 25, "flags enum"],
-      "GamePad": [4, 4, 4, "static sealed class"],
-      "GamePadButtons": [17, 17, 17, "struct"],
-      "GamePadCapabilities": [26, 26, 26, "struct"],
-      "GamePadDPad": [10, 10, 10, "struct"],
-      "GamePadDeadZone": [4, 3, 3, "enum"],
-      "GamePadState": [15, 15, 15, "struct"],
-      "GamePadThumbSticks": [8, 8, 8, "struct"],
-      "GamePadTriggers": [8, 8, 8, "struct"],
-      "GamePadType": [11, 10, 10, "enum"]
+      "Buttons": [
+        26,
+        25,
+        25,
+        "flags enum"
+      ],
+      "GamePad": [
+        4,
+        4,
+        4,
+        "static sealed class"
+      ],
+      "GamePadButtons": [
+        17,
+        17,
+        17,
+        "struct"
+      ],
+      "GamePadCapabilities": [
+        26,
+        26,
+        26,
+        "struct"
+      ],
+      "GamePadDPad": [
+        10,
+        10,
+        10,
+        "struct"
+      ],
+      "GamePadDeadZone": [
+        4,
+        3,
+        3,
+        "enum"
+      ],
+      "GamePadState": [
+        15,
+        15,
+        15,
+        "struct"
+      ],
+      "GamePadThumbSticks": [
+        8,
+        8,
+        8,
+        "struct"
+      ],
+      "GamePadTriggers": [
+        8,
+        8,
+        8,
+        "struct"
+      ],
+      "GamePadType": [
+        11,
+        10,
+        10,
+        "enum"
+      ]
     }
   },
   "vertexClosure": {
@@ -93,9 +156,24 @@
     "expectedRubyIdentities": 35,
     "allLocalDiagnostics": 0,
     "typeMatrix": {
-      "VertexElement": [10, 10, 10, "struct/value object"],
-      "VertexElementFormat": [13, 12, 12, "non-flags Int32 enum"],
-      "VertexElementUsage": [14, 13, 13, "non-flags Int32 enum"]
+      "VertexElement": [
+        10,
+        10,
+        10,
+        "struct/value object"
+      ],
+      "VertexElementFormat": [
+        13,
+        12,
+        12,
+        "non-flags Int32 enum"
+      ],
+      "VertexElementUsage": [
+        14,
+        13,
+        13,
+        "non-flags Int32 enum"
+      ]
     }
   },
   "displayOrientationClosure": {
@@ -117,7 +195,11 @@
     "kind": "enum",
     "underlyingType": "System.Int32",
     "flags": false,
-    "values": {"Normal": 0, "Lost": 1, "NotReset": 2},
+    "values": {
+      "Normal": 0,
+      "Lost": 1,
+      "NotReset": 2
+    },
     "valueStorageExposed": false,
     "graphicsDevicePropertyImplemented": false,
     "graphicsDeviceMissingMemberIdentities": 54
@@ -131,7 +213,10 @@
     "kind": "enum",
     "underlyingType": "System.Int32",
     "flags": false,
-    "values": {"Reach": 0, "HiDef": 1},
+    "values": {
+      "Reach": 0,
+      "HiDef": 1
+    },
     "valueStorageExposed": false,
     "graphicsDevicePropertyImplemented": false,
     "graphicsDeviceManagerPropertyImplemented": false,
@@ -148,7 +233,11 @@
     "localDiagnosticsAfter": 0,
     "statusBefore": "PARTIAL",
     "statusAfter": "COMPLETE",
-    "newIdentities": ["Project", "Unproject", "TitleSafeArea"],
+    "newIdentities": [
+      "Project",
+      "Unproject",
+      "TitleSafeArea"
+    ],
     "managedOnly": true,
     "graphicsDeviceViewportSetterImplemented": false,
     "nativeProjectionImplemented": false
@@ -162,7 +251,11 @@
     "kind": "enum",
     "underlyingType": "System.Int32",
     "flags": true,
-    "values": {"Target": 1, "DepthBuffer": 2, "Stencil": 4},
+    "values": {
+      "Target": 1,
+      "DepthBuffer": 2,
+      "Stencil": 4
+    },
     "validMask": "0x7",
     "xnaNamedZeroPresent": false,
     "namedNonePresent": false,
@@ -172,39 +265,69 @@
     "graphicsDeviceClearOverloadsImplemented": false,
     "nativeMappingImplemented": false
   },
+  "depthFormatClosure": {
+    "sourceTypes": 1,
+    "referenceIdentities": 5,
+    "expectedRubyIdentities": 4,
+    "targetRubyIdentities": 4,
+    "localDiagnostics": 0,
+    "kind": "enum",
+    "underlyingType": "System.Int32",
+    "flags": false,
+    "values": {
+      "None": 0,
+      "Depth16": 1,
+      "Depth24": 2,
+      "Depth24Stencil8": 3
+    },
+    "valueStorageExposed": false,
+    "depth24Stencil8IsFlagsComposition": false,
+    "runtimeEnumFlags": false,
+    "runtimeEnumMask": 0,
+    "graphicsDeviceManagerPropertyImplemented": false,
+    "graphicsAdapterImplemented": false,
+    "presentationParametersImplemented": false,
+    "renderTargetImplemented": false,
+    "depthStencilStateImplemented": false,
+    "nativeMappingImplemented": false,
+    "gpuDepthFormatSupportClaimed": false,
+    "stencilSupportClaimed": false
+  },
   "focusedManaged": {
     "nativeLibraryUnset": true,
-    "runs": 8,
-    "assertions": 159,
+    "runs": 9,
+    "assertions": 151,
     "failures": 0,
     "errors": 0,
     "skips": 0
   },
   "verifier": {
-    "mutationSelfTestRuns": 80,
-    "assertions": 162,
+    "mutationSelfTestRuns": 88,
+    "assertions": 199,
     "failures": 0,
     "focusedGraphicsDeviceStatusFixtures": 12,
     "focusedGraphicsProfileFixtures": 13,
     "focusedViewportFixtures": 16,
     "focusedClearOptionsFixtures": 19,
+    "focusedDepthFormatFixtures": 19,
     "flagsWithoutNamedZeroGenericFixtures": 1,
+    "depthFormatFlagsConfusionFixtures": 2,
     "manualAllowlistEntries": 0,
     "unmeasuredStructuralCategories": 0
   },
   "rbsRuntimeConsistency": {
-    "runs": 13,
-    "assertions": 1779,
+    "runs": 14,
+    "assertions": 1829,
     "failures": 0,
     "selectedProjectionUntyped": 0,
     "selectedProjectionCatchAll": 0
   },
   "behavior": {
     "provenance": "OBSERVATION_LEVEL",
-    "pureXnaDerived": 268,
-    "rubyMappingQualification": 5,
-    "observations": 273,
-    "assertions": 273,
+    "pureXnaDerived": 269,
+    "rubyMappingQualification": 6,
+    "observations": 275,
+    "assertions": 275,
     "failures": 0,
     "gamepadGroups": {
       "BUTTONS": 4,
@@ -228,7 +351,8 @@
       "VIEWPORT_UNPROJECT": 5,
       "VIEWPORT_TITLE_SAFE_AREA": 2
     },
-    "nativeGamePadIncludedInPureTotals": false
+    "nativeGamePadIncludedInPureTotals": false,
+    "depthFormatGroup": 2
   },
   "nativeAbi": {
     "boundFunctions": 38,
@@ -275,32 +399,52 @@
     "sourcePathDevelopmentMode": true,
     "sourceChanged": false,
     "head": "42ae209b8b4fd175b7b1e5de43d895083b81877b",
-    "sourceTreeSha256": "1365fa309f84673c4f932039010cb1c75c31ec4fd4e2433fdc2f93efe64d43f1",
-    "frames60": {"updates": 60, "draws": 60, "status": "PASS"},
-    "frames600": {"updates": 600, "draws": 600, "status": "PASS"}
+    "sourceTreeSha256": "effe1986e3e2e4dbd4ed3a8b1bbbb31da832a9ee13b2b792d37e062a697c1663",
+    "sourceTreeSha256Recipe": "sha256 over sorted `<sha256> <path>` lines for every git-tracked file; recipe newly stated in Foundation 14, so the digest is not comparable with the Foundation 13 value",
+    "worktreeClean": true,
+    "frames60": {
+      "updates": 60,
+      "draws": 60,
+      "status": "PASS"
+    },
+    "frames600": {
+      "updates": 600,
+      "draws": 600,
+      "status": "PASS"
+    }
   },
   "isolatedExactGemConsumer": {
     "gemHome": "fresh",
     "sourceRUBYLIB": false,
     "sourcePathGem": false,
+    "siblingSourceCheckout": false,
     "require": "PASS",
     "syntax": "PASS",
     "installedSourceFiles": 28,
+    "installedSignatureFiles": 8,
+    "bundledNativeLibraries": 0,
+    "depthFormatNativeUnset": "PASS",
+    "depthFormatChecks": 20,
     "clearOptionsNativeUnset": "PASS",
     "viewport": "PASS",
-    "frames60": {"updates": 60, "draws": 60, "status": "PASS"},
-    "frames600": {"updates": 600, "draws": 600, "status": "PASS"}
+    "frames60": {
+      "updates": 60,
+      "draws": 60,
+      "status": "PASS"
+    },
+    "frames600": {
+      "updates": 600,
+      "draws": 600,
+      "status": "PASS"
+    }
   },
   "git": {
     "branch": "develop",
-    "head": "eac94d3ffb801803217fec36cdddd51234fbad7d",
-    "originDevelop": "eac94d3ffb801803217fec36cdddd51234fbad7d",
+    "head": "37e124a52abd9667f4f527bb36ea2c25796c3f81",
+    "originDevelop": "37e124a52abd9667f4f527bb36ea2c25796c3f81",
     "startingWorktree": "clean",
-    "foundation12": "committed externally before this run at eac94d3ffb801803217fec36cdddd51234fbad7d",
-    "foundation13": "uncommitted",
-    "modifiedTracked": 20,
-    "untracked": 3,
-    "staged": 0,
+    "foundation13": "committed externally before this run at 37e124a52abd9667f4f527bb36ea2c25796c3f81",
+    "foundation14": "uncommitted",
     "diffCheck": "PASS",
     "committed": false,
     "pushed": false
@@ -314,7 +458,9 @@
     "SpriteBatch"
   ],
   "nextMilestone": {
-    "types": ["DepthFormat"],
+    "types": [
+      "PrimitiveType"
+    ],
     "sourceTypes": 1,
     "clrIdentities": 5,
     "expectedRubyIdentities": 4,

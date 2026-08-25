@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "referenceTypes": 257,
-  "targetTypes": 78,
-  "completeTypes": 72,
+  "targetTypes": 79,
+  "completeTypes": 73,
   "partialTypes": [
     "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -11,24 +11,9 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 179,
+  "missingTypes": 178,
   "candidatePolicy": "missing managed enum; all XNA public-signature dependencies complete; directly referenced by a selected partial remainder; fewest expected Ruby identities",
   "eligibleManagedEnums": [
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.DepthFormat",
-      "kind": "enum",
-      "expectedRubyIdentities": 4,
-      "dependencies": [
-
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.GraphicsDeviceManager::PreferredDepthStencilFormat (1 overload)"
-      ],
-      "dependencyComplete": true
-    },
     {
       "name": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
       "kind": "enum",
@@ -65,7 +50,7 @@
     }
   ],
   "selectedNext": {
-    "name": "Microsoft.Xna.Framework.Graphics.DepthFormat",
+    "name": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
     "kind": "enum",
     "expectedRubyIdentities": 4,
     "dependencies": [
@@ -75,7 +60,11 @@
 
     ],
     "partialRemainderReverseEdges": [
-      "Microsoft.Xna.Framework.GraphicsDeviceManager::PreferredDepthStencilFormat (1 overload)"
+      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawIndexedPrimitives (1 overload)",
+      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawInstancedPrimitives (1 overload)",
+      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawPrimitives (1 overload)",
+      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawUserIndexedPrimitives (4 overloads)",
+      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawUserPrimitives (2 overloads)"
     ],
     "dependencyComplete": true,
     "selectedOnly": true,

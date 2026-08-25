@@ -62,7 +62,6 @@
 - `Microsoft.Xna.Framework.Graphics.CompareFunction`
 - `Microsoft.Xna.Framework.Graphics.CubeMapFace`
 - `Microsoft.Xna.Framework.Graphics.CullMode`
-- `Microsoft.Xna.Framework.Graphics.DepthFormat`
 - `Microsoft.Xna.Framework.Graphics.DepthStencilState`
 - `Microsoft.Xna.Framework.Graphics.DeviceLostException`
 - `Microsoft.Xna.Framework.Graphics.DeviceNotResetException`

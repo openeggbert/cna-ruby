@@ -24,6 +24,13 @@ module Microsoft
           def &: (ClearOptions other) -> ClearOptions
         end
 
+        class DepthFormat
+          None: DepthFormat
+          Depth16: DepthFormat
+          Depth24: DepthFormat
+          Depth24Stencil8: DepthFormat
+        end
+
         class Viewport
           attr_accessor X: Integer
           attr_accessor Y: Integer

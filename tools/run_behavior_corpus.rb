@@ -13,6 +13,11 @@ CLEAR_OPTIONS_SIGNATURE = JSON.parse(
 ).fetch("types").find do |type|
   type.fetch("name") == "Microsoft.Xna.Framework.Graphics.ClearOptions"
 end
+DEPTH_FORMAT_SIGNATURE = JSON.parse(
+  File.read(File.expand_path("api_compat/signatures.json", __dir__))
+).fetch("types").find do |type|
+  type.fetch("name") == "Microsoft.Xna.Framework.Graphics.DepthFormat"
+end
 GRAPHICS_DEVICE_STATUS_SIGNATURE = JSON.parse(
   File.read(File.expand_path("api_compat/signatures.json", __dir__))
 ).fetch("types").find do |type|
@@ -141,6 +146,7 @@ def behavior_group(item)
   return "VIEWPORT_UNPROJECT" if id.start_with?("viewport_unproject.")
   return "VIEWPORT_TITLE_SAFE_AREA" if id.start_with?("viewport_title_safe_area.")
   return "CLEAR_OPTIONS" if id.start_with?("clear_options.")
+  return "DEPTH_FORMAT" if id.start_with?("depth_format.")
 
   id.split(".").first.upcase
 end
@@ -299,6 +305,47 @@ def execute(item)
       options.instance_variable_get(:@enum_mask), G::GraphicsDevice.instance_method(:Clear).arity,
       G::GraphicsDevice.public_method_defined?(:Viewport=),
       CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("CLEAR_OPTIONS") }
+    ]
+  when "DepthFormat.Contract"
+    members = DEPTH_FORMAT_SIGNATURE.fetch("members")
+    [DEPTH_FORMAT_SIGNATURE.fetch("kind"), DEPTH_FORMAT_SIGNATURE.fetch("underlyingType"),
+     DEPTH_FORMAT_SIGNATURE.fetch("flags"),
+     members.map { |member| [member.fetch("name"), Integer(member.fetch("value"))] },
+     members.any? { |member| Integer(member.fetch("value")).zero? },
+     members.any? { |member| member.fetch("name") == "Default" }]
+  when "DepthFormat.RubyEnumMapping"
+    format = G::DepthFormat
+    values = [format::None, format::Depth16, format::Depth24, format::Depth24Stencil8]
+    foreign = [G::SurfaceFormat::Color, G::GraphicsProfile::Reach, G::GraphicsDeviceStatus::Normal,
+               G::ClearOptions::DepthBuffer, F::DisplayOrientation::Default,
+               G::VertexElementFormat::Vector2, I::GamePadType::GamePad]
+    [
+      values.all? { |value| value.instance_of?(format) },
+      values.all?(&:frozen?),
+      values.map(&:to_i),
+      (0..3).map { |raw| format.coerce(raw).equal?(values[raw]) },
+      values.all? { |value| format.coerce(value).equal?(value) },
+      [4, -1, 12_345, 2_147_483_647].map { |raw| error_name { format.coerce(raw) } },
+      [nil, true, false, 1.0, "1", :Depth16, Object.new].map { |value| error_name { format.coerce(value) } },
+      foreign.map { |value| error_name { format.coerce(value) } },
+      foreign.map { |value| format::Depth24 == value },
+      foreign.map { |value| format::Depth24 <=> value },
+      [error_name { format::Depth16 | format::Depth24 },
+       error_name { format::Depth24Stencil8 & format::Depth24 },
+       error_name { format::None | format::Depth24Stencil8 }],
+      format::Depth16.to_i | format::Depth24.to_i,
+      format.instance_variable_get(:@enum_flags),
+      format.instance_variable_get(:@enum_mask),
+      values.map(&:to_s),
+      values.map(&:inspect),
+      format.constants(false).map(&:to_s).sort,
+      %i[value__ Default Depth32 Stencil8].map { |name| format.constants(false).include?(name) },
+      %i[ToString HasFlag HasStencil DepthBits StencilBits IsDepthOnly NativeFormat Parse]
+        .map { |name| format::Depth24.respond_to?(name) },
+      F::GraphicsDeviceManager.public_method_defined?(:PreferredDepthStencilFormat),
+      %i[DepthStencilState PresentationParameters RenderTarget2D RenderTargetCube GraphicsAdapter]
+        .map { |name| G.const_defined?(name, false) },
+      CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("DEPTH_FORMAT") }
     ]
   when "GraphicsProfile.Contract"
     profile = G::GraphicsProfile
