@@ -42,12 +42,38 @@ reference_by_name = reference.fetch("types").to_h { |type| [type.fetch("name"), 
 target_names = target.fetch("types").map { |type| type.fetch("name") }
 complete_names = strict.fetch("completeTypeNames")
 
+# A type name occurring inside a signature counts as a dependency only when it is bounded on both
+# sides. Testing a prefix alone -- `signature.include?("[#{name}")` -- matched any *longer* name
+# that merely starts with the shorter one, and the Game family is full of them: the signature
+# `System.EventHandler`1[Microsoft.Xna.Framework.GameComponentCollectionEventArgs]` was reported as
+# naming `Game` and `GameComponent` as well, so `GameComponentCollection` was recorded as blocked on
+# two types it never mentions. This is the same class of blind spot Native frontiers 2 and 3 closed
+# in the IL extractor -- a scanner anchored on one side of a token -- seen in the signature graph.
+#
+# The delimiters are the ones a signature really uses: a constructed generic opens with `[`,
+# separates with `,` and closes with `]`; an array appends `[]`; a byref appends `&`. A nested type
+# spelled `Parent+Child` is deliberately *not* matched by its parent's name, exactly as before: the
+# declaring-type edge is added separately by `type_dependencies`.
+OPENING = ["[", ","].freeze
+CLOSING = ["]", ",", "[", "&"].freeze
+
 extract_types = lambda do |signature|
   next [] unless signature
 
   reference_by_name.keys.select do |name|
-    signature == name || signature.include?("[#{name}") || signature.include?(",#{name}") ||
-      signature.include?("#{name}]") || signature.include?("#{name}&")
+    next true if signature == name
+
+    offset = 0
+    bounded = false
+    while (index = signature.index(name, offset))
+      before = index.zero? ? nil : signature[index - 1]
+      after = signature[index + name.length]
+      bounded = (before.nil? || OPENING.include?(before)) && (after.nil? || CLOSING.include?(after))
+      break if bounded
+
+      offset = index + 1
+    end
+    bounded
   end
 end
 

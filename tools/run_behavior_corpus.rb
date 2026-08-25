@@ -115,6 +115,17 @@ def invoke_projection(instance, name)
   instance.public_send(name, *Array.new(arity.negative? ? 0 : arity, nil))
 end
 
+# A minimal IGameComponent for the collection observations: the contract and nothing else, so the
+# rows depend on no later milestone.
+def corpus_component(label = nil)
+  Class.new do
+    include Microsoft::Xna::Framework::IGameComponent
+    define_method(:initialize) { @label = label }
+    attr_reader :label
+    def Initialize = nil
+  end.new
+end
+
 def error_name
   yield
   "none"
@@ -188,6 +199,7 @@ def behavior_group(item)
   return "MANAGED_DESCRIPTOR" if id.start_with?("managed_descriptor.")
   return "CONSTRUCTOR_FREE" if id.start_with?("constructor_free.")
   return "CONTENT_ATTRIBUTE" if id.start_with?("content_attribute.")
+  return "GAME_COMPONENT_COLLECTION" if id.start_with?("game_component_collection.")
 
   id.split(".").first.upcase
 end
@@ -983,17 +995,23 @@ def execute(item)
         member.fetch("static")]
      end]
   when "EventProjection.SupportTypeContract"
-    selected = BATCH_SIGNATURES.values.flat_map do |type|
+    # The identities Foundation 20 established are passed as args rather than censused, so the row
+    # pins what that milestone settled and survives the selection legitimately growing. What is
+    # asserted of the whole selection is the *shape* -- every selected event is an
+    # EventHandler`1 -- which is the rule the support type exists for.
+    identities = item.fetch("args")
+    declared = BATCH_SIGNATURES.values.flat_map do |type|
       type.fetch("members").select { |member| member.fetch("kind") == "event" }
           .map { |member| ["#{type.fetch("name")}::#{member.fetch("name")}", member.fetch("type")] }
-    end
-    [selected.length, selected.map(&:last).uniq, selected.map(&:first)]
+    end.to_h
+    [identities.map { |identity| declared.key?(identity) },
+     identities.map { |identity| declared[identity] },
+     declared.values.all? { |type| type.start_with?("System.EventHandler`1[") }]
   when "EventProjection.DeferredFamilyContract"
     %w[GameComponent DrawableGameComponent GameComponentCollection].map do |short|
       pinned = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.#{short}")
       events = pinned.fetch("members").select { |member| member.fetch("kind") == "event" }
-      [short, events.map { |member| member.fetch("name") }, events.map { |member| member.fetch("type") }.uniq,
-       BATCH_SIGNATURES.key?("Microsoft.Xna.Framework.#{short}")]
+      [short, events.map { |member| member.fetch("name") }, events.map { |member| member.fetch("type") }.uniq]
     end
   when "EventProjection.RubyMapping"
     clr_name = item.fetch("args").fetch(0)
@@ -1925,6 +1943,113 @@ def execute(item)
   when "Golden.FrustumRelations"
     projection = F::Matrix.CreatePerspectiveFieldOfView(F::MathHelper::PiOver4, 4.0 / 3.0, 1, 10); frustum = F::BoundingFrustum.new(F::Matrix.CreateLookAt(F::Vector3.new(0, 0, 5), F::Vector3.Zero, F::Vector3.Up) * projection); distant = F::BoundingFrustum.new(F::Matrix.CreateLookAt(F::Vector3.new(100, 0, 5), F::Vector3.new(100, 0, 0), F::Vector3.Up) * projection)
     [frustum.Contains(F::Vector3.Zero).to_i, frustum.Contains(F::Vector3.new(0, 0, 6)).to_i, frustum.Contains(F::BoundingBox.new(F::Vector3.new(-0.5), F::Vector3.new(0.5))).to_i, frustum.Contains(F::BoundingSphere.new(F::Vector3.Zero, 0.5)).to_i, frustum.Intersects(F::BoundingBox.new(F::Vector3.new(-0.5), F::Vector3.new(0.5))), frustum.Intersects(F::BoundingBox.new(F::Vector3.new(100), F::Vector3.new(101))), frustum.Intersects(F::BoundingSphere.new(F::Vector3.Zero, 0.5)), frustum.Intersects(F::BoundingSphere.new(F::Vector3.new(100), 0.5)), frustum.Intersects(distant), hex32(frustum.Intersects(F::Ray.new(F::Vector3.new(0, 0, 20), F::Vector3.Forward)))]
+  when "GameComponentCollection.Contract"
+    type = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.GameComponentCollection")
+    methods = type.fetch("members").select { |member| member.fetch("kind") == "method" }
+                  .sort_by { |member| member.fetch("name") }
+    [type.fetch("kind"), type.fetch("sealed"), type.fetch("baseType"),
+     type.fetch("members").count { |member| member.fetch("kind") == "constructor" },
+     methods.map { |member| member.fetch("name") },
+     type.fetch("members").select { |member| member.fetch("kind") == "event" }
+         .map { |member| member.fetch("name") }.sort,
+     methods.map { |member| member.fetch("access") }]
+  when "GameComponentCollection.InsertOrder"
+    collection = F::GameComponentCollection.new
+    counts = []
+    collection.ComponentAdded.add { |_sender, _args| counts << collection.Count }
+    first = corpus_component("a")
+    collection.Add(first)
+    refusal = error_name { collection.Add(first) }
+    after_refusal = collection.Count
+    removed_seen = 0
+    collection.ComponentRemoved.add { |_sender, _args| removed_seen += 1 }
+    collection.Add(corpus_component("b"))
+    # count seen by the first handler, count seen after the duplicate refusal, the refusal itself,
+    # the collection size the refusal left behind, how many removals were announced, the count the
+    # second notification saw, and the final size.
+    [counts.first, counts.length, refusal, after_refusal, removed_seen, counts.last, collection.Count]
+  when "GameComponentCollection.RemoveOrder"
+    collection = F::GameComponentCollection.new
+    component = corpus_component("a")
+    collection.Add(component)
+    seen = []
+    collection.ComponentRemoved.add { |sender, args| seen << [collection.Count, sender.equal?(collection), args.GameComponent.equal?(component)] }
+    removed = collection.Remove(component)
+    absent = error_name { collection.Remove(corpus_component("b")) }
+    [seen.length, seen.first[0] + 1, seen.first[1] && seen.first[2], absent,
+     collection.Count, collection.Remove(corpus_component("c")), seen.length - 1]
+  when "GameComponentCollection.ClearOrder"
+    collection = F::GameComponentCollection.new
+    %w[a b c].each { |label| collection.Add(corpus_component(label)) }
+    counts = []
+    labels = []
+    collection.ComponentRemoved.add do |_sender, args|
+      counts << collection.Count
+      labels << args.GameComponent.label
+    end
+    collection.Clear
+    # Every announcement sees the full collection: no mutation happens until they are all done.
+    [counts[0], counts[1], counts[2], counts.length, collection.Count, *labels]
+  when "GameComponentCollection.ClearReReadsCount"
+    collection = F::GameComponentCollection.new
+    collection.Add(corpus_component("a"))
+    late = corpus_component("late")
+    labels = []
+    collection.ComponentRemoved.add do |_sender, args|
+      labels << args.GameComponent.label
+      collection.Add(late) if args.GameComponent.label == "a"
+    end
+    collection.Clear
+    [labels.length, labels[0], labels[1], collection.Count]
+  when "GameComponentCollection.NullComponent"
+    collection = F::GameComponentCollection.new
+    announced = 0
+    collection.ComponentAdded.add { |_sender, _args| announced += 1 }
+    collection.Add(nil)
+    inserted = collection.Count
+    duplicate = error_name { collection.Add(nil) }
+    after = collection.Count
+    removals = []
+    collection.ComponentRemoved.add { |_sender, args| removals << args.GameComponent.nil? }
+    collection.Clear
+    # Inserted silently, a second null is a duplicate, and ClearItems -- alone among the hooks --
+    # has no null check, so it announces the null element.
+    [inserted, announced, duplicate, after, collection.Count, removals.length, removals.first]
+  when "GameComponentCollection.SetItemRefusal"
+    collection = F::GameComponentCollection.new
+    collection.Add(corpus_component("a"))
+    [error_name { collection[0] = corpus_component("b") },
+     error_name { collection[1] = corpus_component("b") },
+     error_name { collection[-1] = corpus_component("b") },
+     error_name { collection[0] = nil },
+     collection.Count]
+  when "GameComponentCollection.InheritedSurface"
+    collection = F::GameComponentCollection.new
+    first = corpus_component("a")
+    second = corpus_component("b")
+    collection.Add(first)
+    collection.Insert(1, second)
+    [collection.Count, collection.IndexOf(second), collection.IndexOf(corpus_component("c")),
+     collection.Contains(first), collection.Contains(corpus_component("c")),
+     error_name { collection[2] }, error_name { collection.RemoveAt(2) },
+     error_name { collection.Insert(3, corpus_component("d")) }]
+  when "GameComponentCollection.RubyBase"
+    klass = F::GameComponentCollection
+    [klass.superclass.name, klass.clr_element_types,
+     klass.ancestors.include?(::Array), klass.ancestors.include?(CNA::Runtime::ReadOnlyCollection),
+     klass.xna_event_identities.map(&:to_s)]
+  when "GameComponentCollection.RubyEvents"
+    collection = F::GameComponentCollection.new
+    other = F::GameComponentCollection.new
+    args = nil
+    collection.ComponentAdded.add { |_sender, value| args = value }
+    collection.Add(corpus_component("a"))
+    [collection.ComponentAdded.class.name,
+     collection.ComponentAdded.equal?(collection.ComponentAdded),
+     collection.ComponentAdded.equal?(collection.ComponentRemoved),
+     collection.ComponentAdded.equal?(other.ComponentAdded),
+     args.class.name,
+     F::GameComponentCollection.public_method_defined?(:add_ComponentAdded)]
   when "Float32.NegativeZero"
     value = CNA::Runtime::Numeric.f32(-0.0)
     value.zero? && (1.0 / value).negative?

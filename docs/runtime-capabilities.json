@@ -116,13 +116,19 @@
       "id": "managed.event-projection",
       "category": "VERIFIED_MANAGED",
       "status": "verified general mapping",
-      "evidence": "Foundation 20: one CLR public event projects to one public Ruby event reader keeping the XNA spelling, answering the generic CNA::Runtime::Event subscription primitive whose whole public surface is add/remove. Registration-ordered dispatch over a snapshot, duplicate subscriptions permitted, last-occurrence removal matching Delegate.Remove, exceptions never swallowed, raising internal to the declaring implementation. System.EventArgs projects as CNA::Runtime::EventArgs with only its two public CLR identities. Verifier measures kind event under EVENT_MAPPING_MISMATCH with EVENT_IDENTITIES=4 across two owner types; mutation coverage rejects add_/remove_ pairs, writers, wrong support types, extra identities and any public emit/fire/trigger surface. No add_EventName or remove_EventName identity and no fabricated ::System namespace exists"
+      "evidence": "Foundation 20: one CLR public event projects to one public Ruby event reader keeping the XNA spelling, answering the generic CNA::Runtime::Event subscription primitive whose whole public surface is add/remove. Registration-ordered dispatch over a snapshot, duplicate subscriptions permitted, last-occurrence removal matching Delegate.Remove, exceptions never swallowed, raising internal to the declaring implementation. System.EventArgs projects as CNA::Runtime::EventArgs with only its two public CLR identities. Verifier measures kind event under EVENT_MAPPING_MISMATCH with EVENT_IDENTITIES=6 across three owner types; mutation coverage rejects add_/remove_ pairs, writers, wrong support types, extra identities and any public emit/fire/trigger surface. No add_EventName or remove_EventName identity and no fabricated ::System namespace exists"
     },
     {
       "id": "managed.event-interfaces",
       "category": "VERIFIED_MANAGED",
       "status": "verified complete abstract contracts",
-      "evidence": "Foundation 20: IUpdateable (Update, Enabled, UpdateOrder, EnabledChanged, UpdateOrderChanged) and IDrawable (Draw, Visible, DrawOrder, VisibleChanged, DrawOrderChanged); 2 types / 10 Ruby identities. Abstract contracts only: every member including the event readers raises NotImplementedError, no concrete type includes either module, and no GameComponent, DrawableGameComponent, GameComponentCollection, GameWindow or Microphone runtime is added"
+      "evidence": "Foundation 20: IUpdateable (Update, Enabled, UpdateOrder, EnabledChanged, UpdateOrderChanged) and IDrawable (Draw, Visible, DrawOrder, VisibleChanged, DrawOrderChanged); 2 types / 10 Ruby identities. Abstract contracts only: every member including the event readers raises NotImplementedError, no concrete type includes either module, and this capability adds no GameComponent, DrawableGameComponent, GameWindow or Microphone runtime of its own"
+    },
+    {
+      "id": "managed.game-component-collection",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified complete managed type",
+      "evidence": "Foundation 35: GameComponentCollection, the sealed Collection<IGameComponent> Game.Components is; 1 type / 7 Ruby identities -- one constructor, four protected hooks and two events -- with the whole Collection<T> public surface arriving by inheritance from CNA::Runtime::Collection, which Foundation 34 projected from the admitted mscorlib. Derived from the pinned Microsoft.Xna.Framework.Game.dll IL: InsertItem refuses a duplicate before mutating and raises ComponentAdded after, RemoveItem reads before mutating and raises ComponentRemoved after, ClearItems raises every ComponentRemoved before any mutation while re-reading Count, and SetItem is an unconditional NotSupportedException. A null component is inserted silently because the IL null check guards the notification rather than the mutation. This capability holds no component: no concrete IGameComponent type exists yet and nothing populates one"
     },
     {
       "id": "managed.bcl-projection",

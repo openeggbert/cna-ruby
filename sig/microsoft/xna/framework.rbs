@@ -50,6 +50,14 @@ module Microsoft
         def &: (DisplayOrientation other) -> DisplayOrientation
       end
 
+      # A sealed Collection<IGameComponent>. Its whole declared surface is four protected hooks
+      # and two events; every public collection member arrives from CNA::Runtime::Collection.
+      class GameComponentCollection < CNA::Runtime::Collection
+        def initialize: () -> void
+        def ComponentAdded: () -> CNA::Runtime::Event
+        def ComponentRemoved: () -> CNA::Runtime::Event
+      end
+
       class Game
         attr_reader GraphicsDevice: Graphics::GraphicsDevice?
         def initialize: () -> void

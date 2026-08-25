@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "derivation": "Foundation 35 GameComponentCollection. The contract row is read from the pinned XNA 4.0 Windows metadata. The ordering rows are read from the pinned Microsoft.Xna.Framework.Game.dll IL: InsertItem checks IndexOf != -1 and throws before base.InsertItem, then raises ComponentAdded only when the item is non-null; RemoveItem reads base[index] before base.RemoveItem and raises ComponentRemoved after it, again only when non-null; SetItem is newobj NotSupportedException + throw with no branch at all; ClearItems raises ComponentRemoved for every element -- with no null check -- re-reading base.Count on each iteration, and calls base.ClearItems only afterwards. The base-class conditions are read from the admitted Microsoft mscorlib Collection`1. The RUBY_MAPPING_QUALIFICATION rows record the projection decisions -- the CLR base really being a Ruby superclass, the declared generic element type, and the established event primitive -- and are not snapshotted from the cna-ruby implementation.",
+  "observations": [
+    {
+      "id": "game_component_collection.contract",
+      "operation": "GameComponentCollection.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        true,
+        "System.Collections.ObjectModel.Collection`1[Microsoft.Xna.Framework.IGameComponent]",
+        1,
+        ["ClearItems", "InsertItem", "RemoveItem", "SetItem"],
+        ["ComponentAdded", "ComponentRemoved"],
+        ["protected", "protected", "protected", "protected"]
+      ]
+    },
+    {
+      "id": "game_component_collection.insert_order",
+      "operation": "GameComponentCollection.InsertOrder",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [1, 2, "ArgumentError", 1, 0, 2, 2]
+    },
+    {
+      "id": "game_component_collection.remove_order",
+      "operation": "GameComponentCollection.RemoveOrder",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [1, 1, true, "none", 0, false, 0]
+    },
+    {
+      "id": "game_component_collection.clear_order",
+      "operation": "GameComponentCollection.ClearOrder",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [3, 3, 3, 3, 0, "a", "b", "c"]
+    },
+    {
+      "id": "game_component_collection.clear_re_reads_count",
+      "operation": "GameComponentCollection.ClearReReadsCount",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [2, "a", "late", 0]
+    },
+    {
+      "id": "game_component_collection.null_component",
+      "operation": "GameComponentCollection.NullComponent",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [1, 0, "ArgumentError", 1, 0, 1, true]
+    },
+    {
+      "id": "game_component_collection.set_item_refusal",
+      "operation": "GameComponentCollection.SetItemRefusal",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": ["CNA::Runtime::NotSupportedError", "RangeError", "RangeError", "CNA::Runtime::NotSupportedError", 1]
+    },
+    {
+      "id": "game_component_collection.inherited_surface",
+      "operation": "GameComponentCollection.InheritedSurface",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [2, 1, -1, true, false, "IndexError", "RangeError", "RangeError"]
+    },
+    {
+      "id": "game_component_collection.ruby_base",
+      "operation": "GameComponentCollection.RubyBase",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "CNA::Runtime::Collection",
+        ["Microsoft.Xna.Framework.IGameComponent"],
+        false,
+        false,
+        ["ComponentAdded", "ComponentRemoved"]
+      ]
+    },
+    {
+      "id": "game_component_collection.ruby_events",
+      "operation": "GameComponentCollection.RubyEvents",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "CNA::Runtime::Event",
+        true,
+        false,
+        false,
+        "Microsoft::Xna::Framework::GameComponentCollectionEventArgs",
+        false
+      ]
+    }
+  ]
+}

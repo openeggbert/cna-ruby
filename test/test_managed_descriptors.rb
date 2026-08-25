@@ -365,8 +365,14 @@ class ManagedDescriptorsTest < Minitest::Test
     assert_equal %i[IsDisposed Viewport Clear].sort, G::GraphicsDevice.public_instance_methods(false).sort
   end
 
+  # The event args type still implies neither component class. GameComponentCollection exists as of
+  # Foundation 35, from its own IL rather than from anything this type implies, and the relation
+  # runs the other way: the collection constructs these args, so it names the type and not the
+  # reverse.
   def test_the_event_args_type_implies_no_game_component_family
-    %i[GameComponent DrawableGameComponent GameComponentCollection]
+    %i[GameComponent DrawableGameComponent]
       .each { |absent| refute F.const_defined?(absent, false), "Framework::#{absent}" }
+    assert F.const_defined?(:GameComponentCollection, false)
+    assert_nil F::GameComponentCollectionEventArgs.new(nil).GameComponent
   end
 end

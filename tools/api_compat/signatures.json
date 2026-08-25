@@ -1084,6 +1084,151 @@
       "rubyName": "Microsoft::Xna::Framework::GameComponentCollectionEventArgs"
     },
     {
+      "name": "Microsoft.Xna.Framework.GameComponentCollection",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Collections.ObjectModel.Collection`1[Microsoft.Xna.Framework.IGameComponent]",
+      "interfaces": [
+        "System.Collections.Generic.ICollection`1[Microsoft.Xna.Framework.IGameComponent]",
+        "System.Collections.Generic.IEnumerable`1[Microsoft.Xna.Framework.IGameComponent]",
+        "System.Collections.Generic.IList`1[Microsoft.Xna.Framework.IGameComponent]",
+        "System.Collections.Generic.IReadOnlyCollection`1[Microsoft.Xna.Framework.IGameComponent]",
+        "System.Collections.Generic.IReadOnlyList`1[Microsoft.Xna.Framework.IGameComponent]",
+        "System.Collections.ICollection",
+        "System.Collections.IEnumerable",
+        "System.Collections.IList"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "InsertItem",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "index",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "item",
+              "type": "Microsoft.Xna.Framework.IGameComponent",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "RemoveItem",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "index",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetItem",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "index",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "item",
+              "type": "Microsoft.Xna.Framework.IGameComponent",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ClearItems",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "event",
+          "name": "ComponentAdded",
+          "type": "System.EventHandler`1[Microsoft.Xna.Framework.GameComponentCollectionEventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "ComponentRemoved",
+          "type": "System.EventHandler`1[Microsoft.Xna.Framework.GameComponentCollectionEventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::GameComponentCollection"
+    },
+    {
       "name": "Microsoft.Xna.Framework.FrameworkDispatcher",
       "kind": "class",
       "flags": false,

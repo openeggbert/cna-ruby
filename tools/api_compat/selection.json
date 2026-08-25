@@ -34,6 +34,10 @@
       "complete": true
     },
     {
+      "name": "Microsoft.Xna.Framework.GameComponentCollection",
+      "complete": true
+    },
+    {
       "name": "Microsoft.Xna.Framework.FrameworkDispatcher",
       "complete": true
     },

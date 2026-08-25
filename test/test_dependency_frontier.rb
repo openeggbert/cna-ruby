@@ -437,17 +437,16 @@ class DependencyFrontierTest < Minitest::Test
     assert_includes REPORT.fetch("mappedBclTypes"), "System.EventHandler`1[System.EventArgs]"
   end
 
-  # The GameComponent family is the cluster event projection was expected to unlock. It stays out
-  # for reasons the graph measures rather than for anything about events.
+  # The GameComponent family is the cluster event projection was expected to unlock. The two
+  # component classes stay out for reasons the graph measures rather than for anything about
+  # events; GameComponentCollection left the family in Foundation 35 because it never depended on
+  # either of them -- see the extractor correction below.
   def test_game_component_family_is_not_dependency_complete
     {
       "Microsoft.Xna.Framework.GameComponent" => %w[Microsoft.Xna.Framework.Game],
       "Microsoft.Xna.Framework.DrawableGameComponent" => %w[
         Microsoft.Xna.Framework.Game Microsoft.Xna.Framework.GameComponent
         Microsoft.Xna.Framework.Graphics.GraphicsDevice
-      ],
-      "Microsoft.Xna.Framework.GameComponentCollection" => %w[
-        Microsoft.Xna.Framework.Game Microsoft.Xna.Framework.GameComponent
       ]
     }.each do |name, unmet|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
@@ -459,8 +458,42 @@ class DependencyFrontierTest < Minitest::Test
       unmet.each { |dependency| refute_includes STRICT.fetch("completeTypeNames"), dependency, dependency }
     end
 
-    # Game is one of the six deferred partial runtime types, so the whole family stays deferred.
+    # Game is one of the six deferred partial runtime types, so both component classes stay
+    # deferred. The collection is complete and is no longer a candidate at all.
     assert_includes STRICT.fetch("partialTypes").keys, "Microsoft.Xna.Framework.Game"
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.GameComponentCollection"
+    assert_nil REPORT.fetch("dependencyCompleteCandidates")
+                     .find { |item| item.fetch("name") == "Microsoft.Xna.Framework.GameComponentCollection" }
+  end
+
+  # Foundation 35 corrected the signature-graph extractor. A type name occurring inside a signature
+  # was matched by an *unbounded prefix* test -- `signature.include?("[#{name}")` -- so any longer
+  # name starting with a shorter one matched it too, and the Game family is full of those. The
+  # signature `System.EventHandler`1[Microsoft.Xna.Framework.GameComponentCollectionEventArgs]` was
+  # therefore read as naming `Game` and `GameComponent`, and GameComponentCollection was recorded as
+  # blocked on two types its public surface never mentions.
+  #
+  # This is the same class of blind spot Native frontiers 2 and 3 closed in the IL extractor -- a
+  # scanner anchored on one side of a token -- seen in the signature graph. It ran in both
+  # directions: 18 spurious edges across 15 types, and 21 edges missed entirely, because a name
+  # followed by `[` (an array, or a generic definition used as an interface) matched nothing.
+  def test_the_signature_extractor_bounds_a_name_on_both_sides
+    collection = BY_NAME.fetch("Microsoft.Xna.Framework.GameComponentCollection")
+    signature = collection.fetch("members").find { |member| member.fetch("kind") == "event" }.fetch("type")
+    assert_equal "System.EventHandler`1[Microsoft.Xna.Framework.GameComponentCollectionEventArgs]", signature
+
+    # The unbounded prefix test the correction replaced, shown failing on this exact signature.
+    %w[Microsoft.Xna.Framework.Game Microsoft.Xna.Framework.GameComponent].each do |shorter|
+      assert signature.include?("[#{shorter}"), "the old test matched #{shorter}"
+      refute signature.include?("[#{shorter}]"), "#{shorter} is not what the signature names"
+    end
+
+    # And the edges the old test missed: a name followed by `[` was never matched.
+    declaration = BY_NAME.fetch("Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8")
+                         .fetch("directInterfaces")
+                         .find { |entry| entry.include?("IPackedVector`1") }
+    assert declaration.start_with?("Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1[")
+    refute declaration.include?("IPackedVector`1]")
   end
 
   def test_named_frontier_examples_keep_their_expected_blocker

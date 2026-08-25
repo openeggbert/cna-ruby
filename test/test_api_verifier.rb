@@ -1685,7 +1685,11 @@ class ApiVerifierTest < Minitest::Test
       type.fetch("members").select { |member| member.fetch("kind") == "event" }
           .map { |member| "#{type.fetch("name")}::#{member.fetch("name")}" }
     end
+    # Foundation 35 added the first *concrete* owner: until then only the two abstract contracts
+    # declared an event, so the census was four.
     assert_equal %w[
+      Microsoft.Xna.Framework.GameComponentCollection::ComponentAdded
+      Microsoft.Xna.Framework.GameComponentCollection::ComponentRemoved
       Microsoft.Xna.Framework.IUpdateable::EnabledChanged
       Microsoft.Xna.Framework.IUpdateable::UpdateOrderChanged
       Microsoft.Xna.Framework.IDrawable::VisibleChanged
@@ -1695,19 +1699,28 @@ class ApiVerifierTest < Minitest::Test
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
     assert_equal selected, strict.fetch("eventIdentities")
     assert_equal selected.length, strict.fetch("EVENT_IDENTITIES")
-    assert_equal 2, strict.fetch("EVENT_OWNER_TYPES")
+    assert_equal 3, strict.fetch("EVENT_OWNER_TYPES")
     assert_equal "CNA::Runtime::Event", strict.fetch("EVENT_SUPPORT_TYPE")
     assert_equal 0, strict.fetch("EVENT_MAPPING_MISMATCH")
 
-    # Every selected event's CLR support type is the one this projection maps.
+    # Every selected event's CLR support type is the generic delegate this projection maps, closed
+    # over whatever args type the event declares -- System.EventArgs for the two interfaces, and
+    # GameComponentCollectionEventArgs for the collection Foundation 35 added. One reader identity
+    # answers for every closed form, which is the point of mapping the definition.
     signature_contract.fetch("types").each do |type|
       type.fetch("members").select { |member| member.fetch("kind") == "event" }.each do |member|
-        assert_equal "System.EventHandler`1[System.EventArgs]", member.fetch("type")
+        assert_match(/\ASystem\.EventHandler`1\[[^\[\]]+\]\z/, member.fetch("type"))
         assert_equal true, member.fetch("add")
         assert_equal true, member.fetch("remove")
         assert_equal false, member.fetch("static")
       end
     end
+    assert_equal ["System.EventHandler`1[Microsoft.Xna.Framework.GameComponentCollectionEventArgs]",
+                  "System.EventHandler`1[System.EventArgs]"],
+                 signature_contract.fetch("types").flat_map { |type|
+                   type.fetch("members").select { |member| member.fetch("kind") == "event" }
+                       .map { |member| member.fetch("type") }
+                 }.uniq.sort
   end
 
   def test_event_kind_projects_exactly_one_reader_identity

@@ -10198,19 +10198,27 @@
     {
       "id": "event_projection.support_type.contract",
       "operation": "EventProjection.SupportTypeContract",
-      "args": [],
+      "args": [
+        "Microsoft.Xna.Framework.IUpdateable::EnabledChanged",
+        "Microsoft.Xna.Framework.IUpdateable::UpdateOrderChanged",
+        "Microsoft.Xna.Framework.IDrawable::VisibleChanged",
+        "Microsoft.Xna.Framework.IDrawable::DrawOrderChanged"
+      ],
       "provenance": "PURE_XNA_DERIVED",
       "expected": [
-        4,
         [
-          "System.EventHandler`1[System.EventArgs]"
+          true,
+          true,
+          true,
+          true
         ],
         [
-          "Microsoft.Xna.Framework.IUpdateable::EnabledChanged",
-          "Microsoft.Xna.Framework.IUpdateable::UpdateOrderChanged",
-          "Microsoft.Xna.Framework.IDrawable::VisibleChanged",
-          "Microsoft.Xna.Framework.IDrawable::DrawOrderChanged"
-        ]
+          "System.EventHandler`1[System.EventArgs]",
+          "System.EventHandler`1[System.EventArgs]",
+          "System.EventHandler`1[System.EventArgs]",
+          "System.EventHandler`1[System.EventArgs]"
+        ],
+        true
       ]
     },
     {
@@ -10228,8 +10236,7 @@
           ],
           [
             "System.EventHandler`1[System.EventArgs]"
-          ],
-          false
+          ]
         ],
         [
           "DrawableGameComponent",
@@ -10239,8 +10246,7 @@
           ],
           [
             "System.EventHandler`1[System.EventArgs]"
-          ],
-          false
+          ]
         ],
         [
           "GameComponentCollection",
@@ -10250,8 +10256,7 @@
           ],
           [
             "System.EventHandler`1[Microsoft.Xna.Framework.GameComponentCollectionEventArgs]"
-          ],
-          false
+          ]
         ]
       ]
     },
@@ -13036,6 +13041,168 @@
         true,
         true
       ]
+    },
+    {
+      "id": "game_component_collection.contract",
+      "operation": "GameComponentCollection.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        true,
+        "System.Collections.ObjectModel.Collection`1[Microsoft.Xna.Framework.IGameComponent]",
+        1,
+        [
+          "ClearItems",
+          "InsertItem",
+          "RemoveItem",
+          "SetItem"
+        ],
+        [
+          "ComponentAdded",
+          "ComponentRemoved"
+        ],
+        [
+          "protected",
+          "protected",
+          "protected",
+          "protected"
+        ]
+      ]
+    },
+    {
+      "id": "game_component_collection.insert_order",
+      "operation": "GameComponentCollection.InsertOrder",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        1,
+        2,
+        "ArgumentError",
+        1,
+        0,
+        2,
+        2
+      ]
+    },
+    {
+      "id": "game_component_collection.remove_order",
+      "operation": "GameComponentCollection.RemoveOrder",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        1,
+        1,
+        true,
+        "none",
+        0,
+        false,
+        0
+      ]
+    },
+    {
+      "id": "game_component_collection.clear_order",
+      "operation": "GameComponentCollection.ClearOrder",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        3,
+        3,
+        3,
+        3,
+        0,
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    {
+      "id": "game_component_collection.clear_re_reads_count",
+      "operation": "GameComponentCollection.ClearReReadsCount",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        2,
+        "a",
+        "late",
+        0
+      ]
+    },
+    {
+      "id": "game_component_collection.null_component",
+      "operation": "GameComponentCollection.NullComponent",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        1,
+        0,
+        "ArgumentError",
+        1,
+        0,
+        1,
+        true
+      ]
+    },
+    {
+      "id": "game_component_collection.set_item_refusal",
+      "operation": "GameComponentCollection.SetItemRefusal",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "CNA::Runtime::NotSupportedError",
+        "RangeError",
+        "RangeError",
+        "CNA::Runtime::NotSupportedError",
+        1
+      ]
+    },
+    {
+      "id": "game_component_collection.inherited_surface",
+      "operation": "GameComponentCollection.InheritedSurface",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        2,
+        1,
+        -1,
+        true,
+        false,
+        "IndexError",
+        "RangeError",
+        "RangeError"
+      ]
+    },
+    {
+      "id": "game_component_collection.ruby_base",
+      "operation": "GameComponentCollection.RubyBase",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "CNA::Runtime::Collection",
+        [
+          "Microsoft.Xna.Framework.IGameComponent"
+        ],
+        false,
+        false,
+        [
+          "ComponentAdded",
+          "ComponentRemoved"
+        ]
+      ]
+    },
+    {
+      "id": "game_component_collection.ruby_events",
+      "operation": "GameComponentCollection.RubyEvents",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "CNA::Runtime::Event",
+        true,
+        false,
+        false,
+        "Microsoft::Xna::Framework::GameComponentCollectionEventArgs",
+        false
+      ]
     }
   ],
   "milestone31SourceAssemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
@@ -13046,5 +13213,8 @@
   "milestone33SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
   "milestone33MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 166b4bfdbb5c1f97a579b620329b2973ccfcd9f59b72a7f40e8b387910b139df, 433 observations) was proved before appending 2 additive observations",
   "milestone33CorpusCorrection": "the three BclProjection.Register rows each carried one slot asserting that System.Type stays unprojected, which Foundation 33 legitimately ended by projecting it to a Ruby Module. That slot was dropped from the operation and from all three rows, so each asserts only the identities it was written to pin plus the standing rule that no ::System namespace exists; the replay proved every other element of those rows, and every other row, unchanged.",
-  "nativeFrontier3CorpusCorrection": "il_provenance.assemblies pinned this project's own measurement of typesNativeReachable, which Native frontier 3 corrected from 61 to 77 by removing a modopt blind spot in the extractor: a mixed-mode C++/CLI thunk is declared `.method ... int32 modopt([mscorlib]...IsLong) Play(uint32)`, so every such method was recorded under the name modopt while every call site resolved to its real name, and every edge into XNA's native-methods classes dangled. That one element was updated. Unlike the Native frontier 2 correction, a re-serialisation replay is available again and was used: byte-preserving serialisation of the pre-correction corpus (SHA-256 581063d14669d2b53f07a6a2089a9860c823e0eb7707d525d1ae71b8fb709630, 435 observations) was proved first, and exactly one observation differs afterwards."
+  "nativeFrontier3CorpusCorrection": "il_provenance.assemblies pinned this project's own measurement of typesNativeReachable, which Native frontier 3 corrected from 61 to 77 by removing a modopt blind spot in the extractor: a mixed-mode C++/CLI thunk is declared `.method ... int32 modopt([mscorlib]...IsLong) Play(uint32)`, so every such method was recorded under the name modopt while every call site resolved to its real name, and every edge into XNA's native-methods classes dangled. That one element was updated. Unlike the Native frontier 2 correction, a re-serialisation replay is available again and was used: byte-preserving serialisation of the pre-correction corpus (SHA-256 581063d14669d2b53f07a6a2089a9860c823e0eb7707d525d1ae71b8fb709630, 435 observations) was proved first, and exactly one observation differs afterwards.",
+  "milestone35MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 08d3a3f5aff4a5fd08bbb78ef3d572b9ef97622dd7dfccb29f6eaae62f2eb6f2, 435 observations) was proved before correcting two rows and appending 10 additive observations",
+  "milestone35CorpusCorrection": "two Foundation 20 event_projection rows censused this binding's own selection, which Foundation 35 legitimately grew by selecting GameComponentCollection. event_projection.deferred_family.contract carried, per type, one slot asserting the type was not selected -- the same over-reach the Foundation 22, 32 and 33 corrections removed -- so that slot was dropped from the operation and from all three rows, leaving only the pure XNA metadata about each type's events. event_projection.support_type.contract snapshotted the whole selected event census, so like Foundation 23's bcl_projection.register it could not survive the census legitimately growing; it now pins the four identities Foundation 20 established, passed as args, plus the standing shape rule that every selected event is an EventHandler`1. The replay proved every other element of those rows, and every other row, unchanged.",
+  "milestone35SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0"
 }
