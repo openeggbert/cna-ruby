@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 141,
-  "completeTypes": 135,
+  "targetTypes": 142,
+  "completeTypes": 136,
   "partialTypes": [
     "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -11,8 +11,8 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 116,
-  "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME or RUNTIME_DATA blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
+  "missingTypes": 115,
+  "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
     "inventory": "docs/generated/xna-il-inventory.json",
@@ -92,19 +92,32 @@
   },
   "partialDependencySatisfiedCandidates": [
     {
-      "name": "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService",
-      "kind": "interface",
-      "expectedRubyIdentities": 5,
+      "name": "Microsoft.Xna.Framework.DrawableGameComponent",
+      "kind": "class",
+      "expectedRubyIdentities": 13,
       "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+        "Microsoft.Xna.Framework.Game",
+        "Microsoft.Xna.Framework.GameComponent",
+        "Microsoft.Xna.Framework.GameTime",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+        "Microsoft.Xna.Framework.IDrawable"
       ],
       "unmetDependencies": [
+        "Microsoft.Xna.Framework.Game",
         "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
       ],
       "missingTypeDependencies": [
 
       ],
       "partialTypeDependencies": {
+        "Microsoft.Xna.Framework.Game": {
+          "reachedMembers": [
+            "Services"
+          ],
+          "reachedButMissing": [
+
+          ]
+        },
         "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
           "reachedMembers": [
 
@@ -115,7 +128,8 @@
         }
       },
       "ilOnlyDependencies": [
-
+        "Microsoft.Xna.Framework.GameServiceContainer",
+        "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
       ],
       "ilOnlyUnmetDependencies": [
 
@@ -126,23 +140,34 @@
       ],
       "dependencyComplete": false,
       "blockers": [
-
+        "INTERFACE_PRODUCER_MISSING"
       ],
       "unmappedBclTypes": [
 
       ],
+      "reachedInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
+      ],
+      "producerlessInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
+      ],
       "eventMembers": [
-        "DeviceDisposing",
-        "DeviceReset",
-        "DeviceResetting",
-        "DeviceCreated"
+        "VisibleChanged",
+        "DrawOrderChanged"
       ],
       "behaviourBearingMembers": [
-
+        ".ctor",
+        "Initialize",
+        "Dispose",
+        "Draw",
+        "LoadContent",
+        "UnloadContent",
+        "OnDrawOrderChanged",
+        "OnVisibleChanged"
       ],
-      "ilDerivationRequired": false,
+      "ilDerivationRequired": true,
       "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "ilAssembly": "Microsoft.Xna.Framework.Game.dll",
       "nativeReachableMethods": [
 
       ],
@@ -189,6 +214,12 @@
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
 
       ],
       "eventMembers": [
@@ -251,6 +282,12 @@
       "unmappedBclTypes": [
 
       ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
       "eventMembers": [
 
       ],
@@ -305,10 +342,17 @@
       ],
       "dependencyComplete": false,
       "blockers": [
-        "NATIVE_RUNTIME"
+        "NATIVE_RUNTIME",
+        "INTERFACE_PRODUCER_MISSING"
       ],
       "unmappedBclTypes": [
 
+      ],
+      "reachedInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType"
+      ],
+      "producerlessInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType"
       ],
       "eventMembers": [
 
@@ -362,6 +406,12 @@
         "System.Char",
         "System.Nullable`1[System.Char]",
         "System.Text.StringBuilder"
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
       ],
       "eventMembers": [
 
@@ -436,6 +486,12 @@
       ],
       "unmappedBclTypes": [
         "Microsoft.Xna.Framework.Graphics.IDynamicGraphicsResource"
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
       ],
       "eventMembers": [
         "ContentLost"
@@ -514,6 +570,12 @@
         "!!0[]",
         "Microsoft.Xna.Framework.Graphics.IGraphicsResource"
       ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
       "eventMembers": [
 
       ],
@@ -579,6 +641,12 @@
         "System.Action`1",
         "System.Action`1[System.IDisposable]",
         "System.IO.Stream"
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
       ],
       "eventMembers": [
 
@@ -649,6 +717,12 @@
         "!!0[]",
         "Microsoft.Xna.Framework.Graphics.IGraphicsResource"
       ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
       "eventMembers": [
 
       ],
@@ -672,82 +746,6 @@
         "ReleaseNativeObject",
         "SaveDataForRecreation",
         "T>"
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.DrawableGameComponent",
-      "kind": "class",
-      "expectedRubyIdentities": 13,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Game",
-        "Microsoft.Xna.Framework.GameComponent",
-        "Microsoft.Xna.Framework.GameTime",
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
-        "Microsoft.Xna.Framework.IDrawable"
-      ],
-      "unmetDependencies": [
-        "Microsoft.Xna.Framework.Game",
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-        "Microsoft.Xna.Framework.Game": {
-          "reachedMembers": [
-            "Services"
-          ],
-          "reachedButMissing": [
-
-          ]
-        },
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
-          "reachedMembers": [
-
-          ],
-          "reachedButMissing": [
-
-          ]
-        }
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.GameServiceContainer",
-        "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": false,
-      "blockers": [
-
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "eventMembers": [
-        "VisibleChanged",
-        "DrawOrderChanged"
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "Initialize",
-        "Dispose",
-        "Draw",
-        "LoadContent",
-        "UnloadContent",
-        "OnDrawOrderChanged",
-        "OnVisibleChanged"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Game.dll",
-      "nativeReachableMethods": [
-
       ],
       "runtimeDataDetail": null
     },
@@ -786,6 +784,12 @@
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
 
       ],
       "eventMembers": [
@@ -860,6 +864,12 @@
       "unmappedBclTypes": [
 
       ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
       "eventMembers": [
 
       ],
@@ -907,6 +917,12 @@
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
 
       ],
       "eventMembers": [
@@ -974,6 +990,12 @@
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
 
       ],
       "eventMembers": [
@@ -1058,6 +1080,12 @@
       "unmappedBclTypes": [
 
       ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
       "eventMembers": [
 
       ],
@@ -1107,6 +1135,12 @@
         "System.Collections.Generic.Dictionary`2",
         "System.Collections.Generic.Dictionary`2[System.String,System.String]"
       ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
       "eventMembers": [
 
       ],
@@ -1153,6 +1187,12 @@
       "unmappedBclTypes": [
         "System.IO.Stream"
       ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
       "eventMembers": [
 
       ],
@@ -1197,6 +1237,12 @@
         "RUNTIME_DATA"
       ],
       "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
 
       ],
       "eventMembers": [
@@ -1246,6 +1292,12 @@
         "System.Runtime.Serialization.SerializationInfo",
         "System.Runtime.Serialization.StreamingContext"
       ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
       "eventMembers": [
 
       ],
@@ -1290,6 +1342,12 @@
         "RUNTIME_DATA"
       ],
       "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
 
       ],
       "eventMembers": [
@@ -1340,6 +1398,12 @@
         "System.Runtime.Serialization.SerializationInfo",
         "System.Runtime.Serialization.StreamingContext"
       ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
       "eventMembers": [
 
       ],
@@ -1384,6 +1448,12 @@
         "RUNTIME_DATA"
       ],
       "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
 
       ],
       "eventMembers": [
@@ -1436,6 +1506,12 @@
         "System.Nullable`1[System.Char]",
         "System.Text.StringBuilder"
       ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
       "eventMembers": [
 
       ],
@@ -1480,6 +1556,12 @@
         "RUNTIME_DATA"
       ],
       "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
 
       ],
       "eventMembers": [
@@ -1533,6 +1615,12 @@
         "System.ComponentModel.ExpandableObjectConverter",
         "System.ComponentModel.ITypeDescriptorContext",
         "System.ComponentModel.PropertyDescriptorCollection"
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
       ],
       "eventMembers": [
 
@@ -1593,6 +1681,12 @@
         "System.Action`1[System.IDisposable]",
         "System.IO.Stream"
       ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
       "eventMembers": [
 
       ],
@@ -1643,6 +1737,12 @@
         "RUNTIME_DATA"
       ],
       "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
 
       ],
       "eventMembers": [
@@ -1708,6 +1808,12 @@
       "unmappedBclTypes": [
 
       ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
       "eventMembers": [
 
       ],
@@ -1770,6 +1876,12 @@
       "unmappedBclTypes": [
         "System.Byte[]"
       ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
       "eventMembers": [
         "BufferReady"
       ],
@@ -1824,6 +1936,12 @@
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
 
       ],
       "eventMembers": [
@@ -1897,6 +2015,12 @@
       "unmappedBclTypes": [
 
       ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
       "eventMembers": [
 
       ],
@@ -1960,6 +2084,12 @@
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
 
       ],
       "eventMembers": [
@@ -2029,6 +2159,12 @@
         "RUNTIME_DATA"
       ],
       "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
 
       ],
       "eventMembers": [

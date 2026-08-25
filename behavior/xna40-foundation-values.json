@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, and the Foundation 33 GameServiceContainer separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, and the Foundation 40 graphics device service separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
   "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
@@ -13657,15 +13657,164 @@
       "operation": "MemberLevelDependency.FrontierEffect",
       "args": [],
       "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "note": "Foundation 39 measured this row as IGraphicsDeviceService with 13 il-only blocked candidates. Foundation 40 built that candidate, so it left the candidate list and the row now names the type the refinement uncovered behind it. This is a RUBY_MAPPING_QUALIFICATION row -- a measurement of this projection's own frontier, which a milestone acting on the frontier is expected to move -- not an XNA fact.",
       "expected": [
         19,
         0,
         "none-consumable",
         [
-          "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
+          "Microsoft.Xna.Framework.DrawableGameComponent"
         ],
-        13,
+        12,
         6
+      ]
+    },
+    {
+      "id": "graphics_device_service.contract",
+      "operation": "InterfaceContract.Contract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "interface",
+        null,
+        [],
+        5,
+        [
+          [
+            "GraphicsDevice",
+            "property",
+            true,
+            false,
+            0
+          ],
+          [
+            "DeviceDisposing",
+            "event",
+            null,
+            null,
+            0
+          ],
+          [
+            "DeviceReset",
+            "event",
+            null,
+            null,
+            0
+          ],
+          [
+            "DeviceResetting",
+            "event",
+            null,
+            null,
+            0
+          ],
+          [
+            "DeviceCreated",
+            "event",
+            null,
+            null,
+            0
+          ]
+        ],
+        4
+      ]
+    },
+    {
+      "id": "graphics_device_service.event_delegates",
+      "operation": "GraphicsDeviceService.EventDelegates",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          "DeviceDisposing",
+          "DeviceReset",
+          "DeviceResetting",
+          "DeviceCreated"
+        ],
+        [
+          "System.EventHandler`1[System.EventArgs]"
+        ],
+        true,
+        false,
+        "GraphicsDevice",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+        true,
+        false,
+        "public"
+      ]
+    },
+    {
+      "id": "graphics_device_service.ruby_mapping",
+      "operation": "InterfaceContract.RubyMapping",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        false,
+        [
+          "DeviceCreated",
+          "DeviceDisposing",
+          "DeviceReset",
+          "DeviceResetting",
+          "GraphicsDevice"
+        ],
+        [
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError"
+        ],
+        [
+          "IGraphicsDeviceService#DeviceCreated",
+          "IGraphicsDeviceService#DeviceDisposing",
+          "IGraphicsDeviceService#DeviceReset",
+          "IGraphicsDeviceService#DeviceResetting",
+          "IGraphicsDeviceService#GraphicsDevice"
+        ],
+        [],
+        [],
+        true
+      ]
+    },
+    {
+      "id": "graphics_device_service.producer_declaration",
+      "operation": "GraphicsDeviceService.ProducerDeclaration",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          "Microsoft.Xna.Framework.GraphicsDeviceManager"
+        ],
+        [
+          "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService",
+          "Microsoft.Xna.Framework.IGraphicsDeviceManager",
+          "System.IDisposable"
+        ],
+        true,
+        true
+      ]
+    },
+    {
+      "id": "graphics_device_service.producer_absent",
+      "operation": "GraphicsDeviceService.ProducerAbsent",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        false,
+        false,
+        null,
+        null,
+        [
+          "INTERFACE_PRODUCER_MISSING"
+        ],
+        [
+          "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
+        ]
       ]
     }
   ],
@@ -13689,5 +13838,7 @@
   "milestone38SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
   "milestone38CorpusCorrection": "disposable_collapse.no_invented_conventions counted a fixed list of names against every Dispose-bearing type, which made a real XNA identity look invented as soon as one shipped: GameComponent declares a protected Finalize in its own contract. The operation now exempts a name the type's own reference contract declares, the same rule its test twin uses, so the row measures the collapse rather than a list of names. No observation data changed -- the row's expected values are the ones Foundation 36 recorded -- and the replay proved every row unchanged.",
   "milestone39MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 967ca08bcc9265f921ffd0bd8eaa8b0eed8b096760d92736cfad0332ca34d13f, 466 observations) was proved before appending 7 additive observations",
-  "milestone39SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0"
+  "milestone39SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "milestone40SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+  "milestone40MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 fe74379cb5ae77b8c5886df8b26c74eb390d7393a7a4e32b50eb36fb55e6e0f0, 473 observations) was proved before appending 5 additive observations"
 }

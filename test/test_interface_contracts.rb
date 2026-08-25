@@ -27,12 +27,17 @@ class InterfaceContractsTest < Minitest::Test
     "Microsoft.Xna.Framework.Graphics.IEffectMatrices" =>
       %i[Projection Projection= View View= World World=],
     "Microsoft.Xna.Framework.Graphics.IEffectFog" =>
-      %i[FogColor FogColor= FogEnabled FogEnabled= FogEnd FogEnd= FogStart FogStart=]
+      %i[FogColor FogColor= FogEnabled FogEnabled= FogEnd FogEnd= FogStart FogStart=],
+    "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService" =>
+      %i[DeviceCreated DeviceDisposing DeviceReset DeviceResetting GraphicsDevice]
   }.freeze
 
+  # Declaration order, which for each entry is the pinned metadata order rather than alphabetical.
   EVENT_CONTRACTS = {
     "Microsoft.Xna.Framework.IUpdateable" => %i[EnabledChanged UpdateOrderChanged],
-    "Microsoft.Xna.Framework.IDrawable" => %i[VisibleChanged DrawOrderChanged]
+    "Microsoft.Xna.Framework.IDrawable" => %i[VisibleChanged DrawOrderChanged],
+    "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService" =>
+      %i[DeviceDisposing DeviceReset DeviceResetting DeviceCreated]
   }.freeze
 
   REFERENCE = JSON.parse(
@@ -72,7 +77,7 @@ class InterfaceContractsTest < Minitest::Test
       assert_equal pinned.fetch("members"), selected.fetch("members"), clr_name
       assert_equal clr_name.split(".").join("::"), selected.fetch("rubyName")
     end
-    assert_equal 21, CONTRACTS.keys.sum { |name| SIGNATURES.fetch(name).fetch("members").length }
+    assert_equal 26, CONTRACTS.keys.sum { |name| SIGNATURES.fetch(name).fetch("members").length }
   end
 
   def test_every_interface_is_a_module_exposing_exactly_its_declared_projections
@@ -192,8 +197,15 @@ class InterfaceContractsTest < Minitest::Test
     # in 38, each from its own IL rather than from anything these interfaces imply. What the
     # contracts still imply is nothing: a fresh container is empty, a fresh collection is empty, and
     # a fresh component reaches no device.
-    %i[DrawableGameComponent IGraphicsDeviceService LaunchParameters GameWindow]
+    %i[DrawableGameComponent LaunchParameters GameWindow]
       .each { |name| refute F.const_defined?(name, false), "Framework::#{name}" }
+    # Foundation 40 projected IGraphicsDeviceService -- under Graphics, which is where the pinned
+    # contract declares it, and never under Framework. Its existence is a contract, not a runtime:
+    # nothing conforms to it and Game.Services holds no key for it.
+    refute F.const_defined?(:IGraphicsDeviceService, false), "Framework::IGraphicsDeviceService"
+    assert G.const_defined?(:IGraphicsDeviceService, false), "Graphics::IGraphicsDeviceService"
+    assert_nil F::GameServiceContainer.new.GetService(G::IGraphicsDeviceService)
+    assert_empty F::Game.new.Services.instance_variable_get(:@services)
     assert_equal 0, F::GameComponentCollection.new.Count
 
     # GameComponent implements both contracts, which is what makes it concrete; it adds no member

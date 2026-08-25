@@ -54,7 +54,6 @@
 - `Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect`
 - `Microsoft.Xna.Framework.Graphics.GraphicsAdapter`
 - `Microsoft.Xna.Framework.Graphics.IEffectLights`
-- `Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService`
 - `Microsoft.Xna.Framework.Graphics.IVertexType`
 - `Microsoft.Xna.Framework.Graphics.IndexBuffer`
 - `Microsoft.Xna.Framework.Graphics.Model`

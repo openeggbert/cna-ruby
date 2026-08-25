@@ -498,6 +498,50 @@ def execute(item)
       interface.protected_instance_methods(false) + interface.private_instance_methods(false),
       BATCH_SIGNATURES.fetch(clr_name).fetch("members").any? { |member| member.fetch("kind") == "event" }
     ]
+  when "GraphicsDeviceService.EventDelegates"
+    # Every member's exact CLR spelling, re-derived from the pinned contract rather than recalled:
+    # one get-only property returning GraphicsDevice, and four events over the same closed generic
+    # delegate, each with both accessors and none static.
+    pinned = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService")
+    events = pinned.fetch("members").select { |member| member.fetch("kind") == "event" }
+    property = pinned.fetch("members").find { |member| member.fetch("kind") == "property" }
+    [events.map { |member| member.fetch("name") },
+     events.map { |member| member.fetch("type") }.uniq,
+     events.all? { |member| member.fetch("add") && member.fetch("remove") },
+     events.any? { |member| member.fetch("static") },
+     property.fetch("name"), property.fetch("type"),
+     property.fetch("get"), property.fetch("set"), property.fetch("getAccess")]
+  when "GraphicsDeviceService.ProducerDeclaration"
+    # Who the pinned metadata says implements the service, and what this projection has done with
+    # that type. One declared implementer, and it is one of the deferred partial runtime types.
+    service = "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
+    declared = BATCH_REFERENCE.each_value.select { |type| type.fetch("interfaces", []).include?(service) }
+                              .map { |type| type.fetch("name") }.sort
+    strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
+    manager = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.GraphicsDeviceManager")
+    [declared,
+     manager.fetch("directInterfaces").sort,
+     strict.fetch("partialTypes").key?("Microsoft.Xna.Framework.GraphicsDeviceManager"),
+     strict.fetch("completeTypeNames").include?(service)]
+  when "GraphicsDeviceService.ProducerAbsent"
+    # The contract exists and nothing provides it. Every half is asked of the live runtime.
+    service = G::IGraphicsDeviceService
+    game = F::Game.new
+    begin
+      frontier = JSON.parse(File.read(File.expand_path("../docs/generated/public-signature-dependency-report.json", __dir__)))
+      drawable = (frontier.fetch("partialDependencySatisfiedCandidates") +
+                  frontier.fetch("ilOnlyBlockedCandidates") +
+                  frontier.fetch("dependencyCompleteCandidates"))
+                 .find { |entry| entry.fetch("name") == "Microsoft.Xna.Framework.DrawableGameComponent" }
+      [F::GraphicsDeviceManager.ancestors.include?(service),
+       F::GraphicsDeviceManager.ancestors.include?(F::IGraphicsDeviceManager),
+       game.Services.GetService(service),
+       game.Services.GetService(F::IGraphicsDeviceManager),
+       drawable.fetch("blockers"),
+       drawable.fetch("producerlessInterfaces")]
+    ensure
+      game.Dispose
+    end
   when "ContentAttribute.Defaults"
     attribute = CONTENT::ContentSerializerAttribute.new
     [attribute.ElementName, attribute.FlattenContent, attribute.Optional, attribute.AllowNull,

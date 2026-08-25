@@ -40,6 +40,16 @@ module Microsoft
           attr_accessor FogEnd: Float
           attr_accessor FogColor: Vector3
         end
+
+        # One read-only property and four EventHandler`1<EventArgs> events. Abstract throughout:
+        # the property and every event reader raise NotImplementedError.
+        module IGraphicsDeviceService
+          def GraphicsDevice: () -> GraphicsDevice
+          def DeviceDisposing: () -> CNA::Runtime::Event
+          def DeviceReset: () -> CNA::Runtime::Event
+          def DeviceResetting: () -> CNA::Runtime::Event
+          def DeviceCreated: () -> CNA::Runtime::Event
+        end
       end
     end
   end

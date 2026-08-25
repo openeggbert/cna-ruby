@@ -88,6 +88,7 @@ There is intentionally no `microsoft/xna/framework/content` implementation in Fo
 - `docs/touch-collection-evidence.md` — Foundation 31, the mutually-dependent `TouchCollection`/`Enumerator` pair, its read-only refusal, and the language-support rule the verifier now applies
 - `docs/touch-panel-evidence.md` — Foundation 32, `TouchPanel` and the closing of `Input.Touch`: the measured stub assembly, the `GetState` derivation, and the `InvalidOperationException` mapping
 - `docs/game-service-container-evidence.md` — Foundation 33, `GameServiceContainer`, `System.Type` as a Ruby `Module`, and the structural-collapse register that records a decision not to invent a constant
+- `docs/graphics-device-service-evidence.md` — Foundation 40, `Graphics.IGraphicsDeviceService` as an abstract contract, the member-level proof that a partial dependency did not block it, and the general interface-producer rule that keeps a completed contract from being mistaken for a provider
 - `docs/native-frontier-3-modopt-evidence.md` — Native frontier 3, the `modopt` blind spot that cost 40 native entry points and 16 native-reachable types, and the Native frontier 1 conclusion it corrects
 - `tools/api_compat/build_il_inventory.rb` — hash-admitted `ikdasm` disassembly into the Microsoft-free IL inventory
 - `tools/api_compat/build_bcl_inventory.rb` — hash-admitted `ikdasm` disassembly of the pinned mscorlib into the Microsoft-free, demand-driven BCL inventory

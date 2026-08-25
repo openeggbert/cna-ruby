@@ -1686,7 +1686,8 @@ class ApiVerifierTest < Minitest::Test
           .map { |member| "#{type.fetch("name")}::#{member.fetch("name")}" }
     end
     # Foundation 35 added the first *concrete* owner: until then only the two abstract contracts
-    # declared an event, so the census was four.
+    # declared an event, so the census was four. Foundation 40 added a third abstract contract,
+    # Graphics::IGraphicsDeviceService, whose four events are the graphics-device service events.
     assert_equal %w[
       Microsoft.Xna.Framework.GameComponentCollection::ComponentAdded
       Microsoft.Xna.Framework.GameComponentCollection::ComponentRemoved
@@ -1697,17 +1698,21 @@ class ApiVerifierTest < Minitest::Test
       Microsoft.Xna.Framework.IUpdateable::UpdateOrderChanged
       Microsoft.Xna.Framework.IDrawable::VisibleChanged
       Microsoft.Xna.Framework.IDrawable::DrawOrderChanged
+      Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService::DeviceDisposing
+      Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService::DeviceReset
+      Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService::DeviceResetting
+      Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService::DeviceCreated
     ], selected
 
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
     assert_equal selected, strict.fetch("eventIdentities")
     assert_equal selected.length, strict.fetch("EVENT_IDENTITIES")
-    assert_equal 4, strict.fetch("EVENT_OWNER_TYPES")
+    assert_equal 5, strict.fetch("EVENT_OWNER_TYPES")
     assert_equal "CNA::Runtime::Event", strict.fetch("EVENT_SUPPORT_TYPE")
     assert_equal 0, strict.fetch("EVENT_MAPPING_MISMATCH")
 
     # Every selected event's CLR support type is the generic delegate this projection maps, closed
-    # over whatever args type the event declares -- System.EventArgs for the two interfaces, and
+    # over whatever args type the event declares -- System.EventArgs for the three interfaces, and
     # GameComponentCollectionEventArgs for the collection Foundation 35 added. One reader identity
     # answers for every closed form, which is the point of mapping the definition.
     signature_contract.fetch("types").each do |type|

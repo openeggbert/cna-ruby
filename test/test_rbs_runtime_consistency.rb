@@ -576,9 +576,12 @@ class RbsRuntimeConsistencyTest < Minitest::Test
 
     source = SIGNATURE_ROOT.join("microsoft", "xna", "interfaces.rbs").read
     refute_includes source, "untyped"
-    %w[IEffectLights IEffectSkinning IGraphicsDeviceService].each do |absent|
+    %w[IEffectLights IEffectSkinning].each do |absent|
       refute_includes source, "module #{absent}\n"
     end
+    # Foundation 40 projected IGraphicsDeviceService, so it is no longer on the absent list. It is
+    # event-bearing, which is why it is measured by the event-interface test rather than this one.
+    assert_includes source, "module IGraphicsDeviceService\n"
   end
 
   # Foundation 20 — the two event-bearing interfaces. Every CLR event declares exactly one Ruby
@@ -645,6 +648,53 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     %w[emit fire trigger subscribe unsubscribe clear].each do |absent|
       refute_includes runtime, "def #{absent}:", absent
     end
+  end
+
+  # Foundation 40 — the graphics-device service contract in RBS. Five members: one read-only
+  # property returning the partial GraphicsDevice, and four event readers returning the generic
+  # subscription primitive. No setter, no add_/remove_ pair, and nothing untyped.
+  def test_foundation40_graphics_device_service_rbs_declares_its_exact_contract
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    name = "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
+    type = contract.fetch("types").find { |candidate| candidate.fetch("name") == name }
+    refute_nil type, name
+    assert_equal "interface", type.fetch("kind")
+    assert_equal 5, type.fetch("members").length
+    assert_equal 4, type.fetch("members").count { |member| member.fetch("kind") == "event" }
+
+    environment = load_environment
+    ruby_name = "::#{type.fetch("rubyName")}"
+    assert_equal "::Microsoft::Xna::Framework::Graphics::IGraphicsDeviceService", ruby_name
+    _key, entry = environment.class_decls.find { |candidate, _value| candidate.to_s == ruby_name }
+    refute_nil entry, ruby_name
+    declaration = entry.decls.first.decl
+    assert_instance_of RBS::AST::Declarations::Module, declaration, ruby_name
+    assert_empty declaration.self_types, ruby_name
+
+    declared = declaration.members.map do |member|
+      assert_instance_of RBS::AST::Members::MethodDefinition, member, ruby_name
+      member.name
+    end
+    assert_equal %i[DeviceCreated DeviceDisposing DeviceReset DeviceResetting GraphicsDevice],
+                 declared.sort
+
+    runtime_type = resolve_constant(ruby_name)
+    assert_instance_of Module, runtime_type
+    declared.each { |method| assert runtime_type.method_defined?(method), "#{ruby_name}##{method}" }
+
+    getter = declaration.members.find { |member| member.name == :GraphicsDevice }
+    assert_equal "::Microsoft::Xna::Framework::Graphics::GraphicsDevice",
+                 getter.overloads.first.method_type.type.return_type.to_s
+    type.fetch("members").select { |member| member.fetch("kind") == "event" }.each do |member|
+      identity = member.fetch("name").to_sym
+      definition = declaration.members.find { |candidate| candidate.name == identity }
+      refute_nil definition, "#{ruby_name}##{identity}"
+      assert_equal "::CNA::Runtime::Event", definition.overloads.first.method_type.type.return_type.to_s
+      refute_includes declared, :"#{identity}=", "#{ruby_name}##{identity}="
+      refute_includes declared, :"add_#{identity}", "#{ruby_name}#add_#{identity}"
+      refute_includes declared, :"remove_#{identity}", "#{ruby_name}#remove_#{identity}"
+    end
+    refute_includes declared, :GraphicsDevice=, "#{ruby_name}#GraphicsDevice="
   end
 
   def test_foundation17_touch_closure_rbs_matches_the_pinned_contract

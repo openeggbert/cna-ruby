@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "json"
+require "set"
+require_relative "name_mapper"
 require_relative "../../lib/cna"
 
 root = File.expand_path("../..", __dir__)
@@ -243,6 +245,52 @@ unmapped_bcl = lambda do |type|
             .reject { |identity| mapped_bcl.include?(identity) }.uniq.sort
 end
 
+# Which interfaces something in this projection actually conforms to.
+#
+# Foundation 40 forced this. Completing an interface as an abstract contract makes it a *complete
+# type*, so every structural test the graph applies starts passing for a dependent that calls into
+# it -- while nothing at all provides the service. `DrawableGameComponent` is the case: the moment
+# `IGraphicsDeviceService` existed it reported `partialDependencySatisfied` with no blocker, even
+# though its `Initialize` throws `InvalidOperationException(MissingGraphicsDeviceService)` unless a
+# producer is registered. The type-level graph cannot see that, because a producer is not a type
+# dependency: it is an *object* that conforms.
+#
+# So conformance is measured, not assumed. An interface has a producer when some type declares it
+# in the pinned contract, is complete in this projection, **and** whose Ruby class actually includes
+# the projected module. All three halves are required: the first is metadata, the second is this
+# projection's own scoreboard, and the third is the only one that proves a live object would answer
+# `is_a?`, which is what the GameServiceContainer projection of CLR assignability tests.
+#
+# This names no type and carries no allowlist. It is the same question asked of every interface.
+interface_names = reference.fetch("types").select { |type| type.fetch("kind") == "interface" }
+                           .map { |type| type.fetch("name") }.to_set
+
+resolve_module = lambda do |clr_name|
+  CNAApiCompat::NameMapper.runtime_constant_path(clr_name)
+                          .split("::").reduce(Object) { |scope, segment| scope.const_get(segment, false) }
+rescue NameError
+  nil
+end
+
+interface_producers = interface_names.to_h do |interface|
+  projected = resolve_module.call(interface)
+  conformers = reference.fetch("types").select do |type|
+    type.fetch("interfaces", []).include?(interface) &&
+      complete_names.include?(type.fetch("name")) &&
+      !projected.nil? &&
+      (concrete = resolve_module.call(type.fetch("name"))) &&
+      concrete.ancestors.include?(projected)
+  end.map { |type| type.fetch("name") }
+  [interface, conformers]
+end
+
+# Every interface a candidate's own IL calls a member of -- which is the precise test, because
+# naming an interface in a signature requires no instance while calling one does.
+reached_interfaces = lambda do |name|
+  member_edges.fetch(name, []).map { |edge| edge.split("::", 2).first }
+              .select { |owner| interface_names.include?(owner) }.uniq.sort
+end
+
 # Why a dependency-complete candidate still cannot be consumed safely.
 #
 # BCL_PROJECTION   the type's public signature names a BCL type no complete type projects.
@@ -252,6 +300,9 @@ end
 # RUNTIME_DATA     the pinned IL settles the type's semantics, but its values come only from a
 #                  device, driver, codec, media library or attached hardware that has not been
 #                  queried. Fabricating them is refused.
+# INTERFACE_PRODUCER_MISSING
+#                  the type's own IL calls members of an interface that nothing in this projection
+#                  conforms to, so the type would compile and then raise on first use.
 #
 # EVENT_PROJECTION was retired in Foundation 20. BEHAVIOR_EVIDENCE was retired in Foundation 22:
 # the original XNA 4.0 Windows assemblies are on this host, hash-pinned by
@@ -270,8 +321,12 @@ classify = lambda do |type|
   blockers << "IL_UNAVAILABLE" if il.nil? && !behaviour.empty?
   blockers << "NATIVE_RUNTIME" if il && il.fetch("nativeReachable")
   blockers << "RUNTIME_DATA" if RUNTIME_DATA.key?(name)
+  producerless = reached_interfaces.call(name).reject { |interface| interface_producers.fetch(interface, []).any? }
+  blockers << "INTERFACE_PRODUCER_MISSING" unless producerless.empty?
 
   {"blockers" => blockers, "unmappedBclTypes" => bcl,
+   "reachedInterfaces" => reached_interfaces.call(name),
+   "producerlessInterfaces" => producerless,
    "eventMembers" => events.map { |member| member.fetch("name") },
    "behaviourBearingMembers" => behaviour.map { |member| member.fetch("name") }.uniq,
    "ilDerivationRequired" => !behaviour.empty?,
@@ -316,7 +371,7 @@ report = {
   "completeTypes" => complete_names.length,
   "partialTypes" => strict.fetch("partialTypes").keys,
   "missingTypes" => strict.fetch("missingTypeNames").length,
-  "candidatePolicy" => "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME or RUNTIME_DATA blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
+  "candidatePolicy" => "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance" => {
     "register" => "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
     "inventory" => "docs/generated/xna-il-inventory.json",

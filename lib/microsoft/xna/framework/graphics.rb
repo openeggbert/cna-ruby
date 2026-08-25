@@ -361,6 +361,36 @@ module Microsoft
           end
         end
 
+        # The graphics-device service contract, derived from the pinned
+        # Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…): one read-only property and
+        # four events, every one of them `EventHandler`1<EventArgs>`. The interface declares no
+        # base and no other interface, and every member is `public hidebysig newslot specialname
+        # abstract virtual`, so nothing here has a body to project.
+        #
+        # This is an abstract contract and nothing more. It is the type `DrawableGameComponent`
+        # asks `Game.Services` for, but declaring the identity registers no producer: no object in
+        # this binding provides the service, `Game.Services` holds no key for it, and none of the
+        # four events is ever raised. The reader raises NotImplementedError exactly as every other
+        # interface member does — an interface declares an event identity and never owns an
+        # invocation list.
+        #
+        # Its single type dependency is `GraphicsDevice`, one of the deferred partial runtime
+        # types, and the member-level dependency graph records that this interface reaches *no
+        # member* of it: naming a type in a return position is not a call. That is what makes the
+        # contract projectable while its dependency stays partial.
+        #
+        # Members are declared in metadata order, which for the four events is the `.event`
+        # declaration order of the pinned IL rather than alphabetical order.
+        module IGraphicsDeviceService
+          extend CNA::Runtime::EventOwner
+
+          def GraphicsDevice = raise(NotImplementedError, "IGraphicsDeviceService#GraphicsDevice")
+          xna_abstract_event :DeviceDisposing, "IGraphicsDeviceService#DeviceDisposing"
+          xna_abstract_event :DeviceReset, "IGraphicsDeviceService#DeviceReset"
+          xna_abstract_event :DeviceResetting, "IGraphicsDeviceService#DeviceResetting"
+          xna_abstract_event :DeviceCreated, "IGraphicsDeviceService#DeviceCreated"
+        end
+
         class Blend < CNA::Runtime::EnumValue
           extend CNA::Runtime::EnumType
           define_values({

@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, and the Foundation 33 GameServiceContainer separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
-  "OBSERVATIONS": 473,
-  "ASSERTIONS": 473,
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, and the Foundation 40 graphics device service separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "OBSERVATIONS": 478,
+  "ASSERTIONS": 478,
   "FAILURES": 0,
   "provenanceCounts": {
-    "PURE_XNA_DERIVED": 374,
-    "RUBY_MAPPING_QUALIFICATION": 99
+    "PURE_XNA_DERIVED": 377,
+    "RUBY_MAPPING_QUALIFICATION": 101
   },
   "groupCounts": {
     "BCL_PROJECTION": 13,
@@ -41,6 +41,7 @@
     "GAME_COMPONENTS": 9,
     "GAME_COMPONENT_COLLECTION": 10,
     "GAME_SERVICE_CONTAINER": 2,
+    "GRAPHICS_DEVICE_SERVICE": 5,
     "GRAPHICS_DEVICE_STATUS": 2,
     "GRAPHICS_PROFILE": 2,
     "IL_PROVENANCE": 2,

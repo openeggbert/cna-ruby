@@ -473,13 +473,16 @@ class GameComponentTest < Minitest::Test
   # ---------------------------------------------------------------------------- the scoreboard
 
   def test_the_milestone_completed_exactly_one_type_and_closed_no_game_member
-    assert_equal 141, STRICT.fetch("TARGET_TYPES")
-    assert_equal 135, STRICT.fetch("COMPLETE_TYPES")
-    assert_equal 116, STRICT.fetch("MISSING_TYPES")
+    # Foundation 40 added Graphics::IGraphicsDeviceService: one type, five identities, four of them
+    # events on a fifth owner. What this milestone owns -- Game's remainder and the partial count --
+    # is what stayed put.
+    assert_equal 142, STRICT.fetch("TARGET_TYPES")
+    assert_equal 136, STRICT.fetch("COMPLETE_TYPES")
+    assert_equal 115, STRICT.fetch("MISSING_TYPES")
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
     assert_equal 130, STRICT.fetch("MISSING_MEMBER"), "Game's remainder is unchanged"
-    assert_equal 9, STRICT.fetch("EVENT_IDENTITIES")
-    assert_equal 4, STRICT.fetch("EVENT_OWNER_TYPES")
+    assert_equal 13, STRICT.fetch("EVENT_IDENTITIES")
+    assert_equal 5, STRICT.fetch("EVENT_OWNER_TYPES")
     assert_equal 0, STRICT.fetch("UNEXPECTED_MEMBER")
     assert_equal 0, STRICT.fetch("INTERNAL_TYPE_LEAK")
     assert_equal 0, STRICT.fetch("UNMEASURED_STRUCTURAL_CATEGORY")

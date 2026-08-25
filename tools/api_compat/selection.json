@@ -238,6 +238,10 @@
       "complete": true
     },
     {
+      "name": "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService",
+      "complete": true
+    },
+    {
       "name": "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
       "complete": true
     },

@@ -279,7 +279,8 @@ class DisposableCollapseTest < Minitest::Test
   def test_it_completes_no_type_and_moves_no_missing_member
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
     assert_equal 130, STRICT.fetch("MISSING_MEMBER")
-    assert_equal 135, STRICT.fetch("COMPLETE_TYPES"), "Foundation 38 added GameComponent"
+    assert_equal 136, STRICT.fetch("COMPLETE_TYPES"),
+                 "Foundation 38 added GameComponent and 40 added IGraphicsDeviceService"
     assert(STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
                  .any? { |entry| entry.include?("::Dispose") })
   end

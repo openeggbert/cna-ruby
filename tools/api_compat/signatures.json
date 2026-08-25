@@ -4876,6 +4876,71 @@
       "rubyName": "Microsoft::Xna::Framework::Graphics::IEffectFog"
     },
     {
+      "name": "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService",
+      "kind": "interface",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": null,
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "property",
+          "name": "GraphicsDevice",
+          "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "event",
+          "name": "DeviceDisposing",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "DeviceReset",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "DeviceResetting",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "DeviceCreated",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::IGraphicsDeviceService"
+    },
+    {
       "name": "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
       "kind": "enum",
       "flags": false,

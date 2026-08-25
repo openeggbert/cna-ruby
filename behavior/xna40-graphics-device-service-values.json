@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+  "derivation": "Foundation 40 Graphics.IGraphicsDeviceService. Contract rows are read from the pinned XNA 4.0 Windows metadata of Microsoft.Xna.Framework.Graphics.dll, whose IL declares the interface as public abstract with no base and no other interface, and every one of its nine methods as public hidebysig newslot specialname abstract virtual. Mapping rows apply the documented abstract-module projection policy to that metadata. The producer rows record that completing a contract is not the same as providing one: the pinned metadata names exactly one implementer, GraphicsDeviceManager, which is a deferred partial runtime type here, so nothing in this projection conforms to the service and nothing is registered under it.",
+  "observations": [
+    {
+      "id": "graphics_device_service.contract",
+      "operation": "InterfaceContract.Contract",
+      "args": ["Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": ["interface", null, [], 5, [["GraphicsDevice", "property", true, false, 0], ["DeviceDisposing", "event", null, null, 0], ["DeviceReset", "event", null, null, 0], ["DeviceResetting", "event", null, null, 0], ["DeviceCreated", "event", null, null, 0]], 4]
+    },
+    {
+      "id": "graphics_device_service.event_delegates",
+      "operation": "GraphicsDeviceService.EventDelegates",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [["DeviceDisposing", "DeviceReset", "DeviceResetting", "DeviceCreated"], ["System.EventHandler`1[System.EventArgs]"], true, false, "GraphicsDevice", "Microsoft.Xna.Framework.Graphics.GraphicsDevice", true, false, "public"]
+    },
+    {
+      "id": "graphics_device_service.ruby_mapping",
+      "operation": "InterfaceContract.RubyMapping",
+      "args": ["Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [true, false, ["DeviceCreated", "DeviceDisposing", "DeviceReset", "DeviceResetting", "GraphicsDevice"], ["NotImplementedError", "NotImplementedError", "NotImplementedError", "NotImplementedError", "NotImplementedError"], ["IGraphicsDeviceService#DeviceCreated", "IGraphicsDeviceService#DeviceDisposing", "IGraphicsDeviceService#DeviceReset", "IGraphicsDeviceService#DeviceResetting", "IGraphicsDeviceService#GraphicsDevice"], [], [], true]
+    },
+    {
+      "id": "graphics_device_service.producer_declaration",
+      "operation": "GraphicsDeviceService.ProducerDeclaration",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [["Microsoft.Xna.Framework.GraphicsDeviceManager"], ["Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService", "Microsoft.Xna.Framework.IGraphicsDeviceManager", "System.IDisposable"], true, true]
+    },
+    {
+      "id": "graphics_device_service.producer_absent",
+      "operation": "GraphicsDeviceService.ProducerAbsent",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [false, false, null, null, ["INTERFACE_PRODUCER_MISSING"], ["Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"]]
+    }
+  ]
+}
