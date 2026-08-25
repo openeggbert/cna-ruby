@@ -76,6 +76,7 @@ module CNA
         signature("cna_game_run_one_frame", T[:result], [T[:handle]], ownership: "borrows Game"),
         signature("cna_game_request_exit", T[:result], [T[:handle]], ownership: "borrows Game"),
         signature("cna_game_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED Game"),
+        signature("cna_framework_dispatcher_update", T[:result], [T[:handle]], ownership: "borrows Game; pumps the canonical CNA framework dispatcher", result_lifetime: "no result value"),
         signature("cna_graphics_device_manager_create", T[:result], [T[:handle], pointer("CNA_GraphicsDeviceManagerHandle")], ownership: "returns OWNED manager"),
         signature("cna_graphics_device_manager_get_graphics_device", T[:result], [handle("CNA_GraphicsDeviceManagerHandle"), pointer("CNA_Handle")], ownership: "returns callback BORROWED device"),
         signature("cna_graphics_device_manager_dispose", T[:result], [handle("CNA_GraphicsDeviceManagerHandle")], ownership: "borrows manager; canonical dispose"),

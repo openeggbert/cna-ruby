@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 27",
+  "milestone": "Native frontier 1",
   "platform": "Linux x86-64 MRI Ruby 3.3.8",
   "cnaAbi": "0.7.0",
   "capabilities": [
@@ -248,7 +248,7 @@
       "id": "native.abi-0.7",
       "category": "VERIFIED_NATIVE",
       "status": "verified",
-      "evidence": "38 exports, 122 signatures, 290+290 layout measurements, 2 callbacks, 59 constants"
+      "evidence": "39 exports, 124 signatures, 290+290 layout measurements, 2 callbacks, 59 constants"
     },
     {
       "id": "native.game-lifecycle",
@@ -359,6 +359,12 @@
       "evidence": "all three routes reject wrong thread before native entry; shutdown/ambiguity rejection; Game-1 to Game-2 reselection; central error propagation"
     },
     {
+      "id": "native.framework-dispatcher",
+      "category": "VERIFIED_NATIVE_ROUTE",
+      "status": "verified canonical route",
+      "evidence": "real cna_framework_dispatcher_update executed inside Update and Draw callbacks and outside any callback, repeated without accumulation; documented preconditions qualified (no live Game and off-owner-thread both refuse before the native entry, disposed Game refuses). The pinned XNA Windows IL reaches no native entry point of its own here: PollForEvents is an empty method, so this route is native because CNA owns the queue being drained. No managed sink observes the drain, because none of the five the IL dispatches to has a Ruby projection"
+    },
+    {
       "id": "native.lifecycle-stress",
       "category": "VERIFIED_NATIVE",
       "status": "verified",
@@ -434,7 +440,7 @@
       "id": "audio-media",
       "category": "UNIMPLEMENTED_CNA_RUBY",
       "status": "deferred",
-      "evidence": "Managed contracts only. Audio holds AudioChannels, AudioStopOptions, MicrophoneState, SoundState, InstancePlayLimitException, NoAudioHardwareException, NoMicrophoneConnectedException, AudioListener and AudioEmitter; Media holds MediaSourceType, MediaState and VideoSoundtrackType. Every audio and media runtime remains absent and unimplemented: no engine, no device, no playback, no XACT, no MediaPlayer or MediaLibrary, no visualisation and no CNA audio or media route. Nothing here makes a sound, plays anything or reads a device"
+      "evidence": "Managed contracts only. Audio holds AudioChannels, AudioStopOptions, MicrophoneState, SoundState, InstancePlayLimitException, NoAudioHardwareException, NoMicrophoneConnectedException, AudioListener and AudioEmitter; Media holds MediaSourceType, MediaState and VideoSoundtrackType. Every audio and media runtime remains absent and unimplemented: no engine, no device, no playback, no XACT, no MediaPlayer or MediaLibrary, and no visualisation. Exactly one canonical CNA route touches this subsystem: FrameworkDispatcher.Update forwards to cna_framework_dispatcher_update, which drains CNA own pending audio and media work. The drain is real; its managed fan-out reaches nothing here, because none of the five XNA sinks the pinned IL dispatches to has a Ruby projection. Nothing here makes a sound, plays anything or reads a device"
     },
     {
       "id": "input.touch",
@@ -483,6 +489,18 @@
       "category": "ASSET_PENDING",
       "status": "not started",
       "evidence": "only project-owned PNG stream path qualified"
+    },
+    {
+      "id": "mapping.readonly-collection",
+      "category": "UNRESOLVED_MAPPING_DECISION",
+      "status": "not designed",
+      "evidence": "System.Collections.ObjectModel.ReadOnlyCollection`1 is the highest-leverage unmapped BCL identity: GraphicsAdapter, SpriteFont, Microphone and Media.VisualizationData all name it. mapping-rules.json lists it under bclProjection.notYetDesigned, and the register admits only an identity whose Ruby projection can be decided without guessing. Two materially different public designs are plausible (a frozen Ruby Array, or a dedicated CLR-shaped runtime collection preserving Count/Item/Contains/IndexOf/CopyTo/GetEnumerator) and no repository rule chooses between them. The deeper obstacle is authority: the pinned inventory admits the ten XNA assemblies and no mscorlib, so this type has no measured reference member surface, unlike every BCL identity projected so far, each of which has an empty or scalar surface with nothing to measure"
+    },
+    {
+      "id": "display.adapter-enumeration",
+      "category": "BACKEND_BLOCKED",
+      "status": "not verified",
+      "evidence": "The canonical C ABI already exposes the whole GraphicsAdapter surface (count, info, description, device name, current mode, supported modes, device preferences, profile support and both format negotiations), so no ABI expansion is needed to reach it. What the qualified artifact cannot supply is truthful data: libcna_c_api.so 0.7.0 was linked with the HEADLESS platform, carrying no SDL2 or SDL3 platform, so CNA GetDisplays answers nothing and the native adapter falls back to a synthetic entry described as Default Display with a single 800x480 mode. Binding a Ruby GraphicsAdapter to that would publish invented hardware. The C ABI additionally refuses the native monitor handle by design, returning CNA_RESULT_NOT_SUPPORTED, and answers every adapter query only through a callback-scoped graphics-device handle, while XNA Adapters and DefaultAdapter are statics usable before any device exists"
     }
   ]
 }

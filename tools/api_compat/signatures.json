@@ -1084,6 +1084,39 @@
       "rubyName": "Microsoft::Xna::Framework::GameComponentCollectionEventArgs"
     },
     {
+      "name": "Microsoft.Xna.Framework.FrameworkDispatcher",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "Update",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::FrameworkDispatcher"
+    },
+    {
       "name": "Microsoft.Xna.Framework.Content.ContentSerializerAttribute",
       "kind": "class",
       "flags": false,

@@ -236,7 +236,7 @@ class TouchValueTypesTest < Minitest::Test
     %i[TouchPanel TouchCollection TouchPanelState].each { |name| refute T.const_defined?(name, false), name.to_s }
     %i[GetCapabilities ReadGesture IsGestureAvailable GetState EnabledGestures]
       .each { |name| refute TL.respond_to?(name), name.to_s }
-    assert_equal 38, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 39, CNA::Native::Manifest::FUNCTIONS.length
     assert_equal 59, CNA::Native::Manifest::CONSTANTS.length
   end
 end

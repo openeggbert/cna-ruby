@@ -26,9 +26,17 @@ RUNTIME_DATA = {
   "Microsoft.Xna.Framework.Media.MediaSource" => "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried",
   "Microsoft.Xna.Framework.Media.Video" => "its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies; no producer exists",
   "Microsoft.Xna.Framework.Media.VisualizationData" => "filled by MediaPlayer.GetVisualizationData from live playback",
-  "Microsoft.Xna.Framework.GameWindow" => "an abstract window whose concrete implementation is the platform window behind Game; projecting it would require the deferred Game/window runtime",
-  "Microsoft.Xna.Framework.FrameworkDispatcher" => "Update pumps the live audio and media services; with neither present it would be a no-op pretending to be a pump"
+  "Microsoft.Xna.Framework.GameWindow" => "an abstract window whose concrete implementation is the platform window behind Game; projecting it would require the deferred Game/window runtime"
 }.freeze
+
+# FrameworkDispatcher was here until the native/CNA expansion audit, on the reasoning that "Update
+# pumps the live audio and media services; with neither present it would be a no-op pretending to
+# be a pump". That reasoning was wrong about where the pump lives. This binding's audio and media
+# *are* CNA, and the canonical C ABI exposes `cna_framework_dispatcher_update` -- the same drain
+# CNA's own game loop drives. Forwarding to it is the faithful analogue of draining the XNA queue,
+# so the projection performs a real pump rather than standing in for one. What is genuinely absent
+# is the managed fan-out, because none of the five sinks the IL dispatches to is projected yet --
+# and an absent subscriber is not a missing runtime value, which is what this register is for.
 
 reference_by_name = reference.fetch("types").to_h { |type| [type.fetch("name"), type] }
 target_names = target.fetch("types").map { |type| type.fetch("name") }

@@ -12,6 +12,10 @@ module Microsoft
         def self.WrapAngle: (Float angle) -> Float
       end
 
+      class FrameworkDispatcher
+        def self.Update: () -> nil
+      end
+
       class Point
         attr_accessor X: Integer
         attr_accessor Y: Integer

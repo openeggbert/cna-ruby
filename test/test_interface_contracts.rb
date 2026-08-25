@@ -193,7 +193,7 @@ class InterfaceContractsTest < Minitest::Test
        IEffectSkinning IVertexType VertexDeclaration].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
-    assert_equal 38, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 39, CNA::Native::Manifest::FUNCTIONS.length
     assert_equal 59, CNA::Native::Manifest::CONSTANTS.length
   end
 end

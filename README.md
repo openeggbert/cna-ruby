@@ -2,7 +2,7 @@
 
 CNA-Ruby is implementing a formally measured Ruby projection of the selected Microsoft XNA Framework 4.0 Windows runtime API over the CNA C ABI.
 
-Foundation 27 is functional on the qualified Linux x86-64 desktop MRI runtime, but the selected XNA profile is intentionally incomplete. The strict scoreboard targets 134 types and 1713 members from the 257-type / 2915-member Ruby projection; it remains red for genuine deferred work. See `docs/generated/api-compat-report.json` for authoritative counts.
+Native frontier 1 is functional on the qualified Linux x86-64 desktop MRI runtime, but the selected XNA profile is intentionally incomplete. The strict scoreboard targets 135 types and 1714 members from the 257-type / 2915-member Ruby projection; it remains red for genuine deferred work. See `docs/generated/api-compat-report.json` for authoritative counts.
 
 Behaviour is derived from the original Microsoft XNA Framework 4.0 Windows assemblies, located by exact SHA-256 and disassembled with `ikdasm`. `tools/api_compat/reference/XNA_IL_PROVENANCE.md` pins ten of them by hash, size and version; no Microsoft binary is stored in this repository or packaged into the gem.
 
@@ -79,6 +79,8 @@ There is intentionally no `microsoft/xna/framework/content` implementation in Fo
 - `docs/managed-descriptor-evidence.md` — Foundation 24 AudioListener, AudioEmitter, PresentationParameters and GameComponentCollectionEventArgs
 - `docs/constructor-free-class-evidence.md` — Foundations 25 and 26 constructor-free classes, DisplayMode and DisplayModeCollection
 - `docs/content-attribute-evidence.md` — Foundation 27 System.Attribute projection and the five ContentSerializer attributes
+- `docs/graphics-adapter-audit-evidence.md` — the native/CNA expansion audit: the exact XNA GraphicsAdapter contract, what CNA and its C ABI already provide, and the four blockers that keep the type incomplete
+- `docs/framework-dispatcher-evidence.md` — Native frontier 1, the first type taken off the RUNTIME_DATA frontier
 - `tools/api_compat/build_il_inventory.rb` — hash-admitted `ikdasm` disassembly into the Microsoft-free IL inventory
 - `tools/api_compat/verify.rb` — structural report/strict/leak-only modes
 - `tools/native_abi/verify.rb` — compiler-backed header/manifest/export verification

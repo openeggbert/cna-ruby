@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "GEM_FILENAME": "cna-ruby-0.1.0.dev0.gem",
   "VERSION": "0.1.0.dev0",
-  "GEM_SHA256": "7f9ed5c38519a5f3e06cde742ad082db9f3c0b49f8836046a6a5e36f4c28db97",
-  "GEM_ENTRIES": 52,
+  "GEM_SHA256": "882aeedd0633c4c37c2a8a9c036584c6938217f6e0014c3f2accf5e386201f25",
+  "GEM_ENTRIES": 53,
   "FORBIDDEN_ENTRIES": [
 
   ],
@@ -40,6 +40,7 @@
     "lib/microsoft/xna/framework/audio.rb",
     "lib/microsoft/xna/framework/content.rb",
     "lib/microsoft/xna/framework/curve.rb",
+    "lib/microsoft/xna/framework/framework_dispatcher.rb",
     "lib/microsoft/xna/framework/game.rb",
     "lib/microsoft/xna/framework/geometry_bounds.rb",
     "lib/microsoft/xna/framework/geometry_matrix.rb",

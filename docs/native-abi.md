@@ -31,3 +31,28 @@ callbacks, and 17 -> 59 constants. `MISSING_HEADER_SYMBOLS`, `MISSING_LIBRARY_SY
 and trigger-rumble APIs are deliberately not bound.
 
 `cna_viewport_get_title_safe_area` is intentionally not bound: its canonical prototype passes `CNA_Viewport` by value, a contract this Fiddle-only foundation does not claim to marshal portably.
+
+## Native frontier 1: the framework dispatcher
+
+This milestone binds exactly one already-existing canonical route and no adjacent API:
+`cna_framework_dispatcher_update`. It measures no new structure and consumes no new constant, so
+the delta touches only the function and signature counts.
+
+The exact Foundation 7 -> Native frontier 1 delta is 38 -> 39 bound functions, 122 -> 124
+signature measurements, 290 -> 290 C layout measurements, 290 -> 290 Ruby layout measurements,
+2 -> 2 callbacks, and 59 -> 59 constants. `MISSING_HEADER_SYMBOLS`, `MISSING_LIBRARY_SYMBOLS`, and
+`ABI_MISMATCHES` are all zero. Every measurement carried over from Foundation 7 is byte- and
+signature-identical: the manifest entry was inserted, nothing existing was edited, and the probe
+type-checks all 39 prototypes against the same canonical headers.
+
+The retained qualification artifact is unchanged. **No CNA source change was made and no new
+native binary was built**, because the audit that opened this milestone found the canonical C ABI
+already exposes everything the milestone needed — see
+`docs/graphics-adapter-audit-evidence.md`, which also records why the same is true of the
+GraphicsAdapter surface this session set out to reach.
+
+`cna_framework_dispatcher_update(CNA_Handle game)` takes the game handle for thread affinity only;
+the canonical dispatcher behind it is static. It answers `CNA_RESULT_SUCCESS` inside and outside a
+lifecycle callback, `CNA_RESULT_INVALID_HANDLE` for a zero or unknown handle, and
+`CNA_RESULT_THREAD` off the owner thread — each observed against the retained artifact before the
+route was bound.

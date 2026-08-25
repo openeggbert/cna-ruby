@@ -209,7 +209,7 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 22, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 21, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     assert_equal 0, REPORT.fetch("consumableCandidates").length

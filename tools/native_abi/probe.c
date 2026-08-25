@@ -18,6 +18,7 @@ CHECK_FN(cna_game_run, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_game_run_one_frame, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_game_request_exit, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_game_destroy, CNA_Result, (CNA_Handle));
+CHECK_FN(cna_framework_dispatcher_update, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_graphics_device_manager_create, CNA_Result, (CNA_Handle, CNA_GraphicsDeviceManagerHandle*));
 CHECK_FN(cna_graphics_device_manager_get_graphics_device, CNA_Result, (CNA_GraphicsDeviceManagerHandle, CNA_Handle*));
 CHECK_FN(cna_graphics_device_manager_dispose, CNA_Result, (CNA_GraphicsDeviceManagerHandle));
@@ -68,6 +69,7 @@ int main(void) {
     SIGNATURE(cna_game_run_one_frame, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_game_request_exit, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_game_destroy, "CNA_Result|CNA_Handle");
+    SIGNATURE(cna_framework_dispatcher_update, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_graphics_device_manager_create, "CNA_Result|CNA_Handle,CNA_GraphicsDeviceManagerHandle*");
     SIGNATURE(cna_graphics_device_manager_get_graphics_device, "CNA_Result|CNA_GraphicsDeviceManagerHandle,CNA_Handle*");
     SIGNATURE(cna_graphics_device_manager_dispose, "CNA_Result|CNA_GraphicsDeviceManagerHandle");

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 134,
-  "completeTypes": 128,
+  "targetTypes": 135,
+  "completeTypes": 129,
   "partialTypes": [
     "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -11,7 +11,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 123,
+  "missingTypes": 122,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME or RUNTIME_DATA blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -26,8 +26,7 @@
     "Microsoft.Xna.Framework.Media.MediaSource": "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried",
     "Microsoft.Xna.Framework.Media.Video": "its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies; no producer exists",
     "Microsoft.Xna.Framework.Media.VisualizationData": "filled by MediaPlayer.GetVisualizationData from live playback",
-    "Microsoft.Xna.Framework.GameWindow": "an abstract window whose concrete implementation is the platform window behind Game; projecting it would require the deferred Game/window runtime",
-    "Microsoft.Xna.Framework.FrameworkDispatcher": "Update pumps the live audio and media services; with neither present it would be a no-op pretending to be a pump"
+    "Microsoft.Xna.Framework.GameWindow": "an abstract window whose concrete implementation is the platform window behind Game; projecting it would require the deferred Game/window runtime"
   },
   "retiredBlockers": {
     "EVENT_PROJECTION": "retired in Foundation 20; one CLR event projects to one Ruby event reader over CNA::Runtime::Event and the API verifier measures it under EVENT_MAPPING_MISMATCH. The residue is BCL_PROJECTION on the EventHandler`1 support type and, for classes, the IL that decides when the event is raised.",
@@ -81,46 +80,12 @@
     "BCL_PROJECTION+RUNTIME_DATA": 2,
     "IL_UNAVAILABLE": 1,
     "NATIVE_RUNTIME": 2,
-    "RUNTIME_DATA": 5
+    "RUNTIME_DATA": 4
   },
   "consumableCandidates": [
 
   ],
   "dependencyCompleteCandidates": [
-    {
-      "name": "Microsoft.Xna.Framework.FrameworkDispatcher",
-      "kind": "class",
-      "expectedRubyIdentities": 1,
-      "dependencies": [
-
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "RUNTIME_DATA"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        "Update"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": "Update pumps the live audio and media services; with neither present it would be a no-op pretending to be a pump"
-    },
     {
       "name": "Microsoft.Xna.Framework.Graphics.TextureCollection",
       "kind": "class",
