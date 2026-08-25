@@ -2,260 +2,288 @@
 
 ## Exact current boundary
 
-Foundations 16 to 27 are complete and qualified and published on `origin/develop`. **Native
-frontiers 1 and 2** are the native/CNA expansion sequence so far, and are local only.
+Foundations 16 to 27 and Native frontiers 1 and 2 are published on `origin/develop`.
+**Foundations 28 to 33, Native frontier 3 and one evidence fix are local only** — eight commits
+ahead of `origin/develop`, none pushed.
 
 | Milestone | What it added | Types | Identities |
 | --- | --- | --- | --- |
-| 16 | pure managed enum batch A | 24 | 109 |
-| 17 | Input.Touch managed closure | 3 | 17 |
-| 18 | event-free interface contracts | 4 | 11 |
-| 19 | dependency frontier register | 0 | 0 |
-| 20 | general event projection, IUpdateable/IDrawable | 2 | 10 |
-| 21 | BCL projection register, exception base mapping | 0 | 0 |
-| 22 | **XNA IL provenance** + six exception types | 6 | 18 |
-| 23 | TouchLocation, GestureSample, measured TimeSpan | 2 | 19 |
-| 24 | AudioListener, AudioEmitter, PresentationParameters, GameComponentCollectionEventArgs | 4 | 26 |
-| 25 | constructor-free class rule, DisplayMode, the two resource EventArgs | 3 | 9 |
-| 26 | DisplayModeCollection, generic-definition blind spot | 1 | 2 |
-| 27 | System.Attribute projection, five ContentSerializer attributes | 5 | 16 |
-| NF1 | **GraphicsAdapter architecture audit** + FrameworkDispatcher | 1 | 1 |
-| NF2 | **nested/generic IL extraction**, declaring-type dependency | 0 | 0 |
+| 16–27 | see the published history | 45 | 231 |
+| NF1 | GraphicsAdapter architecture audit + FrameworkDispatcher | 1 | 1 |
+| NF2 | nested/generic IL extraction, declaring-type dependency | 0 | 0 |
+| 28 | **mscorlib admitted as a separate BCL authority** | 0 | 0 |
+| 29 | `ReadOnlyCollection<T>` projection | 0 | 0 |
+| 30 | `NotSupportedException` → `CNA::Runtime::NotSupportedError` | 0 | 0 |
+| 31 | `TouchCollection` + nested `Enumerator` | 2 | 18 |
+| 32 | `TouchPanel`, closing `Input.Touch` | 1 | 14 |
+| 33 | `GameServiceContainer`, `System.Type`, structural collapse | 1 | 4 |
+| NF3 | **`modopt` blind spot in the native-boundary measurement** | 0 | 0 |
 
-Strict target 135 types / 1714 member identities: 129 complete, six partial native/runtime types,
-122 missing, 306 deferred diagnostics. `MISSING_MEMBER` 132, `PARTIAL_TYPES` 6,
+Strict target 139 types / 1745 member identities: **133 complete**, six partial native/runtime types,
+118 missing, **302 deferred diagnostics**. `MISSING_MEMBER` 132, `PARTIAL_TYPES` 6,
 `PROPERTY_MAPPING_MISMATCH` 1, `OVERLOAD_MAPPING_MISMATCH` 51, every other structural category 0,
-allowlist 0, unmeasured 0. Four event identities across two owner types, five projected BCL
-identities, two exception bases.
+allowlist 0, unmeasured 0. Four event identities across two owner types, **eight** projected BCL
+identities, two exception bases, **six** thrown-exception mappings.
 
-CNA ABI 38 / 122 / 290 / 290 / 2 / 59 through Foundation 27, and **39 / 124 / 290 / 290 / 2 / 59**
-after Native frontier 1 bound `cna_framework_dispatcher_update`. Zero missing header symbols, zero
-missing library symbols, zero ABI mismatches throughout; every Foundation 7 measurement is
-byte- and signature-identical. No CNA source was changed and no new native binary was built.
+CNA ABI **39 / 124 / 290 / 290 / 2 / 59** throughout, byte- and signature-identical to Native
+frontier 1. Zero missing header symbols, zero missing library symbols, zero mismatches. **No CNA
+source was changed and no new native binary was built** in any of these milestones.
 
-## The correction Native frontier 1 makes
+## The third reference authority
 
-This file previously recorded, of the six `NATIVE_RUNTIME` types, that "each reaches a native entry
-point in its own IL. Crossing that boundary means new CNA ABI, which this managed sequence
-deliberately does not do."
+Until Foundation 28 this binding had two: the XNA public-metadata contract and the XNA IL
+provenance register. Every BCL identity it had projected — `EventArgs`, `TimeSpan`, `Attribute` —
+has an empty or scalar surface, so "measured" and "obvious" coincided and no measurement was ever
+needed. `ReadOnlyCollection<T>` is the first with real behaviour, and the frontier register named
+the obstacle exactly: no mscorlib was admitted, so the type had no measured surface at all.
 
-**That is false, and it was the premise the whole native sequence was waiting on.** The retained
-qualification artifact exports **2861** `cna_*` functions. This binding's measured manifest binds
-**39**. The canonical C ABI already carries, in full, the surface every one of those six types
-needs — including `GraphicsAdapter`, for which `modules/c-api/include/CNA/C/display.h` provides
-adapter count, info, description, device name, current display mode, supported display modes,
-device preferences, profile support and both format negotiations.
+Foundation 28 admits one, as a **separate** authority:
 
-The native frontier was never gated on canonical ABI that does not exist. It is gated on three
-other things, and naming them correctly is what this milestone contributes:
-
-1. **Ruby binding work.** 39 of 2861.
-2. **Undesigned BCL projections**, above all `ReadOnlyCollection`1`.
-3. **The six deferred partial runtime types**, which own most of the producers.
-
-Full evidence: `docs/graphics-adapter-audit-evidence.md`.
-
-## Why GraphicsAdapter is still not projected
-
-The audit derived the complete 18-identity contract from the pinned Graphics assembly and mapped
-every identity onto CNA. Four independent blockers remain; any one would be sufficient.
-
-1. **`ReadOnlyCollection`1` has no decided projection and no reference authority.**
-   `mapping-rules.json` already lists it under `bclProjection.notYetDesigned`. Two materially
-   different public Ruby designs are plausible and no rule chooses between them. Worse, the pinned
-   inventory admits the ten XNA assemblies and no mscorlib, so unlike every BCL identity projected
-   so far — each with an empty or scalar surface — this one has no measured member surface at all.
-   It blocks `GraphicsAdapter`, `SpriteFont`, `Microphone` and `Media.VisualizationData`.
-2. **The qualified artifact cannot supply truthful adapter data.** `libcna_c_api.so` 0.7.0 was
-   linked with `CNA_PLATFORM=HEADLESS` — `nm` finds `HeadlessPlatform` and `TerminalPlatform` and
-   no SDL platform, and it does not link SDL. `HeadlessPlatform::GetDisplays()` returns `nullptr`,
-   so CNA's adapter falls back to a fabricated entry: one adapter described as `Default Display`,
-   device name `\\.\DISPLAY1`, a single 800x480 `SurfaceFormat.Color` mode, and zeroed revision and
-   subsystem id. Publishing that as `GraphicsAdapter` would be invented hardware. This is a
-   property of the artifact's build configuration, not of CNA — a build carrying the SDL3 platform
-   would answer truthfully.
-3. **The C ABI is device-scoped and XNA's contract is not.** Every adapter route validates a
-   callback-scoped `CNA_Handle graphics_device`; XNA's `Adapters` and `DefaultAdapter` are statics
-   usable before any device exists, which is their purpose.
-4. **`MonitorHandle` has no truthful producer.** The C ABI refuses it by design with
-   `CNA_RESULT_NOT_SUPPORTED`, and CNA's own value is a display id cast to `uintptr_t` rather than
-   an `HMONITOR`. The Ruby mapping is not the obstacle — `System.IntPtr` already maps to `Integer`.
-
-Five CNA-side divergences from XNA were found and deliberately **not** changed, because each has
-consequences beyond this binding and none unblocks the Ruby type: the `IsWideScreen` threshold
-(CNA 4/3, XNA strictly > 1.6), the static-vs-instance device flags, display modes hardcoded to
-`SurfaceFormat.Color` where `CNA::Platform::DisplayMode` carries no format field at all,
-`Revision`/`SubSystemId` hardcoded to zero, and `IsProfileSupported` answering unconditional
-`true` on every renderer without a descriptor hook. All five are written up in the audit evidence.
-
-## The frontier: 20 dependency-complete, 0 consumable
-
-| Blocker | Types | Nature |
-| --- | --- | --- |
-| `BCL_PROJECTION` | 7 | a BCL cluster no otherwise-unblocked type needs |
-| `BCL_PROJECTION` + `NATIVE_RUNTIME` | 5 | both |
-| `RUNTIME_DATA` | 3 | device, driver, codec or media values not queried |
-| `NATIVE_RUNTIME` | 2 | its own IL reaches a native entry point |
-| `BCL_PROJECTION` + `RUNTIME_DATA` | 2 | both |
-| `NATIVE_RUNTIME` + `RUNTIME_DATA` | 1 | `Audio.AudioCategory`, reclassified by Native frontier 2 |
-| `IL_UNAVAILABLE` | **0** | nothing is blocked on missing IL any more |
-
-`IL_UNAVAILABLE` was emptied by Native frontier 2, which also reclassified `Audio.Cue` as native
-and moved `Audio.AudioCategory` from `RUNTIME_DATA` to both. `EVENT_PROJECTION` was retired in
-Foundation 20, `BEHAVIOR_EVIDENCE` in Foundation 22, and `FrameworkDispatcher` left `RUNTIME_DATA`
-in Native frontier 1 — the first entry retired because
-its recorded reason was *wrong* rather than merely unresolved. It had been deferred on the ground
-that `Update` "would be a no-op pretending to be a pump"; the canonical
-`cna_framework_dispatcher_update` is the same drain CNA's own game loop runs, so forwarding to it
-is a real pump. What is absent is the managed fan-out, because none of the five sinks the IL
-dispatches to has a Ruby projection — and an absent subscriber is not a missing runtime value.
-
-### The two candidates with no BCL blocker
-
-Both were surveyed by the audit and both need a producer this milestone may not add:
-
-- **`EffectAnnotation`** (14 identities) — every member is a `GetValueX()` on a native annotation.
-  The C ABI has the full `cna_effect_annotation_*` family, but the producer is
-  `EffectParameter.Annotations`, and no `Effect` type exists in this binding. Projecting it now
-  would give fourteen members nothing to read from.
-- **`TextureCollection`** (1 identity, `Item[Int32]`) — `cna_graphics_device_get_texture` /
-  `set_texture` / `unbind_texture` cover it, but the producer is `GraphicsDevice.Textures`, and
-  `GraphicsDevice` is one of the six deferred partials.
-
-### What each remaining cluster needs
-
-Unchanged from Foundation 27 except as noted above:
-
-- **`System.Runtime.Serialization` (`ContentLoadException`, `StorageDeviceNotConnectedException`,
-  8 identities)** — both list the protected `(SerializationInfo, StreamingContext)` constructor.
-  .NET binary serialization has no Ruby analogue and no other consumer.
-- **`System.Type` + `System.IServiceProvider` (`GameServiceContainer`, 4 identities)** — two BCL
-  identities for one four-identity consumer whose reason to exist is `Game.Services`.
-- **`System.IO.Stream` (`TitleContainer`, 1 identity)** — real file I/O relative to a title root
-  this binding does not establish. Note that `cna_title_location_copy_path` exists in the C ABI.
-- **`Dictionary`2` (`LaunchParameters`, 1 identity)** — the type *derives from*
-  `Dictionary<string,string>`.
-- **`System.IDisposable` (`Audio.Cue`, `SoundEffectInstance`, 35 identities)** — a live XACT engine.
-- **`Design.MathTypeConverter`** — six BCL identities; `plan.md` records Design converters as out
-  of scope.
-- **`RUNTIME_DATA` (`AudioCategory`, `RendererDetail`, `GameWindow`, `Media.Video`)** — the IL
-  settles every one; what is missing is an audio engine, an enumerated renderer, a platform window
-  and a content pipeline. `GameWindow` additionally needs `Game.Window`, and `Game` is a deferred
-  partial.
-
-## The correction Native frontier 2 makes
-
-The frontier carried one `IL_UNAVAILABLE` entry, justified as "`ikdasm` does not emit the nested
-enumerator under a name the inventory can address". **`ikdasm` emits it; the extractor could not
-read it.** It opened a type only on a `.class` in column zero and closed it on the full declared
-name, so every indented nested declaration was invisible and its lines, fields, methods and
-call-graph edges were charged to its parent. Two further defects rode along: a quoted or generic
-name never matched its closing comment, and an IL reference spells a nested type `Parent/Child`
-where everything else here spells it `Parent+Child`, so edges into nested types dangled.
-
-`TYPES_WITH_IL` 250 -> **257**, `TYPES_WITHOUT_IL` 7 -> **0**, `TYPES_NATIVE_REACHABLE` 55 -> **61**,
-native entry-point methods 205 -> **214**. Seven inventory keys added, none removed, twenty entries
-corrected, **no type lost native reachability**. Full evidence:
-`docs/il-inventory-nesting-evidence.md`.
-
-With the IL present the frontier immediately selected `TouchCollection+Enumerator` as consumable,
-which it is not: it cannot be named, constructed or read without `TouchCollection`, whose `Item` and
-`Count` its `Current` and `MoveNext` call. No member *signature* mentions the declaring type, and
-signatures were all the analyzer looked at -- the same blind spot Foundation 26 closed one level up.
-The analyzer now treats a nested type's declaring type as a dependency, so the pair classifies
-honestly: neither is closable without the other.
-
-What blocks them is a mapping decision. `TouchCollection` is a read-only `IList<TouchLocation>` and
-its IL throws `NotSupportedException` from `Insert`, `RemoveAt`, `Add`, `Clear`, `Remove` and the
-`Item` setter, and this binding has no Ruby mapping for that exception. Recorded as
-`mapping.not-supported-exception`.
-
-## Decision boundaries handed upward
-
-None of these was taken autonomously.
-
-1. **The `ReadOnlyCollection`1` public mapping.** Unblocks four types. Two plausible incompatible
-   designs, no rule choosing between them.
-2. **Whether to admit mscorlib to the pinned reference inventory.** This is what would make (1)
-   measurable rather than a guess, and it changes the measurement basis of the whole binding.
-3. **Whether to rebuild the qualification artifact with the SDL3 platform.** It would turn the
-   fabricated adapter into a real one, at the cost of making the qualified suite depend on the
-   host's displays.
-4. **Whether CNA should stop fabricating an adapter when no display service exists.** Zero
-   adapters is the honest answer and `getDefaultAdapterProperty` already throws in that case, but
-   headless CNA games depend on the current fallback.
-
-## The capability registry is a measured artifact
-
-`tools/capability_consistency.rb` derives its assertions from measured state — the strict
-verifier's complete-type list, the hash-admitted IL inventory, and the namespaces actually present
-under `Microsoft::Xna::Framework`. `tools/generate_capabilities.rb` runs the check first and
-refuses to write the Markdown on any finding. The gate is proved by
-`test/fixtures/capability-registry-foundation-27-prefix.json`: 11 findings against the defective
-Foundation 27 prefix, 0 against the corrected registry.
-
-Native frontier 1 changed four rows: `native.abi-0.7` to 39/124, a new
-`native.framework-dispatcher` (`VERIFIED_NATIVE_ROUTE`, because no managed sink observes the
-drain yet), a corrected `audio-media` — it had claimed "no CNA audio or media route" and there is
-now exactly one — and two new unresolved rows, `mapping.readonly-collection` and
-`display.adapter-enumeration`. 83 rows, 0 contradictions.
-
-Two capability assertions were themselves corrected: `test_capability_consistency.rb` asserted
-that the string `UNRESOLVED_MAPPING_DECISION` may never appear anywhere. That was true at
-Foundation 27 and is a category the checker deliberately classifies, so the assertion now names
-the two retired blockers and the one decision that legitimately stands.
-
-## Established general mappings
-
-### Event projection (Foundation 20)
-
-One CLR public event maps to exactly one public Ruby event reader keeping the XNA spelling, whose
-value is `CNA::Runtime::Event`. `add(callable | &block)` answers the removal token; duplicates
-permitted; registration-order dispatch over a snapshot; unswallowed exceptions; `remove` deletes the
-last matching occurrence as `Delegate.Remove` does. Public surface is exactly `add`/`remove` and
-raising is private. On an abstract contract the reader raises `NotImplementedError`. **No event in
-this binding is ever raised.**
-
-### BCL projection (Foundations 21, 23, 27)
-
-`CNA::Runtime::BclProjection` is the measured register the verifier resolves and the frontier
-consumes:
-
-| CLR identity | Ruby |
+| Field | Value |
 | --- | --- |
-| `System.EventArgs` | `CNA::Runtime::EventArgs` |
-| `System.TimeSpan` | `Float` seconds |
-| `System.Attribute` | `CNA::Runtime::Attribute` |
-| `System.Exception` | `StandardError` |
-| `System.Runtime.InteropServices.ExternalException` | `StandardError` |
+| Assembly | `mscorlib` 4.0.0.0, file version 4.0.30319.1 (RTMRel) |
+| Public key token | `b77a5c561934e089`, **derived** from the assembly's own `.publickey` |
+| Bytes / SHA-256 | 5196112 / `5634668d4775b0113f08ea31093b281fea69bfc4e99227f5ca761b4ed98acc63` |
+| Origin | `Microsoft Corporation` / `Microsoft Common Language Runtime Class Library` |
 
-Plus a thrown-exception table in `mapping-rules.json`: `ArgumentNullException` → `ArgumentError`,
-`ArgumentOutOfRangeException` → `RangeError`, `ArgumentException` → `ArgumentError`,
-`IndexOutOfRangeException` → `IndexError`. No fabricated Ruby `::System` namespace.
+Deliberately not the .NET Compact Framework mscorlib XNA Game Studio ships for Xbox 360, not Mono,
+not `System.Private.CoreLib`, not a NuGet reference assembly. Pinned by
+`tools/api_compat/reference/BCL_PROVENANCE.md`; located by hash, never by path.
 
-### Constructor-free classes (Foundation 25)
+Two properties matter and both are checked on every run. **The identity is derived** — the token is
+computed from the manifest blob by the CLR's own rule rather than compared against a constant.
+**The pairing is proved** — all ten pinned XNA assemblies declare an `AssemblyRef` to `mscorlib`,
+and each must name exactly the version and token the admitted binary derives. That is what makes it
+*the* mscorlib rather than *an* mscorlib.
 
-A CLR class whose only constructor is internal projects with `new` made private, as
-`GraphicsResource` and `Texture` already did. Public non-constructibility is part of the contract;
-the internal path stays reachable through `__send__`; no producer is fabricated.
+It moves no XNA metric: `REFERENCE_TYPES` 257, `REFERENCE_MEMBERS` 2964, `TYPES_WITH_IL` 257,
+`TYPES_WITHOUT_IL` 0. Its own metrics are separate: `BCL_FAMILIES` 3, `BCL_TYPES` 17,
+`BCL_MEMBERS` 246, `BCL_EXCEPTION_TYPES` 9. The inventory is demand-driven and aborts on a family
+the XNA contract does not name.
 
-### Static classes
+## The BCL register, as it now stands
 
-A CLR `abstract sealed` class — C#'s `static class` — projects to a Ruby class whose `new` is
-defined to raise `TypeError` and made private, and whose CLR static members are Ruby class
-methods. `MathHelper` established it and `FrameworkDispatcher` follows it.
+| Register | Entries | What an entry is |
+| --- | --- | --- |
+| `TYPES` | 5 | a BCL type the XNA public surface declares |
+| `EXCEPTION_BASES` | 2 | a CLR base an XNA exception type derives from |
+| `THROWN_EXCEPTIONS` | 6 | a CLR exception a projected member's own IL constructs |
+| `STRUCTURAL_COLLAPSE` | 1 | an identity that projects to **no Ruby constant**, and why |
 
-## Recommended next architectural frontier
+```
+System.EventArgs                                    -> CNA::Runtime::EventArgs
+System.TimeSpan                                     -> Float
+System.Attribute                                    -> CNA::Runtime::Attribute
+System.Collections.ObjectModel.ReadOnlyCollection`1 -> CNA::Runtime::ReadOnlyCollection
+System.Type                                         -> Module
 
-1. **The `ReadOnlyCollection`1` decision**, if a maintainer will take it. Highest leverage of
-   anything remaining: four types, and it is the last purely-decisional blocker in the register.
-2. **A qualification artifact carrying the SDL3 platform**, if the project is willing to separate
-   architecture qualification from environment-dependent integration observation. That is what
-   turns `GraphicsAdapter`, and real `DisplayMode`/`DisplayModeCollection` production, from
-   fabricated into measured.
-3. **The `NotSupportedException` mapping**, which closes `TouchCollection` and its nested
-   `Enumerator` together — 18 identities of pure managed work whose IL is now fully available — and
-   moves `TouchPanel` to a single remaining blocker, a device.
+System.Exception                                    -> StandardError
+System.Runtime.InteropServices.ExternalException    -> StandardError
+
+System.ArgumentNullException                        -> ArgumentError
+System.ArgumentOutOfRangeException                  -> RangeError
+System.ArgumentException                            -> ArgumentError
+System.IndexOutOfRangeException                     -> IndexError
+System.NotSupportedException                        -> CNA::Runtime::NotSupportedError
+System.InvalidOperationException                    -> RuntimeError
+
+System.IServiceProvider                             -> (no constant, deliberately)
+```
+
+`bclProjection.notYetDesigned` is down to four: `System.IO.Stream`, `System.Text.StringBuilder`,
+`System.Runtime.Serialization.SerializationInfo`, `System.Collections.Generic.Dictionary`2`.
+
+Three rules were added along the way, each measured rather than documented:
+
+- **`whoConstructsItDecides`.** A CLR exception the projected member's own IL constructs is mapped by
+  the thrown-exception table. A condition that arises in this binding's own Ruby backing container,
+  because the CLR member merely forwards, is governed by `collections.indexErrors` and raises
+  `IndexError`. `TouchCollection`'s indexer constructs `ArgumentOutOfRangeException("index")` itself
+  and raises `RangeError`; `ReadOnlyCollection` and `CurveKeyCollection` forward and raise
+  `IndexError`. The one-to-one policy holds.
+- **`languageSupport`.** A projected type may declare Ruby identities beside its CLR ones, and
+  `CNA::Runtime::LanguageSupport` maps each to the CLR identity it derives from. The verifier admits
+  one **only on a type that also projects that CLR identity** — `each` where `GetEnumerator` is
+  projected and nowhere else. A rule, not an allowlist of names.
+- **`structuralCollapse`.** Recording a decision *not* to invent a constant, and asserting it holds.
+
+## What the mscorlib settled about `ReadOnlyCollection<T>`
+
+Three facts, each of which rules out a design that was plausible before:
+
+1. **A view, not a snapshot.** The constructor stores the `IList<T>` *reference* and all six public
+   read members forward one call to it. A frozen Ruby copy would be a different type.
+2. **It validates nothing of its own.** Not one of the six carries a throw; bounds, equality,
+   ordering and enumeration all belong to the backing list.
+3. **Read-only is a property of the interface.** Twelve explicit interface implementations throw
+   `NotSupportedException` unconditionally. Ruby has no explicit interface implementation, so the
+   faithful projection is that **no mutating member exists** — nothing to call, nothing to throw
+   from, and no exception mapping needed. `TouchCollection` needed one because *its* six refusals
+   are on its own public surface.
+
+`Collection`1` was measured beside it: also a view, publishing mutation, throwing only when its
+backing list is itself read-only.
+
+**It unblocked no XNA type**, and separating that out was part of the milestone.
+`GraphicsAdapter` dropped to `NATIVE_RUNTIME` alone and `Media.VisualizationData` to `RUNTIME_DATA`
+alone; `Microphone` kept `System.Byte[]` and `SpriteFont` kept `System.Char`,
+`Nullable`1[System.Char]` and `StringBuilder`. The four types that take it as a CLR base —
+`ModelBoneCollection`, `ModelEffectCollection`, `ModelMeshCollection`, `ModelMeshPartCollection` —
+are not on the frontier at all, because `ModelBone`, `Effect`, `ModelMesh` and `ModelMeshPart` are
+missing. So no shipped type inherits from the support class yet and the inheritance rule is proved
+by verifier fixtures.
+
+## The correction Native frontier 3 makes
+
+`Audio.SoundEffectInstance` was the last `BCL_PROJECTION`-only frontier entry that was neither out
+of scope nor already declined — 16 identities, reported `nativeReachable: false`, which would have
+made it pure managed work. **It is not.** Its own IL calls
+`SoundEffectUnsafeNativeMethods::Play`, whose body is `calli unmanaged thiscall` into XACT.
+
+The extractor read a method name as the first identifier before a parenthesis, having stripped the
+two header forms known to carry one. A mixed-mode C++/CLI thunk carries a third:
+
+```
+.method public hidebysig static int32 modopt([mscorlib]...IsLong) Play(uint32)
+```
+
+so every such declaration was recorded as `modopt` while every call site resolved to `::Play`, and
+every edge into XNA's native-methods classes dangled.
+
+| Metric | F22 | NF2 | **NF3** |
+| --- | --- | --- | --- |
+| Native entry-point methods | 205 | 214 | **254** |
+| Native-reachable reference types | 55 of 250 | 61 of 257 | **77 of 257** |
+
+Sixteen types gained reachability, **none lost it**, and no other measured number moved.
+`NATIVE_ENTRY_POINT_METHODS` is now written into the inventory rather than only printed.
+
+It also corrects a conclusion about a **shipped** type. Native frontier 1 recorded that
+`PollForEvents` is `{ ret }`, "so `Update` reaches no native entry point at all". The premise is
+right and the conclusion was not: `Update`'s last call before returning is
+`SoundEffect.RecycleStoppedFireAndForgetInstances`, which reaches XACT through exactly the thunks
+this defect hid. That **strengthens** Native frontier 1's decision — XNA's own `Update` ends in
+native work, so forwarding to the canonical CNA pump is the closer analogue, not the looser one.
+
+The shipped-boundary rule the classifier is validated against now names four complete native types
+rather than three: `Input.Mouse`, `Input.GamePad`, `Graphics.Texture` and `FrameworkDispatcher`,
+each a type whose native route this binding really implements. Every partial runtime type but
+`GraphicsResource` is native, unchanged.
+
+## The frontier: 19 dependency-complete, 0 consumable
+
+| Blocker | Types | Notes |
+| --- | --- | --- |
+| `BCL_PROJECTION` | 5 | see below — every one is declined, out of scope, or a stop boundary |
+| `BCL_PROJECTION` + `NATIVE_RUNTIME` | 5 | `SoundEffectInstance` joined here in NF3 |
+| `NATIVE_RUNTIME` | 3 | `EffectAnnotation`, `GraphicsAdapter`, `TextureCollection` |
+| `NATIVE_RUNTIME` + `RUNTIME_DATA` | 1 | `Audio.AudioCategory` |
+| `RUNTIME_DATA` | 5 | `RendererDetail`, `GameWindow`, `MediaSource`, `Media.Video`, `VisualizationData` |
+| `IL_UNAVAILABLE` | **0** | emptied by Native frontier 2 |
+
+The five `BCL_PROJECTION`-only entries, and why none of them is safe managed work:
+
+- **`ContentLoadException`, `StorageDeviceNotConnectedException`** — the protected
+  `(SerializationInfo, StreamingContext)` constructor. .NET binary serialization has no Ruby
+  analogue and no other consumer; declined since Foundation 22.
+- **`Design.MathTypeConverter`** — `System.ComponentModel`. `plan.md` records Design converters as
+  out of scope.
+- **`TitleContainer`** — `System.IO.Stream`, and real file I/O relative to a title root this
+  binding does not establish. A platform decision, not a mapping one. Note
+  `cna_title_location_copy_path` exists in the C ABI.
+- **`LaunchParameters`** — `Dictionary`2`. **This is where the managed sequence stops**; see below.
+
+## Why `Dictionary`2` is a stop boundary and not the next milestone
+
+`LaunchParameters` is one identity — a public parameterless constructor — and it *derives from*
+`Dictionary<string,string>`, so its entire public surface is inherited. Projecting it faithfully
+means projecting `Dictionary<K,V>`, and the admitted mscorlib says exactly what that costs:
+
+- **27 public/protected members**, against `ReadOnlyCollection`'s six.
+- **Five nested public types**: `Enumerator`, `KeyCollection`, `ValueCollection` and the two nested
+  enumerators of those.
+- The public surface names **`IEqualityComparer`1`** (via `Comparer`) and
+  **`SerializationInfo`/`StreamingContext`** (via the public `GetObjectData` and
+  `OnDeserialization`) — one BCL family with no projection and no entry on any list, and one this
+  project has already declined.
+
+Foundation 29's own rule is that the support class exposes only what the measured projection
+requires; but here the consumer inherits *everything*, so any narrowing changes what
+`LaunchParameters` publicly is. And the cheap alternative — `class LaunchParameters < Hash` — is
+the `frozen Array` of this decision: `Hash#[]` answers nil where the CLR indexer throws
+`KeyNotFoundException`, and `Hash#store` overwrites where `Dictionary.Add` throws
+`ArgumentException`.
+
+So closing one XNA identity, whose producer `Game.LaunchParameters` does not exist because `Game`
+is a deferred partial, would mean taking a cluster of new BCL decisions this prompt did not take.
+That is designing a chunk of the .NET Framework, which is exactly what the demand-driven rule
+exists to prevent. **Recorded as a decision for a maintainer, not taken autonomously.**
+
+## The SDL3 experiment was not run, and why
+
+Every precondition the instruction set was met except one, and that one is decisive:
+
+- SDL3 **3.4.0** is installed at `/usr/local` — no new user-installed dependency. ✔
+- The environment **does** have a display: `XDG_SESSION_TYPE=wayland`, `WAYLAND_DISPLAY=wayland-0`,
+  `DISPLAY=:0`. ✔
+- CNA's default `CNA_PLATFORM` is already `SDL3`, and the existing `cmake-build-debug` is configured
+  `CNA_PLATFORM=SDL3` / `CNA_GRAPHICS_RENDERER=OPENGLES3`, so **no source change** would be needed. ✔
+- **The build could not come from the pinned commit.** The qualification artifact is CNA revision
+  `a09196a6477f69a7a57c8364f990658d31531a5b`; the CNA working tree is on `develop` at
+  `1bb2145d99ed572dd4eb15009c34e2e5f410fcf0`, **18 commits ahead**, with two worktrees already
+  registered and an untracked file present. The instruction requires "the exact same CNA source
+  commit", and reaching it means moving a shared checkout that shows active use. ✘
+
+Separately, it could not have changed the conclusion. All four `GraphicsAdapter` blockers are
+properties of the C ABI's shape and of XNA's contract, not of which platform is linked: the adapter
+routes are callback-scoped where XNA's are statics, `MonitorHandle` is refused by design with
+`CNA_RESULT_NOT_SUPPORTED`, `CNA::Platform::DisplayMode` carries no `SurfaceFormat` field, and
+`IsProfileSupported` answers unconditional `true`. **SDL3 ≠ GraphicsAdapter complete**, exactly as
+recorded.
+
+## GraphicsAdapter: still deferred, now on one blocker
+
+`ReadOnlyCollection`1` cleared its BCL blocker, so it is down to `NATIVE_RUNTIME` alone. The four
+audit blockers stand unchanged and are written up in `docs/graphics-adapter-audit-evidence.md`:
+fabricated headless adapter data, callback-scoped adapter routes versus XNA statics, no truthful
+`MonitorHandle`, and the five CNA/XNA semantic divergences. Nothing here hardcodes a `Color`,
+exposes a fake monitor handle, publishes "Default Display" as real hardware or claims unconditional
+profile support.
+
+## Established general mappings (added this sequence)
+
+### BCL language projection (Foundations 29, 30, 33)
+
+`System.Collections.ObjectModel.ReadOnlyCollection`1` → `CNA::Runtime::ReadOnlyCollection`, a live
+view over its backing Array with no mutating member. A projected CLR **generic definition** answers
+for every constructed form of itself; because a Ruby class is not statically generic, a subclass
+declares its CLR type argument with `projects_elements` and the verifier measures it under
+`GENERIC_MAPPING_MISMATCH`, with no allowlist.
+
+`System.NotSupportedException` → `CNA::Runtime::NotSupportedError < StandardError`. Ruby's
+`NotImplementedError` is refused because it descends from `ScriptError`, so a bare `rescue` — the
+analogue of a CLR `catch (Exception)` — would not catch it.
+
+`System.Type` → `Module`, the type token Ruby has, which is what it is in all 24 places the XNA
+surface names it. `System.IServiceProvider` → no constant at all, recorded and checked.
+
+### Language support (Foundation 31)
+
+`CNA::Runtime::LanguageSupport` maps a Ruby identity to the CLR identity it derives from. A
+projected type may declare one **only if it also projects that CLR identity**. `each` carries
+`GetEnumerator`; `Enumerable` is derived in its entirety from `each`, so including it adds no
+independent behaviour. CLR identities are PascalCase or operators; language support is not, so the
+two can never be confused.
+
+## Recommended next frontier
+
+1. **The `Dictionary`2` decision**, if a maintainer will take it. One XNA identity, and the cost is
+   set out above. It is the last purely-decisional blocker left.
+2. **A qualification artifact carrying the SDL3 platform, built from the pinned CNA commit.** The
+   host now demonstrably has a display, so this would produce real measurements — but it needs a
+   CNA checkout at `a09196a6…` that no other session is using.
+3. **`System.IDisposable`**, which `SoundEffectInstance` and `Audio.Cue` both need. Native frontier 3
+   makes clear it is not managed work: both reach XACT.
 
 `SELECTED_ONLY=true`
 
@@ -266,8 +294,10 @@ methods. `MathHelper` established it and `FrameworkDispatcher` follows it.
 - Ruby assignment aliases value objects; copying is enforced at binding boundaries and through `dup`/`clone`.
 - Uppercase XNA instance methods require an explicit receiver in Ruby source (`self.Position`, not bare `Position`).
 - Setter methods cannot use Ruby's endless method definition syntax.
-- `NotImplementedError` is a `ScriptError`, not a `StandardError`: a bare `rescue` does not catch an abstract contract member.
-- `ikdasm` indents a nested type inside its declaring type and closes it with the **short** name, quotes a name that is not a plain identifier, and appends a generic parameter list it omits from the closing comment. Any IL scanner anchored on column zero or on the full declared name will silently fold a nested type into its parent, which is what happened here from Foundation 22 until Native frontier 2. An IL reference spells a nested type `Parent/Child`; the reference contract and this binding spell it `Parent+Child`.
-- XNA's Framework and Graphics assemblies are mixed-mode C++/CLI. Native work is mostly an indirect `calli` through an unmanaged calling convention, not a classic P/Invoke; any native-boundary analysis must count both. Note the converse trap too: `FrameworkDispatcher.Update` looks native and is not — its `PollForEvents` is an empty method in the Windows assembly, and the measured inventory correctly reports the type as not native-reachable.
+- `NotImplementedError` is a `ScriptError`, not a `StandardError`: a bare `rescue` does not catch an abstract contract member. That is why it is correct for `IUpdateable`/`IDrawable` and wrong for `NotSupportedException`.
+- `ikdasm` indents a nested type inside its declaring type and closes it with the **short** name, quotes a name that is not a plain identifier, and appends a generic parameter list it omits from the closing comment. It also wraps a long operand onto continuation lines, and declares a mixed-mode C++/CLI thunk with a `modopt(...)` return modifier **before** the method name. Any IL scanner anchored on column zero, on the full declared name, on a single operand line, or on the first identifier before a parenthesis will silently lose something — which has now happened three times.
+- An IL reference spells a nested type `Parent/Child`; the reference contract and this binding spell it `Parent+Child`.
+- An `implements` list is comma-separated, but a constructed generic carries commas of its own: split only at depth zero.
+- XNA's Framework and Graphics assemblies are mixed-mode C++/CLI. Native work is mostly an indirect `calli` through an unmanaged calling convention, not a classic P/Invoke; any native-boundary analysis must count both. **The pinned `Input.Touch` assembly is the converse case: it is a stub, with no native entry point anywhere in it, because XNA 4.0's touch support was for Windows Phone.**
 - CNA's platform is a **build-time** selection (`cmake/PlatformSelection.cmake`), not a runtime one. `CNA_RENDERER` selects the renderer and cannot change which platform a given `libcna_c_api.so` carries.
-- The upstream behaviour-corpus source (SHA-256 `398d0201…`) is still absent. Corpus additions are merged by documented deterministic replay, which refuses to write unless re-serialising the pre-merge corpus reproduces its bytes exactly. Four corrections have been made this way, each proving every retained element unchanged.
+- The upstream behaviour-corpus source (SHA-256 `398d0201…`) is still absent. Corpus additions are merged by documented deterministic replay, which refuses to write unless re-serialising the pre-merge corpus reproduces its bytes exactly. **Seven** corrections have been made this way, each proving every retained element unchanged. Contrary to what the Native frontier 2 note recorded, the replay *is* byte-preserving on the current corpus and was used for both of this sequence's corrections.

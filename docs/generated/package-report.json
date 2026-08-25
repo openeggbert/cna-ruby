@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "GEM_FILENAME": "cna-ruby-0.1.0.dev0.gem",
   "VERSION": "0.1.0.dev0",
-  "GEM_SHA256": "9cf7fbdb37503d7cb9851523e6eb19fd0fb158a1b474a1003e833fd8101e4853",
-  "GEM_ENTRIES": 53,
+  "GEM_SHA256": "b6d0ca22b154d57fb2450d48cc0fcf0d6dcd0cd346d354faacdfe0a018014b51",
+  "GEM_ENTRIES": 55,
   "FORBIDDEN_ENTRIES": [
 
   ],
@@ -30,9 +30,11 @@
     "lib/cna/runtime/exception_support.rb",
     "lib/cna/runtime/game_host.rb",
     "lib/cna/runtime/geometry_support.rb",
+    "lib/cna/runtime/language_support.rb",
     "lib/cna/runtime/numeric.rb",
     "lib/cna/runtime/ownership.rb",
     "lib/cna/runtime/packed_vector.rb",
+    "lib/cna/runtime/read_only_collection.rb",
     "lib/cna/runtime/value_semantics.rb",
     "lib/cna/runtime/xact_spatial.rb",
     "lib/cna/version.rb",
