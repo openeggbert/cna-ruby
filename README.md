@@ -82,7 +82,9 @@ There is intentionally no `microsoft/xna/framework/content` implementation in Fo
 - `docs/graphics-adapter-audit-evidence.md` — the native/CNA expansion audit: the exact XNA GraphicsAdapter contract, what CNA and its C ABI already provide, and the four blockers that keep the type incomplete
 - `docs/framework-dispatcher-evidence.md` — Native frontier 1, the first type taken off the RUNTIME_DATA frontier
 - `docs/il-inventory-nesting-evidence.md` — Native frontier 2, the nested- and generic-aware IL extractor and the declaring-type dependency it exposed
+- `docs/bcl-reference-authority-evidence.md` — Foundation 28, the Microsoft .NET Framework mscorlib admitted as a separate BCL authority, the derived identity and pairing proof, and what its IL settles about `ReadOnlyCollection<T>`
 - `tools/api_compat/build_il_inventory.rb` — hash-admitted `ikdasm` disassembly into the Microsoft-free IL inventory
+- `tools/api_compat/build_bcl_inventory.rb` — hash-admitted `ikdasm` disassembly of the pinned mscorlib into the Microsoft-free, demand-driven BCL inventory
 - `tools/api_compat/verify.rb` — structural report/strict/leak-only modes
 - `tools/native_abi/verify.rb` — compiler-backed header/manifest/export verification
 - `tools/run_behavior_corpus.rb` — observation-level XNA-fact and Ruby-mapping qualification corpus

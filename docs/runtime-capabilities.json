@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Native frontier 2",
+  "milestone": "Foundation 28",
   "platform": "Linux x86-64 MRI Ruby 3.3.8",
   "cnaAbi": "0.7.0",
   "capabilities": [
@@ -140,7 +140,13 @@
       "id": "reference.xna-il-provenance",
       "category": "VERIFIED_MANAGED",
       "status": "verified hash-pinned",
-      "evidence": "Foundation 22: the original Microsoft XNA Framework 4.0 Windows assemblies are on this host and are located by exact SHA-256, never by filename. tools/api_compat/reference/XNA_IL_PROVENANCE.md pins ten of them by hash, size and version, including the two the behaviour corpus had cited since Milestone 3. tools/api_compat/build_il_inventory.rb admits each by hash, refuses to run on any mismatch, disassembles with ikdasm and writes docs/generated/xna-il-inventory.json: declaring assembly, IL size, declared field and method counts, per-constructor access and pure-base-forward proof, and native reachability. 250 of 257 reference types have IL. No Microsoft-owned bytes and no machine-local path is committed, and the gem packages zero Microsoft binaries"
+      "evidence": "Foundation 22: the original Microsoft XNA Framework 4.0 Windows assemblies are on this host and are located by exact SHA-256, never by filename. tools/api_compat/reference/XNA_IL_PROVENANCE.md pins ten of them by hash, size and version, including the two the behaviour corpus had cited since Milestone 3. tools/api_compat/build_il_inventory.rb admits each by hash, refuses to run on any mismatch, disassembles with ikdasm and writes docs/generated/xna-il-inventory.json: declaring assembly, IL size, declared field and method counts, per-constructor access and pure-base-forward proof, and native reachability. Native frontier 2 corrected the extractor and all 257 of 257 reference types have IL. No Microsoft-owned bytes and no machine-local path is committed, and the gem packages zero Microsoft binaries"
+    },
+    {
+      "id": "reference.bcl-authority",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified hash-pinned",
+      "evidence": "Foundation 28: a Microsoft .NET Framework 4.0 mscorlib is admitted as a SEPARATE BCL authority beside the XNA metadata contract and the XNA IL provenance register. tools/api_compat/reference/BCL_PROVENANCE.md pins assembly mscorlib 4.0.0.0, file version 4.0.30319.1, 5196112 bytes, SHA-256 5634668d4775b0113f08ea31093b281fea69bfc4e99227f5ca761b4ed98acc63, CompanyName Microsoft Corporation, FileDescription Microsoft Common Language Runtime Class Library. tools/api_compat/build_bcl_inventory.rb admits it by exact SHA-256 and byte length, derives the public key token b77a5c561934e089 from the assembly own .publickey blob by the CLR rule rather than trusting a constant, checks the PE version resource, and proves the pairing: all ten pinned XNA assemblies declare an AssemblyRef to mscorlib naming exactly that version and token. It writes docs/generated/bcl-inventory.json with its own separate metrics, BCL_FAMILIES 3, BCL_TYPES 17, BCL_MEMBERS 246, BCL_EXCEPTION_TYPES 9. mscorlib is not an XNA assembly: REFERENCE_TYPES stays 257, REFERENCE_MEMBERS stays 2964, TYPES_WITH_IL stays 257 and TYPES_WITHOUT_IL stays 0. The inventory is demand-driven and aborts on a family the XNA reference contract does not name. No Microsoft-owned bytes, no IL text and no machine-local path is committed, and the gem packages zero Microsoft binaries"
     },
     {
       "id": "reference.native-reachability",
@@ -494,7 +500,7 @@
       "id": "mapping.readonly-collection",
       "category": "UNRESOLVED_MAPPING_DECISION",
       "status": "not designed",
-      "evidence": "System.Collections.ObjectModel.ReadOnlyCollection`1 is the highest-leverage unmapped BCL identity: GraphicsAdapter, SpriteFont, Microphone and Media.VisualizationData all name it. mapping-rules.json lists it under bclProjection.notYetDesigned, and the register admits only an identity whose Ruby projection can be decided without guessing. Two materially different public designs are plausible (a frozen Ruby Array, or a dedicated CLR-shaped runtime collection preserving Count/Item/Contains/IndexOf/CopyTo/GetEnumerator) and no repository rule chooses between them. The deeper obstacle is authority: the pinned inventory admits the ten XNA assemblies and no mscorlib, so this type has no measured reference member surface, unlike every BCL identity projected so far, each of which has an empty or scalar surface with nothing to measure"
+      "evidence": "System.Collections.ObjectModel.ReadOnlyCollection`1 is the highest-leverage unmapped BCL identity: GraphicsAdapter, SpriteFont, Microphone and Media.VisualizationData all name it and four XNA collection types take it as their CLR base. mapping-rules.json still lists it under bclProjection.notYetDesigned, and the register admits only an identity whose Ruby projection can be decided without guessing. Foundation 28 removed the authority half of the obstacle: reference.bcl-authority admits a Microsoft .NET Framework 4.0 mscorlib and docs/generated/bcl-inventory.json now carries the measured surface, which settles that the type is a live view over the backing IList<T> it is constructed with rather than a frozen copy, that its six public read members forward and validate nothing, and that twelve explicit interface implementations refuse to mutate by throwing NotSupportedException unconditionally. What remains is the public Ruby design decision itself, which no repository rule takes"
     },
     {
       "id": "display.adapter-enumeration",

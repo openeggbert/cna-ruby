@@ -1,0 +1,4970 @@
+{
+  "schemaVersion": 1,
+  "authority": "Microsoft .NET Framework 4.0 mscorlib, the BCL the pinned XNA 4.0 Windows assemblies bind to",
+  "separateFromXna": "mscorlib is not an XNA assembly. Nothing here enters REFERENCE_TYPES, REFERENCE_MEMBERS or docs/generated/xna-il-inventory.json, and no BCL identity is an XNA identity.",
+  "provenance": "derived with ikdasm from a Microsoft .NET Framework 4.0 mscorlib admitted by exact SHA-256. No Microsoft-owned bytes, IL text or machine-local path is reproduced here.",
+  "scope": "demand-driven: a family is admitted only when the XNA reference contract names it, and only the surface those consumers can reach is recorded, plus the exception closure that surface throws",
+  "assembly": {
+    "sha256": "5634668d4775b0113f08ea31093b281fea69bfc4e99227f5ca761b4ed98acc63",
+    "bytes": 5196112,
+    "assemblyName": "mscorlib",
+    "assemblyVersion": "4.0.0.0",
+    "fileVersion": "4.0.30319.1",
+    "publicKeyToken": "b77a5c561934e089",
+    "company": "Microsoft Corporation",
+    "description": "Microsoft Common Language Runtime Class Library",
+    "derivedPublicKeyToken": "b77a5c561934e089",
+    "publicKeyTokenDerivation": "SHA-1 of the assembly's own .publickey blob, low eight bytes, reversed",
+    "observedAssemblyVersion": "4.0.0.0",
+    "observedFileVersion": "4.0.30319.1 (RTMRel.030319-0100)"
+  },
+  "pairing": {
+    "rule": "every pinned XNA assembly's AssemblyRef to mscorlib must name the exact version and public key token the admitted binary derives",
+    "assemblies": [
+      {
+        "assembly": "Microsoft.Xna.Framework.dll",
+        "referencedVersion": "4.0.0.0",
+        "referencedPublicKeyToken": "b77a5c561934e089"
+      },
+      {
+        "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+        "referencedVersion": "4.0.0.0",
+        "referencedPublicKeyToken": "b77a5c561934e089"
+      },
+      {
+        "assembly": "Microsoft.Xna.Framework.Game.dll",
+        "referencedVersion": "4.0.0.0",
+        "referencedPublicKeyToken": "b77a5c561934e089"
+      },
+      {
+        "assembly": "Microsoft.Xna.Framework.Input.Touch.dll",
+        "referencedVersion": "4.0.0.0",
+        "referencedPublicKeyToken": "b77a5c561934e089"
+      },
+      {
+        "assembly": "Microsoft.Xna.Framework.Xact.dll",
+        "referencedVersion": "4.0.0.0",
+        "referencedPublicKeyToken": "b77a5c561934e089"
+      },
+      {
+        "assembly": "Microsoft.Xna.Framework.Storage.dll",
+        "referencedVersion": "4.0.0.0",
+        "referencedPublicKeyToken": "b77a5c561934e089"
+      },
+      {
+        "assembly": "Microsoft.Xna.Framework.Video.dll",
+        "referencedVersion": "4.0.0.0",
+        "referencedPublicKeyToken": "b77a5c561934e089"
+      },
+      {
+        "assembly": "Microsoft.Xna.Framework.Net.dll",
+        "referencedVersion": "4.0.0.0",
+        "referencedPublicKeyToken": "b77a5c561934e089"
+      },
+      {
+        "assembly": "Microsoft.Xna.Framework.GamerServices.dll",
+        "referencedVersion": "4.0.0.0",
+        "referencedPublicKeyToken": "b77a5c561934e089"
+      },
+      {
+        "assembly": "Microsoft.Xna.Framework.Avatar.dll",
+        "referencedVersion": "4.0.0.0",
+        "referencedPublicKeyToken": "b77a5c561934e089"
+      }
+    ]
+  },
+  "throwHelperResolution": {
+    "IfNullAndNullsAreIllegalThenThrow": "System.ArgumentNullException",
+    "ThrowArgumentException": "System.ArgumentException",
+    "ThrowArgumentNullException": "System.ArgumentNullException",
+    "ThrowArgumentOutOfRangeException": "System.ArgumentOutOfRangeException",
+    "ThrowInvalidOperationException": "System.InvalidOperationException",
+    "ThrowKeyNotFoundException": "System.Collections.Generic.KeyNotFoundException",
+    "ThrowNotSupportedException": "System.NotSupportedException",
+    "ThrowObjectDisposedException": "System.ObjectDisposedException",
+    "ThrowSecurityException": "System.Security.SecurityException",
+    "ThrowSerializationException": "System.Runtime.Serialization.SerializationException",
+    "ThrowUnauthorizedAccessException": "System.UnauthorizedAccessException",
+    "ThrowWrongKeyTypeArgumentException": "System.ArgumentException",
+    "ThrowWrongValueTypeArgumentException": "System.ArgumentException"
+  },
+  "BCL_FAMILIES": 3,
+  "BCL_TYPES": 17,
+  "BCL_MEMBERS": 246,
+  "BCL_EXCEPTION_TYPES": 9,
+  "families": [
+    {
+      "family": "System.Collections.ObjectModel.ReadOnlyCollection`1",
+      "reason": "the CLR base of four XNA collection types and the declared return type of six XNA members",
+      "xnaConsumers": [
+        "Microsoft.Xna.Framework.Audio.AudioEngine::RendererDetails",
+        "Microsoft.Xna.Framework.Audio.Microphone::All",
+        "Microsoft.Xna.Framework.Graphics.GraphicsAdapter::Adapters",
+        "Microsoft.Xna.Framework.Graphics.ModelBoneCollection (base)",
+        "Microsoft.Xna.Framework.Graphics.ModelEffectCollection (base)",
+        "Microsoft.Xna.Framework.Graphics.ModelMeshCollection (base)",
+        "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection (base)",
+        "Microsoft.Xna.Framework.Graphics.SpriteFont::Characters",
+        "Microsoft.Xna.Framework.Media.VisualizationData::Frequencies",
+        "Microsoft.Xna.Framework.Media.VisualizationData::Samples"
+      ],
+      "xnaConsumerCount": 10,
+      "types": [
+        "System.Collections.ObjectModel.ReadOnlyCollection`1"
+      ]
+    },
+    {
+      "family": "System.Collections.ObjectModel.Collection`1",
+      "reason": "the CLR base of GameComponentCollection, and the mutable sibling ReadOnlyCollection`1 is measured against",
+      "xnaConsumers": [
+        "Microsoft.Xna.Framework.GameComponentCollection (base)"
+      ],
+      "xnaConsumerCount": 1,
+      "types": [
+        "System.Collections.ObjectModel.Collection`1"
+      ]
+    },
+    {
+      "family": "System.Collections.Generic.Dictionary`2",
+      "reason": "the CLR base of LaunchParameters, the one dependency-complete XNA type blocked on it alone",
+      "xnaConsumers": [
+        "Microsoft.Xna.Framework.LaunchParameters (base)"
+      ],
+      "xnaConsumerCount": 1,
+      "types": [
+        "System.Collections.Generic.Dictionary`2",
+        "System.Collections.Generic.Dictionary`2+Enumerator",
+        "System.Collections.Generic.Dictionary`2+KeyCollection",
+        "System.Collections.Generic.Dictionary`2+KeyCollection+Enumerator",
+        "System.Collections.Generic.Dictionary`2+ValueCollection",
+        "System.Collections.Generic.Dictionary`2+ValueCollection+Enumerator"
+      ]
+    }
+  ],
+  "types": {
+    "System.ArgumentException": {
+      "kind": "class",
+      "baseType": "System.SystemException",
+      "interfaceDeclarations": [
+        "System.Runtime.Serialization.ISerializable"
+      ],
+      "interfaces": [
+        "System.Runtime.Serialization.ISerializable"
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            },
+            {
+              "type": "class System.Exception",
+              "name": "innerException"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            },
+            {
+              "type": "string",
+              "name": "paramName"
+            },
+            {
+              "type": "class System.Exception",
+              "name": "innerException"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            },
+            {
+              "type": "string",
+              "name": "paramName"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Message",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "string",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_ParamName",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "string",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetObjectData",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "property",
+          "name": "Message",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance string Message()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.ArgumentException::get_Message"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "ParamName",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance string ParamName()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.ArgumentException::get_ParamName"
+            }
+          ]
+        }
+      ]
+    },
+    "System.ArgumentNullException": {
+      "kind": "class",
+      "baseType": "System.ArgumentException",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "paramName"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            },
+            {
+              "type": "class System.Exception",
+              "name": "innerException"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "paramName"
+            },
+            {
+              "type": "string",
+              "name": "message"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        }
+      ]
+    },
+    "System.ArgumentOutOfRangeException": {
+      "kind": "class",
+      "baseType": "System.ArgumentException",
+      "interfaceDeclarations": [
+        "System.Runtime.Serialization.ISerializable"
+      ],
+      "interfaces": [
+        "System.Runtime.Serialization.ISerializable"
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "paramName"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "paramName"
+            },
+            {
+              "type": "string",
+              "name": "message"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            },
+            {
+              "type": "class System.Exception",
+              "name": "innerException"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "paramName"
+            },
+            {
+              "type": "object",
+              "name": "actualValue"
+            },
+            {
+              "type": "string",
+              "name": "message"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Message",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "string",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_ActualValue",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "object",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetObjectData",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "property",
+          "name": "Message",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance string Message()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.ArgumentOutOfRangeException::get_Message"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "ActualValue",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance object ActualValue()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.ArgumentOutOfRangeException::get_ActualValue"
+            }
+          ]
+        }
+      ]
+    },
+    "System.Collections.Generic.Dictionary`2": {
+      "kind": "class",
+      "baseType": "System.Object",
+      "interfaceDeclarations": [
+        "class System.Collections.Generic.IDictionary`2<!TKey",
+        "!TValue>",
+        "class System.Collections.Generic.ICollection`1<valuetype System.Collections.Generic.KeyValuePair`2<!TKey",
+        "!TValue>>",
+        "class System.Collections.Generic.IEnumerable`1<valuetype System.Collections.Generic.KeyValuePair`2<!TKey",
+        "!TValue>>",
+        "System.Collections.IDictionary",
+        "System.Collections.ICollection",
+        "System.Collections.IEnumerable",
+        "System.Runtime.Serialization.ISerializable",
+        "System.Runtime.Serialization.IDeserializationCallback"
+      ],
+      "interfaces": [
+        "System.Collections.Generic.IDictionary`2",
+        "!TValue",
+        "System.Collections.Generic.ICollection`1",
+        "!TValue",
+        "System.Collections.Generic.IEnumerable`1",
+        "!TValue",
+        "System.Collections.IDictionary",
+        "System.Collections.ICollection",
+        "System.Collections.IEnumerable",
+        "System.Runtime.Serialization.ISerializable",
+        "System.Runtime.Serialization.IDeserializationCallback"
+      ],
+      "genericParameters": 2,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "capacity"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Collections.Generic.IEqualityComparer`1<!TKey>",
+              "name": "comparer"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "capacity"
+            },
+            {
+              "type": "class System.Collections.Generic.IEqualityComparer`1<!TKey>",
+              "name": "comparer"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "System.ThrowHelper::ThrowArgumentOutOfRangeException",
+                "argument": "capacity"
+              }
+            ],
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Collections.Generic.IDictionary`2<!TKey,!TValue>",
+              "name": "dictionary"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Collections.Generic.IDictionary`2<!TKey,!TValue>",
+              "name": "dictionary"
+            },
+            {
+              "type": "class System.Collections.Generic.IEqualityComparer`1<!TKey>",
+              "name": "comparer"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "dictionary"
+              }
+            ],
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Comparer",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.Collections.Generic.IEqualityComparer`1<!TKey>",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_Count",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_Keys",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.Collections.Generic.Dictionary`2/KeyCollection<!TKey,!TValue>",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.IDictionary<TKey,TValue>.get_Keys",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "class System.Collections.Generic.ICollection`1<!TKey>",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_Values",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.Collections.Generic.Dictionary`2/ValueCollection<!TKey,!TValue>",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.IDictionary<TKey,TValue>.get_Values",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "class System.Collections.Generic.ICollection`1<!TValue>",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_Item",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "!TValue",
+          "parameters": [
+            {
+              "type": "!TKey",
+              "name": "key"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.Collections.Generic.KeyNotFoundException",
+                "via": "System.ThrowHelper::ThrowKeyNotFoundException"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "set_Item",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "!TKey",
+              "name": "key"
+            },
+            {
+              "type": "!TValue",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Add",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "!TKey",
+              "name": "key"
+            },
+            {
+              "type": "!TValue",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.Add",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "valuetype System.Collections.Generic.KeyValuePair`2<!TKey,!TValue>",
+              "name": "keyValuePair"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.Contains",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "valuetype System.Collections.Generic.KeyValuePair`2<!TKey,!TValue>",
+              "name": "keyValuePair"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.Remove",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "valuetype System.Collections.Generic.KeyValuePair`2<!TKey,!TValue>",
+              "name": "keyValuePair"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Clear",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ContainsKey",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "!TKey",
+              "name": "key"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ContainsValue",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "!TValue",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetEnumerator",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "valuetype System.Collections.Generic.Dictionary`2/Enumerator<!TKey,!TValue>",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<TKey,TValue>>.GetEnumerator",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "class System.Collections.Generic.IEnumerator`1<valuetype System.Collections.Generic.KeyValuePair`2<!TKey,!TValue>>",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetObjectData",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "info"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "OnDeserialization",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "sender"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.Runtime.Serialization.SerializationException",
+                "via": "System.ThrowHelper::ThrowSerializationException",
+                "resource": "Serialization_MissingKeys"
+              },
+              {
+                "exception": "System.Runtime.Serialization.SerializationException",
+                "via": "System.ThrowHelper::ThrowSerializationException",
+                "resource": "Serialization_NullKey"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "Remove",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "!TKey",
+              "name": "key"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "key"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "TryGetValue",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "!TKey",
+              "name": "key"
+            },
+            {
+              "type": "[out] !TValue&",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.get_IsReadOnly",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<TKey,TValue>>.CopyTo",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "valuetype System.Collections.Generic.KeyValuePair`2<!TKey,!TValue>[]",
+              "name": "array"
+            },
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.ICollection.CopyTo",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Array",
+              "name": "array"
+            },
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "array"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_RankMultiDimNotSupported"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_NonZeroLowerBound"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "System.ThrowHelper::ThrowArgumentOutOfRangeException",
+                "resource": "ArgumentOutOfRange_NeedNonNegNum",
+                "argument": "index"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_ArrayPlusOffTooSmall"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Argument_InvalidArrayType"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Argument_InvalidArrayType"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IEnumerable.GetEnumerator",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "class System.Collections.IEnumerator",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.ICollection.get_IsSynchronized",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.ICollection.get_SyncRoot",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "object",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IDictionary.get_IsFixedSize",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IDictionary.get_IsReadOnly",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IDictionary.get_Keys",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "class System.Collections.ICollection",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IDictionary.get_Values",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "class System.Collections.ICollection",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IDictionary.get_Item",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "object",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "key"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IDictionary.set_Item",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "key"
+            },
+            {
+              "type": "object",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "key"
+              },
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::IfNullAndNullsAreIllegalThenThrow",
+                "argument": "value"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowWrongValueTypeArgumentException"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowWrongKeyTypeArgumentException"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IDictionary.Add",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "key"
+            },
+            {
+              "type": "object",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "key"
+              },
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::IfNullAndNullsAreIllegalThenThrow",
+                "argument": "value"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowWrongValueTypeArgumentException"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowWrongKeyTypeArgumentException"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IDictionary.Contains",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "key"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IDictionary.GetEnumerator",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "class System.Collections.IDictionaryEnumerator",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IDictionary.Remove",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "key"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Comparer",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance class System.Collections.Generic.IEqualityComparer`1<!TKey> Comparer()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Collections.Generic.Dictionary`2::get_Comparer"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Count",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance int32 Count()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Collections.Generic.Dictionary`2::get_Count"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Keys",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance class System.Collections.Generic.Dictionary`2/KeyCollection<!TKey,!TValue> Keys()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Collections.Generic.Dictionary`2::get_Keys"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Values",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance class System.Collections.Generic.Dictionary`2/ValueCollection<!TKey,!TValue> Values()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Collections.Generic.Dictionary`2::get_Values"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Item",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance !TValue Item(!TKey)",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Collections.Generic.Dictionary`2::get_Item"
+            },
+            {
+              "accessor": "set",
+              "method": "System.Collections.Generic.Dictionary`2::set_Item"
+            }
+          ]
+        }
+      ]
+    },
+    "System.Collections.Generic.Dictionary`2+Enumerator": {
+      "kind": "class",
+      "baseType": "System.ValueType",
+      "interfaceDeclarations": [
+        "class System.Collections.Generic.IEnumerator`1<valuetype System.Collections.Generic.KeyValuePair`2<!TKey",
+        "!TValue>>",
+        "System.IDisposable",
+        "System.Collections.IDictionaryEnumerator",
+        "System.Collections.IEnumerator"
+      ],
+      "interfaces": [
+        "System.Collections.Generic.IEnumerator`1",
+        "!TValue",
+        "System.IDisposable",
+        "System.Collections.IDictionaryEnumerator",
+        "System.Collections.IEnumerator"
+      ],
+      "genericParameters": 1,
+      "sealed": true,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "method",
+          "name": "MoveNext",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "System.ThrowHelper::ThrowInvalidOperationException",
+                "resource": "InvalidOperation_EnumFailedVersion"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Current",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "valuetype System.Collections.Generic.KeyValuePair`2<!TKey,!TValue>",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IEnumerator.get_Current",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "object",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "System.ThrowHelper::ThrowInvalidOperationException",
+                "resource": "InvalidOperation_EnumOpCantHappen"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IEnumerator.Reset",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "System.ThrowHelper::ThrowInvalidOperationException",
+                "resource": "InvalidOperation_EnumFailedVersion"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IDictionaryEnumerator.get_Entry",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "valuetype System.Collections.DictionaryEntry",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "System.ThrowHelper::ThrowInvalidOperationException",
+                "resource": "InvalidOperation_EnumOpCantHappen"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IDictionaryEnumerator.get_Key",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "object",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "System.ThrowHelper::ThrowInvalidOperationException",
+                "resource": "InvalidOperation_EnumOpCantHappen"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IDictionaryEnumerator.get_Value",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "object",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "System.ThrowHelper::ThrowInvalidOperationException",
+                "resource": "InvalidOperation_EnumOpCantHappen"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "property",
+          "name": "Current",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance valuetype System.Collections.Generic.KeyValuePair`2<!TKey,!TValue> Current()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Collections.Generic.Dictionary`2+Enumerator::get_Current"
+            }
+          ]
+        }
+      ]
+    },
+    "System.Collections.Generic.Dictionary`2+KeyCollection": {
+      "kind": "class",
+      "baseType": "System.Object",
+      "interfaceDeclarations": [
+        "class System.Collections.Generic.ICollection`1<!TKey>",
+        "class System.Collections.Generic.IEnumerable`1<!TKey>",
+        "System.Collections.ICollection",
+        "System.Collections.IEnumerable"
+      ],
+      "interfaces": [
+        "System.Collections.Generic.ICollection`1",
+        "System.Collections.Generic.IEnumerable`1",
+        "System.Collections.ICollection",
+        "System.Collections.IEnumerable"
+      ],
+      "genericParameters": 1,
+      "sealed": true,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Collections.Generic.Dictionary`2<!TKey,!TValue>",
+              "name": "dictionary"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "dictionary"
+              }
+            ],
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "GetEnumerator",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "valuetype System.Collections.Generic.Dictionary`2/KeyCollection/Enumerator<!TKey,!TValue>",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "CopyTo",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "!TKey[]",
+              "name": "array"
+            },
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "array"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "System.ThrowHelper::ThrowArgumentOutOfRangeException",
+                "resource": "ArgumentOutOfRange_NeedNonNegNum",
+                "argument": "index"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_ArrayPlusOffTooSmall"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Count",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.Dictionary`2::get_Count",
+            "viaField": "dictionary"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<TKey>.get_IsReadOnly",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<TKey>.Add",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "!TKey",
+              "name": "item"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_KeyCollectionSet"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<TKey>.Clear",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_KeyCollectionSet"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<TKey>.Contains",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "!TKey",
+              "name": "item"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.Dictionary`2::ContainsKey",
+            "viaField": "dictionary"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<TKey>.Remove",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "!TKey",
+              "name": "item"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_KeyCollectionSet"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.IEnumerable<TKey>.GetEnumerator",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "class System.Collections.Generic.IEnumerator`1<!TKey>",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IEnumerable.GetEnumerator",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "class System.Collections.IEnumerator",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.ICollection.CopyTo",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Array",
+              "name": "array"
+            },
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "array"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_RankMultiDimNotSupported"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_NonZeroLowerBound"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "System.ThrowHelper::ThrowArgumentOutOfRangeException",
+                "resource": "ArgumentOutOfRange_NeedNonNegNum",
+                "argument": "index"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_ArrayPlusOffTooSmall"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Argument_InvalidArrayType"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Argument_InvalidArrayType"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.ICollection.get_IsSynchronized",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.ICollection.get_SyncRoot",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "object",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.ICollection::get_SyncRoot",
+            "viaField": "dictionary"
+          }
+        },
+        {
+          "kind": "property",
+          "name": "Count",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance int32 Count()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Collections.Generic.Dictionary`2+KeyCollection::get_Count"
+            }
+          ]
+        }
+      ]
+    },
+    "System.Collections.Generic.Dictionary`2+KeyCollection+Enumerator": {
+      "kind": "class",
+      "baseType": "System.ValueType",
+      "interfaceDeclarations": [
+        "class System.Collections.Generic.IEnumerator`1<!TKey>",
+        "System.IDisposable",
+        "System.Collections.IEnumerator"
+      ],
+      "interfaces": [
+        "System.Collections.Generic.IEnumerator`1",
+        "System.IDisposable",
+        "System.Collections.IEnumerator"
+      ],
+      "genericParameters": 1,
+      "sealed": true,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "MoveNext",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "System.ThrowHelper::ThrowInvalidOperationException",
+                "resource": "InvalidOperation_EnumFailedVersion"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Current",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "!TKey",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IEnumerator.get_Current",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "object",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "System.ThrowHelper::ThrowInvalidOperationException",
+                "resource": "InvalidOperation_EnumOpCantHappen"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IEnumerator.Reset",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "System.ThrowHelper::ThrowInvalidOperationException",
+                "resource": "InvalidOperation_EnumFailedVersion"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "property",
+          "name": "Current",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance !TKey Current()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Collections.Generic.Dictionary`2+KeyCollection+Enumerator::get_Current"
+            }
+          ]
+        }
+      ]
+    },
+    "System.Collections.Generic.Dictionary`2+ValueCollection": {
+      "kind": "class",
+      "baseType": "System.Object",
+      "interfaceDeclarations": [
+        "class System.Collections.Generic.ICollection`1<!TValue>",
+        "class System.Collections.Generic.IEnumerable`1<!TValue>",
+        "System.Collections.ICollection",
+        "System.Collections.IEnumerable"
+      ],
+      "interfaces": [
+        "System.Collections.Generic.ICollection`1",
+        "System.Collections.Generic.IEnumerable`1",
+        "System.Collections.ICollection",
+        "System.Collections.IEnumerable"
+      ],
+      "genericParameters": 1,
+      "sealed": true,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Collections.Generic.Dictionary`2<!TKey,!TValue>",
+              "name": "dictionary"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "dictionary"
+              }
+            ],
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "GetEnumerator",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "valuetype System.Collections.Generic.Dictionary`2/ValueCollection/Enumerator<!TKey,!TValue>",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "CopyTo",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "!TValue[]",
+              "name": "array"
+            },
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "array"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "System.ThrowHelper::ThrowArgumentOutOfRangeException",
+                "resource": "ArgumentOutOfRange_NeedNonNegNum",
+                "argument": "index"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_ArrayPlusOffTooSmall"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Count",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.Dictionary`2::get_Count",
+            "viaField": "dictionary"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<TValue>.get_IsReadOnly",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<TValue>.Add",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "!TValue",
+              "name": "item"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ValueCollectionSet"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<TValue>.Remove",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "!TValue",
+              "name": "item"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ValueCollectionSet"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<TValue>.Clear",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ValueCollectionSet"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<TValue>.Contains",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "!TValue",
+              "name": "item"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.Dictionary`2::ContainsValue",
+            "viaField": "dictionary"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.IEnumerable<TValue>.GetEnumerator",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "class System.Collections.Generic.IEnumerator`1<!TValue>",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IEnumerable.GetEnumerator",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "class System.Collections.IEnumerator",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.ICollection.CopyTo",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Array",
+              "name": "array"
+            },
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "array"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_RankMultiDimNotSupported"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_NonZeroLowerBound"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "System.ThrowHelper::ThrowArgumentOutOfRangeException",
+                "resource": "ArgumentOutOfRange_NeedNonNegNum",
+                "argument": "index"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_ArrayPlusOffTooSmall"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Argument_InvalidArrayType"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Argument_InvalidArrayType"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.ICollection.get_IsSynchronized",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.ICollection.get_SyncRoot",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "object",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.ICollection::get_SyncRoot",
+            "viaField": "dictionary"
+          }
+        },
+        {
+          "kind": "property",
+          "name": "Count",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance int32 Count()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Collections.Generic.Dictionary`2+ValueCollection::get_Count"
+            }
+          ]
+        }
+      ]
+    },
+    "System.Collections.Generic.Dictionary`2+ValueCollection+Enumerator": {
+      "kind": "class",
+      "baseType": "System.ValueType",
+      "interfaceDeclarations": [
+        "class System.Collections.Generic.IEnumerator`1<!TValue>",
+        "System.IDisposable",
+        "System.Collections.IEnumerator"
+      ],
+      "interfaces": [
+        "System.Collections.Generic.IEnumerator`1",
+        "System.IDisposable",
+        "System.Collections.IEnumerator"
+      ],
+      "genericParameters": 1,
+      "sealed": true,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "MoveNext",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "System.ThrowHelper::ThrowInvalidOperationException",
+                "resource": "InvalidOperation_EnumFailedVersion"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Current",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "!TValue",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IEnumerator.get_Current",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "object",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "System.ThrowHelper::ThrowInvalidOperationException",
+                "resource": "InvalidOperation_EnumOpCantHappen"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IEnumerator.Reset",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "System.ThrowHelper::ThrowInvalidOperationException",
+                "resource": "InvalidOperation_EnumFailedVersion"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "property",
+          "name": "Current",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance !TValue Current()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Collections.Generic.Dictionary`2+ValueCollection+Enumerator::get_Current"
+            }
+          ]
+        }
+      ]
+    },
+    "System.Collections.Generic.KeyNotFoundException": {
+      "kind": "class",
+      "baseType": "System.SystemException",
+      "interfaceDeclarations": [
+        "System.Runtime.Serialization.ISerializable"
+      ],
+      "interfaces": [
+        "System.Runtime.Serialization.ISerializable"
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            },
+            {
+              "type": "class System.Exception",
+              "name": "innerException"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        }
+      ]
+    },
+    "System.Collections.ObjectModel.Collection`1": {
+      "kind": "class",
+      "baseType": "System.Object",
+      "interfaceDeclarations": [
+        "class System.Collections.Generic.IList`1<!T>",
+        "class System.Collections.Generic.ICollection`1<!T>",
+        "class System.Collections.Generic.IEnumerable`1<!T>",
+        "System.Collections.IList",
+        "System.Collections.ICollection",
+        "System.Collections.IEnumerable"
+      ],
+      "interfaces": [
+        "System.Collections.Generic.IList`1",
+        "System.Collections.Generic.ICollection`1",
+        "System.Collections.Generic.IEnumerable`1",
+        "System.Collections.IList",
+        "System.Collections.ICollection",
+        "System.Collections.IEnumerable"
+      ],
+      "genericParameters": 1,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Collections.Generic.IList`1<!T>",
+              "name": "list"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "list"
+              }
+            ],
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Count",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.ICollection`1::get_Count",
+            "viaField": "items"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Items",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.Collections.Generic.IList`1<!T>",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_Item",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "!T",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.IList`1::get_Item",
+            "viaField": "items"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "set_Item",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            },
+            {
+              "type": "!T",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "System.ThrowHelper::ThrowArgumentOutOfRangeException"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "Add",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "!T",
+              "name": "item"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "Clear",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "CopyTo",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "!T[]",
+              "name": "array"
+            },
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.ICollection`1::CopyTo",
+            "viaField": "items"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "Contains",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "!T",
+              "name": "item"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.ICollection`1::Contains",
+            "viaField": "items"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "GetEnumerator",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.Collections.Generic.IEnumerator`1<!T>",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.IEnumerable`1::GetEnumerator",
+            "viaField": "items"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "IndexOf",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "!T",
+              "name": "item"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.IList`1::IndexOf",
+            "viaField": "items"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "Insert",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            },
+            {
+              "type": "!T",
+              "name": "item"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "System.ThrowHelper::ThrowArgumentOutOfRangeException",
+                "resource": "ArgumentOutOfRange_ListInsert",
+                "argument": "index"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "Remove",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "!T",
+              "name": "item"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "RemoveAt",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "System.ThrowHelper::ThrowArgumentOutOfRangeException"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "ClearItems",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.ICollection`1::Clear",
+            "viaField": "items"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "InsertItem",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            },
+            {
+              "type": "!T",
+              "name": "item"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.IList`1::Insert",
+            "viaField": "items"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "RemoveItem",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.IList`1::RemoveAt",
+            "viaField": "items"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "SetItem",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            },
+            {
+              "type": "!T",
+              "name": "item"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.IList`1::set_Item",
+            "viaField": "items"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<T>.get_IsReadOnly",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.ICollection`1::get_IsReadOnly",
+            "viaField": "items"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IEnumerable.GetEnumerator",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "class System.Collections.IEnumerator",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.IEnumerable::GetEnumerator",
+            "viaField": "items"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.ICollection.get_IsSynchronized",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.ICollection.get_SyncRoot",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "object",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.ICollection.CopyTo",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Array",
+              "name": "array"
+            },
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "array"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_RankMultiDimNotSupported"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_NonZeroLowerBound"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "System.ThrowHelper::ThrowArgumentOutOfRangeException",
+                "resource": "ArgumentOutOfRange_NeedNonNegNum",
+                "argument": "index"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_ArrayPlusOffTooSmall"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Argument_InvalidArrayType"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Argument_InvalidArrayType"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Argument_InvalidArrayType"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.get_Item",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "object",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.set_Item",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            },
+            {
+              "type": "object",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::IfNullAndNullsAreIllegalThenThrow",
+                "argument": "value"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowWrongValueTypeArgumentException"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.get_IsReadOnly",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.ICollection`1::get_IsReadOnly",
+            "viaField": "items"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.get_IsFixedSize",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.Add",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              },
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::IfNullAndNullsAreIllegalThenThrow",
+                "argument": "value"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowWrongValueTypeArgumentException"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.Contains",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.IndexOf",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.Insert",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            },
+            {
+              "type": "object",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              },
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::IfNullAndNullsAreIllegalThenThrow",
+                "argument": "value"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowWrongValueTypeArgumentException"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.Remove",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "property",
+          "name": "Count",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance int32 Count()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Collections.ObjectModel.Collection`1::get_Count"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Items",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance class System.Collections.Generic.IList`1<!T> Items()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Collections.ObjectModel.Collection`1::get_Items"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Item",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance !T Item(int32)",
+          "accessors": [
+            {
+              "accessor": "set",
+              "method": "System.Collections.ObjectModel.Collection`1::set_Item"
+            },
+            {
+              "accessor": "get",
+              "method": "System.Collections.ObjectModel.Collection`1::get_Item"
+            }
+          ]
+        }
+      ]
+    },
+    "System.Collections.ObjectModel.ReadOnlyCollection`1": {
+      "kind": "class",
+      "baseType": "System.Object",
+      "interfaceDeclarations": [
+        "class System.Collections.Generic.IList`1<!T>",
+        "class System.Collections.Generic.ICollection`1<!T>",
+        "class System.Collections.Generic.IEnumerable`1<!T>",
+        "System.Collections.IList",
+        "System.Collections.ICollection",
+        "System.Collections.IEnumerable"
+      ],
+      "interfaces": [
+        "System.Collections.Generic.IList`1",
+        "System.Collections.Generic.ICollection`1",
+        "System.Collections.Generic.IEnumerable`1",
+        "System.Collections.IList",
+        "System.Collections.ICollection",
+        "System.Collections.IEnumerable"
+      ],
+      "genericParameters": 1,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Collections.Generic.IList`1<!T>",
+              "name": "list"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "list"
+              }
+            ],
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Count",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.ICollection`1::get_Count",
+            "viaField": "list"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Item",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "!T",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.IList`1::get_Item",
+            "viaField": "list"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "Contains",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "!T",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.ICollection`1::Contains",
+            "viaField": "list"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "CopyTo",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "!T[]",
+              "name": "array"
+            },
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.ICollection`1::CopyTo",
+            "viaField": "list"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "GetEnumerator",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.Collections.Generic.IEnumerator`1<!T>",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.IEnumerable`1::GetEnumerator",
+            "viaField": "list"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "IndexOf",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "!T",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.IList`1::IndexOf",
+            "viaField": "list"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Items",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.Collections.Generic.IList`1<!T>",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<T>.get_IsReadOnly",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.IList<T>.get_Item",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "!T",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.Generic.IList`1::get_Item",
+            "viaField": "list"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.IList<T>.set_Item",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            },
+            {
+              "type": "!T",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<T>.Add",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "!T",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<T>.Clear",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.IList<T>.Insert",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            },
+            {
+              "type": "!T",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.ICollection<T>.Remove",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "!T",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.Generic.IList<T>.RemoveAt",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IEnumerable.GetEnumerator",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "class System.Collections.IEnumerator",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Collections.IEnumerable::GetEnumerator",
+            "viaField": "list"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.ICollection.get_IsSynchronized",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.ICollection.get_SyncRoot",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "object",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.ICollection.CopyTo",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Array",
+              "name": "array"
+            },
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "System.ThrowHelper::ThrowArgumentNullException",
+                "argument": "array"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_RankMultiDimNotSupported"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_NonZeroLowerBound"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "System.ThrowHelper::ThrowArgumentOutOfRangeException",
+                "resource": "ArgumentOutOfRange_NeedNonNegNum",
+                "argument": "arrayIndex"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Arg_ArrayPlusOffTooSmall"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Argument_InvalidArrayType"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Argument_InvalidArrayType"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "System.ThrowHelper::ThrowArgumentException",
+                "resource": "Argument_InvalidArrayType"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.get_IsFixedSize",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.get_IsReadOnly",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.get_Item",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "object",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.set_Item",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            },
+            {
+              "type": "object",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.Add",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.Clear",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.Contains",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.IndexOf",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.Insert",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            },
+            {
+              "type": "object",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.Remove",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "System.Collections.IList.RemoveAt",
+          "access": "private",
+          "static": false,
+          "explicitInterface": true,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "index"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.NotSupportedException",
+                "via": "System.ThrowHelper::ThrowNotSupportedException",
+                "resource": "NotSupported_ReadOnlyCollection"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "property",
+          "name": "Count",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance int32 Count()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Collections.ObjectModel.ReadOnlyCollection`1::get_Count"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Item",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance !T Item(int32)",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Collections.ObjectModel.ReadOnlyCollection`1::get_Item"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Items",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance class System.Collections.Generic.IList`1<!T> Items()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Collections.ObjectModel.ReadOnlyCollection`1::get_Items"
+            }
+          ]
+        }
+      ]
+    },
+    "System.Exception": {
+      "kind": "class",
+      "baseType": "System.Object",
+      "interfaceDeclarations": [
+        "System.Runtime.Serialization.ISerializable",
+        "System.Runtime.InteropServices._Exception"
+      ],
+      "interfaces": [
+        "System.Runtime.Serialization.ISerializable",
+        "System.Runtime.InteropServices._Exception"
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            },
+            {
+              "type": "class System.Exception",
+              "name": "innerException"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.Runtime.Serialization.SerializationException",
+                "via": "newobj"
+              }
+            ],
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Message",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "string",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_Data",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.Collections.IDictionary",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetBaseException",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.Exception",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_InnerException",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.Exception",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_TargetSite",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.Reflection.MethodBase",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_StackTrace",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "string",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_HelpLink",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "string",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "set_HelpLink",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_Source",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "string",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "set_Source",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "string",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "add_SerializeObjectState",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.EventHandler`1<class System.Runtime.Serialization.SafeSerializationEventArgs>",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Runtime.Serialization.SafeSerializationManager::add_SerializeObjectState",
+            "viaField": "_safeSerializationManager"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "remove_SerializeObjectState",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.EventHandler`1<class System.Runtime.Serialization.SafeSerializationEventArgs>",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "delegatesTo": "System.Runtime.Serialization.SafeSerializationManager::remove_SerializeObjectState",
+            "viaField": "_safeSerializationManager"
+          }
+        },
+        {
+          "kind": "method",
+          "name": "GetObjectData",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_HResult",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "set_HResult",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetType",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.Type",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Message",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance string Message()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Exception::get_Message"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Data",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance class System.Collections.IDictionary Data()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Exception::get_Data"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "InnerException",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance class System.Exception InnerException()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Exception::get_InnerException"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "TargetSite",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance class System.Reflection.MethodBase TargetSite()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Exception::get_TargetSite"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "StackTrace",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance string StackTrace()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Exception::get_StackTrace"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HelpLink",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance string HelpLink()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.Exception::get_HelpLink"
+            },
+            {
+              "accessor": "set",
+              "method": "System.Exception::set_HelpLink"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Source",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance string Source()",
+          "accessors": [
+            {
+              "accessor": "set",
+              "method": "System.Exception::set_Source"
+            },
+            {
+              "accessor": "get",
+              "method": "System.Exception::get_Source"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HResult",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance int32 HResult()",
+          "accessors": [
+            {
+              "accessor": "set",
+              "method": "System.Exception::set_HResult"
+            },
+            {
+              "accessor": "get",
+              "method": "System.Exception::get_HResult"
+            }
+          ]
+        }
+      ]
+    },
+    "System.InvalidOperationException": {
+      "kind": "class",
+      "baseType": "System.SystemException",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            },
+            {
+              "type": "class System.Exception",
+              "name": "innerException"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        }
+      ]
+    },
+    "System.NotSupportedException": {
+      "kind": "class",
+      "baseType": "System.SystemException",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            },
+            {
+              "type": "class System.Exception",
+              "name": "innerException"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        }
+      ]
+    },
+    "System.Runtime.Serialization.SerializationException": {
+      "kind": "class",
+      "baseType": "System.SystemException",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            },
+            {
+              "type": "class System.Exception",
+              "name": "innerException"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        }
+      ]
+    },
+    "System.SystemException": {
+      "kind": "class",
+      "baseType": "System.Exception",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            },
+            {
+              "type": "class System.Exception",
+              "name": "innerException"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        }
+      ]
+    }
+  }
+}
