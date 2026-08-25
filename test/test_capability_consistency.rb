@@ -68,22 +68,21 @@ class CapabilityConsistencyTest < Minitest::Test
   # ------------------------------------------------------- the three resolved blockers, by name
 
   def test_the_retired_mapping_blockers_are_gone_and_their_verified_successors_stand_alone
-    %w[event-projection bcl-projection].each do |subject|
+    %w[event-projection bcl-projection readonly-collection].each do |subject|
       assert_nil row(REGISTRY, "mapping.#{subject}"), "mapping.#{subject} was resolved and must not stand"
       successor = row(REGISTRY, "managed.#{subject}")
       refute_nil successor, subject
       assert_equal "VERIFIED_MANAGED", successor.fetch("category"), subject
     end
     # The category itself is not retired -- the checker classifies it as unresolved precisely so a
-    # real undecided mapping can be recorded. What must not come back is either blocker named
-    # above. Two decisions legitimately stand, both opened by the native/CNA expansion sequence:
-    # ReadOnlyCollection`1, which four XNA types name, which mapping-rules.json already lists under
-    # bclProjection.notYetDesigned and which the pinned inventory admits no mscorlib to measure;
-    # and NotSupportedException, which six TouchCollection identities throw.
+    # real undecided mapping can be recorded. What must not come back is any blocker named above.
+    # Foundation 29 retired mapping.readonly-collection: Foundation 28 admitted an mscorlib to
+    # measure the type against, and the measurement settled the design. One decision legitimately
+    # stands, NotSupportedException, which six TouchCollection identities throw.
     undecided = rows(REGISTRY).select do |capability|
       capability.fetch("category") == "UNRESOLVED_MAPPING_DECISION"
     end
-    assert_equal %w[mapping.not-supported-exception mapping.readonly-collection],
+    assert_equal %w[mapping.not-supported-exception],
                  undecided.map { |capability| capability.fetch("id") }.sort
   end
 
@@ -125,8 +124,8 @@ class CapabilityConsistencyTest < Minitest::Test
     end
     # UNRESOLVED_MAPPING_DECISION may appear, but only for a decision that is genuinely open.
     undecided = document.lines.grep(/UNRESOLVED_MAPPING_DECISION/)
-    assert_equal 2, undecided.length
-    assert_equal %w[mapping.not-supported-exception mapping.readonly-collection],
+    assert_equal 1, undecided.length
+    assert_equal %w[mapping.not-supported-exception],
                  undecided.map { |line| line[/`([^`]+)`/, 1] }.sort
     # The one row that legitimately still reports an unavailable input is the corpus source.
     unavailable = document.lines.grep(/not available on this host/)

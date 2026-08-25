@@ -17,6 +17,30 @@ module CNA
     class Attribute
     end
 
+    # The Ruby projection of System.Collections.ObjectModel.ReadOnlyCollection`1: a live view over
+    # the backing Array it is constructed with, never a frozen copy, with no mutating member.
+    class ReadOnlyCollection
+      include ::Enumerable[untyped]
+
+      CLR_IDENTITY: String
+      CLR_SURFACE: Array[Symbol]
+      CLR_PROTECTED_SURFACE: Array[Symbol]
+      LANGUAGE_SUPPORT: Array[Symbol]
+
+      def self.projects_elements: (*String) -> Array[String]
+      def self.clr_element_types: () -> Array[String]?
+
+      def initialize: (Array[untyped] list) -> void
+      def Count: () -> Integer
+      def []: (Integer index) -> untyped
+      def Contains: (untyped value) -> bool
+      def IndexOf: (untyped value) -> Integer
+      def CopyTo: (Array[untyped] array, Integer array_index) -> nil
+      def GetEnumerator: () -> Enumerator[untyped, untyped]
+      def each: () { (untyped) -> void } -> ReadOnlyCollection
+              | () -> Enumerator[untyped, untyped]
+    end
+
     # The measured register of non-XNA CLR identities this binding projects.
     module BclProjection
       TYPES: Hash[String, String]
@@ -24,6 +48,9 @@ module CNA
       def self?.ruby_type: (String?) -> String?
       def self?.exception_base?: (String?) -> bool
       def self?.identities: () -> Array[String]
+      def self?.definition: (String?) -> String
+      def self?.element_types: (String?) -> Array[String]
+      def self?.generic_projection?: (String?) -> bool
     end
 
     # Shared construction for the projected XNA exception types.

@@ -31,10 +31,21 @@ module CNA
       # the base preserves is the CLR base identity, which the API verifier measures. None of the
       # XNA attribute types declares a member inherited from System.Attribute, so the base declares
       # none either.
+      # System.Collections.ObjectModel.ReadOnlyCollection`1 projects to
+      # CNA::Runtime::ReadOnlyCollection, a dedicated runtime support class rather than an Array, a
+      # frozen Array, Enumerable alone, a Set or an opaque Object. Foundation 28 admitted a
+      # Microsoft mscorlib as a separate BCL authority precisely so this one could be measured
+      # instead of guessed: the CLR type is a live *view* over the IList<T> it is constructed with,
+      # it validates nothing of its own, and it refuses mutation by implementing every mutating
+      # interface member as an unconditional throw. A frozen Ruby Array would get the view semantics
+      # wrong; a plain Array would get the refusal wrong. Ruby has class inheritance, so an XNA
+      # class whose actual BCL base is this generic inherits from the support class and the CLR base
+      # relationship survives.
       TYPES = {
         "System.EventArgs" => "CNA::Runtime::EventArgs",
         "System.TimeSpan" => "Float",
-        "System.Attribute" => "CNA::Runtime::Attribute"
+        "System.Attribute" => "CNA::Runtime::Attribute",
+        "System.Collections.ObjectModel.ReadOnlyCollection`1" => "CNA::Runtime::ReadOnlyCollection"
       }.freeze
 
       # CLR exception base identity => the Ruby exception class an XNA type deriving from it takes
@@ -58,7 +69,43 @@ module CNA
 
       module_function
 
-      def ruby_type(clr_identity) = TYPES[clr_identity] || EXCEPTION_BASES[clr_identity]
+      def ruby_type(clr_identity)
+        TYPES[clr_identity] || EXCEPTION_BASES[clr_identity] ||
+          TYPES[definition(clr_identity)] || EXCEPTION_BASES[definition(clr_identity)]
+      end
+
+      # A constructed generic hides its definition behind its type arguments: the reference contract
+      # spells the base of ModelBoneCollection as `ReadOnlyCollection`1[...ModelBone]`, and what the
+      # register maps is the definition. Reducing to it here is what lets one register entry answer
+      # for every closed form, and it is the same reduction the dependency frontier applies.
+      def definition(clr_identity) = clr_identity.to_s.sub(/\[.*\]\z/, "")
+
+      # The CLR type arguments of a constructed generic, split at the top level so a nested
+      # constructed argument stays whole.
+      def element_types(clr_identity)
+        arguments = clr_identity.to_s[/\A[^\[]*\[(.*)\]\z/m, 1]
+        return [] if arguments.nil?
+
+        parts = []
+        depth = 0
+        buffer = +""
+        arguments.each_char do |char|
+          depth += 1 if char == "["
+          depth -= 1 if char == "]"
+          if char == "," && depth.zero?
+            parts << buffer
+            buffer = +""
+          else
+            buffer << char
+          end
+        end
+        parts << buffer
+        parts.map(&:strip).reject(&:empty?)
+      end
+
+      # A projected identity whose Ruby class carries its CLR type arguments as metadata, because a
+      # Ruby class is not statically generic.
+      def generic_projection?(clr_identity) = TYPES.key?(definition(clr_identity)) && definition(clr_identity).include?("`")
 
       def exception_base?(clr_identity) = EXCEPTION_BASES.key?(clr_identity)
 

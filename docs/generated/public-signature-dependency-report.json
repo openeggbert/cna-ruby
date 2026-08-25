@@ -41,6 +41,7 @@
     "System.Collections.Generic.ICollection`1",
     "System.Collections.Generic.IEnumerable`1",
     "System.Collections.Generic.IEnumerator`1",
+    "System.Collections.ObjectModel.ReadOnlyCollection`1",
     "System.Enum",
     "System.EventArgs",
     "System.EventHandler`1",
@@ -67,7 +68,8 @@
     "types": {
       "System.EventArgs": "CNA::Runtime::EventArgs",
       "System.TimeSpan": "Float",
-      "System.Attribute": "CNA::Runtime::Attribute"
+      "System.Attribute": "CNA::Runtime::Attribute",
+      "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection"
     },
     "exceptionBases": {
       "System.Exception": "StandardError",
@@ -76,11 +78,11 @@
   },
   "blockerSummary": {
     "BCL_PROJECTION": 7,
-    "BCL_PROJECTION+NATIVE_RUNTIME": 5,
-    "BCL_PROJECTION+RUNTIME_DATA": 2,
-    "NATIVE_RUNTIME": 2,
+    "BCL_PROJECTION+NATIVE_RUNTIME": 4,
+    "BCL_PROJECTION+RUNTIME_DATA": 1,
+    "NATIVE_RUNTIME": 3,
     "NATIVE_RUNTIME+RUNTIME_DATA": 1,
-    "RUNTIME_DATA": 3
+    "RUNTIME_DATA": 4
   },
   "consumableCandidates": [
 
@@ -207,12 +209,10 @@
       ],
       "dependencyComplete": true,
       "blockers": [
-        "BCL_PROJECTION",
         "RUNTIME_DATA"
       ],
       "unmappedBclTypes": [
-        "System.Collections.ObjectModel.ReadOnlyCollection`1",
-        "System.Collections.ObjectModel.ReadOnlyCollection`1[System.Single]"
+
       ],
       "eventMembers": [
 
@@ -425,8 +425,7 @@
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
-        "System.Collections.ObjectModel.ReadOnlyCollection`1",
-        "System.Collections.ObjectModel.ReadOnlyCollection`1[System.Char]",
+        "System.Char",
         "System.Nullable`1[System.Char]",
         "System.Text.StringBuilder"
       ],
@@ -500,7 +499,6 @@
         "BCL_PROJECTION"
       ],
       "unmappedBclTypes": [
-        "System.Attribute[]",
         "System.ComponentModel.ExpandableObjectConverter",
         "System.ComponentModel.ITypeDescriptorContext",
         "System.ComponentModel.PropertyDescriptorCollection",
@@ -690,8 +688,7 @@
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
-        "System.Byte[]",
-        "System.Collections.ObjectModel.ReadOnlyCollection`1"
+        "System.Byte[]"
       ],
       "eventMembers": [
         "BufferReady"
@@ -775,11 +772,10 @@
       ],
       "dependencyComplete": true,
       "blockers": [
-        "BCL_PROJECTION",
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
-        "System.Collections.ObjectModel.ReadOnlyCollection`1"
+
       ],
       "eventMembers": [
 

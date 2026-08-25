@@ -25,7 +25,8 @@
   "collections": {
     "genericICollection": "preserve the CLR interface identity and project its selected typed members directly on the Ruby collection class",
     "genericIEnumerable": "preserve the CLR interface identity; GetEnumerator returns Ruby Enumerator without a fake System namespace",
-    "enumerationMutation": "fail-fast when the backing collection version changes"
+    "enumerationMutation": "fail-fast when the backing collection version changes",
+    "indexErrors": "a collection index outside 0...Count raises Ruby IndexError, the identity Array#fetch raises, and it is out of range rather than counting from the end; a CopyTo whose destination cannot hold the source raises ArgumentError. CurveKeyCollection established both and every projected collection follows them, so one CLR operation keeps one Ruby behaviour across the binding. This is narrower than the thrownExceptions table's ArgumentOutOfRangeException -> RangeError, which covers a CLR exception a projected member's own IL constructs and rethrows; a collection indexer's out-of-range condition belongs to the backing list, not to the member"
   },
   "staticMembers": "class methods; struct-valued members return fresh objects",
   "primitiveTypes": {
@@ -67,13 +68,14 @@
   "expectedTypeFormula": "reference public types",
   "expectedMemberFormula": "reference public members minus enum value__ metadata storage",
   "bclProjection": {
-    "register": "CNA::Runtime::BclProjection; measured, not aspirational \u2014 the API verifier resolves every entry and the dependency frontier consumes the same register",
+    "register": "CNA::Runtime::BclProjection; measured, not aspirational — the API verifier resolves every entry and the dependency frontier consumes the same register",
     "namespace": "a projected BCL identity lives in the CNA runtime; no fabricated Ruby ::System namespace is created",
     "scope": "only a CLR identity the selected XNA surface actually names, and whose Ruby projection can be decided without guessing, is admitted",
     "types": {
       "System.EventArgs": "CNA::Runtime::EventArgs",
       "System.TimeSpan": "Float",
-      "System.Attribute": "CNA::Runtime::Attribute"
+      "System.Attribute": "CNA::Runtime::Attribute",
+      "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection"
     },
     "exceptions": {
       "principle": "an XNA exception must behave as a Ruby exception rather than an ordinary Object subclass",
@@ -90,7 +92,6 @@
       "System.IO.Stream",
       "System.Text.StringBuilder",
       "System.Runtime.Serialization.SerializationInfo",
-      "System.Collections.ObjectModel.ReadOnlyCollection`1",
       "System.Collections.Generic.Dictionary`2"
     ],
     "thrownExceptions": {
@@ -99,7 +100,11 @@
       "System.ArgumentOutOfRangeException": "RangeError, the same class this binding already raises for a value outside its allowed range",
       "System.ArgumentException": "ArgumentError",
       "System.IndexOutOfRangeException": "IndexError"
-    }
+    },
+    "authority": "a BCL identity with a real member surface is measured from the pinned Microsoft .NET Framework mscorlib admitted by tools/api_compat/reference/BCL_PROVENANCE.md, never recalled. The measured surface and its derived behavioural facts live in docs/generated/bcl-inventory.json",
+    "genericProjection": "a projected CLR generic definition answers for every constructed form of itself: ReadOnlyCollection`1[X] resolves to the same Ruby class as ReadOnlyCollection`1. A Ruby class is not statically generic, so the CLR type arguments cannot live in the superclass expression and are carried as class metadata instead, declared with projects_elements and measured by the API verifier under GENERIC_MAPPING_MISMATCH",
+    "readOnlyCollection": "System.Collections.ObjectModel.ReadOnlyCollection`1 projects to the dedicated support class CNA::Runtime::ReadOnlyCollection, never to Array, a frozen Array, Enumerable alone, Set or an opaque Object. The mscorlib IL settles why: the CLR constructor stores the IList<T> reference and every public read member forwards one call to it, so the wrapper is a live view and a frozen copy would be a different type; the six read members validate nothing of their own; and read-only is a property of the interface, expressed by twelve explicit interface implementations whose whole body throws NotSupportedException unconditionally, which in Ruby is projected as the absence of any mutating member. An XNA class whose CLR base is this generic inherits from the support class, because Ruby has class inheritance and flattening the inherited surface into unrelated methods would lose the CLR base relationship",
+    "languageSupport": "a support class may carry Ruby-idiomatic identities beside the CLR ones, and they are not XNA identities. CNA::Runtime::ReadOnlyCollection declares each, the single Ruby identity that carries CLR GetEnumerator, and includes Enumerable, every method of which Ruby derives from each alone. The two sets are separable by construction: a CLR identity is PascalCase or an operator, language support is not"
   },
   "constructorFreeClasses": "a CLR class whose only constructor is internal projects to a Ruby class with `new` made private, as GraphicsResource and Texture already do; its public non-constructibility is part of the contract and the internal construction path stays reachable to a future producer through __send__. No producer is fabricated, and no public Ruby constructor is created that XNA does not expose."
 }

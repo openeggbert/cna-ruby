@@ -15,7 +15,7 @@
   "EVENT_IDENTITIES": 4,
   "EVENT_OWNER_TYPES": 2,
   "EVENT_SUPPORT_TYPE": "CNA::Runtime::Event",
-  "BCL_PROJECTED_IDENTITIES": 5,
+  "BCL_PROJECTED_IDENTITIES": 6,
   "BCL_EXCEPTION_BASES": 2,
   "MISSING_TYPE": 122,
   "MISSING_MEMBER": 132,
@@ -50,7 +50,8 @@
     "types": {
       "System.EventArgs": "CNA::Runtime::EventArgs",
       "System.TimeSpan": "Float",
-      "System.Attribute": "CNA::Runtime::Attribute"
+      "System.Attribute": "CNA::Runtime::Attribute",
+      "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection"
     },
     "exceptionBases": {
       "System.Exception": "StandardError",

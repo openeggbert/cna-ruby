@@ -23,34 +23,33 @@ rather than missing input. Native reachability is measured from that IL:
 | --- | --- | --- | --- |
 | `Microsoft.Xna.Framework.Audio.SoundEffectInstance` | class | 16 | unmapped BCL: System.IDisposable; IL to derive: Finalize, Dispose, Play, Stop, Pause, Resume |
 | `Microsoft.Xna.Framework.Content.ContentLoadException` | class | 4 | unmapped BCL: System.Runtime.Serialization.SerializationInfo, System.Runtime.Serialization.StreamingContext; IL to derive: .ctor |
-| `Microsoft.Xna.Framework.Design.MathTypeConverter` | class | 8 | unmapped BCL: System.Attribute[], System.ComponentModel.ExpandableObjectConverter, System.ComponentModel.ITypeDescriptorContext, System.ComponentModel.PropertyDescriptorCollection, System.Type; IL to derive: .ctor, CanConvertFrom, CanConvertTo, GetCreateInstanceSupported, GetPropertiesSupported, GetProperties |
+| `Microsoft.Xna.Framework.Design.MathTypeConverter` | class | 8 | unmapped BCL: System.ComponentModel.ExpandableObjectConverter, System.ComponentModel.ITypeDescriptorContext, System.ComponentModel.PropertyDescriptorCollection, System.Type; IL to derive: .ctor, CanConvertFrom, CanConvertTo, GetCreateInstanceSupported, GetPropertiesSupported, GetProperties |
 | `Microsoft.Xna.Framework.GameServiceContainer` | class | 4 | unmapped BCL: System.IServiceProvider, System.Type; IL to derive: .ctor, AddService, RemoveService, GetService |
 | `Microsoft.Xna.Framework.LaunchParameters` | class | 1 | unmapped BCL: System.Collections.Generic.Dictionary`2, System.Collections.Generic.Dictionary`2[System.String,System.String]; IL to derive: .ctor |
 | `Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException` | class | 4 | unmapped BCL: System.Runtime.Serialization.SerializationInfo, System.Runtime.Serialization.StreamingContext; IL to derive: .ctor |
 | `Microsoft.Xna.Framework.TitleContainer` | class | 1 | unmapped BCL: System.IO.Stream; IL to derive: OpenStream |
 
-## BCL_PROJECTION + NATIVE_RUNTIME (5)
+## BCL_PROJECTION + NATIVE_RUNTIME (4)
 
 | Type | Kind | Ruby identities | Detail |
 | --- | --- | --- | --- |
 | `Microsoft.Xna.Framework.Audio.Cue` | class | 19 | events: Disposing; unmapped BCL: System.IDisposable; native: Dispose, Finalize, GetVariable, Pause; IL to derive: Play, Pause, Resume, Stop, GetVariable, SetVariable |
-| `Microsoft.Xna.Framework.Audio.Microphone` | class | 15 | events: BufferReady; unmapped BCL: System.Byte[], System.Collections.ObjectModel.ReadOnlyCollection`1; native: .cctor; IL to derive: Finalize, GetSampleSizeInBytes, GetSampleDuration, Start, Stop, GetData |
+| `Microsoft.Xna.Framework.Audio.Microphone` | class | 15 | events: BufferReady; unmapped BCL: System.Byte[]; native: .cctor; IL to derive: Finalize, GetSampleSizeInBytes, GetSampleDuration, Start, Stop, GetData |
 | `Microsoft.Xna.Framework.Content.ContentManager` | class | 10 | unmapped BCL: !!0, System.Action`1, System.Action`1[System.IDisposable], System.IDisposable, System.IO.Stream, System.IServiceProvider; native: ReadAsset<T>; IL to derive: .ctor, Dispose, Unload, Load, ReadAsset, OpenStream |
-| `Microsoft.Xna.Framework.Graphics.GraphicsAdapter` | class | 18 | unmapped BCL: System.Collections.ObjectModel.ReadOnlyCollection`1; native: .cctor, .ctor, InitializeAdapterList, IsProfileSupported; IL to derive: QueryBackBufferFormat, QueryRenderTargetFormat, IsProfileSupported |
-| `Microsoft.Xna.Framework.Graphics.SpriteFont` | class | 6 | unmapped BCL: System.Collections.ObjectModel.ReadOnlyCollection`1, System.Collections.ObjectModel.ReadOnlyCollection`1[System.Char], System.Nullable`1[System.Char], System.Text.StringBuilder; native: InternalDraw; IL to derive: MeasureString |
+| `Microsoft.Xna.Framework.Graphics.SpriteFont` | class | 6 | unmapped BCL: System.Char, System.Nullable`1[System.Char], System.Text.StringBuilder; native: InternalDraw; IL to derive: MeasureString |
 
-## BCL_PROJECTION + RUNTIME_DATA (2)
+## BCL_PROJECTION + RUNTIME_DATA (1)
 
 | Type | Kind | Ruby identities | Detail |
 | --- | --- | --- | --- |
 | `Microsoft.Xna.Framework.Media.MediaSource` | class | 4 | unmapped BCL: System.Collections.Generic.IList`1; GetAvailableMediaSources enumerates the host media sources; no media stack has been queried; IL to derive: ToString, GetAvailableMediaSources |
-| `Microsoft.Xna.Framework.Media.VisualizationData` | class | 3 | unmapped BCL: System.Collections.ObjectModel.ReadOnlyCollection`1, System.Collections.ObjectModel.ReadOnlyCollection`1[System.Single]; filled by MediaPlayer.GetVisualizationData from live playback; IL to derive: .ctor |
 
-## NATIVE_RUNTIME (2)
+## NATIVE_RUNTIME (3)
 
 | Type | Kind | Ruby identities | Detail |
 | --- | --- | --- | --- |
 | `Microsoft.Xna.Framework.Graphics.EffectAnnotation` | class | 14 | native: .ctor, GetValueBoolean, GetValueInt32, GetValueMatrix; IL to derive: GetValueBoolean, GetValueInt32, GetValueSingle, GetValueVector2, GetValueVector3, GetValueVector4 |
+| `Microsoft.Xna.Framework.Graphics.GraphicsAdapter` | class | 18 | native: .cctor, .ctor, InitializeAdapterList, IsProfileSupported; IL to derive: QueryBackBufferFormat, QueryRenderTargetFormat, IsProfileSupported |
 | `Microsoft.Xna.Framework.Graphics.TextureCollection` | class | 1 | native: ResetState, get_Item, set_Item |
 
 ## NATIVE_RUNTIME + RUNTIME_DATA (1)
@@ -59,11 +58,12 @@ rather than missing input. Native reachability is measured from that IL:
 | --- | --- | --- | --- |
 | `Microsoft.Xna.Framework.Audio.AudioCategory` | struct | 11 | native: .ctor, Pause, Resume, SetVolume; an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have; IL to derive: SetVolume, Pause, Resume, Stop, ToString, Equals |
 
-## RUNTIME_DATA (3)
+## RUNTIME_DATA (4)
 
 | Type | Kind | Ruby identities | Detail |
 | --- | --- | --- | --- |
 | `Microsoft.Xna.Framework.Audio.RendererDetail` | struct | 7 | values come from XACT audio renderer enumeration; no audio engine exists in this binding and no renderer has been enumerated; IL to derive: GetHashCode, ToString, op_Equality, op_Inequality, Equals |
 | `Microsoft.Xna.Framework.GameWindow` | class | 20 | events: ScreenDeviceNameChanged, ClientSizeChanged, OrientationChanged; an abstract window whose concrete implementation is the platform window behind Game; projecting it would require the deferred Game/window runtime; IL to derive: BeginScreenDeviceChange, EndScreenDeviceChange, SetTitle, SetSupportedOrientations, OnActivated, OnDeactivated |
 | `Microsoft.Xna.Framework.Media.Video` | class | 5 | its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies; no producer exists |
+| `Microsoft.Xna.Framework.Media.VisualizationData` | class | 3 | filled by MediaPlayer.GetVisualizationData from live playback; IL to derive: .ctor |
 

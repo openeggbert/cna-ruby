@@ -79,9 +79,18 @@ class DependencyFrontierTest < Minitest::Test
   # definition whenever there is one.
   def bcl_identities(signature)
     stripped = signature.sub(/&\z/, "")
+    outer = stripped.split("[", 2).first
+    # Foundation 29: once the register projects a generic definition, a constructed form of it is
+    # no longer opaque -- it requires the definition's projection plus its type arguments'. A
+    # generic the register does not project stays opaque, because then the whole constructed form
+    # really is what is missing.
+    if outer != stripped && CNA::Runtime::BclProjection::TYPES.key?(outer)
+      return ([outer] + CNA::Runtime::BclProjection.element_types(stripped)
+                                                   .flat_map { |argument| bcl_identities(argument) }).uniq
+    end
+
     identities = []
     identities << stripped unless BY_NAME.keys.any? { |name| stripped.include?(name) }
-    outer = stripped.split("[", 2).first
     identities << outer if outer != stripped && !BY_NAME.key?(outer)
     identities.uniq
   end

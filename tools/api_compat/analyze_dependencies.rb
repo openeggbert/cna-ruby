@@ -115,9 +115,22 @@ end
 # definition a complete type already projects counts as mapped.
 bcl_identities = lambda do |signature|
   stripped = signature.sub(/&\z/, "")
+  outer = stripped.split("[", 2).first
+  # Once the register projects a generic *definition*, a constructed form of it is no longer
+  # opaque: what `ReadOnlyCollection`1[System.Single]` requires is the definition's projection plus
+  # a projection of Single, and reporting the whole constructed string as one unmapped identity
+  # hides that. This is the Foundation 26 blind spot seen from the other side — there a constructed
+  # generic hid its definition behind an XNA type argument, here it hides its already-mapped
+  # definition behind a BCL one. A generic the register does *not* project stays opaque, because
+  # then the whole constructed form really is what is missing.
+  if outer != stripped && CNA::Runtime::BclProjection::TYPES.key?(outer)
+    return ([outer] + CNA::Runtime::BclProjection.element_types(stripped).flat_map { |argument|
+      bcl_identities.call(argument)
+    }).uniq
+  end
+
   identities = []
   identities << stripped unless reference_by_name.keys.any? { |name| stripped.include?(name) }
-  outer = stripped.split("[", 2).first
   identities << outer if outer != stripped && !reference_by_name.key?(outer)
   identities.uniq
 end

@@ -282,12 +282,37 @@ module CNAApiCompat
                    CNA::Runtime::EnumValue
                  elsif projected
                    # A non-XNA CLR base the binding projects: an XNA exception takes a Ruby
-                   # exception superclass rather than Object.
+                   # exception superclass rather than Object, and an XNA collection whose CLR base
+                   # is a projected BCL generic takes the runtime support class rather than Array.
                    resolve_ruby_type(projected)
                  else
                    Object
                  end
-      result.add("BASE_MAPPING_MISMATCH", "runtime #{name}: expected #{expected}, got #{object.superclass}", type: name) unless object.superclass == expected
+      unless object.superclass == expected
+        result.add("BASE_MAPPING_MISMATCH", "runtime #{name}: expected #{expected}, got #{object.superclass}", type: name)
+      end
+      verify_bcl_generic_base(name, base, object, result)
+    end
+
+    # A CLR class whose base is a registered BCL *generic* projection has to keep two things, not
+    # one. The Ruby superclass must be the registered support class -- which the check above already
+    # settles, so an Array substitution, an Object fallback or an invented ::System constant all
+    # fail there. And the CLR type argument must survive, which the superclass expression cannot
+    # carry because a Ruby class is not statically generic. The support class records it as
+    # metadata and this is where that metadata is measured against the reference contract.
+    def verify_bcl_generic_base(name, base, object, result)
+      return unless base && CNA::Runtime::BclProjection.generic_projection?(base)
+
+      expected = CNA::Runtime::BclProjection.element_types(base)
+      actual = object.respond_to?(:clr_element_types) ? object.clr_element_types : nil
+      return if actual == expected
+
+      result.add(
+        "GENERIC_MAPPING_MISMATCH",
+        "runtime #{name}: #{CNA::Runtime::BclProjection.definition(base)} element projection " \
+        "expected #{expected.inspect}, got #{actual.inspect}",
+        type: name
+      )
     end
 
     def verify_runtime_interfaces(name, type, object, target_types, result)

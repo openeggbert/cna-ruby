@@ -41,12 +41,17 @@ class BclProjectionTest < Minitest::Test
   # ------------------------------------------------------------------------------- the register
 
   def test_the_register_is_narrow_and_every_entry_resolves
+    # Foundation 29 added ReadOnlyCollection`1, the first entry with a real member surface, which
+    # is why Foundation 28 had to admit a BCL authority to measure it against.
     assert_equal({"System.EventArgs" => "CNA::Runtime::EventArgs", "System.TimeSpan" => "Float",
-                  "System.Attribute" => "CNA::Runtime::Attribute"}, B::TYPES)
+                  "System.Attribute" => "CNA::Runtime::Attribute",
+                  "System.Collections.ObjectModel.ReadOnlyCollection`1" => "CNA::Runtime::ReadOnlyCollection"},
+                 B::TYPES)
     assert_equal({"System.Exception" => "StandardError",
                   "System.Runtime.InteropServices.ExternalException" => "StandardError"},
                  B::EXCEPTION_BASES)
-    assert_equal ["System.Attribute", "System.EventArgs", "System.Exception",
+    assert_equal ["System.Attribute", "System.Collections.ObjectModel.ReadOnlyCollection`1",
+                  "System.EventArgs", "System.Exception",
                   "System.Runtime.InteropServices.ExternalException", "System.TimeSpan"], B.identities
 
     B::TYPES.merge(B::EXCEPTION_BASES).each_value do |path|
@@ -57,7 +62,7 @@ class BclProjectionTest < Minitest::Test
     # Deliberately not designed yet.
     %w[System.Type System.IServiceProvider System.IO.Stream
        System.Text.StringBuilder System.Runtime.Serialization.SerializationInfo
-       System.Collections.ObjectModel.ReadOnlyCollection`1 System.Collections.Generic.Dictionary`2]
+       System.Collections.Generic.Dictionary`2]
       .each { |absent| refute_includes B.identities, absent }
   end
 
@@ -76,7 +81,7 @@ class BclProjectionTest < Minitest::Test
   end
 
   def test_the_strict_report_measures_the_register
-    assert_equal 5, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal 6, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal 2, STRICT.fetch("BCL_EXCEPTION_BASES")
     assert_equal({"types" => B::TYPES, "exceptionBases" => B::EXCEPTION_BASES},
                  STRICT.fetch("bclProjection"))
