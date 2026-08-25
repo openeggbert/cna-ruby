@@ -84,6 +84,10 @@ module Microsoft
         def Run: () -> nil
         def RunOneFrame: () -> nil
         def Exit: () -> nil
+        # Both forward to the timing loop CNA owns. SuppressDraw before the host exists is a
+        # pending request delivered at creation; ResetElapsedTime is then genuinely a no-op.
+        def SuppressDraw: () -> nil
+        def ResetElapsedTime: () -> nil
         def Dispose: () -> nil
         # Both answer the same object for the life of the Game, and neither needs a native host.
         def Components: () -> GameComponentCollection

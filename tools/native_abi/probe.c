@@ -28,6 +28,8 @@ CHECK_FN(cna_game_get_target_elapsed_time_ticks, CNA_Result, (CNA_Handle, int64_
 CHECK_FN(cna_game_set_target_elapsed_time_ticks, CNA_Result, (CNA_Handle, int64_t));
 CHECK_FN(cna_game_get_inactive_sleep_time_ticks, CNA_Result, (CNA_Handle, int64_t*));
 CHECK_FN(cna_game_set_inactive_sleep_time_ticks, CNA_Result, (CNA_Handle, int64_t));
+CHECK_FN(cna_game_suppress_draw, CNA_Result, (CNA_Handle));
+CHECK_FN(cna_game_reset_elapsed_time, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_framework_dispatcher_update, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_graphics_device_manager_create, CNA_Result, (CNA_Handle, CNA_GraphicsDeviceManagerHandle*));
 CHECK_FN(cna_graphics_device_manager_get_graphics_device, CNA_Result, (CNA_GraphicsDeviceManagerHandle, CNA_Handle*));
@@ -89,6 +91,8 @@ int main(void) {
     SIGNATURE(cna_game_set_target_elapsed_time_ticks, "CNA_Result|CNA_Handle,int64_t");
     SIGNATURE(cna_game_get_inactive_sleep_time_ticks, "CNA_Result|CNA_Handle,int64_t*");
     SIGNATURE(cna_game_set_inactive_sleep_time_ticks, "CNA_Result|CNA_Handle,int64_t");
+    SIGNATURE(cna_game_suppress_draw, "CNA_Result|CNA_Handle");
+    SIGNATURE(cna_game_reset_elapsed_time, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_framework_dispatcher_update, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_graphics_device_manager_create, "CNA_Result|CNA_Handle,CNA_GraphicsDeviceManagerHandle*");
     SIGNATURE(cna_graphics_device_manager_get_graphics_device, "CNA_Result|CNA_GraphicsDeviceManagerHandle,CNA_Handle*");

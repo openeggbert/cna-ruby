@@ -270,7 +270,7 @@ class DisposableCollapseTest < Minitest::Test
     end
 
     # No native symbol was added for any of this.
-    assert_equal 49, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 51, CNA::Native::Manifest::FUNCTIONS.length
     assert_equal 63, CNA::Native::Manifest::CONSTANTS.length
   end
 
@@ -278,7 +278,7 @@ class DisposableCollapseTest < Minitest::Test
   # runtime type whose Dispose(Boolean) is still missing, and mapping the interface did not move it.
   def test_it_completes_no_type_and_moves_no_missing_member
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
-    assert_equal 119, STRICT.fetch("MISSING_MEMBER")
+    assert_equal 117, STRICT.fetch("MISSING_MEMBER")
     assert_equal 136, STRICT.fetch("COMPLETE_TYPES"),
                  "Foundation 38 added GameComponent and 40 added IGraphicsDeviceService"
     assert(STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")

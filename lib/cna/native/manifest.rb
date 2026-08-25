@@ -100,6 +100,11 @@ module CNA
         signature("cna_game_set_target_elapsed_time_ticks", T[:result], [T[:handle], T[:i64]], ownership: "borrows Game; rejects a non-positive step"),
         signature("cna_game_get_inactive_sleep_time_ticks", T[:result], [T[:handle], pointer("int64_t")], ownership: "borrows Game; caller output"),
         signature("cna_game_set_inactive_sleep_time_ticks", T[:result], [T[:handle], T[:i64]], ownership: "borrows Game; rejects a negative duration"),
+        # Game's two loop-state operations. XNA's SuppressDraw is eight bytes -- `suppressDraw = true`
+        # -- and ResetElapsedTime is four field writes; every field either one touches belongs to the
+        # timing loop, which CNA owns here, so both forward rather than keeping a shadow.
+        signature("cna_game_suppress_draw", T[:result], [T[:handle]], ownership: "borrows Game; skips the next frame's draw", result_lifetime: "no result value"),
+        signature("cna_game_reset_elapsed_time", T[:result], [T[:handle]], ownership: "borrows Game; forgets accumulated time", result_lifetime: "no result value"),
         signature("cna_framework_dispatcher_update", T[:result], [T[:handle]], ownership: "borrows Game; pumps the canonical CNA framework dispatcher", result_lifetime: "no result value"),
         signature("cna_graphics_device_manager_create", T[:result], [T[:handle], pointer("CNA_GraphicsDeviceManagerHandle")], ownership: "returns OWNED manager"),
         signature("cna_graphics_device_manager_get_graphics_device", T[:result], [handle("CNA_GraphicsDeviceManagerHandle"), pointer("CNA_Handle")], ownership: "returns callback BORROWED device"),

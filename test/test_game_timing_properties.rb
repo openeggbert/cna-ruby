@@ -67,7 +67,7 @@ class GameTimingPropertiesTest < Minitest::Test
       assert_includes selected, name
       refute(remainder.any? { |entry| entry.include?("::#{name} ") }, name)
     end
-    assert_equal 119, STRICT.fetch("MISSING_MEMBER")
+    assert_equal 117, STRICT.fetch("MISSING_MEMBER")
     assert_equal 0, STRICT.fetch("UNEXPECTED_MEMBER")
     # Unrelated and pre-existing: GraphicsDevice::Viewport, whose setter is deliberately excluded.
     assert_equal ["Microsoft.Xna.Framework.Graphics.GraphicsDevice::Viewport"],
@@ -205,8 +205,8 @@ class GameTimingPropertiesTest < Minitest::Test
   def test_the_remaining_game_members_are_untouched
     remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
                       .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_equal %w[Content Dispose Finalize IsActive LaunchParameters ResetElapsedTime
-                    ShowMissingRequirementMessage SuppressDraw Tick Window].sort, remainder.sort
+    assert_equal %w[Content Dispose Finalize IsActive LaunchParameters
+                    ShowMissingRequirementMessage Tick Window].sort, remainder.sort
   end
 
   private
@@ -227,5 +227,96 @@ class GameTimingPropertiesTest < Minitest::Test
      ticks.call("cna_game_get_target_elapsed_time_ticks"),
      ticks.call("cna_game_get_inactive_sleep_time_ticks"),
      boolean.call("cna_game_get_is_mouse_visible")]
+  end
+end
+
+# Foundation 43 — the two loop-state operations.
+class GameLoopStateTest < Minitest::Test
+  F = Microsoft::Xna::Framework
+  ROOT = Pathname(__dir__).join("..").expand_path
+  STRICT = JSON.parse(ROOT.join("docs", "generated", "api-compat-report.json").read).freeze
+  REFERENCE = JSON.parse(
+    ROOT.join("tools", "api_compat", "reference", "xna40-windows-runtime-contract.json").read
+  ).fetch("types").to_h { |type| [type.fetch("name"), type] }.freeze
+
+  def test_both_are_public_parameterless_void_instance_methods
+    members = REFERENCE.fetch("Microsoft.Xna.Framework.Game").fetch("members")
+    %w[SuppressDraw ResetElapsedTime].each do |name|
+      member = members.find { |entry| entry.fetch("name") == name && entry.fetch("kind") == "method" }
+      refute_nil member, name
+      assert_equal "public", member.fetch("access"), name
+      assert_equal "System.Void", member.fetch("returnType"), name
+      assert_empty member.fetch("parameters"), name
+      assert_equal false, member.fetch("static"), name
+      assert_equal 0, F::Game.instance_method(name).arity, name
+    end
+    remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
+    %w[SuppressDraw ResetElapsedTime].each do |name|
+      refute(remainder.any? { |entry| entry.include?("::#{name} ") }, name)
+    end
+    assert_equal 117, STRICT.fetch("MISSING_MEMBER")
+  end
+
+  # Neither creates a host: ResetElapsedTime on a Game with no loop has no accumulated time to
+  # forget, and SuppressDraw remembers the request instead of forcing a host into existence.
+  def test_neither_creates_a_native_host
+    game = F::Game.new
+    begin
+      assert_nil game.SuppressDraw
+      assert_nil game.ResetElapsedTime
+      assert_nil game.instance_variable_get(:@host)
+      assert_equal true, game.instance_variable_get(:@suppress_draw_pending)
+    ensure
+      game.Dispose
+    end
+  end
+
+  # The pending request is delivered exactly once, when the host is created, and then cleared.
+  def test_a_pending_suppress_draw_is_delivered_at_host_creation_and_cleared
+    game = F::Game.new
+    begin
+      game.SuppressDraw
+      game.__send__(:ensure_host)
+      assert_equal false, game.instance_variable_get(:@suppress_draw_pending)
+    ensure
+      game.Dispose
+    end
+  end
+
+  # SuppressDraw before the first frame really does skip that frame's draw, and the loop consumes
+  # the request rather than staying suppressed.
+  def test_suppress_draw_skips_exactly_one_draw
+    klass = Class.new(F::Game) do
+      define_method(:initialize) { super(); @draws = 0; @updates = 0 }
+      define_method(:draws) { @draws }
+      define_method(:updates) { @updates }
+      define_method(:Update) { |t| super(t); @updates += 1 }
+      define_method(:Draw) { |t| super(t); @draws += 1 }
+    end
+    suppressed = klass.new
+    begin
+      suppressed.SuppressDraw
+      3.times { suppressed.RunOneFrame }
+    ensure
+      suppressed.Dispose
+    end
+    plain = klass.new
+    begin
+      3.times { plain.RunOneFrame }
+    ensure
+      plain.Dispose
+    end
+    assert_equal plain.updates, suppressed.updates, "an update is never skipped"
+    assert_equal plain.draws - 1, suppressed.draws, "exactly one draw is skipped"
+  end
+
+  def test_both_run_against_a_live_host_and_a_disposed_game_refuses
+    game = F::Game.new
+    game.RunOneFrame
+    assert_nil game.SuppressDraw
+    assert_nil game.ResetElapsedTime
+    game.Dispose
+    assert_raises(CNA::DisposedObjectError) { game.SuppressDraw }
+    assert_raises(CNA::DisposedObjectError) { game.ResetElapsedTime }
   end
 end

@@ -30017,6 +30017,32 @@
           "parameters": [
 
           ]
+        },
+        {
+          "kind": "method",
+          "name": "SuppressDraw",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ResetElapsedTime",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Game"

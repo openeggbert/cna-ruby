@@ -246,7 +246,7 @@ class TouchValueTypesTest < Minitest::Test
       .each { |name| refute TL.respond_to?(name), name.to_s }
     %i[GetCapabilities ReadGesture IsGestureAvailable GetState EnabledGestures]
       .each { |name| refute T::TouchCollection.respond_to?(name), name.to_s }
-    assert_equal 49, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 51, CNA::Native::Manifest::FUNCTIONS.length
     assert_equal 63, CNA::Native::Manifest::CONSTANTS.length
   end
 end

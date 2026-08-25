@@ -522,6 +522,12 @@
         },
         {
           "name": "IsMouseVisible"
+        },
+        {
+          "name": "SuppressDraw"
+        },
+        {
+          "name": "ResetElapsedTime"
         }
       ]
     },

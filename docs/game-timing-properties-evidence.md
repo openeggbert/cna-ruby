@@ -101,10 +101,44 @@ and no native binary built.
 Types, complete, partial, event counts and every other structural counter unchanged; the one
 `PROPERTY_MAPPING_MISMATCH` is still `GraphicsDevice::Viewport`, which is unrelated and pre-existing.
 
-## Game's remaining ten
+## Foundation 43 — `SuppressDraw` and `ResetElapsedTime`
 
-`Tick`, `SuppressDraw`, `ResetElapsedTime`, `Dispose(Boolean)`, `Finalize`,
-`ShowMissingRequirementMessage`, `LaunchParameters`, `Window`, `IsActive`, `Content`.
+Two more members, closed on the same principle from the opposite side. Where the four properties are
+managed state that CNA reads, these two are operations on state CNA **owns**, so they forward rather
+than shadow.
+
+`SuppressDraw()` is eight bytes — `suppressDraw = true` — and the field's only reader is `DrawFrame`,
+part of the timing loop. `ResetElapsedTime()` is four field writes (`forceElapsedTimeToZero = true`,
+`drawRunningSlowly = false`, and both `updatesSinceRunningSlowly` counters to `int.MaxValue`), every
+one of them belonging to the same accumulator. Keeping a Ruby shadow of either would be state nothing
+reads.
+
+Before a host exists the two differ, and the difference is the honest one:
+
+- `ResetElapsedTime` is a **genuine** no-op — there is no loop, so there is no accumulated time to
+  forget. It is not *made* into a no-op; it already is one.
+- `SuppressDraw` records a **pending request** and delivers it when the host is created, because the
+  frame XNA would have suppressed is the first one. It is a request rather than durable state: the
+  loop consumes it by skipping one draw, exactly as the CLR field is cleared after a frame. A test
+  runs three frames with and without it and asserts exactly one fewer draw and the same number of
+  updates.
+
+Two more symbols, `cna_game_suppress_draw` and `cna_game_reset_elapsed_time`, taking the ABI to
+**51 / 160 / 290 / 290 / 3 / 63**. Members 1784 → **1786**, `MISSING_MEMBER` 119 → **117**,
+`OVERLOAD_MAPPING_MISMATCH` 48 → **46**, diagnostics 283 → **279**.
+
+## Game's remaining eight
+
+`Tick`, `Dispose(Boolean)`, `Finalize`, `ShowMissingRequirementMessage`, `LaunchParameters`,
+`Window`, `IsActive`, `Content`.
+
+`Tick` is the next one with a canonical route and it was deliberately not taken here. It is 681
+bytes of accumulator in XNA — the whole fixed/variable timestep loop — and `cna_game_tick` is
+documented as "the canonical frame step `cna_game_run_one_frame` wraps; it **does not process host
+events**", and is refused from inside a lifecycle callback. So projecting it means adding a second
+public frame-step entry point whose semantics differ from `RunOneFrame` in a way a consumer must be
+told about, plus a re-entrancy contract this binding has no precedent for. That is a public
+architecture decision, not a mechanical binding, and it belongs in its own milestone.
 
 `IsActive` is the one that looks closest and is not. XNA's property is
 

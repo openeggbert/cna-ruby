@@ -419,6 +419,7 @@ module Microsoft
           @has_run = false
           @in_run = false
           @exit_requested = false
+          @suppress_draw_pending = false
           @inside_native_callback = false
           # The four timing/presentation defaults, exactly as the pinned `.ctor` sets them:
           # `isFixedTimeStep = true` as a field initialiser before the base constructor,
@@ -463,6 +464,45 @@ module Microsoft
           raise CNA::DisposedObjectError, "Game is disposed" if disposed?
           assert_owner_thread!
           ensure_host.run_one_frame
+          nil
+        end
+
+        # `SuppressDraw()` is eight bytes: `suppressDraw = true`, and nothing else. The field's only
+        # reader is `DrawFrame`, part of the timing loop CNA owns here, so the projection forwards
+        # to the canonical route rather than keeping a shadow copy of a flag nothing else reads.
+        #
+        # Before a host exists there is no loop and no frame to skip, so the request is remembered
+        # and delivered when the host is created -- which is the frame XNA would have suppressed,
+        # the first one. It is a *pending* request rather than durable state: the loop consumes it
+        # by skipping one draw, exactly as the CLR field is cleared after one frame.
+        def SuppressDraw
+          raise CNA::DisposedObjectError, "Game is disposed" if disposed?
+
+          if @host.nil? || @host.handle.zero?
+            @suppress_draw_pending = true
+          else
+            assert_owner_thread!
+            CNA::Native.library.call("cna_game_suppress_draw", @host.handle)
+          end
+          nil
+        end
+
+        # `ResetElapsedTime()` is four field writes:
+        #
+        #     forceElapsedTimeToZero = true;
+        #     drawRunningSlowly = false;
+        #     updatesSinceRunningSlowly1 = int.MaxValue;
+        #     updatesSinceRunningSlowly2 = int.MaxValue;
+        #
+        # All four belong to the accumulator the timing loop drives, so all four are CNA's here and
+        # the projection forwards. On a Game with no host there is no accumulated time to forget, so
+        # the operation really is a no-op rather than being made into one.
+        def ResetElapsedTime
+          raise CNA::DisposedObjectError, "Game is disposed" if disposed?
+          return nil if @host.nil? || @host.handle.zero?
+
+          assert_owner_thread!
+          CNA::Native.library.call("cna_game_reset_elapsed_time", @host.handle)
           nil
         end
 
@@ -731,6 +771,10 @@ module Microsoft
           @host = CNA::Runtime::GameHost.new(self)
           @host.create
           @graphics_manager&.__send__(:create_native, @host.handle)
+          if @suppress_draw_pending
+            @suppress_draw_pending = false
+            CNA::Native.library.call("cna_game_suppress_draw", @host.handle)
+          end
           @host.request_exit if @exit_requested
           @host
         rescue Exception => error

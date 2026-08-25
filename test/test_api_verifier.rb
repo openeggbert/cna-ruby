@@ -1837,9 +1837,9 @@ class ApiVerifierTest < Minitest::Test
     # 41 closed Game's four events and their three protected raisers -- the three methods among
     # those are also why the overload count fell by three. The set of partial types is what this
     # test guards, and it is unchanged.
-    assert_equal 119, strict.fetch("MISSING_MEMBER")
+    assert_equal 117, strict.fetch("MISSING_MEMBER")
     assert_equal 1, strict.fetch("PROPERTY_MAPPING_MISMATCH")
-    assert_equal 48, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
+    assert_equal 46, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
 
     # Every batch enum that a deferred member mentions leaves that member deferred.
     deferred = strict.fetch("details").fetch("MISSING_MEMBER")
