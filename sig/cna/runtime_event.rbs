@@ -41,6 +41,37 @@ module CNA
               | () -> Enumerator[untyped, untyped]
     end
 
+    # The Ruby projection of System.Collections.ObjectModel.Collection`1: the mutable sibling of
+    # the class above, a live view over the backing Array whose every mutation runs through one of
+    # four protected hooks. No Ruby-idiomatic mutation exists beside the CLR surface.
+    class Collection
+      include ::Enumerable[untyped]
+
+      CLR_IDENTITY: String
+      CLR_SURFACE: Array[Symbol]
+      CLR_PROTECTED_SURFACE: Array[Symbol]
+      LANGUAGE_SUPPORT: Array[Symbol]
+
+      def self.projects_elements: (*String) -> Array[String]
+      def self.clr_element_types: () -> Array[String]?
+
+      def initialize: (?Array[untyped] list) -> void
+      def Count: () -> Integer
+      def []: (Integer index) -> untyped
+      def []=: (Integer index, untyped value) -> untyped
+      def Add: (untyped item) -> nil
+      def Clear: () -> nil
+      def Contains: (untyped item) -> bool
+      def CopyTo: (Array[untyped] array, Integer index) -> nil
+      def GetEnumerator: () -> Enumerator[untyped, untyped]
+      def IndexOf: (untyped item) -> Integer
+      def Insert: (Integer index, untyped item) -> nil
+      def Remove: (untyped item) -> bool
+      def RemoveAt: (Integer index) -> nil
+      def each: () { (untyped) -> void } -> Collection
+              | () -> Enumerator[untyped, untyped]
+    end
+
     # The measured register of non-XNA CLR identities this binding projects.
     module BclProjection
       TYPES: Hash[String, String]

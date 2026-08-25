@@ -46,6 +46,8 @@ class BclProjectionTest < Minitest::Test
     assert_equal({"System.EventArgs" => "CNA::Runtime::EventArgs", "System.TimeSpan" => "Float",
                   "System.Attribute" => "CNA::Runtime::Attribute",
                   "System.Collections.ObjectModel.ReadOnlyCollection`1" => "CNA::Runtime::ReadOnlyCollection",
+                  # Foundation 34 added the mutable sibling, measured against the same mscorlib.
+                  "System.Collections.ObjectModel.Collection`1" => "CNA::Runtime::Collection",
                   # Foundation 33: a type token, and Ruby's is a Module.
                   "System.Type" => "Module"},
                  B::TYPES)
@@ -54,7 +56,8 @@ class BclProjectionTest < Minitest::Test
     assert_equal({"System.Exception" => "StandardError",
                   "System.Runtime.InteropServices.ExternalException" => "StandardError"},
                  B::EXCEPTION_BASES)
-    assert_equal ["System.Attribute", "System.Collections.ObjectModel.ReadOnlyCollection`1",
+    assert_equal ["System.Attribute", "System.Collections.ObjectModel.Collection`1",
+                  "System.Collections.ObjectModel.ReadOnlyCollection`1",
                   "System.EventArgs", "System.Exception", "System.IServiceProvider",
                   "System.Runtime.InteropServices.ExternalException", "System.TimeSpan",
                   "System.Type"], B.identities
@@ -85,7 +88,7 @@ class BclProjectionTest < Minitest::Test
   end
 
   def test_the_strict_report_measures_the_register
-    assert_equal 8, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal 9, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal 2, STRICT.fetch("BCL_EXCEPTION_BASES")
     assert_equal({"types" => B::TYPES, "exceptionBases" => B::EXCEPTION_BASES,
                   "thrownExceptions" => B::THROWN_EXCEPTIONS},

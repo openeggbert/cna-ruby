@@ -41,11 +41,21 @@ module CNA
       # wrong; a plain Array would get the refusal wrong. Ruby has class inheritance, so an XNA
       # class whose actual BCL base is this generic inherits from the support class and the CLR base
       # relationship survives.
+      # System.Collections.ObjectModel.Collection`1 projects to CNA::Runtime::Collection, the
+      # mutable sibling of that class and the same measurement applied to the opposite intent. The
+      # mscorlib IL shows the two are one shape: both store a single IList<T> field, both forward
+      # every read to it and neither copies anything. What differs is that this one's mutating
+      # members are ordinary public members, and every one of them routes through a protected
+      # virtual hook -- InsertItem, RemoveItem, SetItem, ClearItems -- rather than touching the
+      # backing list. That indirection is the type, so the projection declares no Ruby-idiomatic
+      # mutation beside it: a `<<` or a `push` would be a second way to mutate that a subclass's
+      # hook never sees. A bare Array gets that wrong, and a frozen Array gets the view wrong.
       TYPES = {
         "System.EventArgs" => "CNA::Runtime::EventArgs",
         "System.TimeSpan" => "Float",
         "System.Attribute" => "CNA::Runtime::Attribute",
         "System.Collections.ObjectModel.ReadOnlyCollection`1" => "CNA::Runtime::ReadOnlyCollection",
+        "System.Collections.ObjectModel.Collection`1" => "CNA::Runtime::Collection",
         # System.Type is a *type token* everywhere the selected XNA surface names it -- a service
         # key, a content reader's target type, an index element type, a converter's destination --
         # in all twenty-four places. Ruby's type token is a Module, and a Class is one. The single

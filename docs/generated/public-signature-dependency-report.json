@@ -42,6 +42,7 @@
     "System.Collections.Generic.IEnumerable`1",
     "System.Collections.Generic.IEnumerator`1",
     "System.Collections.Generic.IList`1",
+    "System.Collections.ObjectModel.Collection`1",
     "System.Collections.ObjectModel.ReadOnlyCollection`1",
     "System.Enum",
     "System.EventArgs",
@@ -73,6 +74,7 @@
       "System.TimeSpan": "Float",
       "System.Attribute": "CNA::Runtime::Attribute",
       "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection",
+      "System.Collections.ObjectModel.Collection`1": "CNA::Runtime::Collection",
       "System.Type": "Module"
     },
     "exceptionBases": {

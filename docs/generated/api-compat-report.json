@@ -15,7 +15,7 @@
   "EVENT_IDENTITIES": 4,
   "EVENT_OWNER_TYPES": 2,
   "EVENT_SUPPORT_TYPE": "CNA::Runtime::Event",
-  "BCL_PROJECTED_IDENTITIES": 8,
+  "BCL_PROJECTED_IDENTITIES": 9,
   "BCL_EXCEPTION_BASES": 2,
   "BCL_THROWN_EXCEPTIONS": 6,
   "MISSING_TYPE": 118,
@@ -53,6 +53,7 @@
       "System.TimeSpan": "Float",
       "System.Attribute": "CNA::Runtime::Attribute",
       "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection",
+      "System.Collections.ObjectModel.Collection`1": "CNA::Runtime::Collection",
       "System.Type": "Module"
     },
     "exceptionBases": {
