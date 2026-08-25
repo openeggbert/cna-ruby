@@ -17,8 +17,8 @@
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
     "inventory": "docs/generated/xna-il-inventory.json",
     "assemblies": 10,
-    "typesWithIl": 250,
-    "typesNativeReachable": 55
+    "typesWithIl": 257,
+    "typesNativeReachable": 61
   },
   "runtimeDataRegister": {
     "Microsoft.Xna.Framework.Audio.RendererDetail": "values come from XACT audio renderer enumeration; no audio engine exists in this binding and no renderer has been enumerated",
@@ -75,12 +75,12 @@
     }
   },
   "blockerSummary": {
-    "BCL_PROJECTION": 8,
-    "BCL_PROJECTION+NATIVE_RUNTIME": 4,
+    "BCL_PROJECTION": 7,
+    "BCL_PROJECTION+NATIVE_RUNTIME": 5,
     "BCL_PROJECTION+RUNTIME_DATA": 2,
-    "IL_UNAVAILABLE": 1,
     "NATIVE_RUNTIME": 2,
-    "RUNTIME_DATA": 4
+    "NATIVE_RUNTIME+RUNTIME_DATA": 1,
+    "RUNTIME_DATA": 3
   },
   "consumableCandidates": [
 
@@ -187,41 +187,6 @@
       "ilDerivationRequired": true,
       "ilAvailable": true,
       "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator",
-      "kind": "struct",
-      "expectedRubyIdentities": 3,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Input.Touch.TouchLocation"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "IL_UNAVAILABLE"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        "MoveNext",
-        "Dispose"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": false,
-      "ilAssembly": null,
       "nativeReachableMethods": [
 
       ],
@@ -620,6 +585,7 @@
       ],
       "dependencyComplete": true,
       "blockers": [
+        "NATIVE_RUNTIME",
         "RUNTIME_DATA"
       ],
       "unmappedBclTypes": [
@@ -643,7 +609,11 @@
       "ilAvailable": true,
       "ilAssembly": "Microsoft.Xna.Framework.Xact.dll",
       "nativeReachableMethods": [
-
+        ".ctor",
+        "Pause",
+        "Resume",
+        "SetVolume",
+        "Stop"
       ],
       "runtimeDataDetail": "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have"
     },
@@ -825,7 +795,6 @@
       "nativeReachableMethods": [
         ".cctor",
         ".ctor",
-        ".locals",
         "InitializeAdapterList",
         "IsProfileSupported",
         "IsValidDepthFormat",
@@ -860,7 +829,8 @@
       ],
       "dependencyComplete": true,
       "blockers": [
-        "BCL_PROJECTION"
+        "BCL_PROJECTION",
+        "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
         "System.IDisposable"
@@ -883,7 +853,21 @@
       "ilAvailable": true,
       "ilAssembly": "Microsoft.Xna.Framework.Xact.dll",
       "nativeReachableMethods": [
-
+        "Dispose",
+        "Finalize",
+        "GetVariable",
+        "Pause",
+        "Play",
+        "Resume",
+        "SetVariable",
+        "Stop",
+        "get_IsCreated",
+        "get_IsPaused",
+        "get_IsPlaying",
+        "get_IsPrepared",
+        "get_IsPreparing",
+        "get_IsStopped",
+        "get_IsStopping"
       ],
       "runtimeDataDetail": null
     },

@@ -66,17 +66,11 @@
   ],
   "nativeReachabilityRule": "a native entry point is a P/Invoke declaration or an indirect calli through an unmanaged calling convention, which is how XNA's mixed-mode C++/CLI assemblies reach native code. A type is native-reachable when any method it declares is a native entry point, or transitively calls one, following only call/callvirt/newobj/ldftn edges that land inside the pinned assembly set",
   "REFERENCE_TYPES": 257,
-  "TYPES_WITH_IL": 250,
-  "TYPES_WITHOUT_IL": 7,
-  "TYPES_NATIVE_REACHABLE": 55,
+  "TYPES_WITH_IL": 257,
+  "TYPES_WITHOUT_IL": 0,
+  "TYPES_NATIVE_REACHABLE": 61,
   "typesWithoutIl": [
-    "Microsoft.Xna.Framework.Content.ContentTypeReader`1",
-    "Microsoft.Xna.Framework.Graphics.ModelBoneCollection+Enumerator",
-    "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator",
-    "Microsoft.Xna.Framework.Graphics.ModelMeshCollection+Enumerator",
-    "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator",
-    "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1",
-    "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator"
+
   ],
   "types": {
     "Microsoft.Xna.Framework.Audio.AudioCategory": {
@@ -89,9 +83,13 @@
       ],
       "methodNodes": 11,
       "nativeReachableMethods": [
-
+        ".ctor",
+        "Pause",
+        "Resume",
+        "SetVolume",
+        "Stop"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 3,
       "constructors": [
@@ -159,9 +157,18 @@
       ],
       "methodNodes": 16,
       "nativeReachableMethods": [
-
+        ".ctor",
+        "Dispose",
+        "Finalize",
+        "GetCategory",
+        "GetGlobalVariable",
+        "NotifyDestroyedCue",
+        "NotifyDestroyedEngine",
+        "SetGlobalVariable",
+        "Update",
+        "get_RendererDetails"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 12,
       "constructors": [
@@ -241,9 +248,23 @@
       ],
       "methodNodes": 21,
       "nativeReachableMethods": [
-
+        "Dispose",
+        "Finalize",
+        "GetVariable",
+        "Pause",
+        "Play",
+        "Resume",
+        "SetVariable",
+        "Stop",
+        "get_IsCreated",
+        "get_IsPaused",
+        "get_IsPlaying",
+        "get_IsPrepared",
+        "get_IsPreparing",
+        "get_IsStopped",
+        "get_IsStopping"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 8,
       "constructors": [
@@ -490,9 +511,14 @@
       ],
       "methodNodes": 9,
       "nativeReachableMethods": [
-
+        ".ctor",
+        "Dispose",
+        "Finalize",
+        "GetCue",
+        "PlayCue",
+        "get_IsInUse"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 6,
       "constructors": [
@@ -609,9 +635,13 @@
       ],
       "methodNodes": 9,
       "nativeReachableMethods": [
-
+        ".ctor",
+        "Dispose",
+        "Finalize",
+        "get_IsInUse",
+        "get_IsPrepared"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 7,
       "constructors": [
@@ -870,18 +900,18 @@
       "assembly": "Microsoft.Xna.Framework.dll",
       "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
       "assemblyBytes": 679424,
-      "ilLines": 1373,
+      "ilLines": 1330,
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 27,
+      "methodNodes": 26,
       "nativeReachableMethods": [
         "Create",
         "PrepareStream"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": false,
-      "declaredFields": 15,
+      "declaredFields": 13,
       "constructors": [
         {
           "access": "private",
@@ -1066,6 +1096,31 @@
         }
       ],
       "declaredMethods": 9
+    },
+    "Microsoft.Xna.Framework.Content.ContentTypeReader`1": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 71,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 2,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "family",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 5
+        }
+      ],
+      "declaredMethods": 2
     },
     "Microsoft.Xna.Framework.Content.ResourceContentManager": {
       "assembly": "Microsoft.Xna.Framework.dll",
@@ -1613,17 +1668,17 @@
       "assembly": "Microsoft.Xna.Framework.dll",
       "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
       "assemblyBytes": 679424,
-      "ilLines": 312,
+      "ilLines": 270,
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 7,
+      "methodNodes": 5,
       "nativeReachableMethods": [
 
       ],
       "nativeReachable": false,
       "declaresNativeEntryPoint": false,
-      "declaredFields": 5,
+      "declaredFields": 3,
       "constructors": [
 
       ],
@@ -2862,15 +2917,14 @@
       "assembly": "Microsoft.Xna.Framework.Graphics.dll",
       "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
       "assemblyBytes": 427520,
-      "ilLines": 1853,
+      "ilLines": 1757,
       "nativeInteropMarkers": [
         "System.Runtime.InteropServices.Marshal"
       ],
-      "methodNodes": 34,
+      "methodNodes": 31,
       "nativeReachableMethods": [
         ".cctor",
         ".ctor",
-        ".locals",
         "InitializeAdapterList",
         "IsProfileSupported",
         "IsValidDepthFormat",
@@ -3223,17 +3277,17 @@
       "assembly": "Microsoft.Xna.Framework.Graphics.dll",
       "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
       "assemblyBytes": 427520,
-      "ilLines": 832,
+      "ilLines": 751,
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 16,
+      "methodNodes": 15,
       "nativeReachableMethods": [
         "Draw"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": false,
-      "declaredFields": 8,
+      "declaredFields": 5,
       "constructors": [
         {
           "access": "assembly",
@@ -3273,17 +3327,17 @@
       "assembly": "Microsoft.Xna.Framework.Graphics.dll",
       "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
       "assemblyBytes": 427520,
-      "ilLines": 224,
+      "ilLines": 115,
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 9,
+      "methodNodes": 4,
       "nativeReachableMethods": [
 
       ],
       "nativeReachable": false,
       "declaresNativeEntryPoint": false,
-      "declaredFields": 3,
+      "declaredFields": 1,
       "constructors": [
         {
           "access": "assembly",
@@ -3294,15 +3348,15 @@
       ],
       "declaredMethods": 3
     },
-    "Microsoft.Xna.Framework.Graphics.ModelEffectCollection": {
+    "Microsoft.Xna.Framework.Graphics.ModelBoneCollection+Enumerator": {
       "assembly": "Microsoft.Xna.Framework.Graphics.dll",
       "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
       "assemblyBytes": 427520,
-      "ilLines": 150,
+      "ilLines": 107,
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 9,
+      "methodNodes": 6,
       "nativeReachableMethods": [
 
       ],
@@ -3312,12 +3366,62 @@
       "constructors": [
         {
           "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        }
+      ],
+      "declaredMethods": 5
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelEffectCollection": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 56,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 4,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "assembly",
           "leadingArgumentLoads": 0,
           "pureBaseForward": false,
           "instructions": 9
         }
       ],
       "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 92,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 6,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 5
+        }
+      ],
+      "declaredMethods": 5
     },
     "Microsoft.Xna.Framework.Graphics.ModelMesh": {
       "assembly": "Microsoft.Xna.Framework.Graphics.dll",
@@ -3348,17 +3452,17 @@
       "assembly": "Microsoft.Xna.Framework.Graphics.dll",
       "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
       "assemblyBytes": 427520,
-      "ilLines": 224,
+      "ilLines": 115,
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 9,
+      "methodNodes": 4,
       "nativeReachableMethods": [
 
       ],
       "nativeReachable": false,
       "declaresNativeEntryPoint": false,
-      "declaredFields": 3,
+      "declaredFields": 1,
       "constructors": [
         {
           "access": "assembly",
@@ -3368,6 +3472,31 @@
         }
       ],
       "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelMeshCollection+Enumerator": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 107,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 6,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        }
+      ],
+      "declaredMethods": 5
     },
     "Microsoft.Xna.Framework.Graphics.ModelMeshPart": {
       "assembly": "Microsoft.Xna.Framework.Graphics.dll",
@@ -3398,17 +3527,17 @@
       "assembly": "Microsoft.Xna.Framework.Graphics.dll",
       "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
       "assemblyBytes": 427520,
-      "ilLines": 138,
+      "ilLines": 29,
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 7,
+      "methodNodes": 2,
       "nativeReachableMethods": [
 
       ],
       "nativeReachable": false,
       "declaresNativeEntryPoint": false,
-      "declaredFields": 3,
+      "declaredFields": 1,
       "constructors": [
         {
           "access": "assembly",
@@ -3418,6 +3547,31 @@
         }
       ],
       "declaredMethods": 1
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 107,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 6,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        }
+      ],
+      "declaredMethods": 5
     },
     "Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException": {
       "assembly": "Microsoft.Xna.Framework.Graphics.dll",
@@ -3756,6 +3910,26 @@
       ],
       "declaredMethods": 2
     },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 17,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 2,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+
+      ],
+      "declaredMethods": 2
+    },
     "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2": {
       "assembly": "Microsoft.Xna.Framework.dll",
       "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
@@ -4059,7 +4233,7 @@
       "assembly": "Microsoft.Xna.Framework.Graphics.dll",
       "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
       "assemblyBytes": 427520,
-      "ilLines": 367,
+      "ilLines": 353,
       "nativeInteropMarkers": [
 
       ],
@@ -4069,7 +4243,7 @@
       ],
       "nativeReachable": false,
       "declaresNativeEntryPoint": false,
-      "declaredFields": 11,
+      "declaredFields": 1,
       "constructors": [
         {
           "access": "public",
@@ -4434,11 +4608,11 @@
       "assembly": "Microsoft.Xna.Framework.Graphics.dll",
       "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
       "assemblyBytes": 427520,
-      "ilLines": 2668,
+      "ilLines": 2494,
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 19,
+      "methodNodes": 18,
       "nativeReachableMethods": [
         ".ctor",
         "AllocateBuffers",
@@ -4456,7 +4630,7 @@
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": false,
-      "declaredFields": 37,
+      "declaredFields": 27,
       "constructors": [
         {
           "access": "public",
@@ -4503,17 +4677,17 @@
       "assembly": "Microsoft.Xna.Framework.Graphics.dll",
       "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
       "assemblyBytes": 427520,
-      "ilLines": 929,
+      "ilLines": 859,
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 13,
+      "methodNodes": 12,
       "nativeReachableMethods": [
         "InternalDraw"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": false,
-      "declaredFields": 12,
+      "declaredFields": 9,
       "constructors": [
         {
           "access": "assembly",
@@ -4923,9 +5097,10 @@
       ],
       "methodNodes": 7,
       "nativeReachableMethods": [
-
+        "Bind",
+        "Unbind"
       ],
-      "nativeReachable": false,
+      "nativeReachable": true,
       "declaresNativeEntryPoint": false,
       "declaredFields": 3,
       "constructors": [
@@ -5649,7 +5824,7 @@
       ],
       "methodNodes": 5,
       "nativeReachableMethods": [
-        ".cctor"
+        "set_WindowHandle"
       ],
       "nativeReachable": true,
       "declaresNativeEntryPoint": false,
@@ -5733,17 +5908,17 @@
       "assembly": "Microsoft.Xna.Framework.Input.Touch.dll",
       "assemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
       "assemblyBytes": 23040,
-      "ilLines": 1333,
+      "ilLines": 1199,
       "nativeInteropMarkers": [
 
       ],
-      "methodNodes": 27,
+      "methodNodes": 22,
       "nativeReachableMethods": [
 
       ],
       "nativeReachable": false,
       "declaresNativeEntryPoint": false,
-      "declaredFields": 16,
+      "declaredFields": 11,
       "constructors": [
         {
           "access": "public",
@@ -5753,6 +5928,31 @@
         }
       ],
       "declaredMethods": 22
+    },
+    "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator": {
+      "assembly": "Microsoft.Xna.Framework.Input.Touch.dll",
+      "assemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+      "assemblyBytes": 23040,
+      "ilLines": 106,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 6,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        }
+      ],
+      "declaredMethods": 5
     },
     "Microsoft.Xna.Framework.Input.Touch.TouchLocation": {
       "assembly": "Microsoft.Xna.Framework.Input.Touch.dll",
@@ -5900,7 +6100,7 @@
       "assembly": "Microsoft.Xna.Framework.dll",
       "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
       "assemblyBytes": 679424,
-      "ilLines": 12662,
+      "ilLines": 12648,
       "nativeInteropMarkers": [
 
       ],
@@ -5910,7 +6110,7 @@
       ],
       "nativeReachable": false,
       "declaresNativeEntryPoint": false,
-      "declaredFields": 23,
+      "declaredFields": 17,
       "constructors": [
         {
           "access": "public",

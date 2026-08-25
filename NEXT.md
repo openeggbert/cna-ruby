@@ -3,7 +3,7 @@
 ## Exact current boundary
 
 Foundations 16 to 27 are complete and qualified and published on `origin/develop`. **Native
-frontier 1** is the first milestone of the native/CNA expansion sequence and is local only.
+frontiers 1 and 2** are the native/CNA expansion sequence so far, and are local only.
 
 | Milestone | What it added | Types | Identities |
 | --- | --- | --- | --- |
@@ -20,6 +20,7 @@ frontier 1** is the first milestone of the native/CNA expansion sequence and is 
 | 26 | DisplayModeCollection, generic-definition blind spot | 1 | 2 |
 | 27 | System.Attribute projection, five ContentSerializer attributes | 5 | 16 |
 | NF1 | **GraphicsAdapter architecture audit** + FrameworkDispatcher | 1 | 1 |
+| NF2 | **nested/generic IL extraction**, declaring-type dependency | 0 | 0 |
 
 Strict target 135 types / 1714 member identities: 129 complete, six partial native/runtime types,
 122 missing, 306 deferred diagnostics. `MISSING_MEMBER` 132, `PARTIAL_TYPES` 6,
@@ -87,19 +88,22 @@ consequences beyond this binding and none unblocks the Ruby type: the `IsWideScr
 `Revision`/`SubSystemId` hardcoded to zero, and `IsProfileSupported` answering unconditional
 `true` on every renderer without a descriptor hook. All five are written up in the audit evidence.
 
-## The frontier: 21 dependency-complete, 0 consumable
+## The frontier: 20 dependency-complete, 0 consumable
 
 | Blocker | Types | Nature |
 | --- | --- | --- |
-| `BCL_PROJECTION` | 8 | a BCL cluster no otherwise-unblocked type needs |
-| `BCL_PROJECTION` + `NATIVE_RUNTIME` | 4 | both |
-| `RUNTIME_DATA` | 4 | device, driver, codec or media values not queried |
+| `BCL_PROJECTION` | 7 | a BCL cluster no otherwise-unblocked type needs |
+| `BCL_PROJECTION` + `NATIVE_RUNTIME` | 5 | both |
+| `RUNTIME_DATA` | 3 | device, driver, codec or media values not queried |
 | `NATIVE_RUNTIME` | 2 | its own IL reaches a native entry point |
 | `BCL_PROJECTION` + `RUNTIME_DATA` | 2 | both |
-| `IL_UNAVAILABLE` | 1 | `TouchCollection+Enumerator`, which `ikdasm` does not emit under an addressable name |
+| `NATIVE_RUNTIME` + `RUNTIME_DATA` | 1 | `Audio.AudioCategory`, reclassified by Native frontier 2 |
+| `IL_UNAVAILABLE` | **0** | nothing is blocked on missing IL any more |
 
-`EVENT_PROJECTION` was retired in Foundation 20, `BEHAVIOR_EVIDENCE` in Foundation 22, and
-`FrameworkDispatcher` left `RUNTIME_DATA` in Native frontier 1 — the first entry retired because
+`IL_UNAVAILABLE` was emptied by Native frontier 2, which also reclassified `Audio.Cue` as native
+and moved `Audio.AudioCategory` from `RUNTIME_DATA` to both. `EVENT_PROJECTION` was retired in
+Foundation 20, `BEHAVIOR_EVIDENCE` in Foundation 22, and `FrameworkDispatcher` left `RUNTIME_DATA`
+in Native frontier 1 — the first entry retired because
 its recorded reason was *wrong* rather than merely unresolved. It had been deferred on the ground
 that `Update` "would be a no-op pretending to be a pump"; the canonical
 `cna_framework_dispatcher_update` is the same drain CNA's own game loop runs, so forwarding to it
@@ -138,6 +142,33 @@ Unchanged from Foundation 27 except as noted above:
   settles every one; what is missing is an audio engine, an enumerated renderer, a platform window
   and a content pipeline. `GameWindow` additionally needs `Game.Window`, and `Game` is a deferred
   partial.
+
+## The correction Native frontier 2 makes
+
+The frontier carried one `IL_UNAVAILABLE` entry, justified as "`ikdasm` does not emit the nested
+enumerator under a name the inventory can address". **`ikdasm` emits it; the extractor could not
+read it.** It opened a type only on a `.class` in column zero and closed it on the full declared
+name, so every indented nested declaration was invisible and its lines, fields, methods and
+call-graph edges were charged to its parent. Two further defects rode along: a quoted or generic
+name never matched its closing comment, and an IL reference spells a nested type `Parent/Child`
+where everything else here spells it `Parent+Child`, so edges into nested types dangled.
+
+`TYPES_WITH_IL` 250 -> **257**, `TYPES_WITHOUT_IL` 7 -> **0**, `TYPES_NATIVE_REACHABLE` 55 -> **61**,
+native entry-point methods 205 -> **214**. Seven inventory keys added, none removed, twenty entries
+corrected, **no type lost native reachability**. Full evidence:
+`docs/il-inventory-nesting-evidence.md`.
+
+With the IL present the frontier immediately selected `TouchCollection+Enumerator` as consumable,
+which it is not: it cannot be named, constructed or read without `TouchCollection`, whose `Item` and
+`Count` its `Current` and `MoveNext` call. No member *signature* mentions the declaring type, and
+signatures were all the analyzer looked at -- the same blind spot Foundation 26 closed one level up.
+The analyzer now treats a nested type's declaring type as a dependency, so the pair classifies
+honestly: neither is closable without the other.
+
+What blocks them is a mapping decision. `TouchCollection` is a read-only `IList<TouchLocation>` and
+its IL throws `NotSupportedException` from `Insert`, `RemoveAt`, `Add`, `Clear`, `Remove` and the
+`Item` setter, and this binding has no Ruby mapping for that exception. Recorded as
+`mapping.not-supported-exception`.
 
 ## Decision boundaries handed upward
 
@@ -222,9 +253,9 @@ methods. `MathHelper` established it and `FrameworkDispatcher` follows it.
    architecture qualification from environment-dependent integration observation. That is what
    turns `GraphicsAdapter`, and real `DisplayMode`/`DisplayModeCollection` production, from
    fabricated into measured.
-3. **`TouchCollection+Enumerator`** — the single `IL_UNAVAILABLE` entry. A nested-type-aware
-   extractor would settle it and unblock `TouchCollection`, then `TouchPanel`, though `TouchPanel`
-   would still need a device.
+3. **The `NotSupportedException` mapping**, which closes `TouchCollection` and its nested
+   `Enumerator` together — 18 identities of pure managed work whose IL is now fully available — and
+   moves `TouchPanel` to a single remaining blocker, a device.
 
 `SELECTED_ONLY=true`
 
@@ -236,6 +267,7 @@ methods. `MathHelper` established it and `FrameworkDispatcher` follows it.
 - Uppercase XNA instance methods require an explicit receiver in Ruby source (`self.Position`, not bare `Position`).
 - Setter methods cannot use Ruby's endless method definition syntax.
 - `NotImplementedError` is a `ScriptError`, not a `StandardError`: a bare `rescue` does not catch an abstract contract member.
+- `ikdasm` indents a nested type inside its declaring type and closes it with the **short** name, quotes a name that is not a plain identifier, and appends a generic parameter list it omits from the closing comment. Any IL scanner anchored on column zero or on the full declared name will silently fold a nested type into its parent, which is what happened here from Foundation 22 until Native frontier 2. An IL reference spells a nested type `Parent/Child`; the reference contract and this binding spell it `Parent+Child`.
 - XNA's Framework and Graphics assemblies are mixed-mode C++/CLI. Native work is mostly an indirect `calli` through an unmanaged calling convention, not a classic P/Invoke; any native-boundary analysis must count both. Note the converse trap too: `FrameworkDispatcher.Update` looks native and is not — its `PollForEvents` is an empty method in the Windows assembly, and the measured inventory correctly reports the type as not native-reachable.
 - CNA's platform is a **build-time** selection (`cmake/PlatformSelection.cmake`), not a runtime one. `CNA_RENDERER` selects the renderer and cannot change which platform a given `libcna_c_api.so` carries.
 - The upstream behaviour-corpus source (SHA-256 `398d0201…`) is still absent. Corpus additions are merged by documented deterministic replay, which refuses to write unless re-serialising the pre-merge corpus reproduces its bytes exactly. Four corrections have been made this way, each proving every retained element unchanged.

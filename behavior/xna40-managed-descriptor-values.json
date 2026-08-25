@@ -6,6 +6,7 @@
   "sourceGraphicsAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
   "sourceGameAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
   "derivation": "Foundation 24 managed descriptors. Contract rows come from the pinned public metadata and from docs/generated/xna-il-inventory.json. Mapping rows encode what the pinned IL establishes: AudioListener and AudioEmitter pass every Vector3 through UnsafeNativeStructures::FlipHandedness, which is (X, Y, -Z), on both the getter and the setter, and their constructors store Position and Velocity unflipped but Forward and Up flipped, so the default Position and Velocity read back with a negative-zero Z while Forward and Up read back exactly; AudioEmitter.DopplerScale rejects only an ordered negative value because the guard is bge.un, so NaN is accepted; PresentationParameters' constructor performs exactly one store, set_IsFullScreen(true), leaving every other field at the CLR default, validates nothing, derives Bounds from the back buffer and clones by copying the whole settings struct. None is snapshotted from the cna-ruby implementation.",
+  "nativeFrontier2CorpusCorrection": "deterministic byte-level correction; the upstream source is still absent, so import_behavior_corpus.rb was not run, and a re-serialisation replay is unavailable because the committed corpus renders small floats in decimal notation this Ruby's JSON generator does not reproduce. Native frontier 2 made the IL extractor nested- and generic-aware; two observations had recorded the pre-fix measurement of this project's own inventory. il_provenance.assemblies moves typesWithIl 250 -> 257 and typesNativeReachable 55 -> 61; managed_descriptor.presentation_parameters.il_contract moves declaredFields 11 -> 1, because PresentationParameters declares exactly one field, the nested internal Settings struct holding its ten values. The before and after byte streams were compared in full and differ only in those numbers; every other observation, every other element and every other byte is unchanged.",
   "observations": [
     {
       "id": "managed_descriptor.audio_listener.il_contract",
@@ -68,7 +69,7 @@
         13,
         "Microsoft.Xna.Framework.Graphics.dll",
         "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
-        11,
+        1,
         false,
         false,
         [

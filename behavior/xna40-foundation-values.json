@@ -41,6 +41,7 @@
   "milestone26MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 2726fde56ce90fbc471bd7a1c2319bbea07469f789210b007a93c91218e54e3f, 408 observations) was proved before appending 2 additive observations",
   "milestone27SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
   "milestone27MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 6bcaa3e36b3d2cc10e5a6de49e76f61a704181a703804e375ac5d26ab056d921, 410 observations) was proved before appending 10 additive observations",
+  "nativeFrontier2CorpusCorrection": "deterministic byte-level correction; the upstream source is still absent, so import_behavior_corpus.rb was not run, and a re-serialisation replay is unavailable because the committed corpus renders small floats in decimal notation this Ruby's JSON generator does not reproduce. Native frontier 2 made the IL extractor nested- and generic-aware; two observations had recorded the pre-fix measurement of this project's own inventory. il_provenance.assemblies moves typesWithIl 250 -> 257 and typesNativeReachable 55 -> 61; managed_descriptor.presentation_parameters.il_contract moves declaredFields 11 -> 1, because PresentationParameters declares exactly one field, the nested internal Settings struct holding its ten values. The before and after byte streams were compared in full and differ only in those numbers; every other observation, every other element and every other byte is unchanged.",
   "observations": [
     {
       "id": "math.clamp.low",
@@ -11116,8 +11117,8 @@
           ]
         ],
         257,
-        250,
-        55
+        257,
+        61
       ]
     },
     {
@@ -11940,7 +11941,7 @@
         13,
         "Microsoft.Xna.Framework.Graphics.dll",
         "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
-        11,
+        1,
         false,
         false,
         [

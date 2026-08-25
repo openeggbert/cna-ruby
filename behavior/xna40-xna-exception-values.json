@@ -5,6 +5,7 @@
   "sourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
   "sourceGraphicsAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
   "derivation": "Foundation 22 XNA exception cluster. The original XNA 4.0 Windows assemblies were located on this host by exact SHA-256 and disassembled with ikdasm; tools/api_compat/reference/XNA_IL_PROVENANCE.md pins them and tools/api_compat/build_il_inventory.rb derives docs/generated/xna-il-inventory.json from them without reproducing any Microsoft-owned bytes. Contract rows are read from that inventory and from the pinned public metadata: every XNA exception type declares zero fields, zero non-constructor methods, and constructors whose whole IL body is a pure forward to the CLR exception base. Mapping rows are derived from that fact applied to the documented StandardError base mapping; neither is snapshotted from the cna-ruby implementation.",
+  "nativeFrontier2CorpusCorrection": "deterministic byte-level correction; the upstream source is still absent, so import_behavior_corpus.rb was not run, and a re-serialisation replay is unavailable because the committed corpus renders small floats in decimal notation this Ruby's JSON generator does not reproduce. Native frontier 2 made the IL extractor nested- and generic-aware; two observations had recorded the pre-fix measurement of this project's own inventory. il_provenance.assemblies moves typesWithIl 250 -> 257 and typesNativeReachable 55 -> 61; managed_descriptor.presentation_parameters.il_contract moves declaredFields 11 -> 1, because PresentationParameters declares exactly one field, the nested internal Settings struct holding its ten values. The before and after byte streams were compared in full and differ only in those numbers; every other observation, every other element and every other byte is unchanged.",
   "observations": [
     {
       "id": "il_provenance.assemblies",
@@ -68,8 +69,8 @@
           ]
         ],
         257,
-        250,
-        55
+        257,
+        61
       ]
     },
     {

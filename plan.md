@@ -48,12 +48,14 @@ Foundation 22 retired `BEHAVIOR_EVIDENCE`. The original XNA 4.0 Windows assembli
 located by exact SHA-256 and pinned in `tools/api_compat/reference/XNA_IL_PROVENANCE.md`, so
 "behaviour lives in IL" is a statement about work to do rather than about missing input; it is now
 the informational `ilDerivationRequired` flag. Three blockers name what is genuinely absent instead:
-`IL_UNAVAILABLE` when no pinned assembly carries a type's IL under a name the disassembler emits,
+`IL_UNAVAILABLE` when no pinned assembly carries a type's IL under a name the disassembler emits —
+which, since Native frontier 2 taught the extractor to read nested and generic declarations, is no
+longer true of any reference type —
 `NATIVE_RUNTIME` when a type's own IL reaches a native entry point — a P/Invoke or an indirect
 `calli` through an unmanaged calling convention, which is how XNA's mixed-mode C++/CLI assemblies
 reach native code — and `RUNTIME_DATA` when the IL settles a type's semantics but its values come
 only from a device, driver, codec or media library that has not been queried. Native reachability is
-measured over the assemblies' own call graph: 205 native entry points make 55 of 250 reference types
+measured over the assemblies' own call graph: 214 native entry points make 61 of 257 reference types
 native-reachable, and of the complete types exactly `Input.Mouse`, `Input.GamePad` and
 `Graphics.Texture` are, which is precisely the native boundary this binding really implements.
 

@@ -133,12 +133,54 @@ class DependencyFrontierTest < Minitest::Test
     end
   end
 
+  # Native frontier 2 — the extractor reads nested and generic type declarations, which it had
+  # silently folded into their parents since Foundation 22.
+  def test_the_extractor_addresses_nested_and_generic_type_declarations
+    %w[
+      Microsoft.Xna.Framework.Graphics.ModelBoneCollection+Enumerator
+      Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator
+      Microsoft.Xna.Framework.Graphics.ModelMeshCollection+Enumerator
+      Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator
+      Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator
+      Microsoft.Xna.Framework.Content.ContentTypeReader`1
+      Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1
+    ].each do |name|
+      entry = IL.fetch("types").fetch(name)
+      assert_operator entry.fetch("ilLines"), :>, 0, name
+      refute_nil entry.fetch("declaredMethods"), name
+    end
+
+    # A declaring type counts only what it declares itself. Both of these previously absorbed a
+    # nested type's fields: TouchCollection reported 16 for its own 11, and FrameworkDispatcher 5
+    # for its own 3, because the two ManagedCallAndArg fields were counted as its own.
+    assert_equal 11, IL.fetch("types")
+                       .fetch("Microsoft.Xna.Framework.Input.Touch.TouchCollection")
+                       .fetch("declaredFields")
+    assert_equal 3, IL.fetch("types")
+                      .fetch("Microsoft.Xna.Framework.FrameworkDispatcher")
+                      .fetch("declaredFields")
+
+    # A nested type owns its own methods and constructor rather than lending them to its parent.
+    enumerator = IL.fetch("types")
+                   .fetch("Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator")
+    assert_equal 5, enumerator.fetch("declaredMethods")
+    assert_equal 2, enumerator.fetch("declaredFields")
+    assert_equal ["assembly"], enumerator.fetch("constructors").map { |ctor| ctor.fetch("access") }
+  end
+
   # Foundation 22 — the pinned original assemblies were located by hash, so the IL inventory is
   # real evidence rather than an assumption.
   def test_the_il_inventory_is_hash_pinned_and_covers_the_reference_surface
     assert_equal 1, IL.fetch("schemaVersion")
     assert_equal REFERENCE.fetch("types").length, IL.fetch("REFERENCE_TYPES")
-    assert_equal 250, IL.fetch("TYPES_WITH_IL")
+    # Native frontier 2 made the extractor nested- and generic-aware. Every reference type is now
+    # covered, where seven were previously reported as carrying no IL at all: the five nested
+    # `+Enumerator` types, whose declarations `ikdasm` indents inside their parent and closes with
+    # the short name, and the two generic definitions, which it declares as `Name`1<T>` and closes
+    # as `Name`1`.
+    assert_equal REFERENCE.fetch("types").length, IL.fetch("TYPES_WITH_IL")
+    assert_equal 0, IL.fetch("TYPES_WITHOUT_IL")
+    assert_empty IL.fetch("typesWithoutIl")
 
     provenance = ROOT.join("tools", "api_compat", "reference", "XNA_IL_PROVENANCE.md").read
     IL.fetch("assemblies").each do |assembly|
@@ -209,7 +251,7 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 21, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 20, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     assert_equal 0, REPORT.fetch("consumableCandidates").length
@@ -387,10 +429,19 @@ class DependencyFrontierTest < Minitest::Test
       assert_includes STRICT.fetch("missingTypeNames"), name
       refute REPORT.fetch("dependencyCompleteCandidates").any? { |item| item.fetch("name") == name }, name
     end
-    enumerator = REPORT.fetch("dependencyCompleteCandidates")
-                       .find { |item| item.fetch("name") == "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator" }
-    refute_nil enumerator
-    assert_equal ["IL_UNAVAILABLE"], enumerator.fetch("blockers")
-    refute enumerator.fetch("ilAvailable")
+    # The enumerator was the single IL_UNAVAILABLE entry until Native frontier 2, on the ground
+    # that "ikdasm does not emit the nested enumerator under a name the inventory can address". It
+    # emits it; the extractor could not read it. With that fixed the classification is honest on
+    # both counts: the IL is there, and the type is not dependency-complete, because a nested type
+    # cannot be named or read without its declaring type and TouchCollection is still missing.
+    entry = IL.fetch("types").fetch("Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator")
+    assert_operator entry.fetch("ilLines"), :>, 0
+    assert_operator entry.fetch("declaredMethods"), :>, 0
+    refute(REPORT.fetch("dependencyCompleteCandidates").any? { |item|
+      item.fetch("name") == "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator"
+    })
+    # Nothing is blocked on missing IL any more.
+    assert_empty REPORT.fetch("dependencyCompleteCandidates")
+                       .select { |item| item.fetch("blockers").include?("IL_UNAVAILABLE") }
   end
 end

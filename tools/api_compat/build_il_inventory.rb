@@ -62,6 +62,9 @@ CALLI = /^\s+IL_[0-9a-f]{4}:\s+calli\s+(.*)$/.freeze
 UNMANAGED = /\bunmanaged\s+(?:cdecl|stdcall|fastcall|thiscall|winapi)\b/.freeze
 TARGET = /(?:\[[^\]]+\])?([A-Za-z_][A-Za-z0-9_.`+'<>\/]*)::([A-Za-z_.<>][A-Za-z0-9_.<>`]*)/.freeze
 METHOD_NAME = /([A-Za-z_.<>][A-Za-z0-9_.<>`]*)\s*\(/.freeze
+# The generic parameter list `ikdasm` appends to a `.class` declaration but omits from its closing
+# comment.
+GENERIC_SUFFIX = /<[^<>]*>\z/.freeze
 
 inventory = {}
 bodies = {}
@@ -72,34 +75,60 @@ assemblies.each do |name, path, sha256, size|
   il = IO.popen(["ikdasm", path], &:read)
   abort "ikdasm produced no IL for #{name}" if il.nil? || il.empty?
 
-  current = nil
-  body = nil
+  # One frame per open `.class`, innermost last. `ikdasm` indents a nested type inside its
+  # declaring type and closes it with the **short** name, which is why the first version of this
+  # scanner -- anchored on a `.class` in column zero -- never saw one. It folded every nested
+  # type's lines, fields and methods into its parent instead, so five reference types were
+  # reported as carrying no IL while five others counted their children as their own.
+  open = []
   method = nil
   header = nil
   il.each_line do |line|
     stripped = line.rstrip
-    if line.start_with?(".class") && (match = /^\.class .*?([A-Za-z_][A-Za-z0-9_.`+'<>]*)\s*$/.match(stripped))
-      current = match[1].tr("'", "")
-      body = +""
+    indent = line[/\A */].length
+    leading = stripped.lstrip
+    if leading.start_with?(".class ") && !leading.start_with?(".class extern")
+      # `ikdasm` always writes the declared name last on the `.class` line, and quotes a name that
+      # is not a plain identifier -- the compiler-generated `'<>c__DisplayClass3'` closures, for
+      # one. The closing comment quotes it the same way, so both sides are unquoted before they are
+      # compared; reading the name with a leading-identifier regex instead silently truncated every
+      # quoted name and left its frame open forever.
+      # A generic type is declared `Name`1<T>` and closed as `Name`1`, so the trailing generic
+      # parameter list is dropped from both the recorded name -- which then matches the CLR
+      # spelling the reference contract uses -- and the comparison below.
+      short = stripped.split(/\s+/).last.to_s.tr("'", "").sub(GENERIC_SUFFIX, "")
+      # A `.class` at this indent ends any frame at the same or deeper indent that never saw its
+      # closing comment, so one malformed type cannot swallow the rest of the assembly. The
+      # column-zero scanner already discarded such frames, by overwriting its single `current`.
+      open.pop while !open.empty? && open.last[:indent] >= indent
+      # A nested type is addressed the way the reference contract spells it, Parent+Child, rather
+      # than the way an IL reference spells it, Parent/Child. Both are normalised to `+`.
+      open << { name: open.empty? ? short : "#{open.last[:name]}+#{short}", short: short,
+                body: +"", indent: indent }
+      method = nil
+      header = nil
       next
     end
-    next unless current
+    next if open.empty?
 
-    if stripped == "} // end of class #{current}"
-      bodies[current] = body
-      inventory[current] = {
+    current = open.last[:name]
+    if leading.start_with?("} // end of class ") && indent == open.last[:indent] &&
+       leading.sub("} // end of class ", "").tr("'", "").sub(GENERIC_SUFFIX, "") == open.last[:short]
+      frame = open.pop
+      bodies[frame[:name]] = frame[:body]
+      inventory[frame[:name]] = {
         "assembly" => name,
         "assemblySha256" => sha256,
         "assemblyBytes" => size,
-        "ilLines" => body.count("\n"),
-        "nativeInteropMarkers" => NATIVE_MARKERS.select { |marker| body.include?(marker) }
+        "ilLines" => frame[:body].count("\n"),
+        "nativeInteropMarkers" => NATIVE_MARKERS.select { |marker| frame[:body].include?(marker) }
       }
-      current = nil
-      body = nil
       method = nil
+      header = nil
       next
     end
-    body << line
+    # Only the innermost open type owns the line: a parent no longer absorbs its children.
+    open.last[:body] << line
 
     if stripped.lstrip.start_with?(".method ")
       header = +stripped
@@ -130,7 +159,10 @@ assemblies.each do |name, path, sha256, size|
     target = TARGET.match(match[1])
     next unless target
 
-    calls[method] << "#{target[1].tr("'", "")}::#{target[2]}"
+    # IL spells a nested type Parent/Child; the reference contract, the inventory keys and the
+    # method nodes above all spell it Parent+Child. Normalising here is what lets an edge into a
+    # nested type land on a node that exists, instead of dangling.
+    calls[method] << "#{target[1].tr("'", "").tr("/", "+")}::#{target[2]}"
   end
 end
 
@@ -175,7 +207,10 @@ def constructor_facts(body)
       current[:ops] << [operation[1], operation[2].to_s]
       next
     end
-    next unless stripped.start_with?("  } // end of method")
+    # A nested type's methods are indented one level deeper than its parent's, so this is matched
+    # after stripping the indent rather than at a fixed two spaces -- which is why no method inside
+    # a nested type was ever finalised.
+    next unless stripped.lstrip.start_with?("} // end of method")
 
     if current[:name] == ".ctor"
       operands = current[:ops]
@@ -209,9 +244,9 @@ bodies.each do |type_name, body|
 
   entry["declaredFields"] = body.each_line.count { |line| line.lstrip.start_with?(".field ") }
   entry["constructors"] = constructor_facts(body)
-  entry["declaredMethods"] = body.each_line.count { |line| line.start_with?("  } // end of method ") } -
-                             entry["constructors"].length -
-                             body.each_line.count { |line| line.start_with?("  } // end of method ") && line.include?("::.cctor") }
+  ends = body.each_line.select { |line| line.lstrip.start_with?("} // end of method ") }
+  entry["declaredMethods"] = ends.length - entry["constructors"].length -
+                             ends.count { |line| line.include?("::.cctor") }
 end
 
 reference = JSON.parse(File.read(File.join(__dir__, "reference", "xna40-windows-runtime-contract.json")))

@@ -74,16 +74,18 @@ class CapabilityConsistencyTest < Minitest::Test
       refute_nil successor, subject
       assert_equal "VERIFIED_MANAGED", successor.fetch("category"), subject
     end
-  # The category itself is not retired -- the checker classifies it as unresolved precisely so a
-  # real undecided mapping can be recorded. What must not come back is either blocker named
-  # above. The one decision that legitimately stands is ReadOnlyCollection`1, opened by the
-  # native/CNA expansion audit: four XNA types name it, mapping-rules.json lists it under
-  # bclProjection.notYetDesigned, and the pinned inventory admits no mscorlib to measure it from.
-  undecided = rows(REGISTRY).select do |capability|
-    capability.fetch("category") == "UNRESOLVED_MAPPING_DECISION"
+    # The category itself is not retired -- the checker classifies it as unresolved precisely so a
+    # real undecided mapping can be recorded. What must not come back is either blocker named
+    # above. Two decisions legitimately stand, both opened by the native/CNA expansion sequence:
+    # ReadOnlyCollection`1, which four XNA types name, which mapping-rules.json already lists under
+    # bclProjection.notYetDesigned and which the pinned inventory admits no mscorlib to measure;
+    # and NotSupportedException, which six TouchCollection identities throw.
+    undecided = rows(REGISTRY).select do |capability|
+      capability.fetch("category") == "UNRESOLVED_MAPPING_DECISION"
+    end
+    assert_equal %w[mapping.not-supported-exception mapping.readonly-collection],
+                 undecided.map { |capability| capability.fetch("id") }.sort
   end
-  assert_equal %w[mapping.readonly-collection], undecided.map { |capability| capability.fetch("id") }
-end
 
   def test_the_retained_assembly_blocker_is_replaced_by_measured_provenance
     assert_nil row(REGISTRY, "evidence.retained-xna-assemblies")
@@ -117,14 +119,15 @@ end
 
   def test_the_generated_document_carries_no_retired_blocker_claim
     document = ROOT.join("docs", "generated", "runtime-capabilities.md").read
-["blocked pending review", "mapping.event-projection", "mapping.bcl-projection",
- "evidence.retained-xna-assemblies"].each do |stale|
-  refute_includes document, stale
-end
-# UNRESOLVED_MAPPING_DECISION may appear, but only for the one decision that is genuinely open.
-undecided = document.lines.grep(/UNRESOLVED_MAPPING_DECISION/)
-assert_equal 1, undecided.length
-assert_includes undecided.first, "mapping.readonly-collection"
+    ["blocked pending review", "mapping.event-projection", "mapping.bcl-projection",
+     "evidence.retained-xna-assemblies"].each do |stale|
+      refute_includes document, stale
+    end
+    # UNRESOLVED_MAPPING_DECISION may appear, but only for a decision that is genuinely open.
+    undecided = document.lines.grep(/UNRESOLVED_MAPPING_DECISION/)
+    assert_equal 2, undecided.length
+    assert_equal %w[mapping.not-supported-exception mapping.readonly-collection],
+                 undecided.map { |line| line[/`([^`]+)`/, 1] }.sort
     # The one row that legitimately still reports an unavailable input is the corpus source.
     unavailable = document.lines.grep(/not available on this host/)
     assert_equal 1, unavailable.length

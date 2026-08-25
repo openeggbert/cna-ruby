@@ -53,6 +53,14 @@ end
 
 type_dependencies = lambda do |type|
   signatures = [type["baseType"], *type.fetch("directInterfaces", [])]
+  # A nested type's declaring type is a public-signature dependency even when no member mentions
+  # it: `TouchCollection+Enumerator` cannot be named, constructed or read without `TouchCollection`,
+  # whose `Item` and `Count` its `Current` and `MoveNext` call. Without this the pair looks like one
+  # consumable type and one blocked one, when in truth neither can be closed without the other.
+  # This is the same blind spot Foundation 26 closed for a constructed generic hiding its
+  # definition behind an XNA type argument, one level up.
+  declaring = type.fetch("name")[/\A(.+)\+[^+]+\z/, 1]
+  signatures << declaring if declaring
   type.fetch("members").each do |member|
     signatures.concat([member["type"], member["returnType"]])
     signatures.concat(member.fetch("parameters", []).map { |parameter| parameter["type"] })
