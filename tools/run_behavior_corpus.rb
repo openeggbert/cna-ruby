@@ -260,6 +260,7 @@ def behavior_group(item)
   return "DISPOSABLE_COLLAPSE" if id.start_with?("disposable_collapse.")
   return "GAME_COMPONENTS" if id.start_with?("game_components.")
   return "GAME_COMPONENT" if id.start_with?("game_component.")
+  return "MEMBER_LEVEL_DEPENDENCY" if id.start_with?("member_level_dependency.")
 
   id.split(".").first.upcase
 end
@@ -2003,6 +2004,26 @@ def execute(item)
   when "Golden.FrustumRelations"
     projection = F::Matrix.CreatePerspectiveFieldOfView(F::MathHelper::PiOver4, 4.0 / 3.0, 1, 10); frustum = F::BoundingFrustum.new(F::Matrix.CreateLookAt(F::Vector3.new(0, 0, 5), F::Vector3.Zero, F::Vector3.Up) * projection); distant = F::BoundingFrustum.new(F::Matrix.CreateLookAt(F::Vector3.new(100, 0, 5), F::Vector3.new(100, 0, 0), F::Vector3.Up) * projection)
     [frustum.Contains(F::Vector3.Zero).to_i, frustum.Contains(F::Vector3.new(0, 0, 6)).to_i, frustum.Contains(F::BoundingBox.new(F::Vector3.new(-0.5), F::Vector3.new(0.5))).to_i, frustum.Contains(F::BoundingSphere.new(F::Vector3.Zero, 0.5)).to_i, frustum.Intersects(F::BoundingBox.new(F::Vector3.new(-0.5), F::Vector3.new(0.5))), frustum.Intersects(F::BoundingBox.new(F::Vector3.new(100), F::Vector3.new(101))), frustum.Intersects(F::BoundingSphere.new(F::Vector3.Zero, 0.5)), frustum.Intersects(F::BoundingSphere.new(F::Vector3.new(100), 0.5)), frustum.Intersects(distant), hex32(frustum.Intersects(F::Ray.new(F::Vector3.new(0, 0, 20), F::Vector3.Forward)))]
+  when "MemberLevelDependency.Inventory"
+    [IL_INVENTORY.fetch("TYPES_WITH_IL"), IL_INVENTORY.fetch("TYPES_WITHOUT_IL"),
+     IL_INVENTORY.fetch("TYPES_NATIVE_REACHABLE"), IL_INVENTORY.fetch("NATIVE_ENTRY_POINT_METHODS"),
+     IL_INVENTORY.fetch("types").each_value.all? { |entry| entry.key?("externalMemberReferences") },
+     IL_INVENTORY.fetch("types").each_value.sum { |entry| entry.fetch("externalMemberReferences").length } ==
+       IL_INVENTORY.fetch("MEMBER_LEVEL_EDGES")]
+  when "MemberLevelDependency.Reached"
+    owner, dependency = item.fetch("args")
+    reached = IL_INVENTORY.fetch("types").fetch(owner).fetch("externalMemberReferences")
+                          .select { |edge| edge.split("::", 2).first == dependency }
+                          .map { |edge| edge.split("::", 2).last }.uniq.sort
+    [reached, reached.length]
+  when "MemberLevelDependency.FrontierEffect"
+    frontier = JSON.parse(File.read(File.expand_path("../docs/generated/public-signature-dependency-report.json", __dir__)))
+    [frontier.fetch("dependencyCompleteCandidates").length,
+     frontier.fetch("consumableCandidates").length,
+     frontier.fetch("selectionRoute"),
+     frontier.fetch("partialDependencySatisfiedCandidates").map { |entry| entry.fetch("name") },
+     frontier.fetch("ilOnlyBlockedCandidates").length,
+     frontier.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("unmetDependencies").empty? }]
   when "GameComponent.Contract"
     type = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.GameComponent")
     members = type.fetch("members")

@@ -108,6 +108,35 @@ missing_labels.each do |label|
   end
 end
 
+# The member-level half of the dependency graph, from the IL inventory.
+#
+# The signature graph can only see the *types* a public signature names, so it answers "X depends on
+# Game" and stops. When that dependency is one of the deferred partial runtime types, the answer is
+# too coarse to act on: a partial type is a real Ruby class with a real surface, and what a
+# dependent needs is the members it actually calls, not all of them. Foundation 39 records those
+# edges, so the question can now be asked.
+#
+# This does **not** widen the candidate policy. `dependencyComplete` still means every dependency is
+# complete, and `selectedNext` still comes from `consumableCandidates`. What is added is a separate,
+# named report: for an unmet dependency that is *partial*, which of its members this type's own IL
+# reaches, and whether each of those is complete. A type whose every reached member is complete is
+# reported as `partialDependencySatisfied`, which is a statement a maintainer can act on rather than
+# a policy this tool applies on its own.
+member_edges = il_types.transform_values { |entry| entry.fetch("externalMemberReferences", []) }
+partial_names = strict.fetch("partialTypes").keys
+partial_missing = strict.fetch("partialTypes").transform_values do |labels|
+  labels.map { |label| label.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
+end
+
+reached_members = lambda do |name, dependency|
+  member_edges.fetch(name, []).filter_map do |edge|
+    owner, member = edge.split("::", 2)
+    next unless owner == dependency
+
+    member.sub(/\Aget_|\Aset_|\Aadd_|\Aremove_/, "")
+  end.uniq.sort
+end
+
 candidates = reference.fetch("types").filter_map do |type|
   name = type.fetch("name")
   next if target_names.include?(name)
@@ -118,12 +147,39 @@ candidates = reference.fetch("types").filter_map do |type|
   expected = type.fetch("members").count do |member|
     !(type["kind"] == "enum" && member["name"] == "value__")
   end
+  # A dependency the *IL* reaches that no public signature names. DrawableGameComponent is the case
+  # that forced this: its whole device-service handshake lives in a private field, so the signature
+  # graph could not see `IGraphicsDeviceService` at all and reported the type as blocked only on
+  # partial dependencies -- when in truth its `Initialize` throws
+  # InvalidOperationException(MissingGraphicsDeviceService) unless a producer registers one, and no
+  # producer exists. Ignoring these would let a type look ready that cannot be initialised.
+  il_only = member_edges.fetch(name, []).map { |edge| edge.split("::", 2).first }.uniq
+                        .select { |owner| reference_by_name.key?(owner) }
+                        .reject { |owner| owner == name || dependencies.include?(owner) }
+  il_only_unmet = (il_only - complete_names).sort
+  partial_unmet = unmet & partial_names
+  missing_unmet = unmet - partial_names
+  partial_detail = partial_unmet.to_h do |dependency|
+    reached = reached_members.call(name, dependency)
+    still_missing = reached & partial_missing.fetch(dependency, [])
+    [dependency, {"reachedMembers" => reached, "reachedButMissing" => still_missing.sort}]
+  end
   {
     "name" => name,
     "kind" => type.fetch("kind"),
     "expectedRubyIdentities" => expected,
     "dependencies" => dependencies.sort,
     "unmetDependencies" => unmet.sort,
+    "missingTypeDependencies" => missing_unmet.sort,
+    "partialTypeDependencies" => partial_detail,
+    "ilOnlyDependencies" => il_only.sort,
+    "ilOnlyUnmetDependencies" => il_only_unmet,
+    # True when every unmet dependency is a *partial* type, every member of it this type's own IL
+    # reaches is already complete, and the IL reaches no unmet type the signature graph never saw.
+    # It is reported, never acted on.
+    "partialDependencySatisfied" => missing_unmet.empty? && !partial_unmet.empty? &&
+                                    il_only_unmet.empty? &&
+                                    partial_detail.values.all? { |detail| detail.fetch("reachedButMissing").empty? },
     "partialRemainderReverseEdges" => reverse,
     "dependencyComplete" => unmet.empty?
   }
@@ -260,7 +316,7 @@ report = {
   "completeTypes" => complete_names.length,
   "partialTypes" => strict.fetch("partialTypes").keys,
   "missingTypes" => strict.fetch("missingTypeNames").length,
-  "candidatePolicy" => "missing type; all XNA public-signature dependencies complete; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME or RUNTIME_DATA blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
+  "candidatePolicy" => "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME or RUNTIME_DATA blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance" => {
     "register" => "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
     "inventory" => "docs/generated/xna-il-inventory.json",
@@ -280,6 +336,17 @@ report = {
     "exceptionBases" => CNA::Runtime::BclProjection::EXCEPTION_BASES
   },
   "blockerSummary" => blocker_summary,
+  # Candidates the signature graph blocks only on a partial type, every member of which their own IL
+  # already finds complete. Reported for a maintainer to act on; the selection route never uses it.
+  "partialDependencySatisfiedCandidates" => candidates.select { |candidate| candidate.fetch("partialDependencySatisfied") }
+                                                      .map { |candidate| candidate.merge(classify.call(reference_by_name.fetch(candidate.fetch("name")))) }
+                                                      .sort_by(&rank),
+  # The other half of the same measurement: a candidate the signature graph would have called
+  # satisfied, held back by a type only its IL reaches. Reported so the near-miss is visible rather
+  # than silently absent from the list above.
+  "ilOnlyBlockedCandidates" => candidates.select do |candidate|
+    candidate.fetch("missingTypeDependencies").empty? && !candidate.fetch("ilOnlyUnmetDependencies").empty?
+  end.map { |candidate| candidate.merge(classify.call(reference_by_name.fetch(candidate.fetch("name")))) }.sort_by(&rank),
   "consumableCandidates" => consumable,
   "dependencyCompleteCandidates" => dependency_complete,
   "pureManagedEnumCandidates" => pure_managed_enums,

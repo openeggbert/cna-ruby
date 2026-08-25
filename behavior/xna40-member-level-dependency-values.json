@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "derivation": "Foundation 39 member-level dependency edges. Every edge is a call/callvirt/newobj/ldftn/ldvirtftn/jmp operand the IL extractor already collected for the native-reachability fixpoint, kept when it lands on a pinned reference type other than its owner and normalised the same way -- a nested type spelled Parent+Child, a quoted name stripped. The rows below pin the three facts that changed a conclusion: GameComponent's whole body reaches exactly one member of Game, Game::get_Components; DrawableGameComponent's body reaches nine members of IGraphicsDeviceService, which no public signature of that type names, and its Initialize throws InvalidOperationException(MissingGraphicsDeviceService) when the service is absent; and GamerServicesComponent reaches Game::get_Window, which is still one of Game's deferred members.",
+  "observations": [
+    {
+      "id": "member_level_dependency.inventory",
+      "operation": "MemberLevelDependency.Inventory",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [257, 0, 77, 254, true, true]
+    },
+    {
+      "id": "member_level_dependency.game_component",
+      "operation": "MemberLevelDependency.Reached",
+      "args": ["Microsoft.Xna.Framework.GameComponent", "Microsoft.Xna.Framework.Game"],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [["get_Components"], 1]
+    },
+    {
+      "id": "member_level_dependency.drawable_game_component_game",
+      "operation": "MemberLevelDependency.Reached",
+      "args": ["Microsoft.Xna.Framework.DrawableGameComponent", "Microsoft.Xna.Framework.Game"],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [["get_Services"], 1]
+    },
+    {
+      "id": "member_level_dependency.drawable_game_component_device",
+      "operation": "MemberLevelDependency.Reached",
+      "args": ["Microsoft.Xna.Framework.DrawableGameComponent", "Microsoft.Xna.Framework.Graphics.GraphicsDevice"],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [[], 0]
+    },
+    {
+      "id": "member_level_dependency.drawable_game_component_service",
+      "operation": "MemberLevelDependency.Reached",
+      "args": ["Microsoft.Xna.Framework.DrawableGameComponent", "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        ["add_DeviceCreated", "add_DeviceDisposing", "add_DeviceReset", "add_DeviceResetting", "get_GraphicsDevice", "remove_DeviceCreated", "remove_DeviceDisposing", "remove_DeviceReset", "remove_DeviceResetting"],
+        9
+      ]
+    },
+    {
+      "id": "member_level_dependency.gamer_services_component",
+      "operation": "MemberLevelDependency.Reached",
+      "args": ["Microsoft.Xna.Framework.GamerServices.GamerServicesComponent", "Microsoft.Xna.Framework.Game"],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [["Exit", "get_Services", "get_Window"], 3]
+    },
+    {
+      "id": "member_level_dependency.frontier_effect",
+      "operation": "MemberLevelDependency.FrontierEffect",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [19, 0, "none-consumable", ["Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"], 13, 6]
+    }
+  ]
+}

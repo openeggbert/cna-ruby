@@ -247,6 +247,23 @@ inventory.each do |type_name, entry|
   entry["nativeReachableMethods"] = native.map { |node| node.split("::", 2).last }.uniq.sort
   entry["nativeReachable"] = !native.empty?
   entry["declaresNativeEntryPoint"] = own.any? { |node| pinvoke[node] }
+
+  # The member-level half of the dependency graph.
+  #
+  # The signature graph in analyze_dependencies.rb can only see the types a public signature names,
+  # so it answers "GameComponent depends on Game" and stops there. What the IL knows, and what
+  # nothing recorded until now, is *which member* of that type the dependent actually calls:
+  # GameComponent's whole body reaches exactly one, `Game::get_Components`. That is the difference
+  # between a type being blocked on a partial dependency and being blocked on nothing at all.
+  #
+  # The edges are the ones the reachability fixpoint above already collects, so this adds no new
+  # parsing and inherits the same normalisation -- a nested type spelled `Parent+Child`, a name
+  # stripped of quotes. Only edges landing on a *different* XNA reference type are kept: a call
+  # inside the type itself is not a dependency, and everything outside the pinned set is BCL, which
+  # the signature graph already handles.
+  entry["externalMemberReferences"] = own.flat_map { |node| calls.fetch(node, []) }
+                                         .reject { |target| target.start_with?("#{type_name}::") }
+                                         .uniq.sort
 end
 
 bodies.each do |type_name, body|
@@ -280,6 +297,10 @@ report = {
   # unmanaged calli. It was printed but never written, so nothing could pin it; Native frontier 3
   # moved it from 214 to 254 and that had to be measurable rather than only observable in a log.
   "NATIVE_ENTRY_POINT_METHODS" => pinvoke.length,
+  # Every member-level edge that lands on a reference type other than its own owner, keyed by the
+  # type that makes the call. This is what lets a consumer ask whether a dependency on a *partial*
+  # type is really unmet, member for member, instead of assuming it is.
+  "MEMBER_LEVEL_EDGES" => covered.sum { |name| inventory.fetch(name).fetch("externalMemberReferences", []).length },
   "typesWithoutIl" => (reference_names - covered).sort,
   "types" => covered.sort.to_h { |name| [name, inventory.fetch(name)] }
 }
@@ -292,3 +313,4 @@ puts "TYPES_WITH_IL=#{report["TYPES_WITH_IL"]}"
 puts "TYPES_WITHOUT_IL=#{report["TYPES_WITHOUT_IL"]}"
 puts "TYPES_NATIVE_REACHABLE=#{report["TYPES_NATIVE_REACHABLE"]}"
 puts "NATIVE_ENTRY_POINT_METHODS=#{report["NATIVE_ENTRY_POINT_METHODS"]}"
+puts "MEMBER_LEVEL_EDGES=#{report["MEMBER_LEVEL_EDGES"]}"
