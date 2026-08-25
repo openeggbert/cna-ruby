@@ -2,6 +2,20 @@ module Microsoft
   module Xna
     module Framework
       module Audio
+        # Three exception types whose whole declared surface is the standard constructor trio,
+        # every one of which forwards straight to the CLR exception base in the pinned XNA IL.
+        class InstancePlayLimitException < ::StandardError
+          def initialize: (?String? message, ?::Exception? inner) -> void
+        end
+
+        class NoAudioHardwareException < ::StandardError
+          def initialize: (?String? message, ?::Exception? inner) -> void
+        end
+
+        class NoMicrophoneConnectedException < ::StandardError
+          def initialize: (?String? message, ?::Exception? inner) -> void
+        end
+
         class AudioChannels
           Mono: AudioChannels
           Stereo: AudioChannels

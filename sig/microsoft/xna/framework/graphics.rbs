@@ -2,6 +2,20 @@ module Microsoft
   module Xna
     module Framework
       module Graphics
+        # Three exception types whose whole declared surface is the standard constructor trio,
+        # every one of which forwards straight to System.Exception in the pinned XNA IL.
+        class DeviceLostException < ::StandardError
+          def initialize: (?String? message, ?::Exception? inner) -> void
+        end
+
+        class DeviceNotResetException < ::StandardError
+          def initialize: (?String? message, ?::Exception? inner) -> void
+        end
+
+        class NoSuitableGraphicsDeviceException < ::StandardError
+          def initialize: (?String? message, ?::Exception? inner) -> void
+        end
+
         class SurfaceFormat
         end
 

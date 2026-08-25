@@ -136,9 +136,15 @@ unless bcl["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
   abort "Milestone 21 BCL projection evidence lacks observation-level provenance"
 end
 observations.concat(bcl.fetch("observations"))
+exception_path = File.expand_path("../behavior/xna40-xna-exception-values.json", __dir__)
+exceptions = JSON.parse(File.read(exception_path))
+unless exceptions["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
+  abort "Milestone 22 XNA exception evidence lacks observation-level provenance"
+end
+observations.concat(exceptions.fetch("observations"))
 abort "duplicate behavior observation id" unless observations.map { |item| item.fetch("id") }.uniq.length == observations.length
 result = source_corpus.merge(
-  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, and the Foundation 21 BCL projection separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, and the Foundation 22 XNA exception cluster separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category" => "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256" => EXPECTED_SHA256,
   "milestone3SourceAssemblySha256" => milestone.fetch("sourceAssemblySha256"),
@@ -159,6 +165,8 @@ result = source_corpus.merge(
   "milestone18SourceAssemblySha256" => interfaces.fetch("sourceAssemblySha256"),
   "milestone20SourceAssemblySha256" => events.fetch("sourceAssemblySha256"),
   "milestone21SourceAssemblySha256" => bcl.fetch("sourceAssemblySha256"),
+  "milestone22SourceAssemblySha256" => exceptions.fetch("sourceAssemblySha256"),
+  "milestone22SourceGraphicsAssemblySha256" => exceptions.fetch("sourceGraphicsAssemblySha256"),
   # Foundation 16 was merged by documented deterministic replay because this reconstructed host
   # does not carry the upstream source. Re-running this importer with the real source restores the
   # same observation set; it must not be run against any other artifact.

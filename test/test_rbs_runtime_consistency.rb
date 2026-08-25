@@ -693,15 +693,21 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     declared.each { |name| refute_nil resolve_constant(name) }
   end
 
-  def test_foundation16_audio_and_media_signatures_declare_only_selected_enums
+  def test_foundation16_audio_and_media_signatures_declare_only_selected_enums_and_exceptions
     environment = load_environment
-    {"::Microsoft::Xna::Framework::Audio" => %w[AudioChannels AudioStopOptions MicrophoneState SoundState],
+    exceptions = %w[InstancePlayLimitException NoAudioHardwareException NoMicrophoneConnectedException]
+    {"::Microsoft::Xna::Framework::Audio" =>
+       %w[AudioChannels AudioStopOptions MicrophoneState SoundState] + exceptions,
      "::Microsoft::Xna::Framework::Media" => %w[MediaSourceType MediaState VideoSoundtrackType]}.each do |namespace, expected|
       declared = environment.class_decls.keys.map(&:to_s).select { |name| name.start_with?("#{namespace}::") }
       assert_equal expected.map { |name| "#{namespace}::#{name}" }.sort, declared.sort
       declared.each do |name|
         runtime_type = resolve_constant(name)
-        assert_operator runtime_type, :<, CNA::Runtime::EnumValue, name
+        if exceptions.include?(name.split("::").last)
+          assert_operator runtime_type, :<, StandardError, name
+        else
+          assert_operator runtime_type, :<, CNA::Runtime::EnumValue, name
+        end
       end
     end
 

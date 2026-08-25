@@ -1,0 +1,629 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+  "sourceGraphicsAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+  "derivation": "Foundation 22 XNA exception cluster. The original XNA 4.0 Windows assemblies were located on this host by exact SHA-256 and disassembled with ikdasm; tools/api_compat/reference/XNA_IL_PROVENANCE.md pins them and tools/api_compat/build_il_inventory.rb derives docs/generated/xna-il-inventory.json from them without reproducing any Microsoft-owned bytes. Contract rows are read from that inventory and from the pinned public metadata: every XNA exception type declares zero fields, zero non-constructor methods, and constructors whose whole IL body is a pure forward to the CLR exception base. Mapping rows are derived from that fact applied to the documented StandardError base mapping; neither is snapshotted from the cna-ruby implementation.",
+  "observations": [
+    {
+      "id": "il_provenance.assemblies",
+      "operation": "IlProvenance.Assemblies",
+      "args": [
+
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        10,
+        [
+          [
+            "Microsoft.Xna.Framework.dll",
+            "4.0.0.0",
+            "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130"
+          ],
+          [
+            "Microsoft.Xna.Framework.Graphics.dll",
+            "4.0.0.0",
+            "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55"
+          ],
+          [
+            "Microsoft.Xna.Framework.Game.dll",
+            "4.0.0.0",
+            "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0"
+          ],
+          [
+            "Microsoft.Xna.Framework.Input.Touch.dll",
+            "4.0.0.0",
+            "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25"
+          ],
+          [
+            "Microsoft.Xna.Framework.Xact.dll",
+            "4.0.0.0",
+            "a14d5364dca7cf49fb90639e87ba04d52b59a700dc9198efa5707ce8eae28f0a"
+          ],
+          [
+            "Microsoft.Xna.Framework.Storage.dll",
+            "4.0.0.0",
+            "798f678e9ae3d9afc3bed66c30123bc9634fb923b6d200188344b618e608cbb8"
+          ],
+          [
+            "Microsoft.Xna.Framework.Video.dll",
+            "4.0.0.0",
+            "17538b1ca9d48a993e2cd88c96b436df08e7abb4aec5d4758eb21feb580d6e06"
+          ],
+          [
+            "Microsoft.Xna.Framework.Net.dll",
+            "4.0.0.0",
+            "39739dbf5f6ba02e1d0b02ed404f6fe0692497848bc1a6a25be132d47ed9c151"
+          ],
+          [
+            "Microsoft.Xna.Framework.GamerServices.dll",
+            "4.0.0.0",
+            "7c6effed97aa25a95c5e095d9c261f5581e402180cc073271a367b9eef79c8af"
+          ],
+          [
+            "Microsoft.Xna.Framework.Avatar.dll",
+            "4.0.0.0",
+            "b3c70bbe469000b9e11507cc63b88d54a4e0bc5c27afc826d66e0aee51640871"
+          ]
+        ],
+        257,
+        250,
+        55
+      ]
+    },
+    {
+      "id": "il_provenance.native_boundary",
+      "operation": "IlProvenance.NativeBoundary",
+      "args": [
+        "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+        "Microsoft.Xna.Framework.Graphics.PresentationParameters",
+        "Microsoft.Xna.Framework.Audio.AudioListener",
+        "Microsoft.Xna.Framework.Audio.Microphone",
+        "Microsoft.Xna.Framework.Graphics.EffectAnnotation",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+        "Microsoft.Xna.Framework.Input.GamePad",
+        "Microsoft.Xna.Framework.Vector3"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+          false
+        ],
+        [
+          "Microsoft.Xna.Framework.Graphics.PresentationParameters",
+          false
+        ],
+        [
+          "Microsoft.Xna.Framework.Audio.AudioListener",
+          false
+        ],
+        [
+          "Microsoft.Xna.Framework.Audio.Microphone",
+          true
+        ],
+        [
+          "Microsoft.Xna.Framework.Graphics.EffectAnnotation",
+          true
+        ],
+        [
+          "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+          true
+        ],
+        [
+          "Microsoft.Xna.Framework.Input.GamePad",
+          true
+        ],
+        [
+          "Microsoft.Xna.Framework.Vector3",
+          false
+        ]
+      ]
+    },
+    {
+      "id": "xna_exception.instance_play_limit.il_contract",
+      "operation": "XnaException.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Audio.InstancePlayLimitException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        true,
+        "System.Runtime.InteropServices.ExternalException",
+        0,
+        0,
+        false,
+        [
+          [
+            "public",
+            0,
+            true
+          ],
+          [
+            "public",
+            1,
+            true
+          ],
+          [
+            "public",
+            2,
+            true
+          ],
+          [
+            "private",
+            2,
+            true
+          ]
+        ],
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130"
+      ]
+    },
+    {
+      "id": "xna_exception.no_audio_hardware.il_contract",
+      "operation": "XnaException.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Audio.NoAudioHardwareException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        true,
+        "System.Runtime.InteropServices.ExternalException",
+        0,
+        0,
+        false,
+        [
+          [
+            "public",
+            0,
+            true
+          ],
+          [
+            "public",
+            1,
+            true
+          ],
+          [
+            "public",
+            2,
+            true
+          ],
+          [
+            "private",
+            2,
+            true
+          ]
+        ],
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130"
+      ]
+    },
+    {
+      "id": "xna_exception.no_microphone_connected.il_contract",
+      "operation": "XnaException.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Audio.NoMicrophoneConnectedException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        true,
+        "System.Exception",
+        0,
+        0,
+        false,
+        [
+          [
+            "public",
+            0,
+            true
+          ],
+          [
+            "public",
+            1,
+            true
+          ],
+          [
+            "public",
+            2,
+            true
+          ],
+          [
+            "private",
+            2,
+            true
+          ]
+        ],
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130"
+      ]
+    },
+    {
+      "id": "xna_exception.device_lost.il_contract",
+      "operation": "XnaException.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.DeviceLostException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        true,
+        "System.Exception",
+        0,
+        0,
+        false,
+        [
+          [
+            "public",
+            0,
+            true
+          ],
+          [
+            "public",
+            1,
+            true
+          ],
+          [
+            "public",
+            2,
+            true
+          ],
+          [
+            "private",
+            2,
+            true
+          ]
+        ],
+        "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55"
+      ]
+    },
+    {
+      "id": "xna_exception.device_not_reset.il_contract",
+      "operation": "XnaException.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.DeviceNotResetException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        true,
+        "System.Exception",
+        0,
+        0,
+        false,
+        [
+          [
+            "public",
+            0,
+            true
+          ],
+          [
+            "public",
+            1,
+            true
+          ],
+          [
+            "public",
+            2,
+            true
+          ],
+          [
+            "private",
+            2,
+            true
+          ]
+        ],
+        "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55"
+      ]
+    },
+    {
+      "id": "xna_exception.no_suitable_graphics_device.il_contract",
+      "operation": "XnaException.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        true,
+        "System.Exception",
+        0,
+        0,
+        false,
+        [
+          [
+            "public",
+            0,
+            true
+          ],
+          [
+            "public",
+            1,
+            true
+          ],
+          [
+            "public",
+            2,
+            true
+          ],
+          [
+            "private",
+            2,
+            true
+          ]
+        ],
+        "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55"
+      ]
+    },
+    {
+      "id": "xna_exception.content_load.il_contract",
+      "operation": "XnaException.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Content.ContentLoadException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        false,
+        "System.Exception",
+        0,
+        0,
+        false,
+        [
+          [
+            "public",
+            0,
+            true
+          ],
+          [
+            "public",
+            1,
+            true
+          ],
+          [
+            "public",
+            2,
+            true
+          ],
+          [
+            "family",
+            2,
+            true
+          ]
+        ],
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130"
+      ]
+    },
+    {
+      "id": "xna_exception.storage_device_not_connected.il_contract",
+      "operation": "XnaException.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        false,
+        "System.Runtime.InteropServices.ExternalException",
+        0,
+        0,
+        false,
+        [
+          [
+            "public",
+            0,
+            true
+          ],
+          [
+            "public",
+            1,
+            true
+          ],
+          [
+            "public",
+            2,
+            true
+          ],
+          [
+            "family",
+            2,
+            true
+          ]
+        ],
+        "798f678e9ae3d9afc3bed66c30123bc9634fb923b6d200188344b618e608cbb8"
+      ]
+    },
+    {
+      "id": "xna_exception.instance_play_limit.ruby_mapping",
+      "operation": "XnaException.RubyMapping",
+      "args": [
+        "Microsoft.Xna.Framework.Audio.InstancePlayLimitException"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        "StandardError",
+        true,
+        [
+
+        ],
+        [
+
+        ],
+        "Microsoft::Xna::Framework::Audio::InstancePlayLimitException",
+        "m",
+        "m",
+        true,
+        true,
+        true,
+        true,
+        "Microsoft::Xna::Framework::Audio::InstancePlayLimitException",
+        [
+          "Microsoft::Xna::Framework::Audio::InstancePlayLimitException",
+          "raised"
+        ],
+        "TypeError"
+      ]
+    },
+    {
+      "id": "xna_exception.no_audio_hardware.ruby_mapping",
+      "operation": "XnaException.RubyMapping",
+      "args": [
+        "Microsoft.Xna.Framework.Audio.NoAudioHardwareException"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        "StandardError",
+        true,
+        [
+
+        ],
+        [
+
+        ],
+        "Microsoft::Xna::Framework::Audio::NoAudioHardwareException",
+        "m",
+        "m",
+        true,
+        true,
+        true,
+        true,
+        "Microsoft::Xna::Framework::Audio::NoAudioHardwareException",
+        [
+          "Microsoft::Xna::Framework::Audio::NoAudioHardwareException",
+          "raised"
+        ],
+        "TypeError"
+      ]
+    },
+    {
+      "id": "xna_exception.no_microphone_connected.ruby_mapping",
+      "operation": "XnaException.RubyMapping",
+      "args": [
+        "Microsoft.Xna.Framework.Audio.NoMicrophoneConnectedException"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        "StandardError",
+        true,
+        [
+
+        ],
+        [
+
+        ],
+        "Microsoft::Xna::Framework::Audio::NoMicrophoneConnectedException",
+        "m",
+        "m",
+        true,
+        true,
+        true,
+        true,
+        "Microsoft::Xna::Framework::Audio::NoMicrophoneConnectedException",
+        [
+          "Microsoft::Xna::Framework::Audio::NoMicrophoneConnectedException",
+          "raised"
+        ],
+        "TypeError"
+      ]
+    },
+    {
+      "id": "xna_exception.device_lost.ruby_mapping",
+      "operation": "XnaException.RubyMapping",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.DeviceLostException"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        "StandardError",
+        true,
+        [
+
+        ],
+        [
+
+        ],
+        "Microsoft::Xna::Framework::Graphics::DeviceLostException",
+        "m",
+        "m",
+        true,
+        true,
+        true,
+        true,
+        "Microsoft::Xna::Framework::Graphics::DeviceLostException",
+        [
+          "Microsoft::Xna::Framework::Graphics::DeviceLostException",
+          "raised"
+        ],
+        "TypeError"
+      ]
+    },
+    {
+      "id": "xna_exception.device_not_reset.ruby_mapping",
+      "operation": "XnaException.RubyMapping",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.DeviceNotResetException"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        "StandardError",
+        true,
+        [
+
+        ],
+        [
+
+        ],
+        "Microsoft::Xna::Framework::Graphics::DeviceNotResetException",
+        "m",
+        "m",
+        true,
+        true,
+        true,
+        true,
+        "Microsoft::Xna::Framework::Graphics::DeviceNotResetException",
+        [
+          "Microsoft::Xna::Framework::Graphics::DeviceNotResetException",
+          "raised"
+        ],
+        "TypeError"
+      ]
+    },
+    {
+      "id": "xna_exception.no_suitable_graphics_device.ruby_mapping",
+      "operation": "XnaException.RubyMapping",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        "StandardError",
+        true,
+        [
+
+        ],
+        [
+
+        ],
+        "Microsoft::Xna::Framework::Graphics::NoSuitableGraphicsDeviceException",
+        "m",
+        "m",
+        true,
+        true,
+        true,
+        true,
+        "Microsoft::Xna::Framework::Graphics::NoSuitableGraphicsDeviceException",
+        [
+          "Microsoft::Xna::Framework::Graphics::NoSuitableGraphicsDeviceException",
+          "raised"
+        ],
+        "TypeError"
+      ]
+    }
+  ]
+}

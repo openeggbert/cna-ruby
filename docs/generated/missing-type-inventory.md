@@ -6,10 +6,7 @@
 - `Microsoft.Xna.Framework.Audio.AudioListener`
 - `Microsoft.Xna.Framework.Audio.Cue`
 - `Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance`
-- `Microsoft.Xna.Framework.Audio.InstancePlayLimitException`
 - `Microsoft.Xna.Framework.Audio.Microphone`
-- `Microsoft.Xna.Framework.Audio.NoAudioHardwareException`
-- `Microsoft.Xna.Framework.Audio.NoMicrophoneConnectedException`
 - `Microsoft.Xna.Framework.Audio.RendererDetail`
 - `Microsoft.Xna.Framework.Audio.SoundBank`
 - `Microsoft.Xna.Framework.Audio.SoundEffect`
@@ -52,8 +49,6 @@
 - `Microsoft.Xna.Framework.Graphics.BasicEffect`
 - `Microsoft.Xna.Framework.Graphics.BlendState`
 - `Microsoft.Xna.Framework.Graphics.DepthStencilState`
-- `Microsoft.Xna.Framework.Graphics.DeviceLostException`
-- `Microsoft.Xna.Framework.Graphics.DeviceNotResetException`
 - `Microsoft.Xna.Framework.Graphics.DirectionalLight`
 - `Microsoft.Xna.Framework.Graphics.DisplayMode`
 - `Microsoft.Xna.Framework.Graphics.DisplayModeCollection`
@@ -88,7 +83,6 @@
 - `Microsoft.Xna.Framework.Graphics.ModelMeshPart`
 - `Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection`
 - `Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator`
-- `Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException`
 - `Microsoft.Xna.Framework.Graphics.OcclusionQuery`
 - `Microsoft.Xna.Framework.Graphics.PresentationParameters`
 - `Microsoft.Xna.Framework.Graphics.RasterizerState`

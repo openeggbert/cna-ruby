@@ -7,6 +7,24 @@ root = File.expand_path("../..", __dir__)
 reference = JSON.parse(File.read(File.join(__dir__, "reference", "xna40-windows-runtime-contract.json")))
 target = JSON.parse(File.read(File.join(__dir__, "signatures.json")))
 strict = JSON.parse(File.read(File.join(root, "docs", "generated", "api-compat-report.json")))
+il_inventory = JSON.parse(File.read(File.join(root, "docs", "generated", "xna-il-inventory.json")))
+il_types = il_inventory.fetch("types")
+
+# A type whose behaviour the pinned IL proves, but whose *values* only a device, driver, codec,
+# media library or attached hardware can supply. IL availability settles semantics, never the
+# availability of runtime data, and this project does not fabricate capability values. Each entry
+# must name the exact missing input; test/test_dependency_frontier.rb enforces that.
+RUNTIME_DATA = {
+  "Microsoft.Xna.Framework.Audio.RendererDetail" => "values come from XACT audio renderer enumeration; no audio engine exists in this binding and no renderer has been enumerated",
+  "Microsoft.Xna.Framework.Audio.AudioCategory" => "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have",
+  "Microsoft.Xna.Framework.Media.MediaSource" => "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried",
+  "Microsoft.Xna.Framework.Media.Video" => "produced only by the content pipeline or MediaLibrary; no producer exists and the class declares no public constructor",
+  "Microsoft.Xna.Framework.Media.VisualizationData" => "filled by MediaPlayer.GetVisualizationData from live playback",
+  "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs" => "raised only by GraphicsDevice.ResourceCreated; the class declares no public constructor and no producer exists",
+  "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs" => "raised only by GraphicsDevice.ResourceDestroyed; the class declares no public constructor and no producer exists",
+  "Microsoft.Xna.Framework.GameWindow" => "an abstract window whose concrete implementation is the platform window behind Game; projecting it would require the deferred Game/window runtime",
+  "Microsoft.Xna.Framework.FrameworkDispatcher" => "Update pumps the live audio and media services; with neither present it would be a no-op pretending to be a pump"
+}.freeze
 
 reference_by_name = reference.fetch("types").to_h { |type| [type.fetch("name"), type] }
 target_names = target.fetch("types").map { |type| type.fetch("name") }
@@ -105,37 +123,40 @@ end
 
 # Why a dependency-complete candidate still cannot be consumed safely.
 #
-# BCL_PROJECTION     the type's public signature names a BCL type no complete type projects.
-# BEHAVIOR_EVIDENCE  the type declares a constructor or method whose behaviour lives in XNA IL.
-#                    The pinned snapshot is metadata only, so that behaviour cannot be derived on
-#                    this host without the retained original assemblies.
+# BCL_PROJECTION   the type's public signature names a BCL type no complete type projects.
+# IL_UNAVAILABLE   the type declares behaviour but no pinned assembly carries its IL.
+# NATIVE_RUNTIME   the type's own IL reaches a native entry point, so faithful behaviour needs CNA
+#                  or platform support this managed sequence does not add.
+# RUNTIME_DATA     the pinned IL settles the type's semantics, but its values come only from a
+#                  device, driver, codec, media library or attached hardware that has not been
+#                  queried. Fabricating them is refused.
 #
-# EVENT_PROJECTION was retired in Foundation 20. Declaring a CLR event is no longer a blocker in
-# itself: one CLR event projects to one Ruby event reader over CNA::Runtime::Event, and the API
-# verifier measures that projection under EVENT_MAPPING_MISMATCH. What is left of the old blocker
-# is exactly the question BCL_PROJECTION already measures — whether the event's
-# System.EventHandler`1[TArgs] support type is projected by a complete type — plus, for a class,
-# the IL that decides when the event is raised, which BEHAVIOR_EVIDENCE already measures.
+# EVENT_PROJECTION was retired in Foundation 20. BEHAVIOR_EVIDENCE was retired in Foundation 22:
+# the original XNA 4.0 Windows assemblies are on this host, hash-pinned by
+# tools/api_compat/reference/XNA_IL_PROVENANCE.md, so "behaviour lives in IL" is a statement about
+# work to do rather than about missing input. Declaring a constructor or method is now reported as
+# the informational `ilDerivationRequired` flag, not as a blocker.
 classify = lambda do |type|
+  name = type.fetch("name")
   blockers = []
   events = type.fetch("members").select { |member| member.fetch("kind") == "event" }
   bcl = unmapped_bcl.call(type)
   blockers << "BCL_PROJECTION" unless bcl.empty?
 
   behaviour = type.fetch("members").select { |member| %w[constructor method].include?(member.fetch("kind")) }
-  metadata_complete = case type.fetch("kind")
-                      when "enum" then true
-                      when "interface" then true
-                      else
-                        # A struct with no declared constructor and only read-only properties is
-                        # fully described by the CLR default value; anything else needs IL.
-                        type.fetch("kind") == "struct" && behaviour.empty? &&
-                          type.fetch("members").all? { |member| member.fetch("kind") == "property" && !member.fetch("set") }
-                      end
-  blockers << "BEHAVIOR_EVIDENCE" unless metadata_complete
+  il = il_types[name]
+  blockers << "IL_UNAVAILABLE" if il.nil? && !behaviour.empty?
+  blockers << "NATIVE_RUNTIME" if il && il.fetch("nativeReachable")
+  blockers << "RUNTIME_DATA" if RUNTIME_DATA.key?(name)
+
   {"blockers" => blockers, "unmappedBclTypes" => bcl,
    "eventMembers" => events.map { |member| member.fetch("name") },
-   "behaviourBearingMembers" => behaviour.map { |member| member.fetch("name") }.uniq}
+   "behaviourBearingMembers" => behaviour.map { |member| member.fetch("name") }.uniq,
+   "ilDerivationRequired" => !behaviour.empty?,
+   "ilAvailable" => !il.nil?,
+   "ilAssembly" => il && il.fetch("assembly"),
+   "nativeReachableMethods" => il ? il.fetch("nativeReachableMethods") : [],
+   "runtimeDataDetail" => RUNTIME_DATA[name]}
 end
 
 dependency_complete = candidates.map do |candidate|
@@ -173,9 +194,18 @@ report = {
   "completeTypes" => complete_names.length,
   "partialTypes" => strict.fetch("partialTypes").keys,
   "missingTypes" => strict.fetch("missingTypeNames").length,
-  "candidatePolicy" => "missing type; all XNA public-signature dependencies complete; consumable only when no BCL_PROJECTION or BEHAVIOR_EVIDENCE blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
+  "candidatePolicy" => "missing type; all XNA public-signature dependencies complete; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME or RUNTIME_DATA blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
+  "ilProvenance" => {
+    "register" => "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
+    "inventory" => "docs/generated/xna-il-inventory.json",
+    "assemblies" => il_inventory.fetch("assemblies").length,
+    "typesWithIl" => il_inventory.fetch("TYPES_WITH_IL"),
+    "typesNativeReachable" => il_inventory.fetch("TYPES_NATIVE_REACHABLE")
+  },
+  "runtimeDataRegister" => RUNTIME_DATA,
   "retiredBlockers" => {
-    "EVENT_PROJECTION" => "retired in Foundation 20; one CLR event projects to one Ruby event reader over CNA::Runtime::Event and the API verifier measures it under EVENT_MAPPING_MISMATCH. The residue is BCL_PROJECTION on the EventHandler`1 support type and, for classes, BEHAVIOR_EVIDENCE on the raising IL."
+    "EVENT_PROJECTION" => "retired in Foundation 20; one CLR event projects to one Ruby event reader over CNA::Runtime::Event and the API verifier measures it under EVENT_MAPPING_MISMATCH. The residue is BCL_PROJECTION on the EventHandler`1 support type and, for classes, the IL that decides when the event is raised.",
+    "BEHAVIOR_EVIDENCE" => "retired in Foundation 22; the original hash-pinned XNA 4.0 Windows assemblies are available on this host, so declaring a constructor or method is work to do, not missing input. It is reported as the informational ilDerivationRequired flag and split into the IL_UNAVAILABLE, NATIVE_RUNTIME and RUNTIME_DATA blockers, which name what is genuinely absent."
   },
   "selectionRoute" => selection_route,
   "mappedBclTypes" => mapped_bcl,
@@ -196,7 +226,9 @@ File.write(destination, JSON.pretty_generate(report) + "\n")
 
 blocker_notes = {
   "BCL_PROJECTION" => "public signature names a BCL type that no complete type projects",
-  "BEHAVIOR_EVIDENCE" => "declares a constructor or method whose behaviour lives in XNA IL; the pinned snapshot is metadata only"
+  "IL_UNAVAILABLE" => "declares behaviour but no pinned assembly carries its IL",
+  "NATIVE_RUNTIME" => "its own IL reaches a native entry point, so faithful behaviour needs CNA or platform support this managed sequence does not add",
+  "RUNTIME_DATA" => "the pinned IL settles its semantics, but its values come only from a device, driver, codec or media library that has not been queried"
 }
 lines = ["# Dependency frontier", "",
          "Every missing type whose XNA public-signature dependencies are already complete, and the",
@@ -205,11 +237,11 @@ lines = ["# Dependency frontier", "",
          "Consumable now: #{consumable.length}. Dependency-complete but blocked: #{dependency_complete.length - consumable.length}.", ""]
 blocker_notes.each { |key, note| lines << "- `#{key}` — #{note}" }
 lines << ""
-lines << "`EVENT_PROJECTION` was retired in Foundation 20. One CLR event projects to one Ruby event"
-lines << "reader over `CNA::Runtime::Event`, and the API verifier measures that projection under"
-lines << "`EVENT_MAPPING_MISMATCH`. Declaring an event no longer blocks a candidate; the residue is"
-lines << "`BCL_PROJECTION` on its `System.EventHandler`1[TArgs]` support type and, for a class,"
-lines << "`BEHAVIOR_EVIDENCE` on the IL that decides when the event is raised."
+lines << "`EVENT_PROJECTION` was retired in Foundation 20 and `BEHAVIOR_EVIDENCE` in Foundation 22."
+lines << "The original XNA 4.0 Windows assemblies are on this host, hash-pinned by"
+lines << "`tools/api_compat/reference/XNA_IL_PROVENANCE.md`, so \"behaviour lives in IL\" is work to do"
+lines << "rather than missing input. Native reachability is measured from that IL:"
+lines << "#{il_inventory.fetch("TYPES_NATIVE_REACHABLE")} of #{il_inventory.fetch("TYPES_WITH_IL")} reference types reach a native entry point."
 lines << ""
 dependency_complete.group_by { |candidate| candidate.fetch("blockers") }.sort_by { |key, _| key.join }.each do |blockers, list|
   lines << "## #{blockers.empty? ? "CONSUMABLE" : blockers.join(" + ")} (#{list.length})"
@@ -220,8 +252,12 @@ dependency_complete.group_by { |candidate| candidate.fetch("blockers") }.sort_by
     detail = []
     detail << "events: #{candidate.fetch("eventMembers").join(", ")}" unless candidate.fetch("eventMembers").empty?
     detail << "unmapped BCL: #{candidate.fetch("unmappedBclTypes").join(", ")}" unless candidate.fetch("unmappedBclTypes").empty?
+    unless candidate.fetch("nativeReachableMethods").empty?
+      detail << "native: #{candidate.fetch("nativeReachableMethods").first(4).join(", ")}"
+    end
+    detail << candidate.fetch("runtimeDataDetail") if candidate.fetch("runtimeDataDetail")
     unless candidate.fetch("behaviourBearingMembers").empty?
-      detail << "IL-bearing: #{candidate.fetch("behaviourBearingMembers").first(6).join(", ")}"
+      detail << "IL to derive: #{candidate.fetch("behaviourBearingMembers").first(6).join(", ")}"
     end
     lines << "| `#{candidate.fetch("name")}` | #{candidate.fetch("kind")} | #{candidate.fetch("expectedRubyIdentities")} | #{detail.join("; ")} |"
   end

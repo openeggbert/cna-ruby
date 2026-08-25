@@ -8,6 +8,22 @@ module Microsoft
   module Xna
     module Framework
       module Graphics
+        # The three Graphics exception types. Each declares nothing but the standard trio of
+        # constructors, every one of which the pinned XNA IL shows forwarding straight to
+        # System.Exception. Nothing in this binding ever raises them: device loss, device reset and
+        # adapter selection all remain deferred.
+        class DeviceLostException < StandardError
+          include CNA::Runtime::XnaExceptionConstruction
+        end
+
+        class DeviceNotResetException < StandardError
+          include CNA::Runtime::XnaExceptionConstruction
+        end
+
+        class NoSuitableGraphicsDeviceException < StandardError
+          include CNA::Runtime::XnaExceptionConstruction
+        end
+
         class SpriteSortMode < CNA::Runtime::EnumValue
           extend CNA::Runtime::EnumType
           define_values({ "Deferred" => 0, "Immediate" => 1, "Texture" => 2, "BackToFront" => 3, "FrontToBack" => 4 })

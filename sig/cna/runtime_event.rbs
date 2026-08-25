@@ -22,6 +22,15 @@ module CNA
       def self?.identities: () -> Array[String]
     end
 
+    # Shared construction for the projected XNA exception types.
+    module ExceptionSupport
+      def self?.bind_cause: (::Exception exception, ::Exception inner) -> ::Exception
+    end
+
+    module XnaExceptionConstruction
+      def initialize: (?String? message, ?::Exception? inner) -> void
+    end
+
     module EventOwner
       def xna_event: (Symbol identity) -> void
       def xna_abstract_event: (Symbol identity, String contract) -> void

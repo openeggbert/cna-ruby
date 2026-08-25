@@ -23,6 +23,7 @@ class DependencyFrontierTest < Minitest::Test
   SIGNATURES = JSON.parse(ROOT.join("tools", "api_compat", "signatures.json").read)
   STRICT = JSON.parse(ROOT.join("docs", "generated", "api-compat-report.json").read)
   REPORT = JSON.parse(ROOT.join("docs", "generated", "public-signature-dependency-report.json").read)
+  IL = JSON.parse(ROOT.join("docs", "generated", "xna-il-inventory.json").read)
 
   BY_NAME = REFERENCE.fetch("types").to_h { |type| [type.fetch("name"), type] }.freeze
 
@@ -40,6 +41,12 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.IEffectFog
       Microsoft.Xna.Framework.IUpdateable
       Microsoft.Xna.Framework.IDrawable
+      Microsoft.Xna.Framework.Audio.InstancePlayLimitException
+      Microsoft.Xna.Framework.Audio.NoAudioHardwareException
+      Microsoft.Xna.Framework.Audio.NoMicrophoneConnectedException
+      Microsoft.Xna.Framework.Graphics.DeviceLostException
+      Microsoft.Xna.Framework.Graphics.DeviceNotResetException
+      Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException
     ]
   ).compact.uniq.freeze
 
@@ -63,22 +70,20 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   # The same rule the tool applies, restated independently here. Declaring a CLR event is not a
-  # blocker: what is left of the retired EVENT_PROJECTION blocker is BCL_PROJECTION on the
-  # EventHandler`1 support type and, for a class, BEHAVIOR_EVIDENCE on the raising IL.
+  # blocker (retired in Foundation 20) and neither is declaring a constructor or method (retired in
+  # Foundation 22, once the hash-pinned original assemblies were located): what blocks a candidate
+  # is an unmapped BCL type, absent IL, IL that reaches a native entry point, or values only a
+  # device or media stack can supply.
   def blockers_for(type, mapped)
+    name = type.fetch("name")
     blockers = []
     blockers << "BCL_PROJECTION" unless unmapped_bcl(type, mapped).empty?
 
     behaviour = type.fetch("members").select { |member| %w[constructor method].include?(member.fetch("kind")) }
-    metadata_complete =
-      case type.fetch("kind")
-      when "enum", "interface" then true
-      when "struct"
-        behaviour.empty? &&
-          type.fetch("members").all? { |member| member.fetch("kind") == "property" && !member.fetch("set") }
-      else false
-      end
-    blockers << "BEHAVIOR_EVIDENCE" unless metadata_complete
+    il = IL.fetch("types")[name]
+    blockers << "IL_UNAVAILABLE" if il.nil? && !behaviour.empty?
+    blockers << "NATIVE_RUNTIME" if il && il.fetch("nativeReachable")
+    blockers << "RUNTIME_DATA" if REPORT.fetch("runtimeDataRegister").key?(name)
     blockers
   end
 
@@ -109,9 +114,72 @@ class DependencyFrontierTest < Minitest::Test
     end
   end
 
-  def test_every_type_completed_in_foundations_16_to_20_classifies_as_consumable
+  # Foundation 22 — the pinned original assemblies were located by hash, so the IL inventory is
+  # real evidence rather than an assumption.
+  def test_the_il_inventory_is_hash_pinned_and_covers_the_reference_surface
+    assert_equal 1, IL.fetch("schemaVersion")
+    assert_equal REFERENCE.fetch("types").length, IL.fetch("REFERENCE_TYPES")
+    assert_equal 250, IL.fetch("TYPES_WITH_IL")
+
+    provenance = ROOT.join("tools", "api_compat", "reference", "XNA_IL_PROVENANCE.md").read
+    IL.fetch("assemblies").each do |assembly|
+      assert_equal 64, assembly.fetch("sha256").length, assembly.fetch("name")
+      assert_equal "4.0.0.0", assembly.fetch("version")
+      # Every hash the inventory reports is pinned in the committed provenance register.
+      assert_includes provenance, assembly.fetch("sha256"), assembly.fetch("name")
+      assert_includes provenance, assembly.fetch("name")
+    end
+    # The two hashes every earlier milestone cited as sourceAssemblySha256 are in the register.
+    assert_includes provenance, "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130"
+    assert_includes provenance, "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55"
+    # No Microsoft-owned bytes and no machine-local path may be committed.
+    refute_match(%r{/home/|/rv/|/tmp/}, provenance)
+    refute_match(%r{/home/|/rv/|/tmp/}, ROOT.join("docs", "generated", "xna-il-inventory.json").read)
+
+    assert_equal REPORT.fetch("ilProvenance").fetch("assemblies"), IL.fetch("assemblies").length
+    assert_equal REPORT.fetch("ilProvenance").fetch("typesNativeReachable"), IL.fetch("TYPES_NATIVE_REACHABLE")
+  end
+
+  # The classifier must agree with what this binding already knows is native.
+  def test_native_reachability_agrees_with_the_shipped_native_boundary
+    native = IL.fetch("types").select { |_name, entry| entry.fetch("nativeReachable") }.keys
+    # Every partial runtime type except the pure-managed GraphicsResource contract is native.
+    %w[
+      Microsoft.Xna.Framework.Game
+      Microsoft.Xna.Framework.GraphicsDeviceManager
+      Microsoft.Xna.Framework.Graphics.GraphicsDevice
+      Microsoft.Xna.Framework.Graphics.Texture2D
+      Microsoft.Xna.Framework.Graphics.SpriteBatch
+    ].each { |name| assert_includes native, name, name }
+
+    # The only complete types that are native-reachable are the three whose native routes this
+    # binding really implements; every other complete type is pure managed.
+    assert_equal %w[
+      Microsoft.Xna.Framework.Graphics.Texture
+      Microsoft.Xna.Framework.Input.GamePad
+      Microsoft.Xna.Framework.Input.Mouse
+    ], (STRICT.fetch("completeTypeNames") & native).sort
+
+    assert_operator IL.fetch("TYPES_NATIVE_REACHABLE"), :>, 0
+    assert_operator IL.fetch("TYPES_NATIVE_REACHABLE"), :<, IL.fetch("TYPES_WITH_IL")
+  end
+
+  # Every runtime-data deferral must name a real type and say exactly what input is missing.
+  def test_every_runtime_data_deferral_is_justified
+    register = REPORT.fetch("runtimeDataRegister")
+    refute_empty register
+    register.each do |name, justification|
+      assert BY_NAME.key?(name), name
+      refute_empty justification.to_s, name
+      refute_includes STRICT.fetch("completeTypeNames"), name, name
+      # A runtime-data deferral is about missing values, never about missing IL.
+      assert IL.fetch("types").key?(name), name
+    end
+  end
+
+  def test_every_type_completed_in_foundations_16_to_22_classifies_as_consumable
     mapped = mapped_bcl_from_complete_types
-    assert_equal 33, CONSUMED.length
+    assert_equal 39, CONSUMED.length
 
     CONSUMED.each do |name|
       type = BY_NAME.fetch(name)
@@ -121,38 +189,67 @@ class DependencyFrontierTest < Minitest::Test
     end
   end
 
-  def test_the_frontier_is_blocked_and_every_blocker_is_attributed
-    assert_empty REPORT.fetch("consumableCandidates")
-    assert_nil REPORT["selectedNext"]
-    assert_equal "none-consumable", REPORT.fetch("selectionRoute")
-    assert_equal 38, REPORT.fetch("dependencyCompleteCandidates").length
+  def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
+    assert_equal 32, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
-    refute REPORT.fetch("blockerSummary").key?("NONE")
+    assert_equal 7, REPORT.fetch("consumableCandidates").length
+    assert_equal REPORT.fetch("consumableCandidates").length, REPORT.fetch("blockerSummary").fetch("NONE")
+    assert_equal "global-consumable-rank", REPORT.fetch("selectionRoute")
+    refute_nil REPORT["selectedNext"]
 
     REPORT.fetch("dependencyCompleteCandidates").each do |candidate|
-      refute_empty candidate.fetch("blockers"), candidate.fetch("name")
-      refute_includes candidate.fetch("blockers"), "EVENT_PROJECTION", candidate.fetch("name")
-      if candidate.fetch("blockers").include?("BEHAVIOR_EVIDENCE")
-        assert candidate.fetch("behaviourBearingMembers").any? || candidate.fetch("kind") == "class",
-               candidate.fetch("name")
+      %w[EVENT_PROJECTION BEHAVIOR_EVIDENCE].each do |retired|
+        refute_includes candidate.fetch("blockers"), retired, candidate.fetch("name")
+      end
+      # Declaring a constructor or method is now a work marker, never a blocker.
+      if candidate.fetch("ilDerivationRequired")
+        refute_empty candidate.fetch("behaviourBearingMembers"), candidate.fetch("name")
+      end
+      assert candidate.fetch("ilAvailable") || candidate.fetch("blockers").include?("IL_UNAVAILABLE"),
+             candidate.fetch("name")
+      if candidate.fetch("blockers").include?("NATIVE_RUNTIME")
+        refute_empty candidate.fetch("nativeReachableMethods"), candidate.fetch("name")
+      end
+      if candidate.fetch("blockers").include?("RUNTIME_DATA")
+        refute_nil candidate.fetch("runtimeDataDetail"), candidate.fetch("name")
       end
     end
-    assert_equal %w[EVENT_PROJECTION], REPORT.fetch("retiredBlockers").keys
+    assert_equal %w[BEHAVIOR_EVIDENCE EVENT_PROJECTION], REPORT.fetch("retiredBlockers").keys.sort
   end
 
-  # Foundation 21 — the general exception base mapping is made, so the six XNA exception types whose
-  # whole non-XNA surface is System.Exception / ExternalException are blocked on XNA IL alone.
-  def test_exception_cluster_is_blocked_on_il_alone_once_the_base_mapping_exists
-    assert_equal({"types" => CNA::Runtime::BclProjection::TYPES,
-                  "exceptionBases" => CNA::Runtime::BclProjection::EXCEPTION_BASES},
-                 REPORT.fetch("bclProjectionRegister"))
+  # Every consumable candidate really is pure managed, hash-pinned and dependency-complete.
+  def test_every_consumable_candidate_is_pure_managed_with_available_il
+    assert_equal %w[
+      Microsoft.Xna.Framework.Audio.AudioEmitter
+      Microsoft.Xna.Framework.Audio.AudioListener
+      Microsoft.Xna.Framework.GameComponentCollectionEventArgs
+      Microsoft.Xna.Framework.Graphics.DisplayMode
+      Microsoft.Xna.Framework.Graphics.PresentationParameters
+      Microsoft.Xna.Framework.Input.Touch.GestureSample
+      Microsoft.Xna.Framework.Input.Touch.TouchLocation
+    ], REPORT.fetch("consumableCandidates").map { |candidate| candidate.fetch("name") }.sort
 
+    REPORT.fetch("consumableCandidates").each do |candidate|
+      name = candidate.fetch("name")
+      assert_empty candidate.fetch("blockers"), name
+      assert_empty candidate.fetch("unmetDependencies"), name
+      assert_empty candidate.fetch("unmappedBclTypes"), name
+      assert candidate.fetch("ilAvailable"), name
+      entry = IL.fetch("types").fetch(name)
+      refute entry.fetch("nativeReachable"), name
+      assert_includes IL.fetch("assemblies").map { |assembly| assembly.fetch("name") }, entry.fetch("assembly"), name
+      refute_includes STRICT.fetch("completeTypeNames"), name, name
+    end
+  end
+
+  # Foundation 22 — the pinned IL settled every XNA exception constructor, so six are complete and
+  # only the two carrying a protected serialization constructor remain.
+  def test_six_exception_types_are_complete_and_two_remain_on_the_serialization_cluster
     exceptions = BY_NAME.keys.grep(/Exception\z/).sort
     assert_equal 8, exceptions.length
-    exceptions.each { |name| assert_includes STRICT.fetch("missingTypeNames"), name }
 
-    il_only = %w[
+    completed = %w[
       Microsoft.Xna.Framework.Audio.InstancePlayLimitException
       Microsoft.Xna.Framework.Audio.NoAudioHardwareException
       Microsoft.Xna.Framework.Audio.NoMicrophoneConnectedException
@@ -160,25 +257,18 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.DeviceNotResetException
       Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException
     ]
-    il_only.each do |name|
-      candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
-      refute_nil candidate, name
-      assert_equal ["BEHAVIOR_EVIDENCE"], candidate.fetch("blockers"), name
-      assert_empty candidate.fetch("unmappedBclTypes"), name
-      assert_equal [".ctor"], candidate.fetch("behaviourBearingMembers"), name
-      # Every declared member is a constructor: nothing but construction is left to establish.
-      assert(BY_NAME.fetch(name).fetch("members").all? { |member| member.fetch("kind") == "constructor" }, name)
+    completed.each do |name|
+      assert_includes STRICT.fetch("completeTypeNames"), name, name
+      assert_equal 0, STRICT.fetch("localDiagnostics").fetch(name), name
+      refute IL.fetch("types").fetch(name).fetch("nativeReachable"), name
     end
 
-    # The two serialisable exceptions still need a BCL cluster this milestone deliberately skips.
-    %w[
-      Microsoft.Xna.Framework.Content.ContentLoadException
-      Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException
-    ].each do |name|
+    (exceptions - completed).each do |name|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
       refute_nil candidate, name
-      assert_includes candidate.fetch("blockers"), "BCL_PROJECTION", name
+      assert_equal ["BCL_PROJECTION"], candidate.fetch("blockers"), name
       assert_includes candidate.fetch("unmappedBclTypes"), "System.Runtime.Serialization.SerializationInfo", name
+      assert candidate.fetch("ilAvailable"), name
     end
   end
 
@@ -204,8 +294,9 @@ class DependencyFrontierTest < Minitest::Test
 
     window = events.find { |item| item.fetch("name") == "Microsoft.Xna.Framework.GameWindow" }
     assert_equal %w[ScreenDeviceNameChanged ClientSizeChanged OrientationChanged], window.fetch("eventMembers")
-    assert_equal ["BEHAVIOR_EVIDENCE"], window.fetch("blockers")
+    assert_equal ["RUNTIME_DATA"], window.fetch("blockers")
     assert_empty window.fetch("unmappedBclTypes")
+    assert_includes window.fetch("runtimeDataDetail"), "window"
 
     # Completing IUpdateable/IDrawable is what projected the EventHandler`1 support type.
     assert_includes REPORT.fetch("mappedBclTypes"), "System.EventHandler`1[System.EventArgs]"
@@ -240,12 +331,12 @@ class DependencyFrontierTest < Minitest::Test
 
   def test_named_frontier_examples_keep_their_expected_blocker
     {
-      "Microsoft.Xna.Framework.GameWindow" => "BEHAVIOR_EVIDENCE",
-      "Microsoft.Xna.Framework.Audio.Microphone" => "BCL_PROJECTION",
-      "Microsoft.Xna.Framework.Input.Touch.TouchLocation" => "BEHAVIOR_EVIDENCE",
-      "Microsoft.Xna.Framework.Graphics.PresentationParameters" => "BEHAVIOR_EVIDENCE",
-      "Microsoft.Xna.Framework.Audio.AudioListener" => "BEHAVIOR_EVIDENCE",
-      "Microsoft.Xna.Framework.Graphics.DeviceLostException" => "BEHAVIOR_EVIDENCE",
+      "Microsoft.Xna.Framework.GameWindow" => "RUNTIME_DATA",
+      "Microsoft.Xna.Framework.Audio.Microphone" => "NATIVE_RUNTIME",
+      "Microsoft.Xna.Framework.Graphics.EffectAnnotation" => "NATIVE_RUNTIME",
+      "Microsoft.Xna.Framework.Graphics.TextureCollection" => "NATIVE_RUNTIME",
+      "Microsoft.Xna.Framework.Audio.RendererDetail" => "RUNTIME_DATA",
+      "Microsoft.Xna.Framework.Media.Video" => "RUNTIME_DATA",
       "Microsoft.Xna.Framework.Content.ContentSerializerAttribute" => "BCL_PROJECTION",
       "Microsoft.Xna.Framework.TitleContainer" => "BCL_PROJECTION"
     }.each do |name, expected|
@@ -255,18 +346,21 @@ class DependencyFrontierTest < Minitest::Test
     end
   end
 
-  def test_touch_location_is_blocked_only_on_retained_assembly_evidence
-    # It became dependency-complete because Foundation 17 completed TouchLocationState, and its
-    # signature names no unmapped BCL type. What it still needs is XNA IL for Equals, GetHashCode,
-    # ToString and TryGetPreviousLocation, which this host does not carry.
+  def test_touch_location_is_now_consumable_from_pinned_il
+    # It was deferred only because the retained assemblies were believed absent. They are not: the
+    # Input.Touch assembly is hash-pinned, its IL carries every member, and none of it is native.
     candidate = REPORT.fetch("dependencyCompleteCandidates")
                       .find { |item| item.fetch("name") == "Microsoft.Xna.Framework.Input.Touch.TouchLocation" }
     refute_nil candidate
-    assert_equal ["BEHAVIOR_EVIDENCE"], candidate.fetch("blockers")
+    assert_empty candidate.fetch("blockers")
     assert_empty candidate.fetch("unmappedBclTypes")
     assert_empty candidate.fetch("eventMembers")
     assert_includes candidate.fetch("dependencies"), "Microsoft.Xna.Framework.Input.Touch.TouchLocationState"
     assert_includes candidate.fetch("behaviourBearingMembers"), "TryGetPreviousLocation"
     assert_includes candidate.fetch("behaviourBearingMembers"), "GetHashCode"
+    assert candidate.fetch("ilDerivationRequired")
+    assert candidate.fetch("ilAvailable")
+    assert_equal "Microsoft.Xna.Framework.Input.Touch.dll", candidate.fetch("ilAssembly")
+    refute IL.fetch("types").fetch("Microsoft.Xna.Framework.Input.Touch.TouchLocation").fetch("nativeReachable")
   end
 end

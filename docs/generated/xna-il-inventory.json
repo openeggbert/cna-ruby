@@ -1,0 +1,7054 @@
+{
+  "schemaVersion": 1,
+  "profile": "XNA 4.0 Windows runtime",
+  "provenance": "derived with ikdasm from the pinned original XNA 4.0 Windows assemblies; located and admitted by exact SHA-256, never by filename. No Microsoft-owned bytes are reproduced here.",
+  "assemblies": [
+    {
+      "name": "Microsoft.Xna.Framework.dll",
+      "sha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "bytes": 679424,
+      "version": "4.0.0.0"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.dll",
+      "sha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "bytes": 427520,
+      "version": "4.0.0.0"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Game.dll",
+      "sha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "bytes": 74752,
+      "version": "4.0.0.0"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.dll",
+      "sha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+      "bytes": 23040,
+      "version": "4.0.0.0"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Xact.dll",
+      "sha256": "a14d5364dca7cf49fb90639e87ba04d52b59a700dc9198efa5707ce8eae28f0a",
+      "bytes": 75776,
+      "version": "4.0.0.0"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Storage.dll",
+      "sha256": "798f678e9ae3d9afc3bed66c30123bc9634fb923b6d200188344b618e608cbb8",
+      "bytes": 20992,
+      "version": "4.0.0.0"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Video.dll",
+      "sha256": "17538b1ca9d48a993e2cd88c96b436df08e7abb4aec5d4758eb21feb580d6e06",
+      "bytes": 17920,
+      "version": "4.0.0.0"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Net.dll",
+      "sha256": "39739dbf5f6ba02e1d0b02ed404f6fe0692497848bc1a6a25be132d47ed9c151",
+      "bytes": 54272,
+      "version": "4.0.0.0"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.GamerServices.dll",
+      "sha256": "7c6effed97aa25a95c5e095d9c261f5581e402180cc073271a367b9eef79c8af",
+      "bytes": 73728,
+      "version": "4.0.0.0"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Avatar.dll",
+      "sha256": "b3c70bbe469000b9e11507cc63b88d54a4e0bc5c27afc826d66e0aee51640871",
+      "bytes": 26624,
+      "version": "4.0.0.0"
+    }
+  ],
+  "nativeReachabilityRule": "a native entry point is a P/Invoke declaration or an indirect calli through an unmanaged calling convention, which is how XNA's mixed-mode C++/CLI assemblies reach native code. A type is native-reachable when any method it declares is a native entry point, or transitively calls one, following only call/callvirt/newobj/ldftn edges that land inside the pinned assembly set",
+  "REFERENCE_TYPES": 257,
+  "TYPES_WITH_IL": 250,
+  "TYPES_WITHOUT_IL": 7,
+  "TYPES_NATIVE_REACHABLE": 55,
+  "typesWithoutIl": [
+    "Microsoft.Xna.Framework.Content.ContentTypeReader`1",
+    "Microsoft.Xna.Framework.Graphics.ModelBoneCollection+Enumerator",
+    "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator",
+    "Microsoft.Xna.Framework.Graphics.ModelMeshCollection+Enumerator",
+    "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator",
+    "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1",
+    "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator"
+  ],
+  "types": {
+    "Microsoft.Xna.Framework.Audio.AudioCategory": {
+      "assembly": "Microsoft.Xna.Framework.Xact.dll",
+      "assemblySha256": "a14d5364dca7cf49fb90639e87ba04d52b59a700dc9198efa5707ce8eae28f0a",
+      "assemblyBytes": 75776,
+      "ilLines": 285,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 11,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 35
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Audio.AudioChannels": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 5,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Audio.AudioEmitter": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 209,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 11,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 37
+        }
+      ],
+      "declaredMethods": 10
+    },
+    "Microsoft.Xna.Framework.Audio.AudioEngine": {
+      "assembly": "Microsoft.Xna.Framework.Xact.dll",
+      "assemblySha256": "a14d5364dca7cf49fb90639e87ba04d52b59a700dc9198efa5707ce8eae28f0a",
+      "assemblyBytes": 75776,
+      "ilLines": 819,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 16,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 12,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 101
+        },
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 3
+        }
+      ],
+      "declaredMethods": 15
+    },
+    "Microsoft.Xna.Framework.Audio.AudioListener": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 155,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 9,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 21
+        }
+      ],
+      "declaredMethods": 8
+    },
+    "Microsoft.Xna.Framework.Audio.AudioStopOptions": {
+      "assembly": "Microsoft.Xna.Framework.Xact.dll",
+      "assemblySha256": "a14d5364dca7cf49fb90639e87ba04d52b59a700dc9198efa5707ce8eae28f0a",
+      "assemblyBytes": 75776,
+      "ilLines": 9,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Audio.Cue": {
+      "assembly": "Microsoft.Xna.Framework.Xact.dll",
+      "assemblySha256": "a14d5364dca7cf49fb90639e87ba04d52b59a700dc9198efa5707ce8eae28f0a",
+      "assemblyBytes": 75776,
+      "ilLines": 658,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 21,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 8,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 34
+        }
+      ],
+      "declaredMethods": 21
+    },
+    "Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 973,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 17,
+      "nativeReachableMethods": [
+        ".cctor"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 29
+        }
+      ],
+      "declaredMethods": 16
+    },
+    "Microsoft.Xna.Framework.Audio.InstancePlayLimitException": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 51,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 1,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": true,
+          "instructions": 4
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        },
+        {
+          "access": "private",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        }
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Audio.Microphone": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 1032,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 24,
+      "nativeReachableMethods": [
+        ".cctor"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 9,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 33
+        }
+      ],
+      "declaredMethods": 23
+    },
+    "Microsoft.Xna.Framework.Audio.MicrophoneState": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 5,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Audio.NoAudioHardwareException": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 51,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 1,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": true,
+          "instructions": 4
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        },
+        {
+          "access": "private",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        }
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Audio.NoMicrophoneConnectedException": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 57,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 1,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": true,
+          "instructions": 4
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        },
+        {
+          "access": "private",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        }
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Audio.RendererDetail": {
+      "assembly": "Microsoft.Xna.Framework.Xact.dll",
+      "assemblySha256": "a14d5364dca7cf49fb90639e87ba04d52b59a700dc9198efa5707ce8eae28f0a",
+      "assemblyBytes": 75776,
+      "ilLines": 175,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        }
+      ],
+      "declaredMethods": 7
+    },
+    "Microsoft.Xna.Framework.Audio.SoundBank": {
+      "assembly": "Microsoft.Xna.Framework.Xact.dll",
+      "assemblySha256": "a14d5364dca7cf49fb90639e87ba04d52b59a700dc9198efa5707ce8eae28f0a",
+      "assemblyBytes": 75776,
+      "ilLines": 565,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 9,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 6,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 103
+        }
+      ],
+      "declaredMethods": 10
+    },
+    "Microsoft.Xna.Framework.Audio.SoundEffect": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 1809,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 33,
+      "nativeReachableMethods": [
+        ".cctor"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 17,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 39
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 38
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 27
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 29
+        }
+      ],
+      "declaredMethods": 33
+    },
+    "Microsoft.Xna.Framework.Audio.SoundEffectInstance": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 1234,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 28,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 12,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 44
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 30
+    },
+    "Microsoft.Xna.Framework.Audio.SoundState": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 6,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Audio.WaveBank": {
+      "assembly": "Microsoft.Xna.Framework.Xact.dll",
+      "assemblySha256": "a14d5364dca7cf49fb90639e87ba04d52b59a700dc9198efa5707ce8eae28f0a",
+      "assemblyBytes": 75776,
+      "ilLines": 478,
+      "nativeInteropMarkers": [
+        "System.Runtime.InteropServices.SafeHandle"
+      ],
+      "methodNodes": 9,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 7,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 52
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 57
+        }
+      ],
+      "declaredMethods": 9
+    },
+    "Microsoft.Xna.Framework.BoundingBox": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 2659,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 13,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        }
+      ],
+      "declaredMethods": 30
+    },
+    "Microsoft.Xna.Framework.BoundingFrustum": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 2367,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 21,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 12,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 11
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 14
+        }
+      ],
+      "declaredMethods": 36
+    },
+    "Microsoft.Xna.Framework.BoundingSphere": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 2125,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 14,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 13
+        }
+      ],
+      "declaredMethods": 31
+    },
+    "Microsoft.Xna.Framework.Color": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 3420,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 167,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 4
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 38
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 44
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 3,
+          "pureBaseForward": false,
+          "instructions": 8
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 4,
+          "pureBaseForward": false,
+          "instructions": 8
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 11
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 168
+    },
+    "Microsoft.Xna.Framework.ContainmentType": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 6,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Content.ContentLoadException": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 57,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 1,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": true,
+          "instructions": 4
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        },
+        {
+          "access": "family",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        }
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Content.ContentManager": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 630,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 11,
+      "nativeReachableMethods": [
+        "ReadAsset<T>"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 10,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 5
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 26
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Content.ContentReader": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 1373,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 27,
+      "nativeReachableMethods": [
+        "Create",
+        "PrepareStream"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 15,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 16
+        }
+      ],
+      "declaredMethods": 34
+    },
+    "Microsoft.Xna.Framework.Content.ContentSerializerAttribute": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 247,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 15,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 6,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 6
+        }
+      ],
+      "declaredMethods": 14
+    },
+    "Microsoft.Xna.Framework.Content.ContentSerializerCollectionItemNameAttribute": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 39,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 2,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 1
+    },
+    "Microsoft.Xna.Framework.Content.ContentSerializerIgnoreAttribute": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 13,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 1,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        }
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Content.ContentSerializerRuntimeTypeAttribute": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 39,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 2,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 1
+    },
+    "Microsoft.Xna.Framework.Content.ContentSerializerTypeVersionAttribute": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 31,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 2,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 6
+        }
+      ],
+      "declaredMethods": 1
+    },
+    "Microsoft.Xna.Framework.Content.ContentTypeReader": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 82,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 6,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "family",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 14
+        }
+      ],
+      "declaredMethods": 5
+    },
+    "Microsoft.Xna.Framework.Content.ContentTypeReaderManager": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 692,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 9,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 6
+        }
+      ],
+      "declaredMethods": 9
+    },
+    "Microsoft.Xna.Framework.Content.ResourceContentManager": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 85,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 2,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 1
+    },
+    "Microsoft.Xna.Framework.Curve": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 888,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 14,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 6
+        }
+      ],
+      "declaredMethods": 15
+    },
+    "Microsoft.Xna.Framework.CurveContinuity": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 5,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.CurveKey": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 459,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 16,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 5,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 15
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 18
+        }
+      ],
+      "declaredMethods": 16
+    },
+    "Microsoft.Xna.Framework.CurveKeyCollection": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 391,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 16,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        }
+      ],
+      "declaredMethods": 15
+    },
+    "Microsoft.Xna.Framework.CurveLoopType": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 8,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 6,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.CurveTangent": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 6,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Design.BoundingBoxConverter": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 197,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 4,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 45
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Design.BoundingSphereConverter": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 197,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 4,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 45
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Design.ColorConverter": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 351,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 4,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 64
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Design.MathTypeConverter": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 328,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 6
+        }
+      ],
+      "declaredMethods": 7
+    },
+    "Microsoft.Xna.Framework.Design.MatrixConverter": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 500,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 3,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 140
+        }
+      ],
+      "declaredMethods": 2
+    },
+    "Microsoft.Xna.Framework.Design.PlaneConverter": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 180,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 3,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 45
+        }
+      ],
+      "declaredMethods": 2
+    },
+    "Microsoft.Xna.Framework.Design.PointConverter": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 273,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 4,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 42
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Design.QuaternionConverter": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 353,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 4,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 64
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Design.RayConverter": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 197,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 4,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 45
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Design.RectangleConverter": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 212,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 3,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 46
+        }
+      ],
+      "declaredMethods": 2
+    },
+    "Microsoft.Xna.Framework.Design.Vector2Converter": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 273,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 4,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 42
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Design.Vector3Converter": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 313,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 4,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 53
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Design.Vector4Converter": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 353,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 4,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 64
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.DisplayOrientation": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 8,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 5,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.DrawableGameComponent": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 502,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 21,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 6,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 7
+        }
+      ],
+      "declaredMethods": 20
+    },
+    "Microsoft.Xna.Framework.FrameworkDispatcher": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 312,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 7,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 5,
+      "constructors": [
+
+      ],
+      "declaredMethods": 4
+    },
+    "Microsoft.Xna.Framework.Game": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 2460,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 69,
+      "nativeReachableMethods": [
+        ".ctor",
+        "EnsureHost"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 37,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 91
+        }
+      ],
+      "declaredMethods": 69
+    },
+    "Microsoft.Xna.Framework.GameComponent": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 487,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 18,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 6,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        }
+      ],
+      "declaredMethods": 18
+    },
+    "Microsoft.Xna.Framework.GameComponentCollection": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 291,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 11,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        }
+      ],
+      "declaredMethods": 10
+    },
+    "Microsoft.Xna.Framework.GameComponentCollectionEventArgs": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 31,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 2,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 6
+        }
+      ],
+      "declaredMethods": 1
+    },
+    "Microsoft.Xna.Framework.GameServiceContainer": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 154,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 4,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 6
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.GameTime": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 132,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 7,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": false,
+          "instructions": 6
+        }
+      ],
+      "declaredMethods": 6
+    },
+    "Microsoft.Xna.Framework.GameWindow": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 748,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 35,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 9,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 6
+        }
+      ],
+      "declaredMethods": 34
+    },
+    "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 62,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 4,
+      "nativeReachableMethods": [
+        "Initialize",
+        "Update"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": true,
+          "instructions": 4
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Graphics.AlphaTestEffect": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 922,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 31,
+      "nativeReachableMethods": [
+        ".ctor",
+        "Clone",
+        "OnApply",
+        "get_FogColor",
+        "get_Texture",
+        "set_FogColor",
+        "set_Texture"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 21,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 31
+        },
+        {
+          "access": "family",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 74
+        }
+      ],
+      "declaredMethods": 30
+    },
+    "Microsoft.Xna.Framework.Graphics.BasicEffect": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 1244,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 45,
+      "nativeReachableMethods": [
+        ".ctor",
+        "CacheEffectParameters",
+        "Clone",
+        "EnableDefaultLighting",
+        "OnApply",
+        "get_FogColor",
+        "get_SpecularColor",
+        "get_SpecularPower",
+        "get_Texture",
+        "set_FogColor",
+        "set_SpecularColor",
+        "set_SpecularPower",
+        "set_Texture"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 32,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 45
+        },
+        {
+          "access": "family",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 90
+        }
+      ],
+      "declaredMethods": 44
+    },
+    "Microsoft.Xna.Framework.Graphics.Blend": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 21,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 14,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.BlendFunction": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 8,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 6,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.BlendState": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 1179,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 30,
+      "nativeReachableMethods": [
+        "Apply"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 27,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 13
+        },
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 36
+        }
+      ],
+      "declaredMethods": 29
+    },
+    "Microsoft.Xna.Framework.Graphics.BufferUsage": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 6,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.ClearOptions": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 7,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.ColorWriteChannels": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 10,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 7,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.CompareFunction": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 11,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 9,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.CubeMapFace": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 9,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 7,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.CullMode": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 6,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.DepthFormat": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 7,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 5,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.DepthStencilState": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 1015,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 38,
+      "nativeReachableMethods": [
+        "Apply"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 29,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 13
+        },
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 26
+        }
+      ],
+      "declaredMethods": 37
+    },
+    "Microsoft.Xna.Framework.Graphics.DeviceLostException": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 51,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 1,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": true,
+          "instructions": 4
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        },
+        {
+          "access": "private",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        }
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.DeviceNotResetException": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 51,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 1,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": true,
+          "instructions": 4
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        },
+        {
+          "access": "private",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        }
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.DirectionalLight": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 245,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 9,
+      "nativeReachableMethods": [
+        ".ctor",
+        "set_DiffuseColor",
+        "set_Direction",
+        "set_Enabled",
+        "set_SpecularColor"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 7,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 40
+        }
+      ],
+      "declaredMethods": 8
+    },
+    "Microsoft.Xna.Framework.Graphics.DisplayMode": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 164,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 7,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 6
+    },
+    "Microsoft.Xna.Framework.Graphics.DisplayModeCollection": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 96,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 4,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 6
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Graphics.DualTextureEffect": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 704,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 29,
+      "nativeReachableMethods": [
+        ".ctor",
+        "Clone",
+        "OnApply",
+        "get_FogColor",
+        "get_Texture",
+        "get_Texture2",
+        "set_FogColor",
+        "set_Texture",
+        "set_Texture2"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 18,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 28
+        },
+        {
+          "access": "family",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 63
+        }
+      ],
+      "declaredMethods": 28
+    },
+    "Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 411,
+      "nativeInteropMarkers": [
+        "System.Runtime.InteropServices.Marshal"
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+        ".ctor",
+        "get_IsContentLost",
+        "modopt"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 41
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 45
+        }
+      ],
+      "declaredMethods": 9
+    },
+    "Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 403,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+        ".ctor",
+        "get_IsContentLost",
+        "modopt"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 41
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 44
+        }
+      ],
+      "declaredMethods": 9
+    },
+    "Microsoft.Xna.Framework.Graphics.Effect": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 1340,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 20,
+      "nativeReachableMethods": [
+        ".ctor",
+        "Clone",
+        "CreateEffectFromCode",
+        "GetManagedObject",
+        "InitializeHelpers",
+        "OnLostDevice",
+        "OnObjectCreation",
+        "OnResetDevice",
+        "ReleaseNativeObject",
+        "modopt",
+        "set_CurrentTechnique"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 8,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 16
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        },
+        {
+          "access": "family",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 158
+        }
+      ],
+      "declaredMethods": 21
+    },
+    "Microsoft.Xna.Framework.Graphics.EffectAnnotation": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 486,
+      "nativeInteropMarkers": [
+        "System.Runtime.InteropServices.Marshal"
+      ],
+      "methodNodes": 16,
+      "nativeReachableMethods": [
+        ".ctor",
+        "GetValueBoolean",
+        "GetValueInt32",
+        "GetValueMatrix",
+        "GetValueSingle",
+        "GetValueString",
+        "GetValueVector2",
+        "GetValueVector3",
+        "GetValueVector4"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 8,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 81
+        }
+      ],
+      "declaredMethods": 15
+    },
+    "Microsoft.Xna.Framework.Graphics.EffectAnnotationCollection": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 267,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 7,
+      "nativeReachableMethods": [
+        ".ctor",
+        "UpdateParent"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 52
+        }
+      ],
+      "declaredMethods": 7
+    },
+    "Microsoft.Xna.Framework.Graphics.EffectMaterial": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 13,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 1,
+      "nativeReachableMethods": [
+        ".ctor"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": true,
+          "instructions": 4
+        }
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.EffectParameter": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 7365,
+      "nativeInteropMarkers": [
+        "System.Runtime.InteropServices.Marshal"
+      ],
+      "methodNodes": 38,
+      "nativeReachableMethods": [
+        ".ctor",
+        "GetValueBoolean",
+        "GetValueBooleanArray",
+        "GetValueInt32",
+        "GetValueInt32Array",
+        "GetValueMatrix",
+        "GetValueMatrixArray",
+        "GetValueMatrixTranspose",
+        "GetValueMatrixTransposeArray",
+        "GetValueQuaternion",
+        "GetValueQuaternionArray",
+        "GetValueSingle",
+        "GetValueSingleArray",
+        "GetValueString",
+        "GetValueTexture2D",
+        "GetValueTexture3D",
+        "GetValueTextureCube",
+        "GetValueVector2",
+        "GetValueVector2Array",
+        "GetValueVector3",
+        "GetValueVector3Array",
+        "GetValueVector4",
+        "GetValueVector4Array",
+        "SaveDataForRecreation",
+        "SetLastValue",
+        "SetValue",
+        "SetValueTranspose",
+        "UpdateHandle"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 14,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 132
+        }
+      ],
+      "declaredMethods": 55
+    },
+    "Microsoft.Xna.Framework.Graphics.EffectParameterClass": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 8,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 6,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.EffectParameterCollection": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 452,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 9,
+      "nativeReachableMethods": [
+        ".ctor",
+        "SaveDataForRecreation",
+        "UpdateParent"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 78
+        }
+      ],
+      "declaredMethods": 9
+    },
+    "Microsoft.Xna.Framework.Graphics.EffectParameterType": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 13,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 11,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.EffectPass": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 460,
+      "nativeInteropMarkers": [
+        "System.Runtime.InteropServices.Marshal"
+      ],
+      "methodNodes": 7,
+      "nativeReachableMethods": [
+        ".ctor",
+        "Apply",
+        "EndPass",
+        "UpdateHandle"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 10,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 66
+        }
+      ],
+      "declaredMethods": 6
+    },
+    "Microsoft.Xna.Framework.Graphics.EffectPassCollection": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 265,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 7,
+      "nativeReachableMethods": [
+        ".ctor",
+        "UpdateParent"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 45
+        }
+      ],
+      "declaredMethods": 7
+    },
+    "Microsoft.Xna.Framework.Graphics.EffectTechnique": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 161,
+      "nativeInteropMarkers": [
+        "System.Runtime.InteropServices.Marshal"
+      ],
+      "methodNodes": 5,
+      "nativeReachableMethods": [
+        ".ctor",
+        "UpdateHandle"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 6,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 61
+        }
+      ],
+      "declaredMethods": 4
+    },
+    "Microsoft.Xna.Framework.Graphics.EffectTechniqueCollection": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 308,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+        ".ctor",
+        "UpdateParent"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 46
+        }
+      ],
+      "declaredMethods": 8
+    },
+    "Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 1210,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 43,
+      "nativeReachableMethods": [
+        ".ctor",
+        "CacheEffectParameters",
+        "Clone",
+        "EnableDefaultLighting",
+        "OnApply",
+        "get_EnvironmentMap",
+        "get_EnvironmentMapAmount",
+        "get_EnvironmentMapSpecular",
+        "get_FogColor",
+        "get_FresnelFactor",
+        "get_Texture",
+        "set_EnvironmentMap",
+        "set_EnvironmentMapAmount",
+        "set_EnvironmentMapSpecular",
+        "set_FogColor",
+        "set_FresnelFactor",
+        "set_Texture"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 32,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 48
+        },
+        {
+          "access": "family",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 82
+        }
+      ],
+      "declaredMethods": 42
+    },
+    "Microsoft.Xna.Framework.Graphics.FillMode": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 5,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.GraphicsAdapter": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 1853,
+      "nativeInteropMarkers": [
+        "System.Runtime.InteropServices.Marshal"
+      ],
+      "methodNodes": 34,
+      "nativeReachableMethods": [
+        ".cctor",
+        ".ctor",
+        ".locals",
+        "InitializeAdapterList",
+        "IsProfileSupported",
+        "IsValidDepthFormat",
+        "IsValidSurfaceFormat",
+        "QueryBackBufferFormat",
+        "QueryDepthFormat",
+        "QueryFormat",
+        "QueryMultiSampleCount",
+        "QueryRenderTargetFormat",
+        "QuerySurfaceFormat",
+        "get_CurrentDisplayMode",
+        "get_IsWideScreen",
+        "get_MonitorHandle",
+        "get_SupportedDisplayModes"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 14,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 62
+        }
+      ],
+      "declaredMethods": 30
+    },
+    "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 8036,
+      "nativeInteropMarkers": [
+        "System.Runtime.InteropServices.Marshal",
+        "System.Runtime.InteropServices.GCHandle"
+      ],
+      "methodNodes": 86,
+      "nativeReachableMethods": [
+        ".ctor",
+        ".locals",
+        "BeginUserPrimitives",
+        "Clear",
+        "ClearDirtyBuffers",
+        "ConvertPresentationParametersToNative",
+        "CreateDevice",
+        "CreateHelperClasses",
+        "DrawIndexedPrimitives",
+        "DrawInstancedPrimitives",
+        "DrawPrimitives",
+        "GetManagedObject",
+        "InitializeDeviceState",
+        "OnObjectCreation",
+        "Present",
+        "Reset",
+        "ResolveRenderTarget",
+        "SetRenderTarget",
+        "SetRenderTargets",
+        "SetVertexBuffer",
+        "SetVertexBuffers",
+        "T>",
+        "VerifyCanDraw",
+        "get_DisplayMode",
+        "get_GraphicsDeviceStatus",
+        "get_IsDeviceLost",
+        "get_ScissorRectangle",
+        "modopt",
+        "set_BlendFactor",
+        "set_BlendState",
+        "set_DepthStencilState",
+        "set_Indices",
+        "set_MultiSampleMask",
+        "set_RasterizerState",
+        "set_ReferenceStencil",
+        "set_ScissorRectangle",
+        "set_Viewport"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 54,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 21
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 71
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 23
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 15
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 4,
+          "pureBaseForward": false,
+          "instructions": 8
+        }
+      ],
+      "declaredMethods": 105
+    },
+    "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 6,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.GraphicsProfile": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 5,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.GraphicsResource": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 361,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 14,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 6,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        }
+      ],
+      "declaredMethods": 15
+    },
+    "Microsoft.Xna.Framework.Graphics.IEffectFog": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 63,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+
+      ],
+      "declaredMethods": 8
+    },
+    "Microsoft.Xna.Framework.Graphics.IEffectLights": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 71,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+
+      ],
+      "declaredMethods": 8
+    },
+    "Microsoft.Xna.Framework.Graphics.IEffectMatrices": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 52,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 6,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+
+      ],
+      "declaredMethods": 6
+    },
+    "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 72,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 9,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+
+      ],
+      "declaredMethods": 9
+    },
+    "Microsoft.Xna.Framework.Graphics.IVertexType": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 12,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 1,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+
+      ],
+      "declaredMethods": 1
+    },
+    "Microsoft.Xna.Framework.Graphics.IndexBuffer": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 1288,
+      "nativeInteropMarkers": [
+        "System.Runtime.InteropServices.Marshal"
+      ],
+      "methodNodes": 13,
+      "nativeReachableMethods": [
+        ".ctor",
+        ".locals",
+        "CreateBuffer",
+        "GetManagedObject",
+        "ReleaseNativeObject",
+        "T>",
+        "modopt"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 7,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 14
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 39
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 43
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        }
+      ],
+      "declaredMethods": 20
+    },
+    "Microsoft.Xna.Framework.Graphics.IndexElementSize": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 5,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.Model": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 832,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 16,
+      "nativeReachableMethods": [
+        "Draw"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 8,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        }
+      ],
+      "declaredMethods": 14
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelBone": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 129,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 5,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 7
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelBoneCollection": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 224,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 9,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelEffectCollection": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 150,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 9,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelMesh": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 240,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 9,
+      "nativeReachableMethods": [
+        "Draw"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 6,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 46
+        }
+      ],
+      "declaredMethods": 8
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelMeshCollection": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 224,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 9,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelMeshPart": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 316,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+        "Draw"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 9,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 18
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 138,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 7,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        }
+      ],
+      "declaredMethods": 1
+    },
+    "Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 51,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 1,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": true,
+          "instructions": 4
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        },
+        {
+          "access": "private",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        }
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.OcclusionQuery": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 555,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 10,
+      "nativeReachableMethods": [
+        ".ctor",
+        "Begin",
+        "End",
+        "GetManagedObject",
+        "ReleaseNativeObject",
+        "get_IsComplete",
+        "get_PixelCount",
+        "modopt"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 6,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 14
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 65
+        }
+      ],
+      "declaredMethods": 12
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.Alpha8": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 189,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 5
+        }
+      ],
+      "declaredMethods": 12
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.Bgr565": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 271,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 3,
+          "pureBaseForward": false,
+          "instructions": 7
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 10
+        }
+      ],
+      "declaredMethods": 12
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra4444": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 276,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 11,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 4,
+          "pureBaseForward": false,
+          "instructions": 8
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.Bgra5551": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 276,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 11,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 4,
+          "pureBaseForward": false,
+          "instructions": 8
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.Byte4": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 279,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 11,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 4,
+          "pureBaseForward": false,
+          "instructions": 8
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.HalfSingle": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 176,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 11,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 5
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector2": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 235,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": false,
+          "instructions": 6
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 8
+        }
+      ],
+      "declaredMethods": 12
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.HalfVector4": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 268,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 11,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 4,
+          "pureBaseForward": false,
+          "instructions": 8
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 12,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 2,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+
+      ],
+      "declaredMethods": 2
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte2": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 241,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": false,
+          "instructions": 6
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 8
+        }
+      ],
+      "declaredMethods": 12
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedByte4": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 275,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 11,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 4,
+          "pureBaseForward": false,
+          "instructions": 8
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort2": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 240,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": false,
+          "instructions": 6
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 8
+        }
+      ],
+      "declaredMethods": 12
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.NormalizedShort4": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 283,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 11,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 4,
+          "pureBaseForward": false,
+          "instructions": 8
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.Rg32": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 240,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": false,
+          "instructions": 6
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 8
+        }
+      ],
+      "declaredMethods": 12
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba1010102": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 275,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 11,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 4,
+          "pureBaseForward": false,
+          "instructions": 8
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.Rgba64": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 283,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 11,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 4,
+          "pureBaseForward": false,
+          "instructions": 8
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.Short2": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 238,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": false,
+          "instructions": 6
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 8
+        }
+      ],
+      "declaredMethods": 12
+    },
+    "Microsoft.Xna.Framework.Graphics.PackedVector.Short4": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 275,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 11,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 4,
+          "pureBaseForward": false,
+          "instructions": 8
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Graphics.PresentInterval": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 7,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 5,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.PresentationParameters": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 367,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 23,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 11,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 6
+        }
+      ],
+      "declaredMethods": 22
+    },
+    "Microsoft.Xna.Framework.Graphics.PrimitiveType": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 7,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 5,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.RasterizerState": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 504,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 18,
+      "nativeReachableMethods": [
+        "Apply"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 12,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 13
+        },
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 21
+        }
+      ],
+      "declaredMethods": 17
+    },
+    "Microsoft.Xna.Framework.Graphics.RenderTarget2D": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 512,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 13,
+      "nativeReachableMethods": [
+        ".ctor",
+        "CreateRenderTarget",
+        "ReleaseNativeObject",
+        "get_IsContentLost",
+        "modopt"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 18
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 18
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 18
+        }
+      ],
+      "declaredMethods": 14
+    },
+    "Microsoft.Xna.Framework.Graphics.RenderTargetBinding": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 95,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 4,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 13
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 13
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Graphics.RenderTargetCube": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 449,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 13,
+      "nativeReachableMethods": [
+        ".ctor",
+        "CreateRenderTarget",
+        "ReleaseNativeObject",
+        "get_IsContentLost",
+        "modopt"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 17
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 17
+        }
+      ],
+      "declaredMethods": 14
+    },
+    "Microsoft.Xna.Framework.Graphics.RenderTargetUsage": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 6,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 30,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 2,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 6
+        }
+      ],
+      "declaredMethods": 1
+    },
+    "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 49,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 3,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        }
+      ],
+      "declaredMethods": 2
+    },
+    "Microsoft.Xna.Framework.Graphics.SamplerState": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 987,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 20,
+      "nativeReachableMethods": [
+        "Apply"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 25,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 13
+        },
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 36
+        }
+      ],
+      "declaredMethods": 19
+    },
+    "Microsoft.Xna.Framework.Graphics.SamplerStateCollection": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 234,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 5,
+      "nativeReachableMethods": [
+        "InitializeDeviceState",
+        "set_Item"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 13
+        }
+      ],
+      "declaredMethods": 4
+    },
+    "Microsoft.Xna.Framework.Graphics.SetDataOptions": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 7,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.SkinnedEffect": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 1361,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 45,
+      "nativeReachableMethods": [
+        ".ctor",
+        "CacheEffectParameters",
+        "Clone",
+        "EnableDefaultLighting",
+        "GetBoneTransforms",
+        "OnApply",
+        "SetBoneTransforms",
+        "get_FogColor",
+        "get_SpecularColor",
+        "get_SpecularPower",
+        "get_Texture",
+        "set_FogColor",
+        "set_SpecularColor",
+        "set_SpecularPower",
+        "set_Texture"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 32,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 69
+        },
+        {
+          "access": "family",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 85
+        }
+      ],
+      "declaredMethods": 44
+    },
+    "Microsoft.Xna.Framework.Graphics.SpriteBatch": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 2668,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 19,
+      "nativeReachableMethods": [
+        ".ctor",
+        "AllocateBuffers",
+        "Begin",
+        "ConstructPlatformData",
+        "Draw",
+        "DrawString",
+        "End",
+        "Flush",
+        "InternalDraw",
+        "PlatformRenderBatch",
+        "RenderBatch",
+        "SetPlatformRenderState",
+        "SetRenderState"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 37,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 34
+        },
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 4
+        },
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 5
+        }
+      ],
+      "declaredMethods": 31
+    },
+    "Microsoft.Xna.Framework.Graphics.SpriteEffects": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 7,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.SpriteFont": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 929,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 13,
+      "nativeReachableMethods": [
+        "InternalDraw"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 12,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 27
+        }
+      ],
+      "declaredMethods": 12
+    },
+    "Microsoft.Xna.Framework.Graphics.SpriteSortMode": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 8,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 6,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.StencilOperation": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 11,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 9,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.SurfaceFormat": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 23,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 21,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.Texture": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 1139,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 15,
+      "nativeReachableMethods": [
+        "InitializeDescription"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 6,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        }
+      ],
+      "declaredMethods": 15
+    },
+    "Microsoft.Xna.Framework.Graphics.Texture2D": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 2788,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 20,
+      "nativeReachableMethods": [
+        ".ctor",
+        "CreateTexture",
+        "FromStream",
+        "GetManagedObject",
+        "InitializeDescription",
+        "OnObjectCreation",
+        "ReleaseNativeObject",
+        "T>",
+        "modopt"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 5,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 19
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 17
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 17
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 17
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 94
+        },
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 6
+        }
+      ],
+      "declaredMethods": 31
+    },
+    "Microsoft.Xna.Framework.Graphics.Texture3D": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 2041,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 16,
+      "nativeReachableMethods": [
+        ".ctor",
+        "CreateTexture",
+        "GetManagedObject",
+        "InitializeDescription",
+        "OnObjectCreation",
+        "ReleaseNativeObject",
+        "T>",
+        "modopt"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 5,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 19
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 16
+        }
+      ],
+      "declaredMethods": 27
+    },
+    "Microsoft.Xna.Framework.Graphics.TextureAddressMode": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 6,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.TextureCollection": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 642,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 4,
+      "nativeReachableMethods": [
+        "ResetState",
+        "get_Item",
+        "set_Item"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.Graphics.TextureCube": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 1973,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 13,
+      "nativeReachableMethods": [
+        ".ctor",
+        "CreateTexture",
+        "GetManagedObject",
+        "InitializeDescription",
+        "OnObjectCreation",
+        "ReleaseNativeObject",
+        "T>",
+        "modopt"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 4,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 19
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 16
+        }
+      ],
+      "declaredMethods": 22
+    },
+    "Microsoft.Xna.Framework.Graphics.TextureFilter": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 12,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 10,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.VertexBuffer": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 1451,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 13,
+      "nativeReachableMethods": [
+        ".ctor",
+        ".locals",
+        "CreateBuffer",
+        "GetManagedObject",
+        "ReleaseNativeObject",
+        "T>",
+        "modopt"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": true,
+      "declaredFields": 7,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 14
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 39
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 42
+        }
+      ],
+      "declaredMethods": 20
+    },
+    "Microsoft.Xna.Framework.Graphics.VertexBufferBinding": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 181,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 5,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 33
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 27
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 16
+        }
+      ],
+      "declaredMethods": 4
+    },
+    "Microsoft.Xna.Framework.Graphics.VertexDeclaration": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 454,
+      "nativeInteropMarkers": [
+        "System.Runtime.InteropServices.Marshal"
+      ],
+      "methodNodes": 7,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 45
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 49
+        }
+      ],
+      "declaredMethods": 8
+    },
+    "Microsoft.Xna.Framework.Graphics.VertexElement": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 272,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 14,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 13
+        }
+      ],
+      "declaredMethods": 13
+    },
+    "Microsoft.Xna.Framework.Graphics.VertexElementFormat": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 15,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 13,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.VertexElementUsage": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 16,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 14,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Graphics.VertexPositionColor": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 214,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        }
+      ],
+      "declaredMethods": 6
+    },
+    "Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 250,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 10
+        }
+      ],
+      "declaredMethods": 6
+    },
+    "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 250,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 10
+        }
+      ],
+      "declaredMethods": 6
+    },
+    "Microsoft.Xna.Framework.Graphics.VertexPositionTexture": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 214,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        }
+      ],
+      "declaredMethods": 6
+    },
+    "Microsoft.Xna.Framework.Graphics.Viewport": {
+      "assembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "assemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+      "assemblyBytes": 427520,
+      "ilLines": 658,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 22,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 6,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 19
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 23
+        }
+      ],
+      "declaredMethods": 21
+    },
+    "Microsoft.Xna.Framework.GraphicsDeviceInformation": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 350,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 10,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        }
+      ],
+      "declaredMethods": 9
+    },
+    "Microsoft.Xna.Framework.GraphicsDeviceManager": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 2315,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 67,
+      "nativeReachableMethods": [
+        ".ctor",
+        "AddDevices",
+        "ApplyChanges",
+        "ChangeDevice",
+        "CreateDevice",
+        "Dispose",
+        "EnsureDevice",
+        "EnsureDevicePlatform",
+        "FindBestDevice",
+        "FindBestPlatformDevice",
+        "GameWindowClientSizeChanged",
+        "GameWindowOrientationChanged",
+        "GameWindowScreenDeviceNameChanged",
+        "IsWindowOnAdapter",
+        "MassagePresentParameters",
+        "Microsoft.Xna.Framework.IGraphicsDeviceManager.BeginDraw",
+        "Microsoft.Xna.Framework.IGraphicsDeviceManager.CreateDevice",
+        "Microsoft.Xna.Framework.IGraphicsDeviceManager.EndDraw",
+        "System.IDisposable.Dispose",
+        "ToggleFullScreen",
+        "ValidateGraphicsDeviceInformation"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 28,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 67
+        }
+      ],
+      "declaredMethods": 66
+    },
+    "Microsoft.Xna.Framework.IDrawable": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 54,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 7,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+
+      ],
+      "declaredMethods": 7
+    },
+    "Microsoft.Xna.Framework.IGameComponent": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 6,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 1,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+
+      ],
+      "declaredMethods": 1
+    },
+    "Microsoft.Xna.Framework.IGraphicsDeviceManager": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 16,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 3,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+
+      ],
+      "declaredMethods": 3
+    },
+    "Microsoft.Xna.Framework.IUpdateable": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 54,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 7,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+
+      ],
+      "declaredMethods": 7
+    },
+    "Microsoft.Xna.Framework.Input.ButtonState": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 5,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Input.Buttons": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 29,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 26,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Input.GamePad": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 307,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 6,
+      "nativeReachableMethods": [
+        "GetCapabilities",
+        "GetState",
+        "SetVibration"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+
+      ],
+      "declaredMethods": 6
+    },
+    "Microsoft.Xna.Framework.Input.GamePadButtons": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 759,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 17,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 11,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 111
+        }
+      ],
+      "declaredMethods": 16
+    },
+    "Microsoft.Xna.Framework.Input.GamePadCapabilities": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 603,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 27,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 26
+    },
+    "Microsoft.Xna.Framework.Input.GamePadDPad": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 313,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 10,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 13
+        }
+      ],
+      "declaredMethods": 9
+    },
+    "Microsoft.Xna.Framework.Input.GamePadDeadZone": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 6,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Input.GamePadState": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 1388,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 15,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 8,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 24
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 91
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 264
+        }
+      ],
+      "declaredMethods": 14
+    },
+    "Microsoft.Xna.Framework.Input.GamePadThumbSticks": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 206,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 33
+        }
+      ],
+      "declaredMethods": 7
+    },
+    "Microsoft.Xna.Framework.Input.GamePadTriggers": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 198,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 31
+        }
+      ],
+      "declaredMethods": 7
+    },
+    "Microsoft.Xna.Framework.Input.GamePadType": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 13,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 11,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Input.KeyState": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 5,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Input.Keyboard": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 87,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 2,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+
+      ],
+      "declaredMethods": 2
+    },
+    "Microsoft.Xna.Framework.Input.KeyboardState": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 974,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 13,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 16,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 7,
+          "pureBaseForward": false,
+          "instructions": 58
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Input.Keys": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 163,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 161,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Input.Mouse": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 174,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 5,
+      "nativeReachableMethods": [
+        ".cctor"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+
+      ],
+      "declaredMethods": 4
+    },
+    "Microsoft.Xna.Framework.Input.MouseState": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 449,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 14,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 8,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 25
+        }
+      ],
+      "declaredMethods": 13
+    },
+    "Microsoft.Xna.Framework.Input.Touch.GestureSample": {
+      "assembly": "Microsoft.Xna.Framework.Input.Touch.dll",
+      "assemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+      "assemblyBytes": 23040,
+      "ilLines": 129,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 7,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 6,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 19
+        }
+      ],
+      "declaredMethods": 6
+    },
+    "Microsoft.Xna.Framework.Input.Touch.GestureType": {
+      "assembly": "Microsoft.Xna.Framework.Input.Touch.dll",
+      "assemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+      "assemblyBytes": 23040,
+      "ilLines": 15,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 12,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Input.Touch.TouchCollection": {
+      "assembly": "Microsoft.Xna.Framework.Input.Touch.dll",
+      "assemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+      "assemblyBytes": 23040,
+      "ilLines": 1333,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 27,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 16,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 103
+        }
+      ],
+      "declaredMethods": 22
+    },
+    "Microsoft.Xna.Framework.Input.Touch.TouchLocation": {
+      "assembly": "Microsoft.Xna.Framework.Input.Touch.dll",
+      "assemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+      "assemblyBytes": 23040,
+      "ilLines": 444,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 10,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 7,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 24
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 26
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 22
+        }
+      ],
+      "declaredMethods": 10
+    },
+    "Microsoft.Xna.Framework.Input.Touch.TouchLocationState": {
+      "assembly": "Microsoft.Xna.Framework.Input.Touch.dll",
+      "assemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+      "assemblyBytes": 23040,
+      "ilLines": 7,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 5,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Input.Touch.TouchPanel": {
+      "assembly": "Microsoft.Xna.Framework.Input.Touch.dll",
+      "assemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+      "assemblyBytes": 23040,
+      "ilLines": 274,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 16,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 10,
+      "constructors": [
+
+      ],
+      "declaredMethods": 15
+    },
+    "Microsoft.Xna.Framework.Input.Touch.TouchPanelCapabilities": {
+      "assembly": "Microsoft.Xna.Framework.Input.Touch.dll",
+      "assemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
+      "assemblyBytes": 23040,
+      "ilLines": 74,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 5,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+
+      ],
+      "declaredMethods": 5
+    },
+    "Microsoft.Xna.Framework.LaunchParameters": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 147,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 3,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 6
+        }
+      ],
+      "declaredMethods": 2
+    },
+    "Microsoft.Xna.Framework.MathHelper": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 347,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 7,
+      "constructors": [
+
+      ],
+      "declaredMethods": 12
+    },
+    "Microsoft.Xna.Framework.Matrix": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 12662,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 57,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 23,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 49
+        }
+      ],
+      "declaredMethods": 97
+    },
+    "Microsoft.Xna.Framework.Media.Album": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 651,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 22,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 10,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 24
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 43
+        }
+      ],
+      "declaredMethods": 22
+    },
+    "Microsoft.Xna.Framework.Media.AlbumCollection": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 268,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 16
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Media.Artist": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 472,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 16,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 7,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 18
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 37
+        }
+      ],
+      "declaredMethods": 16
+    },
+    "Microsoft.Xna.Framework.Media.ArtistCollection": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 265,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 16
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Media.Genre": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 478,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 16,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 7,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 18
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 37
+        }
+      ],
+      "declaredMethods": 16
+    },
+    "Microsoft.Xna.Framework.Media.GenreCollection": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 268,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 16
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Media.MediaLibrary": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 630,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 17,
+      "nativeReachableMethods": [
+        ".cctor"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 10,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 30
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 4
+        }
+      ],
+      "declaredMethods": 17
+    },
+    "Microsoft.Xna.Framework.Media.MediaPlayer": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 557,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 28,
+      "nativeReachableMethods": [
+        ".cctor"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 5,
+      "constructors": [
+
+      ],
+      "declaredMethods": 29
+    },
+    "Microsoft.Xna.Framework.Media.MediaQueue": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 385,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 10,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Media.MediaSource": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 76,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 5,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        }
+      ],
+      "declaredMethods": 4
+    },
+    "Microsoft.Xna.Framework.Media.MediaSourceType": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 5,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Media.MediaState": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 6,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Media.Picture": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 474,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 21,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 9,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 18
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 21
+        }
+      ],
+      "declaredMethods": 21
+    },
+    "Microsoft.Xna.Framework.Media.PictureAlbum": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 443,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 17,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 8,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 21
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 24
+        }
+      ],
+      "declaredMethods": 17
+    },
+    "Microsoft.Xna.Framework.Media.PictureAlbumCollection": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 268,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 16
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Media.PictureCollection": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 265,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 16
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Media.Playlist": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 468,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 16,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 7,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 18
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 37
+        }
+      ],
+      "declaredMethods": 16
+    },
+    "Microsoft.Xna.Framework.Media.PlaylistCollection": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 268,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 16
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Media.Song": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 879,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 24,
+      "nativeReachableMethods": [
+        ".cctor"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 11,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 30
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 77
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 69
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 54
+        }
+      ],
+      "declaredMethods": 24
+    },
+    "Microsoft.Xna.Framework.Media.SongCollection": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 268,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+        {
+          "access": "private",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 16
+        }
+      ],
+      "declaredMethods": 11
+    },
+    "Microsoft.Xna.Framework.Media.Video": {
+      "assembly": "Microsoft.Xna.Framework.Video.dll",
+      "assemblySha256": "17538b1ca9d48a993e2cd88c96b436df08e7abb4aec5d4758eb21feb580d6e06",
+      "assemblyBytes": 17920,
+      "ilLines": 157,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 7,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 29
+        }
+      ],
+      "declaredMethods": 7
+    },
+    "Microsoft.Xna.Framework.Media.VideoPlayer": {
+      "assembly": "Microsoft.Xna.Framework.Video.dll",
+      "assemblySha256": "17538b1ca9d48a993e2cd88c96b436df08e7abb4aec5d4758eb21feb580d6e06",
+      "assemblyBytes": 17920,
+      "ilLines": 1039,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 22,
+      "nativeReachableMethods": [
+        "AllocateTextures",
+        "Play"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 10,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 35
+        }
+      ],
+      "declaredMethods": 22
+    },
+    "Microsoft.Xna.Framework.Media.VideoSoundtrackType": {
+      "assembly": "Microsoft.Xna.Framework.Video.dll",
+      "assemblySha256": "17538b1ca9d48a993e2cd88c96b436df08e7abb4aec5d4758eb21feb580d6e06",
+      "assemblyBytes": 17920,
+      "ilLines": 6,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Media.VisualizationData": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 66,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 3,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 23
+        }
+      ],
+      "declaredMethods": 2
+    },
+    "Microsoft.Xna.Framework.Plane": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 1974,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 12,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 16
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 20
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 121
+        }
+      ],
+      "declaredMethods": 24
+    },
+    "Microsoft.Xna.Framework.PlaneIntersectionType": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 6,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 4,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.PlayerIndex": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 7,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 0,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 5,
+      "constructors": [
+
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.Point": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 190,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 8,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        }
+      ],
+      "declaredMethods": 7
+    },
+    "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs": {
+      "assembly": "Microsoft.Xna.Framework.Game.dll",
+      "assemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+      "assemblyBytes": 74752,
+      "ilLines": 31,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 2,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 6
+        }
+      ],
+      "declaredMethods": 1
+    },
+    "Microsoft.Xna.Framework.Quaternion": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 3920,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 30,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 5,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 13
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 16
+        }
+      ],
+      "declaredMethods": 49
+    },
+    "Microsoft.Xna.Framework.Ray": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 769,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 7,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 2,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        }
+      ],
+      "declaredMethods": 13
+    },
+    "Microsoft.Xna.Framework.Rectangle": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 1283,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 22,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 5,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 13
+        }
+      ],
+      "declaredMethods": 29
+    },
+    "Microsoft.Xna.Framework.Storage.StorageContainer": {
+      "assembly": "Microsoft.Xna.Framework.Storage.dll",
+      "assemblySha256": "798f678e9ae3d9afc3bed66c30123bc9634fb923b6d200188344b618e608cbb8",
+      "assemblyBytes": 20992,
+      "ilLines": 839,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 26,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 6,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 20
+        }
+      ],
+      "declaredMethods": 30
+    },
+    "Microsoft.Xna.Framework.Storage.StorageDevice": {
+      "assembly": "Microsoft.Xna.Framework.Storage.dll",
+      "assemblySha256": "798f678e9ae3d9afc3bed66c30123bc9634fb923b6d200188344b618e608cbb8",
+      "assemblyBytes": 20992,
+      "ilLines": 557,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 13,
+      "nativeReachableMethods": [
+        "get_FreeSpace",
+        "get_IsConnected",
+        "get_TotalSpace"
+      ],
+      "nativeReachable": true,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 3,
+      "constructors": [
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        },
+        {
+          "access": "assembly",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 9
+        }
+      ],
+      "declaredMethods": 14
+    },
+    "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException": {
+      "assembly": "Microsoft.Xna.Framework.Storage.dll",
+      "assemblySha256": "798f678e9ae3d9afc3bed66c30123bc9634fb923b6d200188344b618e608cbb8",
+      "assemblyBytes": 20992,
+      "ilLines": 60,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 1,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 0,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": true,
+          "instructions": 3
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": true,
+          "instructions": 4
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        },
+        {
+          "access": "family",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": true,
+          "instructions": 5
+        }
+      ],
+      "declaredMethods": 0
+    },
+    "Microsoft.Xna.Framework.TitleContainer": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 369,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 6,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 1,
+      "constructors": [
+
+      ],
+      "declaredMethods": 5
+    },
+    "Microsoft.Xna.Framework.Vector2": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 3445,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 38,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 6,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 7
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 2,
+          "pureBaseForward": false,
+          "instructions": 9
+        }
+      ],
+      "declaredMethods": 73
+    },
+    "Microsoft.Xna.Framework.Vector3": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 4993,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 46,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 14,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 10
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 3,
+          "pureBaseForward": false,
+          "instructions": 14
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 12
+        }
+      ],
+      "declaredMethods": 82
+    },
+    "Microsoft.Xna.Framework.Vector4": {
+      "assembly": "Microsoft.Xna.Framework.dll",
+      "assemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+      "assemblyBytes": 679424,
+      "ilLines": 6103,
+      "nativeInteropMarkers": [
+
+      ],
+      "methodNodes": 38,
+      "nativeReachableMethods": [
+
+      ],
+      "nativeReachable": false,
+      "declaresNativeEntryPoint": false,
+      "declaredFields": 10,
+      "constructors": [
+        {
+          "access": "public",
+          "leadingArgumentLoads": 1,
+          "pureBaseForward": false,
+          "instructions": 13
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 15
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 0,
+          "pureBaseForward": false,
+          "instructions": 16
+        },
+        {
+          "access": "public",
+          "leadingArgumentLoads": 4,
+          "pureBaseForward": false,
+          "instructions": 19
+        }
+      ],
+      "declaredMethods": 77
+    }
+  }
+}

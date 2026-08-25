@@ -344,12 +344,18 @@ class PureManagedEnumBatchTest < Minitest::Test
      T => %i[GestureType TouchLocationState]}.each do |namespace, expected|
       declared = namespace.constants(false).sort
       selected = expected.select { |name| BATCH.any? { |clr, _, _| clr.end_with?(".#{name}") } }.sort
-      # Input::Touch also carries the TouchPanelCapabilities struct, which is not an enum.
-      assert_equal (selected + declared.grep(/Capabilities\z/)).uniq.sort, declared, namespace.name
+      # Input::Touch also carries the TouchPanelCapabilities struct, and Audio carries the three
+      # Foundation 22 exception types; neither is an enum.
+      extras = declared.grep(/Capabilities\z/) + declared.grep(/Exception\z/)
+      assert_equal (selected + extras).uniq.sort, declared, namespace.name
       declared.each do |name|
         next if name == :TouchPanelCapabilities
+        next if name.to_s.end_with?("Exception")
 
         assert_operator namespace.const_get(name, false), :<, CNA::Runtime::EnumValue
+      end
+      declared.grep(/Exception\z/).each do |name|
+        assert_operator namespace.const_get(name, false), :<, StandardError, name
       end
     end
   end

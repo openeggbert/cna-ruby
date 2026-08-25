@@ -15,9 +15,9 @@ require_relative "../tools/api_compat/verifier"
 #
 # The exception rule: a CLR type whose declared base is a projected exception base takes a Ruby
 # exception superclass rather than Object. StandardError is the root, because a CLR
-# `catch (Exception)` is the analogue of a bare Ruby `rescue`. No XNA exception type is claimed by
-# this milestone — all eight declare constructors whose behaviour lives in XNA IL that this host
-# does not carry.
+# `catch (Exception)` is the analogue of a bare Ruby `rescue`. Foundation 22 consumed six of the
+# eight XNA exception types once the pinned XNA 4.0 Windows IL became available; the two whose
+# selected surface includes a protected serialization constructor stay deferred.
 class BclProjectionTest < Minitest::Test
   B = CNA::Runtime::BclProjection
 
@@ -109,10 +109,19 @@ class BclProjectionTest < Minitest::Test
     assert_equal declared, B::EXCEPTION_BASES.keys.sort
 
     # ExternalException collapses to the nearest projected ancestor: the selected XNA surface never
-    # names it, so no Ruby constant is invented for it.
+    # names it, so no Ruby class is invented for it, and the two XNA types that derive from it take
+    # StandardError directly.
     refute Object.const_defined?(:System, false)
-    refute CNA::Runtime.const_defined?(:ExternalException, false)
-    refute CNA::Runtime.const_defined?(:XnaException, false)
+    assert_empty CNA::Runtime.constants(false).select { |name|
+      value = CNA::Runtime.const_get(name, false)
+      value.instance_of?(Class) && value <= ::Exception
+    }
+    [Microsoft::Xna::Framework::Audio::InstancePlayLimitException,
+     Microsoft::Xna::Framework::Audio::NoAudioHardwareException].each do |klass|
+      assert_equal StandardError, klass.superclass, klass.name
+      assert_equal "System.Runtime.InteropServices.ExternalException",
+                   BY_NAME.fetch("Microsoft.Xna.Framework.Audio.#{klass.name.split("::").last}").fetch("baseType")
+    end
   end
 
   # ----------------------------------------------------------------------- verifier mutations
@@ -197,12 +206,29 @@ class BclProjectionTest < Minitest::Test
 
   # ------------------------------------------------------------- no exception type is claimed
 
-  def test_no_xna_exception_type_is_projected
+  SERIALIZABLE = %w[
+    Microsoft.Xna.Framework.Content.ContentLoadException
+    Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException
+  ].freeze
+  PROJECTED = (EXCEPTIONS - SERIALIZABLE).freeze
+
+  def test_six_xna_exception_types_are_projected_and_two_stay_deferred
     assert_equal EXCEPTIONS.sort, BY_NAME.keys.grep(/Exception\z/).sort
-    EXCEPTIONS.each do |name|
+    assert_equal 6, PROJECTED.length
+
+    PROJECTED.each do |name|
+      assert SIGNATURES.fetch("types").any? { |type| type.fetch("name") == name }, name
+      assert_includes STRICT.fetch("completeTypeNames"), name
+      assert_equal 0, STRICT.fetch("localDiagnostics").fetch(name), name
+      runtime = name.split(".").reduce(Object) { |scope, part| scope.const_get(part, false) }
+      assert_operator runtime, :<, StandardError, name
+      assert_equal StandardError, runtime.superclass, name
+    end
+
+    SERIALIZABLE.each do |name|
       refute SIGNATURES.fetch("types").any? { |type| type.fetch("name") == name }, name
       assert_includes STRICT.fetch("missingTypeNames"), name
-      # Neither the type nor, in the Content and Storage cases, the namespace that would hold it.
+      # Neither the type nor the Content/Storage namespace that would hold it.
       segments = name.split(".")
       scope = segments[0..-2].reduce(Object) do |context, part|
         break nil unless context&.const_defined?(part, false)
@@ -213,19 +239,29 @@ class BclProjectionTest < Minitest::Test
     end
   end
 
-  def test_every_xna_exception_declares_only_constructors_whose_il_is_absent
+  def test_every_xna_exception_declares_only_constructors
     EXCEPTIONS.each do |name|
       members = BY_NAME.fetch(name).fetch("members")
       assert(members.all? { |member| member.fetch("kind") == "constructor" }, name)
       refute_empty members, name
+      members.each { |member| assert_nil member.fetch("returnType"), name }
+    end
 
-      # The pinned contract carries signatures only, so what a constructor does to Message and
-      # InnerException — and what the parameterless one produces at all — is not on this host.
-      members.each do |member|
-        assert_equal %w[kind name static access returnType genericParameters parameters].sort,
-                     member.keys.sort, name
-        assert_nil member.fetch("returnType"), name
-      end
+    # The two deferred types are exactly the two whose selected surface carries the protected
+    # serialization constructor; the other six declare only the public trio.
+    PROJECTED.each do |name|
+      assert_equal 3, BY_NAME.fetch(name).fetch("members").length, name
+      assert(BY_NAME.fetch(name).fetch("members").all? { |member| member.fetch("access") == "public" }, name)
+    end
+    SERIALIZABLE.each do |name|
+      members = BY_NAME.fetch(name).fetch("members")
+      assert_equal 4, members.length, name
+      protected_ctor = members.find { |member| member.fetch("access") == "protected" }
+      refute_nil protected_ctor, name
+      assert_equal ["System.Runtime.Serialization.SerializationInfo",
+                    "System.Runtime.Serialization.StreamingContext"],
+                   protected_ctor.fetch("parameters").map { |parameter| parameter.fetch("type") }, name
+      refute_includes B.identities, "System.Runtime.Serialization.SerializationInfo"
     end
   end
 end

@@ -43,6 +43,9 @@ BATCH_SIGNATURES = JSON.parse(
 BATCH_REFERENCE = JSON.parse(
   File.read(File.expand_path("api_compat/reference/xna40-windows-runtime-contract.json", __dir__))
 ).fetch("types").to_h { |type| [type.fetch("name"), type] }
+# Derived from the hash-pinned original XNA assemblies by tools/api_compat/build_il_inventory.rb.
+# It carries no Microsoft-owned bytes, only measured structural facts and the assembly hashes.
+IL_INVENTORY = JSON.parse(File.read(File.expand_path("../docs/generated/xna-il-inventory.json", __dir__)))
 
 def batch_enum_type(clr_name)
   clr_name.split(".").reduce(Object) { |scope, segment| scope.const_get(segment, false) }
@@ -178,6 +181,8 @@ def behavior_group(item)
   return "EVENT_PROJECTION" if id.start_with?("event_projection.")
   return "EVENT_RUNTIME" if id.start_with?("event_runtime.")
   return "BCL_PROJECTION" if id.start_with?("bcl_projection.")
+  return "XNA_EXCEPTION" if id.start_with?("xna_exception.")
+  return "IL_PROVENANCE" if id.start_with?("il_provenance.")
 
   id.split(".").first.upcase
 end
@@ -413,6 +418,45 @@ def execute(item)
       interface.protected_instance_methods(false) + interface.private_instance_methods(false),
       BATCH_SIGNATURES.fetch(clr_name).fetch("members").any? { |member| member.fetch("kind") == "event" }
     ]
+  when "XnaException.IlContract"
+    clr_name = item.fetch("args").fetch(0)
+    entry = IL_INVENTORY.fetch("types").fetch(clr_name)
+    pinned = BATCH_REFERENCE.fetch(clr_name)
+    [pinned.fetch("kind"), pinned.fetch("sealed"), pinned.fetch("baseType"),
+     entry.fetch("declaredFields"), entry.fetch("declaredMethods"),
+     entry.fetch("nativeReachable"),
+     entry.fetch("constructors").map do |ctor|
+       [ctor.fetch("access"), ctor.fetch("leadingArgumentLoads"), ctor.fetch("pureBaseForward")]
+     end,
+     entry.fetch("assemblySha256")]
+  when "XnaException.RubyMapping"
+    clr_name = item.fetch("args").fetch(0)
+    klass = batch_enum_type(clr_name)
+    inner = ArgumentError.new("inner")
+    plain = klass.new
+    message = klass.new("m")
+    chained = klass.new("m", inner)
+    rescued = begin
+      raise klass, "raised"
+    rescue StandardError => error
+      [error.class.name, error.message]
+    end
+    [
+      klass.instance_of?(Class), klass.superclass.name, (klass <= StandardError),
+      klass.public_instance_methods(false), klass.constants(false),
+      plain.message, message.message, chained.message,
+      plain.cause.nil?, chained.cause.equal?(inner), chained.backtrace.nil?,
+      klass.new("m", nil).cause.nil?, klass.new(nil).message,
+      rescued, error_name { klass.new("m", 42) }
+    ]
+  when "IlProvenance.Assemblies"
+    [IL_INVENTORY.fetch("assemblies").length,
+     IL_INVENTORY.fetch("assemblies").map { |assembly| [assembly.fetch("name"), assembly.fetch("version"), assembly.fetch("sha256")] },
+     IL_INVENTORY.fetch("REFERENCE_TYPES"), IL_INVENTORY.fetch("TYPES_WITH_IL"),
+     IL_INVENTORY.fetch("TYPES_NATIVE_REACHABLE")]
+  when "IlProvenance.NativeBoundary"
+    names = item.fetch("args")
+    names.map { |name| [name, IL_INVENTORY.fetch("types").fetch(name).fetch("nativeReachable")] }
   when "BclProjection.Register"
     register = CNA::Runtime::BclProjection
     [register::TYPES, register::EXCEPTION_BASES, register.identities,
@@ -435,16 +479,17 @@ def execute(item)
   when "BclProjection.ExceptionContract"
     clr_name = item.fetch("args").fetch(0)
     pinned = BATCH_REFERENCE.fetch(clr_name)
+    # Pinned XNA facts only. Whether the binding has selected the type is a mapping fact and
+    # belongs in a RUBY_MAPPING_QUALIFICATION row, not here.
     [pinned.fetch("kind"), pinned.fetch("sealed"), pinned.fetch("baseType"),
      pinned.fetch("directInterfaces"), pinned.fetch("members").length,
      pinned.fetch("members").map do |member|
        [member.fetch("kind"), member.fetch("access"),
         member.fetch("parameters").map { |parameter| parameter.fetch("type") }]
-     end,
-     BATCH_SIGNATURES.key?(clr_name)]
+     end]
   when "BclProjection.ExceptionDeferral"
     names = BATCH_REFERENCE.keys.grep(/Exception\z/).sort
-    [names.length, names, names.map { |name| BATCH_SIGNATURES.key?(name) },
+    [names.length, names,
      names.map do |name|
        BATCH_REFERENCE.fetch(name).fetch("members").all? { |member| member.fetch("kind") == "constructor" }
      end,

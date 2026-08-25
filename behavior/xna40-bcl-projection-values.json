@@ -43,8 +43,7 @@
               "System.Exception"
             ]
           ]
-        ],
-        false
+        ]
       ]
     },
     {
@@ -85,8 +84,7 @@
               "System.Exception"
             ]
           ]
-        ],
-        false
+        ]
       ]
     },
     {
@@ -127,8 +125,7 @@
               "System.Exception"
             ]
           ]
-        ],
-        false
+        ]
       ]
     },
     {
@@ -177,8 +174,7 @@
               "System.Runtime.Serialization.StreamingContext"
             ]
           ]
-        ],
-        false
+        ]
       ]
     },
     {
@@ -219,8 +215,7 @@
               "System.Exception"
             ]
           ]
-        ],
-        false
+        ]
       ]
     },
     {
@@ -261,8 +256,7 @@
               "System.Exception"
             ]
           ]
-        ],
-        false
+        ]
       ]
     },
     {
@@ -303,8 +297,7 @@
               "System.Exception"
             ]
           ]
-        ],
-        false
+        ]
       ]
     },
     {
@@ -353,8 +346,7 @@
               "System.Runtime.Serialization.StreamingContext"
             ]
           ]
-        ],
-        false
+        ]
       ]
     },
     {
@@ -375,16 +367,6 @@
           "Microsoft.Xna.Framework.Graphics.DeviceNotResetException",
           "Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException",
           "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException"
-        ],
-        [
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false,
-          false
         ],
         [
           true,
@@ -473,5 +455,6 @@
         false
       ]
     }
-  ]
+  ],
+  "correction": "Foundation 22 removed one mapping fact (whether the binding had selected the type) from these PURE_XNA_DERIVED rows; every XNA fact they record is unchanged."
 }
