@@ -100,9 +100,15 @@ unless depth_format["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
   abort "Milestone 14 DepthFormat evidence lacks observation-level provenance"
 end
 observations.concat(depth_format.fetch("observations"))
+primitive_type_path = File.expand_path("../behavior/xna40-primitive-type-values.json", __dir__)
+primitive_type = JSON.parse(File.read(primitive_type_path))
+unless primitive_type["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
+  abort "Milestone 15 PrimitiveType evidence lacks observation-level provenance"
+end
+observations.concat(primitive_type.fetch("observations"))
 abort "duplicate behavior observation id" unless observations.map { |item| item.fetch("id") }.uniq.length == observations.length
 result = source_corpus.merge(
-  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, and DepthFormat separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, and PrimitiveType separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category" => "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256" => EXPECTED_SHA256,
   "milestone3SourceAssemblySha256" => milestone.fetch("sourceAssemblySha256"),
@@ -117,6 +123,7 @@ result = source_corpus.merge(
   "milestone12SourceAssemblySha256" => viewport.fetch("sourceAssemblySha256"),
   "milestone13SourceAssemblySha256" => clear_options.fetch("sourceAssemblySha256"),
   "milestone14SourceAssemblySha256" => depth_format.fetch("sourceAssemblySha256"),
+  "milestone15SourceAssemblySha256" => primitive_type.fetch("sourceAssemblySha256"),
   "observations" => observations
 )
 destination = File.expand_path("../behavior/xna40-foundation-values.json", __dir__)

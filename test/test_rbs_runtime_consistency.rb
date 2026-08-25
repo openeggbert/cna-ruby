@@ -420,6 +420,40 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     refute_includes source, "DepthStencilState"
   end
 
+  def test_primitive_type_rbs_retains_exact_four_identity_non_flags_projection
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    selected = contract.fetch("types").find do |type|
+      type.fetch("name") == "Microsoft.Xna.Framework.Graphics.PrimitiveType"
+    end
+    refute_nil selected
+    assert_equal 4, selected.fetch("members").length
+    assert_equal "enum", selected.fetch("kind")
+    assert_equal false, selected.fetch("flags")
+    assert_equal "System.Int32", selected.fetch("underlyingType")
+    assert_equal({"TriangleList" => "0", "TriangleStrip" => "1", "LineList" => "2", "LineStrip" => "3"},
+                 selected.fetch("members").to_h { |member| [member.fetch("name"), member.fetch("value")] })
+
+    source = File.read(SIGNATURE_ROOT.join("microsoft", "xna", "framework", "graphics.rbs"))
+    match = source.match(/^        class PrimitiveType\n(?<body>.*?)^        end$/m)
+    refute_nil match
+    section = match[:body]
+    %w[TriangleList TriangleStrip LineList LineStrip].each do |name|
+      assert_includes section, "#{name}: PrimitiveType"
+    end
+    declared = section.lines.filter_map { |line| line[/\A\s+(\w+):/, 1] }
+    assert_equal %w[TriangleList TriangleStrip LineList LineStrip], declared
+    %w[PointList TriangleFan Default None value__].each { |name| refute_includes declared, name }
+    refute_includes section, "untyped"
+    refute_match(/\*\w*/, section)
+    refute_includes section, "def |:"
+    refute_includes section, "def &:"
+    refute_includes section, "def ToString"
+    %w[DrawPrimitives DrawIndexedPrimitives DrawInstancedPrimitives DrawUserPrimitives
+       DrawUserIndexedPrimitives VertexBuffer IndexBuffer VertexDeclaration].each do |name|
+      refute_includes source, name
+    end
+  end
+
   def test_viewport_rbs_retains_exact_complete_fourteen_identity_projection
     contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
     selected = contract.fetch("types").find do |type|

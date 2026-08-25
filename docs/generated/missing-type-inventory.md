@@ -109,7 +109,6 @@
 - `Microsoft.Xna.Framework.Graphics.OcclusionQuery`
 - `Microsoft.Xna.Framework.Graphics.PresentInterval`
 - `Microsoft.Xna.Framework.Graphics.PresentationParameters`
-- `Microsoft.Xna.Framework.Graphics.PrimitiveType`
 - `Microsoft.Xna.Framework.Graphics.RasterizerState`
 - `Microsoft.Xna.Framework.Graphics.RenderTarget2D`
 - `Microsoft.Xna.Framework.Graphics.RenderTargetBinding`

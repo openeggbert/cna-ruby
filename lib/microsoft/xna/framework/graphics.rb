@@ -37,6 +37,16 @@ module Microsoft
           })
         end
 
+        class PrimitiveType < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "TriangleList" => 0,
+            "TriangleStrip" => 1,
+            "LineList" => 2,
+            "LineStrip" => 3
+          })
+        end
+
         class SurfaceFormat < CNA::Runtime::EnumValue
           extend CNA::Runtime::EnumType
           define_values({

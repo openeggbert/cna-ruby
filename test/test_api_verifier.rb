@@ -934,6 +934,165 @@ class ApiVerifierTest < Minitest::Test
     refute Microsoft::Xna::Framework::GraphicsDeviceManager.public_method_defined?(:"PreferredDepthStencilFormat=")
   end
 
+  def test_primitive_type_missing_type_and_wrong_namespace_are_detected
+    reference, target = primitive_type_contracts
+    target.fetch("types").clear
+    assert_operator verify(reference, target).counts["MISSING_TYPE"], :>, 0
+
+    reference, target = primitive_type_contracts
+    topology = target.fetch("types").first
+    topology["name"] = "Microsoft.Xna.Framework.PrimitiveType"
+    topology["rubyName"] = "Microsoft::Xna::Framework::PrimitiveType"
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_TYPE"], :>, 0
+    assert_operator result.counts["UNEXPECTED_TYPE"], :>, 0
+  end
+
+  def test_primitive_type_wrong_kind_underlying_type_and_flags_are_detected
+    reference, target = primitive_type_contracts
+    target.fetch("types").first["kind"] = "struct"
+    assert_operator verify(reference, target).counts["TYPE_KIND_MISMATCH"], :>, 0
+
+    reference, target = primitive_type_contracts
+    target.fetch("types").first["underlyingType"] = "System.UInt32"
+    assert_operator verify(reference, target).counts["ENUM_VALUE_MISMATCH"], :>, 0
+
+    reference, target = primitive_type_contracts
+    target.fetch("types").first["flags"] = true
+    assert_operator verify(reference, target).counts["FLAGS_MAPPING_MISMATCH"], :>, 0
+  end
+
+  def test_primitive_type_each_wrong_raw_value_is_detected
+    {"TriangleList" => "1", "TriangleStrip" => "0", "LineList" => "3", "LineStrip" => "2"}.each do |name, raw|
+      reference, target = primitive_type_contracts
+      target.fetch("types").first.fetch("members").find { |member| member["name"] == name }["value"] = raw
+      assert_operator verify(reference, target).counts["ENUM_VALUE_MISMATCH"], :>, 0, name
+    end
+  end
+
+  def test_primitive_type_rejects_the_xna31_direct3d9_ordering
+    # XNA 3.1 declared LineList=1, LineStrip=2, TriangleList=3, TriangleStrip=4
+    # alongside PointList=0 and TriangleFan=5. XNA 4.0 renumbered the survivors.
+    reference, target = primitive_type_contracts
+    legacy = {"TriangleList" => "3", "TriangleStrip" => "4", "LineList" => "1", "LineStrip" => "2"}
+    target.fetch("types").first.fetch("members").each { |member| member["value"] = legacy.fetch(member.fetch("name")) }
+    assert_operator verify(reference, target).counts["ENUM_VALUE_MISMATCH"], :>, 0
+
+    pinned = reference_contract.fetch("types").find { |type| type.fetch("name") == primitive_type_name }
+    assert_equal({"TriangleList" => "0", "TriangleStrip" => "1", "LineList" => "2", "LineStrip" => "3"},
+                 pinned.fetch("members").reject { |member| member["name"] == "value__" }
+                       .to_h { |member| [member.fetch("name"), member.fetch("value")] })
+    refute pinned.fetch("members").any? { |member| %w[PointList TriangleFan].include?(member["name"]) }
+  end
+
+  def test_primitive_type_missing_middle_and_final_values_are_detected
+    %w[LineList LineStrip].each do |name|
+      reference, target = primitive_type_contracts
+      target.fetch("types").first.fetch("members").reject! { |member| member["name"] == name }
+      result = verify(reference, target)
+      assert_operator result.counts["MISSING_MEMBER"], :>, 0, name
+      refute_includes result.complete_types, primitive_type_name, name
+    end
+  end
+
+  def test_primitive_type_exposed_storage_extra_values_and_renamed_final_value_are_detected
+    reference, target = primitive_type_contracts
+    storage = reference.fetch("types").first.fetch("members").find { |member| member["name"] == "value__" }
+    target.fetch("types").first.fetch("members") << Marshal.load(Marshal.dump(storage))
+    assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0
+
+    {"PointList" => "4", "TriangleFan" => "5"}.each do |name, raw|
+      reference, target = primitive_type_contracts
+      target.fetch("types").first.fetch("members") << {
+        "kind" => "field", "name" => name, "type" => primitive_type_name,
+        "static" => true, "constant" => true, "value" => raw
+      }
+      assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0, name
+    end
+
+    reference, target = primitive_type_contracts
+    target.fetch("types").first.fetch("members")
+          .find { |member| member["name"] == "LineStrip" }["name"] = "LineStrips"
+    result = verify(reference, target)
+    assert_operator result.counts["MISSING_MEMBER"], :>, 0
+    assert_operator result.counts["UNEXPECTED_MEMBER"], :>, 0
+  end
+
+  def test_primitive_type_unexpected_xna_member_and_public_helper_are_detected
+    reference, target = primitive_type_contracts
+    target.fetch("types").first.fetch("members") << {
+      "kind" => "method", "name" => "GetVertexCount", "static" => false, "access" => "public",
+      "returnType" => "System.Int32", "genericParameters" => [], "parameters" => []
+    }
+    assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0
+
+    topology_class = Microsoft::Xna::Framework::Graphics::PrimitiveType
+    topology_class.class_eval { def VertexCount = 0 }
+    assert_operator verify(reference, target, runtime: true).counts["UNEXPECTED_MEMBER"], :>, 0
+  ensure
+    topology_class&.__send__(:remove_method, :VertexCount) if topology_class&.public_method_defined?(:VertexCount)
+  end
+
+  def test_primitive_type_is_never_accepted_as_a_flags_enum
+    # LineStrip = 3 is one declared ordinary literal, not TriangleStrip | LineList.
+    pinned = reference_contract.fetch("types").find { |type| type.fetch("name") == primitive_type_name }
+    selected = signature_contract.fetch("types").find { |type| type.fetch("name") == primitive_type_name }
+    assert_equal false, pinned.fetch("flags")
+    assert_equal false, selected.fetch("flags")
+    combined = selected.fetch("members").reduce(0) { |mask, member| mask | Integer(member.fetch("value")) }
+    assert_equal 3, combined
+    assert_equal 3, Integer(selected.fetch("members").find { |member| member["name"] == "LineStrip" }.fetch("value"))
+
+    reference, target = primitive_type_contracts
+    topology = Microsoft::Xna::Framework::Graphics::PrimitiveType
+    original_flags = topology.instance_variable_get(:@enum_flags)
+    topology.instance_variable_set(:@enum_flags, true)
+    assert_operator verify(reference, target, runtime: true).counts["FLAGS_MAPPING_MISMATCH"], :>, 0
+    topology.instance_variable_set(:@enum_flags, original_flags)
+
+    reference, target = primitive_type_contracts
+    reference.fetch("types").first["flags"] = true
+    target.fetch("types").first["flags"] = true
+    result = verify(reference, target, runtime: true)
+    assert_operator result.counts["FLAGS_MAPPING_MISMATCH"], :>, 0
+    assert_equal 0, topology.instance_variable_get(:@enum_mask)
+    assert_raises(TypeError) { topology::TriangleStrip | topology::LineList }
+    assert_raises(TypeError) { topology::LineStrip & topology::LineList }
+  ensure
+    topology&.instance_variable_set(:@enum_flags, original_flags) unless original_flags.nil?
+  end
+
+  def test_primitive_type_selected_surface_rejects_accidental_graphics_device_draw_members
+    device_name = "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+    draw_names = %w[DrawIndexedPrimitives DrawInstancedPrimitives DrawPrimitives
+                    DrawUserIndexedPrimitives DrawUserPrimitives]
+    reference_device = reference_contract.fetch("types").find { |type| type.fetch("name") == device_name }
+    draw_members = reference_device.fetch("members").select { |member| draw_names.include?(member["name"]) }
+    assert_equal 9, draw_members.length
+    assert draw_members.all? { |member|
+      member.fetch("parameters").any? { |parameter| parameter.fetch("type") == primitive_type_name }
+    }
+
+    draw_names.each do |name|
+      reference, target = primitive_type_selected_surface_contracts
+      reference_device.fetch("members").select { |member| member["name"] == name }.each do |member|
+        target.fetch("types").find { |type| type.fetch("name") == device_name }
+              .fetch("members") << Marshal.load(Marshal.dump(member))
+      end
+      assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0, name
+    end
+
+    selected_device = signature_contract.fetch("types").find { |type| type.fetch("name") == device_name }
+    refute selected_device.fetch("members").any? { |member| member.fetch("name").start_with?("Draw") }
+    draw_names.each do |name|
+      refute Microsoft::Xna::Framework::Graphics::GraphicsDevice.public_method_defined?(name), name
+    end
+    strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
+    draw_names.each do |name|
+      assert strict.fetch("details").fetch("MISSING_MEMBER").any? { |label| label.include?("#{device_name}::#{name} ") }, name
+    end
+  end
+
   def test_viewport_missing_project_and_unproject_are_detected
     %w[Project Unproject].each do |name|
       reference, target = viewport_contracts
@@ -1192,6 +1351,27 @@ class ApiVerifierTest < Minitest::Test
     selected_manager = signature_contract.fetch("types").find { |type| type.fetch("name") == manager_name }
     reference.fetch("types") << Marshal.load(Marshal.dump(selected_manager))
     target.fetch("types") << Marshal.load(Marshal.dump(selected_manager))
+    [reference, target]
+  end
+
+  def primitive_type_name
+    "Microsoft.Xna.Framework.Graphics.PrimitiveType"
+  end
+
+  def primitive_type_contracts
+    reference = reference_contract
+    target = signature_contract
+    reference_type = reference.fetch("types").find { |type| type.fetch("name") == primitive_type_name }
+    target_type = target.fetch("types").find { |type| type.fetch("name") == primitive_type_name }
+    [{"types" => [reference_type]}, {"types" => [Marshal.load(Marshal.dump(target_type))]}]
+  end
+
+  def primitive_type_selected_surface_contracts
+    reference, target = primitive_type_contracts
+    device_name = "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+    selected_device = signature_contract.fetch("types").find { |type| type.fetch("name") == device_name }
+    reference.fetch("types") << Marshal.load(Marshal.dump(selected_device))
+    target.fetch("types") << Marshal.load(Marshal.dump(selected_device))
     [reference, target]
   end
 

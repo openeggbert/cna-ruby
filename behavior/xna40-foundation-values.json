@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, and DepthFormat separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, and PrimitiveType separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "observations": [
     {
@@ -4817,6 +4817,172 @@
         ],
         false
       ]
+    },
+    {
+      "id": "primitive_type.contract",
+      "operation": "PrimitiveType.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "enum",
+        "System.Int32",
+        false,
+        [
+          [
+            "TriangleList",
+            0
+          ],
+          [
+            "TriangleStrip",
+            1
+          ],
+          [
+            "LineList",
+            2
+          ],
+          [
+            "LineStrip",
+            3
+          ]
+        ],
+        4,
+        true,
+        [
+          false,
+          false
+        ]
+      ]
+    },
+    {
+      "id": "primitive_type.ruby_enum_mapping",
+      "operation": "PrimitiveType.RubyEnumMapping",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        true,
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          true,
+          true,
+          true,
+          true
+        ],
+        true,
+        [
+          "RangeError",
+          "RangeError",
+          "RangeError",
+          "RangeError",
+          "RangeError"
+        ],
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
+        [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
+        3,
+        false,
+        0,
+        [
+          "TriangleList",
+          "TriangleStrip",
+          "LineList",
+          "LineStrip"
+        ],
+        [
+          "Microsoft::Xna::Framework::Graphics::PrimitiveType::TriangleList",
+          "Microsoft::Xna::Framework::Graphics::PrimitiveType::TriangleStrip",
+          "Microsoft::Xna::Framework::Graphics::PrimitiveType::LineList",
+          "Microsoft::Xna::Framework::Graphics::PrimitiveType::LineStrip"
+        ],
+        [
+          "LineList",
+          "LineStrip",
+          "TriangleList",
+          "TriangleStrip"
+        ],
+        [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        false,
+        false
+      ]
     }
   ],
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
@@ -4831,5 +4997,6 @@
   "milestone11SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
   "milestone12SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
   "milestone13SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
-  "milestone14SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55"
+  "milestone14SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+  "milestone15SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55"
 }

@@ -18,6 +18,11 @@ DEPTH_FORMAT_SIGNATURE = JSON.parse(
 ).fetch("types").find do |type|
   type.fetch("name") == "Microsoft.Xna.Framework.Graphics.DepthFormat"
 end
+PRIMITIVE_TYPE_SIGNATURE = JSON.parse(
+  File.read(File.expand_path("api_compat/signatures.json", __dir__))
+).fetch("types").find do |type|
+  type.fetch("name") == "Microsoft.Xna.Framework.Graphics.PrimitiveType"
+end
 GRAPHICS_DEVICE_STATUS_SIGNATURE = JSON.parse(
   File.read(File.expand_path("api_compat/signatures.json", __dir__))
 ).fetch("types").find do |type|
@@ -147,6 +152,7 @@ def behavior_group(item)
   return "VIEWPORT_TITLE_SAFE_AREA" if id.start_with?("viewport_title_safe_area.")
   return "CLEAR_OPTIONS" if id.start_with?("clear_options.")
   return "DEPTH_FORMAT" if id.start_with?("depth_format.")
+  return "PRIMITIVE_TYPE" if id.start_with?("primitive_type.")
 
   id.split(".").first.upcase
 end
@@ -346,6 +352,50 @@ def execute(item)
       %i[DepthStencilState PresentationParameters RenderTarget2D RenderTargetCube GraphicsAdapter]
         .map { |name| G.const_defined?(name, false) },
       CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("DEPTH_FORMAT") }
+    ]
+  when "PrimitiveType.Contract"
+    members = PRIMITIVE_TYPE_SIGNATURE.fetch("members")
+    [PRIMITIVE_TYPE_SIGNATURE.fetch("kind"), PRIMITIVE_TYPE_SIGNATURE.fetch("underlyingType"),
+     PRIMITIVE_TYPE_SIGNATURE.fetch("flags"),
+     members.map { |member| [member.fetch("name"), Integer(member.fetch("value"))] },
+     members.length,
+     members.any? { |member| Integer(member.fetch("value")).zero? },
+     %w[PointList TriangleFan].map { |name| members.any? { |member| member.fetch("name") == name } }]
+  when "PrimitiveType.RubyEnumMapping"
+    topology = G::PrimitiveType
+    values = [topology::TriangleList, topology::TriangleStrip, topology::LineList, topology::LineStrip]
+    foreign = [G::DepthFormat::Depth24, G::SurfaceFormat::Color, G::SpriteSortMode::Deferred,
+               G::GraphicsProfile::Reach, G::GraphicsDeviceStatus::Normal, G::ClearOptions::Target,
+               F::DisplayOrientation::Default, G::VertexElementFormat::Vector2, I::GamePadType::GamePad]
+    [
+      values.all? { |value| value.instance_of?(topology) },
+      values.all?(&:frozen?),
+      values.map(&:to_i),
+      (0..3).map { |raw| topology.coerce(raw).equal?(values[raw]) },
+      values.all? { |value| topology.coerce(value).equal?(value) },
+      [4, 5, -1, 12_345, 2_147_483_647].map { |raw| error_name { topology.coerce(raw) } },
+      [nil, true, false, 1.0, "1", :LineList, Object.new].map { |value| error_name { topology.coerce(value) } },
+      foreign.map { |value| error_name { topology.coerce(value) } },
+      foreign.map { |value| topology::LineList == value },
+      foreign.map { |value| topology::LineList <=> value },
+      [error_name { topology::TriangleStrip | topology::LineList },
+       error_name { topology::LineStrip & topology::LineList },
+       error_name { topology::TriangleList | topology::LineStrip }],
+      topology::TriangleStrip.to_i | topology::LineList.to_i,
+      topology.instance_variable_get(:@enum_flags),
+      topology.instance_variable_get(:@enum_mask),
+      values.map(&:to_s),
+      values.map(&:inspect),
+      topology.constants(false).map(&:to_s).sort,
+      %i[value__ PointList TriangleFan Default None].map { |name| topology.constants(false).include?(name) },
+      %i[ToString HasFlag VertexCount PrimitiveCount NativeTopology GlEnum Parse FromInt32]
+        .map { |name| topology::LineList.respond_to?(name) },
+      %w[DrawPrimitives DrawIndexedPrimitives DrawInstancedPrimitives DrawUserPrimitives
+         DrawUserIndexedPrimitives].map { |name| G::GraphicsDevice.public_method_defined?(name) },
+      %i[VertexBuffer IndexBuffer VertexDeclaration RasterizerState Effect]
+        .map { |name| G.const_defined?(name, false) },
+      CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("PRIMITIVE") || name.include?("TOPOLOGY") },
+      CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?("primitive") || entry.symbol.include?("draw_") }
     ]
   when "GraphicsProfile.Contract"
     profile = G::GraphicsProfile

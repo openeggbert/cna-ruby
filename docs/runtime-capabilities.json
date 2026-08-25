@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 13",
+  "milestone": "Foundation 15",
   "platform": "Linux x86-64 MRI Ruby 3.3.8",
   "cnaAbi": "0.7.0",
   "capabilities": [
@@ -16,6 +16,7 @@
     {"id": "managed.viewport-value", "category": "VERIFIED_MANAGED", "status": "verified complete value contract", "evidence": "Viewport: 14/14 identities; direct Windows XNA Project/Unproject Binary32 goldens, exact W branch and Y/depth/origin mapping, read-only TitleSafeArea copies; no GraphicsDevice setter, native projection, or renderer claim"},
     {"id": "managed.clear-options", "category": "VERIFIED_MANAGED", "status": "verified complete flags enum", "evidence": "ClearOptions: 4 CLR / 3 Ruby identities, Target=1, DepthBuffer=2, Stencil=4, valid mask 0x7, no named zero, and controlled typed/frozen composition; no GraphicsDevice.Clear overload or renderer clear-mask support claim"},
     {"id": "managed.depth-format", "category": "VERIFIED_MANAGED", "status": "verified complete non-flags enum", "evidence": "DepthFormat: 5 CLR / 4 Ruby identities, None=0, Depth16=1, Depth24=2, Depth24Stencil8=3, flags=false and value__ excluded; Depth24Stencil8 is one ordinary literal, not Depth16|Depth24; no GPU depth-format support, no stencil support, no native mapping, no DepthStencilState, and no GraphicsDeviceManager.PreferredDepthStencilFormat claim"},
+    {"id": "managed.primitive-type", "category": "VERIFIED_MANAGED", "status": "verified complete non-flags enum", "evidence": "PrimitiveType: 5 CLR / 4 Ruby identities, TriangleList=0, TriangleStrip=1, LineList=2, LineStrip=3, flags=false and value__ excluded; XNA 4.0 renumbering, not the XNA 3.1/Direct3D 9 ordering, and no PointList or TriangleFan; no GraphicsDevice Draw* member, no vertex/index buffer, no renderer topology mapping, and no native primitive constant claim"},
     {"id": "managed.button-state", "category": "VERIFIED_MANAGED", "status": "verified complete type", "evidence": "Released=0, Pressed=1; typed frozen non-flags enum; locally strict-zero"},
     {"id": "managed.mouse-state", "category": "VERIFIED_MANAGED", "status": "verified complete type", "evidence": "14/14 identities; exact constructor, properties, equality, XOR hash, string, Int32 extremes, and independent copies"},
     {"id": "managed.gamepad.enums", "category": "VERIFIED_MANAGED", "status": "verified complete types", "evidence": "Buttons 25/25 Ruby identities with flags composition; GamePadDeadZone 3/3; GamePadType 10/10 including BigButtonPad=768"},

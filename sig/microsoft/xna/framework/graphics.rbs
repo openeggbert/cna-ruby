@@ -31,6 +31,13 @@ module Microsoft
           Depth24Stencil8: DepthFormat
         end
 
+        class PrimitiveType
+          TriangleList: PrimitiveType
+          TriangleStrip: PrimitiveType
+          LineList: PrimitiveType
+          LineStrip: PrimitiveType
+        end
+
         class Viewport
           attr_accessor X: Integer
           attr_accessor Y: Integer

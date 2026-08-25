@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 14",
+  "milestone": "Foundation 15",
   "complete": true,
   "date": "2026-08-25",
   "ruby": "ruby 3.3.8 (2025-04-09 revision b200bad6cd) [x86_64-linux-gnu]",
@@ -19,17 +19,25 @@
     "headersVerifiedAgainstCnaRevision": "a09196a6477f69a7a57c8364f990658d31531a5b",
     "headerFilesCompared": 59,
     "headerMismatches": 0,
-    "projectSourceOnRubylib": false
+    "projectSourceOnRubylib": false,
+    "reusedFoundation14Toolchain": true,
+    "nativeLibrarySha256": "c62949d23d3745964f5e557a06665875621ed4cb6e2930e3f282afd5911f2dcb",
+    "cnaTestPng": "/rv/data/development/github.com/openeggbert/_bindings/cna-ruby-template/Content/logo.png",
+    "cnaTestPngConfigured": true,
+    "environmentDriftAfterRun": "none; interpreter, library SHA-256, all 59 headers and CNA_TEST_PNG re-verified identical at the end of the run",
+    "pathOnlyProvenanceDelta": "nativeLibraryPreservedFrom records the original disposable /tmp build path; the artifact now lives at nativeLibraryPath with unchanged content hash. No /tmp path was recreated."
   },
   "gem": {
     "filename": "cna-ruby-0.1.0.dev0.gem",
     "version": "0.1.0.dev0",
-    "sha256": "bd278da518904cc8c514ec23fae99531ff21e0495ce42d13f1c0e1c48f982dbc",
+    "sha256": "5606bb482861ec42ac8d7e43712b19b5d093053d8d2fd135b12be7be4b96a72d",
     "entries": 37,
     "forbiddenEntries": 0,
     "nativeLibrariesBundled": 0,
     "developerPathLeaks": 0,
-    "previousMilestoneSha256": "eee6fde53cadb145d2b9326be5e7c892fe275cb46106fd133a05ad05ae5963eb"
+    "previousMilestoneSha256": "bd278da518904cc8c514ec23fae99531ff21e0495ce42d13f1c0e1c48f982dbc",
+    "packagedEntriesMatchWorktree": true,
+    "packageWorktreeMismatches": 0
   },
   "native": {
     "abi": "0.7.0",
@@ -40,8 +48,8 @@
     "audio": "NULL"
   },
   "tests": {
-    "runs": 267,
-    "assertions": 5034,
+    "runs": 288,
+    "assertions": 5354,
     "failures": 0,
     "errors": 0,
     "skips": 0
@@ -51,14 +59,14 @@
     "referenceMembers": 2964,
     "expectedRubyTypes": 257,
     "expectedRubyMembers": 2915,
-    "targetTypes": 79,
-    "targetMembers": 1472,
-    "totalDiagnostics": 362,
-    "missingType": 178,
+    "targetTypes": 80,
+    "targetMembers": 1476,
+    "totalDiagnostics": 361,
+    "missingType": 177,
     "missingMember": 132,
-    "completeTypes": 73,
+    "completeTypes": 74,
     "partialTypes": 6,
-    "missingTypes": 178,
+    "missingTypes": 177,
     "unexpectedType": 0,
     "unexpectedMember": 0,
     "typeKindMismatch": 0,
@@ -293,17 +301,66 @@
     "gpuDepthFormatSupportClaimed": false,
     "stencilSupportClaimed": false
   },
+  "primitiveTypeClosure": {
+    "sourceTypes": 1,
+    "referenceIdentities": 5,
+    "expectedRubyIdentities": 4,
+    "targetRubyIdentities": 4,
+    "localDiagnostics": 0,
+    "kind": "enum",
+    "underlyingType": "System.Int32",
+    "flags": false,
+    "values": {
+      "TriangleList": 0,
+      "TriangleStrip": 1,
+      "LineList": 2,
+      "LineStrip": 3
+    },
+    "valueStorageExposed": false,
+    "xna31Direct3d9OrderingUsed": false,
+    "xna31DroppedLiteralsPresent": {
+      "PointList": false,
+      "TriangleFan": false
+    },
+    "graphicsDeviceDrawMembersImplemented": false,
+    "graphicsDeviceDrawOverloadsDeferred": 9,
+    "graphicsDeviceDrawMemberNamesDeferred": [
+      "DrawPrimitives",
+      "DrawIndexedPrimitives",
+      "DrawInstancedPrimitives",
+      "DrawUserPrimitives",
+      "DrawUserIndexedPrimitives"
+    ],
+    "graphicsDevicePublicInstanceMethods": [
+      "IsDisposed",
+      "Viewport",
+      "Clear"
+    ],
+    "rendererTopologyMappingImplemented": false,
+    "nativeMappingImplemented": false,
+    "managedOnly": true,
+    "reverseEdgesFromSelectedPartialRemainder": [
+      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawPrimitives (1 overload)",
+      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawIndexedPrimitives (1 overload)",
+      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawInstancedPrimitives (1 overload)",
+      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawUserIndexedPrimitives (4 overloads)",
+      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawUserPrimitives (2 overloads)"
+    ],
+    "onlyReferenceUserIsGraphicsDevice": true
+  },
   "focusedManaged": {
+    "type": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+    "file": "test/test_primitive_type.rb",
     "nativeLibraryUnset": true,
-    "runs": 9,
-    "assertions": 151,
+    "runs": 11,
+    "assertions": 205,
     "failures": 0,
     "errors": 0,
     "skips": 0
   },
   "verifier": {
-    "mutationSelfTestRuns": 88,
-    "assertions": 199,
+    "mutationSelfTestRuns": 97,
+    "assertions": 252,
     "failures": 0,
     "focusedGraphicsDeviceStatusFixtures": 12,
     "focusedGraphicsProfileFixtures": 13,
@@ -313,21 +370,26 @@
     "flagsWithoutNamedZeroGenericFixtures": 1,
     "depthFormatFlagsConfusionFixtures": 2,
     "manualAllowlistEntries": 0,
-    "unmeasuredStructuralCategories": 0
+    "unmeasuredStructuralCategories": 0,
+    "focusedPrimitiveTypeFixtures": 25,
+    "primitiveTypeXna31OrderingFixtures": 1,
+    "primitiveTypeFlagsConfusionFixtures": 2,
+    "primitiveTypeDrawMemberLeakFixtures": 5,
+    "focusedFixtureCountingMethod": "Foundation 15 counts discrete mutated-contract verifications (one per Verifier#verify call inside the focused tests). That method reproduces the recorded Foundation-14 focusedDepthFormatFixtures value of 19 exactly; earlier milestone fixture counts are carried forward as recorded by those milestones and their tests are unchanged and green."
   },
   "rbsRuntimeConsistency": {
-    "runs": 14,
-    "assertions": 1829,
+    "runs": 15,
+    "assertions": 1891,
     "failures": 0,
     "selectedProjectionUntyped": 0,
     "selectedProjectionCatchAll": 0
   },
   "behavior": {
     "provenance": "OBSERVATION_LEVEL",
-    "pureXnaDerived": 269,
-    "rubyMappingQualification": 6,
-    "observations": 275,
-    "assertions": 275,
+    "pureXnaDerived": 270,
+    "rubyMappingQualification": 7,
+    "observations": 277,
+    "assertions": 277,
     "failures": 0,
     "gamepadGroups": {
       "BUTTONS": 4,
@@ -352,7 +414,10 @@
       "VIEWPORT_TITLE_SAFE_AREA": 2
     },
     "nativeGamePadIncludedInPureTotals": false,
-    "depthFormatGroup": 2
+    "depthFormatGroup": 2,
+    "primitiveTypeGroup": 2,
+    "importSourceAvailable": false,
+    "importNote": "The upstream import source (SHA-256 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855) is absent on this reconstructed host and tools/import_behavior_corpus.rb refuses to run without it. The Foundation-15 merge replayed the importer's identical merge and formatting tail over the already-merged corpus; a JSON round-trip of the pre-merge file was first proven byte-identical. The importer was updated so a future run with the real source produces the same file."
   },
   "nativeAbi": {
     "boundFunctions": 38,
@@ -400,7 +465,7 @@
     "sourceChanged": false,
     "head": "42ae209b8b4fd175b7b1e5de43d895083b81877b",
     "sourceTreeSha256": "effe1986e3e2e4dbd4ed3a8b1bbbb31da832a9ee13b2b792d37e062a697c1663",
-    "sourceTreeSha256Recipe": "sha256 over sorted `<sha256> <path>` lines for every git-tracked file; recipe newly stated in Foundation 14, so the digest is not comparable with the Foundation 13 value",
+    "sourceTreeSha256Recipe": "For every git-tracked file in path-sorted order (`git ls-files | sort`), emit one LF-terminated line `<sha256> <path>` with a single space, then SHA-256 the whole byte stream including the final newline. Foundation 15 reproduced the recorded Foundation-14 digest exactly with this recipe, so the template source is byte-identical.",
     "worktreeClean": true,
     "frames60": {
       "updates": 60,
@@ -411,7 +476,9 @@
       "updates": 600,
       "draws": 600,
       "status": "PASS"
-    }
+    },
+    "sourceTreeSha256MatchesFoundation14": true,
+    "trackedFiles": 6
   },
   "isolatedExactGemConsumer": {
     "gemHome": "fresh",
@@ -436,18 +503,22 @@
       "updates": 600,
       "draws": 600,
       "status": "PASS"
-    }
+    },
+    "primitiveTypeNativeUnset": "PASS",
+    "primitiveTypeChecks": 45
   },
   "git": {
     "branch": "develop",
-    "head": "37e124a52abd9667f4f527bb36ea2c25796c3f81",
-    "originDevelop": "37e124a52abd9667f4f527bb36ea2c25796c3f81",
+    "head": "a9bad3a031d718d20ae6e46cad6ed4d0cd60d158",
+    "originDevelop": "a9bad3a031d718d20ae6e46cad6ed4d0cd60d158",
     "startingWorktree": "clean",
-    "foundation13": "committed externally before this run at 37e124a52abd9667f4f527bb36ea2c25796c3f81",
-    "foundation14": "uncommitted",
+    "foundation14": "committed externally before this run at a9bad3a031d718d20ae6e46cad6ed4d0cd60d158 and pushed to origin/develop",
     "diffCheck": "PASS",
     "committed": false,
-    "pushed": false
+    "pushed": false,
+    "foundation15": "uncommitted",
+    "cnaRepositoryDiffCheck": "PASS",
+    "cnaRepositoryChanged": false
   },
   "remainingPartialTypes": [
     "Game",
@@ -459,14 +530,18 @@
   ],
   "nextMilestone": {
     "types": [
-      "PrimitiveType"
+      "CubeMapFace"
     ],
+    "name": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
     "sourceTypes": 1,
-    "clrIdentities": 5,
-    "expectedRubyIdentities": 4,
+    "clrIdentities": 7,
+    "expectedRubyIdentities": 6,
     "currentTargetIdentities": 0,
-    "remainingIdentities": 4,
+    "remainingIdentities": 6,
     "dependencyComplete": true,
+    "reverseEdges": [
+      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::SetRenderTarget (2 overloads)"
+    ],
     "selectedOnly": true,
     "started": false
   }

@@ -1147,6 +1147,60 @@
       "rubyName": "Microsoft::Xna::Framework::Graphics::DepthFormat"
     },
     {
+      "name": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "TriangleList",
+          "type": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "TriangleStrip",
+          "type": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "LineList",
+          "type": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "LineStrip",
+          "type": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+          "static": true,
+          "constant": true,
+          "value": "3"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PrimitiveType"
+    },
+    {
       "name": "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
       "kind": "enum",
       "flags": false,
