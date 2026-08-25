@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "GEM_FILENAME": "cna-ruby-0.1.0.dev0.gem",
   "VERSION": "0.1.0.dev0",
-  "GEM_SHA256": "b6d0ca22b154d57fb2450d48cc0fcf0d6dcd0cd346d354faacdfe0a018014b51",
-  "GEM_ENTRIES": 55,
+  "GEM_SHA256": "a4e033ce27dace255e1a73aff98b21c6e5ac2e203f9c5536e6b549f90e89d632",
+  "GEM_ENTRIES": 56,
   "FORBIDDEN_ENTRIES": [
 
   ],
@@ -24,6 +24,7 @@
     "lib/cna/native/resolver.rb",
     "lib/cna/runtime.rb",
     "lib/cna/runtime/bcl_projection.rb",
+    "lib/cna/runtime/collection.rb",
     "lib/cna/runtime/context.rb",
     "lib/cna/runtime/enum.rb",
     "lib/cna/runtime/event.rb",
