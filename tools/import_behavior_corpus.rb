@@ -208,9 +208,15 @@ unless game_components["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
   abort "Milestone 37 Game component engine evidence lacks observation-level provenance"
 end
 observations.concat(game_components.fetch("observations"))
+game_component_path = File.expand_path("../behavior/xna40-game-component-values.json", __dir__)
+game_component = JSON.parse(File.read(game_component_path))
+unless game_component["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
+  abort "Milestone 38 GameComponent evidence lacks observation-level provenance"
+end
+observations.concat(game_component.fetch("observations"))
 abort "duplicate behavior observation id" unless observations.map { |item| item.fetch("id") }.uniq.length == observations.length
 result = source_corpus.merge(
-  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, and the Foundation 37 Game component engine separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, and the Foundation 38 GameComponent separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category" => "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256" => EXPECTED_SHA256,
   "milestone3SourceAssemblySha256" => milestone.fetch("sourceAssemblySha256"),
@@ -245,6 +251,7 @@ result = source_corpus.merge(
   "milestone35SourceAssemblySha256" => game_component_collection.fetch("sourceAssemblySha256"),
   "milestone36SourceAssemblySha256" => disposable.fetch("sourceAssemblySha256"),
   "milestone37SourceAssemblySha256" => game_components.fetch("sourceAssemblySha256"),
+  "milestone38SourceAssemblySha256" => game_component.fetch("sourceAssemblySha256"),
   # Foundation 16 was merged by documented deterministic replay because this reconstructed host
   # does not carry the upstream source. Re-running this importer with the real source restores the
   # same observation set; it must not be run against any other artifact.

@@ -13428,6 +13428,132 @@
         true,
         false
       ]
+    },
+    {
+      "id": "game_component.contract",
+      "operation": "GameComponent.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        false,
+        "System.Object",
+        [
+          "Microsoft.Xna.Framework.IGameComponent",
+          "Microsoft.Xna.Framework.IUpdateable",
+          "System.IDisposable"
+        ],
+        14,
+        [
+          "Disposed",
+          "EnabledChanged",
+          "UpdateOrderChanged"
+        ],
+        [
+          "Enabled",
+          "Game",
+          "UpdateOrder"
+        ],
+        2
+      ]
+    },
+    {
+      "id": "game_component.constructor_defaults",
+      "operation": "GameComponent.ConstructorDefaults",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        true,
+        0,
+        true,
+        true,
+        0,
+        "none"
+      ]
+    },
+    {
+      "id": "game_component.property_notifications",
+      "operation": "GameComponent.PropertyNotifications",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        0,
+        2,
+        2,
+        false,
+        7,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": "game_component.hooks_ignore_sender",
+      "operation": "GameComponent.HooksIgnoreSender",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        true,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "id": "game_component.dispose_order",
+      "operation": "GameComponent.DisposeOrder",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        0,
+        1,
+        2,
+        3,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "game_component.dispose_false_and_finalize",
+      "operation": "GameComponent.DisposeFalseAndFinalize",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        1,
+        0,
+        1,
+        0,
+        "none"
+      ]
+    },
+    {
+      "id": "game_component.game_disposes_components",
+      "operation": "GameComponent.GameDisposesComponents",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        3,
+        3,
+        0,
+        true
+      ]
+    },
+    {
+      "id": "game_component.ruby_projection",
+      "operation": "GameComponent.RubyProjection",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        true,
+        false,
+        -1,
+        false,
+        false,
+        false,
+        "Object"
+      ]
     }
   ],
   "milestone31SourceAssemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
@@ -13445,5 +13571,8 @@
   "milestone36MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 e49be457f9e60ec9947576bc090ad775ef837c20817963e18ac68abd154d1cd5, 445 observations) was proved before appending 4 additive observations",
   "milestone36SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
   "milestone37MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 d005bd8fbff9d1a90c60748baf5bba4ed5b1b4ad40d848eab2cf997a18f71ed2, 449 observations) was proved before appending 9 additive observations",
-  "milestone37SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0"
+  "milestone37SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "milestone38MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 9eb50357d6ce29124d12019c45f9afc4c65e7c850407619f7db3f554744673b6, 458 observations) was proved before appending 8 additive observations",
+  "milestone38SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "milestone38CorpusCorrection": "disposable_collapse.no_invented_conventions counted a fixed list of names against every Dispose-bearing type, which made a real XNA identity look invented as soon as one shipped: GameComponent declares a protected Finalize in its own contract. The operation now exempts a name the type's own reference contract declares, the same rule its test twin uses, so the row measures the collapse rather than a list of names. No observation data changed -- the row's expected values are the ones Foundation 36 recorded -- and the replay proved every row unchanged."
 }

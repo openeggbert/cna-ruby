@@ -432,8 +432,10 @@ class GameComponentCollectionTest < Minitest::Test
       refute F::GameComponentCollection.public_method_defined?(leaked), leaked
       refute F::GameComponentCollection.protected_method_defined?(leaked), leaked
     end
-    assert_equal 6, STRICT.fetch("EVENT_IDENTITIES")
-    assert_equal 3, STRICT.fetch("EVENT_OWNER_TYPES")
+    # The collection contributed the first two identities on a concrete owner; the census has grown
+    # since, so what is asserted is that both of its own are in it.
+    assert_includes STRICT.fetch("eventIdentities"), "#{NAME}::ComponentAdded"
+    assert_includes STRICT.fetch("eventIdentities"), "#{NAME}::ComponentRemoved"
     assert_equal 0, STRICT.fetch("EVENT_MAPPING_MISMATCH")
   end
 
@@ -564,10 +566,15 @@ class GameComponentCollectionTest < Minitest::Test
 
   # --------------------------------------------------------------------------- the scoreboard
 
+  # The relation the milestone established, rather than the census it happened to leave behind:
+  # every selected type is either complete or one of the six deferred partials, this one is
+  # complete, and the reference is fully accounted for.
   def test_the_milestone_completed_exactly_one_type
-    assert_equal 140, STRICT.fetch("TARGET_TYPES")
-    assert_equal 134, STRICT.fetch("COMPLETE_TYPES")
-    assert_equal 117, STRICT.fetch("MISSING_TYPES")
+    assert_equal STRICT.fetch("TARGET_TYPES"),
+                 STRICT.fetch("COMPLETE_TYPES") + STRICT.fetch("PARTIAL_TYPES")
+    assert_equal 257, STRICT.fetch("COMPLETE_TYPES") + STRICT.fetch("PARTIAL_TYPES") +
+                      STRICT.fetch("MISSING_TYPES")
+    assert_includes STRICT.fetch("completeTypeNames"), NAME
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
     assert_equal 0, STRICT.fetch("ALLOWLIST_ENTRIES")
     assert_equal 0, STRICT.fetch("UNMEASURED_STRUCTURAL_CATEGORY")

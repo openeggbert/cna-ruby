@@ -259,6 +259,7 @@ def behavior_group(item)
   return "GAME_COMPONENT_COLLECTION" if id.start_with?("game_component_collection.")
   return "DISPOSABLE_COLLAPSE" if id.start_with?("disposable_collapse.")
   return "GAME_COMPONENTS" if id.start_with?("game_components.")
+  return "GAME_COMPONENT" if id.start_with?("game_component.")
 
   id.split(".").first.upcase
 end
@@ -2002,6 +2003,118 @@ def execute(item)
   when "Golden.FrustumRelations"
     projection = F::Matrix.CreatePerspectiveFieldOfView(F::MathHelper::PiOver4, 4.0 / 3.0, 1, 10); frustum = F::BoundingFrustum.new(F::Matrix.CreateLookAt(F::Vector3.new(0, 0, 5), F::Vector3.Zero, F::Vector3.Up) * projection); distant = F::BoundingFrustum.new(F::Matrix.CreateLookAt(F::Vector3.new(100, 0, 5), F::Vector3.new(100, 0, 0), F::Vector3.Up) * projection)
     [frustum.Contains(F::Vector3.Zero).to_i, frustum.Contains(F::Vector3.new(0, 0, 6)).to_i, frustum.Contains(F::BoundingBox.new(F::Vector3.new(-0.5), F::Vector3.new(0.5))).to_i, frustum.Contains(F::BoundingSphere.new(F::Vector3.Zero, 0.5)).to_i, frustum.Intersects(F::BoundingBox.new(F::Vector3.new(-0.5), F::Vector3.new(0.5))), frustum.Intersects(F::BoundingBox.new(F::Vector3.new(100), F::Vector3.new(101))), frustum.Intersects(F::BoundingSphere.new(F::Vector3.Zero, 0.5)), frustum.Intersects(F::BoundingSphere.new(F::Vector3.new(100), 0.5)), frustum.Intersects(distant), hex32(frustum.Intersects(F::Ray.new(F::Vector3.new(0, 0, 20), F::Vector3.Forward)))]
+  when "GameComponent.Contract"
+    type = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.GameComponent")
+    members = type.fetch("members")
+    [type.fetch("kind"), type.fetch("sealed"), type.fetch("baseType"),
+     type.fetch("directInterfaces").sort, members.length,
+     members.select { |member| member.fetch("kind") == "event" }.map { |member| member.fetch("name") }.sort,
+     members.select { |member| member.fetch("kind") == "property" }.map { |member| member.fetch("name") }.sort,
+     members.count { |member| member.fetch("name") == "Dispose" }]
+  when "GameComponent.ConstructorDefaults"
+    game = F::Game.new
+    begin
+      component = F::GameComponent.new(game)
+      orphan = F::GameComponent.new(nil)
+      [component.Enabled, component.UpdateOrder, component.Game.equal?(game),
+       orphan.Enabled, orphan.UpdateOrder, error_name { orphan.Dispose }]
+    ensure
+      game.Dispose
+    end
+  when "GameComponent.PropertyNotifications"
+    game = F::Game.new
+    begin
+      component = F::GameComponent.new(game)
+      raised = 0
+      values = []
+      component.EnabledChanged.add { |sender, args| raised += 1; values << [component.Enabled, sender.equal?(component), args.equal?(CNA::Runtime::EventArgs::Empty)] }
+      component.UpdateOrderChanged.add { |sender, args| raised += 1; values << [component.UpdateOrder, sender.equal?(component), args.equal?(CNA::Runtime::EventArgs::Empty)] }
+      component.Enabled = true
+      component.UpdateOrder = 0
+      suppressed = raised
+      component.Enabled = false
+      component.UpdateOrder = 7
+      after = raised
+      component.Enabled = false
+      component.UpdateOrder = 7
+      # A same-value write raises nothing; a real write raises once and the handler sees the new
+      # value, the component as sender and EventArgs.Empty as args.
+      [suppressed, after, raised, values[0][0], values[1][0],
+       values.all? { |entry| entry[1] }, values.all? { |entry| entry[2] },
+       component.Enabled == false]
+    ensure
+      game.Dispose
+    end
+  when "GameComponent.HooksIgnoreSender"
+    game = F::Game.new
+    begin
+      component = F::GameComponent.new(game)
+      other = F::GameComponent.new(game)
+      senders = []
+      component.EnabledChanged.add { |sender, _args| senders << sender }
+      component.UpdateOrderChanged.add { |sender, _args| senders << sender }
+      component.__send__(:OnEnabledChanged, other, CNA::Runtime::EventArgs::Empty)
+      component.__send__(:OnUpdateOrderChanged, nil, CNA::Runtime::EventArgs::Empty)
+      [senders[0].equal?(component), senders[1].equal?(component),
+       senders[0].equal?(other), senders.include?(nil)]
+    ensure
+      game.Dispose
+    end
+  when "GameComponent.DisposeOrder"
+    game = F::Game.new
+    begin
+      component = F::GameComponent.new(game)
+      game.Components.Add(component)
+      counts = []
+      raised = 0
+      component.Disposed.add { |_sender, _args| raised += 1; counts << game.Components.Count }
+      component.Dispose
+      first = raised
+      component.Dispose
+      second = raised
+      component.Dispose
+      # The removal happens before the notification, and no disposed flag stops the repeats.
+      [counts.first, first, second, raised, game.Components.Count, counts.uniq.length, counts.last]
+    ensure
+      game.Dispose
+    end
+  when "GameComponent.DisposeFalseAndFinalize"
+    game = F::Game.new
+    begin
+      component = F::GameComponent.new(game)
+      game.Components.Add(component)
+      raised = 0
+      component.Disposed.add { |_sender, _args| raised += 1 }
+      component.Dispose(false)
+      after_false = [game.Components.Count, raised]
+      component.__send__(:Finalize)
+      after_finalize = [game.Components.Count, raised]
+      [*after_false, *after_finalize, error_name { component.__send__(:Finalize) }]
+    ensure
+      game.Dispose
+    end
+  when "GameComponent.GameDisposesComponents"
+    game = F::Game.new
+    disposed = []
+    components = Array.new(3) do
+      component = F::GameComponent.new(game)
+      component.Disposed.add { |sender, _args| disposed << sender }
+      game.Components.Add(component)
+      component
+    end
+    before = game.Components.Count
+    game.Dispose
+    [before, disposed.length, game.Components.Count, disposed == components]
+  when "GameComponent.RubyProjection"
+    klass = F::GameComponent
+    [klass.ancestors.include?(F::IGameComponent),
+     klass.ancestors.include?(F::IUpdateable),
+     klass.ancestors.include?(F::IDrawable),
+     klass.instance_method(:Dispose).arity,
+     CNA::Runtime.const_defined?(:IDisposable, false),
+     Object.const_defined?(:IDisposable, false),
+     klass.public_method_defined?(:Finalize),
+     klass.superclass.name]
   when "GameComponents.PropertyContract"
     game = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.Game")
     %w[Components Services].flat_map do |name|
@@ -2242,10 +2355,18 @@ def execute(item)
     disposing = BATCH_SIGNATURES.values.select do |type|
       type.fetch("members").any? { |member| member.fetch("name") == "Dispose" }
     end
-    invented = %i[Close close Finalize finalize dispose! release Release using owned?]
+    # A name counts as invented only when the type's own reference contract does not declare it.
+    # GameComponent really declares a protected Finalize, and GraphicsResource and GraphicsDevice
+    # really declare IsDisposed; exempting them by rule keeps this row measuring the collapse rather
+    # than a list of names.
+    candidates = %i[Close close IsDisposed Finalize finalize dispose! release Release using owned?]
     leaks = disposing.sum do |type|
       klass = type.fetch("rubyName").split("::").reduce(Object) { |scope, part| scope.const_get(part, false) }
-      invented.count { |name| klass.public_method_defined?(name) || klass.protected_method_defined?(name) }
+      declared = BATCH_REFERENCE.fetch(type.fetch("name")).fetch("members")
+                                .map { |member| member.fetch("name").to_sym }
+      (candidates - declared).count do |name|
+        klass.public_method_defined?(name) || klass.protected_method_defined?(name)
+      end
     end
     [leaks, disposing.count { |type| type.fetch("rubyName").include?("Disposable") },
      CNA::Runtime::BclProjection::TYPES.keys.count { |key| key.include?("IDisposable") },

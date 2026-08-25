@@ -449,14 +449,17 @@ class EventProjectionTest < Minitest::Test
   # Foundation 35 added the first concrete owner, which is what an event projection is ultimately
   # for. The rule is unchanged and the census grew.
   def test_the_strict_report_measures_the_selected_event_identities
-    assert_equal 6, STRICT.fetch("EVENT_IDENTITIES")
-    assert_equal 3, STRICT.fetch("EVENT_OWNER_TYPES")
+    assert_equal 9, STRICT.fetch("EVENT_IDENTITIES")
+    assert_equal 4, STRICT.fetch("EVENT_OWNER_TYPES")
     assert_equal "CNA::Runtime::Event", STRICT.fetch("EVENT_SUPPORT_TYPE")
     assert_equal 0, STRICT.fetch("EVENT_MAPPING_MISMATCH")
     assert_equal 0, STRICT.fetch("UNMEASURED_STRUCTURAL_CATEGORY")
     assert_equal %w[
       Microsoft.Xna.Framework.GameComponentCollection::ComponentAdded
       Microsoft.Xna.Framework.GameComponentCollection::ComponentRemoved
+      Microsoft.Xna.Framework.GameComponent::EnabledChanged
+      Microsoft.Xna.Framework.GameComponent::UpdateOrderChanged
+      Microsoft.Xna.Framework.GameComponent::Disposed
       Microsoft.Xna.Framework.IUpdateable::EnabledChanged
       Microsoft.Xna.Framework.IUpdateable::UpdateOrderChanged
       Microsoft.Xna.Framework.IDrawable::VisibleChanged

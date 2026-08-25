@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "derivation": "Foundation 38 GameComponent. Every row is read from the pinned Microsoft.Xna.Framework.Game.dll IL. The .ctor is twenty-one bytes with no branch: enabled = true as a field initialiser, Object..ctor(), then game = game, so a null Game is stored as-is and updateOrder keeps the CLR default 0. set_Enabled and set_UpdateOrder each open with a same-value comparison that returns, write the field, then call the protected hook with (this, EventArgs.Empty). OnEnabledChanged and OnUpdateOrderChanged load ldarg.0 as the delegate's sender and ldarg.2 as the args, never reading the declared sender at ldarg.1. Initialize and Update are each a bare ret. Dispose() is Dispose(true) then GC.SuppressFinalize(this); Dispose(bool) returns immediately when disposing is false, and otherwise takes Monitor.Enter(this), removes the component from Game.Components when Game is non-null with the result popped, then invokes Disposed(this, EventArgs.Empty) -- and the type declares no disposed field anywhere, so the sequence repeats on every call. Finalize is Dispose(false) in a try with base.Finalize() in the finally. Game.Dispose(bool) copies gameComponents into an IGameComponent[] and disposes each entry before the graphics manager. The RUBY_MAPPING_QUALIFICATION rows record the projection decisions -- module inclusion for the two XNA contracts, the single arity-dispatching Dispose, and the absence of any finalizer registration -- and are not snapshotted from the cna-ruby implementation.",
+  "observations": [
+    {
+      "id": "game_component.contract",
+      "operation": "GameComponent.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        false,
+        "System.Object",
+        ["Microsoft.Xna.Framework.IGameComponent", "Microsoft.Xna.Framework.IUpdateable", "System.IDisposable"],
+        14,
+        ["Disposed", "EnabledChanged", "UpdateOrderChanged"],
+        ["Enabled", "Game", "UpdateOrder"],
+        2
+      ]
+    },
+    {
+      "id": "game_component.constructor_defaults",
+      "operation": "GameComponent.ConstructorDefaults",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [true, 0, true, true, 0, "none"]
+    },
+    {
+      "id": "game_component.property_notifications",
+      "operation": "GameComponent.PropertyNotifications",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [0, 2, 2, false, 7, true, true, true]
+    },
+    {
+      "id": "game_component.hooks_ignore_sender",
+      "operation": "GameComponent.HooksIgnoreSender",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [true, true, false, false]
+    },
+    {
+      "id": "game_component.dispose_order",
+      "operation": "GameComponent.DisposeOrder",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [0, 1, 2, 3, 0, 1, 0]
+    },
+    {
+      "id": "game_component.dispose_false_and_finalize",
+      "operation": "GameComponent.DisposeFalseAndFinalize",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [1, 0, 1, 0, "none"]
+    },
+    {
+      "id": "game_component.game_disposes_components",
+      "operation": "GameComponent.GameDisposesComponents",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [3, 3, 0, true]
+    },
+    {
+      "id": "game_component.ruby_projection",
+      "operation": "GameComponent.RubyProjection",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [true, true, false, -1, false, false, false, "Object"]
+    }
+  ]
+}

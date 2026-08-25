@@ -188,14 +188,18 @@ class InterfaceContractsTest < Minitest::Test
   end
 
   def test_interfaces_imply_no_component_effect_or_device_runtime
-    # GameServiceContainer arrived in Foundation 33 and GameComponentCollection in Foundation 35,
-    # each from its own IL rather than from anything these interfaces imply. GameServiceContainer
-    # starts empty and nothing registers a service in it; GameComponentCollection holds
-    # IGameComponent, but no concrete component type exists to put in one.
-    %i[GameComponent DrawableGameComponent
-       IGraphicsDeviceService LaunchParameters GameWindow]
+    # GameServiceContainer arrived in Foundation 33, GameComponentCollection in 35 and GameComponent
+    # in 38, each from its own IL rather than from anything these interfaces imply. What the
+    # contracts still imply is nothing: a fresh container is empty, a fresh collection is empty, and
+    # a fresh component reaches no device.
+    %i[DrawableGameComponent IGraphicsDeviceService LaunchParameters GameWindow]
       .each { |name| refute F.const_defined?(name, false), "Framework::#{name}" }
     assert_equal 0, F::GameComponentCollection.new.Count
+
+    # GameComponent implements both contracts, which is what makes it concrete; it adds no member
+    # beyond the fourteen its own contract declares.
+    assert_includes F::GameComponent.ancestors, F::IUpdateable
+    refute_includes F::GameComponent.ancestors, F::IDrawable
     assert_nil F::GameServiceContainer.new.GetService(F::IGraphicsDeviceManager)
     %i[Effect BasicEffect EffectParameter EffectTechnique DirectionalLight IEffectLights
        IEffectSkinning IVertexType VertexDeclaration].each do |name|

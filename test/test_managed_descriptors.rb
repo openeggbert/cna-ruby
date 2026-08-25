@@ -369,10 +369,27 @@ class ManagedDescriptorsTest < Minitest::Test
   # Foundation 35, from its own IL rather than from anything this type implies, and the relation
   # runs the other way: the collection constructs these args, so it names the type and not the
   # reverse.
+  # The event args type still implies neither the collection nor the component class. Both exist
+  # now -- Foundation 35 and 38 -- each from its own IL rather than from anything this type implies,
+  # and the relation runs the other way: the collection constructs these args, so it names the type
+  # and not the reverse. DrawableGameComponent, which this type does not name at all, is still
+  # absent.
   def test_the_event_args_type_implies_no_game_component_family
-    %i[GameComponent DrawableGameComponent]
-      .each { |absent| refute F.const_defined?(absent, false), "Framework::#{absent}" }
+    refute F.const_defined?(:DrawableGameComponent, false)
     assert F.const_defined?(:GameComponentCollection, false)
+    assert F.const_defined?(:GameComponent, false)
     assert_nil F::GameComponentCollectionEventArgs.new(nil).GameComponent
+
+    # Nothing in the args type's own contract names either class: its one property is typed
+    # IGameComponent, the contract, not GameComponent, the implementation.
+    reference = JSON.parse(ROOT.join("tools", "api_compat", "reference",
+                                     "xna40-windows-runtime-contract.json").read)
+    args = reference.fetch("types")
+                    .find { |type| type.fetch("name") == "Microsoft.Xna.Framework.GameComponentCollectionEventArgs" }
+    signatures = args.fetch("members").flat_map do |member|
+      [member["type"], member["returnType"], *member.fetch("parameters", []).map { |p| p["type"] }]
+    end.compact
+    refute(signatures.any? { |signature| signature.end_with?(".GameComponent") })
+    assert(signatures.any? { |signature| signature.end_with?(".IGameComponent") })
   end
 end

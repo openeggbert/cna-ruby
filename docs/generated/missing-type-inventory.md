@@ -31,7 +31,6 @@
 - `Microsoft.Xna.Framework.Design.Vector3Converter`
 - `Microsoft.Xna.Framework.Design.Vector4Converter`
 - `Microsoft.Xna.Framework.DrawableGameComponent`
-- `Microsoft.Xna.Framework.GameComponent`
 - `Microsoft.Xna.Framework.GameWindow`
 - `Microsoft.Xna.Framework.GamerServices.GamerServicesComponent`
 - `Microsoft.Xna.Framework.Graphics.AlphaTestEffect`

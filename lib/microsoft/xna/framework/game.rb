@@ -1,8 +1,165 @@
 # frozen_string_literal: true
 
+require "monitor"
+
 module Microsoft
   module Xna
     module Framework
+      # Derived from the pinned Microsoft.Xna.Framework.Game.dll IL (SHA-256 b5dffdd8…).
+      #
+      # `.class public auto ansi beforefieldinit`, extending `System.Object` and implementing
+      # `IGameComponent`, `IUpdateable` and `System.IDisposable`. Fourteen identities over three
+      # private fields and three delegate fields, reaching no native entry point and holding no
+      # unmanaged resource: it is pure managed behaviour throughout.
+      #
+      # The two XNA contracts it implements are projected as Ruby modules and really included, which
+      # is what `Game`'s engine tests with `is_a?`. That is the faithful analogue of the CLR's
+      # `isinst`: a nominal interface test needs a nominal Ruby relation, and duck-typing on member
+      # names would answer true for a type that never declared the contract. Every member either
+      # module declares is overridden here, so no abstract `NotImplementedError` survives.
+      #
+      # `System.IDisposable` is the third, and it contributes no inclusion because Foundation 36
+      # measured it as a structural collapse: the interface declares one member, `Dispose()`, which
+      # this type declares publicly, so the contract survives as that member and no module exists to
+      # include.
+      class GameComponent
+        extend CNA::Runtime::EventOwner
+        include IGameComponent
+        include IUpdateable
+
+        xna_event :EnabledChanged
+        xna_event :UpdateOrderChanged
+        xna_event :Disposed
+
+        # `.ctor(Game game)` is twenty-one bytes: `enabled = true` as a field initialiser, then
+        # `Object..ctor()`, then `game = game`. There is **no null check**, so a component with no
+        # Game is legal and `Dispose` below is written for it. `updateOrder` gets the CLR's default
+        # 0 because nothing assigns it.
+        def initialize(game)
+          unless game.nil? || game.is_a?(Game)
+            raise TypeError, "game must be a Game"
+          end
+
+          @Enabled = true
+          @UpdateOrder = 0
+          @game = game
+          # `lock (this)` in `Dispose(bool)` is `Monitor.Enter(this)`, which is **reentrant**: a
+          # Disposed handler that disposes the same component again re-enters rather than
+          # deadlocking. Ruby's Mutex is not reentrant and ::Monitor is, so ::Monitor is the exact
+          # analogue. It is per-instance because the CLR locks the instance.
+          @monitor = ::Monitor.new
+        end
+
+        # `get_Enabled` and `get_UpdateOrder` are one `ldfld` each; `get_Game` likewise, and it has
+        # no setter in the contract.
+        attr_reader :Enabled, :UpdateOrder
+
+        def Game = @game
+
+        # `set_Enabled(bool)` and `set_UpdateOrder(int32)` are the same five instructions:
+        #
+        #     if (field == value) return;          // same-value suppression, before anything else
+        #     field = value;                       // the field is written *before* the notification
+        #     OnEnabledChanged(this, EventArgs.Empty);
+        #
+        # So a handler always observes the new value, and setting a property to what it already
+        # holds raises nothing at all.
+        def Enabled=(value)
+          value = value ? true : false unless value == true || value == false
+          return if @Enabled == value
+
+          @Enabled = value
+          self.OnEnabledChanged(self, CNA::Runtime::EventArgs::Empty)
+          value
+        end
+
+        def UpdateOrder=(value)
+          value = CNA::Runtime::Numeric.int32(value, "value")
+          return if @UpdateOrder == value
+
+          @UpdateOrder = value
+          self.OnUpdateOrderChanged(self, CNA::Runtime::EventArgs::Empty)
+          value
+        end
+
+        # `Initialize()` and `Update(GameTime)` are each a bare `ret` — public virtual hooks with
+        # genuinely no base behaviour, not placeholders. A subclass overrides them and `super` runs
+        # the nothing the base really does.
+        def Initialize = nil
+
+        def Update(gameTime)
+          require_game_time(gameTime)
+          nil
+        end
+
+        # `Dispose()` is `Dispose(true)` followed by `GC.SuppressFinalize(this)`;
+        # `Dispose(bool disposing)` is the `family virtual` extension point. Ruby cannot give one
+        # name two visibilities, so the two CLR overloads project to one public method dispatching
+        # on arity — the rule mapping-rules.json already applies to every other overload set — and
+        # the static contract retains both signature identities. The widening is recorded: the
+        # protected overload is publicly reachable here, which it is not in the CLR.
+        #
+        # The two bodies differ only by `GC.SuppressFinalize`, which needs no Ruby analogue because
+        # nothing registers a Ruby finalizer for this type in the first place (see `Finalize`), so
+        # `Dispose` and `Dispose(true)` really do coincide.
+        #
+        #     if (!disposing) return;
+        #     lock (this) {
+        #       if (Game != null) Game.Components.Remove(this);   // result popped
+        #       if (Disposed != null) Disposed(this, EventArgs.Empty);
+        #     }
+        #
+        # Two measured consequences. The removal happens **before** the notification, so a Disposed
+        # handler sees the component already out of `Game.Components`. And there is **no disposed
+        # flag anywhere in the type**, so disposing twice removes twice — the second `Remove`
+        # answers false and is discarded — and raises `Disposed` twice. Reproduced, not corrected.
+        def Dispose(disposing = true)
+          return nil unless disposing
+
+          @monitor.synchronize do
+            self.Game&.Components&.Remove(self)
+            self.Disposed.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+          end
+          nil
+        end
+
+        protected
+
+        # `Finalize()` is `try { Dispose(false); } finally { base.Finalize(); }`, and `Dispose(false)`
+        # returns at its first instruction, so the CLR finalizer for this type does **nothing
+        # observable**. It is projected as the member the contract declares and it does the same
+        # nothing.
+        #
+        # Ruby's garbage collector never calls it: no `ObjectSpace.define_finalizer` is registered
+        # here and none is invented, which is also why `GC.SuppressFinalize` in `Dispose()` needs no
+        # analogue — there is nothing to suppress.
+        def Finalize
+          self.Dispose(false)
+          nil
+        end
+
+        # `OnEnabledChanged(object sender, EventArgs args)` and `OnUpdateOrderChanged(...)` are
+        # `family virtual`, and both carry the same Microsoft quirk: the declared `sender` parameter
+        # is **ignored**. The IL loads `ldarg.0` — `this` — as the delegate's sender and `ldarg.2`
+        # as the args, so `ldarg.1` is never read. A subclass that calls the base with some other
+        # sender still raises the event with the component itself. Recorded and reproduced.
+        def OnEnabledChanged(sender, args)
+          self.EnabledChanged.__send__(:dispatch, self, args)
+          nil
+        end
+
+        def OnUpdateOrderChanged(sender, args)
+          self.UpdateOrderChanged.__send__(:dispatch, self, args)
+          nil
+        end
+
+        private
+
+        def require_game_time(value)
+          raise TypeError, "gameTime must be GameTime" unless value.instance_of?(GameTime)
+        end
+      end
+
       # Derived from the pinned Microsoft.Xna.Framework.Game.dll IL (SHA-256 b5dffdd8…).
       #
       # A sealed `Collection<IGameComponent>` with two events and four overridden hooks, and the
@@ -342,10 +499,42 @@ module Microsoft
         # then a log event. Same two absences as BeginDraw, so the base does nothing.
         def EndDraw = nil
 
+        # `Game.Dispose()` is `Dispose(true)` plus `GC.SuppressFinalize`, and `Dispose(bool)` opens
+        # under `lock (this)` with the component pass:
+        #
+        #     array = new IGameComponent[gameComponents.Count];
+        #     gameComponents.CopyTo(array, 0);
+        #     foreach (x in array) if (x is IDisposable) x.Dispose();
+        #     if (graphicsDeviceManager is IDisposable d) d.Dispose();
+        #     UnhookDeviceEvents();
+        #     if (Disposed != null) Disposed(this, EventArgs.Empty);
+        #
+        # Only the first three lines belong to this slice and only they are implemented here; the
+        # rest of this method is the native ownership chain this binding already had, and
+        # `Dispose(Boolean)`, `Finalize` and the `Disposed` event stay in Game's missing list.
+        #
+        # The pass is over a **snapshot array**, which is what makes it safe: each component's own
+        # `Dispose` removes it from `Game.Components`, so iterating the live collection would skip
+        # every other one. `x is IDisposable` has no nominal Ruby analogue, because Foundation 36
+        # measured `System.IDisposable` as a structural collapse with no constant; under that rule
+        # the contract survives as the member, so testing for the member is the projection of
+        # testing for the interface. This is the first place the collapse has an observable
+        # consequence.
         def Dispose
           return if disposed?
           assert_owner_thread!
           first_error = nil
+          snapshot = Array.new(@gameComponents.Count)
+          @gameComponents.CopyTo(snapshot, 0)
+          snapshot.each do |component|
+            next unless component.respond_to?(:Dispose)
+
+            begin
+              component.Dispose
+            rescue Exception => error
+              first_error ||= error
+            end
+          end
           @native_children.reverse_each do |child|
             begin
               child.Dispose

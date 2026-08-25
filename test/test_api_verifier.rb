@@ -1690,6 +1690,9 @@ class ApiVerifierTest < Minitest::Test
     assert_equal %w[
       Microsoft.Xna.Framework.GameComponentCollection::ComponentAdded
       Microsoft.Xna.Framework.GameComponentCollection::ComponentRemoved
+      Microsoft.Xna.Framework.GameComponent::EnabledChanged
+      Microsoft.Xna.Framework.GameComponent::UpdateOrderChanged
+      Microsoft.Xna.Framework.GameComponent::Disposed
       Microsoft.Xna.Framework.IUpdateable::EnabledChanged
       Microsoft.Xna.Framework.IUpdateable::UpdateOrderChanged
       Microsoft.Xna.Framework.IDrawable::VisibleChanged
@@ -1699,7 +1702,7 @@ class ApiVerifierTest < Minitest::Test
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
     assert_equal selected, strict.fetch("eventIdentities")
     assert_equal selected.length, strict.fetch("EVENT_IDENTITIES")
-    assert_equal 3, strict.fetch("EVENT_OWNER_TYPES")
+    assert_equal 4, strict.fetch("EVENT_OWNER_TYPES")
     assert_equal "CNA::Runtime::Event", strict.fetch("EVENT_SUPPORT_TYPE")
     assert_equal 0, strict.fetch("EVENT_MAPPING_MISMATCH")
 

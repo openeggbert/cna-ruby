@@ -38,6 +38,10 @@
       "complete": true
     },
     {
+      "name": "Microsoft.Xna.Framework.GameComponent",
+      "complete": true
+    },
+    {
       "name": "Microsoft.Xna.Framework.FrameworkDispatcher",
       "complete": true
     },

@@ -444,15 +444,14 @@ class DependencyFrontierTest < Minitest::Test
     assert_includes REPORT.fetch("mappedBclTypes"), "System.EventHandler`1[System.EventArgs]"
   end
 
-  # The GameComponent family is the cluster event projection was expected to unlock. The two
-  # component classes stay out for reasons the graph measures rather than for anything about
-  # events; GameComponentCollection left the family in Foundation 35 because it never depended on
-  # either of them -- see the extractor correction below.
+  # The GameComponent family is the cluster event projection was expected to unlock. Two of its
+  # three members have since left it: GameComponentCollection in Foundation 35, because it never
+  # depended on either component class -- see the extractor correction below -- and GameComponent
+  # itself in Foundation 38, once Game.Components gave it a producer. DrawableGameComponent stays
+  # out for a reason the graph measures rather than for anything about events.
   def test_game_component_family_is_not_dependency_complete
     {
-      "Microsoft.Xna.Framework.GameComponent" => %w[Microsoft.Xna.Framework.Game],
       "Microsoft.Xna.Framework.DrawableGameComponent" => %w[
-        Microsoft.Xna.Framework.Game Microsoft.Xna.Framework.GameComponent
         Microsoft.Xna.Framework.Graphics.GraphicsDevice
       ]
     }.each do |name, unmet|
@@ -465,12 +464,16 @@ class DependencyFrontierTest < Minitest::Test
       unmet.each { |dependency| refute_includes STRICT.fetch("completeTypeNames"), dependency, dependency }
     end
 
-    # Game is one of the six deferred partial runtime types, so both component classes stay
-    # deferred. The collection is complete and is no longer a candidate at all.
+    # Game is still one of the six deferred partial runtime types, and that no longer keeps the
+    # component classes out: what a missing type needs is its *dependencies* complete, and a partial
+    # Game that declares Components and Services is enough. Both completed types are out of the
+    # candidate list entirely.
     assert_includes STRICT.fetch("partialTypes").keys, "Microsoft.Xna.Framework.Game"
-    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.GameComponentCollection"
-    assert_nil REPORT.fetch("dependencyCompleteCandidates")
-                     .find { |item| item.fetch("name") == "Microsoft.Xna.Framework.GameComponentCollection" }
+    %w[Microsoft.Xna.Framework.GameComponentCollection
+       Microsoft.Xna.Framework.GameComponent].each do |name|
+      assert_includes STRICT.fetch("completeTypeNames"), name
+      assert_nil REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
+    end
   end
 
   # Foundation 35 corrected the signature-graph extractor. A type name occurring inside a signature

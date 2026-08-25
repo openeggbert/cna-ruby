@@ -78,25 +78,30 @@ class DisposableCollapseTest < Minitest::Test
     end
     refute_empty disposing
 
+    # A name counts as invented only when the type's *own* reference contract does not declare it,
+    # so the rule stays measured rather than becoming a list of exempt names. `IsDisposed` is a real
+    # XNA identity on GraphicsResource and GraphicsDevice, and `Finalize` is one on GameComponent;
+    # both are exempted by that rule rather than by being written down here.
+    candidates = %i[Close close IsDisposed Finalize finalize dispose! release Release
+                    with_disposal using owned? take_ownership]
     disposing.each do |type|
       klass = type.fetch("rubyName").split("::").reduce(Object) { |scope, part| scope.const_get(part, false) }
-      # IsDisposed is deliberately absent from this list: it is a real XNA identity that
-      # GraphicsResource and GraphicsDevice declare in their own contracts, asserted below.
-      %i[Close close Finalize finalize dispose! release Release
-         with_disposal using owned? take_ownership].each do |invented|
+      declared = REFERENCE.fetch("types").find { |entry| entry.fetch("name") == type.fetch("name") }
+                          .fetch("members").map { |member| member.fetch("name").to_sym }
+      (candidates - declared).each do |invented|
         refute klass.public_method_defined?(invented), "#{type.fetch("rubyName")}##{invented}"
         refute klass.protected_method_defined?(invented), "#{type.fetch("rubyName")}##{invented}"
       end
     end
 
-    # `IsDisposed` on GraphicsResource and GraphicsDevice is a real XNA identity those types declare
-    # in their own contract, not something this collapse contributes -- so it exists exactly where
-    # the reference contract puts it and nowhere else.
-    %w[Microsoft.Xna.Framework.Graphics.GraphicsResource
-       Microsoft.Xna.Framework.Graphics.GraphicsDevice].each do |name|
+    # The two exemptions the rule produces, named so the rule cannot silently widen: `IsDisposed` on
+    # the two graphics types and `Finalize` on GameComponent, each declared by its own contract.
+    {"Microsoft.Xna.Framework.Graphics.GraphicsResource" => "IsDisposed",
+     "Microsoft.Xna.Framework.Graphics.GraphicsDevice" => "IsDisposed",
+     "Microsoft.Xna.Framework.GameComponent" => "Finalize"}.each do |name, identity|
       declared = REFERENCE.fetch("types").find { |type| type.fetch("name") == name }
                           .fetch("members").map { |member| member.fetch("name") }
-      assert_includes declared, "IsDisposed", name
+      assert_includes declared, identity, name
     end
   end
 
@@ -274,7 +279,7 @@ class DisposableCollapseTest < Minitest::Test
   def test_it_completes_no_type_and_moves_no_missing_member
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
     assert_equal 130, STRICT.fetch("MISSING_MEMBER")
-    assert_equal 134, STRICT.fetch("COMPLETE_TYPES")
+    assert_equal 135, STRICT.fetch("COMPLETE_TYPES"), "Foundation 38 added GameComponent"
     assert(STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
                  .any? { |entry| entry.include?("::Dispose") })
   end

@@ -50,6 +50,26 @@ module Microsoft
         def &: (DisplayOrientation other) -> DisplayOrientation
       end
 
+      # The first concrete component: pure managed, including both XNA contracts it implements.
+      # The two CLR Dispose overloads project to one Ruby method dispatching on arity.
+      class GameComponent
+        include IGameComponent
+        include IUpdateable
+
+        def initialize: (Game? game) -> void
+        def Game: () -> Game?
+        def Enabled: () -> bool
+        def Enabled=: (bool value) -> bool?
+        def UpdateOrder: () -> Integer
+        def UpdateOrder=: (Integer value) -> Integer?
+        def Initialize: () -> nil
+        def Update: (GameTime gameTime) -> nil
+        def Dispose: (?bool disposing) -> nil
+        def EnabledChanged: () -> CNA::Runtime::Event
+        def UpdateOrderChanged: () -> CNA::Runtime::Event
+        def Disposed: () -> CNA::Runtime::Event
+      end
+
       # A sealed Collection<IGameComponent>. Its whole declared surface is four protected hooks
       # and two events; every public collection member arrives from CNA::Runtime::Collection.
       class GameComponentCollection < CNA::Runtime::Collection
