@@ -498,6 +498,52 @@ def execute(item)
       interface.protected_instance_methods(false) + interface.private_instance_methods(false),
       BATCH_SIGNATURES.fetch(clr_name).fetch("members").any? { |member| member.fetch("kind") == "event" }
     ]
+  when "GameTiming.Contract"
+    # The four timing/presentation properties, re-derived from the pinned metadata: all four are
+    # public read-write instance properties, two Boolean and two TimeSpan.
+    members = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.Game").fetch("members")
+    %w[IsFixedTimeStep TargetElapsedTime InactiveSleepTime IsMouseVisible].map do |name|
+      member = members.find { |entry| entry.fetch("name") == name && entry.fetch("kind") == "property" }
+      [member.fetch("type"), member.fetch("get"), member.fetch("set"), member.fetch("static"),
+       member.fetch("getAccess"), member.fetch("setAccess")]
+    end
+  when "GameTiming.Defaults"
+    # The values the pinned .ctor sets: isFixedTimeStep = true, targetElapsedTime =
+    # TimeSpan.FromTicks(0x28b0b), inactiveSleepTime = TimeSpan.FromMilliseconds(20), and
+    # isMouseVisible left at the CLR default. Reported in whole ticks, which is what a TimeSpan
+    # carries, so the row does not depend on Float spelling.
+    game = F::Game.new
+    begin
+      [game.IsFixedTimeStep, (game.TargetElapsedTime * 10_000_000).round,
+       (game.InactiveSleepTime * 10_000_000).round, game.IsMouseVisible,
+       game.instance_variable_get(:@host).nil?]
+    ensure
+      game.Dispose
+    end
+  when "GameTiming.Validation"
+    # set_TargetElapsedTime compares with op_LessThanOrEqual, so zero is refused;
+    # set_InactiveSleepTime compares with op_LessThan, so zero is accepted and only a negative
+    # duration is refused. The two Boolean setters are bare field writes with no validation.
+    game = F::Game.new
+    begin
+      outcome = lambda do |&block|
+        begin
+          block.call
+          "none"
+        rescue Exception => error
+          error.class.name
+        end
+      end
+      [outcome.call { game.TargetElapsedTime = 0 },
+       outcome.call { game.TargetElapsedTime = -1 },
+       outcome.call { game.TargetElapsedTime = 0.5 },
+       outcome.call { game.InactiveSleepTime = 0 },
+       outcome.call { game.InactiveSleepTime = -1 },
+       outcome.call { game.IsFixedTimeStep = false },
+       outcome.call { game.IsMouseVisible = true }]
+    ensure
+      game.Dispose
+    end
   when "GameEvent.Contract"
     # The four Game events and the three protected raisers, re-derived from the pinned metadata.
     # There are three raisers and not four: Disposed has no `On...` method, because the IL raises it

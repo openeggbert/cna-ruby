@@ -91,6 +91,17 @@ module Microsoft
         # The four canonical Game events. One CLR event, one Ruby reader over the subscription
         # primitive; the three protected raisers are the only public way to raise the first three,
         # and Dispose raises the fourth.
+        # The four timing/presentation properties. Every getter is one `ldfld` in the pinned IL, so
+        # each answers managed state and needs no host; the setters push down once one exists.
+        # TimeSpan projects to Float seconds, which is the established BCL mapping.
+        attr_reader IsFixedTimeStep: bool
+        attr_reader TargetElapsedTime: Float
+        attr_reader InactiveSleepTime: Float
+        attr_reader IsMouseVisible: bool
+        def IsFixedTimeStep=: (bool value) -> bool
+        def TargetElapsedTime=: (Numeric value) -> Float
+        def InactiveSleepTime=: (Numeric value) -> Float
+        def IsMouseVisible=: (bool value) -> bool
         def Activated: () -> CNA::Runtime::Event
         def Deactivated: () -> CNA::Runtime::Event
         def Exiting: () -> CNA::Runtime::Event

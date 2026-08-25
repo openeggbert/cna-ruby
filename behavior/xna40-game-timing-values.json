@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "derivation": "Foundation 42 Game timing and presentation properties. Contract rows are read from the pinned XNA 4.0 Windows metadata of Microsoft.Xna.Framework.Game.dll. Behaviour rows follow that assembly's IL: every one of the four getters is a single ldfld, so all four are managed fields the host loop reads rather than native queries; Game::.ctor sets isFixedTimeStep = true as a field initialiser, targetElapsedTime = TimeSpan.FromTicks(0x28b0b) = 166667 ticks and inactiveSleepTime = TimeSpan.FromMilliseconds(20) = 200000 ticks, and never assigns isMouseVisible, which therefore keeps the CLR default false. set_TargetElapsedTime throws ArgumentOutOfRangeException when the value is op_LessThanOrEqual TimeSpan.Zero, so zero is refused; set_InactiveSleepTime uses op_LessThan, so zero is accepted and only a negative duration is refused, despite its CLR resource being named InactiveSleepTimeCannotBeZero; set_IsFixedTimeStep and set_IsMouseVisible perform no validation at all.",
+  "observations": [
+    {
+      "id": "game_timing.contract",
+      "operation": "GameTiming.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [["System.Boolean", true, true, false, "public", "public"], ["System.TimeSpan", true, true, false, "public", "public"], ["System.TimeSpan", true, true, false, "public", "public"], ["System.Boolean", true, true, false, "public", "public"]]
+    },
+    {
+      "id": "game_timing.defaults",
+      "operation": "GameTiming.Defaults",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [true, 166667, 200000, false, true]
+    },
+    {
+      "id": "game_timing.validation",
+      "operation": "GameTiming.Validation",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": ["RangeError", "RangeError", "none", "none", "RangeError", "none", "none"]
+    }
+  ]
+}

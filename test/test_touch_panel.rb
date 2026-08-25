@@ -56,7 +56,7 @@ class TouchPanelTest < Minitest::Test
                    entry.fetch("assemblySha256"), name
     end
     # And no native symbol was bound for touch.
-    assert_equal 41, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 49, CNA::Native::Manifest::FUNCTIONS.length
     assert(CNA::Native::Manifest::FUNCTIONS.none? { |name, _| name.to_s.include?("touch") })
   end
 

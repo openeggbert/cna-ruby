@@ -29965,6 +29965,58 @@
               "optional": false
             }
           ]
+        },
+        {
+          "kind": "property",
+          "name": "IsFixedTimeStep",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "TargetElapsedTime",
+          "type": "System.TimeSpan",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "InactiveSleepTime",
+          "type": "System.TimeSpan",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "IsMouseVisible",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Game"

@@ -89,6 +89,17 @@ module CNA
         # the game by failing, and measured to fire on every teardown including one that never ran.
         signature("cna_game_subscribe", T[:result], [T[:handle], enum("CNA_GameEvent"), callback_pointer("CNA_GameEventCallback"), T[:ptr], pointer("CNA_GameEventRegistrationHandle")], ownership: "borrows Game; returns OWNED registration; retains callback and context until released"),
         signature("cna_game_unsubscribe", T[:result], [handle("CNA_GameEventRegistrationHandle")], ownership: "consumes OWNED registration"),
+        # Game's four timing/presentation properties. In XNA every getter is one `ldfld` -- they are
+        # managed fields the host loop reads, not native queries -- so the projection keeps the
+        # managed state authoritative and pushes it down; these are the push routes.
+        signature("cna_game_get_is_mouse_visible", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows Game; caller output"),
+        signature("cna_game_set_is_mouse_visible", T[:result], [T[:handle], T[:bool]], ownership: "borrows Game; shows or hides the window cursor"),
+        signature("cna_game_get_is_fixed_time_step", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows Game; caller output"),
+        signature("cna_game_set_is_fixed_time_step", T[:result], [T[:handle], T[:bool]], ownership: "borrows Game; chooses fixed or variable timing"),
+        signature("cna_game_get_target_elapsed_time_ticks", T[:result], [T[:handle], pointer("int64_t")], ownership: "borrows Game; caller output"),
+        signature("cna_game_set_target_elapsed_time_ticks", T[:result], [T[:handle], T[:i64]], ownership: "borrows Game; rejects a non-positive step"),
+        signature("cna_game_get_inactive_sleep_time_ticks", T[:result], [T[:handle], pointer("int64_t")], ownership: "borrows Game; caller output"),
+        signature("cna_game_set_inactive_sleep_time_ticks", T[:result], [T[:handle], T[:i64]], ownership: "borrows Game; rejects a negative duration"),
         signature("cna_framework_dispatcher_update", T[:result], [T[:handle]], ownership: "borrows Game; pumps the canonical CNA framework dispatcher", result_lifetime: "no result value"),
         signature("cna_graphics_device_manager_create", T[:result], [T[:handle], pointer("CNA_GraphicsDeviceManagerHandle")], ownership: "returns OWNED manager"),
         signature("cna_graphics_device_manager_get_graphics_device", T[:result], [handle("CNA_GraphicsDeviceManagerHandle"), pointer("CNA_Handle")], ownership: "returns callback BORROWED device"),

@@ -53,7 +53,7 @@ class GameComponentTest < Minitest::Test
     assert_equal 0, STRICT.fetch("localDiagnostics").fetch(NAME)
     refute IL.fetch("types").fetch(NAME).fetch("nativeReachable")
     assert_empty IL.fetch("types").fetch(NAME).fetch("nativeReachableMethods")
-    assert_equal 41, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 49, CNA::Native::Manifest::FUNCTIONS.length
   end
 
   def test_it_declares_fourteen_identities_over_the_measured_shape
@@ -480,8 +480,9 @@ class GameComponentTest < Minitest::Test
     assert_equal 136, STRICT.fetch("COMPLETE_TYPES")
     assert_equal 115, STRICT.fetch("MISSING_TYPES")
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
-    assert_equal 123, STRICT.fetch("MISSING_MEMBER"),
-                 "Foundation 41 closed Game's four events and their three raisers"
+    assert_equal 119, STRICT.fetch("MISSING_MEMBER"),
+                 "Foundation 41 closed Game's four events and three raisers, 42 its four " \
+                 "timing and presentation properties"
     assert_equal 17, STRICT.fetch("EVENT_IDENTITIES")
     assert_equal 6, STRICT.fetch("EVENT_OWNER_TYPES")
     assert_equal 0, STRICT.fetch("UNEXPECTED_MEMBER")

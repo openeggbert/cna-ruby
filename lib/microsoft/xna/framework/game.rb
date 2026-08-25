@@ -308,6 +308,70 @@ module Microsoft
         xna_event :Exiting
         xna_event :Disposed
 
+        # A CLR TimeSpan is 100-nanosecond ticks; this binding projects TimeSpan as Float seconds,
+        # so the two pinned defaults are converted once, here, rather than spelled as magic seconds.
+        TICKS_PER_SECOND = 10_000_000.0
+        private_constant :TICKS_PER_SECOND
+        # `TimeSpan.FromTicks(0x28b0b)` -- one sixtieth of a second.
+        TARGET_ELAPSED_TIME_DEFAULT_TICKS = 166_667.0
+        private_constant :TARGET_ELAPSED_TIME_DEFAULT_TICKS
+        # `TimeSpan.FromMilliseconds(20)`.
+        INACTIVE_SLEEP_TIME_DEFAULT_TICKS = 200_000.0
+        private_constant :INACTIVE_SLEEP_TIME_DEFAULT_TICKS
+
+        # Each getter is one `ldfld`: it reads the managed field and never consults the host, so it
+        # answers before the Game has run, after it has run, and on a Game that never will.
+        attr_reader :IsFixedTimeStep, :TargetElapsedTime, :InactiveSleepTime, :IsMouseVisible
+
+        # `set_IsFixedTimeStep(bool)` is a bare field write with no validation at all.
+        def IsFixedTimeStep=(value)
+          value = value ? true : false unless value == true || value == false
+          @IsFixedTimeStep = value
+          push_native_game_setting("cna_game_set_is_fixed_time_step", value ? 1 : 0)
+          value
+        end
+
+        # `set_TargetElapsedTime(TimeSpan)`:
+        #
+        #     if (value <= TimeSpan.Zero)
+        #         throw new ArgumentOutOfRangeException("value", Resources.TargetElaspedCannotBeZero);
+        #     targetElapsedTime = value;
+        #
+        # The comparison is `op_LessThanOrEqual`, so zero is rejected as well as negative -- which
+        # is also what CNA's route documents, refusing a step that is not positive.
+        def TargetElapsedTime=(value)
+          seconds = CNA::Runtime::BclProjection.time_span(value)
+          raise RangeError, "TargetElapsedTime must be greater than zero" unless seconds.positive?
+
+          @TargetElapsedTime = seconds
+          push_native_game_setting("cna_game_set_target_elapsed_time_ticks", ticks_for(seconds))
+          seconds
+        end
+
+        # `set_InactiveSleepTime(TimeSpan)` is the same shape with `op_LessThan`, so **zero is
+        # accepted** and only a negative duration is refused, despite the resource being named
+        # `InactiveSleepTimeCannotBeZero`. CNA's route agrees: it refuses a negative duration.
+        def InactiveSleepTime=(value)
+          seconds = CNA::Runtime::BclProjection.time_span(value)
+          raise RangeError, "InactiveSleepTime must not be negative" if seconds.negative?
+
+          @InactiveSleepTime = seconds
+          push_native_game_setting("cna_game_set_inactive_sleep_time_ticks", ticks_for(seconds))
+          seconds
+        end
+
+        # `set_IsMouseVisible(bool)` writes the field first and then, **only when `Window` is not
+        # null**, forwards to `Window.IsMouseVisible`. `GameWindow` is still a deferred type here, so
+        # the window this forwards to is CNA's own -- `cna_game_set_is_mouse_visible` is documented
+        # as showing or hiding the cursor over the game window -- and the null check becomes the
+        # same question this binding can actually ask: whether a native host exists yet.
+        def IsMouseVisible=(value)
+          value = value ? true : false unless value == true || value == false
+          @IsMouseVisible = value
+          push_native_game_setting("cna_game_set_is_mouse_visible", value ? 1 : 0)
+          value
+        end
+
         # The construction order below is the one the pinned Game.dll `.ctor` performs, in its own
         # sequence. Two of its steps are field initialisers, which the CLR runs *before* the base
         # constructor, and the rest run after; what matters to a consumer is the relative order, and
@@ -356,6 +420,20 @@ module Microsoft
           @in_run = false
           @exit_requested = false
           @inside_native_callback = false
+          # The four timing/presentation defaults, exactly as the pinned `.ctor` sets them:
+          # `isFixedTimeStep = true` as a field initialiser before the base constructor,
+          # `targetElapsedTime = TimeSpan.FromTicks(0x28b0b)` -- 166667 ticks, one sixtieth of a
+          # second -- and `inactiveSleepTime = TimeSpan.FromMilliseconds(20)`. `isMouseVisible` is
+          # never assigned, so it keeps the CLR default `false`.
+          #
+          # All four are **managed** state here because they are managed state in XNA: every getter
+          # is one `ldfld` and nothing else, and it is the host loop that reads the fields. So they
+          # answer correctly on a Game that has never run, which is what XNA does, and each setter
+          # pushes the new value down to CNA only once a native host exists.
+          @IsFixedTimeStep = true
+          @TargetElapsedTime = CNA::Runtime::BclProjection.time_span(TARGET_ELAPSED_TIME_DEFAULT_TICKS / TICKS_PER_SECOND)
+          @InactiveSleepTime = CNA::Runtime::BclProjection.time_span(INACTIVE_SLEEP_TIME_DEFAULT_TICKS / TICKS_PER_SECOND)
+          @IsMouseVisible = false
           @gameComponents = GameComponentCollection.new
           @gameComponents.ComponentAdded.add(method(:game_component_added))
           @gameComponents.ComponentRemoved.add(method(:game_component_removed))
@@ -846,6 +924,27 @@ module Microsoft
         end
 
         def assert_owner_thread! = @generation.assert_owner_thread!
+
+        # A CLR TimeSpan carries whole ticks, so the projected Float seconds are rounded to the
+        # nearest tick on the way down rather than truncated.
+        def ticks_for(seconds) = (seconds * TICKS_PER_SECOND).round
+
+        # The push half of each setter. Before a host exists there is nothing to push to and the
+        # managed field is the whole story -- which is also the state the host is *created* from,
+        # so nothing is lost. Once one exists the value is forwarded immediately, as XNA forwards
+        # `IsMouseVisible` to a non-null Window.
+        #
+        # Recorded deviation: the native routes are owner-thread bound and XNA's setters are not, so
+        # a setter called off the owner thread raises once a host exists and does not before. The
+        # asymmetry is the native contract's, not this projection's, and it is asserted rather than
+        # hidden.
+        def push_native_game_setting(symbol, value)
+          return if @host.nil? || @host.handle.zero?
+
+          assert_owner_thread!
+          CNA::Native.library.call(symbol, @host.handle, value)
+          nil
+        end
         def require_game_time(value)
           raise TypeError, "game_time must be GameTime" unless value.instance_of?(GameTime)
         end

@@ -39,10 +39,15 @@ module CNA
         build_callback_tables
       end
 
+      # The two settings `CNA_GameCreateInfo` carries are taken from the Game's own managed state
+      # rather than hardcoded, so a value set before the first `Run` is the value the host is
+      # created with -- which is what makes those setters meaningful on a Game that has not run.
+      # The defaults are unchanged: `IsFixedTimeStep` is true and `TargetElapsedTime` is 166667
+      # ticks, exactly the pair the pinned XNA constructor sets.
       def create
         info = CNA::Native::Layouts::GameCreateInfo.new(
-          fixed: true,
-          target_ticks: 166_667,
+          fixed: @game.IsFixedTimeStep,
+          target_ticks: @game.__send__(:ticks_for, @game.TargetElapsedTime),
           title: "CNA-Ruby",
           callbacks: @callbacks
         )
@@ -50,6 +55,7 @@ module CNA
         @library.call("cna_game_create", info.pointer, output)
         @handle = output[0, 8].unpack1("Q")
         @library.call("cna_game_set_frame_hooks_ext", handle, @hooks.pointer)
+        push_initial_game_settings
         subscribe_game_events
         CNA::Runtime::Context.register(@game)
       rescue Exception
@@ -141,6 +147,16 @@ module CNA
         end
         @callbacks_keepalive << callback
         callback
+      end
+
+      # The two settings `CNA_GameCreateInfo` does not carry. `IsFixedTimeStep` and
+      # `TargetElapsedTime` went in through the create info above; these two have no slot there, so
+      # a value set before the first `Run` is pushed the moment the host exists.
+      def push_initial_game_settings
+        @library.call("cna_game_set_is_mouse_visible", handle, @game.IsMouseVisible ? 1 : 0)
+        @library.call("cna_game_set_inactive_sleep_time_ticks", handle,
+                      @game.__send__(:ticks_for, @game.InactiveSleepTime))
+        nil
       end
 
       # One native subscription per event identity, created with the host and released before the

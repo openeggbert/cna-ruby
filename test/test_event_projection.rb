@@ -486,7 +486,7 @@ class EventProjectionTest < Minitest::Test
     end
     refute F.const_defined?(:EventArgs, false)
     refute Object.const_defined?(:System, false), "no fabricated ::System namespace"
-    assert_equal 41, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 49, CNA::Native::Manifest::FUNCTIONS.length
     assert_equal 63, CNA::Native::Manifest::CONSTANTS.length
   end
 end

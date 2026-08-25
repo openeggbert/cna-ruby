@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, the Foundation 40 graphics device service, and the Foundation 41 canonical Game events separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, the Foundation 40 graphics device service, the Foundation 41 canonical Game events, and the Foundation 42 Game timing and presentation properties separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
   "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
@@ -13885,6 +13885,74 @@
         true,
         true
       ]
+    },
+    {
+      "id": "game_timing.contract",
+      "operation": "GameTiming.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          "System.Boolean",
+          true,
+          true,
+          false,
+          "public",
+          "public"
+        ],
+        [
+          "System.TimeSpan",
+          true,
+          true,
+          false,
+          "public",
+          "public"
+        ],
+        [
+          "System.TimeSpan",
+          true,
+          true,
+          false,
+          "public",
+          "public"
+        ],
+        [
+          "System.Boolean",
+          true,
+          true,
+          false,
+          "public",
+          "public"
+        ]
+      ]
+    },
+    {
+      "id": "game_timing.defaults",
+      "operation": "GameTiming.Defaults",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        166667,
+        200000,
+        false,
+        true
+      ]
+    },
+    {
+      "id": "game_timing.validation",
+      "operation": "GameTiming.Validation",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "RangeError",
+        "RangeError",
+        "none",
+        "none",
+        "RangeError",
+        "none",
+        "none"
+      ]
     }
   ],
   "milestone31SourceAssemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
@@ -13911,5 +13979,7 @@
   "milestone40SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
   "milestone40MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 fe74379cb5ae77b8c5886df8b26c74eb390d7393a7a4e32b50eb36fb55e6e0f0, 473 observations) was proved before appending 5 additive observations",
   "milestone41SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
-  "milestone41MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 062e8dc39568dbf997d986b6cc88be573ce739faed3e2496a6d480fe91d06fc8, 478 observations) was proved before appending 3 additive observations"
+  "milestone41MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 062e8dc39568dbf997d986b6cc88be573ce739faed3e2496a6d480fe91d06fc8, 478 observations) was proved before appending 3 additive observations",
+  "milestone42SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "milestone42MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 0d6410b86e4f75bca5365a9dead1d286e9478939bff5b2833aec7200e920fa63, 481 observations) was proved before appending 3 additive observations"
 }

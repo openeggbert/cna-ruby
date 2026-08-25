@@ -510,6 +510,18 @@
         },
         {
           "name": "OnExiting"
+        },
+        {
+          "name": "IsFixedTimeStep"
+        },
+        {
+          "name": "TargetElapsedTime"
+        },
+        {
+          "name": "InactiveSleepTime"
+        },
+        {
+          "name": "IsMouseVisible"
         }
       ]
     },
