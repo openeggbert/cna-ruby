@@ -12,7 +12,15 @@
     "multipleOut": "ordered Array following any non-void CLR return"
   },
   "arrayTransforms": "caller-owned source/destination Arrays; whole and indexed range forms preserve forward overlap order",
-  "properties": {"getter": "Name", "setter": "Name=", "preserveMutability": true, "indexedItem": {"getter": "[]", "setter": "[]="}},
+  "properties": {
+    "getter": "Name",
+    "setter": "Name=",
+    "preserveMutability": true,
+    "indexedItem": {
+      "getter": "[]",
+      "setter": "[]="
+    }
+  },
   "collections": {
     "genericICollection": "preserve the CLR interface identity and project its selected typed members directly on the Ruby collection class",
     "genericIEnumerable": "preserve the CLR interface identity; GetEnumerator returns Ruby Enumerator without a fake System namespace",
@@ -28,10 +36,24 @@
       "nativeBoundary": "two's-complement bit pattern in the canonical fixed-width C carrier; never Fiddle::Pointer"
     }
   },
-  "enums": {"representation": "typed frozen Ruby objects", "excludeMetadataMembers": ["value__"], "flags": "declared bits only"},
+  "enums": {
+    "representation": "typed frozen Ruby objects",
+    "excludeMetadataMembers": [
+      "value__"
+    ],
+    "flags": "declared bits only"
+  },
   "structs": "Ruby classes with boundary copies and dup/clone; assignment aliasing is documented",
   "operators": "map to Ruby syntax where available and retain op_* identity in static contract",
-  "events": "retain identity; explicit subscription mapping when implemented",
+  "events": {
+    "identity": "one CLR public event maps to one public Ruby event reader keeping the XNA spelling; never an add_Name/remove_Name pair, never a writer, never a Proc, Array or callback property",
+    "support": "the reader answers the generic CNA::Runtime::Event subscription primitive, whose whole public surface is add/remove",
+    "subscribe": "add(callable) or add { |sender, args| ... } appends one handler and answers the token remove takes back; duplicate subscriptions are permitted",
+    "unsubscribe": "remove(handler) removes the last matching occurrence, as Delegate.Remove does to a multicast invocation list; removing an absent handler is harmless",
+    "dispatch": "registration order, over a snapshot, with exceptions never swallowed",
+    "raise": "internal to the declaring implementation; no consumer-facing emit, fire, trigger or call exists",
+    "abstract": "on an XNA interface contract the event reader raises NotImplementedError like every other member: an interface declares the identity and never owns an invocation list"
+  },
   "generics": {
     "contract": "retain CLR arity/signature and reject ambiguous runtime dispatch",
     "runtimeTypeName": "each CLR generic type definition Name`N maps deterministically to NameOfT for arity 1 and NameOfT1T2...TN for higher arity",
@@ -42,5 +64,33 @@
     }
   },
   "expectedTypeFormula": "reference public types",
-  "expectedMemberFormula": "reference public members minus enum value__ metadata storage"
+  "expectedMemberFormula": "reference public members minus enum value__ metadata storage",
+  "bclProjection": {
+    "register": "CNA::Runtime::BclProjection; measured, not aspirational \u2014 the API verifier resolves every entry and the dependency frontier consumes the same register",
+    "namespace": "a projected BCL identity lives in the CNA runtime; no fabricated Ruby ::System namespace is created",
+    "scope": "only a CLR identity the selected XNA surface actually names, and whose Ruby projection can be decided without guessing, is admitted",
+    "types": {
+      "System.EventArgs": "CNA::Runtime::EventArgs"
+    },
+    "exceptions": {
+      "principle": "an XNA exception must behave as a Ruby exception rather than an ordinary Object subclass",
+      "root": "StandardError, because a CLR catch (Exception) is the analogue of a bare Ruby rescue; ::Exception would put XNA failures alongside Ruby's non-recoverable system-level conditions",
+      "bases": {
+        "System.Exception": "StandardError",
+        "System.Runtime.InteropServices.ExternalException": "StandardError"
+      },
+      "intermediateBases": "an intermediate BCL exception class the selected XNA surface never names collapses to the nearest projected ancestor; no Ruby constant is invented for it"
+    },
+    "notYetDesigned": [
+      "System.Type",
+      "System.IServiceProvider",
+      "System.IO.Stream",
+      "System.TimeSpan",
+      "System.Attribute",
+      "System.Text.StringBuilder",
+      "System.Runtime.Serialization.SerializationInfo",
+      "System.Collections.ObjectModel.ReadOnlyCollection`1",
+      "System.Collections.Generic.Dictionary`2"
+    ]
+  }
 }

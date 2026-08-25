@@ -1,0 +1,477 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+  "derivation": "Foundation 21 BCL projection register and XNA exception base mapping. Contract rows are read from the pinned XNA 4.0 Windows metadata and record, for each of the eight XNA exception types, that its whole declared surface is constructors — which is why none is claimed. Mapping rows are derived from the documented BCL projection policy: a measured register in CNA::Runtime::BclProjection, System.EventArgs projected as CNA::Runtime::EventArgs, and StandardError as the Ruby root for a CLR exception base. Neither is snapshotted from the cna-ruby implementation.",
+  "observations": [
+    {
+      "id": "bcl_projection.exception.instance_play_limit.contract",
+      "operation": "BclProjection.ExceptionContract",
+      "args": [
+        "Microsoft.Xna.Framework.Audio.InstancePlayLimitException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        true,
+        "System.Runtime.InteropServices.ExternalException",
+        [
+
+        ],
+        3,
+        [
+          [
+            "constructor",
+            "public",
+            [
+
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String"
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String",
+              "System.Exception"
+            ]
+          ]
+        ],
+        false
+      ]
+    },
+    {
+      "id": "bcl_projection.exception.no_audio_hardware.contract",
+      "operation": "BclProjection.ExceptionContract",
+      "args": [
+        "Microsoft.Xna.Framework.Audio.NoAudioHardwareException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        true,
+        "System.Runtime.InteropServices.ExternalException",
+        [
+
+        ],
+        3,
+        [
+          [
+            "constructor",
+            "public",
+            [
+
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String"
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String",
+              "System.Exception"
+            ]
+          ]
+        ],
+        false
+      ]
+    },
+    {
+      "id": "bcl_projection.exception.no_microphone_connected.contract",
+      "operation": "BclProjection.ExceptionContract",
+      "args": [
+        "Microsoft.Xna.Framework.Audio.NoMicrophoneConnectedException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        true,
+        "System.Exception",
+        [
+
+        ],
+        3,
+        [
+          [
+            "constructor",
+            "public",
+            [
+
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String"
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String",
+              "System.Exception"
+            ]
+          ]
+        ],
+        false
+      ]
+    },
+    {
+      "id": "bcl_projection.exception.content_load.contract",
+      "operation": "BclProjection.ExceptionContract",
+      "args": [
+        "Microsoft.Xna.Framework.Content.ContentLoadException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        false,
+        "System.Exception",
+        [
+
+        ],
+        4,
+        [
+          [
+            "constructor",
+            "public",
+            [
+
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String"
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String",
+              "System.Exception"
+            ]
+          ],
+          [
+            "constructor",
+            "protected",
+            [
+              "System.Runtime.Serialization.SerializationInfo",
+              "System.Runtime.Serialization.StreamingContext"
+            ]
+          ]
+        ],
+        false
+      ]
+    },
+    {
+      "id": "bcl_projection.exception.device_lost.contract",
+      "operation": "BclProjection.ExceptionContract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.DeviceLostException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        true,
+        "System.Exception",
+        [
+
+        ],
+        3,
+        [
+          [
+            "constructor",
+            "public",
+            [
+
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String"
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String",
+              "System.Exception"
+            ]
+          ]
+        ],
+        false
+      ]
+    },
+    {
+      "id": "bcl_projection.exception.device_not_reset.contract",
+      "operation": "BclProjection.ExceptionContract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.DeviceNotResetException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        true,
+        "System.Exception",
+        [
+
+        ],
+        3,
+        [
+          [
+            "constructor",
+            "public",
+            [
+
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String"
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String",
+              "System.Exception"
+            ]
+          ]
+        ],
+        false
+      ]
+    },
+    {
+      "id": "bcl_projection.exception.no_suitable_graphics_device.contract",
+      "operation": "BclProjection.ExceptionContract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        true,
+        "System.Exception",
+        [
+
+        ],
+        3,
+        [
+          [
+            "constructor",
+            "public",
+            [
+
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String"
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String",
+              "System.Exception"
+            ]
+          ]
+        ],
+        false
+      ]
+    },
+    {
+      "id": "bcl_projection.exception.storage_device_not_connected.contract",
+      "operation": "BclProjection.ExceptionContract",
+      "args": [
+        "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        false,
+        "System.Runtime.InteropServices.ExternalException",
+        [
+
+        ],
+        4,
+        [
+          [
+            "constructor",
+            "public",
+            [
+
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String"
+            ]
+          ],
+          [
+            "constructor",
+            "public",
+            [
+              "System.String",
+              "System.Exception"
+            ]
+          ],
+          [
+            "constructor",
+            "protected",
+            [
+              "System.Runtime.Serialization.SerializationInfo",
+              "System.Runtime.Serialization.StreamingContext"
+            ]
+          ]
+        ],
+        false
+      ]
+    },
+    {
+      "id": "bcl_projection.exception.deferral",
+      "operation": "BclProjection.ExceptionDeferral",
+      "args": [
+
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        8,
+        [
+          "Microsoft.Xna.Framework.Audio.InstancePlayLimitException",
+          "Microsoft.Xna.Framework.Audio.NoAudioHardwareException",
+          "Microsoft.Xna.Framework.Audio.NoMicrophoneConnectedException",
+          "Microsoft.Xna.Framework.Content.ContentLoadException",
+          "Microsoft.Xna.Framework.Graphics.DeviceLostException",
+          "Microsoft.Xna.Framework.Graphics.DeviceNotResetException",
+          "Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException",
+          "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException"
+        ],
+        [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          false,
+          false,
+          false,
+          true,
+          false,
+          false,
+          false,
+          true
+        ]
+      ]
+    },
+    {
+      "id": "bcl_projection.register",
+      "operation": "BclProjection.Register",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        {
+          "System.EventArgs": "CNA::Runtime::EventArgs"
+        },
+        {
+          "System.Exception": "StandardError",
+          "System.Runtime.InteropServices.ExternalException": "StandardError"
+        },
+        [
+          "System.EventArgs",
+          "System.Exception",
+          "System.Runtime.InteropServices.ExternalException"
+        ],
+        [
+          "CNA::Runtime::EventArgs",
+          "StandardError",
+          "StandardError"
+        ],
+        [
+          false,
+          true,
+          true
+        ],
+        null,
+        false
+      ]
+    },
+    {
+      "id": "bcl_projection.exception_base_rule",
+      "operation": "BclProjection.ExceptionBaseRule",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          "StandardError"
+        ],
+        [
+          true
+        ],
+        [
+          true
+        ],
+        [
+          true
+        ],
+        [
+          false
+        ],
+        [
+          "StandardError"
+        ],
+        "projected",
+        false,
+        false
+      ]
+    }
+  ]
+}

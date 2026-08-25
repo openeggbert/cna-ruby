@@ -1,8 +1,8 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 80,
-  "completeTypes": 74,
+  "targetTypes": 113,
+  "completeTypes": 107,
   "partialTypes": [
     "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -11,13 +11,55 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 177,
-  "candidatePolicy": "missing managed enum; all XNA public-signature dependencies complete; directly referenced by a selected partial remainder; fewest expected Ruby identities",
-  "eligibleManagedEnums": [
+  "missingTypes": 144,
+  "candidatePolicy": "missing type; all XNA public-signature dependencies complete; consumable only when no BCL_PROJECTION or BEHAVIOR_EVIDENCE blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
+  "retiredBlockers": {
+    "EVENT_PROJECTION": "retired in Foundation 20; one CLR event projects to one Ruby event reader over CNA::Runtime::Event and the API verifier measures it under EVENT_MAPPING_MISMATCH. The residue is BCL_PROJECTION on the EventHandler`1 support type and, for classes, BEHAVIOR_EVIDENCE on the raising IL."
+  },
+  "selectionRoute": "none-consumable",
+  "mappedBclTypes": [
+    "!0",
+    "System.Boolean",
+    "System.Byte",
+    "System.Enum",
+    "System.EventArgs",
+    "System.EventHandler`1[System.EventArgs]",
+    "System.Exception",
+    "System.Int32",
+    "System.IntPtr",
+    "System.Nullable`1[System.Single]",
+    "System.Object",
+    "System.Runtime.InteropServices.ExternalException",
+    "System.Single",
+    "System.String",
+    "System.TimeSpan",
+    "System.UInt16",
+    "System.UInt32",
+    "System.UInt64",
+    "System.ValueType",
+    "System.Void"
+  ],
+  "bclProjectionRegister": {
+    "types": {
+      "System.EventArgs": "CNA::Runtime::EventArgs"
+    },
+    "exceptionBases": {
+      "System.Exception": "StandardError",
+      "System.Runtime.InteropServices.ExternalException": "StandardError"
+    }
+  },
+  "blockerSummary": {
+    "BCL_PROJECTION+BEHAVIOR_EVIDENCE": 15,
+    "BEHAVIOR_EVIDENCE": 23
+  },
+  "consumableCandidates": [
+
+  ],
+  "dependencyCompleteCandidates": [
     {
-      "name": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
-      "kind": "enum",
-      "expectedRubyIdentities": 6,
+      "name": "Microsoft.Xna.Framework.Content.ContentSerializerIgnoreAttribute",
+      "kind": "class",
+      "expectedRubyIdentities": 1,
       "dependencies": [
 
       ],
@@ -25,26 +67,1129 @@
 
       ],
       "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::SetRenderTarget (2 overloads)"
+
       ],
-      "dependencyComplete": true
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+        "System.Attribute"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.FrameworkDispatcher",
+      "kind": "class",
+      "expectedRubyIdentities": 1,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        "Update"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs",
+      "kind": "class",
+      "expectedRubyIdentities": 1,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::ResourceCreated (1 overload)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.TextureCollection",
+      "kind": "class",
+      "expectedRubyIdentities": 1,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.Texture"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Textures (1 overload)",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::VertexTextures (1 overload)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.LaunchParameters",
+      "kind": "class",
+      "expectedRubyIdentities": 1,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Game::LaunchParameters (1 overload)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+        "System.Collections.Generic.Dictionary`2[System.String,System.String]"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.TitleContainer",
+      "kind": "class",
+      "expectedRubyIdentities": 1,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+        "System.IO.Stream"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        "OpenStream"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentSerializerCollectionItemNameAttribute",
+      "kind": "class",
+      "expectedRubyIdentities": 2,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+        "System.Attribute"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentSerializerRuntimeTypeAttribute",
+      "kind": "class",
+      "expectedRubyIdentities": 2,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+        "System.Attribute"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentSerializerTypeVersionAttribute",
+      "kind": "class",
+      "expectedRubyIdentities": 2,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+        "System.Attribute"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.GameComponentCollectionEventArgs",
+      "kind": "class",
+      "expectedRubyIdentities": 2,
+      "dependencies": [
+        "Microsoft.Xna.Framework.IGameComponent"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs",
+      "kind": "class",
+      "expectedRubyIdentities": 2,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::ResourceDestroyed (1 overload)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.InstancePlayLimitException",
+      "kind": "class",
+      "expectedRubyIdentities": 3,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.NoAudioHardwareException",
+      "kind": "class",
+      "expectedRubyIdentities": 3,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.NoMicrophoneConnectedException",
+      "kind": "class",
+      "expectedRubyIdentities": 3,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DeviceLostException",
+      "kind": "class",
+      "expectedRubyIdentities": 3,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DeviceNotResetException",
+      "kind": "class",
+      "expectedRubyIdentities": 3,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.NoSuitableGraphicsDeviceException",
+      "kind": "class",
+      "expectedRubyIdentities": 3,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.VisualizationData",
+      "kind": "class",
+      "expectedRubyIdentities": 3,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+        "System.Collections.ObjectModel.ReadOnlyCollection`1[System.Single]"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentLoadException",
+      "kind": "class",
+      "expectedRubyIdentities": 4,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+        "System.Runtime.Serialization.SerializationInfo",
+        "System.Runtime.Serialization.StreamingContext"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.GameServiceContainer",
+      "kind": "class",
+      "expectedRubyIdentities": 4,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Game::Services (1 overload)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+        "System.IServiceProvider",
+        "System.Type"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "AddService",
+        "RemoveService",
+        "GetService"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.MediaSource",
+      "kind": "class",
+      "expectedRubyIdentities": 4,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Media.MediaSourceType"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        "ToString",
+        "GetAvailableMediaSources"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException",
+      "kind": "class",
+      "expectedRubyIdentities": 4,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+        "System.Runtime.Serialization.SerializationInfo",
+        "System.Runtime.Serialization.StreamingContext"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.AudioListener",
+      "kind": "class",
+      "expectedRubyIdentities": 5,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Vector3"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.Video",
+      "kind": "class",
+      "expectedRubyIdentities": 5,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Media.VideoSoundtrackType"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.AudioEmitter",
+      "kind": "class",
+      "expectedRubyIdentities": 6,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Vector3"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DisplayMode",
+      "kind": "class",
+      "expectedRubyIdentities": 6,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
+        "Microsoft.Xna.Framework.Rectangle"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DisplayMode (1 overload)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        "ToString"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.SpriteFont",
+      "kind": "class",
+      "expectedRubyIdentities": 6,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Vector2"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Graphics.SpriteBatch::DrawString (6 overloads)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+        "System.Collections.ObjectModel.ReadOnlyCollection`1[System.Char]",
+        "System.Nullable`1[System.Char]",
+        "System.Text.StringBuilder"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        "MeasureString"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.RendererDetail",
+      "kind": "struct",
+      "expectedRubyIdentities": 7,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        "GetHashCode",
+        "ToString",
+        "op_Equality",
+        "op_Inequality",
+        "Equals"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.GestureSample",
+      "kind": "struct",
+      "expectedRubyIdentities": 7,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Input.Touch.GestureType",
+        "Microsoft.Xna.Framework.Vector2"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Design.MathTypeConverter",
+      "kind": "class",
+      "expectedRubyIdentities": 8,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+        "System.Attribute[]",
+        "System.ComponentModel.ExpandableObjectConverter",
+        "System.ComponentModel.ITypeDescriptorContext",
+        "System.ComponentModel.PropertyDescriptorCollection",
+        "System.Type"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "CanConvertFrom",
+        "CanConvertTo",
+        "GetCreateInstanceSupported",
+        "GetPropertiesSupported",
+        "GetProperties"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentSerializerAttribute",
+      "kind": "class",
+      "expectedRubyIdentities": 9,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+        "System.Attribute"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "Clone"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentManager",
+      "kind": "class",
+      "expectedRubyIdentities": 10,
+      "dependencies": [
+
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Game::Content (1 overload)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+        "!!0",
+        "System.Action`1[System.IDisposable]",
+        "System.IDisposable",
+        "System.IO.Stream",
+        "System.IServiceProvider"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "Dispose",
+        "Unload",
+        "Load",
+        "ReadAsset",
+        "OpenStream"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.AudioCategory",
+      "kind": "struct",
+      "expectedRubyIdentities": 11,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Audio.AudioStopOptions"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        "SetVolume",
+        "Pause",
+        "Resume",
+        "Stop",
+        "ToString",
+        "Equals",
+        "GetHashCode",
+        "op_Equality",
+        "op_Inequality"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.TouchLocation",
+      "kind": "struct",
+      "expectedRubyIdentities": 12,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+        "Microsoft.Xna.Framework.Vector2"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "TryGetPreviousLocation",
+        "ToString",
+        "Equals",
+        "GetHashCode",
+        "op_Equality",
+        "op_Inequality"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PresentationParameters",
+      "kind": "class",
+      "expectedRubyIdentities": 13,
+      "dependencies": [
+        "Microsoft.Xna.Framework.DisplayOrientation",
+        "Microsoft.Xna.Framework.Graphics.DepthFormat",
+        "Microsoft.Xna.Framework.Graphics.PresentInterval",
+        "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
+        "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
+        "Microsoft.Xna.Framework.Rectangle"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::.ctor (1 overload)",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::PresentationParameters (1 overload)",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Reset (3 overloads)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "Clone"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.EffectAnnotation",
+      "kind": "class",
+      "expectedRubyIdentities": 14,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.EffectParameterClass",
+        "Microsoft.Xna.Framework.Graphics.EffectParameterType",
+        "Microsoft.Xna.Framework.Matrix",
+        "Microsoft.Xna.Framework.Vector2",
+        "Microsoft.Xna.Framework.Vector3",
+        "Microsoft.Xna.Framework.Vector4"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        "GetValueBoolean",
+        "GetValueInt32",
+        "GetValueSingle",
+        "GetValueVector2",
+        "GetValueVector3",
+        "GetValueVector4",
+        "GetValueMatrix",
+        "GetValueString"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.Microphone",
+      "kind": "class",
+      "expectedRubyIdentities": 15,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Audio.MicrophoneState"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION",
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+        "System.Byte[]"
+      ],
+      "eventMembers": [
+        "BufferReady"
+      ],
+      "behaviourBearingMembers": [
+        "Finalize",
+        "GetSampleSizeInBytes",
+        "GetSampleDuration",
+        "Start",
+        "Stop",
+        "GetData"
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.GameWindow",
+      "kind": "class",
+      "expectedRubyIdentities": 20,
+      "dependencies": [
+        "Microsoft.Xna.Framework.DisplayOrientation",
+        "Microsoft.Xna.Framework.Rectangle"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Game::Window (1 overload)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BEHAVIOR_EVIDENCE"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "eventMembers": [
+        "ScreenDeviceNameChanged",
+        "ClientSizeChanged",
+        "OrientationChanged"
+      ],
+      "behaviourBearingMembers": [
+        "BeginScreenDeviceChange",
+        "EndScreenDeviceChange",
+        "SetTitle",
+        "SetSupportedOrientations",
+        "OnActivated",
+        "OnDeactivated",
+        "OnPaint",
+        "OnScreenDeviceNameChanged",
+        "OnClientSizeChanged",
+        "OnOrientationChanged"
+      ]
     }
   ],
-  "selectedNext": {
-    "name": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
-    "kind": "enum",
-    "expectedRubyIdentities": 6,
-    "dependencies": [
+  "pureManagedEnumCandidates": [
 
-    ],
-    "unmetDependencies": [
+  ],
+  "eligibleManagedEnums": [
 
-    ],
-    "partialRemainderReverseEdges": [
-      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::SetRenderTarget (2 overloads)"
-    ],
-    "dependencyComplete": true,
-    "selectedOnly": true,
-    "started": false
-  }
+  ],
+  "selectedNext": null
 }

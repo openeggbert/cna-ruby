@@ -1,0 +1,28 @@
+module Microsoft
+  module Xna
+    module Framework
+      module Audio
+        class AudioChannels
+          Mono: AudioChannels
+          Stereo: AudioChannels
+        end
+
+        class AudioStopOptions
+          AsAuthored: AudioStopOptions
+          Immediate: AudioStopOptions
+        end
+
+        class SoundState
+          Playing: SoundState
+          Paused: SoundState
+          Stopped: SoundState
+        end
+
+        class MicrophoneState
+          Started: MicrophoneState
+          Stopped: MicrophoneState
+        end
+      end
+    end
+  end
+end

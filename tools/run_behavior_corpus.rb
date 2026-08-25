@@ -34,6 +34,20 @@ GRAPHICS_PROFILE_SIGNATURE = JSON.parse(
   type.fetch("name") == "Microsoft.Xna.Framework.Graphics.GraphicsProfile"
 end
 
+A = F::Audio
+M = F::Media
+TOUCH = F::Input::Touch
+BATCH_SIGNATURES = JSON.parse(
+  File.read(File.expand_path("api_compat/signatures.json", __dir__))
+).fetch("types").to_h { |type| [type.fetch("name"), type] }
+BATCH_REFERENCE = JSON.parse(
+  File.read(File.expand_path("api_compat/reference/xna40-windows-runtime-contract.json", __dir__))
+).fetch("types").to_h { |type| [type.fetch("name"), type] }
+
+def batch_enum_type(clr_name)
+  clr_name.split(".").reduce(Object) { |scope, segment| scope.const_get(segment, false) }
+end
+
 def vector(value) = F::Vector2.new(*value)
 def vector3(value) = F::Vector3.new(*value)
 def vector4(value) = F::Vector4.new(*value)
@@ -92,6 +106,11 @@ end
 def viewport_matrix_with_w(bits)
   F::Matrix.Identity.tap { |matrix| matrix.M44 = CNA::Runtime::Numeric.f32_from_bits(bits) }
 end
+def invoke_projection(instance, name)
+  arity = instance.method(name).arity
+  instance.public_send(name, *Array.new(arity.negative? ? 0 : arity, nil))
+end
+
 def error_name
   yield
   "none"
@@ -153,6 +172,12 @@ def behavior_group(item)
   return "CLEAR_OPTIONS" if id.start_with?("clear_options.")
   return "DEPTH_FORMAT" if id.start_with?("depth_format.")
   return "PRIMITIVE_TYPE" if id.start_with?("primitive_type.")
+  return "PURE_MANAGED_ENUM_BATCH" if id.start_with?("pure_managed_enum.")
+  return "TOUCH_CLOSURE" if id.start_with?("touch_closure.")
+  return "INTERFACE_CONTRACT" if id.start_with?("interface_contract.")
+  return "EVENT_PROJECTION" if id.start_with?("event_projection.")
+  return "EVENT_RUNTIME" if id.start_with?("event_runtime.")
+  return "BCL_PROJECTION" if id.start_with?("bcl_projection.")
 
   id.split(".").first.upcase
 end
@@ -352,6 +377,278 @@ def execute(item)
       %i[DepthStencilState PresentationParameters RenderTarget2D RenderTargetCube GraphicsAdapter]
         .map { |name| G.const_defined?(name, false) },
       CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("DEPTH_FORMAT") }
+    ]
+  when "InterfaceContract.Contract"
+    clr_name = item.fetch("args").fetch(0)
+    pinned = BATCH_REFERENCE.fetch(clr_name)
+    members = pinned.fetch("members")
+    [pinned.fetch("kind"), pinned["baseType"], pinned.fetch("directInterfaces"), members.length,
+     members.map do |member|
+       [member.fetch("name"), member.fetch("kind"), member["get"], member["set"],
+        member.fetch("parameters", []).length]
+     end,
+     members.count { |member| member.fetch("kind") == "event" }]
+  when "InterfaceContract.RubyMapping"
+    clr_name = item.fetch("args").fetch(0)
+    short = clr_name.split(".").last
+    interface = batch_enum_type(clr_name)
+    projections = interface.public_instance_methods(false).map(&:to_s).sort
+    host = Class.new { include(interface) }
+    errors = projections.map { |name| error_name { invoke_projection(host.new, name) } }
+    messages = projections.map do |name|
+      begin
+        invoke_projection(host.new, name)
+        "none"
+      rescue Exception => error
+        error.message
+      end
+    end
+    [
+      interface.instance_of?(Module),
+      interface.instance_of?(Class),
+      projections,
+      errors,
+      messages,
+      interface.constants(false),
+      interface.protected_instance_methods(false) + interface.private_instance_methods(false),
+      BATCH_SIGNATURES.fetch(clr_name).fetch("members").any? { |member| member.fetch("kind") == "event" }
+    ]
+  when "BclProjection.Register"
+    register = CNA::Runtime::BclProjection
+    [register::TYPES, register::EXCEPTION_BASES, register.identities,
+     register.identities.map { |identity| register.ruby_type(identity) },
+     register.identities.map { |identity| register.exception_base?(identity) },
+     register.ruby_type("System.Type"), Object.const_defined?(:System, false)]
+  when "BclProjection.ExceptionBaseRule"
+    roots = CNA::Runtime::BclProjection::EXCEPTION_BASES.values.uniq
+    resolved = roots.map { |root| Object.const_get(root, false) }
+    rescued = begin
+      raise StandardError, "projected"
+    rescue StandardError => error
+      error.message
+    end
+    [roots, resolved.map { |root| root.instance_of?(Class) },
+     resolved.map { |root| root <= StandardError }, resolved.map { |root| root <= ::Exception },
+     resolved.map { |root| root.equal?(::Exception) }, resolved.map(&:name), rescued,
+     CNA::Runtime.const_defined?(:XnaException, false),
+     CNA::Runtime.const_defined?(:ExternalException, false)]
+  when "BclProjection.ExceptionContract"
+    clr_name = item.fetch("args").fetch(0)
+    pinned = BATCH_REFERENCE.fetch(clr_name)
+    [pinned.fetch("kind"), pinned.fetch("sealed"), pinned.fetch("baseType"),
+     pinned.fetch("directInterfaces"), pinned.fetch("members").length,
+     pinned.fetch("members").map do |member|
+       [member.fetch("kind"), member.fetch("access"),
+        member.fetch("parameters").map { |parameter| parameter.fetch("type") }]
+     end,
+     BATCH_SIGNATURES.key?(clr_name)]
+  when "BclProjection.ExceptionDeferral"
+    names = BATCH_REFERENCE.keys.grep(/Exception\z/).sort
+    [names.length, names, names.map { |name| BATCH_SIGNATURES.key?(name) },
+     names.map do |name|
+       BATCH_REFERENCE.fetch(name).fetch("members").all? { |member| member.fetch("kind") == "constructor" }
+     end,
+     names.map do |name|
+       BATCH_REFERENCE.fetch(name).fetch("members").any? do |member|
+         member.fetch("parameters").any? { |parameter| parameter.fetch("type").include?("SerializationInfo") }
+       end
+     end]
+  when "EventProjection.Contract"
+    clr_name = item.fetch("args").fetch(0)
+    pinned = BATCH_REFERENCE.fetch(clr_name)
+    events = pinned.fetch("members").select { |member| member.fetch("kind") == "event" }
+    [pinned.fetch("kind"), pinned["baseType"], pinned.fetch("members").length, events.length,
+     events.map do |member|
+       [member.fetch("name"), member.fetch("type"), member.fetch("add"), member.fetch("remove"),
+        member.fetch("static")]
+     end]
+  when "EventProjection.SupportTypeContract"
+    selected = BATCH_SIGNATURES.values.flat_map do |type|
+      type.fetch("members").select { |member| member.fetch("kind") == "event" }
+          .map { |member| ["#{type.fetch("name")}::#{member.fetch("name")}", member.fetch("type")] }
+    end
+    [selected.length, selected.map(&:last).uniq, selected.map(&:first)]
+  when "EventProjection.DeferredFamilyContract"
+    %w[GameComponent DrawableGameComponent GameComponentCollection].map do |short|
+      pinned = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.#{short}")
+      events = pinned.fetch("members").select { |member| member.fetch("kind") == "event" }
+      [short, events.map { |member| member.fetch("name") }, events.map { |member| member.fetch("type") }.uniq,
+       BATCH_SIGNATURES.key?("Microsoft.Xna.Framework.#{short}")]
+    end
+  when "EventProjection.RubyMapping"
+    clr_name = item.fetch("args").fetch(0)
+    interface = batch_enum_type(clr_name)
+    identities = BATCH_SIGNATURES.fetch(clr_name).fetch("members")
+                                 .select { |member| member.fetch("kind") == "event" }
+                                 .map { |member| member.fetch("name") }
+    host = Class.new { include(interface) }
+    [
+      identities,
+      interface.xna_event_identities.map(&:to_s),
+      identities.map { |name| interface.public_method_defined?(name) },
+      identities.map { |name| interface.method_defined?("#{name}=") },
+      identities.map { |name| interface.method_defined?("add_#{name}") },
+      identities.map { |name| interface.method_defined?("remove_#{name}") },
+      identities.map { |name| error_name { host.allocate.public_send(name) } },
+      identities.map do |name|
+        begin
+          host.allocate.public_send(name)
+          "none"
+        rescue Exception => error
+          error.message
+        end
+      end
+    ]
+  when "EventRuntime.Surface"
+    event = CNA::Runtime::Event
+    [
+      event.public_instance_methods(false).map(&:to_s).sort,
+      event.protected_instance_methods(false).map(&:to_s).sort,
+      %w[emit fire trigger call invoke notify broadcast publish raise_event dispatch subscribe
+         unsubscribe clear << >>].map { |name| event.public_method_defined?(name) },
+      event.private_method_defined?(:dispatch),
+      event.superclass.name,
+      Object.const_defined?(:System, false)
+    ]
+  when "EventRuntime.Subscription"
+    event = CNA::Runtime::Event.new
+    order = []
+    first = ->(_sender, _args) { order << "first" }
+    second = ->(_sender, _args) { order << "second" }
+    event.add(first)
+    event.add(second)
+    event.add(first)
+    event.__send__(:dispatch, :sender, CNA::Runtime::EventArgs::Empty)
+    registered = order.dup
+    order.clear
+    removed = event.remove(first).equal?(first)
+    event.__send__(:dispatch, :sender, CNA::Runtime::EventArgs::Empty)
+    [registered, removed, order.dup, event.remove(:never_subscribed).nil?]
+  when "EventRuntime.Dispatch"
+    event = CNA::Runtime::Event.new
+    seen = []
+    late = ->(_sender, _args) { seen << "late" }
+    event.add { |_sender, _args| seen << "first" }
+    event.add { |_sender, _args| seen << "second"; event.add(late) }
+    event.__send__(:dispatch, nil, CNA::Runtime::EventArgs::Empty)
+    snapshot = seen.dup
+    seen.clear
+    event.__send__(:dispatch, nil, CNA::Runtime::EventArgs::Empty)
+    reentrant = seen.dup
+
+    failing = CNA::Runtime::Event.new
+    log = []
+    failing.add { |_sender, _args| log << "before" }
+    failing.add { |_sender, _args| raise ArgumentError, "handler failed" }
+    failing.add { |_sender, _args| log << "after" }
+    [snapshot, reentrant, error_name { failing.__send__(:dispatch, nil, CNA::Runtime::EventArgs::Empty) }, log]
+  when "EventRuntime.Validation"
+    event = CNA::Runtime::Event.new
+    [
+      error_name { event.add },
+      error_name { event.add(42) },
+      error_name { event.add(->(only) { only }) },
+      error_name { event.add(->(one, two, three) { [one, two, three] }) },
+      error_name { event.add(->(_sender, _args) {}) { |_sender, _args| } },
+      error_name { event.add(->(_sender, _args) {}) },
+      error_name { event.add { |_sender, _args| } },
+      error_name { event.add(->(*rest) { rest }) }
+    ]
+  when "EventRuntime.EventArgs"
+    args = CNA::Runtime::EventArgs
+    [args::Empty.instance_of?(args), args::Empty.frozen?, args::Empty.equal?(args::Empty),
+     args.new.instance_of?(args), args.new.equal?(args::Empty),
+     args.constants(false).map(&:to_s), args.public_instance_methods(false).map(&:to_s),
+     args.superclass.name]
+  when "EventRuntime.OwnerIsolation"
+    owner = Class.new do
+      extend CNA::Runtime::EventOwner
+      xna_event :Changed
+      def raise_changed(args) = self.Changed.__send__(:dispatch, self, args)
+    end
+    first = owner.new
+    second = owner.new
+    seen = []
+    first.Changed.add { |sender, args| seen << [sender.equal?(first), args.equal?(CNA::Runtime::EventArgs::Empty)] }
+    second.raise_changed(CNA::Runtime::EventArgs::Empty)
+    isolated = seen.empty?
+    first.raise_changed(CNA::Runtime::EventArgs::Empty)
+    [first.Changed.equal?(second.Changed), first.Changed.equal?(first.Changed), isolated, seen,
+     owner.xna_event_identities.map(&:to_s)]
+  when "TouchPanelCapabilities.Contract"
+    name = "Microsoft.Xna.Framework.Input.Touch.TouchPanelCapabilities"
+    pinned = BATCH_REFERENCE.fetch(name)
+    selected = BATCH_SIGNATURES.fetch(name)
+    [pinned.fetch("kind"), pinned.fetch("baseType"), pinned.fetch("sealed"),
+     pinned.fetch("members").length,
+     pinned.fetch("members").map do |member|
+       [member.fetch("name"), member.fetch("type"), member.fetch("get"), member.fetch("set")]
+     end,
+     selected.fetch("members").any? { |member| member.fetch("kind") == "constructor" }]
+  when "TouchPanelCapabilities.DefaultValue"
+    capabilities = TOUCH::TouchPanelCapabilities.new
+    copy = capabilities.dup
+    [
+      capabilities.IsConnected,
+      capabilities.MaximumTouchCount,
+      capabilities.instance_of?(TOUCH::TouchPanelCapabilities),
+      (TOUCH::TouchPanelCapabilities.public_instance_methods(false) - %i[dup clone]).map(&:to_s).sort,
+      capabilities.respond_to?(:IsConnected=),
+      capabilities.equal?(copy),
+      copy.IsConnected == capabilities.IsConnected && copy.MaximumTouchCount == capabilities.MaximumTouchCount,
+      TOUCH::TouchPanelCapabilities.respond_to?(:GetCapabilities),
+      TOUCH.const_defined?(:TouchPanel, false)
+    ]
+  when "PureManagedEnum.Contract"
+    clr_name = item.fetch("args").fetch(0)
+    pinned = BATCH_REFERENCE.fetch(clr_name)
+    selected = BATCH_SIGNATURES.fetch(clr_name)
+    declared = pinned.fetch("members").reject { |member| member.fetch("name") == "value__" }
+    [pinned.fetch("kind"), pinned.fetch("underlyingType"), pinned.fetch("flags"),
+     declared.map { |member| [member.fetch("name"), Integer(member.fetch("value"))] },
+     declared.length,
+     pinned.fetch("members").length,
+     pinned.fetch("members").any? { |member| member.fetch("name") == "value__" },
+     selected.fetch("members").length,
+     selected.fetch("members").any? { |member| member.fetch("name") == "value__" }]
+  when "PureManagedEnum.RubyMapping"
+    clr_name = item.fetch("args").fetch(0)
+    type = batch_enum_type(clr_name)
+    members = BATCH_SIGNATURES.fetch(clr_name).fetch("members")
+    names = members.map { |member| member.fetch("name") }
+    raws = members.map { |member| Integer(member.fetch("value")) }
+    values = names.map { |name| type.const_get(name, false) }
+    mask = raws.reduce(0) { |accumulator, raw| accumulator | raw }
+    flags = type.instance_variable_get(:@enum_flags)
+    foreign = [G::DepthFormat::Depth24, G::SurfaceFormat::Color,
+               F::DisplayOrientation::Default, I::GamePadType::GamePad]
+    undefined = if flags
+                  [-1, mask + 1]
+                else
+                  ([-1, raws.max + 1] + (0..raws.max).to_a - raws).uniq
+                end
+    [
+      type.constants(false).map(&:to_s).sort,
+      values.map(&:to_i),
+      values.all? { |value| value.instance_of?(type) },
+      values.all?(&:frozen?),
+      raws.map { |raw| type.coerce(raw).to_i },
+      raws.map { |raw| type.coerce(raw).name },
+      values.map { |value| type.coerce(value).equal?(value) },
+      flags,
+      type.instance_variable_get(:@enum_mask),
+      values.map(&:to_s),
+      values.map(&:inspect),
+      [nil, true, false, 1.0, "1", :Literal, []].map { |bad| error_name { type.coerce(bad) } },
+      foreign.map { |value| error_name { type.coerce(value) } },
+      foreign.map { |value| values.first == value },
+      foreign.map { |value| values.first <=> value },
+      flags ? (values.first | values.last).to_i : error_name { values.first | values.last },
+      flags ? (values.first & values.last).to_i : error_name { values.first & values.last },
+      undefined.map { |raw| error_name { type.coerce(raw) } },
+      flags ? (0..mask).select { |raw| (raw & ~mask).zero? }.map { |raw| type.coerce(raw).to_i } : [],
+      type.public_instance_methods(false),
+      %i[ToString HasFlag Parse FromInt32 GetValues to_native].map { |name| values.first.respond_to?(name) }
     ]
   when "PrimitiveType.Contract"
     members = PRIMITIVE_TYPE_SIGNATURE.fetch("members")

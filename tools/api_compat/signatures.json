@@ -939,6 +939,762 @@
       "rubyName": "Microsoft::Xna::Framework::DisplayOrientation"
     },
     {
+      "name": "Microsoft.Xna.Framework.IGameComponent",
+      "kind": "interface",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": null,
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "Initialize",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::IGameComponent"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.IGraphicsDeviceManager",
+      "kind": "interface",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": null,
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "CreateDevice",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "BeginDraw",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "EndDraw",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::IGraphicsDeviceManager"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.IUpdateable",
+      "kind": "interface",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": null,
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "Update",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "gameTime",
+              "type": "Microsoft.Xna.Framework.GameTime",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Enabled",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "UpdateOrder",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "event",
+          "name": "EnabledChanged",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "UpdateOrderChanged",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::IUpdateable"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.IDrawable",
+      "kind": "interface",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": null,
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "Draw",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "gameTime",
+              "type": "Microsoft.Xna.Framework.GameTime",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Visible",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DrawOrder",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "event",
+          "name": "VisibleChanged",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "DrawOrderChanged",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::IDrawable"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.AudioChannels",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Mono",
+          "type": "Microsoft.Xna.Framework.Audio.AudioChannels",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "Stereo",
+          "type": "Microsoft.Xna.Framework.Audio.AudioChannels",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Audio::AudioChannels"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.AudioStopOptions",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "AsAuthored",
+          "type": "Microsoft.Xna.Framework.Audio.AudioStopOptions",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Immediate",
+          "type": "Microsoft.Xna.Framework.Audio.AudioStopOptions",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Audio::AudioStopOptions"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.MicrophoneState",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Started",
+          "type": "Microsoft.Xna.Framework.Audio.MicrophoneState",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Stopped",
+          "type": "Microsoft.Xna.Framework.Audio.MicrophoneState",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Audio::MicrophoneState"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.SoundState",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Playing",
+          "type": "Microsoft.Xna.Framework.Audio.SoundState",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Paused",
+          "type": "Microsoft.Xna.Framework.Audio.SoundState",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "Stopped",
+          "type": "Microsoft.Xna.Framework.Audio.SoundState",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Audio::SoundState"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.MediaSourceType",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "LocalDevice",
+          "type": "Microsoft.Xna.Framework.Media.MediaSourceType",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "WindowsMediaConnect",
+          "type": "Microsoft.Xna.Framework.Media.MediaSourceType",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Media::MediaSourceType"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.MediaState",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Paused",
+          "type": "Microsoft.Xna.Framework.Media.MediaState",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "Playing",
+          "type": "Microsoft.Xna.Framework.Media.MediaState",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "Stopped",
+          "type": "Microsoft.Xna.Framework.Media.MediaState",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Media::MediaState"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.VideoSoundtrackType",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Music",
+          "type": "Microsoft.Xna.Framework.Media.VideoSoundtrackType",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Dialog",
+          "type": "Microsoft.Xna.Framework.Media.VideoSoundtrackType",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "MusicAndDialog",
+          "type": "Microsoft.Xna.Framework.Media.VideoSoundtrackType",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Media::VideoSoundtrackType"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Invalid",
+          "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Released",
+          "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "Pressed",
+          "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "Moved",
+          "type": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
+          "static": true,
+          "constant": true,
+          "value": "3"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::Touch::TouchLocationState"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+      "kind": "enum",
+      "flags": true,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "None",
+          "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Tap",
+          "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "DoubleTap",
+          "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "Hold",
+          "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        },
+        {
+          "kind": "field",
+          "name": "HorizontalDrag",
+          "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+          "static": true,
+          "constant": true,
+          "value": "8"
+        },
+        {
+          "kind": "field",
+          "name": "VerticalDrag",
+          "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+          "static": true,
+          "constant": true,
+          "value": "16"
+        },
+        {
+          "kind": "field",
+          "name": "FreeDrag",
+          "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+          "static": true,
+          "constant": true,
+          "value": "32"
+        },
+        {
+          "kind": "field",
+          "name": "Pinch",
+          "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+          "static": true,
+          "constant": true,
+          "value": "64"
+        },
+        {
+          "kind": "field",
+          "name": "Flick",
+          "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+          "static": true,
+          "constant": true,
+          "value": "128"
+        },
+        {
+          "kind": "field",
+          "name": "DragComplete",
+          "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+          "static": true,
+          "constant": true,
+          "value": "256"
+        },
+        {
+          "kind": "field",
+          "name": "PinchComplete",
+          "type": "Microsoft.Xna.Framework.Input.Touch.GestureType",
+          "static": true,
+          "constant": true,
+          "value": "512"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::Touch::GestureType"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Input.Touch.TouchPanelCapabilities",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "property",
+          "name": "IsConnected",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MaximumTouchCount",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Input::Touch::TouchPanelCapabilities"
+    },
+    {
       "name": "Microsoft.Xna.Framework.Graphics.SpriteSortMode",
       "kind": "enum",
       "flags": false,
@@ -1199,6 +1955,1247 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::PrimitiveType"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "PositiveX",
+          "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "NegativeX",
+          "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "PositiveY",
+          "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "NegativeY",
+          "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+          "static": true,
+          "constant": true,
+          "value": "3"
+        },
+        {
+          "kind": "field",
+          "name": "PositiveZ",
+          "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        },
+        {
+          "kind": "field",
+          "name": "NegativeZ",
+          "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+          "static": true,
+          "constant": true,
+          "value": "5"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::CubeMapFace"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+      "kind": "enum",
+      "flags": true,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "None",
+          "type": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "WriteOnly",
+          "type": "Microsoft.Xna.Framework.Graphics.BufferUsage",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::BufferUsage"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.FillMode",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Solid",
+          "type": "Microsoft.Xna.Framework.Graphics.FillMode",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "WireFrame",
+          "type": "Microsoft.Xna.Framework.Graphics.FillMode",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::FillMode"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.IndexElementSize",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "SixteenBits",
+          "type": "Microsoft.Xna.Framework.Graphics.IndexElementSize",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "ThirtyTwoBits",
+          "type": "Microsoft.Xna.Framework.Graphics.IndexElementSize",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::IndexElementSize"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.CullMode",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "None",
+          "type": "Microsoft.Xna.Framework.Graphics.CullMode",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "CullClockwiseFace",
+          "type": "Microsoft.Xna.Framework.Graphics.CullMode",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "CullCounterClockwiseFace",
+          "type": "Microsoft.Xna.Framework.Graphics.CullMode",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::CullMode"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "DiscardContents",
+          "type": "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "PreserveContents",
+          "type": "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "PlatformContents",
+          "type": "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::RenderTargetUsage"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.SetDataOptions",
+      "kind": "enum",
+      "flags": true,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "None",
+          "type": "Microsoft.Xna.Framework.Graphics.SetDataOptions",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Discard",
+          "type": "Microsoft.Xna.Framework.Graphics.SetDataOptions",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "NoOverwrite",
+          "type": "Microsoft.Xna.Framework.Graphics.SetDataOptions",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::SetDataOptions"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Wrap",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Clamp",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "Mirror",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::TextureAddressMode"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.PresentInterval",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Default",
+          "type": "Microsoft.Xna.Framework.Graphics.PresentInterval",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "One",
+          "type": "Microsoft.Xna.Framework.Graphics.PresentInterval",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "Two",
+          "type": "Microsoft.Xna.Framework.Graphics.PresentInterval",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "Immediate",
+          "type": "Microsoft.Xna.Framework.Graphics.PresentInterval",
+          "static": true,
+          "constant": true,
+          "value": "3"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::PresentInterval"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Add",
+          "type": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Subtract",
+          "type": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "ReverseSubtract",
+          "type": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "Min",
+          "type": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+          "static": true,
+          "constant": true,
+          "value": "3"
+        },
+        {
+          "kind": "field",
+          "name": "Max",
+          "type": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::BlendFunction"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.EffectParameterClass",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Scalar",
+          "type": "Microsoft.Xna.Framework.Graphics.EffectParameterClass",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Vector",
+          "type": "Microsoft.Xna.Framework.Graphics.EffectParameterClass",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "Matrix",
+          "type": "Microsoft.Xna.Framework.Graphics.EffectParameterClass",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "Object",
+          "type": "Microsoft.Xna.Framework.Graphics.EffectParameterClass",
+          "static": true,
+          "constant": true,
+          "value": "3"
+        },
+        {
+          "kind": "field",
+          "name": "Struct",
+          "type": "Microsoft.Xna.Framework.Graphics.EffectParameterClass",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::EffectParameterClass"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+      "kind": "enum",
+      "flags": true,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "None",
+          "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Red",
+          "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "Green",
+          "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "Blue",
+          "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        },
+        {
+          "kind": "field",
+          "name": "Alpha",
+          "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+          "static": true,
+          "constant": true,
+          "value": "8"
+        },
+        {
+          "kind": "field",
+          "name": "All",
+          "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+          "static": true,
+          "constant": true,
+          "value": "15"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::ColorWriteChannels"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Always",
+          "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Never",
+          "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "Less",
+          "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "LessEqual",
+          "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+          "static": true,
+          "constant": true,
+          "value": "3"
+        },
+        {
+          "kind": "field",
+          "name": "Equal",
+          "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        },
+        {
+          "kind": "field",
+          "name": "GreaterEqual",
+          "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+          "static": true,
+          "constant": true,
+          "value": "5"
+        },
+        {
+          "kind": "field",
+          "name": "Greater",
+          "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+          "static": true,
+          "constant": true,
+          "value": "6"
+        },
+        {
+          "kind": "field",
+          "name": "NotEqual",
+          "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+          "static": true,
+          "constant": true,
+          "value": "7"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::CompareFunction"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Keep",
+          "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Zero",
+          "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "Replace",
+          "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "Increment",
+          "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+          "static": true,
+          "constant": true,
+          "value": "3"
+        },
+        {
+          "kind": "field",
+          "name": "Decrement",
+          "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        },
+        {
+          "kind": "field",
+          "name": "IncrementSaturation",
+          "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+          "static": true,
+          "constant": true,
+          "value": "5"
+        },
+        {
+          "kind": "field",
+          "name": "DecrementSaturation",
+          "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+          "static": true,
+          "constant": true,
+          "value": "6"
+        },
+        {
+          "kind": "field",
+          "name": "Invert",
+          "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+          "static": true,
+          "constant": true,
+          "value": "7"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::StencilOperation"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Linear",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Point",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "Anisotropic",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "LinearMipPoint",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+          "static": true,
+          "constant": true,
+          "value": "3"
+        },
+        {
+          "kind": "field",
+          "name": "PointMipLinear",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        },
+        {
+          "kind": "field",
+          "name": "MinLinearMagPointMipLinear",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+          "static": true,
+          "constant": true,
+          "value": "5"
+        },
+        {
+          "kind": "field",
+          "name": "MinLinearMagPointMipPoint",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+          "static": true,
+          "constant": true,
+          "value": "6"
+        },
+        {
+          "kind": "field",
+          "name": "MinPointMagLinearMipLinear",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+          "static": true,
+          "constant": true,
+          "value": "7"
+        },
+        {
+          "kind": "field",
+          "name": "MinPointMagLinearMipPoint",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+          "static": true,
+          "constant": true,
+          "value": "8"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::TextureFilter"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.EffectParameterType",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "Void",
+          "type": "Microsoft.Xna.Framework.Graphics.EffectParameterType",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Bool",
+          "type": "Microsoft.Xna.Framework.Graphics.EffectParameterType",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "Int32",
+          "type": "Microsoft.Xna.Framework.Graphics.EffectParameterType",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "Single",
+          "type": "Microsoft.Xna.Framework.Graphics.EffectParameterType",
+          "static": true,
+          "constant": true,
+          "value": "3"
+        },
+        {
+          "kind": "field",
+          "name": "String",
+          "type": "Microsoft.Xna.Framework.Graphics.EffectParameterType",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        },
+        {
+          "kind": "field",
+          "name": "Texture",
+          "type": "Microsoft.Xna.Framework.Graphics.EffectParameterType",
+          "static": true,
+          "constant": true,
+          "value": "5"
+        },
+        {
+          "kind": "field",
+          "name": "Texture1D",
+          "type": "Microsoft.Xna.Framework.Graphics.EffectParameterType",
+          "static": true,
+          "constant": true,
+          "value": "6"
+        },
+        {
+          "kind": "field",
+          "name": "Texture2D",
+          "type": "Microsoft.Xna.Framework.Graphics.EffectParameterType",
+          "static": true,
+          "constant": true,
+          "value": "7"
+        },
+        {
+          "kind": "field",
+          "name": "Texture3D",
+          "type": "Microsoft.Xna.Framework.Graphics.EffectParameterType",
+          "static": true,
+          "constant": true,
+          "value": "8"
+        },
+        {
+          "kind": "field",
+          "name": "TextureCube",
+          "type": "Microsoft.Xna.Framework.Graphics.EffectParameterType",
+          "static": true,
+          "constant": true,
+          "value": "9"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::EffectParameterType"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.Blend",
+      "kind": "enum",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": "System.Int32",
+      "baseType": "System.Enum",
+      "interfaces": [
+        "System.IComparable",
+        "System.IConvertible",
+        "System.IFormattable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "field",
+          "name": "One",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": true,
+          "constant": true,
+          "value": "0"
+        },
+        {
+          "kind": "field",
+          "name": "Zero",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": true,
+          "constant": true,
+          "value": "1"
+        },
+        {
+          "kind": "field",
+          "name": "SourceColor",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": true,
+          "constant": true,
+          "value": "2"
+        },
+        {
+          "kind": "field",
+          "name": "InverseSourceColor",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": true,
+          "constant": true,
+          "value": "3"
+        },
+        {
+          "kind": "field",
+          "name": "SourceAlpha",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": true,
+          "constant": true,
+          "value": "4"
+        },
+        {
+          "kind": "field",
+          "name": "InverseSourceAlpha",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": true,
+          "constant": true,
+          "value": "5"
+        },
+        {
+          "kind": "field",
+          "name": "DestinationColor",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": true,
+          "constant": true,
+          "value": "6"
+        },
+        {
+          "kind": "field",
+          "name": "InverseDestinationColor",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": true,
+          "constant": true,
+          "value": "7"
+        },
+        {
+          "kind": "field",
+          "name": "DestinationAlpha",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": true,
+          "constant": true,
+          "value": "8"
+        },
+        {
+          "kind": "field",
+          "name": "InverseDestinationAlpha",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": true,
+          "constant": true,
+          "value": "9"
+        },
+        {
+          "kind": "field",
+          "name": "BlendFactor",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": true,
+          "constant": true,
+          "value": "10"
+        },
+        {
+          "kind": "field",
+          "name": "InverseBlendFactor",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": true,
+          "constant": true,
+          "value": "11"
+        },
+        {
+          "kind": "field",
+          "name": "SourceAlphaSaturation",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": true,
+          "constant": true,
+          "value": "12"
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::Blend"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.IEffectMatrices",
+      "kind": "interface",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": null,
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "property",
+          "name": "World",
+          "type": "Microsoft.Xna.Framework.Matrix",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "View",
+          "type": "Microsoft.Xna.Framework.Matrix",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Projection",
+          "type": "Microsoft.Xna.Framework.Matrix",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::IEffectMatrices"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.IEffectFog",
+      "kind": "interface",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": null,
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "property",
+          "name": "FogEnabled",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "FogStart",
+          "type": "System.Single",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "FogEnd",
+          "type": "System.Single",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "FogColor",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::IEffectFog"
     },
     {
       "name": "Microsoft.Xna.Framework.Graphics.SurfaceFormat",

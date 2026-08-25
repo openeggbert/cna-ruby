@@ -485,7 +485,276 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     refute viewport.public_method_defined?(:unproject)
   end
 
+  def test_foundation16_batch_rbs_projects_every_enum_identity_in_pinned_order
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    batch = contract.fetch("types").select do |type|
+      type.fetch("kind") == "enum" && FOUNDATION16_BATCH.include?(type.fetch("name"))
+    end
+    assert_equal FOUNDATION16_BATCH.length, batch.length
+    assert_equal 109, batch.sum { |type| type.fetch("members").length }
+
+    sources = {
+      "Audio" => SIGNATURE_ROOT.join("microsoft", "xna", "audio.rbs").read,
+      "Media" => SIGNATURE_ROOT.join("microsoft", "xna", "media.rbs").read,
+      "Graphics" => SIGNATURE_ROOT.join("microsoft", "xna", "framework", "graphics.rbs").read
+    }
+
+    batch.each do |type|
+      name = type.fetch("name")
+      short = name.split(".").last
+      namespace = name.split(".")[3]
+      source = sources.fetch(namespace)
+      match = source.match(/^        class #{short}\n(?<body>.*?)^        end$/m)
+      refute_nil match, name
+      section = match[:body]
+
+      declared = section.lines.filter_map { |line| line[/\A\s+(\w+): /, 1] }
+      assert_equal type.fetch("members").map { |member| member.fetch("name") }, declared, name
+      declared.each { |literal| assert_includes section, "#{literal}: #{short}" }
+      refute_includes section, "untyped"
+      refute_includes section, "value__"
+      refute_match(/\*\w*/, section)
+      refute_includes section, "def ToString"
+      refute_includes section, "def Parse"
+
+      if type.fetch("flags")
+        assert_includes section, "def |: (#{short} other) -> #{short}", name
+        assert_includes section, "def &: (#{short} other) -> #{short}", name
+      else
+        refute_includes section, "def |:", name
+        refute_includes section, "def &:", name
+      end
+    end
+  end
+
+  def test_foundation18_interface_contracts_rbs_declares_every_projection
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    names = %w[
+      Microsoft.Xna.Framework.IGameComponent
+      Microsoft.Xna.Framework.IGraphicsDeviceManager
+      Microsoft.Xna.Framework.Graphics.IEffectMatrices
+      Microsoft.Xna.Framework.Graphics.IEffectFog
+    ]
+    selected = contract.fetch("types").select { |type| names.include?(type.fetch("name")) }
+    assert_equal 4, selected.length
+    assert_equal 11, selected.sum { |type| type.fetch("members").length }
+    assert(selected.all? { |type| type.fetch("kind") == "interface" })
+
+    environment = load_environment
+    selected.each do |type|
+      name = "::#{type.fetch("rubyName")}"
+      _key, entry = environment.class_decls.find { |candidate, _value| candidate.to_s == name }
+      refute_nil entry, name
+      declaration = entry.decls.first.decl
+      assert_instance_of RBS::AST::Declarations::Module, declaration, name
+
+      declared = declaration.members.flat_map do |member|
+        case member
+        when RBS::AST::Members::MethodDefinition then [member.name]
+        when RBS::AST::Members::AttrAccessor then [member.name, :"#{member.name}="]
+        when RBS::AST::Members::AttrReader then [member.name]
+        when RBS::AST::Members::AttrWriter then [:"#{member.name}="]
+        else []
+        end
+      end
+
+      expected = type.fetch("members").flat_map do |member|
+        case member.fetch("kind")
+        when "method" then [member.fetch("name").to_sym]
+        when "property"
+          [member.fetch("name").to_sym,
+           (member.fetch("set") ? :"#{member.fetch("name")}=" : nil)].compact
+        else []
+        end
+      end
+      assert_equal expected.sort, declared.sort, name
+
+      runtime_type = resolve_constant(name)
+      assert_instance_of Module, runtime_type
+      declared.each { |method| assert runtime_type.method_defined?(method), "#{name}##{method}" }
+    end
+
+    source = SIGNATURE_ROOT.join("microsoft", "xna", "interfaces.rbs").read
+    refute_includes source, "untyped"
+    %w[IEffectLights IEffectSkinning IGraphicsDeviceService].each do |absent|
+      refute_includes source, "module #{absent}\n"
+    end
+  end
+
+  # Foundation 20 — the two event-bearing interfaces. Every CLR event declares exactly one Ruby
+  # event reader in RBS, returning the generic subscription primitive; no add_/remove_ pair and no
+  # writer is declared anywhere.
+  def test_foundation20_event_interfaces_rbs_declares_one_reader_per_event
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    names = %w[Microsoft.Xna.Framework.IUpdateable Microsoft.Xna.Framework.IDrawable]
+    selected = contract.fetch("types").select { |type| names.include?(type.fetch("name")) }
+    assert_equal 2, selected.length
+    assert_equal 10, selected.sum { |type| type.fetch("members").length }
+    assert_equal 4, selected.sum { |type| type.fetch("members").count { |member| member.fetch("kind") == "event" } }
+
+    environment = load_environment
+    selected.each do |type|
+      name = "::#{type.fetch("rubyName")}"
+      _key, entry = environment.class_decls.find { |candidate, _value| candidate.to_s == name }
+      refute_nil entry, name
+      declaration = entry.decls.first.decl
+      assert_instance_of RBS::AST::Declarations::Module, declaration, name
+
+      declared = declaration.members.flat_map do |member|
+        case member
+        when RBS::AST::Members::MethodDefinition then [member.name]
+        when RBS::AST::Members::AttrAccessor then [member.name, :"#{member.name}="]
+        when RBS::AST::Members::AttrReader then [member.name]
+        when RBS::AST::Members::AttrWriter then [:"#{member.name}="]
+        else []
+        end
+      end
+
+      expected = type.fetch("members").flat_map do |member|
+        case member.fetch("kind")
+        when "method", "event" then [member.fetch("name").to_sym]
+        when "property"
+          [member.fetch("name").to_sym,
+           (member.fetch("set") ? :"#{member.fetch("name")}=" : nil)].compact
+        else []
+        end
+      end
+      assert_equal expected.sort, declared.sort, name
+
+      runtime_type = resolve_constant(name)
+      assert_instance_of Module, runtime_type
+      declared.each { |method| assert runtime_type.method_defined?(method), "#{name}##{method}" }
+
+      type.fetch("members").select { |member| member.fetch("kind") == "event" }.each do |member|
+        identity = member.fetch("name").to_sym
+        definition = declaration.members.find do |candidate|
+          candidate.is_a?(RBS::AST::Members::MethodDefinition) && candidate.name == identity
+        end
+        refute_nil definition, "#{name}##{identity}"
+        assert_equal "::CNA::Runtime::Event", definition.overloads.first.method_type.type.return_type.to_s
+        refute_includes declared, :"#{identity}=", "#{name}##{identity}="
+        refute_includes declared, :"add_#{identity}", "#{name}#add_#{identity}"
+        refute_includes declared, :"remove_#{identity}", "#{name}#remove_#{identity}"
+      end
+    end
+
+    runtime = SIGNATURE_ROOT.join("cna", "runtime_event.rbs").read
+    assert_includes runtime, "class Event"
+    assert_includes runtime, "class EventArgs"
+    assert_includes runtime, "Empty: EventArgs"
+    %w[emit fire trigger subscribe unsubscribe clear].each do |absent|
+      refute_includes runtime, "def #{absent}:", absent
+    end
+  end
+
+  def test_foundation17_touch_closure_rbs_matches_the_pinned_contract
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    names = %w[TouchLocationState GestureType TouchPanelCapabilities]
+             .map { |short| "Microsoft.Xna.Framework.Input.Touch.#{short}" }
+    selected = contract.fetch("types").select { |type| names.include?(type.fetch("name")) }
+    assert_equal 3, selected.length
+    assert_equal 17, selected.sum { |type| type.fetch("members").length }
+
+    source = SIGNATURE_ROOT.join("microsoft", "xna", "touch.rbs").read
+    selected.each do |type|
+      short = type.fetch("name").split(".").last
+      match = source.match(/^          class #{short}\n(?<body>.*?)^          end$/m)
+      refute_nil match, short
+      section = match[:body]
+      refute_includes section, "untyped"
+
+      if type.fetch("kind") == "enum"
+        declared = section.lines.filter_map { |line| line[/\A\s+(\w+): /, 1] }
+        assert_equal type.fetch("members").map { |member| member.fetch("name") }, declared, short
+        if type.fetch("flags")
+          assert_includes section, "def |: (#{short} other) -> #{short}"
+        else
+          refute_includes section, "def |:"
+        end
+      else
+        assert_includes section, "attr_reader IsConnected: bool"
+        assert_includes section, "attr_reader MaximumTouchCount: Integer"
+        refute_includes section, "attr_accessor"
+        refute_includes section, "attr_writer"
+        refute_includes section, "def initialize"
+      end
+    end
+
+    # The rest of the Touch family stays out of the signatures entirely. TouchPanel is a prefix of
+    # the selected TouchPanelCapabilities, so absence is asserted per declaration.
+    %w[TouchPanel TouchCollection TouchLocation GestureSample].each do |absent|
+      refute_includes source, "class #{absent}\n"
+    end
+
+    environment = load_environment
+    declared = environment.class_decls.keys.map(&:to_s)
+                          .select { |name| name.start_with?("::Microsoft::Xna::Framework::Input::Touch::") }
+    assert_equal names.map { |name| "::#{name.split(".").join("::")}" }.sort, declared.sort
+    declared.each { |name| refute_nil resolve_constant(name) }
+  end
+
+  def test_foundation16_audio_and_media_signatures_declare_only_selected_enums
+    environment = load_environment
+    {"::Microsoft::Xna::Framework::Audio" => %w[AudioChannels AudioStopOptions MicrophoneState SoundState],
+     "::Microsoft::Xna::Framework::Media" => %w[MediaSourceType MediaState VideoSoundtrackType]}.each do |namespace, expected|
+      declared = environment.class_decls.keys.map(&:to_s).select { |name| name.start_with?("#{namespace}::") }
+      assert_equal expected.map { |name| "#{namespace}::#{name}" }.sort, declared.sort
+      declared.each do |name|
+        runtime_type = resolve_constant(name)
+        assert_operator runtime_type, :<, CNA::Runtime::EnumValue, name
+      end
+    end
+
+    # Substring checks would match the selected MicrophoneState literal, so assert on declarations.
+    %w[SoundEffect Microphone AudioEngine WaveBank SoundBank Cue MediaPlayer MediaLibrary
+       Song Album Video VideoPlayer Playlist].each do |absent|
+      %w[audio.rbs media.rbs].each do |file|
+        refute_includes SIGNATURE_ROOT.join("microsoft", "xna", file).read, "class #{absent}\n"
+      end
+    end
+  end
+
+  def test_foundation16_batch_adds_no_deferred_renderer_or_device_signature
+    source = SIGNATURE_ROOT.join("microsoft", "xna", "framework", "graphics.rbs").read
+    # TextureCube is a declared EffectParameterType literal, so absence is asserted per declaration.
+    %w[RenderTarget2D RenderTargetCube TextureCube Texture3D VertexBuffer IndexBuffer
+       VertexDeclaration BlendState DepthStencilState RasterizerState SamplerState Effect
+       BasicEffect GraphicsAdapter PresentationParameters DisplayMode].each do |absent|
+      refute_includes source, "class #{absent}\n"
+      refute_includes source, "class #{absent} <"
+    end
+    %w[SetRenderTarget SetRenderTargets DrawPrimitives DrawIndexedPrimitives GetRenderTargets]
+      .each { |absent| refute_includes source, absent }
+  end
+
   private
+
+  FOUNDATION16_BATCH = %w[
+    Microsoft.Xna.Framework.Audio.AudioChannels
+    Microsoft.Xna.Framework.Audio.AudioStopOptions
+    Microsoft.Xna.Framework.Audio.MicrophoneState
+    Microsoft.Xna.Framework.Audio.SoundState
+    Microsoft.Xna.Framework.Graphics.Blend
+    Microsoft.Xna.Framework.Graphics.BlendFunction
+    Microsoft.Xna.Framework.Graphics.BufferUsage
+    Microsoft.Xna.Framework.Graphics.ColorWriteChannels
+    Microsoft.Xna.Framework.Graphics.CompareFunction
+    Microsoft.Xna.Framework.Graphics.CubeMapFace
+    Microsoft.Xna.Framework.Graphics.CullMode
+    Microsoft.Xna.Framework.Graphics.EffectParameterClass
+    Microsoft.Xna.Framework.Graphics.EffectParameterType
+    Microsoft.Xna.Framework.Graphics.FillMode
+    Microsoft.Xna.Framework.Graphics.IndexElementSize
+    Microsoft.Xna.Framework.Graphics.PresentInterval
+    Microsoft.Xna.Framework.Graphics.RenderTargetUsage
+    Microsoft.Xna.Framework.Graphics.SetDataOptions
+    Microsoft.Xna.Framework.Graphics.StencilOperation
+    Microsoft.Xna.Framework.Graphics.TextureAddressMode
+    Microsoft.Xna.Framework.Graphics.TextureFilter
+    Microsoft.Xna.Framework.Media.MediaSourceType
+    Microsoft.Xna.Framework.Media.MediaState
+    Microsoft.Xna.Framework.Media.VideoSoundtrackType
+  ].freeze
 
   def load_environment
     loader = RBS::EnvironmentLoader.new

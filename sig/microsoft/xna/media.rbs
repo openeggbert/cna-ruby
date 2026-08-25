@@ -1,0 +1,24 @@
+module Microsoft
+  module Xna
+    module Framework
+      module Media
+        class MediaState
+          Paused: MediaState
+          Playing: MediaState
+          Stopped: MediaState
+        end
+
+        class MediaSourceType
+          LocalDevice: MediaSourceType
+          WindowsMediaConnect: MediaSourceType
+        end
+
+        class VideoSoundtrackType
+          Music: VideoSoundtrackType
+          Dialog: VideoSoundtrackType
+          MusicAndDialog: VideoSoundtrackType
+        end
+      end
+    end
+  end
+end

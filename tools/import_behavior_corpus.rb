@@ -106,9 +106,39 @@ unless primitive_type["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
   abort "Milestone 15 PrimitiveType evidence lacks observation-level provenance"
 end
 observations.concat(primitive_type.fetch("observations"))
+batch_path = File.expand_path("../behavior/xna40-pure-managed-enum-batch-values.json", __dir__)
+batch = JSON.parse(File.read(batch_path))
+unless batch["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
+  abort "Milestone 16 pure managed enum batch evidence lacks observation-level provenance"
+end
+observations.concat(batch.fetch("observations"))
+touch_path = File.expand_path("../behavior/xna40-touch-closure-values.json", __dir__)
+touch = JSON.parse(File.read(touch_path))
+unless touch["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
+  abort "Milestone 17 Input.Touch closure evidence lacks observation-level provenance"
+end
+observations.concat(touch.fetch("observations"))
+interfaces_path = File.expand_path("../behavior/xna40-interface-contract-values.json", __dir__)
+interfaces = JSON.parse(File.read(interfaces_path))
+unless interfaces["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
+  abort "Milestone 18 interface contract evidence lacks observation-level provenance"
+end
+observations.concat(interfaces.fetch("observations"))
+events_path = File.expand_path("../behavior/xna40-event-projection-values.json", __dir__)
+events = JSON.parse(File.read(events_path))
+unless events["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
+  abort "Milestone 20 event projection evidence lacks observation-level provenance"
+end
+observations.concat(events.fetch("observations"))
+bcl_path = File.expand_path("../behavior/xna40-bcl-projection-values.json", __dir__)
+bcl = JSON.parse(File.read(bcl_path))
+unless bcl["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
+  abort "Milestone 21 BCL projection evidence lacks observation-level provenance"
+end
+observations.concat(bcl.fetch("observations"))
 abort "duplicate behavior observation id" unless observations.map { |item| item.fetch("id") }.uniq.length == observations.length
 result = source_corpus.merge(
-  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, and PrimitiveType separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, and the Foundation 21 BCL projection separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category" => "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256" => EXPECTED_SHA256,
   "milestone3SourceAssemblySha256" => milestone.fetch("sourceAssemblySha256"),
@@ -124,6 +154,17 @@ result = source_corpus.merge(
   "milestone13SourceAssemblySha256" => clear_options.fetch("sourceAssemblySha256"),
   "milestone14SourceAssemblySha256" => depth_format.fetch("sourceAssemblySha256"),
   "milestone15SourceAssemblySha256" => primitive_type.fetch("sourceAssemblySha256"),
+  "milestone16SourceAssemblySha256" => batch.fetch("sourceAssemblySha256"),
+  "milestone17SourceAssemblySha256" => touch.fetch("sourceAssemblySha256"),
+  "milestone18SourceAssemblySha256" => interfaces.fetch("sourceAssemblySha256"),
+  "milestone20SourceAssemblySha256" => events.fetch("sourceAssemblySha256"),
+  "milestone21SourceAssemblySha256" => bcl.fetch("sourceAssemblySha256"),
+  # Foundation 16 was merged by documented deterministic replay because this reconstructed host
+  # does not carry the upstream source. Re-running this importer with the real source restores the
+  # same observation set; it must not be run against any other artifact.
+  "milestone16MergeMethod" => "deterministic replay; upstream source #{EXPECTED_SHA256} is absent from this reconstructed host, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus was proved before appending",
+  "milestone20MergeMethod" => "deterministic replay; upstream source #{EXPECTED_SHA256} is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 fc87b85cebf2c09de2b0a2ca33051d466f16c87ed57119165ba717c9ff2e3b21, 339 observations) was proved before appending 16 additive observations",
+  "milestone21MergeMethod" => "deterministic replay; upstream source #{EXPECTED_SHA256} is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 fab5788ffbaa551b5f3ca6d4381c2c7a64a620810513ff796cad44ce805abb8f, 355 observations) was proved before appending 11 additive observations",
   "observations" => observations
 )
 destination = File.expand_path("../behavior/xna40-foundation-values.json", __dir__)

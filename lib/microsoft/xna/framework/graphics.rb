@@ -47,6 +47,201 @@ module Microsoft
           })
         end
 
+        class CubeMapFace < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "PositiveX" => 0,
+            "NegativeX" => 1,
+            "PositiveY" => 2,
+            "NegativeY" => 3,
+            "PositiveZ" => 4,
+            "NegativeZ" => 5
+          })
+        end
+
+        class BufferUsage < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "None" => 0,
+            "WriteOnly" => 1
+          }, flags: true)
+        end
+
+        class FillMode < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "Solid" => 0,
+            "WireFrame" => 1
+          })
+        end
+
+        class IndexElementSize < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "SixteenBits" => 0,
+            "ThirtyTwoBits" => 1
+          })
+        end
+
+        class CullMode < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "None" => 0,
+            "CullClockwiseFace" => 1,
+            "CullCounterClockwiseFace" => 2
+          })
+        end
+
+        class RenderTargetUsage < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "DiscardContents" => 0,
+            "PreserveContents" => 1,
+            "PlatformContents" => 2
+          })
+        end
+
+        class SetDataOptions < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "None" => 0,
+            "Discard" => 1,
+            "NoOverwrite" => 2
+          }, flags: true)
+        end
+
+        class TextureAddressMode < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "Wrap" => 0,
+            "Clamp" => 1,
+            "Mirror" => 2
+          })
+        end
+
+        # XNA declares One = 0 and Zero = 1; the names do not mirror the raw values.
+        # Abstract effect contracts. No Effect, BasicEffect or shader type exists in this
+        # foundation; these are the declared XNA interface members and nothing more.
+        module IEffectMatrices
+          def World = raise(NotImplementedError, "IEffectMatrices#World")
+          def World=(_value)
+            raise NotImplementedError, "IEffectMatrices#World="
+          end
+          def View = raise(NotImplementedError, "IEffectMatrices#View")
+          def View=(_value)
+            raise NotImplementedError, "IEffectMatrices#View="
+          end
+          def Projection = raise(NotImplementedError, "IEffectMatrices#Projection")
+          def Projection=(_value)
+            raise NotImplementedError, "IEffectMatrices#Projection="
+          end
+        end
+
+        module IEffectFog
+          def FogEnabled = raise(NotImplementedError, "IEffectFog#FogEnabled")
+          def FogEnabled=(_value)
+            raise NotImplementedError, "IEffectFog#FogEnabled="
+          end
+          def FogStart = raise(NotImplementedError, "IEffectFog#FogStart")
+          def FogStart=(_value)
+            raise NotImplementedError, "IEffectFog#FogStart="
+          end
+          def FogEnd = raise(NotImplementedError, "IEffectFog#FogEnd")
+          def FogEnd=(_value)
+            raise NotImplementedError, "IEffectFog#FogEnd="
+          end
+          def FogColor = raise(NotImplementedError, "IEffectFog#FogColor")
+          def FogColor=(_value)
+            raise NotImplementedError, "IEffectFog#FogColor="
+          end
+        end
+
+        class Blend < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "One" => 0, "Zero" => 1, "SourceColor" => 2, "InverseSourceColor" => 3,
+            "SourceAlpha" => 4, "InverseSourceAlpha" => 5, "DestinationColor" => 6,
+            "InverseDestinationColor" => 7, "DestinationAlpha" => 8,
+            "InverseDestinationAlpha" => 9, "BlendFactor" => 10,
+            "InverseBlendFactor" => 11, "SourceAlphaSaturation" => 12
+          })
+        end
+
+        class BlendFunction < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "Add" => 0,
+            "Subtract" => 1,
+            "ReverseSubtract" => 2,
+            "Min" => 3,
+            "Max" => 4
+          })
+        end
+
+        class ColorWriteChannels < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "None" => 0, "Red" => 1, "Green" => 2, "Blue" => 4, "Alpha" => 8, "All" => 15
+          }, flags: true)
+        end
+
+        class CompareFunction < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "Always" => 0, "Never" => 1, "Less" => 2, "LessEqual" => 3,
+            "Equal" => 4, "GreaterEqual" => 5, "Greater" => 6, "NotEqual" => 7
+          })
+        end
+
+        class EffectParameterClass < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "Scalar" => 0,
+            "Vector" => 1,
+            "Matrix" => 2,
+            "Object" => 3,
+            "Struct" => 4
+          })
+        end
+
+        class EffectParameterType < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "Void" => 0, "Bool" => 1, "Int32" => 2, "Single" => 3, "String" => 4,
+            "Texture" => 5, "Texture1D" => 6, "Texture2D" => 7, "Texture3D" => 8,
+            "TextureCube" => 9
+          })
+        end
+
+        class PresentInterval < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "Default" => 0,
+            "One" => 1,
+            "Two" => 2,
+            "Immediate" => 3
+          })
+        end
+
+        class StencilOperation < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "Keep" => 0, "Zero" => 1, "Replace" => 2, "Increment" => 3,
+            "Decrement" => 4, "IncrementSaturation" => 5,
+            "DecrementSaturation" => 6, "Invert" => 7
+          })
+        end
+
+        class TextureFilter < CNA::Runtime::EnumValue
+          extend CNA::Runtime::EnumType
+          define_values({
+            "Linear" => 0, "Point" => 1, "Anisotropic" => 2, "LinearMipPoint" => 3,
+            "PointMipLinear" => 4, "MinLinearMagPointMipLinear" => 5,
+            "MinLinearMagPointMipPoint" => 6, "MinPointMagLinearMipLinear" => 7,
+            "MinPointMagLinearMipPoint" => 8
+          })
+        end
+
         class SurfaceFormat < CNA::Runtime::EnumValue
           extend CNA::Runtime::EnumType
           define_values({

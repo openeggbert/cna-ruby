@@ -15,6 +15,10 @@ expected_members = reference_types.sum do |type|
   type.fetch("members").count { |member| !(type["kind"] == "enum" && member["name"] == "value__") }
 end
 target_members = target.fetch("types").sum { |type| type.fetch("members").length }
+event_members = target.fetch("types").flat_map do |type|
+  type.fetch("members").select { |member| member["kind"] == "event" }.map { |member| "#{type.fetch("name")}::#{member.fetch("name")}" }
+end
+event_owners = target.fetch("types").count { |type| type.fetch("members").any? { |member| member["kind"] == "event" } }
 total = result.counts.values.sum
 report = {
   "schemaVersion" => 1,
@@ -29,8 +33,18 @@ report = {
   "COMPLETE_TYPES" => result.complete_types.length,
   "PARTIAL_TYPES" => result.partial_types.length,
   "MISSING_TYPES" => result.missing_types.length,
-  "ALLOWLIST_ENTRIES" => 0
+  "ALLOWLIST_ENTRIES" => 0,
+  "EVENT_IDENTITIES" => event_members.length,
+  "EVENT_OWNER_TYPES" => event_owners,
+  "EVENT_SUPPORT_TYPE" => CNAApiCompat::EVENT_SUPPORT_TYPE,
+  "BCL_PROJECTED_IDENTITIES" => CNA::Runtime::BclProjection.identities.length,
+  "BCL_EXCEPTION_BASES" => CNA::Runtime::BclProjection::EXCEPTION_BASES.length
 }.merge(result.counts).merge(
+  "eventIdentities" => event_members,
+  "bclProjection" => {
+    "types" => CNA::Runtime::BclProjection::TYPES,
+    "exceptionBases" => CNA::Runtime::BclProjection::EXCEPTION_BASES
+  },
   "completeTypeNames" => result.complete_types,
   "partialTypes" => result.partial_types,
   "missingTypeNames" => result.missing_types,

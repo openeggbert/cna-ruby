@@ -1,0 +1,316 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+  "derivation": "Foundation 18 interface contracts. Contract rows are read from the pinned XNA 4.0 Windows metadata. Mapping rows are derived from the documented abstract-module projection policy applied to that metadata; neither is snapshotted from the cna-ruby implementation.",
+  "observations": [
+    {
+      "id": "interface_contract.game_component.contract",
+      "operation": "InterfaceContract.Contract",
+      "args": [
+        "Microsoft.Xna.Framework.IGameComponent"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "interface",
+        null,
+        [
+
+        ],
+        1,
+        [
+          [
+            "Initialize",
+            "method",
+            null,
+            null,
+            0
+          ]
+        ],
+        0
+      ]
+    },
+    {
+      "id": "interface_contract.game_component.ruby_mapping",
+      "operation": "InterfaceContract.RubyMapping",
+      "args": [
+        "Microsoft.Xna.Framework.IGameComponent"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        false,
+        [
+          "Initialize"
+        ],
+        [
+          "NotImplementedError"
+        ],
+        [
+          "IGameComponent#Initialize"
+        ],
+        [
+
+        ],
+        [
+
+        ],
+        false
+      ]
+    },
+    {
+      "id": "interface_contract.graphics_device_manager.contract",
+      "operation": "InterfaceContract.Contract",
+      "args": [
+        "Microsoft.Xna.Framework.IGraphicsDeviceManager"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "interface",
+        null,
+        [
+
+        ],
+        3,
+        [
+          [
+            "CreateDevice",
+            "method",
+            null,
+            null,
+            0
+          ],
+          [
+            "BeginDraw",
+            "method",
+            null,
+            null,
+            0
+          ],
+          [
+            "EndDraw",
+            "method",
+            null,
+            null,
+            0
+          ]
+        ],
+        0
+      ]
+    },
+    {
+      "id": "interface_contract.graphics_device_manager.ruby_mapping",
+      "operation": "InterfaceContract.RubyMapping",
+      "args": [
+        "Microsoft.Xna.Framework.IGraphicsDeviceManager"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        false,
+        [
+          "BeginDraw",
+          "CreateDevice",
+          "EndDraw"
+        ],
+        [
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError"
+        ],
+        [
+          "IGraphicsDeviceManager#BeginDraw",
+          "IGraphicsDeviceManager#CreateDevice",
+          "IGraphicsDeviceManager#EndDraw"
+        ],
+        [
+
+        ],
+        [
+
+        ],
+        false
+      ]
+    },
+    {
+      "id": "interface_contract.effect_matrices.contract",
+      "operation": "InterfaceContract.Contract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.IEffectMatrices"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "interface",
+        null,
+        [
+
+        ],
+        3,
+        [
+          [
+            "World",
+            "property",
+            true,
+            true,
+            0
+          ],
+          [
+            "View",
+            "property",
+            true,
+            true,
+            0
+          ],
+          [
+            "Projection",
+            "property",
+            true,
+            true,
+            0
+          ]
+        ],
+        0
+      ]
+    },
+    {
+      "id": "interface_contract.effect_matrices.ruby_mapping",
+      "operation": "InterfaceContract.RubyMapping",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.IEffectMatrices"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        false,
+        [
+          "Projection",
+          "Projection=",
+          "View",
+          "View=",
+          "World",
+          "World="
+        ],
+        [
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError"
+        ],
+        [
+          "IEffectMatrices#Projection",
+          "IEffectMatrices#Projection=",
+          "IEffectMatrices#View",
+          "IEffectMatrices#View=",
+          "IEffectMatrices#World",
+          "IEffectMatrices#World="
+        ],
+        [
+
+        ],
+        [
+
+        ],
+        false
+      ]
+    },
+    {
+      "id": "interface_contract.effect_fog.contract",
+      "operation": "InterfaceContract.Contract",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.IEffectFog"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "interface",
+        null,
+        [
+
+        ],
+        4,
+        [
+          [
+            "FogEnabled",
+            "property",
+            true,
+            true,
+            0
+          ],
+          [
+            "FogStart",
+            "property",
+            true,
+            true,
+            0
+          ],
+          [
+            "FogEnd",
+            "property",
+            true,
+            true,
+            0
+          ],
+          [
+            "FogColor",
+            "property",
+            true,
+            true,
+            0
+          ]
+        ],
+        0
+      ]
+    },
+    {
+      "id": "interface_contract.effect_fog.ruby_mapping",
+      "operation": "InterfaceContract.RubyMapping",
+      "args": [
+        "Microsoft.Xna.Framework.Graphics.IEffectFog"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        false,
+        [
+          "FogColor",
+          "FogColor=",
+          "FogEnabled",
+          "FogEnabled=",
+          "FogEnd",
+          "FogEnd=",
+          "FogStart",
+          "FogStart="
+        ],
+        [
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError"
+        ],
+        [
+          "IEffectFog#FogColor",
+          "IEffectFog#FogColor=",
+          "IEffectFog#FogEnabled",
+          "IEffectFog#FogEnabled=",
+          "IEffectFog#FogEnd",
+          "IEffectFog#FogEnd=",
+          "IEffectFog#FogStart",
+          "IEffectFog#FogStart="
+        ],
+        [
+
+        ],
+        [
+
+        ],
+        false
+      ]
+    }
+  ]
+}

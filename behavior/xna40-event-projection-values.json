@@ -1,0 +1,548 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
+  "derivation": "Foundation 20 event projection. Contract rows are read from the pinned XNA 4.0 Windows metadata, including the GameComponent family rows that record why that cluster stays deferred. Mapping rows are derived from the documented event-projection policy — one CLR public event projects to one public Ruby event reader over CNA::Runtime::Event, registration-ordered dispatch with snapshot semantics, last-occurrence removal matching Delegate.Remove, unswallowed exceptions, and System.EventArgs projected as CNA::Runtime::EventArgs — applied to that metadata; neither is snapshotted from the cna-ruby implementation.",
+  "observations": [
+    {
+      "id": "event_projection.updateable.contract",
+      "operation": "EventProjection.Contract",
+      "args": [
+        "Microsoft.Xna.Framework.IUpdateable"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "interface",
+        null,
+        5,
+        2,
+        [
+          [
+            "EnabledChanged",
+            "System.EventHandler`1[System.EventArgs]",
+            true,
+            true,
+            false
+          ],
+          [
+            "UpdateOrderChanged",
+            "System.EventHandler`1[System.EventArgs]",
+            true,
+            true,
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "event_projection.drawable.contract",
+      "operation": "EventProjection.Contract",
+      "args": [
+        "Microsoft.Xna.Framework.IDrawable"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "interface",
+        null,
+        5,
+        2,
+        [
+          [
+            "VisibleChanged",
+            "System.EventHandler`1[System.EventArgs]",
+            true,
+            true,
+            false
+          ],
+          [
+            "DrawOrderChanged",
+            "System.EventHandler`1[System.EventArgs]",
+            true,
+            true,
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "event_projection.support_type.contract",
+      "operation": "EventProjection.SupportTypeContract",
+      "args": [
+
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        4,
+        [
+          "System.EventHandler`1[System.EventArgs]"
+        ],
+        [
+          "Microsoft.Xna.Framework.IUpdateable::EnabledChanged",
+          "Microsoft.Xna.Framework.IUpdateable::UpdateOrderChanged",
+          "Microsoft.Xna.Framework.IDrawable::VisibleChanged",
+          "Microsoft.Xna.Framework.IDrawable::DrawOrderChanged"
+        ]
+      ]
+    },
+    {
+      "id": "event_projection.deferred_family.contract",
+      "operation": "EventProjection.DeferredFamilyContract",
+      "args": [
+
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        [
+          "GameComponent",
+          [
+            "EnabledChanged",
+            "UpdateOrderChanged",
+            "Disposed"
+          ],
+          [
+            "System.EventHandler`1[System.EventArgs]"
+          ],
+          false
+        ],
+        [
+          "DrawableGameComponent",
+          [
+            "VisibleChanged",
+            "DrawOrderChanged"
+          ],
+          [
+            "System.EventHandler`1[System.EventArgs]"
+          ],
+          false
+        ],
+        [
+          "GameComponentCollection",
+          [
+            "ComponentAdded",
+            "ComponentRemoved"
+          ],
+          [
+            "System.EventHandler`1[Microsoft.Xna.Framework.GameComponentCollectionEventArgs]"
+          ],
+          false
+        ]
+      ]
+    },
+    {
+      "id": "interface_contract.updateable.contract",
+      "operation": "InterfaceContract.Contract",
+      "args": [
+        "Microsoft.Xna.Framework.IUpdateable"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "interface",
+        null,
+        [
+
+        ],
+        5,
+        [
+          [
+            "Update",
+            "method",
+            null,
+            null,
+            1
+          ],
+          [
+            "Enabled",
+            "property",
+            true,
+            false,
+            0
+          ],
+          [
+            "UpdateOrder",
+            "property",
+            true,
+            false,
+            0
+          ],
+          [
+            "EnabledChanged",
+            "event",
+            null,
+            null,
+            0
+          ],
+          [
+            "UpdateOrderChanged",
+            "event",
+            null,
+            null,
+            0
+          ]
+        ],
+        2
+      ]
+    },
+    {
+      "id": "interface_contract.drawable.contract",
+      "operation": "InterfaceContract.Contract",
+      "args": [
+        "Microsoft.Xna.Framework.IDrawable"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "interface",
+        null,
+        [
+
+        ],
+        5,
+        [
+          [
+            "Draw",
+            "method",
+            null,
+            null,
+            1
+          ],
+          [
+            "Visible",
+            "property",
+            true,
+            false,
+            0
+          ],
+          [
+            "DrawOrder",
+            "property",
+            true,
+            false,
+            0
+          ],
+          [
+            "VisibleChanged",
+            "event",
+            null,
+            null,
+            0
+          ],
+          [
+            "DrawOrderChanged",
+            "event",
+            null,
+            null,
+            0
+          ]
+        ],
+        2
+      ]
+    },
+    {
+      "id": "event_projection.updateable.ruby_mapping",
+      "operation": "EventProjection.RubyMapping",
+      "args": [
+        "Microsoft.Xna.Framework.IUpdateable"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          "EnabledChanged",
+          "UpdateOrderChanged"
+        ],
+        [
+          "EnabledChanged",
+          "UpdateOrderChanged"
+        ],
+        [
+          true,
+          true
+        ],
+        [
+          false,
+          false
+        ],
+        [
+          false,
+          false
+        ],
+        [
+          false,
+          false
+        ],
+        [
+          "NotImplementedError",
+          "NotImplementedError"
+        ],
+        [
+          "IUpdateable#EnabledChanged",
+          "IUpdateable#UpdateOrderChanged"
+        ]
+      ]
+    },
+    {
+      "id": "event_projection.drawable.ruby_mapping",
+      "operation": "EventProjection.RubyMapping",
+      "args": [
+        "Microsoft.Xna.Framework.IDrawable"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          "VisibleChanged",
+          "DrawOrderChanged"
+        ],
+        [
+          "VisibleChanged",
+          "DrawOrderChanged"
+        ],
+        [
+          true,
+          true
+        ],
+        [
+          false,
+          false
+        ],
+        [
+          false,
+          false
+        ],
+        [
+          false,
+          false
+        ],
+        [
+          "NotImplementedError",
+          "NotImplementedError"
+        ],
+        [
+          "IDrawable#VisibleChanged",
+          "IDrawable#DrawOrderChanged"
+        ]
+      ]
+    },
+    {
+      "id": "interface_contract.updateable.ruby_mapping",
+      "operation": "InterfaceContract.RubyMapping",
+      "args": [
+        "Microsoft.Xna.Framework.IUpdateable"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        false,
+        [
+          "Enabled",
+          "EnabledChanged",
+          "Update",
+          "UpdateOrder",
+          "UpdateOrderChanged"
+        ],
+        [
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError"
+        ],
+        [
+          "IUpdateable#Enabled",
+          "IUpdateable#EnabledChanged",
+          "IUpdateable#Update",
+          "IUpdateable#UpdateOrder",
+          "IUpdateable#UpdateOrderChanged"
+        ],
+        [
+
+        ],
+        [
+
+        ],
+        true
+      ]
+    },
+    {
+      "id": "interface_contract.drawable.ruby_mapping",
+      "operation": "InterfaceContract.RubyMapping",
+      "args": [
+        "Microsoft.Xna.Framework.IDrawable"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        false,
+        [
+          "Draw",
+          "DrawOrder",
+          "DrawOrderChanged",
+          "Visible",
+          "VisibleChanged"
+        ],
+        [
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError",
+          "NotImplementedError"
+        ],
+        [
+          "IDrawable#Draw",
+          "IDrawable#DrawOrder",
+          "IDrawable#DrawOrderChanged",
+          "IDrawable#Visible",
+          "IDrawable#VisibleChanged"
+        ],
+        [
+
+        ],
+        [
+
+        ],
+        true
+      ]
+    },
+    {
+      "id": "event_runtime.surface",
+      "operation": "EventRuntime.Surface",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          "add",
+          "remove"
+        ],
+        [
+
+        ],
+        [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        true,
+        "Object",
+        false
+      ]
+    },
+    {
+      "id": "event_runtime.subscription",
+      "operation": "EventRuntime.Subscription",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          "first",
+          "second",
+          "first"
+        ],
+        true,
+        [
+          "first",
+          "second"
+        ],
+        true
+      ]
+    },
+    {
+      "id": "event_runtime.dispatch",
+      "operation": "EventRuntime.Dispatch",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          "first",
+          "second"
+        ],
+        [
+          "first",
+          "second",
+          "late"
+        ],
+        "ArgumentError",
+        [
+          "before"
+        ]
+      ]
+    },
+    {
+      "id": "event_runtime.validation",
+      "operation": "EventRuntime.Validation",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "ArgumentError",
+        "TypeError",
+        "ArgumentError",
+        "ArgumentError",
+        "ArgumentError",
+        "none",
+        "none",
+        "none"
+      ]
+    },
+    {
+      "id": "event_runtime.event_args",
+      "operation": "EventRuntime.EventArgs",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        true,
+        true,
+        true,
+        false,
+        [
+          "Empty"
+        ],
+        [
+
+        ],
+        "Object"
+      ]
+    },
+    {
+      "id": "event_runtime.owner_isolation",
+      "operation": "EventRuntime.OwnerIsolation",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        false,
+        true,
+        true,
+        [
+          [
+            true,
+            true
+          ]
+        ],
+        [
+          "Changed"
+        ]
+      ]
+    }
+  ]
+}

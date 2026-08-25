@@ -38,6 +38,155 @@ module Microsoft
           LineStrip: PrimitiveType
         end
 
+        class CubeMapFace
+          PositiveX: CubeMapFace
+          NegativeX: CubeMapFace
+          PositiveY: CubeMapFace
+          NegativeY: CubeMapFace
+          PositiveZ: CubeMapFace
+          NegativeZ: CubeMapFace
+        end
+
+        class BufferUsage
+          None: BufferUsage
+          WriteOnly: BufferUsage
+          def |: (BufferUsage other) -> BufferUsage
+          def &: (BufferUsage other) -> BufferUsage
+        end
+
+        class FillMode
+          Solid: FillMode
+          WireFrame: FillMode
+        end
+
+        class IndexElementSize
+          SixteenBits: IndexElementSize
+          ThirtyTwoBits: IndexElementSize
+        end
+
+        class CullMode
+          None: CullMode
+          CullClockwiseFace: CullMode
+          CullCounterClockwiseFace: CullMode
+        end
+
+        class RenderTargetUsage
+          DiscardContents: RenderTargetUsage
+          PreserveContents: RenderTargetUsage
+          PlatformContents: RenderTargetUsage
+        end
+
+        class SetDataOptions
+          None: SetDataOptions
+          Discard: SetDataOptions
+          NoOverwrite: SetDataOptions
+          def |: (SetDataOptions other) -> SetDataOptions
+          def &: (SetDataOptions other) -> SetDataOptions
+        end
+
+        class TextureAddressMode
+          Wrap: TextureAddressMode
+          Clamp: TextureAddressMode
+          Mirror: TextureAddressMode
+        end
+
+        class Blend
+          One: Blend
+          Zero: Blend
+          SourceColor: Blend
+          InverseSourceColor: Blend
+          SourceAlpha: Blend
+          InverseSourceAlpha: Blend
+          DestinationColor: Blend
+          InverseDestinationColor: Blend
+          DestinationAlpha: Blend
+          InverseDestinationAlpha: Blend
+          BlendFactor: Blend
+          InverseBlendFactor: Blend
+          SourceAlphaSaturation: Blend
+        end
+
+        class BlendFunction
+          Add: BlendFunction
+          Subtract: BlendFunction
+          ReverseSubtract: BlendFunction
+          Min: BlendFunction
+          Max: BlendFunction
+        end
+
+        class ColorWriteChannels
+          None: ColorWriteChannels
+          Red: ColorWriteChannels
+          Green: ColorWriteChannels
+          Blue: ColorWriteChannels
+          Alpha: ColorWriteChannels
+          All: ColorWriteChannels
+          def |: (ColorWriteChannels other) -> ColorWriteChannels
+          def &: (ColorWriteChannels other) -> ColorWriteChannels
+        end
+
+        class CompareFunction
+          Always: CompareFunction
+          Never: CompareFunction
+          Less: CompareFunction
+          LessEqual: CompareFunction
+          Equal: CompareFunction
+          GreaterEqual: CompareFunction
+          Greater: CompareFunction
+          NotEqual: CompareFunction
+        end
+
+        class EffectParameterClass
+          Scalar: EffectParameterClass
+          Vector: EffectParameterClass
+          Matrix: EffectParameterClass
+          Object: EffectParameterClass
+          Struct: EffectParameterClass
+        end
+
+        class EffectParameterType
+          Void: EffectParameterType
+          Bool: EffectParameterType
+          Int32: EffectParameterType
+          Single: EffectParameterType
+          String: EffectParameterType
+          Texture: EffectParameterType
+          Texture1D: EffectParameterType
+          Texture2D: EffectParameterType
+          Texture3D: EffectParameterType
+          TextureCube: EffectParameterType
+        end
+
+        class PresentInterval
+          Default: PresentInterval
+          One: PresentInterval
+          Two: PresentInterval
+          Immediate: PresentInterval
+        end
+
+        class StencilOperation
+          Keep: StencilOperation
+          Zero: StencilOperation
+          Replace: StencilOperation
+          Increment: StencilOperation
+          Decrement: StencilOperation
+          IncrementSaturation: StencilOperation
+          DecrementSaturation: StencilOperation
+          Invert: StencilOperation
+        end
+
+        class TextureFilter
+          Linear: TextureFilter
+          Point: TextureFilter
+          Anisotropic: TextureFilter
+          LinearMipPoint: TextureFilter
+          PointMipLinear: TextureFilter
+          MinLinearMagPointMipLinear: TextureFilter
+          MinLinearMagPointMipPoint: TextureFilter
+          MinPointMagLinearMipLinear: TextureFilter
+          MinPointMagLinearMipPoint: TextureFilter
+        end
+
         class Viewport
           attr_accessor X: Integer
           attr_accessor Y: Integer

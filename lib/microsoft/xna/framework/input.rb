@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../framework"
+require_relative "input/touch"
 
 module Microsoft
   module Xna

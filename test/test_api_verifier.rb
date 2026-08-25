@@ -1396,6 +1396,415 @@ class ApiVerifierTest < Minitest::Test
     [reference, target]
   end
 
+  # --- Foundation 16 PURE MANAGED BATCH A -------------------------------------------------
+  #
+  # Twenty-four dependency-complete pure managed enums closed in one batch. Rather than one
+  # bespoke fixture family per enum, every mutation below is applied to each batch type in
+  # turn, so a wrong raw value, a leaked synthetic storage field, a flipped flags bit or an
+  # invented literal is rejected for all twenty-four with the same evidence.
+  BATCH_ENUMS = %w[
+    Microsoft.Xna.Framework.Audio.AudioChannels
+    Microsoft.Xna.Framework.Audio.AudioStopOptions
+    Microsoft.Xna.Framework.Audio.MicrophoneState
+    Microsoft.Xna.Framework.Audio.SoundState
+    Microsoft.Xna.Framework.Graphics.Blend
+    Microsoft.Xna.Framework.Graphics.BlendFunction
+    Microsoft.Xna.Framework.Graphics.BufferUsage
+    Microsoft.Xna.Framework.Graphics.ColorWriteChannels
+    Microsoft.Xna.Framework.Graphics.CompareFunction
+    Microsoft.Xna.Framework.Graphics.CubeMapFace
+    Microsoft.Xna.Framework.Graphics.CullMode
+    Microsoft.Xna.Framework.Graphics.EffectParameterClass
+    Microsoft.Xna.Framework.Graphics.EffectParameterType
+    Microsoft.Xna.Framework.Graphics.FillMode
+    Microsoft.Xna.Framework.Graphics.IndexElementSize
+    Microsoft.Xna.Framework.Graphics.PresentInterval
+    Microsoft.Xna.Framework.Graphics.RenderTargetUsage
+    Microsoft.Xna.Framework.Graphics.SetDataOptions
+    Microsoft.Xna.Framework.Graphics.StencilOperation
+    Microsoft.Xna.Framework.Graphics.TextureAddressMode
+    Microsoft.Xna.Framework.Graphics.TextureFilter
+    Microsoft.Xna.Framework.Media.MediaSourceType
+    Microsoft.Xna.Framework.Media.MediaState
+    Microsoft.Xna.Framework.Media.VideoSoundtrackType
+  ].freeze
+
+  # Foundation 17 added the Input.Touch closure. Its two enums join the same mutation battery.
+  TOUCH_CLOSURE_ENUMS = %w[
+    Microsoft.Xna.Framework.Input.Touch.GestureType
+    Microsoft.Xna.Framework.Input.Touch.TouchLocationState
+  ].freeze
+
+  PURE_MANAGED_ENUMS = (BATCH_ENUMS + TOUCH_CLOSURE_ENUMS).freeze
+
+  FLAGS_BATCH_ENUMS = %w[
+    Microsoft.Xna.Framework.Input.Touch.GestureType
+    Microsoft.Xna.Framework.Graphics.BufferUsage
+    Microsoft.Xna.Framework.Graphics.ColorWriteChannels
+    Microsoft.Xna.Framework.Graphics.SetDataOptions
+  ].freeze
+
+  def batch_enum_contracts(type_name)
+    reference = reference_contract
+    target = signature_contract
+    reference_type = reference.fetch("types").find { |type| type.fetch("name") == type_name }
+    target_type = target.fetch("types").find { |type| type.fetch("name") == type_name }
+    refute_nil reference_type, type_name
+    refute_nil target_type, type_name
+    [{"types" => [reference_type]}, {"types" => [Marshal.load(Marshal.dump(target_type))]}]
+  end
+
+  def test_batch_enums_are_selected_complete_and_locally_clean
+    strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
+    assert_equal 24, BATCH_ENUMS.length
+    assert_equal 2, TOUCH_CLOSURE_ENUMS.length
+    assert_equal 26, PURE_MANAGED_ENUMS.length
+    assert_equal PURE_MANAGED_ENUMS.length, PURE_MANAGED_ENUMS.uniq.length
+    touch_identities = TOUCH_CLOSURE_ENUMS.sum do |type_name|
+      _reference, target = batch_enum_contracts(type_name)
+      target.fetch("types").first.fetch("members").length
+    end
+    assert_equal 15, touch_identities
+    identities = BATCH_ENUMS.sum do |type_name|
+      reference, target = batch_enum_contracts(type_name)
+      # Structural only: a single-type contract cannot carry the whole runtime namespace,
+      # so runtime leak walking is exercised by the full-surface verifier run instead.
+      result = verify(reference, target)
+      assert_equal 0, result.counts.values.sum, type_name
+      assert_includes result.complete_types, type_name
+      assert_includes strict.fetch("completeTypeNames"), type_name
+      assert_equal 0, strict.fetch("localDiagnostics").fetch(type_name), type_name
+      target.fetch("types").first.fetch("members").length
+    end
+    assert_equal 109, identities
+  end
+
+  def test_batch_enums_reject_a_missing_type_or_a_relocated_namespace
+    PURE_MANAGED_ENUMS.each do |type_name|
+      reference, target = batch_enum_contracts(type_name)
+      target.fetch("types").clear
+      assert_operator verify(reference, target).counts["MISSING_TYPE"], :>, 0, type_name
+
+      reference, target = batch_enum_contracts(type_name)
+      relocated = "Microsoft.Xna.Framework.#{type_name.split(".").last}"
+      target.fetch("types").first["name"] = relocated
+      target.fetch("types").first["rubyName"] = relocated.gsub(".", "::")
+      result = verify(reference, target)
+      assert_operator result.counts["MISSING_TYPE"], :>, 0, type_name
+      assert_operator result.counts["UNEXPECTED_TYPE"], :>, 0, type_name
+    end
+  end
+
+  def test_batch_enums_reject_a_wrong_kind_underlying_type_or_flags_bit
+    PURE_MANAGED_ENUMS.each do |type_name|
+      reference, target = batch_enum_contracts(type_name)
+      target.fetch("types").first["kind"] = "struct"
+      assert_operator verify(reference, target).counts["TYPE_KIND_MISMATCH"], :>, 0, type_name
+
+      reference, target = batch_enum_contracts(type_name)
+      target.fetch("types").first["underlyingType"] = "System.UInt32"
+      assert_operator verify(reference, target).counts["ENUM_VALUE_MISMATCH"], :>, 0, type_name
+
+      reference, target = batch_enum_contracts(type_name)
+      selected = target.fetch("types").first
+      selected["flags"] = !selected.fetch("flags")
+      assert_operator verify(reference, target).counts["FLAGS_MAPPING_MISMATCH"], :>, 0, type_name
+    end
+  end
+
+  def test_batch_enums_reject_every_individually_wrong_raw_value
+    PURE_MANAGED_ENUMS.each do |type_name|
+      _reference, pristine = batch_enum_contracts(type_name)
+      pristine.fetch("types").first.fetch("members").each do |member|
+        reference, target = batch_enum_contracts(type_name)
+        mutated = target.fetch("types").first.fetch("members").find { |candidate| candidate["name"] == member["name"] }
+        mutated["value"] = (Integer(member.fetch("value")) + 1).to_s
+        assert_operator verify(reference, target).counts["ENUM_VALUE_MISMATCH"], :>, 0,
+                        "#{type_name}::#{member["name"]}"
+      end
+    end
+  end
+
+  def test_batch_enums_reject_a_dropped_renamed_or_invented_literal
+    PURE_MANAGED_ENUMS.each do |type_name|
+      reference, target = batch_enum_contracts(type_name)
+      dropped = target.fetch("types").first.fetch("members").pop.fetch("name")
+      result = verify(reference, target)
+      assert_operator result.counts["MISSING_MEMBER"], :>, 0, "#{type_name}::#{dropped}"
+      refute_includes result.complete_types, type_name
+
+      reference, target = batch_enum_contracts(type_name)
+      renamed = target.fetch("types").first.fetch("members").first
+      renamed["name"] = "#{renamed.fetch("name")}Ex"
+      result = verify(reference, target)
+      assert_operator result.counts["MISSING_MEMBER"], :>, 0, type_name
+      assert_operator result.counts["UNEXPECTED_MEMBER"], :>, 0, type_name
+
+      reference, target = batch_enum_contracts(type_name)
+      highest = target.fetch("types").first.fetch("members").map { |member| Integer(member.fetch("value")) }.max
+      target.fetch("types").first.fetch("members") << {
+        "kind" => "field", "name" => "Invented", "type" => type_name,
+        "static" => true, "constant" => true, "value" => (highest + 1).to_s
+      }
+      assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0, type_name
+    end
+  end
+
+  def test_batch_enums_reject_exposed_synthetic_storage_and_a_helper_method
+    PURE_MANAGED_ENUMS.each do |type_name|
+      reference, target = batch_enum_contracts(type_name)
+      storage = reference.fetch("types").first.fetch("members").find { |member| member["name"] == "value__" }
+      refute_nil storage, type_name
+      target.fetch("types").first.fetch("members") << Marshal.load(Marshal.dump(storage))
+      assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0, type_name
+
+      reference, target = batch_enum_contracts(type_name)
+      target.fetch("types").first.fetch("members") << {
+        "kind" => "method", "name" => "Parse", "static" => true, "access" => "public",
+        "returnType" => type_name, "genericParameters" => [], "parameters" => []
+      }
+      assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0, type_name
+    end
+  end
+
+  def test_batch_enum_runtime_flags_and_masks_are_pinned_against_the_contract
+    PURE_MANAGED_ENUMS.each do |type_name|
+      reference, target = batch_enum_contracts(type_name)
+      selected = target.fetch("types").first
+      runtime_type = CNAApiCompat::NameMapper.runtime_constant_path(type_name)
+                                             .split("::").reduce(Object) { |scope, part| scope.const_get(part, false) }
+      flags = selected.fetch("flags")
+      assert_equal flags, FLAGS_BATCH_ENUMS.include?(type_name), type_name
+      assert_equal flags, runtime_type.instance_variable_get(:@enum_flags), type_name
+      expected_mask = flags ? selected.fetch("members").reduce(0) { |mask, member| mask | Integer(member.fetch("value")) } : 0
+      assert_equal expected_mask, runtime_type.instance_variable_get(:@enum_mask), type_name
+
+      original = runtime_type.instance_variable_get(:@enum_flags)
+      begin
+        runtime_type.instance_variable_set(:@enum_flags, !original)
+        assert_operator verify(reference, target, runtime: true).counts["FLAGS_MAPPING_MISMATCH"], :>, 0, type_name
+      ensure
+        runtime_type.instance_variable_set(:@enum_flags, original)
+      end
+      assert_equal 0, verify(reference, target, runtime: true).counts.fetch("FLAGS_MAPPING_MISMATCH"), type_name
+      assert_equal 0, verify(reference, target).counts.values.sum, type_name
+    end
+  end
+
+  def test_batch_flags_enums_reject_a_wrong_runtime_combined_value_mask
+    FLAGS_BATCH_ENUMS.each do |type_name|
+      reference, target = batch_enum_contracts(type_name)
+      runtime_type = CNAApiCompat::NameMapper.runtime_constant_path(type_name)
+                                             .split("::").reduce(Object) { |scope, part| scope.const_get(part, false) }
+      original = runtime_type.instance_variable_get(:@enum_mask)
+      begin
+        runtime_type.instance_variable_set(:@enum_mask, original | (original + 1))
+        assert_operator verify(reference, target, runtime: true).counts["FLAGS_MAPPING_MISMATCH"], :>, 0, type_name
+      ensure
+        runtime_type.instance_variable_set(:@enum_mask, original)
+      end
+    end
+  end
+
+  INTERFACE_CONTRACTS = %w[
+    Microsoft.Xna.Framework.Graphics.IEffectFog
+    Microsoft.Xna.Framework.Graphics.IEffectMatrices
+    Microsoft.Xna.Framework.IGameComponent
+    Microsoft.Xna.Framework.IGraphicsDeviceManager
+  ].freeze
+
+  def test_interface_contracts_are_selected_complete_and_event_free
+    strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
+    identities = INTERFACE_CONTRACTS.sum do |type_name|
+      reference, target = batch_enum_contracts(type_name)
+      assert_equal "interface", target.fetch("types").first.fetch("kind"), type_name
+      assert_equal 0, verify(reference, target).counts.values.sum, type_name
+      assert_equal 0, strict.fetch("localDiagnostics").fetch(type_name), type_name
+      assert_includes strict.fetch("completeTypeNames"), type_name
+      refute target.fetch("types").first.fetch("members").any? { |member| member["kind"] == "event" }
+      target.fetch("types").first.fetch("members").length
+    end
+    assert_equal 11, identities
+  end
+
+  def test_interface_contract_mutations_are_detected
+    INTERFACE_CONTRACTS.each do |type_name|
+      reference, target = batch_enum_contracts(type_name)
+      target.fetch("types").first["kind"] = "class"
+      assert_operator verify(reference, target).counts["TYPE_KIND_MISMATCH"], :>, 0, type_name
+
+      reference, target = batch_enum_contracts(type_name)
+      dropped = target.fetch("types").first.fetch("members").pop.fetch("name")
+      result = verify(reference, target)
+      assert_operator result.counts["MISSING_MEMBER"], :>, 0, "#{type_name}::#{dropped}"
+      refute_includes result.complete_types, type_name
+
+      reference, target = batch_enum_contracts(type_name)
+      target.fetch("types").first.fetch("members") << {
+        "kind" => "method", "name" => "Reset", "static" => false, "access" => "public",
+        "returnType" => "System.Void", "genericParameters" => [], "parameters" => []
+      }
+      assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0, type_name
+    end
+  end
+
+  def test_interface_property_accessors_are_pinned_in_both_directions
+    {"Microsoft.Xna.Framework.Graphics.IEffectMatrices" => %w[World View Projection],
+     "Microsoft.Xna.Framework.Graphics.IEffectFog" => %w[FogEnabled FogStart FogEnd FogColor]}
+      .each do |type_name, properties|
+      properties.each do |property|
+        reference, target = batch_enum_contracts(type_name)
+        member = target.fetch("types").first.fetch("members").find { |candidate| candidate["name"] == property }
+        assert_equal true, member.fetch("get"), "#{type_name}::#{property}"
+        assert_equal true, member.fetch("set"), "#{type_name}::#{property}"
+        member["set"] = false
+        assert_operator verify(reference, target).counts["PROPERTY_MAPPING_MISMATCH"], :>, 0, property
+      end
+
+      # A runtime module missing one declared setter must be reported as a missing member.
+      interface = CNAApiCompat::NameMapper.runtime_constant_path(type_name)
+                                          .split("::").reduce(Object) { |scope, part| scope.const_get(part, false) }
+      setter = :"#{properties.first}="
+      original = interface.instance_method(setter)
+      reference, target = batch_enum_contracts(type_name)
+      begin
+        interface.__send__(:remove_method, setter)
+        assert_operator verify(reference, target, runtime: true).counts["MISSING_MEMBER"], :>, 0, type_name
+      ensure
+        interface.__send__(:define_method, setter, original)
+      end
+      assert_equal 0, verify(reference, target, runtime: true).counts["MISSING_MEMBER"], type_name
+    end
+  end
+
+  # Foundation 20 replaced the "no selected type declares an event" safety assertion with a
+  # measured projection policy: every selected event identity must project, and the strict report
+  # must count the identities it measured.
+  def test_every_selected_event_identity_is_measured_and_projected
+    selected = signature_contract.fetch("types").flat_map do |type|
+      type.fetch("members").select { |member| member.fetch("kind") == "event" }
+          .map { |member| "#{type.fetch("name")}::#{member.fetch("name")}" }
+    end
+    assert_equal %w[
+      Microsoft.Xna.Framework.IUpdateable::EnabledChanged
+      Microsoft.Xna.Framework.IUpdateable::UpdateOrderChanged
+      Microsoft.Xna.Framework.IDrawable::VisibleChanged
+      Microsoft.Xna.Framework.IDrawable::DrawOrderChanged
+    ], selected
+
+    strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
+    assert_equal selected, strict.fetch("eventIdentities")
+    assert_equal selected.length, strict.fetch("EVENT_IDENTITIES")
+    assert_equal 2, strict.fetch("EVENT_OWNER_TYPES")
+    assert_equal "CNA::Runtime::Event", strict.fetch("EVENT_SUPPORT_TYPE")
+    assert_equal 0, strict.fetch("EVENT_MAPPING_MISMATCH")
+
+    # Every selected event's CLR support type is the one this projection maps.
+    signature_contract.fetch("types").each do |type|
+      type.fetch("members").select { |member| member.fetch("kind") == "event" }.each do |member|
+        assert_equal "System.EventHandler`1[System.EventArgs]", member.fetch("type")
+        assert_equal true, member.fetch("add")
+        assert_equal true, member.fetch("remove")
+        assert_equal false, member.fetch("static")
+      end
+    end
+  end
+
+  def test_event_kind_projects_exactly_one_reader_identity
+    verifier = CNAApiCompat::Verifier.new(reference: {"types" => []}, target: {"types" => []})
+    instance = {"kind" => "event", "name" => "Changed", "static" => false}
+    assert_equal ["instance:Changed"], verifier.__send__(:ruby_projections, instance)
+    assert_equal ["class:Changed"], verifier.__send__(:ruby_projections, instance.merge("static" => true))
+
+    # Never an add_/remove_ pair, never a writer.
+    projections = verifier.__send__(:ruby_projections, instance)
+    refute_includes projections, "instance:add_Changed"
+    refute_includes projections, "instance:remove_Changed"
+    refute_includes projections, "instance:Changed="
+  end
+
+  def test_touch_panel_capabilities_struct_mutations_are_detected
+    name = "Microsoft.Xna.Framework.Input.Touch.TouchPanelCapabilities"
+    reference, target = batch_enum_contracts(name)
+    assert_equal 0, verify(reference, target).counts.values.sum
+    assert_equal "struct", target.fetch("types").first.fetch("kind")
+
+    reference, target = batch_enum_contracts(name)
+    target.fetch("types").first["kind"] = "class"
+    assert_operator verify(reference, target).counts["TYPE_KIND_MISMATCH"], :>, 0
+
+    %w[IsConnected MaximumTouchCount].each do |property|
+      reference, target = batch_enum_contracts(name)
+      target.fetch("types").first.fetch("members").reject! { |member| member["name"] == property }
+      result = verify(reference, target)
+      assert_operator result.counts["MISSING_MEMBER"], :>, 0, property
+      refute_includes result.complete_types, name
+
+      # A writable projection would be an invented identity: both properties are get-only.
+      reference, target = batch_enum_contracts(name)
+      target.fetch("types").first.fetch("members")
+            .find { |member| member["name"] == property }["set"] = true
+      assert_operator verify(reference, target).counts["PROPERTY_MAPPING_MISMATCH"], :>, 0, property
+
+      reference, target = batch_enum_contracts(name)
+      target.fetch("types").first.fetch("members")
+            .find { |member| member["name"] == property }["type"] = "System.Single"
+      assert_operator verify(reference, target).counts["PROPERTY_MAPPING_MISMATCH"], :>, 0, property
+    end
+
+    reference, target = batch_enum_contracts(name)
+    target.fetch("types").first.fetch("members") << {
+      "kind" => "method", "name" => "GetCapabilities", "static" => true, "access" => "public",
+      "returnType" => name, "genericParameters" => [], "parameters" => []
+    }
+    assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0
+
+    capabilities = Microsoft::Xna::Framework::Input::Touch::TouchPanelCapabilities
+    begin
+      capabilities.class_eval { def IsConnected=(value); end }
+      assert_operator verify(reference, target, runtime: true).counts["UNEXPECTED_MEMBER"], :>, 0
+    ensure
+      capabilities.__send__(:remove_method, :IsConnected=)
+    end
+  end
+
+  def test_touch_closure_adds_no_touch_panel_surface
+    reference = reference_contract
+    %w[TouchPanel TouchCollection TouchLocation GestureSample].each do |short|
+      full = "Microsoft.Xna.Framework.Input.Touch.#{short}"
+      assert reference.fetch("types").any? { |type| type.fetch("name") == full }, full
+      refute signature_contract.fetch("types").any? { |type| type.fetch("name") == full }, full
+    end
+    strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
+    %w[TouchPanel TouchCollection TouchLocation GestureSample].each do |short|
+      assert_includes strict.fetch("missingTypeNames"), "Microsoft.Xna.Framework.Input.Touch.#{short}"
+    end
+  end
+
+  def test_batch_does_not_expand_the_six_deferred_partial_runtime_types
+    strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
+    partial = strict.fetch("partialTypes")
+    assert_equal %w[
+      Microsoft.Xna.Framework.Game
+      Microsoft.Xna.Framework.GraphicsDeviceManager
+      Microsoft.Xna.Framework.Graphics.GraphicsDevice
+      Microsoft.Xna.Framework.Graphics.GraphicsResource
+      Microsoft.Xna.Framework.Graphics.SpriteBatch
+      Microsoft.Xna.Framework.Graphics.Texture2D
+    ].sort, partial.keys.sort
+    assert_equal 132, strict.fetch("MISSING_MEMBER")
+    assert_equal 1, strict.fetch("PROPERTY_MAPPING_MISMATCH")
+    assert_equal 51, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
+
+    # Every batch enum that a deferred member mentions leaves that member deferred.
+    deferred = strict.fetch("details").fetch("MISSING_MEMBER")
+    %w[SetRenderTarget PreferredDepthStencilFormat].each do |name|
+      assert deferred.any? { |label| label.include?(name) }, name
+    end
+    assert_equal %i[IsDisposed Viewport Clear].sort,
+                 Microsoft::Xna::Framework::Graphics::GraphicsDevice.public_instance_methods(false).sort
+  end
+
   def reference_contract
     JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
   end

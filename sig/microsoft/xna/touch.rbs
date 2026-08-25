@@ -1,0 +1,37 @@
+module Microsoft
+  module Xna
+    module Framework
+      module Input
+        module Touch
+          class TouchLocationState
+            Invalid: TouchLocationState
+            Released: TouchLocationState
+            Pressed: TouchLocationState
+            Moved: TouchLocationState
+          end
+
+          class GestureType
+            None: GestureType
+            Tap: GestureType
+            DoubleTap: GestureType
+            Hold: GestureType
+            HorizontalDrag: GestureType
+            VerticalDrag: GestureType
+            FreeDrag: GestureType
+            Pinch: GestureType
+            Flick: GestureType
+            DragComplete: GestureType
+            PinchComplete: GestureType
+            def |: (GestureType other) -> GestureType
+            def &: (GestureType other) -> GestureType
+          end
+
+          class TouchPanelCapabilities
+            attr_reader IsConnected: bool
+            attr_reader MaximumTouchCount: Integer
+          end
+        end
+      end
+    end
+  end
+end

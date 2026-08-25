@@ -18,7 +18,8 @@ The selected authority is the Microsoft XNA Framework 4.0 Windows runtime metada
 | one `out` value | ordinary Ruby method return; the CLR overload identity remains separately retained |
 | several `out` values | ordered Ruby Array return, following any non-void CLR return (`Matrix#Decompose` returns `[success, scale, rotation, translation]`) |
 | array transform overload | caller-provided source/destination Arrays with exact whole-array or indexed-range call shape |
-| event | measured contract identity; eventual projection uses explicit add/remove subscription methods |
+| event | one public Ruby event reader keeping the XNA spelling, answering a `CNA::Runtime::Event`; never an `add_Name`/`remove_Name` pair and never a writer |
+| CLR exception base | a Ruby exception superclass drawn from the `CNA::Runtime::BclProjection` register, rooted at `StandardError`, rather than `Object` |
 | generic type/member | CLR arity and full signature remain in the contract; a generic definition with base name `Name` maps to `NameOfT` for arity 1 and `NameOfT1T2...TN` for higher arity |
 | `ICollection<CurveKey>` | the CLR interfaces remain in structural metadata; the exact typed collection members live directly on `CurveKeyCollection` |
 | `IEnumerator<CurveKey>` | `GetEnumerator` returns a fresh Ruby `Enumerator`; no public fake `System::Collections` hierarchy |
@@ -40,5 +41,49 @@ qualified x86-64 host it accepts `-9223372036854775808..9223372036854775807`. A 
 carried through a canonical unsigned C integer as the same-width two's-complement bit pattern and
 is sign-extended back to Ruby on return. The scalar is externally owned: Ruby never dereferences,
 frees, closes, or otherwise assumes ownership of it.
+
+## Events
+
+One CLR public event `T.EventName : System.EventHandler`1[TArgs]` projects to exactly one public
+Ruby event reader `object.EventName` whose value is the generic `CNA::Runtime::Event` subscription
+primitive:
+
+```ruby
+handler = object.EventName.add { |sender, args| ... }
+object.EventName.remove(handler)
+```
+
+`add` takes a callable or a block and answers the token `remove` takes back. Duplicate subscriptions
+are permitted, invocation order is registration order, dispatch runs over a snapshot so a handler may
+subscribe or unsubscribe safely, and an exception raised by a handler propagates rather than being
+swallowed. `remove` deletes the last matching occurrence, which is what `Delegate.Remove` does to a
+multicast invocation list; handler matching uses Ruby `==`, so a `Proc` matches by identity and a
+`Method` by receiver-and-method, the closest analogue of CLR delegate equality. Removing an absent
+handler is harmless.
+
+The primitive's whole public surface is `add`/`remove`. Raising is internal to the declaring
+implementation and no consumer-facing `emit`, `fire`, `trigger` or `call` exists. On an abstract XNA
+interface contract the event reader raises `NotImplementedError` like every other member: an
+interface declares the event identity and never owns an invocation list.
+
+## BCL projection
+
+`CNA::Runtime::BclProjection` is the measured register of every non-XNA CLR identity this binding
+projects. The API verifier resolves every entry and shape-checks every exception base, and the
+dependency frontier consumes the same register, so a BCL type is never reported as mapped unless the
+runtime really projects it. A projected BCL identity lives in the CNA runtime; there is no
+fabricated Ruby `::System` namespace.
+
+`System.EventArgs` projects to `CNA::Runtime::EventArgs`, which carries only the two public CLR
+identities that type has: the parameterless constructor and the shared static `Empty` instance.
+`nil` is never used as an EventArgs representation.
+
+An XNA exception must behave as a Ruby exception rather than an ordinary `Object` subclass, so
+`System.Exception` and `System.Runtime.InteropServices.ExternalException` both project to
+`StandardError` — a CLR `catch (Exception)` is the analogue of a bare Ruby `rescue`, which catches
+`StandardError` and deliberately not `::Exception`. An intermediate BCL exception class the selected
+XNA surface never names collapses to the nearest projected ancestor rather than gaining an invented
+Ruby constant. No XNA exception type is projected yet: every one of the eight declares only
+constructors, whose behaviour lives in XNA IL this host does not carry.
 
 `CurveKeyCollection` deliberately does not mix in Ruby `Enumerable`, because that would add a broad helper surface unrelated to XNA. Its mapped `Enumerator` preserves XNA order, independent cursors, and `List<CurveKey>`-style fail-fast mutation detection. Invalid strict collection indices, including negative indices, map to `IndexError`; null/wrong typed values map to `TypeError`, destination-capacity failures map to `ArgumentError`, and enumerator invalidation maps to `RuntimeError`.

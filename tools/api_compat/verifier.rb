@@ -26,6 +26,14 @@ module CNAApiCompat
     }
   }.freeze
 
+  # One CLR public event identity projects to exactly one public Ruby event reader keeping the XNA
+  # spelling, whose value is the generic event subscription primitive. add_Name/remove_Name pairs,
+  # a writer, an ordinary mutable property and any consumer-facing raise helper are all mapping
+  # failures rather than acceptable alternatives.
+  EVENT_SUPPORT_TYPE = "CNA::Runtime::Event"
+  EVENT_SUPPORT_SURFACE = %i[add remove].freeze
+  EVENT_RAISE_NAMES = %i[broadcast call dispatch emit fire invoke notify publish raise_event trigger].freeze
+
   class Result
     attr_reader :counts, :details, :complete_types, :partial_types, :missing_types
 
@@ -208,6 +216,8 @@ module CNAApiCompat
     end
 
     def verify_runtime(target_types, result)
+      verify_bcl_projection(result)
+      verify_event_support_type(target_types, result)
       target_types.each do |name, type|
         ruby_name = type.fetch("rubyName")
         begin
@@ -230,6 +240,7 @@ module CNAApiCompat
         end
         verify_runtime_base(name, type, object, result)
         verify_runtime_interfaces(name, type, object, target_types, result)
+        verify_runtime_events(name, type, object, result)
         type.fetch("members").each do |member|
           missing = ruby_projections(member).reject { |projection| projection_exists?(object, projection, member) }
           next if missing.empty?
@@ -238,14 +249,41 @@ module CNAApiCompat
       end
     end
 
+    # Every entry of the measured BCL projection register must resolve, and an exception base must
+    # really be a Ruby exception class. Without this the register could claim a projection the
+    # runtime does not carry, and the dependency frontier would inherit that claim.
+    def verify_bcl_projection(result)
+      CNA::Runtime::BclProjection::TYPES.each do |clr_identity, ruby_path|
+        resolve_ruby_type(ruby_path)
+      rescue NameError
+        result.add("LANGUAGE_MAPPING_MISMATCH", "BCL projection #{clr_identity}: #{ruby_path} does not resolve")
+      end
+      CNA::Runtime::BclProjection::EXCEPTION_BASES.each do |clr_identity, ruby_path|
+        base = begin
+          resolve_ruby_type(ruby_path)
+        rescue NameError
+          result.add("LANGUAGE_MAPPING_MISMATCH", "BCL exception base #{clr_identity}: #{ruby_path} does not resolve")
+          next
+        end
+        next if base.instance_of?(Class) && base <= ::Exception && base <= ::StandardError
+
+        result.add("LANGUAGE_MAPPING_MISMATCH", "BCL exception base #{clr_identity}: #{ruby_path} is not a Ruby StandardError class")
+      end
+    end
+
     def verify_runtime_base(name, type, object, result)
       return if object.instance_of?(Module) && !object.instance_of?(Class)
 
       base = type["baseType"]
+      projected = CNA::Runtime::BclProjection.ruby_type(base)
       expected = if base&.start_with?("Microsoft.Xna.") && target.fetch("types").any? { |candidate| candidate["name"] == base }
                    resolve_ruby_type(NameMapper.runtime_constant_path(base))
                  elsif type["kind"] == "enum"
                    CNA::Runtime::EnumValue
+                 elsif projected
+                   # A non-XNA CLR base the binding projects: an XNA exception takes a Ruby
+                   # exception superclass rather than Object.
+                   resolve_ruby_type(projected)
                  else
                    Object
                  end
@@ -287,6 +325,81 @@ module CNAApiCompat
       end
     end
 
+    # The generic subscription primitive is checked once, not per owner: its whole public surface
+    # must stay add/remove so that no consumer-facing raise helper can appear behind an event.
+    def verify_event_support_type(target_types, result)
+      owners = target_types.select do |_name, type|
+        type.fetch("members").any? { |member| member.fetch("kind") == "event" }
+      end
+      return if owners.empty?
+
+      support = resolve_ruby_type(EVENT_SUPPORT_TYPE)
+      surface = (support.public_instance_methods(false) + support.protected_instance_methods(false)).sort
+      unless surface == EVENT_SUPPORT_SURFACE
+        result.add("EVENT_MAPPING_MISMATCH", "#{EVENT_SUPPORT_TYPE} subscription surface #{surface.inspect}")
+      end
+      leaked = EVENT_RAISE_NAMES.select { |candidate| support.public_method_defined?(candidate) }
+      return if leaked.empty?
+
+      result.add("EVENT_MAPPING_MISMATCH", "#{EVENT_SUPPORT_TYPE} exposes public #{leaked.join(", ")}")
+    end
+
+    # Selected event identities are measured rather than assumed: the declared set must match the
+    # set the runtime projection registers through the generic primitive, no add_/remove_ or writer
+    # identity may exist beside the reader, and the reader's value must be the primitive itself
+    # (or, on an abstract XNA interface, the same NotImplementedError every other member raises).
+    def verify_runtime_events(name, type, object, result)
+      declared = type.fetch("members").select { |member| member.fetch("kind") == "event" }
+                     .map { |member| member.fetch("name").to_sym }
+      registered = object.respond_to?(:xna_event_identities) ? object.xna_event_identities : []
+      return if declared.empty? && registered.empty?
+
+      (declared - registered).each do |identity|
+        result.add("EVENT_MAPPING_MISMATCH", "#{name}::#{identity} is not declared through #{EVENT_SUPPORT_TYPE}", type: name)
+      end
+      (registered - declared).each do |identity|
+        result.add("EVENT_MAPPING_MISMATCH", "#{name}::#{identity} runtime event identity is not selected", type: name)
+      end
+
+      abstract = type["kind"] == "interface"
+      probe = event_probe(object)
+      declared.each do |identity|
+        %W[add_#{identity} remove_#{identity} #{identity}=].each do |leaked|
+          next unless object.method_defined?(leaked) || object.private_method_defined?(leaked)
+
+          result.add("EVENT_MAPPING_MISMATCH", "#{name}::#{identity} also projects #{leaked}", type: name)
+        end
+        projected = event_projection(probe, identity, abstract)
+        next if projected == :expected
+
+        result.add("EVENT_MAPPING_MISMATCH", "#{name}::#{identity} projects #{projected}", type: name)
+      end
+    end
+
+    # An uninitialised instance is enough: the generated reader creates its invocation list lazily,
+    # and an abstract contract needs only a host that includes the module.
+    def event_probe(object)
+      host = object.instance_of?(Class) ? object : Class.new { include(object) }
+      host.allocate
+    rescue StandardError, NotImplementedError
+      nil
+    end
+
+    def event_projection(probe, identity, abstract)
+      return "no probe instance" if probe.nil?
+
+      begin
+        value = probe.public_send(identity)
+      rescue NotImplementedError
+        return abstract ? :expected : "an abstract contract"
+      rescue StandardError => error
+        return error.class.to_s
+      end
+      return "a value where the abstract contract is expected" if abstract
+
+      value.instance_of?(resolve_ruby_type(EVENT_SUPPORT_TYPE)) ? :expected : value.class.to_s
+    end
+
     def ruby_projections(member)
       case member.fetch("kind")
       when "constructor" then ["instance:initialize"]
@@ -306,6 +419,9 @@ module CNAApiCompat
         else
           ["instance:#{member["name"]}", "instance:#{member["name"]}="]
         end
+      when "event"
+        # Exactly one identity: the reader. Never an add_/remove_ pair and never a writer.
+        [member["static"] ? "class:#{member["name"]}" : "instance:#{member["name"]}"]
       else
         []
       end

@@ -1,0 +1,46 @@
+module Microsoft
+  module Xna
+    module Framework
+      module IGameComponent
+        def Initialize: () -> void
+      end
+
+      module IGraphicsDeviceManager
+        def CreateDevice: () -> void
+        def BeginDraw: () -> bool
+        def EndDraw: () -> void
+      end
+
+      module IUpdateable
+        def Update: (GameTime gameTime) -> void
+        attr_reader Enabled: bool
+        attr_reader UpdateOrder: Integer
+        def EnabledChanged: () -> CNA::Runtime::Event
+        def UpdateOrderChanged: () -> CNA::Runtime::Event
+      end
+
+      module IDrawable
+        def Draw: (GameTime gameTime) -> void
+        attr_reader Visible: bool
+        attr_reader DrawOrder: Integer
+        def VisibleChanged: () -> CNA::Runtime::Event
+        def DrawOrderChanged: () -> CNA::Runtime::Event
+      end
+
+      module Graphics
+        module IEffectMatrices
+          attr_accessor World: Matrix
+          attr_accessor View: Matrix
+          attr_accessor Projection: Matrix
+        end
+
+        module IEffectFog
+          attr_accessor FogEnabled: bool
+          attr_accessor FogStart: Float
+          attr_accessor FogEnd: Float
+          attr_accessor FogColor: Vector3
+        end
+      end
+    end
+  end
+end

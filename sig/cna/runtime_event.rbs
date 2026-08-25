@@ -1,0 +1,31 @@
+module CNA
+  module Runtime
+    # The Ruby projection of System.EventArgs: the parameterless constructor and the shared
+    # static Empty instance, and nothing else.
+    class EventArgs
+      Empty: EventArgs
+    end
+
+    # The generic event subscription primitive. One CLR public event projects to one Ruby event
+    # reader returning this object; raising stays internal to the declaring implementation.
+    class Event
+      def add: (?untyped callable) ?{ (untyped sender, untyped args) -> void } -> untyped
+      def remove: (untyped handler) -> untyped
+    end
+
+    # The measured register of non-XNA CLR identities this binding projects.
+    module BclProjection
+      TYPES: Hash[String, String]
+      EXCEPTION_BASES: Hash[String, String]
+      def self?.ruby_type: (String?) -> String?
+      def self?.exception_base?: (String?) -> bool
+      def self?.identities: () -> Array[String]
+    end
+
+    module EventOwner
+      def xna_event: (Symbol identity) -> void
+      def xna_abstract_event: (Symbol identity, String contract) -> void
+      def xna_event_identities: () -> Array[Symbol]
+    end
+  end
+end
