@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "note": "Verbatim capability rows from docs/runtime-capabilities.json as committed at 831971e, the Foundation 27 state before the consistency correction. They are kept byte-identical so test/test_capability_consistency.rb can prove the gate fails against the exact state that shipped green.",
+  "milestone": "Foundation 27",
+  "capabilities": [
+    {
+      "id": "managed.pure-enum-batch.audio",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified complete enum metadata contracts",
+      "evidence": "Foundation 16 batch: AudioChannels (Mono=1, Stereo=2, no zero literal), AudioStopOptions, MicrophoneState, SoundState; 4 types / 9 Ruby identities. Enum metadata contract only. The Microsoft.Xna.Framework.Audio namespace contains these four enums and nothing else; no audio engine, SoundEffect, Microphone, XACT or CNA audio route exists or is claimed"
+    },
+    {
+      "id": "managed.touch-closure",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified complete managed value contracts",
+      "evidence": "Foundation 17: TouchLocationState (Invalid=0..Moved=3), GestureType (flags, declared None=0, mask 0x3FF, no invented aggregate), TouchPanelCapabilities (get-only IsConnected/MaximumTouchCount projecting the CLR default struct value, because XNA declares no public constructor); 3 types / 17 Ruby identities. Managed contract only: no TouchPanel, TouchCollection, TouchLocation, GestureSample, gesture recognition, touch route or touch hardware is implemented or claimed, and nothing queries a touch device"
+    },
+    {
+      "id": "managed.event-projection",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified general mapping",
+      "evidence": "Foundation 20: one CLR public event projects to one public Ruby event reader keeping the XNA spelling, answering the generic CNA::Runtime::Event subscription primitive whose whole public surface is add/remove. Registration-ordered dispatch over a snapshot, duplicate subscriptions permitted, last-occurrence removal matching Delegate.Remove, exceptions never swallowed, raising internal to the declaring implementation. System.EventArgs projects as CNA::Runtime::EventArgs with only its two public CLR identities. Verifier measures kind event under EVENT_MAPPING_MISMATCH with EVENT_IDENTITIES=4 across two owner types; mutation coverage rejects add_/remove_ pairs, writers, wrong support types, extra identities and any public emit/fire/trigger surface. No add_EventName or remove_EventName identity and no fabricated ::System namespace exists"
+    },
+    {
+      "id": "managed.bcl-projection",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified general mapping",
+      "evidence": "Foundation 21: CNA::Runtime::BclProjection is the measured register of non-XNA CLR identities this binding projects — System.EventArgs to CNA::Runtime::EventArgs, and System.Exception and System.Runtime.InteropServices.ExternalException to the Ruby StandardError root. The API verifier resolves and shape-checks every entry under LANGUAGE_MAPPING_MISMATCH and the dependency frontier consumes the same register, so no BCL type can be reported as mapped that the runtime does not project. StandardError rather than ::Exception because a CLR catch (Exception) is the analogue of a bare Ruby rescue; an intermediate BCL exception class the XNA surface never names collapses to the nearest projected ancestor. System.Type, IServiceProvider, IO.Stream, TimeSpan as a first-class type, Attribute, StringBuilder, SerializationInfo, ReadOnlyCollection and Dictionary are deliberately not designed"
+    },
+    {
+      "id": "managed.xna-exception-types",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified complete cluster",
+      "evidence": "Foundation 22: six XNA exception types as real Ruby exceptions rooted at StandardError - Audio InstancePlayLimitException, NoAudioHardwareException, NoMicrophoneConnectedException; Graphics DeviceLostException, DeviceNotResetException, NoSuitableGraphicsDeviceException; 6 types / 18 Ruby identities. The pinned IL shows all eight XNA exception types declare zero fields, zero methods and four constructors whose entire body is a pure forward to the CLR exception base, with no message synthesis and no validation. The inner exception maps to Ruby Exception#cause, bound at construction with the backtrace cleared, so an unraised exception matches the CLR's InnerException set and StackTrace null. ContentLoadException and StorageDeviceNotConnectedException stay deferred on System.Runtime.Serialization. Nothing in this binding raises any of them, and no audio engine, Content or Storage namespace is added"
+    },
+    {
+      "id": "reference.xna-il-provenance",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified hash-pinned",
+      "evidence": "Foundation 22: the original Microsoft XNA Framework 4.0 Windows assemblies are on this host and are located by exact SHA-256, never by filename. tools/api_compat/reference/XNA_IL_PROVENANCE.md pins ten of them by hash, size and version, including the two the behaviour corpus had cited since Milestone 3. tools/api_compat/build_il_inventory.rb admits each by hash, refuses to run on any mismatch, disassembles with ikdasm and writes docs/generated/xna-il-inventory.json: declaring assembly, IL size, declared field and method counts, per-constructor access and pure-base-forward proof, and native reachability. 250 of 257 reference types have IL. No Microsoft-owned bytes and no machine-local path is committed, and the gem packages zero Microsoft binaries"
+    },
+    {
+      "id": "audio-media",
+      "category": "UNIMPLEMENTED_CNA_RUBY",
+      "status": "deferred",
+      "evidence": "Foundation 16 adds the managed Audio and Media enum metadata contracts only; every audio and media runtime type, engine, device and playback route remains absent and unimplemented"
+    },
+    {
+      "id": "input.touch",
+      "category": "UNIMPLEMENTED_CNA_RUBY",
+      "status": "deferred",
+      "evidence": "Foundation 17 adds the managed TouchLocationState, GestureType and TouchPanelCapabilities contracts only; TouchPanel, TouchCollection, TouchLocation, GestureSample, gesture recognition and every touch route remain absent, and no touch hardware has been measured"
+    },
+    {
+      "id": "mapping.event-projection",
+      "category": "UNRESOLVED_MAPPING_DECISION",
+      "status": "blocked pending review",
+      "evidence": "no selected type has ever projected a CLR event; IUpdateable, IDrawable, GameWindow and Audio.Microphone are dependency-complete but blocked because Ruby subscription/unsubscription semantics for System.EventHandler are an unmade public-API decision"
+    },
+    {
+      "id": "mapping.bcl-projection",
+      "category": "UNRESOLVED_MAPPING_DECISION",
+      "status": "blocked pending review",
+      "evidence": "23 dependency-complete types name BCL types no complete type projects: System.Exception and ExternalException, System.Attribute, System.EventArgs, System.Type, System.IServiceProvider, System.IO.Stream, System.TimeSpan, ReadOnlyCollection, Dictionary, StringBuilder, SerializationInfo. The mapped BCL set is derived from measured work, not asserted"
+    },
+    {
+      "id": "evidence.retained-xna-assemblies",
+      "category": "UPSTREAM_INPUT_UNAVAILABLE",
+      "status": "not available on this host",
+      "evidence": "13 dependency-complete pure managed types are blocked on constructor/method IL. PROVENANCE.md pins metadata only, and the behaviour-corpus upstream source 398d0201 is absent. tools/touch_location_reference_probe.cs is ready to capture TouchLocation goldens on a real Windows XNA host"
+    }
+  ]
+}

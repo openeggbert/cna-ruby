@@ -92,7 +92,7 @@
       "id": "managed.pure-enum-batch.audio",
       "category": "VERIFIED_MANAGED",
       "status": "verified complete enum metadata contracts",
-      "evidence": "Foundation 16 batch: AudioChannels (Mono=1, Stereo=2, no zero literal), AudioStopOptions, MicrophoneState, SoundState; 4 types / 9 Ruby identities. Enum metadata contract only. The Microsoft.Xna.Framework.Audio namespace contains these four enums and nothing else; no audio engine, SoundEffect, Microphone, XACT or CNA audio route exists or is claimed"
+      "evidence": "Foundation 16 batch: AudioChannels (Mono=1, Stereo=2, no zero literal), AudioStopOptions, MicrophoneState, SoundState; 4 types / 9 Ruby identities. Enum metadata contract only. Foundation 16 opened the Audio namespace with exactly these four enums; Foundations 22 and 24 added the three Audio exception types and the two spatial descriptors, so see managed.xna-exception-types and managed.spatial-audio-descriptors for what the namespace holds now. No audio engine, SoundEffect, Microphone, XACT or CNA audio route exists or is claimed"
     },
     {
       "id": "managed.pure-enum-batch.media",
@@ -104,7 +104,7 @@
       "id": "managed.touch-closure",
       "category": "VERIFIED_MANAGED",
       "status": "verified complete managed value contracts",
-      "evidence": "Foundation 17: TouchLocationState (Invalid=0..Moved=3), GestureType (flags, declared None=0, mask 0x3FF, no invented aggregate), TouchPanelCapabilities (get-only IsConnected/MaximumTouchCount projecting the CLR default struct value, because XNA declares no public constructor); 3 types / 17 Ruby identities. Managed contract only: no TouchPanel, TouchCollection, TouchLocation, GestureSample, gesture recognition, touch route or touch hardware is implemented or claimed, and nothing queries a touch device"
+      "evidence": "Foundation 17: TouchLocationState (Invalid=0..Moved=3), GestureType (flags, declared None=0, mask 0x3FF, no invented aggregate), TouchPanelCapabilities (get-only IsConnected/MaximumTouchCount projecting the CLR default struct value, because XNA declares no public constructor); 3 types / 17 Ruby identities. Managed contract only: no TouchPanel, TouchCollection, gesture recognition, touch route or touch hardware is implemented or claimed, and nothing queries a touch device. Foundation 23 later added the TouchLocation and GestureSample value contracts; see managed.touch-value-types"
     },
     {
       "id": "managed.interface-contracts",
@@ -134,7 +134,7 @@
       "id": "managed.xna-exception-types",
       "category": "VERIFIED_MANAGED",
       "status": "verified complete cluster",
-      "evidence": "Foundation 22: six XNA exception types as real Ruby exceptions rooted at StandardError - Audio InstancePlayLimitException, NoAudioHardwareException, NoMicrophoneConnectedException; Graphics DeviceLostException, DeviceNotResetException, NoSuitableGraphicsDeviceException; 6 types / 18 Ruby identities. The pinned IL shows all eight XNA exception types declare zero fields, zero methods and four constructors whose entire body is a pure forward to the CLR exception base, with no message synthesis and no validation. The inner exception maps to Ruby Exception#cause, bound at construction with the backtrace cleared, so an unraised exception matches the CLR's InnerException set and StackTrace null. ContentLoadException and StorageDeviceNotConnectedException stay deferred on System.Runtime.Serialization. Nothing in this binding raises any of them, and no audio engine, Content or Storage namespace is added"
+      "evidence": "Foundation 22: six XNA exception types as real Ruby exceptions rooted at StandardError - Audio InstancePlayLimitException, NoAudioHardwareException, NoMicrophoneConnectedException; Graphics DeviceLostException, DeviceNotResetException, NoSuitableGraphicsDeviceException; 6 types / 18 Ruby identities. The pinned IL shows all eight XNA exception types declare zero fields, zero methods and four constructors whose entire body is a pure forward to the CLR exception base, with no message synthesis and no validation. The inner exception maps to Ruby Exception#cause, bound at construction with the backtrace cleared, so an unraised exception matches the CLR's InnerException set and StackTrace null. ContentLoadException and StorageDeviceNotConnectedException stay deferred on System.Runtime.Serialization. Nothing in this binding raises any of them, there is no audio engine, and Microsoft.Xna.Framework.Storage does not exist; Foundation 27 later opened the Content namespace for the five ContentSerializer attributes"
     },
     {
       "id": "reference.xna-il-provenance",
@@ -434,31 +434,19 @@
       "id": "audio-media",
       "category": "UNIMPLEMENTED_CNA_RUBY",
       "status": "deferred",
-      "evidence": "Foundation 16 adds the managed Audio and Media enum metadata contracts only; every audio and media runtime type, engine, device and playback route remains absent and unimplemented"
+      "evidence": "Managed contracts only. Audio holds AudioChannels, AudioStopOptions, MicrophoneState, SoundState, InstancePlayLimitException, NoAudioHardwareException, NoMicrophoneConnectedException, AudioListener and AudioEmitter; Media holds MediaSourceType, MediaState and VideoSoundtrackType. Every audio and media runtime remains absent and unimplemented: no engine, no device, no playback, no XACT, no MediaPlayer or MediaLibrary, no visualisation and no CNA audio or media route. Nothing here makes a sound, plays anything or reads a device"
     },
     {
       "id": "input.touch",
       "category": "UNIMPLEMENTED_CNA_RUBY",
       "status": "deferred",
-      "evidence": "Foundation 17 adds the managed TouchLocationState, GestureType and TouchPanelCapabilities contracts only; TouchPanel, TouchCollection, TouchLocation, GestureSample, gesture recognition and every touch route remain absent, and no touch hardware has been measured"
+      "evidence": "Managed value contracts only. Input.Touch holds TouchLocationState, GestureType, TouchPanelCapabilities, TouchLocation and GestureSample, every one of them complete. TouchPanel, TouchCollection, gesture recognition and every touch route remain absent; no touch hardware has been measured, nothing queries a touch device, nothing produces a TouchLocation or a GestureSample, and TouchPanelCapabilities answers the CLR default struct value rather than a device"
     },
     {
-      "id": "mapping.event-projection",
-      "category": "UNRESOLVED_MAPPING_DECISION",
-      "status": "blocked pending review",
-      "evidence": "no selected type has ever projected a CLR event; IUpdateable, IDrawable, GameWindow and Audio.Microphone are dependency-complete but blocked because Ruby subscription/unsubscription semantics for System.EventHandler are an unmade public-API decision"
-    },
-    {
-      "id": "mapping.bcl-projection",
-      "category": "UNRESOLVED_MAPPING_DECISION",
-      "status": "blocked pending review",
-      "evidence": "23 dependency-complete types name BCL types no complete type projects: System.Exception and ExternalException, System.Attribute, System.EventArgs, System.Type, System.IServiceProvider, System.IO.Stream, System.TimeSpan, ReadOnlyCollection, Dictionary, StringBuilder, SerializationInfo. The mapped BCL set is derived from measured work, not asserted"
-    },
-    {
-      "id": "evidence.retained-xna-assemblies",
+      "id": "evidence.behavior-corpus-upstream-source",
       "category": "UPSTREAM_INPUT_UNAVAILABLE",
       "status": "not available on this host",
-      "evidence": "13 dependency-complete pure managed types are blocked on constructor/method IL. PROVENANCE.md pins metadata only, and the behaviour-corpus upstream source 398d0201 is absent. tools/touch_location_reference_probe.cs is ready to capture TouchLocation goldens on a real Windows XNA host"
+      "evidence": "the upstream behaviour-corpus source with SHA-256 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is not on this host, so tools/import_behavior_corpus.rb has never been run. Corpus additions are merged by the documented deterministic replay, which refuses to write unless re-serialising the pre-merge corpus reproduces its bytes exactly, and every merge and correction to date has been proved additive or element-wise unchanged"
     },
     {
       "id": "platform.windows",

@@ -3,8 +3,9 @@
 ## Exact current boundary
 
 Foundations 16 to 27 are complete and qualified. Foundations 16–21 are one checkpoint commit;
-Foundations 22–27 are one commit each; a final documentation commit records the qualified state.
-**Eight local commits ahead of `origin/develop`, nothing pushed.**
+Foundations 22–27 are one commit each; a documentation commit records the qualified state, and a
+ninth commit reconciles the runtime capability registry with what Foundations 20–27 actually built.
+**All nine are published on `origin/develop`.**
 
 | Foundation | What it added | Types | Identities |
 | --- | --- | --- | --- |
@@ -96,6 +97,29 @@ the one nested enumerator.
 - **`NATIVE_RUNTIME` (`EffectAnnotation`, `TextureCollection`, `Microphone`, `ContentManager`,
   `GraphicsAdapter`, `SpriteFont`)** — each reaches a native entry point in its own IL. Crossing
   that boundary means new CNA ABI, which this managed sequence deliberately does not do.
+
+## The capability registry is now a measured artifact
+
+`docs/runtime-capabilities.json` had drifted: three rows still named blockers that Foundations 20,
+21 and 22 had retired, and five more described a namespace by the one Foundation that opened it
+rather than by what the namespace holds today. Nothing caught it, because qualification never
+compared the registry against the rest of the project — every milestone was green while the
+registry contradicted it.
+
+`tools/capability_consistency.rb` closes that. It derives its assertions from measured state, not
+from expected strings: the strict verifier's complete-type list, the hash-admitted IL inventory,
+and the namespaces actually present under `Microsoft::Xna::Framework` at runtime. Six rules fire on
+a row that claims a complete type is absent, claims a present namespace is absent, states a
+namespace type count that does not match the live count, calls a subsystem unimplemented while it
+has complete types, cites an unavailable upstream input the inventory has since admitted, or
+duplicates a subject another row already owns. Two structural rules reject an unknown category and
+a duplicate identity.
+
+`tools/generate_capabilities.rb` runs the check first and **refuses to write the Markdown** on any
+finding, so a contradictory registry cannot reach `docs/generated/`. The gate is proved by
+`test/fixtures/capability-registry-foundation-27-prefix.json`, which holds the eight defective rows
+byte-identical to the shipped Foundation 27 state: the checker answers 11 findings across all six
+defect rules against it and 0 against the corrected registry.
 
 ## Established general mappings
 
