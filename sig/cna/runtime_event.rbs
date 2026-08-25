@@ -13,6 +13,10 @@ module CNA
       def remove: (untyped handler) -> untyped
     end
 
+    # The Ruby projection of System.Attribute: a marker base with no members of its own.
+    class Attribute
+    end
+
     # The measured register of non-XNA CLR identities this binding projects.
     module BclProjection
       TYPES: Hash[String, String]

@@ -1,0 +1,43 @@
+module Microsoft
+  module Xna
+    module Framework
+      module Content
+        class ContentSerializerAttribute < CNA::Runtime::Attribute
+          def initialize: () -> void
+          attr_reader ElementName: String?
+          attr_reader FlattenContent: bool
+          attr_reader Optional: bool
+          attr_reader AllowNull: bool
+          attr_reader SharedResource: bool
+          def ElementName=: (String? value) -> String?
+          def FlattenContent=: (bool value) -> bool
+          def Optional=: (bool value) -> bool
+          def AllowNull=: (bool value) -> bool
+          def SharedResource=: (bool value) -> bool
+          def CollectionItemName: () -> String
+          def CollectionItemName=: (String value) -> String
+          def HasCollectionItemName: () -> bool
+          def Clone: () -> ContentSerializerAttribute
+        end
+
+        class ContentSerializerCollectionItemNameAttribute < CNA::Runtime::Attribute
+          def initialize: (String collectionItemName) -> void
+          attr_reader CollectionItemName: String
+        end
+
+        class ContentSerializerIgnoreAttribute < CNA::Runtime::Attribute
+        end
+
+        class ContentSerializerRuntimeTypeAttribute < CNA::Runtime::Attribute
+          def initialize: (String runtimeType) -> void
+          attr_reader RuntimeType: String
+        end
+
+        class ContentSerializerTypeVersionAttribute < CNA::Runtime::Attribute
+          def initialize: (Integer typeVersion) -> void
+          attr_reader TypeVersion: Integer
+        end
+      end
+    end
+  end
+end

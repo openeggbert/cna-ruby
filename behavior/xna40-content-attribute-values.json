@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+  "derivation": "Foundation 27 ContentSerializer attributes. Contract rows come from the pinned public metadata and docs/generated/xna-il-inventory.json. Mapping rows encode what the pinned Microsoft.Xna.Framework.dll IL establishes: ContentSerializerAttribute's constructor stores allowNull true before calling the base constructor and leaves every other field at its CLR default; CollectionItemName answers the literal \"Item\" whenever the raw field is null or empty and its setter throws ArgumentNullException for null or empty; HasCollectionItemName is the negation of that same emptiness test; Clone copies the six raw fields; the CollectionItemName and RuntimeType constructors throw ArgumentNullException for null or empty while the TypeVersion constructor validates nothing; and ContentSerializerIgnoreAttribute declares nothing but its constructor. System.Attribute projects to the CNA::Runtime::Attribute marker base and System.ArgumentNullException to Ruby's ArgumentError. None is snapshotted from the cna-ruby implementation.",
+  "observations": [
+    {
+      "id": "content_attribute.serializer.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Content.ContentSerializerAttribute"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Attribute",
+        9,
+        "Microsoft.Xna.Framework.dll",
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+        6,
+        false,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "content_attribute.collectionitemname.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Content.ContentSerializerCollectionItemNameAttribute"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Attribute",
+        2,
+        "Microsoft.Xna.Framework.dll",
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+        1,
+        false,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "content_attribute.ignore.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Content.ContentSerializerIgnoreAttribute"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Attribute",
+        1,
+        "Microsoft.Xna.Framework.dll",
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+        0,
+        false,
+        false,
+        [
+          [
+            "public",
+            true
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "content_attribute.runtimetype.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Content.ContentSerializerRuntimeTypeAttribute"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Attribute",
+        2,
+        "Microsoft.Xna.Framework.dll",
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+        1,
+        false,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "content_attribute.typeversion.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Content.ContentSerializerTypeVersionAttribute"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Attribute",
+        2,
+        "Microsoft.Xna.Framework.dll",
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+        1,
+        false,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "content_attribute.register",
+      "operation": "BclProjection.Register",
+      "args": [
+        "System.Attribute"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          [
+            "System.Attribute",
+            "CNA::Runtime::Attribute",
+            false,
+            true
+          ]
+        ],
+        null,
+        false
+      ]
+    },
+    {
+      "id": "content_attribute.defaults",
+      "operation": "ContentAttribute.Defaults",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        null,
+        false,
+        false,
+        true,
+        false,
+        "Item",
+        false,
+        "CNA::Runtime::Attribute",
+        [
+          "AllowNull",
+          "AllowNull=",
+          "Clone",
+          "CollectionItemName",
+          "CollectionItemName=",
+          "ElementName",
+          "ElementName=",
+          "FlattenContent",
+          "FlattenContent=",
+          "HasCollectionItemName",
+          "Optional",
+          "Optional=",
+          "SharedResource",
+          "SharedResource="
+        ]
+      ]
+    },
+    {
+      "id": "content_attribute.validation",
+      "operation": "ContentAttribute.Validation",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "ArgumentError:value",
+        "ArgumentError:value",
+        "TypeError",
+        "Item",
+        "none",
+        "none",
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
+        "ArgumentError:collectionItemName",
+        "ArgumentError:runtimeType",
+        "RangeError",
+        "none"
+      ]
+    },
+    {
+      "id": "content_attribute.clone",
+      "operation": "ContentAttribute.Clone",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        false,
+        [
+          "Node",
+          true,
+          true,
+          false,
+          true,
+          "Entry",
+          true
+        ],
+        [
+          "Item",
+          false,
+          true
+        ]
+      ]
+    },
+    {
+      "id": "content_attribute.single_argument",
+      "operation": "ContentAttribute.SingleArgument",
+      "args": [
+
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "Entry",
+        "Foo",
+        3,
+        -3,
+        true,
+        [
+
+        ],
+        [
+          "ContentSerializerAttribute",
+          "ContentSerializerCollectionItemNameAttribute",
+          "ContentSerializerIgnoreAttribute",
+          "ContentSerializerRuntimeTypeAttribute",
+          "ContentSerializerTypeVersionAttribute"
+        ],
+        [
+
+        ],
+        "Object"
+      ]
+    }
+  ]
+}

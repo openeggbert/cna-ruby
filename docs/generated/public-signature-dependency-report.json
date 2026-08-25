@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 129,
-  "completeTypes": 123,
+  "targetTypes": 134,
+  "completeTypes": 128,
   "partialTypes": [
     "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -11,7 +11,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 128,
+  "missingTypes": 123,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME or RUNTIME_DATA blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -36,6 +36,7 @@
   "selectionRoute": "none-consumable",
   "mappedBclTypes": [
     "!0",
+    "System.Attribute",
     "System.Boolean",
     "System.Byte",
     "System.Collections.Generic.ICollection`1",
@@ -66,7 +67,8 @@
   "bclProjectionRegister": {
     "types": {
       "System.EventArgs": "CNA::Runtime::EventArgs",
-      "System.TimeSpan": "Float"
+      "System.TimeSpan": "Float",
+      "System.Attribute": "CNA::Runtime::Attribute"
     },
     "exceptionBases": {
       "System.Exception": "StandardError",
@@ -74,7 +76,7 @@
     }
   },
   "blockerSummary": {
-    "BCL_PROJECTION": 13,
+    "BCL_PROJECTION": 8,
     "BCL_PROJECTION+NATIVE_RUNTIME": 4,
     "BCL_PROJECTION+RUNTIME_DATA": 2,
     "IL_UNAVAILABLE": 1,
@@ -85,40 +87,6 @@
 
   ],
   "dependencyCompleteCandidates": [
-    {
-      "name": "Microsoft.Xna.Framework.Content.ContentSerializerIgnoreAttribute",
-      "kind": "class",
-      "expectedRubyIdentities": 1,
-      "dependencies": [
-
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "BCL_PROJECTION"
-      ],
-      "unmappedBclTypes": [
-        "System.Attribute"
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    },
     {
       "name": "Microsoft.Xna.Framework.FrameworkDispatcher",
       "kind": "class",
@@ -250,108 +218,6 @@
       ],
       "behaviourBearingMembers": [
         "OpenStream"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Content.ContentSerializerCollectionItemNameAttribute",
-      "kind": "class",
-      "expectedRubyIdentities": 2,
-      "dependencies": [
-
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "BCL_PROJECTION"
-      ],
-      "unmappedBclTypes": [
-        "System.Attribute"
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Content.ContentSerializerRuntimeTypeAttribute",
-      "kind": "class",
-      "expectedRubyIdentities": 2,
-      "dependencies": [
-
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "BCL_PROJECTION"
-      ],
-      "unmappedBclTypes": [
-        "System.Attribute"
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Content.ContentSerializerTypeVersionAttribute",
-      "kind": "class",
-      "expectedRubyIdentities": 2,
-      "dependencies": [
-
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "BCL_PROJECTION"
-      ],
-      "unmappedBclTypes": [
-        "System.Attribute"
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor"
       ],
       "ilDerivationRequired": true,
       "ilAvailable": true,
@@ -704,7 +570,6 @@
         "BCL_PROJECTION"
       ],
       "unmappedBclTypes": [
-        "System.Attribute",
         "System.Attribute[]",
         "System.ComponentModel.ExpandableObjectConverter",
         "System.ComponentModel.ITypeDescriptorContext",
@@ -721,41 +586,6 @@
         "GetCreateInstanceSupported",
         "GetPropertiesSupported",
         "GetProperties"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Content.ContentSerializerAttribute",
-      "kind": "class",
-      "expectedRubyIdentities": 9,
-      "dependencies": [
-
-      ],
-      "unmetDependencies": [
-
-      ],
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "BCL_PROJECTION"
-      ],
-      "unmappedBclTypes": [
-        "System.Attribute"
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "Clone"
       ],
       "ilDerivationRequired": true,
       "ilAvailable": true,

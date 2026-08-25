@@ -37,6 +37,7 @@ end
 A = F::Audio
 M = F::Media
 TOUCH = F::Input::Touch
+CONTENT = F::Content
 BATCH_SIGNATURES = JSON.parse(
   File.read(File.expand_path("api_compat/signatures.json", __dir__))
 ).fetch("types").to_h { |type| [type.fetch("name"), type] }
@@ -186,6 +187,7 @@ def behavior_group(item)
   return "TOUCH_VALUE" if id.start_with?("touch_value.")
   return "MANAGED_DESCRIPTOR" if id.start_with?("managed_descriptor.")
   return "CONSTRUCTOR_FREE" if id.start_with?("constructor_free.")
+  return "CONTENT_ATTRIBUTE" if id.start_with?("content_attribute.")
 
   id.split(".").first.upcase
 end
@@ -423,6 +425,58 @@ def execute(item)
       interface.protected_instance_methods(false) + interface.private_instance_methods(false),
       BATCH_SIGNATURES.fetch(clr_name).fetch("members").any? { |member| member.fetch("kind") == "event" }
     ]
+  when "ContentAttribute.Defaults"
+    attribute = CONTENT::ContentSerializerAttribute.new
+    [attribute.ElementName, attribute.FlattenContent, attribute.Optional, attribute.AllowNull,
+     attribute.SharedResource, attribute.CollectionItemName, attribute.HasCollectionItemName,
+     CONTENT::ContentSerializerAttribute.superclass.name,
+     CONTENT::ContentSerializerAttribute.public_instance_methods(false).map(&:to_s).sort]
+  when "ContentAttribute.Validation"
+    attribute = CONTENT::ContentSerializerAttribute.new
+    messages = ->(block) do
+      begin
+        block.call
+        "none"
+      rescue Exception => error
+        "#{error.class}:#{error.message}"
+      end
+    end
+    [messages.call(-> { attribute.CollectionItemName = "" }),
+     messages.call(-> { attribute.CollectionItemName = nil }),
+     error_name { attribute.CollectionItemName = 5 },
+     attribute.CollectionItemName,
+     error_name { attribute.ElementName = "" }, error_name { attribute.ElementName = nil },
+     %i[FlattenContent= Optional= AllowNull= SharedResource=].map do |setter|
+       error_name { attribute.public_send(setter, 1) }
+     end,
+     messages.call(-> { CONTENT::ContentSerializerCollectionItemNameAttribute.new("") }),
+     messages.call(-> { CONTENT::ContentSerializerRuntimeTypeAttribute.new("") }),
+     error_name { CONTENT::ContentSerializerTypeVersionAttribute.new(2**31) },
+     error_name { CONTENT::ContentSerializerTypeVersionAttribute.new(-3) }]
+  when "ContentAttribute.Clone"
+    attribute = CONTENT::ContentSerializerAttribute.new
+    attribute.ElementName = "Node"
+    attribute.FlattenContent = true
+    attribute.Optional = true
+    attribute.AllowNull = false
+    attribute.SharedResource = true
+    attribute.CollectionItemName = "Entry"
+    copy = attribute.Clone
+    fresh = CONTENT::ContentSerializerAttribute.new.Clone
+    [copy.equal?(attribute),
+     [copy.ElementName, copy.FlattenContent, copy.Optional, copy.AllowNull, copy.SharedResource,
+      copy.CollectionItemName, copy.HasCollectionItemName],
+     [fresh.CollectionItemName, fresh.HasCollectionItemName, fresh.AllowNull]]
+  when "ContentAttribute.SingleArgument"
+    [CONTENT::ContentSerializerCollectionItemNameAttribute.new("Entry").CollectionItemName,
+     CONTENT::ContentSerializerRuntimeTypeAttribute.new("Foo").RuntimeType,
+     CONTENT::ContentSerializerTypeVersionAttribute.new(3).TypeVersion,
+     CONTENT::ContentSerializerTypeVersionAttribute.new(-3).TypeVersion,
+     CONTENT::ContentSerializerIgnoreAttribute.new.instance_of?(CONTENT::ContentSerializerIgnoreAttribute),
+     CONTENT::ContentSerializerIgnoreAttribute.public_instance_methods(false).map(&:to_s),
+     CONTENT.constants(false).map(&:to_s).sort,
+     CNA::Runtime::Attribute.public_instance_methods(false).map(&:to_s),
+     CNA::Runtime::Attribute.superclass.name]
   when "DisplayModeCollection.Projection"
     build = ->(width, height, format) { G::DisplayMode.__send__(:new, width, height, format) }
     modes = [build.call(1920, 1080, G::SurfaceFormat::Color),

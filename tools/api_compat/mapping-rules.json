@@ -71,7 +71,9 @@
     "namespace": "a projected BCL identity lives in the CNA runtime; no fabricated Ruby ::System namespace is created",
     "scope": "only a CLR identity the selected XNA surface actually names, and whose Ruby projection can be decided without guessing, is admitted",
     "types": {
-      "System.EventArgs": "CNA::Runtime::EventArgs"
+      "System.EventArgs": "CNA::Runtime::EventArgs",
+      "System.TimeSpan": "Float",
+      "System.Attribute": "CNA::Runtime::Attribute"
     },
     "exceptions": {
       "principle": "an XNA exception must behave as a Ruby exception rather than an ordinary Object subclass",
@@ -86,13 +88,18 @@
       "System.Type",
       "System.IServiceProvider",
       "System.IO.Stream",
-      "System.TimeSpan",
-      "System.Attribute",
       "System.Text.StringBuilder",
       "System.Runtime.Serialization.SerializationInfo",
       "System.Collections.ObjectModel.ReadOnlyCollection`1",
       "System.Collections.Generic.Dictionary`2"
-    ]
+    ],
+    "thrownExceptions": {
+      "policy": "a CLR exception a projected member throws maps to the nearest Ruby exception with the same meaning, and one CLR exception always maps to exactly one Ruby exception",
+      "System.ArgumentNullException": "ArgumentError; the CLR throws it for a null *or empty* string, so TypeError would be wrong for half its cases",
+      "System.ArgumentOutOfRangeException": "RangeError, the same class this binding already raises for a value outside its allowed range",
+      "System.ArgumentException": "ArgumentError",
+      "System.IndexOutOfRangeException": "IndexError"
+    }
   },
   "constructorFreeClasses": "a CLR class whose only constructor is internal projects to a Ruby class with `new` made private, as GraphicsResource and Texture already do; its public non-constructibility is part of the contract and the internal construction path stays reachable to a future producer through __send__. No producer is fabricated, and no public Ruby constructor is created that XNA does not expose."
 }

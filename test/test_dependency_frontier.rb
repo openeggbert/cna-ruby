@@ -57,6 +57,11 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs
       Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs
       Microsoft.Xna.Framework.Graphics.DisplayModeCollection
+      Microsoft.Xna.Framework.Content.ContentSerializerAttribute
+      Microsoft.Xna.Framework.Content.ContentSerializerCollectionItemNameAttribute
+      Microsoft.Xna.Framework.Content.ContentSerializerIgnoreAttribute
+      Microsoft.Xna.Framework.Content.ContentSerializerRuntimeTypeAttribute
+      Microsoft.Xna.Framework.Content.ContentSerializerTypeVersionAttribute
     ]
   ).compact.uniq.freeze
 
@@ -191,9 +196,9 @@ class DependencyFrontierTest < Minitest::Test
     end
   end
 
-  def test_every_type_completed_in_foundations_16_to_26_classifies_as_consumable
+  def test_every_type_completed_in_foundations_16_to_27_classifies_as_consumable
     mapped = mapped_bcl_from_complete_types
-    assert_equal 49, CONSUMED.length
+    assert_equal 54, CONSUMED.length
 
     CONSUMED.each do |name|
       type = BY_NAME.fetch(name)
@@ -204,7 +209,7 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 27, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 22, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     assert_equal 0, REPORT.fetch("consumableCandidates").length
@@ -351,7 +356,7 @@ class DependencyFrontierTest < Minitest::Test
       "Microsoft.Xna.Framework.Graphics.TextureCollection" => "NATIVE_RUNTIME",
       "Microsoft.Xna.Framework.Audio.RendererDetail" => "RUNTIME_DATA",
       "Microsoft.Xna.Framework.Media.Video" => "RUNTIME_DATA",
-      "Microsoft.Xna.Framework.Content.ContentSerializerAttribute" => "BCL_PROJECTION",
+      "Microsoft.Xna.Framework.Content.ContentLoadException" => "BCL_PROJECTION",
       "Microsoft.Xna.Framework.TitleContainer" => "BCL_PROJECTION"
     }.each do |name, expected|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }

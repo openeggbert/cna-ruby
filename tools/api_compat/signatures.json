@@ -1084,6 +1084,335 @@
       "rubyName": "Microsoft::Xna::Framework::GameComponentCollectionEventArgs"
     },
     {
+      "name": "Microsoft.Xna.Framework.Content.ContentSerializerAttribute",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Attribute",
+      "interfaces": [
+        "System.Runtime.InteropServices._Attribute"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Clone",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Content.ContentSerializerAttribute",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "ElementName",
+          "type": "System.String",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "FlattenContent",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Optional",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "AllowNull",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "SharedResource",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "CollectionItemName",
+          "type": "System.String",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "HasCollectionItemName",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Content::ContentSerializerAttribute"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentSerializerCollectionItemNameAttribute",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Attribute",
+      "interfaces": [
+        "System.Runtime.InteropServices._Attribute"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "collectionItemName",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "CollectionItemName",
+          "type": "System.String",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Content::ContentSerializerCollectionItemNameAttribute"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentSerializerIgnoreAttribute",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Attribute",
+      "interfaces": [
+        "System.Runtime.InteropServices._Attribute"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Content::ContentSerializerIgnoreAttribute"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentSerializerRuntimeTypeAttribute",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Attribute",
+      "interfaces": [
+        "System.Runtime.InteropServices._Attribute"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "runtimeType",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "RuntimeType",
+          "type": "System.String",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Content::ContentSerializerRuntimeTypeAttribute"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentSerializerTypeVersionAttribute",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Attribute",
+      "interfaces": [
+        "System.Runtime.InteropServices._Attribute"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "typeVersion",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "TypeVersion",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Content::ContentSerializerTypeVersionAttribute"
+    },
+    {
       "name": "Microsoft.Xna.Framework.IUpdateable",
       "kind": "interface",
       "flags": false,

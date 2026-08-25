@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, and the Foundation 26 DisplayModeCollection separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, and the Foundation 27 ContentSerializer attributes separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
   "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
@@ -39,6 +39,8 @@
   "milestone25MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 9fdd907b24818eedc00f6ea67de59d33017dbb0fae7791e0b26892d97e6dc48b, 402 observations) was proved before appending 6 additive observations",
   "milestone26SourceAssemblySha256": "560080fc39021c611ca9d076dcebed312faf6d7d1413c2dc523683ea635e9f55",
   "milestone26MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 2726fde56ce90fbc471bd7a1c2319bbea07469f789210b007a93c91218e54e3f, 408 observations) was proved before appending 2 additive observations",
+  "milestone27SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+  "milestone27MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 6bcaa3e36b3d2cc10e5a6de49e76f61a704181a703804e375ac5d26ab056d921, 410 observations) was proved before appending 10 additive observations",
   "observations": [
     {
       "id": "math.clamp.low",
@@ -12441,6 +12443,248 @@
         false,
         "RangeError",
         "TypeError"
+      ]
+    },
+    {
+      "id": "content_attribute.serializer.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Content.ContentSerializerAttribute"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Attribute",
+        9,
+        "Microsoft.Xna.Framework.dll",
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+        6,
+        false,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "content_attribute.collectionitemname.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Content.ContentSerializerCollectionItemNameAttribute"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Attribute",
+        2,
+        "Microsoft.Xna.Framework.dll",
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+        1,
+        false,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "content_attribute.ignore.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Content.ContentSerializerIgnoreAttribute"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Attribute",
+        1,
+        "Microsoft.Xna.Framework.dll",
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+        0,
+        false,
+        false,
+        [
+          [
+            "public",
+            true
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "content_attribute.runtimetype.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Content.ContentSerializerRuntimeTypeAttribute"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Attribute",
+        2,
+        "Microsoft.Xna.Framework.dll",
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+        1,
+        false,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "content_attribute.typeversion.il_contract",
+      "operation": "ManagedDescriptor.IlContract",
+      "args": [
+        "Microsoft.Xna.Framework.Content.ContentSerializerTypeVersionAttribute"
+      ],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Attribute",
+        2,
+        "Microsoft.Xna.Framework.dll",
+        "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+        1,
+        false,
+        false,
+        [
+          [
+            "public",
+            false
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "content_attribute.register",
+      "operation": "BclProjection.Register",
+      "args": [
+        "System.Attribute"
+      ],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          [
+            "System.Attribute",
+            "CNA::Runtime::Attribute",
+            false,
+            true
+          ]
+        ],
+        null,
+        false
+      ]
+    },
+    {
+      "id": "content_attribute.defaults",
+      "operation": "ContentAttribute.Defaults",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        null,
+        false,
+        false,
+        true,
+        false,
+        "Item",
+        false,
+        "CNA::Runtime::Attribute",
+        [
+          "AllowNull",
+          "AllowNull=",
+          "Clone",
+          "CollectionItemName",
+          "CollectionItemName=",
+          "ElementName",
+          "ElementName=",
+          "FlattenContent",
+          "FlattenContent=",
+          "HasCollectionItemName",
+          "Optional",
+          "Optional=",
+          "SharedResource",
+          "SharedResource="
+        ]
+      ]
+    },
+    {
+      "id": "content_attribute.validation",
+      "operation": "ContentAttribute.Validation",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "ArgumentError:value",
+        "ArgumentError:value",
+        "TypeError",
+        "Item",
+        "none",
+        "none",
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
+        "ArgumentError:collectionItemName",
+        "ArgumentError:runtimeType",
+        "RangeError",
+        "none"
+      ]
+    },
+    {
+      "id": "content_attribute.clone",
+      "operation": "ContentAttribute.Clone",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        false,
+        [
+          "Node",
+          true,
+          true,
+          false,
+          true,
+          "Entry",
+          true
+        ],
+        [
+          "Item",
+          false,
+          true
+        ]
+      ]
+    },
+    {
+      "id": "content_attribute.single_argument",
+      "operation": "ContentAttribute.SingleArgument",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "Entry",
+        "Foo",
+        3,
+        -3,
+        true,
+        [],
+        [
+          "ContentSerializerAttribute",
+          "ContentSerializerCollectionItemNameAttribute",
+          "ContentSerializerIgnoreAttribute",
+          "ContentSerializerRuntimeTypeAttribute",
+          "ContentSerializerTypeVersionAttribute"
+        ],
+        [],
+        "Object"
       ]
     }
   ]

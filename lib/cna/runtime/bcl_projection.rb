@@ -11,6 +11,10 @@ module CNA
     #
     # It stays deliberately narrow. Only a CLR identity the selected XNA surface actually names, and
     # whose Ruby projection can be decided without guessing, belongs here.
+    # The Ruby projection of System.Attribute: a marker base with no members of its own.
+    class Attribute
+    end
+
     module BclProjection
       # CLR type identity => Ruby constant path.
       #
@@ -22,9 +26,15 @@ module CNA
       # because GestureSample.Timestamp is the second consumer. A TimeSpan is a tick count and a
       # binary64 Float is not, so the projection is exact only within Float's 53-bit significand —
       # documented as a LANGUAGE_MAPPING_LIMITATION, not hidden.
+      # System.Attribute projects to CNA::Runtime::Attribute, an empty marker base. Ruby has no
+      # annotation mechanism, so a CLR attribute projects as an ordinary data-carrying class; what
+      # the base preserves is the CLR base identity, which the API verifier measures. None of the
+      # XNA attribute types declares a member inherited from System.Attribute, so the base declares
+      # none either.
       TYPES = {
         "System.EventArgs" => "CNA::Runtime::EventArgs",
-        "System.TimeSpan" => "Float"
+        "System.TimeSpan" => "Float",
+        "System.Attribute" => "CNA::Runtime::Attribute"
       }.freeze
 
       # CLR exception base identity => the Ruby exception class an XNA type deriving from it takes

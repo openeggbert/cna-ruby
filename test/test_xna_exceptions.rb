@@ -163,7 +163,10 @@ class XnaExceptionsTest < Minitest::Test
       refute F::Graphics.const_defined?(name, false), "Graphics::#{name}"
     end
     refute F.const_defined?(:Storage, false)
-    refute F.const_defined?(:Content, false)
+    # Foundation 27 opened Content for the five ContentSerializer attributes and nothing else.
+    assert_equal %i[ContentSerializerAttribute ContentSerializerCollectionItemNameAttribute
+                    ContentSerializerIgnoreAttribute ContentSerializerRuntimeTypeAttribute
+                    ContentSerializerTypeVersionAttribute], F::Content.constants(false).sort
     assert_equal 38, CNA::Native::Manifest::FUNCTIONS.length
     assert_equal 59, CNA::Native::Manifest::CONSTANTS.length
   end
