@@ -53,7 +53,7 @@ class GameComponentTest < Minitest::Test
     assert_equal 0, STRICT.fetch("localDiagnostics").fetch(NAME)
     refute IL.fetch("types").fetch(NAME).fetch("nativeReachable")
     assert_empty IL.fetch("types").fetch(NAME).fetch("nativeReachableMethods")
-    assert_equal 39, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 41, CNA::Native::Manifest::FUNCTIONS.length
   end
 
   def test_it_declares_fourteen_identities_over_the_measured_shape
@@ -480,18 +480,22 @@ class GameComponentTest < Minitest::Test
     assert_equal 136, STRICT.fetch("COMPLETE_TYPES")
     assert_equal 115, STRICT.fetch("MISSING_TYPES")
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
-    assert_equal 130, STRICT.fetch("MISSING_MEMBER"), "Game's remainder is unchanged"
-    assert_equal 13, STRICT.fetch("EVENT_IDENTITIES")
-    assert_equal 5, STRICT.fetch("EVENT_OWNER_TYPES")
+    assert_equal 123, STRICT.fetch("MISSING_MEMBER"),
+                 "Foundation 41 closed Game's four events and their three raisers"
+    assert_equal 17, STRICT.fetch("EVENT_IDENTITIES")
+    assert_equal 6, STRICT.fetch("EVENT_OWNER_TYPES")
     assert_equal 0, STRICT.fetch("UNEXPECTED_MEMBER")
     assert_equal 0, STRICT.fetch("INTERNAL_TYPE_LEAK")
     assert_equal 0, STRICT.fetch("UNMEASURED_STRUCTURAL_CATEGORY")
 
-    # Game's own Dispose(Boolean), Finalize and Disposed stay deferred: only the component pass of
-    # Dispose belongs to this slice.
+    # Game's own Dispose(Boolean) and Finalize stay deferred: only the component pass of Dispose
+    # belongs to this slice. `Disposed` was deferred with them until Foundation 41 closed it -- the
+    # event, not the overload, and the two are independent because the IL raises `Disposed` inline
+    # rather than through an `On...` raiser.
     remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
-    %w[Dispose Finalize Disposed].each do |name|
+    %w[Dispose Finalize].each do |name|
       assert(remainder.any? { |entry| entry.include?("::#{name} ") }, name)
     end
+    refute(remainder.any? { |entry| entry.include?("::Disposed ") })
   end
 end

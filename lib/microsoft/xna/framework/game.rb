@@ -290,7 +290,23 @@ module Microsoft
       end
 
       class Game
+        extend CNA::Runtime::EventOwner
+
         attr_reader :GraphicsDevice
+
+        # The four canonical Game events, in the pinned metadata's declaration order. Every one is
+        # `EventHandler`1<EventArgs>`, and each projects to exactly one public Ruby reader over the
+        # generic subscription primitive -- no writer, no add_/remove_ pair, and raising stays
+        # internal, reached through the protected raisers below or, for `Disposed`, through
+        # `Dispose` itself.
+        #
+        # Handlers may be added before the Game has ever run: the readers are ordinary managed
+        # objects that exist from construction, and the native subscriptions that feed three of them
+        # are created when the host is, which is later.
+        xna_event :Activated
+        xna_event :Deactivated
+        xna_event :Exiting
+        xna_event :Disposed
 
         # The construction order below is the one the pinned Game.dll `.ctor` performs, in its own
         # sequence. Two of its steps are field initialisers, which the CLR runs *before* the base
@@ -388,15 +404,20 @@ module Microsoft
         # `Game.Initialize()`:
         #
         #   1. `HookDeviceEvents()` -- reads `Services.GetService(typeof(IGraphicsDeviceService))`
-        #      and subscribes four device events when it answers non-null. `IGraphicsDeviceService`
-        #      is a missing type in this binding, so no Ruby key for it exists, nothing can register
-        #      one, and the whole method is unreachably conditional. It touches no component state.
+        #      and subscribes four device events when it answers non-null. Foundation 40 completed
+        #      that interface, so the key now exists; what still does not is a producer. Nothing in
+        #      this binding registers one, and the producer audit settled why: CNA's own native Game
+        #      is already the producer, into its own service container, and has already run this
+        #      exact step. So the guard is false here and the method stays unreachably conditional.
+        #      It touches no component state.
         #   2. the drain loop below.
         #   3. `if (graphicsDeviceService != null && graphicsDeviceService.GraphicsDevice != null)
         #      LoadContent();` -- guarded by the same service, so false here for the same reason.
         #      The CNA host delivers `load_content` as its own callback immediately after
         #      `initialize`, which is the canonical order its header documents and the order the
-        #      audit measured, so nothing is called twice and nothing is skipped.
+        #      audit measured, so nothing is called twice and nothing is skipped. Registering a
+        #      managed producer to make this guard true was measured to produce **two**
+        #      `LoadContent` calls, which is why it was not done.
         #
         # The drain loop is exact: `Initialize` is called on the element at index 0 and the element
         # is removed **after** it returns, and `Count` is re-read every iteration. So a component
@@ -555,12 +576,64 @@ module Microsoft
           end
           @generation.invalidate!
           @disposed = true
+          # `Disposed` is the one Game event with no `On…` raiser: the IL raises it inline at the
+          # end of `Dispose(Boolean)`'s `if (disposing)` body, with `this` as the sender and
+          # `EventArgs.Empty` as the args, after the components and the graphics device manager have
+          # been disposed and after `UnhookDeviceEvents()`. That is exactly this position.
+          #
+          # It is raised from here rather than relayed from CNA's own `CNA_GAME_EVENT_DISPOSED`,
+          # and the reason is measured: that signal only exists once a native host exists, so a Game
+          # that was constructed and disposed without ever running would raise nothing, while XNA
+          # raises it for every disposal. Raising it here is right in both cases.
+          #
+          # Two recorded deviations, both inherited from this method rather than introduced by the
+          # event. XNA's `Dispose(Boolean)` has **no disposed guard at all**, so calling `Dispose()`
+          # twice runs the whole body twice and raises `Disposed` twice -- the same absence
+          # Foundation 38 recorded for `GameComponent`. This binding's `Dispose` returns early when
+          # already disposed, because native destruction is not repeatable, so the event is raised
+          # **once**. And XNA's body runs under `Monitor.Enter(this)`, which belongs to
+          # `Dispose(Boolean)` -- still one of Game's missing members -- and is not taken here.
+          begin
+            self.Disposed.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+          rescue Exception => error
+            first_error ||= error
+          end
           raise first_error if first_error
           nil
         end
 
+        # The three protected raisers, each reproducing its pinned IL exactly.
+        #
+        # All three declare a `sender` parameter and **none of them reads it**: the IL loads
+        # `ldarg.0` -- `this` -- as the delegate's sender for `OnActivated` and `OnDeactivated`, so a
+        # subclass calling the base with some other sender still raises with the Game itself. That
+        # is the same shape `GameComponent.OnEnabledChanged` already has.
+        #
+        # `OnExiting` is the exception that a summary would get wrong. Its IL loads **`ldnull`**, so
+        # XNA raises `Exiting` with a **null sender** while the other two raise with the Game. It is
+        # not a quirk this binding is free to tidy up: a handler written against XNA may test the
+        # sender, so the projection dispatches `nil`.
+        #
+        # In all three the `args` argument is `ldarg.2`, passed through unchanged rather than forced
+        # to `EventArgs.Empty` -- the callers are the ones that supply `EventArgs.Empty`.
+        def OnActivated(sender, args)
+          self.Activated.__send__(:dispatch, self, args)
+          nil
+        end
+
+        def OnDeactivated(sender, args)
+          self.Deactivated.__send__(:dispatch, self, args)
+          nil
+        end
+
+        def OnExiting(sender, args)
+          self.Exiting.__send__(:dispatch, nil, args)
+          nil
+        end
+
         protected :Initialize, :LoadContent, :UnloadContent, :BeginRun, :EndRun,
-                  :Update, :Draw, :BeginDraw, :EndDraw
+                  :Update, :Draw, :BeginDraw, :EndDraw,
+                  :OnActivated, :OnDeactivated, :OnExiting
 
         private
 

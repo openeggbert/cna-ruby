@@ -10,6 +10,24 @@ module CNA
 
       attr_reader :handle, :pending_exception
 
+      # The three canonical Game events CNA raises, and the protected raiser each one drives.
+      #
+      # `CNA_GAME_EVENT_DISPOSED` is deliberately absent: `Game#Dispose` raises `Disposed` itself,
+      # because that signal only exists once a host does and XNA raises the event for every
+      # disposal, including one on a Game that never ran.
+      #
+      # `CNA_GameCallbacks::exiting` is deliberately *not* used for `Exiting` either, and that is a
+      # measured decision rather than a stylistic one: the callback fires on every teardown --
+      # including `RunOneFrame` that never exited, and a Game destroyed without ever running --
+      # while XNA raises `Game.Exiting` only when the host actually exits its loop. The C ABI says
+      # as much, noting the callback "can stop the game by failing, while these handlers only
+      # observe". The observer is the faithful source; the veto-capable callback is not.
+      GAME_EVENTS = {
+        "CNA_GAME_EVENT_ACTIVATED" => :OnActivated,
+        "CNA_GAME_EVENT_DEACTIVATED" => :OnDeactivated,
+        "CNA_GAME_EVENT_EXITING" => :OnExiting
+      }.freeze
+
       def initialize(game)
         @game = game
         @library = CNA::Native.library
@@ -17,6 +35,7 @@ module CNA
         @pending_exception = nil
         @callbacks_keepalive = []
         @callback_buffers = []
+        @event_registrations = []
         build_callback_tables
       end
 
@@ -31,6 +50,7 @@ module CNA
         @library.call("cna_game_create", info.pointer, output)
         @handle = output[0, 8].unpack1("Q")
         @library.call("cna_game_set_frame_hooks_ext", handle, @hooks.pointer)
+        subscribe_game_events
         CNA::Runtime::Context.register(@game)
       rescue Exception
         destroy if @handle != 0
@@ -52,6 +72,7 @@ module CNA
       def destroy
         return if handle.zero?
 
+        unsubscribe_game_events
         result = @library.function("cna_game_destroy").call(handle)
         if result.zero? || result == CALLBACK_FAILURE
           @handle = 0
@@ -120,6 +141,55 @@ module CNA
         end
         @callbacks_keepalive << callback
         callback
+      end
+
+      # One native subscription per event identity, created with the host and released before the
+      # game is destroyed. Each registration is an owned handle; `cna_game_unsubscribe` consumes it.
+      def subscribe_game_events
+        GAME_EVENTS.each do |constant, raiser|
+          callback = game_event_callback(raiser)
+          @callbacks_keepalive << callback
+          output = @library.pointer_for("Q", 0)
+          @library.call("cna_game_subscribe", handle,
+                        CNA::Native::Manifest::CONSTANTS.fetch(constant),
+                        callback, 0, output)
+          @event_registrations << output[0, 8].unpack1("Q")
+        end
+      end
+
+      def unsubscribe_game_events
+        registrations = @event_registrations
+        @event_registrations = []
+        registrations.each { |registration| @library.function("cna_game_unsubscribe").call(registration) }
+      end
+
+      # A game event carries nothing but its sender, so the handler receives only its context, and
+      # it returns `void` -- there is no result channel a failure could travel back through. So an
+      # exception is captured the way a lifecycle callback's is and re-raised by the next `finish`,
+      # and **nothing is allowed to escape into C**.
+      #
+      # These arrive between lifecycle callbacks rather than inside one, so the device-borrow
+      # prologue `safely` performs is deliberately not run: no borrowed GraphicsDevice is promised
+      # outside a lifecycle callback, and pretending otherwise would hand out a handle CNA has not
+      # lent. The owner-thread check is kept, because it is the same contract every callback has.
+      def game_event_callback(raiser)
+        Fiddle::Closure::BlockCaller.new(Fiddle::TYPE_VOID, [Fiddle::TYPE_VOIDP]) do |_context|
+          begin
+            unless pending_exception
+              if Thread.current.equal?(@game.__send__(:owner_thread))
+                CNA::Runtime::Context.enter(@game) do
+                  @game.__send__(raiser, @game, CNA::Runtime::EventArgs::Empty)
+                end
+              else
+                @pending_exception =
+                  CNA::OwnerThreadError.new("CNA raised #{raiser} off the Game owner thread")
+              end
+            end
+          rescue Exception => exception
+            @pending_exception ||= exception
+          end
+          nil
+        end
       end
 
       def safely(name)

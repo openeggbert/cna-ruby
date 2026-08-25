@@ -489,6 +489,27 @@
         },
         {
           "name": "Services"
+        },
+        {
+          "name": "Activated"
+        },
+        {
+          "name": "Deactivated"
+        },
+        {
+          "name": "Exiting"
+        },
+        {
+          "name": "Disposed"
+        },
+        {
+          "name": "OnActivated"
+        },
+        {
+          "name": "OnDeactivated"
+        },
+        {
+          "name": "OnExiting"
         }
       ]
     },

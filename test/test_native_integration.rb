@@ -103,6 +103,106 @@ class NativeIntegrationTest < Minitest::Test
     assert_equal 2, game.draws
   end
 
+  # ------------------------------------------------------- Foundation 41, the native Game events
+
+  # A Game that records every lifecycle callback and every Game event in one ordered log, so the
+  # interleaving is measured rather than inferred.
+  class EventOrderGame < F::Game
+    attr_reader :log
+
+    def initialize(frame_limit)
+      super()
+      @log = []
+      @updates = 0
+      @frame_limit = frame_limit
+      self.Activated.add(->(sender, args) { @log << [:Activated, sender.equal?(self), args] })
+      self.Deactivated.add(->(sender, args) { @log << [:Deactivated, sender.equal?(self), args] })
+      self.Exiting.add(->(sender, args) { @log << [:Exiting, sender.nil?, args] })
+      self.Disposed.add(->(sender, args) { @log << [:Disposed, sender.equal?(self), args] })
+    end
+
+    def names = @log.map { |entry| entry.is_a?(Array) ? entry.first : entry }
+
+    protected
+
+    def Initialize = @log << :initialize
+    def LoadContent = @log << :load_content
+    def BeginRun = @log << :begin_run
+    def Update(_time)
+      @log << :update
+      @updates += 1
+      self.Exit if @frame_limit && @updates == @frame_limit
+    end
+    def Draw(_time) = @log << :draw
+    def EndRun = @log << :end_run
+    def UnloadContent = @log << :unload_content
+  end
+
+  # Activated arrives after BeginRun and before the first Update; Exiting after the Update that
+  # requested the exit and before EndRun; Disposed at disposal. Every sender and args is checked.
+  def test_game_events_are_really_raised_in_the_measured_order
+    game = EventOrderGame.new(2)
+    begin
+      game.Run
+    ensure
+      game.Dispose
+    end
+    assert_equal %i[initialize load_content begin_run Activated update draw update
+                    Exiting end_run unload_content Disposed], game.names
+    game.log.grep(Array).each do |identity, sender_ok, args|
+      assert sender_ok, "#{identity} sender"
+      assert_same CNA::Runtime::EventArgs::Empty, args, "#{identity} args"
+    end
+    # Exactly once each, and HEADLESS produced no deactivation, which is not fabricated.
+    assert_equal 1, game.names.count(:Activated)
+    assert_equal 1, game.names.count(:Exiting)
+    assert_equal 1, game.names.count(:Disposed)
+    assert_equal 0, game.names.count(:Deactivated)
+  end
+
+  # RunOneFrame never exits its loop, so XNA would raise no Exiting -- and neither does this. The
+  # already-bound CNA_GameCallbacks::exiting slot fires here, which is exactly why it is not the
+  # source this projection uses.
+  def test_run_one_frame_raises_no_exiting_and_no_activation
+    game = EventOrderGame.new(nil)
+    begin
+      game.RunOneFrame
+    ensure
+      game.Dispose
+    end
+    assert_equal %i[initialize load_content update draw unload_content Disposed], game.names
+  end
+
+  # The registrations are released before the game is destroyed, and releasing them is what stops
+  # CNA calling back into a Ruby closure afterwards.
+  def test_event_registrations_are_released_before_the_game_is_destroyed
+    game = EventOrderGame.new(1)
+    host = game.__send__(:ensure_host)
+    registrations = host.instance_variable_get(:@event_registrations)
+    assert_equal 3, registrations.length, "Activated, Deactivated and Exiting; Disposed is managed"
+    assert(registrations.none?(&:zero?))
+    begin
+      game.Run
+    ensure
+      game.Dispose
+    end
+    assert_empty host.instance_variable_get(:@event_registrations)
+    assert_equal 1, game.names.count(:Disposed)
+  end
+
+  # A handler that raises inside a native event callback must not escape into C. It is captured the
+  # way a lifecycle callback's exception is and surfaces from the enclosing native call.
+  def test_an_exception_from_a_game_event_handler_crosses_the_boundary_safely
+    game = EventOrderGame.new(2)
+    game.Activated.add(->(_sender, _args) { raise "from an Activated handler" })
+    begin
+      error = assert_raises(RuntimeError) { game.Run }
+      assert_equal "from an Activated handler", error.message
+    ensure
+      game.Dispose
+    end
+  end
+
   %w[Initialize LoadContent Update Draw].each do |callback|
     define_method("test_#{callback.downcase}_exception_is_contained") do
       callback_name = callback

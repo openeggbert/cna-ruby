@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "derivation": "Foundation 41 canonical Game events. Contract rows are read from the pinned XNA 4.0 Windows metadata of Microsoft.Xna.Framework.Game.dll. Behaviour rows follow that assembly's IL: Game::OnActivated and Game::OnDeactivated load ldarg.0 -- this -- as the delegate's sender and never read the sender parameter they declare, while Game::OnExiting loads ldnull, so XNA raises Exiting with a null sender; all three pass their args argument through unchanged. Disposed has no On... raiser at all because Dispose(Boolean) raises it inline, with this as the sender and EventArgs.Empty as the args, after the components and the graphics device manager are disposed and after UnhookDeviceEvents. Mapping rows record that this binding's Dispose is idempotent where XNA's Dispose(Boolean) carries no disposed guard.",
+  "observations": [
+    {
+      "id": "game_event.contract",
+      "operation": "GameEvent.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [["Activated", "Deactivated", "Exiting", "Disposed"], ["System.EventHandler`1[System.EventArgs]"], true, false, ["OnActivated", "OnDeactivated", "OnExiting"], ["protected"], [["System.Object", "System.EventArgs"]], false]
+    },
+    {
+      "id": "game_event.raiser_senders",
+      "operation": "GameEvent.RaiserSenders",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [[true, true], [true, true], [null, true], true, false, false]
+    },
+    {
+      "id": "game_event.disposed_semantics",
+      "operation": "GameEvent.DisposedSemantics",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [true, 1, true, true]
+    }
+  ]
+}

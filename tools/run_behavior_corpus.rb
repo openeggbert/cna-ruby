@@ -498,6 +498,56 @@ def execute(item)
       interface.protected_instance_methods(false) + interface.private_instance_methods(false),
       BATCH_SIGNATURES.fetch(clr_name).fetch("members").any? { |member| member.fetch("kind") == "event" }
     ]
+  when "GameEvent.Contract"
+    # The four Game events and the three protected raisers, re-derived from the pinned metadata.
+    # There are three raisers and not four: Disposed has no `On...` method, because the IL raises it
+    # inline at the end of Dispose(Boolean).
+    pinned = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.Game")
+    events = pinned.fetch("members").select { |member| member.fetch("kind") == "event" }
+    raisers = pinned.fetch("members").select { |member| member.fetch("name").start_with?("On") }
+    [events.map { |member| member.fetch("name") },
+     events.map { |member| member.fetch("type") }.uniq,
+     events.all? { |member| member.fetch("add") && member.fetch("remove") },
+     events.any? { |member| member.fetch("static") },
+     raisers.map { |member| member.fetch("name") }.sort,
+     raisers.map { |member| member.fetch("access") }.uniq,
+     raisers.map { |member| member.fetch("parameters").map { |p| p.fetch("type") } }.uniq,
+     pinned.fetch("members").any? { |member| member.fetch("name") == "OnDisposed" }]
+  when "GameEvent.RaiserSenders"
+    # Which sender each raiser really dispatches. OnActivated and OnDeactivated load ldarg.0 -- the
+    # Game -- and ignore the sender they were handed; OnExiting loads ldnull.
+    game = F::Game.new
+    begin
+      other = Object.new
+      seen = {}
+      {OnActivated: :Activated, OnDeactivated: :Deactivated, OnExiting: :Exiting}.each do |raiser, identity|
+        game.public_send(identity).add(->(sender, args) { seen[identity] = [sender.nil? ? nil : sender.equal?(game), args.equal?(CNA::Runtime::EventArgs::Empty)] })
+        game.__send__(raiser, other, CNA::Runtime::EventArgs::Empty)
+      end
+      [seen[:Activated], seen[:Deactivated], seen[:Exiting],
+       F::Game.protected_instance_methods(false).include?(:OnActivated),
+       F::Game.public_instance_methods(false).include?(:OnExiting),
+       F::Game.instance_methods.include?(:OnDisposed)]
+    ensure
+      game.Dispose
+    end
+  when "GameEvent.DisposedSemantics"
+    # Disposed is raised by Dispose itself, so a Game that never had a native host still raises it;
+    # and this binding's Dispose is idempotent, so a second call raises nothing -- a recorded
+    # deviation from XNA's unguarded Dispose(Boolean).
+    game = F::Game.new
+    raised = 0
+    sender_is_game = nil
+    args_empty = nil
+    game.Disposed.add(lambda do |sender, args|
+      raised += 1
+      sender_is_game = sender.equal?(game)
+      args_empty = args.equal?(CNA::Runtime::EventArgs::Empty)
+    end)
+    host_before = game.instance_variable_get(:@host).nil?
+    game.Dispose
+    game.Dispose
+    [host_before, raised, sender_is_game, args_empty]
   when "GraphicsDeviceService.EventDelegates"
     # Every member's exact CLR spelling, re-derived from the pinned contract rather than recalled:
     # one get-only property returning GraphicsDevice, and four events over the same closed generic

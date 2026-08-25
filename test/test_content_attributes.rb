@@ -174,7 +174,7 @@ class ContentAttributesTest < Minitest::Test
   def test_the_cluster_adds_no_content_pipeline
     refute F.const_defined?(:TitleContainer, false)
     refute F::Graphics.const_defined?(:SpriteFont, false)
-    assert_equal 39, CNA::Native::Manifest::FUNCTIONS.length
-    assert_equal 59, CNA::Native::Manifest::CONSTANTS.length
+    assert_equal 41, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 63, CNA::Native::Manifest::CONSTANTS.length
   end
 end

@@ -18,6 +18,8 @@ CHECK_FN(cna_game_run, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_game_run_one_frame, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_game_request_exit, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_game_destroy, CNA_Result, (CNA_Handle));
+CHECK_FN(cna_game_subscribe, CNA_Result, (CNA_Handle, CNA_GameEvent, CNA_GameEventCallback, void*, CNA_GameEventRegistrationHandle*));
+CHECK_FN(cna_game_unsubscribe, CNA_Result, (CNA_GameEventRegistrationHandle));
 CHECK_FN(cna_framework_dispatcher_update, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_graphics_device_manager_create, CNA_Result, (CNA_Handle, CNA_GraphicsDeviceManagerHandle*));
 CHECK_FN(cna_graphics_device_manager_get_graphics_device, CNA_Result, (CNA_GraphicsDeviceManagerHandle, CNA_Handle*));
@@ -69,6 +71,8 @@ int main(void) {
     SIGNATURE(cna_game_run_one_frame, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_game_request_exit, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_game_destroy, "CNA_Result|CNA_Handle");
+    SIGNATURE(cna_game_subscribe, "CNA_Result|CNA_Handle,CNA_GameEvent,CNA_GameEventCallback,void*,CNA_GameEventRegistrationHandle*");
+    SIGNATURE(cna_game_unsubscribe, "CNA_Result|CNA_GameEventRegistrationHandle");
     SIGNATURE(cna_framework_dispatcher_update, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_graphics_device_manager_create, "CNA_Result|CNA_Handle,CNA_GraphicsDeviceManagerHandle*");
     SIGNATURE(cna_graphics_device_manager_get_graphics_device, "CNA_Result|CNA_GraphicsDeviceManagerHandle,CNA_Handle*");
@@ -119,6 +123,7 @@ int main(void) {
 
     CONSTANT(CNA_ABI_VERSION); CONSTANT(CNA_FALSE); CONSTANT(CNA_TRUE);
     CONSTANT(CNA_RESULT_SUCCESS); CONSTANT(CNA_RESULT_NOT_SUPPORTED); CONSTANT(CNA_RESULT_THREAD); CONSTANT(CNA_RESULT_CALLBACK);
+    CONSTANT(CNA_GAME_EVENT_ACTIVATED); CONSTANT(CNA_GAME_EVENT_DEACTIVATED); CONSTANT(CNA_GAME_EVENT_DISPOSED); CONSTANT(CNA_GAME_EVENT_EXITING);
     CONSTANT(CNA_SPRITE_SORT_MODE_DEFERRED); CONSTANT(CNA_SPRITE_EFFECT_NONE); CONSTANT(CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY); CONSTANT(CNA_SPRITE_EFFECT_FLIP_VERTICALLY);
     CONSTANT(CNA_SURFACE_FORMAT_COLOR);
     CONSTANT(CNA_MOUSE_BUTTON_LEFT); CONSTANT(CNA_MOUSE_BUTTON_MIDDLE); CONSTANT(CNA_MOUSE_BUTTON_RIGHT); CONSTANT(CNA_MOUSE_BUTTON_X1); CONSTANT(CNA_MOUSE_BUTTON_X2);

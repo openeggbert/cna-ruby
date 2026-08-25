@@ -65,6 +65,13 @@ module CNA
         { c: c, fiddle: U64, width: 64, signed: false }
       end
 
+      # A callback typedef is already a function-pointer type, so the parameter carries no star of
+      # its own. It is still a pointer at the Fiddle boundary, which is why the depth stays 0 here
+      # and only the C spelling differs from `pointer`.
+      def callback_pointer(c)
+        { c: c, fiddle: PTR, pointer_depth: 0 }
+      end
+
       FUNCTIONS = [
         signature("cna_get_abi_version", T[:u32], [], ownership: "process-global metadata", result_lifetime: "value"),
         signature("cna_error_get_last_info", T[:result], [pointer("CNA_ErrorInfo")], ownership: "caller output"),
@@ -76,6 +83,12 @@ module CNA
         signature("cna_game_run_one_frame", T[:result], [T[:handle]], ownership: "borrows Game"),
         signature("cna_game_request_exit", T[:result], [T[:handle]], ownership: "borrows Game"),
         signature("cna_game_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED Game"),
+        # The canonical game-event subscription. XNA's Activated, Deactivated and Exiting are raised
+        # by Game's private Host* handlers, which are exactly the observers this route registers --
+        # the `exiting` slot in CNA_GameCallbacks is a *different* thing, documented as able to stop
+        # the game by failing, and measured to fire on every teardown including one that never ran.
+        signature("cna_game_subscribe", T[:result], [T[:handle], enum("CNA_GameEvent"), callback_pointer("CNA_GameEventCallback"), T[:ptr], pointer("CNA_GameEventRegistrationHandle")], ownership: "borrows Game; returns OWNED registration; retains callback and context until released"),
+        signature("cna_game_unsubscribe", T[:result], [handle("CNA_GameEventRegistrationHandle")], ownership: "consumes OWNED registration"),
         signature("cna_framework_dispatcher_update", T[:result], [T[:handle]], ownership: "borrows Game; pumps the canonical CNA framework dispatcher", result_lifetime: "no result value"),
         signature("cna_graphics_device_manager_create", T[:result], [T[:handle], pointer("CNA_GraphicsDeviceManagerHandle")], ownership: "returns OWNED manager"),
         signature("cna_graphics_device_manager_get_graphics_device", T[:result], [handle("CNA_GraphicsDeviceManagerHandle"), pointer("CNA_Handle")], ownership: "returns callback BORROWED device"),
@@ -109,7 +122,10 @@ module CNA
 
       CALLBACKS = [
         { name: "CNA_GameLifecycleCallback", c_return: "CNA_Result", c_arguments: ["CNA_Handle", "const CNA_GameTime*", "void*", "CNA_CallbackError*"], calling_convention: "platform C", fiddle_return: U32, fiddle_arguments: [U64, PTR, PTR, PTR] },
-        { name: "CNA_GameBeginDrawCallback", c_return: "CNA_Result", c_arguments: ["CNA_Handle", "const CNA_GameTime*", "void*", "CNA_Bool*", "CNA_CallbackError*"], calling_convention: "platform C", fiddle_return: U32, fiddle_arguments: [U64, PTR, PTR, PTR, PTR] }
+        { name: "CNA_GameBeginDrawCallback", c_return: "CNA_Result", c_arguments: ["CNA_Handle", "const CNA_GameTime*", "void*", "CNA_Bool*", "CNA_CallbackError*"], calling_convention: "platform C", fiddle_return: U32, fiddle_arguments: [U64, PTR, PTR, PTR, PTR] },
+        # A game event carries nothing but its sender, so the handler receives only its context --
+        # and it returns void, so a failure has nowhere to go and must never escape into C.
+        { name: "CNA_GameEventCallback", c_return: "void", c_arguments: ["void*"], calling_convention: "platform C", fiddle_return: VOID, fiddle_arguments: [PTR] }
       ].freeze
 
       CONSTANTS = {
@@ -117,6 +133,10 @@ module CNA
         "CNA_FALSE" => 0, "CNA_TRUE" => 1,
         "CNA_RESULT_SUCCESS" => 0, "CNA_RESULT_NOT_SUPPORTED" => 6,
         "CNA_RESULT_THREAD" => 8, "CNA_RESULT_CALLBACK" => 9,
+        "CNA_GAME_EVENT_ACTIVATED" => 0,
+        "CNA_GAME_EVENT_DEACTIVATED" => 1,
+        "CNA_GAME_EVENT_DISPOSED" => 2,
+        "CNA_GAME_EVENT_EXITING" => 3,
         "CNA_SPRITE_SORT_MODE_DEFERRED" => 0,
         "CNA_SPRITE_EFFECT_NONE" => 0,
         "CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY" => 1,

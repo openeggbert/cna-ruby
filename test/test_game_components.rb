@@ -149,7 +149,8 @@ class GameComponentsTest < Minitest::Test
     game = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
     refute(game.any? { |entry| entry.include?("::Components") })
     refute(game.any? { |entry| entry.include?("::Services") })
-    assert_equal 21, game.length
+    # 21 until Foundation 41 closed the four Game events and their three raisers.
+    assert_equal 14, game.length
 
     reference = REFERENCE.fetch("types").find { |type| type.fetch("name") == "Microsoft.Xna.Framework.Game" }
     %w[Components Services].each do |name|
@@ -224,8 +225,8 @@ class GameComponentsTest < Minitest::Test
 
   # Nothing routes a component through the C ABI.
   def test_the_component_engine_adds_no_native_binding
-    assert_equal 39, CNA::Native::Manifest::FUNCTIONS.length
-    assert_equal 59, CNA::Native::Manifest::CONSTANTS.length
+    assert_equal 41, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 63, CNA::Native::Manifest::CONSTANTS.length
     refute(CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.to_s.include?("component") })
   end
 

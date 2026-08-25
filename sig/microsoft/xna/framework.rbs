@@ -88,6 +88,13 @@ module Microsoft
         # Both answer the same object for the life of the Game, and neither needs a native host.
         def Components: () -> GameComponentCollection
         def Services: () -> GameServiceContainer
+        # The four canonical Game events. One CLR event, one Ruby reader over the subscription
+        # primitive; the three protected raisers are the only public way to raise the first three,
+        # and Dispose raises the fourth.
+        def Activated: () -> CNA::Runtime::Event
+        def Deactivated: () -> CNA::Runtime::Event
+        def Exiting: () -> CNA::Runtime::Event
+        def Disposed: () -> CNA::Runtime::Event
       end
 
       class GraphicsDeviceManager
