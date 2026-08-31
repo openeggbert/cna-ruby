@@ -126,7 +126,7 @@ class BclInventoryTest < Minitest::Test
   end
 
   def test_the_bcl_metrics_are_reported_separately_and_add_up
-    assert_equal 3, INVENTORY.fetch("BCL_FAMILIES")
+    assert_equal 4, INVENTORY.fetch("BCL_FAMILIES")
     assert_equal INVENTORY.fetch("families").length, INVENTORY.fetch("BCL_FAMILIES")
     assert_equal types.length, INVENTORY.fetch("BCL_TYPES")
     assert_equal types.values.sum { |entry| entry.fetch("members").length }, INVENTORY.fetch("BCL_MEMBERS")
@@ -364,6 +364,7 @@ class BclInventoryTest < Minitest::Test
       System.Exception
       System.InvalidOperationException
       System.NotSupportedException
+      System.ObjectDisposedException
       System.Runtime.Serialization.SerializationException
       System.SystemException
     ], exceptions

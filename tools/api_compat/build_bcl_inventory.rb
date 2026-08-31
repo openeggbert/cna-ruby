@@ -49,7 +49,9 @@ FAMILIES = {
   "System.Collections.ObjectModel.Collection`1" =>
     "the CLR base of GameComponentCollection, and the mutable sibling ReadOnlyCollection`1 is measured against",
   "System.Collections.Generic.Dictionary`2" =>
-    "the CLR base of LaunchParameters, the one dependency-complete XNA type blocked on it alone"
+    "the CLR base of LaunchParameters, the one dependency-complete XNA type blocked on it alone",
+  "System.IO.Stream" =>
+    "the declared return type of TitleContainer.OpenStream, ContentManager.OpenStream, StorageContainer.OpenFile/CreateFile and four Media getters, and the declared parameter of SoundEffect.FromStream, Texture2D.FromStream and Texture2D.SaveAsPng/SaveAsJpeg -- seventeen XNA members in all"
 }.freeze
 
 # Support enums the collection families throw through. Their literal names are what make a derived

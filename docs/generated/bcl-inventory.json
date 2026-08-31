@@ -88,10 +88,10 @@
     "ThrowWrongKeyTypeArgumentException": "System.ArgumentException",
     "ThrowWrongValueTypeArgumentException": "System.ArgumentException"
   },
-  "BCL_FAMILIES": 3,
-  "BCL_TYPES": 17,
-  "BCL_MEMBERS": 246,
-  "BCL_EXCEPTION_TYPES": 9,
+  "BCL_FAMILIES": 4,
+  "BCL_TYPES": 19,
+  "BCL_MEMBERS": 295,
+  "BCL_EXCEPTION_TYPES": 10,
   "families": [
     {
       "family": "System.Collections.ObjectModel.ReadOnlyCollection`1",
@@ -138,6 +138,30 @@
         "System.Collections.Generic.Dictionary`2+KeyCollection+Enumerator",
         "System.Collections.Generic.Dictionary`2+ValueCollection",
         "System.Collections.Generic.Dictionary`2+ValueCollection+Enumerator"
+      ]
+    },
+    {
+      "family": "System.IO.Stream",
+      "reason": "the declared return type of TitleContainer.OpenStream, ContentManager.OpenStream, StorageContainer.OpenFile/CreateFile and four Media getters, and the declared parameter of SoundEffect.FromStream, Texture2D.FromStream and Texture2D.SaveAsPng/SaveAsJpeg -- seventeen XNA members in all",
+      "xnaConsumers": [
+        "Microsoft.Xna.Framework.Audio.SoundEffect::FromStream",
+        "Microsoft.Xna.Framework.Content.ContentManager::OpenStream",
+        "Microsoft.Xna.Framework.Content.ResourceContentManager::OpenStream",
+        "Microsoft.Xna.Framework.Graphics.Texture2D::FromStream",
+        "Microsoft.Xna.Framework.Graphics.Texture2D::SaveAsJpeg",
+        "Microsoft.Xna.Framework.Graphics.Texture2D::SaveAsPng",
+        "Microsoft.Xna.Framework.Media.Album::GetAlbumArt",
+        "Microsoft.Xna.Framework.Media.Album::GetThumbnail",
+        "Microsoft.Xna.Framework.Media.MediaLibrary::SavePicture",
+        "Microsoft.Xna.Framework.Media.Picture::GetImage",
+        "Microsoft.Xna.Framework.Media.Picture::GetThumbnail",
+        "Microsoft.Xna.Framework.Storage.StorageContainer::CreateFile",
+        "Microsoft.Xna.Framework.Storage.StorageContainer::OpenFile",
+        "Microsoft.Xna.Framework.TitleContainer::OpenStream"
+      ],
+      "xnaConsumerCount": 14,
+      "types": [
+        "System.IO.Stream"
       ]
     }
   ],
@@ -4606,6 +4630,721 @@
         }
       ]
     },
+    "System.IO.Stream": {
+      "kind": "class",
+      "baseType": "System.MarshalByRefObject",
+      "interfaceDeclarations": [
+        "System.IDisposable"
+      ],
+      "interfaces": [
+        "System.IDisposable"
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": true,
+      "members": [
+        {
+          "kind": "field",
+          "name": "Null",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "declaration": "public static initonly class System.IO.Stream Null"
+        },
+        {
+          "kind": "method",
+          "name": "get_CanRead",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_CanSeek",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_CanTimeout",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_CanWrite",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_Length",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int64",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_Position",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int64",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "set_Position",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int64",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_ReadTimeout",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "newobj"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "set_ReadTimeout",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "newobj"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_WriteTimeout",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "newobj"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "set_WriteTimeout",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "value"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "newobj"
+              }
+            ],
+            "throwsUnconditionally": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "CopyTo",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.IO.Stream",
+              "name": "destination"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ObjectDisposedException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ObjectDisposedException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.NotSupportedException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.NotSupportedException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "CopyTo",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.IO.Stream",
+              "name": "destination"
+            },
+            {
+              "type": "int32",
+              "name": "bufferSize"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ObjectDisposedException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ObjectDisposedException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.NotSupportedException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.NotSupportedException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "Close",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "bool",
+              "name": "disposing"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Flush",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "CreateWaitHandle",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.Threading.WaitHandle",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "BeginRead",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.IAsyncResult",
+          "parameters": [
+            {
+              "type": "uint8[]",
+              "name": "buffer"
+            },
+            {
+              "type": "int32",
+              "name": "offset"
+            },
+            {
+              "type": "int32",
+              "name": "count"
+            },
+            {
+              "type": "class System.AsyncCallback",
+              "name": "callback"
+            },
+            {
+              "type": "object",
+              "name": "state"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "EndRead",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "class System.IAsyncResult",
+              "name": "asyncResult"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "BeginWrite",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.IAsyncResult",
+          "parameters": [
+            {
+              "type": "uint8[]",
+              "name": "buffer"
+            },
+            {
+              "type": "int32",
+              "name": "offset"
+            },
+            {
+              "type": "int32",
+              "name": "count"
+            },
+            {
+              "type": "class System.AsyncCallback",
+              "name": "callback"
+            },
+            {
+              "type": "object",
+              "name": "state"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "EndWrite",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.IAsyncResult",
+              "name": "asyncResult"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "Seek",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int64",
+          "parameters": [
+            {
+              "type": "int64",
+              "name": "offset"
+            },
+            {
+              "type": "valuetype System.IO.SeekOrigin",
+              "name": "origin"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetLength",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int64",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Read",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "[in][out] uint8[]",
+              "name": "buffer"
+            },
+            {
+              "type": "int32",
+              "name": "offset"
+            },
+            {
+              "type": "int32",
+              "name": "count"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadByte",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Write",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "uint8[]",
+              "name": "buffer"
+            },
+            {
+              "type": "int32",
+              "name": "offset"
+            },
+            {
+              "type": "int32",
+              "name": "count"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "WriteByte",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "uint8",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Synchronized",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "returnType": "class System.IO.Stream",
+          "parameters": [
+            {
+              "type": "class System.IO.Stream",
+              "name": "stream"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "ObjectInvariant",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "property",
+          "name": "CanRead",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance bool CanRead()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.IO.Stream::get_CanRead"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "CanSeek",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance bool CanSeek()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.IO.Stream::get_CanSeek"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "CanTimeout",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance bool CanTimeout()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.IO.Stream::get_CanTimeout"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "CanWrite",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance bool CanWrite()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.IO.Stream::get_CanWrite"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Length",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance int64 Length()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.IO.Stream::get_Length"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Position",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance int64 Position()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.IO.Stream::get_Position"
+            },
+            {
+              "accessor": "set",
+              "method": "System.IO.Stream::set_Position"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "ReadTimeout",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance int32 ReadTimeout()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.IO.Stream::get_ReadTimeout"
+            },
+            {
+              "accessor": "set",
+              "method": "System.IO.Stream::set_ReadTimeout"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "WriteTimeout",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance int32 WriteTimeout()",
+          "accessors": [
+            {
+              "accessor": "set",
+              "method": "System.IO.Stream::set_WriteTimeout"
+            },
+            {
+              "accessor": "get",
+              "method": "System.IO.Stream::get_WriteTimeout"
+            }
+          ]
+        }
+      ]
+    },
     "System.InvalidOperationException": {
       "kind": "class",
       "baseType": "System.SystemException",
@@ -4779,6 +5518,169 @@
           "behaviour": {
             "storesConstructorArgumentToField": false
           }
+        }
+      ]
+    },
+    "System.ObjectDisposedException": {
+      "kind": "class",
+      "baseType": "System.InvalidOperationException",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "objectName"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "objectName"
+            },
+            {
+              "type": "string",
+              "name": "message"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            },
+            {
+              "type": "class System.Exception",
+              "name": "innerException"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Message",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "string",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_ObjectName",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "string",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "GetObjectData",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Message",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance string Message()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.ObjectDisposedException::get_Message"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "ObjectName",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance string ObjectName()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.ObjectDisposedException::get_ObjectName"
+            }
+          ]
         }
       ]
     },
