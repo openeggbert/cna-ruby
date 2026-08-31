@@ -274,9 +274,15 @@ unless serialization["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
   abort "Milestone 49 serialization evidence lacks observation-level provenance"
 end
 observations.concat(serialization.fetch("observations"))
+renderer_detail_path = File.expand_path("../behavior/xna40-renderer-detail-values.json", __dir__)
+renderer_detail = JSON.parse(File.read(renderer_detail_path))
+unless renderer_detail["category"] == "MIXED_WITH_OBSERVATION_PROVENANCE"
+  abort "Milestone 50 RendererDetail evidence lacks observation-level provenance"
+end
+observations.concat(renderer_detail.fetch("observations"))
 abort "duplicate behavior observation id" unless observations.map { |item| item.fetch("id") }.uniq.length == observations.length
 result = source_corpus.merge(
-  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, the Foundation 40 graphics device service, the Foundation 41 canonical Game events, the Foundation 42 Game timing and presentation properties, the Foundation 44 Game.Tick projection, the Foundation 45 Game.IsActive projection, the Foundation 46 Dictionary`2 / LaunchParameters projection, the Foundation 47 Game protected remainder, the Foundation 48 GameWindow projection, and the Foundation 49 serialization carrier separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance" => "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, the Foundation 40 graphics device service, the Foundation 41 canonical Game events, the Foundation 42 Game timing and presentation properties, the Foundation 44 Game.Tick projection, the Foundation 45 Game.IsActive projection, the Foundation 46 Dictionary`2 / LaunchParameters projection, the Foundation 47 Game protected remainder, the Foundation 48 GameWindow projection, the Foundation 49 serialization carrier, and the Foundation 50 RendererDetail projection separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category" => "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256" => EXPECTED_SHA256,
   "milestone3SourceAssemblySha256" => milestone.fetch("sourceAssemblySha256"),
@@ -326,6 +332,7 @@ result = source_corpus.merge(
   "milestone49SourceAssemblySha256" => serialization.fetch("sourceAssemblySha256"),
   "milestone49SourceStorageAssemblySha256" => serialization.fetch("sourceStorageAssemblySha256"),
   "milestone49SourceBclAssemblySha256" => serialization.fetch("sourceBclAssemblySha256"),
+  "milestone50SourceAssemblySha256" => renderer_detail.fetch("sourceAssemblySha256"),
   # Foundation 16 was merged by documented deterministic replay because this reconstructed host
   # does not carry the upstream source. Re-running this importer with the real source restores the
   # same observation set; it must not be run against any other artifact.

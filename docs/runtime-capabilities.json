@@ -305,6 +305,12 @@
       "evidence": "39 exports, 124 signatures, 290+290 layout measurements, 2 callbacks, 59 constants"
     },
     {
+      "id": "managed.renderer-detail",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified complete value type",
+      "evidence": "Foundation 50: Audio.RendererDetail, 1 type / 7 identities. It sat on the frontier under RUNTIME_DATA, justified as values that come from XACT audio renderer enumeration with no audio engine present -- a statement about the producer rather than the type. The pinned Xact.dll shows a sealed value type over two private string fields whose seven identities are field reads, ordinal string comparisons and an XOR, with not one native reach among them, so Foundation 25's rule for Graphics.DisplayMode applies unchanged: a class whose only constructor is assembly projects with construction made private, and completing it implies nothing about the enumerator that would fill it. op_Equality compares both fields with String::op_Equality, short-circuiting on the name; Equals(object) answers false for null and for a different type before delegating to it. GetHashCode contributes zero for an empty or null component and XORs the two, with the name on the left; that shape is exact, while System.String.GetHashCode is a Microsoft-internal algorithm this binding does not reproduce and a CLR hash code is documented as implementation-specific, so Ruby's own String#hash stands in and the limitation is recorded rather than hidden. ToString is declared and forwards to ValueType::ToString, which answers the type's own fully-qualified CLR name -- a deterministic string belonging to this type, not a localized resource. Completing it claims no AudioEngine, SoundBank, WaveBank, Cue, SoundEffect or Microphone, no renderer is enumerated and no CNA audio route is bound"
+    },
+    {
       "id": "audio.sound-effect-playback",
       "category": "UPSTREAM_CNA_BLOCKED",
       "status": "measured; routes execute, observable behaviour absent",
@@ -536,7 +542,7 @@
       "id": "audio-media",
       "category": "UNIMPLEMENTED_CNA_RUBY",
       "status": "deferred",
-      "evidence": "Managed contracts only. Audio holds AudioChannels, AudioStopOptions, MicrophoneState, SoundState, InstancePlayLimitException, NoAudioHardwareException, NoMicrophoneConnectedException, AudioListener and AudioEmitter; Media holds MediaSourceType, MediaState and VideoSoundtrackType. Every audio and media runtime remains absent and unimplemented: no engine, no device, no playback, no XACT, no MediaPlayer or MediaLibrary, and no visualisation. Exactly one canonical CNA route touches this subsystem: FrameworkDispatcher.Update forwards to cna_framework_dispatcher_update, which drains CNA own pending audio and media work. The drain is real; its managed fan-out reaches nothing here, because none of the five XNA sinks the pinned IL dispatches to has a Ruby projection. Nothing here makes a sound, plays anything or reads a device"
+      "evidence": "Managed contracts only. Audio holds AudioChannels, AudioStopOptions, MicrophoneState, SoundState, InstancePlayLimitException, NoAudioHardwareException, NoMicrophoneConnectedException, AudioListener, AudioEmitter and RendererDetail, the last added by Foundation 50 as a sealed value type over two strings whose producer -- an XACT AudioEngine -- is still absent; Media holds MediaSourceType, MediaState and VideoSoundtrackType. Every audio and media runtime remains absent and unimplemented: no engine, no device, no playback, no XACT, no MediaPlayer or MediaLibrary, and no visualisation. Exactly one canonical CNA route touches this subsystem: FrameworkDispatcher.Update forwards to cna_framework_dispatcher_update, which drains CNA own pending audio and media work. The drain is real; its managed fan-out reaches nothing here, because none of the five XNA sinks the pinned IL dispatches to has a Ruby projection. Nothing here makes a sound, plays anything or reads a device"
     },
     {
       "id": "input.touch",

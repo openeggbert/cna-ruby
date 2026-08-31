@@ -23,12 +23,19 @@ il_types = il_inventory.fetch("types")
 # internal path the CLR gives it. What keeps a type here is that its values, or the arguments its
 # internal constructor needs, do not exist on this host.
 RUNTIME_DATA = {
-  "Microsoft.Xna.Framework.Audio.RendererDetail" => "values come from XACT audio renderer enumeration; no audio engine exists in this binding and no renderer has been enumerated",
   "Microsoft.Xna.Framework.Audio.AudioCategory" => "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have",
   "Microsoft.Xna.Framework.Media.MediaSource" => "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried",
   "Microsoft.Xna.Framework.Media.Video" => "its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies; no producer exists",
   "Microsoft.Xna.Framework.Media.VisualizationData" => "filled by MediaPlayer.GetVisualizationData from live playback"
 }.freeze
+
+# RendererDetail was in this register until Foundation 50, on the reasoning that "values come from
+# XACT audio renderer enumeration; no audio engine exists in this binding and no renderer has been
+# enumerated". That is a statement about the *producer*, not the type: the pinned Xact.dll shows a
+# sealed value type over two string fields whose seven identities are field reads, ordinal string
+# comparisons and an XOR, with not one native reach among them. Foundation 25 settled the same case
+# for Graphics.DisplayMode -- a constructor-free class projects with construction made private, and
+# completing it implies nothing about the enumerator that would fill it.
 
 # Native frontier 4 audited the audio-playback cluster and did *not* move it here, deliberately.
 # `Audio.SoundEffectInstance` reports `NATIVE_RUNTIME`, which means only that its own IL reaches a

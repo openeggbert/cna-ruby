@@ -571,6 +571,31 @@ def execute(item)
     ensure
       game.Dispose
     end
+  when "RendererDetail.Contract"
+    # A sealed value type over System.ValueType with seven identities and no selected constructor:
+    # the CLR one is `assembly`.
+    type = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.Audio.RendererDetail")
+    members = type.fetch("members")
+    [type.fetch("kind"), type.fetch("baseType"), type.fetch("sealed"), type.fetch("interfaces"),
+     members.length,
+     members.select { |m| m.fetch("kind") == "method" }.map { |m| m.fetch("name") }.sort,
+     members.select { |m| m.fetch("kind") == "property" }.map { |m| m.fetch("name") }.sort,
+     members.count { |m| m.fetch("kind") == "constructor" }]
+  when "RendererDetail.Behaviour"
+    # op_Equality compares both fields with String::op_Equality, ordinal; Equals(object) answers
+    # false for null and for a different type first. GetHashCode contributes zero for an empty or
+    # null component and XORs the two. ToString is ValueType::ToString, the type's own CLR name.
+    build = ->(name, id) { F::Audio::RendererDetail.__send__(:new, name, id) }
+    left = build.call("Speakers", "id-1")
+    [left.FriendlyName, left.RendererId, left.ToString,
+     left == build.call("Speakers", "id-1"),
+     left == build.call("speakers", "id-1"),
+     left == build.call("Headset", "id-1"),
+     left.Equals(nil), left.Equals("Speakers"),
+     build.call("", "").GetHashCode, build.call(nil, nil).GetHashCode,
+     build.call("a", "").GetHashCode == build.call("a", nil).GetHashCode,
+     left.dup == left, left.dup.equal?(left),
+     F::Audio::RendererDetail.public_method_defined?(:new)]
   when "Serialization.Contract"
     # Both types declare the four-constructor exception shape, and the fourth is the family
     # (SerializationInfo, StreamingContext) form. Two of the four take *two* arguments, which is the

@@ -72,8 +72,8 @@ class SerializationExceptionsTest < Minitest::Test
       refute_includes STRICT.fetch("missingTypeNames"), name
       assert_includes STRICT.fetch("completeTypeNames"), name
     end
-    assert_equal 140, STRICT.fetch("COMPLETE_TYPES")
-    assert_equal 111, STRICT.fetch("MISSING_TYPES")
+    assert_equal 141, STRICT.fetch("COMPLETE_TYPES")
+    assert_equal 110, STRICT.fetch("MISSING_TYPES")
   end
 
   # Storage is a new namespace holding exactly one type, the shape Audio and Media took in

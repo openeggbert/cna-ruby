@@ -255,7 +255,7 @@ class GameWindowTest < Minitest::Test
                       .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
     assert_equal %w[Content], remainder
     assert_equal 110, STRICT.fetch("MISSING_MEMBER")
-    assert_equal 140, STRICT.fetch("COMPLETE_TYPES")
+    assert_equal 141, STRICT.fetch("COMPLETE_TYPES")
   end
 
   # `get_Window` is `host?.Window`, and XNA's null branch is unreachable because its constructor

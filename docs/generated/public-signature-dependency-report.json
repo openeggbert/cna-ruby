@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 146,
-  "completeTypes": 140,
+  "targetTypes": 147,
+  "completeTypes": 141,
   "partialTypes": [
     "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -11,7 +11,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 111,
+  "missingTypes": 110,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -21,7 +21,6 @@
     "typesNativeReachable": 77
   },
   "runtimeDataRegister": {
-    "Microsoft.Xna.Framework.Audio.RendererDetail": "values come from XACT audio renderer enumeration; no audio engine exists in this binding and no renderer has been enumerated",
     "Microsoft.Xna.Framework.Audio.AudioCategory": "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have",
     "Microsoft.Xna.Framework.Media.MediaSource": "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried",
     "Microsoft.Xna.Framework.Media.Video": "its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies; no producer exists",
@@ -93,7 +92,7 @@
     "BCL_PROJECTION+NATIVE_RUNTIME": 3,
     "NATIVE_RUNTIME": 5,
     "NATIVE_RUNTIME+RUNTIME_DATA": 1,
-    "RUNTIME_DATA": 4
+    "RUNTIME_DATA": 3
   },
   "partialDependencySatisfiedCandidates": [
     {
@@ -1370,62 +1369,6 @@
         "InternalDraw"
       ],
       "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Audio.RendererDetail",
-      "kind": "struct",
-      "expectedRubyIdentities": 7,
-      "dependencies": [
-
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-
-      ],
-      "ilOnlyUnmetDependencies": [
-
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "RUNTIME_DATA"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        "GetHashCode",
-        "ToString",
-        "op_Equality",
-        "op_Inequality",
-        "Equals"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Xact.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": "values come from XACT audio renderer enumeration; no audio engine exists in this binding and no renderer has been enumerated"
     },
     {
       "name": "Microsoft.Xna.Framework.Design.MathTypeConverter",

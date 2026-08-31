@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "a14d5364dca7cf49fb90639e87ba04d52b59a700dc9198efa5707ce8eae28f0a",
+  "derivation": "Foundation 50 Audio.RendererDetail, read from the pinned Microsoft.Xna.Framework.Xact.dll. It is `.class public sequential ansi sealed beforefieldinit` extending System.ValueType over two private string fields, _name and _id, and declares seven identities plus one `assembly` constructor that stores the two arguments with no validation. get_FriendlyName and get_RendererId are one ldfld each. op_Equality compares _name with String::op_Equality and, only if that holds, compares _id the same way; op_Inequality is its negation. Equals(object) returns false for null, returns false when GetType differs, and otherwise delegates to op_Equality. GetHashCode is (String.IsNullOrEmpty(_name) ? 0 : _name.GetHashCode()) ^ (String.IsNullOrEmpty(_id) ? 0 : _id.GetHashCode()), with the name's contribution as the left operand. ToString is declared and its whole body is a call to ValueType::ToString, which answers the type's own fully-qualified CLR name. Not one of the seven reaches a device, an engine or a native entry point: the type's frontier deferral was about its producer, an XACT AudioEngine, and not about the type.",
+  "observations": [
+    {
+      "id": "renderer_detail.contract",
+      "operation": "RendererDetail.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": ["struct", "System.ValueType", true, [], 7, ["Equals", "GetHashCode", "ToString", "op_Equality", "op_Inequality"], ["FriendlyName", "RendererId"], 0]
+    },
+    {
+      "id": "renderer_detail.behaviour",
+      "operation": "RendererDetail.Behaviour",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": ["Speakers", "id-1", "Microsoft.Xna.Framework.Audio.RendererDetail", true, false, false, false, false, 0, 0, true, true, false, false]
+    }
+  ]
+}

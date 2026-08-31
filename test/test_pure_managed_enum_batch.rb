@@ -352,7 +352,7 @@ class PureManagedEnumBatchTest < Minitest::Test
       # types TouchLocation and GestureSample; Audio carries the three Foundation 22 exception
       # types. None of those is an enum.
       value_types = %i[TouchPanelCapabilities TouchLocation GestureSample TouchCollection
-                       TouchPanel AudioListener AudioEmitter]
+                       TouchPanel AudioListener AudioEmitter RendererDetail]
       extras = declared & value_types
       extras += declared.grep(/Exception\z/)
       assert_equal (selected + extras).uniq.sort, declared, namespace.name

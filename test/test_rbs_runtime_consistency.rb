@@ -754,18 +754,24 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     declared.each { |name| refute_nil resolve_constant(name) }
   end
 
+  # Foundation 50 added RendererDetail to the same namespace from its own IL: a sealed value type
+  # over two strings, which this milestone's enums and exceptions neither imply nor produce.
   def test_foundation16_audio_and_media_signatures_declare_only_selected_enums_and_exceptions
     environment = load_environment
     exceptions = %w[InstancePlayLimitException NoAudioHardwareException NoMicrophoneConnectedException]
     {"::Microsoft::Xna::Framework::Audio" =>
-       %w[AudioChannels AudioStopOptions MicrophoneState SoundState] + exceptions,
+       %w[AudioChannels AudioStopOptions MicrophoneState SoundState RendererDetail] + exceptions,
      "::Microsoft::Xna::Framework::Media" => %w[MediaSourceType MediaState VideoSoundtrackType]}.each do |namespace, expected|
       declared = environment.class_decls.keys.map(&:to_s).select { |name| name.start_with?("#{namespace}::") }
       assert_equal expected.map { |name| "#{namespace}::#{name}" }.sort, declared.sort
       declared.each do |name|
         runtime_type = resolve_constant(name)
-        if exceptions.include?(name.split("::").last)
+        short = name.split("::").last
+        if exceptions.include?(short)
           assert_operator runtime_type, :<, StandardError, name
+        elsif short == "RendererDetail"
+          # Foundation 50: a value type, not an enum and not an exception.
+          assert_includes runtime_type.ancestors, CNA::Runtime::ValueSemantics, name
         else
           assert_operator runtime_type, :<, CNA::Runtime::EnumValue, name
         end

@@ -2,6 +2,18 @@ module Microsoft
   module Xna
     module Framework
       module Audio
+        # A sealed value type over two strings. Construction is private because the CLR constructor
+        # is `assembly`; nothing in this binding enumerates a renderer, so nothing produces one.
+        class RendererDetail
+          include CNA::Runtime::ValueSemantics
+          attr_reader FriendlyName: String?
+          attr_reader RendererId: String?
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def to_s: () -> String
+          def dup: () -> RendererDetail
+        end
+
         # Three exception types whose whole declared surface is the standard constructor trio,
         # every one of which forwards straight to the CLR exception base in the pinned XNA IL.
         class InstancePlayLimitException < ::StandardError

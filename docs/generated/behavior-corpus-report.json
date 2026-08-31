@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, the Foundation 40 graphics device service, the Foundation 41 canonical Game events, the Foundation 42 Game timing and presentation properties, the Foundation 44 Game.Tick projection, the Foundation 45 Game.IsActive projection, the Foundation 46 Dictionary`2 / LaunchParameters projection, the Foundation 47 Game protected remainder, the Foundation 48 GameWindow projection, and the Foundation 49 serialization carrier separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
-  "OBSERVATIONS": 520,
-  "ASSERTIONS": 520,
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, the Foundation 40 graphics device service, the Foundation 41 canonical Game events, the Foundation 42 Game timing and presentation properties, the Foundation 44 Game.Tick projection, the Foundation 45 Game.IsActive projection, the Foundation 46 Dictionary`2 / LaunchParameters projection, the Foundation 47 Game protected remainder, the Foundation 48 GameWindow projection, the Foundation 49 serialization carrier, and the Foundation 50 RendererDetail projection separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "OBSERVATIONS": 522,
+  "ASSERTIONS": 522,
   "FAILURES": 0,
   "provenanceCounts": {
-    "PURE_XNA_DERIVED": 387,
-    "RUBY_MAPPING_QUALIFICATION": 133
+    "PURE_XNA_DERIVED": 388,
+    "RUBY_MAPPING_QUALIFICATION": 134
   },
   "groupCounts": {
     "BCL_PROJECTION": 13,
@@ -73,6 +73,7 @@
     "QUATERNION": 8,
     "RAY": 3,
     "RECTANGLE": 13,
+    "RENDERER_DETAIL": 2,
     "SERIALIZATION": 5,
     "TOUCH_CLOSURE": 2,
     "TOUCH_COLLECTION": 9,

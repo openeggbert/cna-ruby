@@ -203,6 +203,24 @@ effect with parameters, and `cna_effect_create_empty` builds one with none;
 `Graphics.TextureCollection` has **no CNA route at all**, which is the one case where
 `NATIVE_RUNTIME` was the right word.
 
+## Foundation 50 — a deferral that was about the producer
+
+`Audio.RendererDetail` sat in the `RUNTIME_DATA` register as "values come from XACT audio renderer
+enumeration; no audio engine exists in this binding and no renderer has been enumerated". That is a
+statement about the **producer**, not the type. The pinned `Xact.dll` shows a sealed value type over
+two private `string` fields whose seven identities are field reads, ordinal string comparisons and an
+XOR — not one native reach among them — so Foundation 25's rule for `Graphics.DisplayMode` applies
+unchanged: an `assembly` constructor projects with construction made private, and completing the type
+implies nothing about the enumerator that would fill it.
+
+Two facts a summary would round wrong. `GetHashCode` contributes **zero** for an empty *or null*
+component and XORs the two with the name on the left; that shape is exact, while
+`System.String.GetHashCode` is Microsoft-internal and is not reproduced — recorded as a
+language-mapping limitation, since a CLR hash code is documented as implementation-specific. And
+`ToString` is *declared*, forwarding to `ValueType::ToString`, which answers the type's own
+fully-qualified CLR name — a deterministic string belonging to this type rather than a localized
+resource, so it is reproduced literally.
+
 ## Recommended next frontier
 
 1. **`Game.Tick` — a public architecture decision, not a binding.** `cna_game_tick` exists, but it is
