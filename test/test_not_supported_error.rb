@@ -46,9 +46,12 @@ class NotSupportedErrorTest < Minitest::Test
                   # Added by Foundation 32; see test_touch_panel.rb.
                   "System.InvalidOperationException" => "RuntimeError",
                   # Added by Foundation 46; see test_dictionary.rb.
-                  "System.Collections.Generic.KeyNotFoundException" => "KeyError"},
+                  "System.Collections.Generic.KeyNotFoundException" => "KeyError",
+                  # Added by Foundation 49; see test_serialization_exceptions.rb.
+                  "System.Runtime.Serialization.SerializationException" =>
+                    "CNA::Runtime::SerializationError"},
                  B::THROWN_EXCEPTIONS)
-    assert_equal 7, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
+    assert_equal 8, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
     assert_equal B::THROWN_EXCEPTIONS, STRICT.fetch("bclProjection").fetch("thrownExceptions")
   end
 
@@ -67,7 +70,7 @@ class NotSupportedErrorTest < Minitest::Test
   def test_thrown_exceptions_are_a_separate_register_from_the_named_identities
     B::THROWN_EXCEPTIONS.each_key { |identity| refute_includes B.identities, identity }
     assert_equal B::THROWN_EXCEPTIONS.keys.sort, B.thrown_identities
-    assert_equal 11, STRICT.fetch("BCL_PROJECTED_IDENTITIES"), "unchanged by the thrown-exception register"
+    assert_equal 13, STRICT.fetch("BCL_PROJECTED_IDENTITIES"), "unchanged by the thrown-exception register"
 
     frontier = JSON.parse(ROOT.join("docs", "generated", "public-signature-dependency-report.json").read)
     B::THROWN_EXCEPTIONS.each_key { |identity| refute_includes frontier.fetch("mappedBclTypes"), identity }
@@ -129,7 +132,7 @@ class NotSupportedErrorTest < Minitest::Test
       value = CNA::Runtime.const_get(name, false)
       value.instance_of?(Class) && value <= ::Exception
     end
-    assert_equal [:NotSupportedError], exceptions
+    assert_equal %i[NotSupportedError SerializationError], exceptions
   end
 
   # ---------------------------------------------------------- the measured mscorlib behaviour

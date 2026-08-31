@@ -43,12 +43,15 @@ class ContentAttributesTest < Minitest::Test
     assert_equal "CNA::Runtime::Attribute", CNA::Runtime::BclProjection::TYPES.fetch("System.Attribute")
   end
 
+  # Foundation 49 added ContentLoadException to the same namespace from its own IL and its own BCL
+  # cluster, which this milestone neither implies nor produces.
   def test_the_content_namespace_holds_exactly_the_five_attributes
     assert_equal %i[ContentSerializerAttribute ContentSerializerCollectionItemNameAttribute
                     ContentSerializerIgnoreAttribute ContentSerializerRuntimeTypeAttribute
-                    ContentSerializerTypeVersionAttribute], C.constants(false).sort
+                    ContentSerializerTypeVersionAttribute],
+                 (C.constants(false) - %i[ContentLoadException]).sort
     %i[ContentManager ContentReader ContentTypeReader ContentTypeReaderManager
-       ResourceContentManager ContentLoadException].each do |absent|
+       ResourceContentManager].each do |absent|
       refute C.const_defined?(absent, false), "Content::#{absent}"
     end
   end

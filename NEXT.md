@@ -173,7 +173,9 @@ unload_content  Disposed
 ## Game's remaining one
 
 `Content`, blocked on the missing `ContentManager`. Foundation 44 took `Tick` off this list, 45
-`IsActive`, 46 `LaunchParameters`, 47 the three protected members and 48 `Window`.
+`IsActive`, 46 `LaunchParameters`, 47 the three protected members and 48 `Window`. Foundation 49
+then took the serialization cluster off the BCL frontier, completing `Content.ContentLoadException`
+and `Storage.StorageDeviceNotConnectedException`.
 
 ## Recommended next frontier
 

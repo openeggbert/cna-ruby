@@ -10,7 +10,6 @@
 - `Microsoft.Xna.Framework.Audio.SoundEffect`
 - `Microsoft.Xna.Framework.Audio.SoundEffectInstance`
 - `Microsoft.Xna.Framework.Audio.WaveBank`
-- `Microsoft.Xna.Framework.Content.ContentLoadException`
 - `Microsoft.Xna.Framework.Content.ContentManager`
 - `Microsoft.Xna.Framework.Content.ContentReader`
 - `Microsoft.Xna.Framework.Content.ContentTypeReader`
@@ -111,5 +110,4 @@
 - `Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs`
 - `Microsoft.Xna.Framework.Storage.StorageContainer`
 - `Microsoft.Xna.Framework.Storage.StorageDevice`
-- `Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException`
 - `Microsoft.Xna.Framework.TitleContainer`

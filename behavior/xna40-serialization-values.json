@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+  "sourceStorageAssemblySha256": "798f678e9ae3d9afc3bed66c30123bc9634fb923b6d200188344b618e608cbb8",
+  "sourceBclAssemblySha256": "5634668d4775b0113f08ea31093b281fea69bfc4e99227f5ca761b4ed98acc63",
+  "derivation": "Foundation 49 the System.Runtime.Serialization carrier and the two XNA exception types it unblocks. Content.ContentLoadException is read from the pinned Microsoft.Xna.Framework.dll and Storage.StorageDeviceNotConnectedException from Microsoft.Xna.Framework.Storage.dll; both are `.class public auto ansi serializable beforefieldinit` declaring nothing but four constructors, every one a pure forward to its base, and the fourth is `family .ctor(SerializationInfo, StreamingContext)`. The first extends System.Exception directly and the second extends System.Runtime.InteropServices.ExternalException, which the BCL register collapses to the nearest projected ancestor. Two of the four constructors take two arguments, which is why the carrier must be a nominal identity: Ruby has no overload by parameter type. The carrier half is read from the admitted mscorlib. SerializationInfo::AddValue(string, object, Type) throws ThrowHelper-free ArgumentNullException(\"name\") on a null name, ArgumentNullException(\"type\") on a null type and SerializationException(Serialization_SameNameTwice) when the name is already present; the two-argument AddValue forwards with value?.GetType() ?? typeof(object), so the type argument is never null through it. GetValue reaches GetElement, which throws SerializationException(Serialization_NotFound) when FindElement answers -1. get_MemberCount is the live count. StreamingContext is `.class public sequential ansi serializable sealed` over m_state and m_additionalContext, with two public constructors, get_State, get_Context, Equals and GetHashCode. StreamingContextStates is a flags enum with CrossProcess=1, CrossMachine=2, File=4, Persistence=8, Remoting=16, Other=32, Clone=64, CrossAppDomain=128 and All=0xFF, and no named zero. System.Exception's serialization constructor reads eleven named values -- ClassName, Message, Data, InnerException, HelpURL, StackTraceString, RemoteStackTraceString, RemoteStackIndex, ExceptionMethod, HResult and Source -- of which Ruby's exception base holds exactly one, the message.",
+  "observations": [
+    {
+      "id": "serialization.contract",
+      "operation": "Serialization.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [["System.Exception", 4, [["public", 0], ["public", 1], ["public", 2], ["protected", 2]], 2], ["System.Runtime.InteropServices.ExternalException", 4, [["public", 0], ["public", 1], ["public", 2], ["protected", 2]], 2]]
+    },
+    {
+      "id": "serialization.register",
+      "operation": "Serialization.Register",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": ["CNA::Runtime::SerializationInfo", "CNA::Runtime::StreamingContext", "CNA::Runtime::SerializationError", false, false, "CNA::Runtime::SerializationInfo"]
+    },
+    {
+      "id": "serialization.carrier",
+      "operation": "Serialization.Carrier",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [2, "hello", null, "CNA::Runtime::SerializationError", "CNA::Runtime::SerializationError", "ArgumentError", ["AddValue", "GetValue", "MemberCount"]]
+    },
+    {
+      "id": "serialization.context",
+      "operation": "Serialization.Context",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": ["All", null, true, true, "File", "payload", false, [1, 2, 4, 8, 16, 32, 64, 128, 255]]
+    },
+    {
+      "id": "serialization.constructors",
+      "operation": "Serialization.Constructors",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [[true, "boom", "direct", true, "from the carrier", true, "StandardError"], [true, "boom", "direct", true, "from the carrier", true, "StandardError"]]
+    }
+  ]
+}

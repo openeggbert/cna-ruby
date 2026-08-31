@@ -32,7 +32,7 @@ class DictionaryTest < Minitest::Test
     assert_equal "CNA::Runtime::Dictionary", B::TYPES.fetch(CLR)
     assert_equal D, Object.const_get(B::TYPES.fetch(CLR), false)
     assert_includes B.identities, CLR
-    assert_equal 11, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal 13, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal B::TYPES.transform_keys(&:to_s), RULES.fetch("bclProjection").fetch("types")
 
     # It is a class of its own, not any of the shapes a reader might reach for first.
@@ -53,7 +53,7 @@ class DictionaryTest < Minitest::Test
 
   def test_key_not_found_is_a_measured_thrown_exception
     assert_equal "KeyError", B::THROWN_EXCEPTIONS.fetch("System.Collections.Generic.KeyNotFoundException")
-    assert_equal 7, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
+    assert_equal 8, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
     assert_operator ::KeyError, :<, ::StandardError
     refute_operator ::KeyError, :<, ::ScriptError
     documented = RULES.fetch("bclProjection").fetch("thrownExceptions")
@@ -282,11 +282,9 @@ class DictionaryTest < Minitest::Test
   # it back", and the carrier is a plain named-value bag. No formatter, surrogate selector, binder
   # or stream format is invented, and `SerializationInfo` is deliberately not a projected identity.
   def test_get_object_data_and_on_deserialization_round_trip_through_a_carrier
-    carrier = Class.new do
-      def initialize = @values = {}
-      def AddValue(name, value) = @values[name] = value
-      def GetValue(name) = @values[name]
-    end.new
+    # Foundation 49 gave the carrier a nominal identity, so the duck type this test used is now the
+    # projected `SerializationInfo` and the members refuse anything else.
+    carrier = CNA::Runtime::SerializationInfo.new
 
     dictionary = D.new
     dictionary.Add("a", "1")
@@ -301,7 +299,9 @@ class DictionaryTest < Minitest::Test
     assert_equal "2", restored["b"]
 
     assert_raises(ArgumentError) { dictionary.GetObjectData(nil) }
-    refute_includes B.identities, "System.Runtime.Serialization.SerializationInfo"
+    assert_raises(TypeError) { dictionary.GetObjectData(Object.new) }
+    # Foundation 49 registered it, for the two XNA exception types whose signatures name it.
+    assert_includes B.identities, "System.Runtime.Serialization.SerializationInfo"
   end
 
   # ------------------------------------------------------------------------------ LaunchParameters

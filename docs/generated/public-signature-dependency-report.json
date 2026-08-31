@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 144,
-  "completeTypes": 138,
+  "targetTypes": 146,
+  "completeTypes": 140,
   "partialTypes": [
     "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -11,7 +11,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 113,
+  "missingTypes": 111,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -59,6 +59,8 @@
     "System.Nullable`1[System.Single]",
     "System.Object",
     "System.Runtime.InteropServices.ExternalException",
+    "System.Runtime.Serialization.SerializationInfo",
+    "System.Runtime.Serialization.StreamingContext",
     "System.Single",
     "System.String",
     "System.TimeSpan",
@@ -73,6 +75,8 @@
     "types": {
       "System.EventArgs": "CNA::Runtime::EventArgs",
       "System.Collections.Generic.Dictionary`2": "CNA::Runtime::Dictionary",
+      "System.Runtime.Serialization.SerializationInfo": "CNA::Runtime::SerializationInfo",
+      "System.Runtime.Serialization.StreamingContext": "CNA::Runtime::StreamingContext",
       "System.TimeSpan": "Float",
       "System.Attribute": "CNA::Runtime::Attribute",
       "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection",
@@ -85,7 +89,7 @@
     }
   },
   "blockerSummary": {
-    "BCL_PROJECTION": 4,
+    "BCL_PROJECTION": 2,
     "BCL_PROJECTION+NATIVE_RUNTIME": 3,
     "NATIVE_RUNTIME": 5,
     "NATIVE_RUNTIME+RUNTIME_DATA": 1,
@@ -624,7 +628,6 @@
         "Microsoft.Xna.Framework.TitleContainer"
       ],
       "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Content.ContentLoadException",
         "Microsoft.Xna.Framework.Content.ContentReader",
         "Microsoft.Xna.Framework.TitleContainer"
       ],
@@ -1208,59 +1211,6 @@
       "runtimeDataDetail": "filled by MediaPlayer.GetVisualizationData from live playback"
     },
     {
-      "name": "Microsoft.Xna.Framework.Content.ContentLoadException",
-      "kind": "class",
-      "expectedRubyIdentities": 4,
-      "dependencies": [
-
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-
-      ],
-      "ilOnlyUnmetDependencies": [
-
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "BCL_PROJECTION"
-      ],
-      "unmappedBclTypes": [
-        "System.Runtime.Serialization.SerializationInfo",
-        "System.Runtime.Serialization.StreamingContext"
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    },
-    {
       "name": "Microsoft.Xna.Framework.Media.MediaSource",
       "kind": "class",
       "expectedRubyIdentities": 4,
@@ -1312,59 +1262,6 @@
 
       ],
       "runtimeDataDetail": "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried"
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException",
-      "kind": "class",
-      "expectedRubyIdentities": 4,
-      "dependencies": [
-
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-
-      ],
-      "ilOnlyUnmetDependencies": [
-
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "BCL_PROJECTION"
-      ],
-      "unmappedBclTypes": [
-        "System.Runtime.Serialization.SerializationInfo",
-        "System.Runtime.Serialization.StreamingContext"
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Storage.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
     },
     {
       "name": "Microsoft.Xna.Framework.Media.Video",
@@ -1610,7 +1507,6 @@
         "Microsoft.Xna.Framework.TitleContainer"
       ],
       "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Content.ContentLoadException",
         "Microsoft.Xna.Framework.Content.ContentReader",
         "Microsoft.Xna.Framework.TitleContainer"
       ],

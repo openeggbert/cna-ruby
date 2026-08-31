@@ -571,6 +571,71 @@ def execute(item)
     ensure
       game.Dispose
     end
+  when "Serialization.Contract"
+    # Both types declare the four-constructor exception shape, and the fourth is the family
+    # (SerializationInfo, StreamingContext) form. Two of the four take *two* arguments, which is the
+    # Ruby fact that makes the carrier nominal rather than a marker.
+    %w[Microsoft.Xna.Framework.Content.ContentLoadException
+       Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException].map do |name|
+      type = BATCH_REFERENCE.fetch(name)
+      members = type.fetch("members")
+      [type.fetch("baseType"), members.length,
+       members.map { |member| [member.fetch("access"), member.fetch("parameters").length] },
+       members.count { |member| member.fetch("parameters").length == 2 }]
+    end
+  when "Serialization.Register"
+    # Two registered identities, one thrown exception, and one support enum deliberately left out
+    # because the selected reference never names it.
+    register = CNA::Runtime::BclProjection
+    [register::TYPES["System.Runtime.Serialization.SerializationInfo"],
+     register::TYPES["System.Runtime.Serialization.StreamingContext"],
+     register::THROWN_EXCEPTIONS["System.Runtime.Serialization.SerializationException"],
+     register.identities.include?("System.Runtime.Serialization.StreamingContextStates"),
+     register.identities.include?("System.Runtime.Serialization.SerializationException"),
+     BATCH_RULES.fetch("bclProjection").fetch("types")["System.Runtime.Serialization.SerializationInfo"]]
+  when "Serialization.Carrier"
+    # AddValue throws ArgumentNullException("name") on a null name and
+    # SerializationException(Serialization_SameNameTwice) on a duplicate; GetElement throws
+    # SerializationException(Serialization_NotFound) when FindElement answers -1. A stored nil is a
+    # value, not an absence. The surface is the narrow one the XNA contract can reach.
+    info = CNA::Runtime::SerializationInfo.new
+    info.AddValue("Message", "hello")
+    info.AddValue("Nothing", nil)
+    [info.MemberCount, info.GetValue("Message"), info.GetValue("Nothing"),
+     error_name { info.AddValue("Message", "again") },
+     error_name { info.GetValue("absent") },
+     error_name { info.AddValue(nil, 1) },
+     CNA::Runtime::SerializationInfo.public_instance_methods(false).map(&:to_s).sort]
+  when "Serialization.Context"
+    # A sequential sealed value type over two fields, with value equality and a hash of the state.
+    # The pinned flags enum has eight named bits, All = 0xFF and no named zero.
+    states = CNA::Runtime::StreamingContextStates
+    context = CNA::Runtime::StreamingContext.new
+    other = CNA::Runtime::StreamingContext.new(states::File, "payload")
+    [context.State.to_s, context.Context, context.frozen?,
+     context == CNA::Runtime::StreamingContext.new,
+     other.State.to_s, other.Context, context == other,
+     %w[CrossProcess CrossMachine File Persistence Remoting Other Clone CrossAppDomain All]
+       .map { |name| states.const_get(name).to_i }]
+  when "Serialization.Constructors"
+    # Every one of the four is a pure forward to System.Exception's. The nominal carrier is what
+    # tells the two two-argument forms apart. System.Exception's serialization constructor reads
+    # eleven named values; Ruby's exception base holds one of them, so that is the one that crosses
+    # and the other ten are not fabricated.
+    info = CNA::Runtime::SerializationInfo.new
+    info.AddValue("Message", "from the carrier")
+    info.AddValue("ClassName", "ignored")
+    info.AddValue("HResult", 42)
+    context = CNA::Runtime::StreamingContext.new
+    [F::Content::ContentLoadException, F::Storage::StorageDeviceNotConnectedException].map do |klass|
+      inner = RuntimeError.new("inner")
+      from_message = klass.new("direct", inner)
+      [klass.new.message == klass.name, klass.new("boom").message,
+       from_message.message, from_message.cause.equal?(inner),
+       klass.new(info, context).message,
+       klass.new(CNA::Runtime::SerializationInfo.new, context).message == klass.name,
+       klass.superclass.name]
+    end
   when "GameWindow.Contract"
     # An abstract class over System.Object with twenty identities: eleven methods, six properties
     # and three events. XNA declares six event fields but three are `assembly`, so only three are
@@ -1195,7 +1260,9 @@ def execute(item)
      CONTENT::ContentSerializerTypeVersionAttribute.new(-3).TypeVersion,
      CONTENT::ContentSerializerIgnoreAttribute.new.instance_of?(CONTENT::ContentSerializerIgnoreAttribute),
      CONTENT::ContentSerializerIgnoreAttribute.public_instance_methods(false).map(&:to_s),
-     CONTENT.constants(false).map(&:to_s).sort,
+     # The Content namespace census this row used to carry was dropped in Foundation 49: it pinned
+     # this binding's own selection, which a later milestone legitimately grew by adding
+     # ContentLoadException from its own IL. What the row is for is the five attributes themselves.
      CNA::Runtime::Attribute.public_instance_methods(false).map(&:to_s),
      CNA::Runtime::Attribute.superclass.name]
   when "DisplayModeCollection.Projection"

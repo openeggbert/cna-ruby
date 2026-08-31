@@ -5,20 +5,20 @@
   "REFERENCE_MEMBERS": 2964,
   "EXPECTED_RUBY_TYPES": 257,
   "EXPECTED_RUBY_MEMBERS": 2915,
-  "TARGET_TYPES": 144,
-  "TARGET_MEMBERS": 1814,
-  "TOTAL_DIAGNOSTICS": 266,
-  "COMPLETE_TYPES": 138,
+  "TARGET_TYPES": 146,
+  "TARGET_MEMBERS": 1822,
+  "TOTAL_DIAGNOSTICS": 264,
+  "COMPLETE_TYPES": 140,
   "PARTIAL_TYPES": 6,
-  "MISSING_TYPES": 113,
+  "MISSING_TYPES": 111,
   "ALLOWLIST_ENTRIES": 0,
   "EVENT_IDENTITIES": 20,
   "EVENT_OWNER_TYPES": 7,
   "EVENT_SUPPORT_TYPE": "CNA::Runtime::Event",
-  "BCL_PROJECTED_IDENTITIES": 11,
+  "BCL_PROJECTED_IDENTITIES": 13,
   "BCL_EXCEPTION_BASES": 2,
-  "BCL_THROWN_EXCEPTIONS": 7,
-  "MISSING_TYPE": 113,
+  "BCL_THROWN_EXCEPTIONS": 8,
+  "MISSING_TYPE": 111,
   "MISSING_MEMBER": 110,
   "UNEXPECTED_TYPE": 0,
   "UNEXPECTED_MEMBER": 0,
@@ -67,6 +67,8 @@
     "types": {
       "System.EventArgs": "CNA::Runtime::EventArgs",
       "System.Collections.Generic.Dictionary`2": "CNA::Runtime::Dictionary",
+      "System.Runtime.Serialization.SerializationInfo": "CNA::Runtime::SerializationInfo",
+      "System.Runtime.Serialization.StreamingContext": "CNA::Runtime::StreamingContext",
       "System.TimeSpan": "Float",
       "System.Attribute": "CNA::Runtime::Attribute",
       "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection",
@@ -84,7 +86,8 @@
       "System.IndexOutOfRangeException": "IndexError",
       "System.NotSupportedException": "CNA::Runtime::NotSupportedError",
       "System.InvalidOperationException": "RuntimeError",
-      "System.Collections.Generic.KeyNotFoundException": "KeyError"
+      "System.Collections.Generic.KeyNotFoundException": "KeyError",
+      "System.Runtime.Serialization.SerializationException": "CNA::Runtime::SerializationError"
     }
   },
   "completeTypeNames": [
@@ -225,6 +228,8 @@
     "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
     "Microsoft.Xna.Framework.LaunchParameters",
     "Microsoft.Xna.Framework.GameWindow",
+    "Microsoft.Xna.Framework.Content.ContentLoadException",
+    "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException",
     "Microsoft.Xna.Framework.GameServiceContainer"
   ],
   "partialTypes": {
@@ -334,7 +339,6 @@
     "Microsoft.Xna.Framework.Audio.SoundEffect",
     "Microsoft.Xna.Framework.Audio.SoundEffectInstance",
     "Microsoft.Xna.Framework.Audio.WaveBank",
-    "Microsoft.Xna.Framework.Content.ContentLoadException",
     "Microsoft.Xna.Framework.Content.ContentManager",
     "Microsoft.Xna.Framework.Content.ContentReader",
     "Microsoft.Xna.Framework.Content.ContentTypeReader",
@@ -435,7 +439,6 @@
     "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs",
     "Microsoft.Xna.Framework.Storage.StorageContainer",
     "Microsoft.Xna.Framework.Storage.StorageDevice",
-    "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException",
     "Microsoft.Xna.Framework.TitleContainer"
   ],
   "localDiagnostics": {
@@ -582,6 +585,8 @@
     "Microsoft.Xna.Framework.Input.Touch.TouchPanel": 0,
     "Microsoft.Xna.Framework.LaunchParameters": 0,
     "Microsoft.Xna.Framework.GameWindow": 0,
+    "Microsoft.Xna.Framework.Content.ContentLoadException": 0,
+    "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException": 0,
     "Microsoft.Xna.Framework.GameServiceContainer": 0
   },
   "details": {
@@ -596,7 +601,6 @@
       "Microsoft.Xna.Framework.Audio.SoundEffect",
       "Microsoft.Xna.Framework.Audio.SoundEffectInstance",
       "Microsoft.Xna.Framework.Audio.WaveBank",
-      "Microsoft.Xna.Framework.Content.ContentLoadException",
       "Microsoft.Xna.Framework.Content.ContentManager",
       "Microsoft.Xna.Framework.Content.ContentReader",
       "Microsoft.Xna.Framework.Content.ContentTypeReader",
@@ -697,7 +701,6 @@
       "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs",
       "Microsoft.Xna.Framework.Storage.StorageContainer",
       "Microsoft.Xna.Framework.Storage.StorageDevice",
-      "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException",
       "Microsoft.Xna.Framework.TitleContainer"
     ],
     "MISSING_MEMBER": [

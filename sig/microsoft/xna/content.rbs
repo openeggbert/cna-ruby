@@ -41,3 +41,17 @@ module Microsoft
     end
   end
 end
+
+module Microsoft
+  module Xna
+    module Framework
+      module Content
+        # Four constructors, the fourth being the protected (SerializationInfo, StreamingContext)
+        # form. The two two-argument shapes are told apart by the nominal carrier.
+        class ContentLoadException < StandardError
+          def initialize: (?untyped first, ?untyped second) -> void
+        end
+      end
+    end
+  end
+end

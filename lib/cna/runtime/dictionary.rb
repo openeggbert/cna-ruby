@@ -209,8 +209,9 @@ module CNA
       # contract they implement is "hand your state to this carrier" and "take it back", and the
       # carrier is a plain named-value bag.
       #
-      # So the projection is the smallest exact one — a `SerializationInfo` duck type answering
-      # `AddValue(name, value)` and `GetValue(name)` — and no formatter, surrogate selector,
+      # So the projection is the smallest exact one — `CNA::Runtime::SerializationInfo`, the same
+      # nominal carrier Foundation 49 projected for the two XNA exception types that declare a
+      # `family .ctor(SerializationInfo, StreamingContext)` — and no formatter, surrogate selector,
       # binder or stream format is invented. Nothing in this binding serialises anything; these
       # exist because they are public members of the CLR type this class projects.
       SERIALIZATION_VERSION = "Version"
@@ -219,6 +220,7 @@ module CNA
 
       def GetObjectData(info, _context = nil)
         raise ArgumentError, "info must not be nil" if info.nil?
+        raise TypeError, "info must be a SerializationInfo" unless info.is_a?(SerializationInfo)
 
         info.AddValue(SERIALIZATION_VERSION, @version)
         info.AddValue(SERIALIZATION_COMPARER, @comparer)
@@ -228,6 +230,7 @@ module CNA
 
       def OnDeserialization(_sender = nil, info: nil)
         return nil if info.nil?
+        raise TypeError, "info must be a SerializationInfo" unless info.is_a?(SerializationInfo)
 
         @comparer = info.GetValue(SERIALIZATION_COMPARER)
         entries = info.GetValue(SERIALIZATION_ENTRIES) || []

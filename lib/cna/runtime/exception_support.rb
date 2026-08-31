@@ -45,7 +45,9 @@ module CNA
     # `System.SystemException`, which extends `System.Exception` — the identity this register
     # already roots at `StandardError` — and declares three public constructors, `()`,
     # `(string message)` and `(string message, Exception innerException)`, plus the protected
-    # serialization constructor this binding projects nowhere. The two message-bearing forms
+    # serialization constructor. That fourth form is not projected *here*, because
+    # `NotSupportedException` is not an XNA type and no selected signature names it; the two
+    # XNA exception types that do declare it get it in Foundation 49. The two message-bearing forms
     # forward the message to the base and synthesise nothing.
     #
     # The parameterless form is the one XNA actually uses, and in the CLR it fills the message from
@@ -70,6 +72,59 @@ module CNA
         return if inner.nil?
 
         ExceptionSupport.bind_cause(self, inner)
+      end
+    end
+
+    # The Ruby projection of `System.Runtime.Serialization.SerializationException`, which
+    # `SerializationInfo` really throws: `Serialization_SameNameTwice` from `AddValue` and
+    # `Serialization_NotFound` from `GetElement`. A dedicated `StandardError` subclass for the same
+    # reason `NotSupportedError` is one -- it is a distinct CLR identity a caller can rescue by
+    # name, and no existing Ruby class says what it says. It is a *thrown* exception, never an
+    # identity the XNA surface names, so it belongs in that register and not in the projected one.
+    class SerializationError < StandardError
+    end
+
+    # The four-constructor exception shape, for the two XNA exception types that add the protected
+    # `.ctor(SerializationInfo, StreamingContext)` to the standard trio.
+    #
+    # Both of those types have **two two-argument constructors**, and Ruby has no overload by
+    # parameter type, so one `initialize` has to tell `(message, innerException)` from
+    # `(info, context)`. The nominal carrier is what makes that a decision rather than a guess: the
+    # first argument either is a `SerializationInfo` or it is not.
+    #
+    # Every one of the four is a pure forward to `System.Exception`'s in the pinned IL, and the
+    # serialization form's base reads eleven named values -- ClassName, Message, Data,
+    # InnerException, HelpURL, StackTraceString, RemoteStackTraceString, RemoteStackIndex,
+    # ExceptionMethod, HResult and Source. Ruby's exception base holds exactly one of them, the
+    # message, so that is the one this carries across; the other ten name CLR-internal state
+    # `System.Exception` projects to `StandardError` without, and none of them is fabricated. A
+    # carrier with no `Message` member yields an exception with no message, which is what an absent
+    # value means rather than an error.
+    module XnaSerializableExceptionConstruction
+      def initialize(first = nil, second = nil)
+        if first.is_a?(CNA::Runtime::SerializationInfo)
+          raise ArgumentError, "info must not be nil" if first.nil?
+
+          message = first.MemberCount.zero? ? nil : serialized_message(first)
+          super(message)
+          return
+        end
+
+        super(first)
+        return if second.nil?
+
+        ExceptionSupport.bind_cause(self, second)
+      end
+
+      private
+
+      # `System.Exception`'s serialization constructor reads the message with
+      # `info.GetString("Message")`. `GetValue` raises when the member is absent, and an absent
+      # message is not an error here, so the absence is answered rather than propagated.
+      def serialized_message(info)
+        info.GetValue("Message")
+      rescue CNA::Runtime::SerializationError
+        nil
       end
     end
   end

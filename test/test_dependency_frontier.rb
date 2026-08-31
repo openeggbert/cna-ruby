@@ -329,7 +329,7 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 17, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 15, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -396,12 +396,13 @@ class DependencyFrontierTest < Minitest::Test
       refute IL.fetch("types").fetch(name).fetch("nativeReachable"), name
     end
 
+    # The other two were held on the serialization cluster until Foundation 49 projected it, which
+    # is the transition this measurement exists to make visible: they left the frontier by their
+    # blocker being *resolved*, not by the rule being relaxed.
     (exceptions - completed).each do |name|
-      candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
-      refute_nil candidate, name
-      assert_equal ["BCL_PROJECTION"], candidate.fetch("blockers"), name
-      assert_includes candidate.fetch("unmappedBclTypes"), "System.Runtime.Serialization.SerializationInfo", name
-      assert candidate.fetch("ilAvailable"), name
+      refute(REPORT.fetch("dependencyCompleteCandidates").any? { |item| item.fetch("name") == name }, name)
+      assert_includes STRICT.fetch("completeTypeNames"), name
+      assert_includes REPORT.fetch("mappedBclTypes"), "System.Runtime.Serialization.SerializationInfo"
     end
   end
 
@@ -508,7 +509,6 @@ class DependencyFrontierTest < Minitest::Test
       "Microsoft.Xna.Framework.Graphics.TextureCollection" => "NATIVE_RUNTIME",
       "Microsoft.Xna.Framework.Audio.RendererDetail" => "RUNTIME_DATA",
       "Microsoft.Xna.Framework.Media.Video" => "RUNTIME_DATA",
-      "Microsoft.Xna.Framework.Content.ContentLoadException" => "BCL_PROJECTION",
       "Microsoft.Xna.Framework.TitleContainer" => "BCL_PROJECTION"
     }.each do |name, expected|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }

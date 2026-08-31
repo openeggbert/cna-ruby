@@ -162,9 +162,12 @@ class XnaExceptionsTest < Minitest::Test
     %i[GraphicsAdapter RenderTarget2D Effect].each do |name|
       refute F::Graphics.const_defined?(name, false), "Graphics::#{name}"
     end
-    refute F.const_defined?(:Storage, false)
-    # Foundation 27 opened Content for the five ContentSerializer attributes and nothing else.
-    assert_equal %i[ContentSerializerAttribute ContentSerializerCollectionItemNameAttribute
+    # Foundation 49 opened Storage for exactly one type -- the shape Audio and Media took -- and
+    # added ContentLoadException beside Foundation 27's five ContentSerializer attributes. Neither
+    # is raised by anything, here or there.
+    assert_equal %i[StorageDeviceNotConnectedException], F::Storage.constants(false).sort
+    assert_equal %i[ContentLoadException ContentSerializerAttribute
+                    ContentSerializerCollectionItemNameAttribute
                     ContentSerializerIgnoreAttribute ContentSerializerRuntimeTypeAttribute
                     ContentSerializerTypeVersionAttribute], F::Content.constants(false).sort
     assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length

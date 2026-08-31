@@ -1,0 +1,13 @@
+module Microsoft
+  module Xna
+    module Framework
+      # Exactly one projected type, the shape Audio and Media took for their enums. No StorageDevice,
+      # StorageContainer or file system of any kind.
+      module Storage
+        class StorageDeviceNotConnectedException < StandardError
+          def initialize: (?untyped first, ?untyped second) -> void
+        end
+      end
+    end
+  end
+end

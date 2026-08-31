@@ -44,7 +44,9 @@ class BclProjectionTest < Minitest::Test
     # Foundation 29 added ReadOnlyCollection`1, the first entry with a real member surface, which
     # is why Foundation 28 had to admit a BCL authority to measure it against.
     assert_equal({"System.EventArgs" => "CNA::Runtime::EventArgs",
-                  "System.Collections.Generic.Dictionary`2" => "CNA::Runtime::Dictionary", "System.TimeSpan" => "Float",
+                  "System.Collections.Generic.Dictionary`2" => "CNA::Runtime::Dictionary",
+                  "System.Runtime.Serialization.SerializationInfo" => "CNA::Runtime::SerializationInfo",
+                  "System.Runtime.Serialization.StreamingContext" => "CNA::Runtime::StreamingContext", "System.TimeSpan" => "Float",
                   "System.Attribute" => "CNA::Runtime::Attribute",
                   "System.Collections.ObjectModel.ReadOnlyCollection`1" => "CNA::Runtime::ReadOnlyCollection",
                   # Foundation 34 added the mutable sibling, measured against the same mscorlib.
@@ -63,7 +65,9 @@ class BclProjectionTest < Minitest::Test
                   "System.Collections.ObjectModel.ReadOnlyCollection`1",
                   "System.EventArgs", "System.Exception", "System.IDisposable",
                   "System.IServiceProvider",
-                  "System.Runtime.InteropServices.ExternalException", "System.TimeSpan",
+                  "System.Runtime.InteropServices.ExternalException",
+                  "System.Runtime.Serialization.SerializationInfo",
+                  "System.Runtime.Serialization.StreamingContext", "System.TimeSpan",
                   "System.Type"], B.identities
 
     B::TYPES.merge(B::EXCEPTION_BASES).each_value do |path|
@@ -72,12 +76,13 @@ class BclProjectionTest < Minitest::Test
     end
 
     # Deliberately not designed yet. Dictionary`2 was on this list until Foundation 46 measured it
-    # against the same mscorlib and projected it; SerializationInfo stays off deliberately even
-    # though that projection carries GetObjectData and OnDeserialization, because the pinned
-    # reference never names it in a public signature and the two members take a duck-typed carrier
-    # rather than a projected CLR identity.
+    # against the same mscorlib, and the SerializationInfo/StreamingContext pair until Foundation 49
+    # -- which the pinned reference does name, in the protected constructor two XNA exception types
+    # declare. StreamingContextStates stays off because that surface never names it: it is a support
+    # enum of the projection, not an identity the register admits.
     %w[System.IO.Stream System.Text.StringBuilder
-       System.Runtime.Serialization.SerializationInfo System.Runtime.Serialization.StreamingContext]
+       System.Runtime.Serialization.StreamingContextStates
+       System.Runtime.Serialization.SerializationException]
       .each { |absent| refute_includes B.identities, absent }
   end
 
@@ -96,12 +101,12 @@ class BclProjectionTest < Minitest::Test
   end
 
   def test_the_strict_report_measures_the_register
-    assert_equal 11, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal 13, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal 2, STRICT.fetch("BCL_EXCEPTION_BASES")
     assert_equal({"types" => B::TYPES, "exceptionBases" => B::EXCEPTION_BASES,
                   "thrownExceptions" => B::THROWN_EXCEPTIONS},
                  STRICT.fetch("bclProjection"))
-    assert_equal 7, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
+    assert_equal 8, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
     assert_equal 0, STRICT.fetch("LANGUAGE_MAPPING_MISMATCH")
     assert_equal 0, STRICT.fetch("BASE_MAPPING_MISMATCH")
   end
@@ -150,7 +155,7 @@ class BclProjectionTest < Minitest::Test
     # No Ruby constant is invented for an XNA exception *base*. The one exception class the CNA
     # runtime carries is CNA::Runtime::NotSupportedError, added by Foundation 30, and it is a
     # projection of a CLR exception XNA members *throw*, never a base any XNA type derives from.
-    assert_equal [:NotSupportedError], CNA::Runtime.constants(false).select { |name|
+    assert_equal %i[NotSupportedError SerializationError], CNA::Runtime.constants(false).select { |name|
       value = CNA::Runtime.const_get(name, false)
       value.instance_of?(Class) && value <= ::Exception
     }
@@ -265,17 +270,16 @@ class BclProjectionTest < Minitest::Test
       assert_equal StandardError, runtime.superclass, name
     end
 
+    # Foundation 49 projected the SerializationInfo/StreamingContext pair and completed both of
+    # these, so what this milestone owns is no longer their absence but the split itself: they are
+    # the two whose selected surface carries the protected serialization constructor, and the other
+    # six declare only the public trio. `test_serialization_exceptions.rb` owns their behaviour.
     SERIALIZABLE.each do |name|
-      refute SIGNATURES.fetch("types").any? { |type| type.fetch("name") == name }, name
-      assert_includes STRICT.fetch("missingTypeNames"), name
-      # Neither the type nor the Content/Storage namespace that would hold it.
+      assert SIGNATURES.fetch("types").any? { |type| type.fetch("name") == name }, name
+      assert_includes STRICT.fetch("completeTypeNames"), name
       segments = name.split(".")
-      scope = segments[0..-2].reduce(Object) do |context, part|
-        break nil unless context&.const_defined?(part, false)
-
-        context.const_get(part, false)
-      end
-      refute scope&.const_defined?(segments.last.to_sym, false), name
+      scope = segments[0..-2].reduce(Object) { |context, part| context.const_get(part, false) }
+      assert scope.const_defined?(segments.last.to_sym, false), name
     end
   end
 
@@ -301,7 +305,7 @@ class BclProjectionTest < Minitest::Test
       assert_equal ["System.Runtime.Serialization.SerializationInfo",
                     "System.Runtime.Serialization.StreamingContext"],
                    protected_ctor.fetch("parameters").map { |parameter| parameter.fetch("type") }, name
-      refute_includes B.identities, "System.Runtime.Serialization.SerializationInfo"
+      assert_includes B.identities, "System.Runtime.Serialization.SerializationInfo"
     end
   end
 end

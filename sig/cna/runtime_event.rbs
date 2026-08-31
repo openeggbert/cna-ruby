@@ -1,5 +1,28 @@
 module CNA
   module Runtime
+    # The narrow System.Runtime.Serialization carrier. It exists as a *nominal* type because two XNA
+    # exception types declare two two-argument constructors and Ruby has no overload by parameter
+    # type, so one initialize must tell them apart.
+    class SerializationInfo
+      def initialize: () -> void
+      def AddValue: (String name, untyped value) -> nil
+      def GetValue: (String name) -> untyped
+      def MemberCount: () -> Integer
+    end
+
+    class StreamingContextStates
+    end
+
+    # A sequential sealed value type over two fields, with value equality.
+    class StreamingContext
+      attr_reader State: StreamingContextStates
+      attr_reader Context: untyped
+      def initialize: (?untyped state, ?untyped context) -> void
+    end
+
+    class SerializationError < StandardError
+    end
+
     # The Ruby projection of System.EventArgs: the parameterless constructor and the shared
     # static Empty instance, and nothing else.
     class EventArgs

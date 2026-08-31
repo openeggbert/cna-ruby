@@ -63,9 +63,32 @@ module CNA
       # the support class carries. A Ruby Hash is its private store and never its public projection:
       # Hash#[] answers nil where get_Item throws, Hash#store overwrites where Add throws, and
       # Hash#each never fails fast on a version counter.
+      # System.Runtime.Serialization.SerializationInfo and StreamingContext are the parameter types
+      # of the `family .ctor(SerializationInfo, StreamingContext)` that two XNA exception types --
+      # Content.ContentLoadException and Storage.StorageDeviceNotConnectedException -- declare
+      # alongside the standard trio. Both were deferred for eight milestones as "a BCL cluster no
+      # otherwise-unblocked type needs".
+      #
+      # They are projected as classes rather than collapsed, and the reason is a Ruby fact rather
+      # than a preference: those types have *two* two-argument constructors, `(message,
+      # innerException)` and `(info, context)`, and Ruby has no overload by parameter type, so one
+      # `initialize` must tell them apart. A nominal first argument makes that a decision; a marker
+      # or a duck type would make it a guess.
+      #
+      # The XNA surface names both and calls no member of either -- every one of those constructors
+      # is a pure forward to System.Exception's -- so the narrowness rule applies exactly as it does
+      # to System.Type: each projects to what that surface can reach. SerializationInfo carries the
+      # general AddValue/GetValue pair and MemberCount; mscorlib's other forty public members are
+      # the typed overloads a dynamically typed language has nothing to distinguish, plus a
+      # formatter's type-resolution protocol no formatter here runs. StreamingContext is the value
+      # type it is in the IL, two fields with value equality. StreamingContextStates is deliberately
+      # *not* registered: the selected reference never names it, and the register admits only
+      # identities that surface really names.
       TYPES = {
         "System.EventArgs" => "CNA::Runtime::EventArgs",
         "System.Collections.Generic.Dictionary`2" => "CNA::Runtime::Dictionary",
+        "System.Runtime.Serialization.SerializationInfo" => "CNA::Runtime::SerializationInfo",
+        "System.Runtime.Serialization.StreamingContext" => "CNA::Runtime::StreamingContext",
         "System.TimeSpan" => "Float",
         "System.Attribute" => "CNA::Runtime::Attribute",
         "System.Collections.ObjectModel.ReadOnlyCollection`1" => "CNA::Runtime::ReadOnlyCollection",
@@ -158,7 +181,14 @@ module CNA
         # projection reuses Ruby's own identity rather than inventing one. IndexError itself would
         # lose the distinction the CLR draws between an index and a key, which
         # IndexOutOfRangeException already occupies in this register.
-        "System.Collections.Generic.KeyNotFoundException" => "KeyError"
+        "System.Collections.Generic.KeyNotFoundException" => "KeyError",
+        # SerializationException is what SerializationInfo really throws --
+        # Serialization_SameNameTwice from AddValue and Serialization_NotFound from GetElement. A
+        # dedicated StandardError subclass for the same reason NotSupportedError is one: it is a
+        # distinct CLR identity a caller can rescue by name, and no existing Ruby class says what it
+        # says. RuntimeError is already spoken for by InvalidOperationException and would lose the
+        # identity; KeyError would claim a keyed collection this is not.
+        "System.Runtime.Serialization.SerializationException" => "CNA::Runtime::SerializationError"
       }.freeze
 
       module_function

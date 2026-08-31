@@ -247,13 +247,6 @@
 
         ],
         [
-          "ContentSerializerAttribute",
-          "ContentSerializerCollectionItemNameAttribute",
-          "ContentSerializerIgnoreAttribute",
-          "ContentSerializerRuntimeTypeAttribute",
-          "ContentSerializerTypeVersionAttribute"
-        ],
-        [
 
         ],
         "Object"

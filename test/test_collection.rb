@@ -50,7 +50,7 @@ class CollectionTest < Minitest::Test
     assert_equal "CNA::Runtime::Collection", B::TYPES.fetch(CLR)
     assert_equal C, Object.const_get(B::TYPES.fetch(CLR), false)
     assert_includes B.identities, CLR
-    assert_equal 11, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal 13, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal B::TYPES, STRICT.fetch("bclProjection").fetch("types")
     assert_equal B::TYPES.transform_keys(&:to_s),
                  RULES.fetch("bclProjection").fetch("types")

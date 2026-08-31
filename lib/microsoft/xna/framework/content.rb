@@ -16,6 +16,25 @@ module Microsoft
         N = CNA::Runtime::Numeric
         private_constant :N
 
+        # Derived from the pinned Microsoft.Xna.Framework.dll IL (SHA-256 38e7093f…).
+        #
+        # `.class public auto ansi serializable beforefieldinit`, extending `System.Exception` and
+        # declaring nothing but four constructors, every one of which is a pure forward to its base:
+        # `()`, `(string message)`, `(string message, Exception innerException)` and the `family`
+        # `(SerializationInfo info, StreamingContext context)`.
+        #
+        # It was deferred through eight milestones as "a BCL cluster no otherwise-unblocked type
+        # needs". What that cluster really costs is two nominal identities, and what makes them
+        # nominal rather than markers is a Ruby fact: the last two constructors both take **two**
+        # arguments, and Ruby has no overload by parameter type, so `initialize` needs a real
+        # `SerializationInfo` to dispatch on. See `CNA::Runtime::XnaSerializableExceptionConstruction`.
+        #
+        # Nothing in this binding raises it: there is still no ContentManager, ContentReader, XNB
+        # support or content pipeline, so no asset load can fail.
+        class ContentLoadException < StandardError
+          include CNA::Runtime::XnaSerializableExceptionConstruction
+        end
+
         # `String.IsNullOrEmpty` guards three of the seven setters and constructors below; where it
         # fails the CLR throws ArgumentNullException, which this binding maps to ArgumentError.
         def self.require_present(value, name)
