@@ -5,7 +5,6 @@ require "fiddle"
 module CNA
   module Native
     class Library
-      EXPECTED_ABI = 0x0000_0700
       RESULT_NOT_SUPPORTED = 6
       RESULT_THREAD = 8
 
@@ -17,9 +16,20 @@ module CNA
         @functions = {}
         bind_manifest!
         @abi_version = function("cna_get_abi_version").call
-        raise CNA::AbiMismatchError, format("CNA C ABI mismatch for %s: expected 0x%08x (0.7.0), got 0x%08x", path, EXPECTED_ABI, abi_version) unless abi_version == EXPECTED_ABI
+        raise CNA::AbiMismatchError, self.class.admission_failure(path, abi_version) unless Manifest::ADMITTED_ABI_VERSIONS.include?(abi_version)
       rescue Fiddle::DLError => error
         raise CNA::NativeLoadError, "cannot load CNA library #{path || "(unresolved)"}: #{error.message}"
+      end
+
+      # The refusal names the whole admitted set, the version actually found and the library it
+      # came from. It never names a single hard-coded version, so it cannot go stale the way
+      # "expected 0.7.0" did once the admitted set moved.
+      def self.admission_failure(path, actual)
+        admitted = Manifest::ADMITTED_ABI_VERSIONS
+                   .map { |value| format("%s (0x%08x)", Manifest.decode_abi_version(value), value) }
+                   .join(", ")
+        format("CNA C ABI %s (0x%08x) reported by %s is not admitted; this build of cna-ruby admits %s",
+               Manifest.decode_abi_version(actual), actual, path, admitted)
       end
 
       def function(name) = @functions.fetch(name)
@@ -78,7 +88,7 @@ module CNA
           address = @handle[entry.symbol]
           @functions[entry.symbol] = Fiddle::Function.new(address, entry.fiddle_arguments, entry.fiddle_return)
         rescue Fiddle::DLError => error
-          raise CNA::MissingSymbolError, "CNA ABI 0.7.0 library #{path} is missing required symbol #{entry.symbol}: #{error.message}"
+          raise CNA::MissingSymbolError, "CNA C ABI library #{path} is missing required symbol #{entry.symbol}: #{error.message}"
         end
       end
     end

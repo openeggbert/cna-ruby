@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "native_surface_census"
 require_relative "../lib/cna"
 
 # Foundation 37 — `Game.Components`, `Game.Services`, and the managed component engine.
@@ -229,8 +230,8 @@ class GameComponentsTest < Minitest::Test
 
   # Nothing routes a component through the C ABI.
   def test_the_component_engine_adds_no_native_binding
-    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
-    assert_equal 66, CNA::Native::Manifest::CONSTANTS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length
     refute(CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.to_s.include?("component") })
   end
 

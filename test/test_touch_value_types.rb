@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "native_surface_census"
 require_relative "../lib/cna"
 
 # Foundation 23 — TouchLocation and GestureSample, derived from the pinned
@@ -246,7 +247,7 @@ class TouchValueTypesTest < Minitest::Test
       .each { |name| refute TL.respond_to?(name), name.to_s }
     %i[GetCapabilities ReadGesture IsGestureAvailable GetState EnabledGestures]
       .each { |name| refute T::TouchCollection.respond_to?(name), name.to_s }
-    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
-    assert_equal 66, CNA::Native::Manifest::CONSTANTS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length
   end
 end

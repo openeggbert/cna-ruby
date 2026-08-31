@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "native_surface_census"
 require_relative "../lib/cna"
 require_relative "../tools/api_compat/verifier"
 
@@ -489,7 +490,7 @@ class EventProjectionTest < Minitest::Test
     end
     refute F.const_defined?(:EventArgs, false)
     refute Object.const_defined?(:System, false), "no fabricated ::System namespace"
-    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
-    assert_equal 66, CNA::Native::Manifest::CONSTANTS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length
   end
 end

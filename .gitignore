@@ -3,3 +3,5 @@
 /.bundle/
 /vendor/bundle/
 .DS_Store
+/build-probe/
+/build-consumer/

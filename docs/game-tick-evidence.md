@@ -136,6 +136,29 @@ re-implemented on this side, because the managed `Game` here is a callback faça
   `initialize … begin_run update(0) update draw …`. Synthesising the missing call would fabricate a
   lifecycle callback CNA never delivered, which this project does not do.
 
+## Corrected by the CNA C ABI 0.21.0 migration
+
+Two of the statements above were true of the CNA `0.7.0` artifact and are no longer true of the
+current one. Both corrections are recorded here rather than by editing the sentences they replace,
+because what the audit measured at the time is itself evidence.
+
+- **The priming `Update` exists now.** The second "measured deviation of CNA's loop" above says
+  CNA's `Run` does not deliver `RunGame`'s zero-elapsed priming `Update`. On CNA `0.21.0` it does,
+  and the measured order is `initialize load_content begin_run update(0,0) draw update(0,step) …`.
+  The deviation is retired on `Run` and replaced by a narrower one on `Tick`: CNA delivers the
+  priming update from the **first frame step**, so a Game driven only by `Tick` sees it, where
+  XNA's `Tick` has none. CNA also draws after the priming update, where XNA's first draw follows the
+  first loop update.
+- **"The fixed step advances `TotalGameTime` by exactly one `TargetElapsedTime` per tick" was a
+  misreading of the IL.** `IL_0180` writes `gameTime.TotalGameTime = this.totalGameTime` **before**
+  the `finally` at `IL_01e8` adds the step, so an Update is handed the total accumulated before its
+  own step and the first advancing Update reports zero. CNA `0.7.0` reported the post-increment
+  value and this document and its test both took that for XNA's behaviour; CNA `0.21.0` reports the
+  pre-increment value the IL specifies, which is what exposed the error. The test now asserts the
+  IL's rule directly — every Update's `TotalGameTime` is the sum of every earlier Update's
+  `ElapsedGameTime` — and is named for it. Full record in
+  `docs/native-abi-migration-evidence.md`.
+
 ## Structural movement
 
 | | before | after |

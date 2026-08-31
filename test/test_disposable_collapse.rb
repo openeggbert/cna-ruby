@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "native_surface_census"
 require_relative "../lib/cna"
 require_relative "../tools/api_compat/verifier"
 
@@ -274,8 +275,8 @@ class DisposableCollapseTest < Minitest::Test
     end
 
     # No native symbol was added for any of this.
-    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
-    assert_equal 66, CNA::Native::Manifest::CONSTANTS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length
   end
 
   # The collapse says nothing about whether a given type's disposal works: it maps one interface

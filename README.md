@@ -9,7 +9,7 @@ Behaviour is derived from the original Microsoft XNA Framework 4.0 Windows assem
 ## Qualified foundation
 
 - MRI Ruby 3.3.8 and Fiddle 1.1.2
-- exact CNA C ABI 0.7.0 admission
+- measured CNA C ABI admission: the set of encoded versions whose bound surface a compiler has verified, currently `0.7.0` and `0.21.0`, qualified against a CNA `0.21.0` `SDL3`-platform / `SDL3`-audio / `HEADLESS`-renderer artifact
 - centralized native resolver, signature manifest, layouts, result translation, ownership, generation/thread checks, and callback exception containment
 - complete mapped MathHelper, Vector2/3/4, Quaternion, Matrix, Plane, Ray, BoundingBox, BoundingSphere, BoundingFrustum, Rectangle, Color, Curve family, the full 19-type `Graphics.PackedVector` family, the managed three-type `VertexElement` descriptor closure, Viewport, DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, ClearOptions, DepthFormat, PrimitiveType, the 24-enum Foundation 16 pure managed batch (Graphics Blend, BlendFunction, BufferUsage, ColorWriteChannels, CompareFunction, CubeMapFace, CullMode, EffectParameterClass, EffectParameterType, FillMode, IndexElementSize, PresentInterval, RenderTargetUsage, SetDataOptions, StencilOperation, TextureAddressMode, TextureFilter; Audio AudioChannels, AudioStopOptions, MicrophoneState, SoundState; Media MediaSourceType, MediaState, VideoSoundtrackType), the Input.Touch managed closure (TouchLocationState, GestureType, TouchPanelCapabilities), the abstract interface contracts IGameComponent, IGraphicsDeviceManager, IEffectMatrices, IEffectFog, IUpdateable and IDrawable, eight XNA exception types (Audio InstancePlayLimitException, NoAudioHardwareException, NoMicrophoneConnectedException; Graphics DeviceLostException, DeviceNotResetException, NoSuitableGraphicsDeviceException; Content ContentLoadException; Storage StorageDeviceNotConnectedException), the Input.Touch value types TouchLocation and GestureSample, the managed descriptors AudioListener, AudioEmitter, PresentationParameters, DisplayMode, DisplayModeCollection, GameComponentCollectionEventArgs, ResourceCreatedEventArgs and ResourceDestroyedEventArgs, the five Content ContentSerializer attributes, ContainmentType, PlaneIntersectionType, Point, GameTime, PlayerIndex, SpriteSortMode, SpriteEffects, SurfaceFormat, KeyState, Keys, KeyboardState, Keyboard, ButtonState, MouseState, Mouse, the exact ten-type GamePad family, and Texture contract types
 - the general Ruby event projection: one CLR public event maps to exactly one public Ruby event reader keeping the XNA spelling, answering a `CNA::Runtime::Event` whose whole public surface is `add`/`remove`, with `System.EventArgs` projected as `CNA::Runtime::EventArgs`
@@ -30,7 +30,7 @@ gem build cna-ruby.gemspec
 gem install ./cna-ruby-0.1.0.dev0.gem
 ```
 
-Provide a reviewed CNA C ABI 0.7.0 library by absolute path:
+Provide a reviewed CNA C ABI library by absolute path. The admitted versions are listed in `docs/native-abi.md`; a library outside the admitted set is refused by a message naming the set, the version found and the path:
 
 ```sh
 export CNA_NATIVE_LIBRARY=/absolute/path/to/libcna_c_api.so
@@ -52,7 +52,8 @@ There is intentionally no `microsoft/xna/framework/content` implementation in Fo
 - `plan.md` — normative architecture/status
 - `NEXT.md` — exact continuation boundary
 - `docs/xna-ruby-mapping.md` — formal language mapping
-- `docs/native-abi.md` — reviewed artifact and ABI policy
+- `docs/native-abi.md` — reviewed artifact and ABI admission policy
+- `docs/native-abi-migration-evidence.md` — the CNA C ABI 0.7.0 -> 0.21.0 migration: the compiler-backed proof that the bound surface is byte-identical, the admission policy derived from CNA's own versioning contract, the sixteen mutation controls that prove the gate fails, and the four behavioural facts the migration measured
 - `docs/placeholder-audit.md` — every original fake member and disposition
 - `docs/geometry-transform-evidence.md` — Foundation 2 managed geometry closure
 - `docs/color-rectangle-evidence.md` — Foundation 3 managed presentation-value closure

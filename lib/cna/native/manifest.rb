@@ -103,6 +103,33 @@ module CNA
         { c: c, fiddle: PTR, pointer_depth: 0 }
       end
 
+      # The set of encoded CNA C ABI versions this binding admits.
+      #
+      # CNA's own contract (`docs/c-api/ABI_VERSIONING.md`) says two things that together rule out
+      # both of the easy policies:
+      #
+      #   * "A consumer must reject a different major and may require a minimum minor."
+      #   * "ABI `0.x` is experimental: an incompatible change requires a minor-version increment,
+      #     release notes and a regenerated ABI baseline."
+      #
+      # So "same major accepts everything" is unsound -- in `0.x` a *later* minor may be
+      # incompatible, and `0.20.0` really was: it removed eleven renderer identities and moved a
+      # public `MAXIMUM` sentinel. And "require a minimum minor" is unsound for exactly the same
+      # reason, because the incompatibility travels forward rather than backward. A single frozen
+      # version would be sound but would say nothing about why.
+      #
+      # Admission is therefore neither a range nor a single number but **the set of encoded
+      # versions whose whole bound surface this repository has measured with a compiler**.
+      # `tools/native_abi/verify.rb` compiles the probe once per admitted version's headers,
+      # requires each to report a version in this list, and requires every measurement except
+      # `CNA_ABI_VERSION` itself to agree across them. A version leaves this list the moment that
+      # measurement stops holding -- which is a fact about headers, not a preference.
+      ADMITTED_ABI_VERSIONS = [0x0000_0700, 0x0000_1500].freeze
+
+      def self.decode_abi_version(encoded)
+        format("%d.%d.%d", (encoded >> 16) & 0xFFFF, (encoded >> 8) & 0xFF, encoded & 0xFF)
+      end
+
       FUNCTIONS = [
         signature("cna_get_abi_version", T[:u32], [], ownership: "process-global metadata", result_lifetime: "value"),
         signature("cna_error_get_last_info", T[:result], [pointer("CNA_ErrorInfo")], ownership: "caller output"),
@@ -216,8 +243,12 @@ module CNA
         { name: "CNA_GameEventCallback", c_return: "void", c_arguments: ["void*"], calling_convention: "platform C", fiddle_return: VOID, fiddle_arguments: [PTR] }
       ].freeze
 
+      # `CNA_ABI_VERSION` is deliberately **not** here. It is not a constant this binding consumes;
+      # it is the identity this binding gates on, and it is the one measurement that legitimately
+      # differs between two admitted versions. The verifier checks it against
+      # `ADMITTED_ABI_VERSIONS` per header root instead, so a version mismatch is reported as an
+      # admission failure rather than as a constant mismatch.
       CONSTANTS = {
-        "CNA_ABI_VERSION" => 0x0000_0700,
         "CNA_FALSE" => 0, "CNA_TRUE" => 1,
         "CNA_RESULT_SUCCESS" => 0, "CNA_RESULT_NOT_SUPPORTED" => 6,
         "CNA_RESULT_THREAD" => 8, "CNA_RESULT_CALLBACK" => 9,

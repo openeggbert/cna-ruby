@@ -180,18 +180,38 @@ class GameTickTest < Minitest::Test
     end
   end
 
-  # Fixed time step is the constructor default, so every tick advances TotalGameTime by exactly one
-  # TargetElapsedTime and reports that same span as ElapsedGameTime.
-  def test_the_fixed_step_advances_total_game_time_by_exactly_one_target_step
+  # Fixed time step is the constructor default, and the pinned IL settles what an Update sees. The
+  # fixed-step branch writes `gameTime.TotalGameTime = this.totalGameTime` at IL_0180, *before* the
+  # `finally` at IL_01e8 adds the step to `totalGameTime`. So an Update is handed the total that had
+  # accumulated **before** its own step: the first advancing Update reports zero, not one step.
+  #
+  # This test used to assert `step * (index + 1)`, which was CNA 0.7.0's post-increment value and a
+  # misreading of the IL; the ABI migration to 0.21.0 caught it, because 0.21.0 reports the
+  # pre-increment value the IL specifies. The rule is now stated the way the IL states it, so it
+  # holds however many Updates one tick delivers: every Update's TotalGameTime is the sum of every
+  # earlier Update's ElapsedGameTime.
+  #
+  # The first Update carries `ElapsedGameTime = Zero`. That is XNA's priming Update -- `RunGame`
+  # IL_004c..IL_007a sets Elapsed to `TimeSpan.Zero`, Total to `totalGameTime` and IsRunningSlowly
+  # to false, calls `Update`, then sets `doneFirstUpdate` -- which CNA now delivers from the first
+  # frame step. On `Run` that is a fix; on `Tick` it is a deviation, since XNA's `Tick` has no
+  # priming Update. `docs/native-abi-migration-evidence.md` records both.
+  def test_the_fixed_step_hands_each_update_the_total_accumulated_before_its_own_step
     with_game do |game|
       step = game.TargetElapsedTime
       5.times { game.Tick }
       updates = game.log.select { |entry| entry.is_a?(Array) }
       assert_equal 5, updates.length
-      updates.each_with_index do |(_, total, elapsed), index|
-        assert_in_delta step, elapsed, 1e-9
-        assert_in_delta step * (index + 1), total, 1e-9
+
+      elapsed_spans = updates.map { |(_, _, elapsed)| elapsed }
+      assert_in_delta 0.0, elapsed_spans.first, 1e-9, "the first Update is the priming one"
+      elapsed_spans.drop(1).each { |elapsed| assert_in_delta step, elapsed, 1e-9 }
+
+      updates.each_with_index do |(_, total, _), index|
+        assert_in_delta elapsed_spans.take(index).sum, total, 1e-9,
+                        "Update #{index} must see the total accumulated before its own step"
       end
+      assert_in_delta step * 4, updates.map { |(_, _, elapsed)| elapsed }.sum, 1e-9
     end
   end
 

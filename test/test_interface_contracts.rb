@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "native_surface_census"
 require_relative "../lib/cna"
 
 # Foundations 18 and 20 — the managed XNA interface contracts.
@@ -219,7 +220,7 @@ class InterfaceContractsTest < Minitest::Test
        IEffectSkinning IVertexType VertexDeclaration].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
-    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
-    assert_equal 66, CNA::Native::Manifest::CONSTANTS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length
   end
 end

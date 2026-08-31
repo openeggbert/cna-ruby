@@ -1,19 +1,52 @@
 # Native ABI Qualification
 
-The Foundation 1 admission policy retained unchanged through Foundation 7 admits exactly CNA C ABI 0.7.0 (`0x00000700`). Newer 0.x and same-major versions are rejected until separately reviewed.
+## Admission policy
 
-The retained qualification artifact used for this milestone is:
+CNA-Ruby admits **the set of encoded CNA C ABI versions whose whole bound surface it has measured
+with a compiler**, currently `0.7.0` (`0x00000700`) and `0.21.0` (`0x00001500`). It is deliberately
+neither "the same major" nor "a minimum minor" nor a single frozen number; the derivation from CNA's
+own `docs/c-api/ABI_VERSIONING.md`, and the compiler-backed measurement that both versions are
+byte-identical over this binding's surface, are in `docs/native-abi-migration-evidence.md`.
 
-- CNA source revision: `a09196a6477f69a7a57c8364f990658d31531a5b`
-- library: external `libcna_c_api.so`
-- SHA-256: `c62949d23d3745964f5e557a06665875621ed4cb6e2930e3f282afd5911f2dcb`
-- platform: Linux x86-64
-- renderer: HEADLESS
-- audio: NULL
+The set is enforced in two places. `CNA::Native::Library` refuses a library whose
+`cna_get_abi_version()` is outside it, naming the admitted set, the version found and the library
+path. `tools/native_abi/verify.rb` requires every admitted version's headers to declare an admitted
+`CNA_ABI_VERSION` and to agree with every other root on every other measurement, so the policy is
+re-derived on each run instead of being asserted.
 
-It is not bundled and its temporary qualification location is not a runtime default. Consumers set `CNA_NATIVE_LIBRARY` to an absolute path. Production resolution then considers a future package-native directory and platform dynamic-loader names; it never searches developer sibling repositories.
+`CNA_ABI_VERSION` is not in `Manifest::CONSTANTS`. It is not a constant this binding consumes, it is
+the identity this binding gates on, and it is the one measurement two admitted versions may
+legitimately disagree about.
 
-The reviewed manifest records exact C type names, pointer depth, constness, fixed width, signedness, CNA_Bool/enum representation, ownership, result lifetime, and callbacks. `tools/native_abi/verify.rb` compiles an independent C probe against canonical headers, compares structure size/alignment/offsets and constants with Ruby declarations, type-checks every function/callback prototype, and checks exports in the actually loaded library.
+## The qualification artifact
+
+- CNA source revision: `cnanext` `0a6158e4ff764907065cd7259e3d29e331a52088` (branch `next`)
+- library: external `libcna_c_api.so`, pinned at `~/deps/cna-c-abi-0.21.0/libcna_c_api.so`
+- SHA-256: `c32bfbd307d695664f906ccf2834ec3f9ebc240fa388d544ac21ee3ebaeb731b`
+- headers: 61 files, tree digest `1342fdbb24c654352ebac6b7381ee2a6dafeae6ec413c2c5ec4e653325704850`
+- platform: Linux x86-64, `CNA_PLATFORM=SDL3`
+- renderer: `HEADLESS` (a build-time selection; the runtime `CNA_GRAPHICS_RENDERER` override can
+  only choose a renderer compiled in)
+- audio: `SDL3`
+
+The retired artifact was CNA revision `a09196a6477f69a7a57c8364f990658d31531a5b`, SHA-256
+`c62949d23d3745964f5e557a06665875621ed4cb6e2930e3f282afd5911f2dcb`, built with the `HEADLESS`
+*platform* and the null audio backend. It remains admitted by version and is no longer the qualified
+artifact.
+
+Neither artifact is bundled and neither location is a runtime default. Consumers set
+`CNA_NATIVE_LIBRARY` to an absolute path. Production resolution then considers a future
+package-native directory and platform dynamic-loader names; it never searches developer sibling
+repositories.
+
+The reviewed manifest records exact C type names, pointer depth, constness, fixed width, signedness,
+CNA_Bool/enum representation, ownership, result lifetime, and callbacks. `tools/native_abi/verify.rb`
+compiles an independent C probe against canonical headers, compares structure size/alignment/offsets
+and constants with Ruby declarations, type-checks every function/callback prototype, and checks
+exports in the actually loaded library. `test/test_native_abi_gate.rb` proves the gate fails, one
+planted defect at a time.
+
+## Historical deltas
 
 Foundation 6 binds four already-existing reviewed functions and no adjacent input API: `cna_mouse_get_state`, `cna_mouse_set_position`, `cna_mouse_get_window_handle`, and `cna_mouse_set_window_handle`. It measures the complete `CNA_MouseState` layout and the five consumed button-bit constants. The compiler-backed delta is 30 -> 34 bound functions, 90 -> 103 signature measurements, 158 -> 176 C layout measurements, 158 -> 176 Ruby layout measurements, 2 -> 2 callbacks, and 12 -> 17 constants. Missing header symbols, missing library symbols, and ABI mismatches remain zero.
 
@@ -45,7 +78,7 @@ signature measurements, 290 -> 290 C layout measurements, 290 -> 290 Ruby layout
 signature-identical: the manifest entry was inserted, nothing existing was edited, and the probe
 type-checks all 39 prototypes against the same canonical headers.
 
-The retained qualification artifact is unchanged. **No CNA source change was made and no new
+The qualification artifact of that milestone was unchanged. **No CNA source change was made and no new
 native binary was built**, because the audit that opened this milestone found the canonical C ABI
 already exposes everything the milestone needed — see
 `docs/graphics-adapter-audit-evidence.md`, which also records why the same is true of the
