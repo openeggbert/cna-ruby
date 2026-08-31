@@ -43,7 +43,8 @@ class BclProjectionTest < Minitest::Test
   def test_the_register_is_narrow_and_every_entry_resolves
     # Foundation 29 added ReadOnlyCollection`1, the first entry with a real member surface, which
     # is why Foundation 28 had to admit a BCL authority to measure it against.
-    assert_equal({"System.EventArgs" => "CNA::Runtime::EventArgs", "System.TimeSpan" => "Float",
+    assert_equal({"System.EventArgs" => "CNA::Runtime::EventArgs",
+                  "System.Collections.Generic.Dictionary`2" => "CNA::Runtime::Dictionary", "System.TimeSpan" => "Float",
                   "System.Attribute" => "CNA::Runtime::Attribute",
                   "System.Collections.ObjectModel.ReadOnlyCollection`1" => "CNA::Runtime::ReadOnlyCollection",
                   # Foundation 34 added the mutable sibling, measured against the same mscorlib.
@@ -57,7 +58,8 @@ class BclProjectionTest < Minitest::Test
     assert_equal({"System.Exception" => "StandardError",
                   "System.Runtime.InteropServices.ExternalException" => "StandardError"},
                  B::EXCEPTION_BASES)
-    assert_equal ["System.Attribute", "System.Collections.ObjectModel.Collection`1",
+    assert_equal ["System.Attribute", "System.Collections.Generic.Dictionary`2",
+                  "System.Collections.ObjectModel.Collection`1",
                   "System.Collections.ObjectModel.ReadOnlyCollection`1",
                   "System.EventArgs", "System.Exception", "System.IDisposable",
                   "System.IServiceProvider",
@@ -69,9 +71,13 @@ class BclProjectionTest < Minitest::Test
       assert_instance_of Class, resolved, path
     end
 
-    # Deliberately not designed yet.
+    # Deliberately not designed yet. Dictionary`2 was on this list until Foundation 46 measured it
+    # against the same mscorlib and projected it; SerializationInfo stays off deliberately even
+    # though that projection carries GetObjectData and OnDeserialization, because the pinned
+    # reference never names it in a public signature and the two members take a duck-typed carrier
+    # rather than a projected CLR identity.
     %w[System.IO.Stream System.Text.StringBuilder
-       System.Runtime.Serialization.SerializationInfo System.Collections.Generic.Dictionary`2]
+       System.Runtime.Serialization.SerializationInfo System.Runtime.Serialization.StreamingContext]
       .each { |absent| refute_includes B.identities, absent }
   end
 
@@ -90,12 +96,12 @@ class BclProjectionTest < Minitest::Test
   end
 
   def test_the_strict_report_measures_the_register
-    assert_equal 10, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal 11, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal 2, STRICT.fetch("BCL_EXCEPTION_BASES")
     assert_equal({"types" => B::TYPES, "exceptionBases" => B::EXCEPTION_BASES,
                   "thrownExceptions" => B::THROWN_EXCEPTIONS},
                  STRICT.fetch("bclProjection"))
-    assert_equal 6, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
+    assert_equal 7, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
     assert_equal 0, STRICT.fetch("LANGUAGE_MAPPING_MISMATCH")
     assert_equal 0, STRICT.fetch("BASE_MAPPING_MISMATCH")
   end

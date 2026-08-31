@@ -5,21 +5,21 @@
   "REFERENCE_MEMBERS": 2964,
   "EXPECTED_RUBY_TYPES": 257,
   "EXPECTED_RUBY_MEMBERS": 2915,
-  "TARGET_TYPES": 142,
-  "TARGET_MEMBERS": 1788,
-  "TOTAL_DIAGNOSTICS": 276,
-  "COMPLETE_TYPES": 136,
+  "TARGET_TYPES": 143,
+  "TARGET_MEMBERS": 1790,
+  "TOTAL_DIAGNOSTICS": 274,
+  "COMPLETE_TYPES": 137,
   "PARTIAL_TYPES": 6,
-  "MISSING_TYPES": 115,
+  "MISSING_TYPES": 114,
   "ALLOWLIST_ENTRIES": 0,
   "EVENT_IDENTITIES": 17,
   "EVENT_OWNER_TYPES": 6,
   "EVENT_SUPPORT_TYPE": "CNA::Runtime::Event",
-  "BCL_PROJECTED_IDENTITIES": 10,
+  "BCL_PROJECTED_IDENTITIES": 11,
   "BCL_EXCEPTION_BASES": 2,
-  "BCL_THROWN_EXCEPTIONS": 6,
-  "MISSING_TYPE": 115,
-  "MISSING_MEMBER": 115,
+  "BCL_THROWN_EXCEPTIONS": 7,
+  "MISSING_TYPE": 114,
+  "MISSING_MEMBER": 114,
   "UNEXPECTED_TYPE": 0,
   "UNEXPECTED_MEMBER": 0,
   "TYPE_KIND_MISMATCH": 0,
@@ -63,6 +63,7 @@
   "bclProjection": {
     "types": {
       "System.EventArgs": "CNA::Runtime::EventArgs",
+      "System.Collections.Generic.Dictionary`2": "CNA::Runtime::Dictionary",
       "System.TimeSpan": "Float",
       "System.Attribute": "CNA::Runtime::Attribute",
       "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection",
@@ -79,7 +80,8 @@
       "System.ArgumentException": "ArgumentError",
       "System.IndexOutOfRangeException": "IndexError",
       "System.NotSupportedException": "CNA::Runtime::NotSupportedError",
-      "System.InvalidOperationException": "RuntimeError"
+      "System.InvalidOperationException": "RuntimeError",
+      "System.Collections.Generic.KeyNotFoundException": "KeyError"
     }
   },
   "completeTypeNames": [
@@ -218,6 +220,7 @@
     "Microsoft.Xna.Framework.Input.Touch.TouchCollection",
     "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator",
     "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
+    "Microsoft.Xna.Framework.LaunchParameters",
     "Microsoft.Xna.Framework.GameServiceContainer"
   ],
   "partialTypes": {
@@ -225,7 +228,6 @@
       "Microsoft.Xna.Framework.Game::Dispose (1 overload)",
       "Microsoft.Xna.Framework.Game::Finalize (1 overload)",
       "Microsoft.Xna.Framework.Game::ShowMissingRequirementMessage (1 overload)",
-      "Microsoft.Xna.Framework.Game::LaunchParameters (1 overload)",
       "Microsoft.Xna.Framework.Game::Window (1 overload)",
       "Microsoft.Xna.Framework.Game::Content (1 overload)"
     ],
@@ -410,7 +412,6 @@
     "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
     "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
     "Microsoft.Xna.Framework.GraphicsDeviceInformation",
-    "Microsoft.Xna.Framework.LaunchParameters",
     "Microsoft.Xna.Framework.Media.Album",
     "Microsoft.Xna.Framework.Media.AlbumCollection",
     "Microsoft.Xna.Framework.Media.Artist",
@@ -547,7 +548,7 @@
     "Microsoft.Xna.Framework.CurveContinuity": 0,
     "Microsoft.Xna.Framework.CurveLoopType": 0,
     "Microsoft.Xna.Framework.CurveTangent": 0,
-    "Microsoft.Xna.Framework.Game": 9,
+    "Microsoft.Xna.Framework.Game": 8,
     "Microsoft.Xna.Framework.GraphicsDeviceManager": 37,
     "Microsoft.Xna.Framework.Graphics.Viewport": 0,
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice": 73,
@@ -580,6 +581,7 @@
     "Microsoft.Xna.Framework.Input.Touch.TouchCollection": 0,
     "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator": 0,
     "Microsoft.Xna.Framework.Input.Touch.TouchPanel": 0,
+    "Microsoft.Xna.Framework.LaunchParameters": 0,
     "Microsoft.Xna.Framework.GameServiceContainer": 0
   },
   "details": {
@@ -672,7 +674,6 @@
       "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
       "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
       "Microsoft.Xna.Framework.GraphicsDeviceInformation",
-      "Microsoft.Xna.Framework.LaunchParameters",
       "Microsoft.Xna.Framework.Media.Album",
       "Microsoft.Xna.Framework.Media.AlbumCollection",
       "Microsoft.Xna.Framework.Media.Artist",
@@ -704,7 +705,6 @@
       "Microsoft.Xna.Framework.Game::Dispose (1 overload)",
       "Microsoft.Xna.Framework.Game::Finalize (1 overload)",
       "Microsoft.Xna.Framework.Game::ShowMissingRequirementMessage (1 overload)",
-      "Microsoft.Xna.Framework.Game::LaunchParameters (1 overload)",
       "Microsoft.Xna.Framework.Game::Window (1 overload)",
       "Microsoft.Xna.Framework.Game::Content (1 overload)",
       "Microsoft.Xna.Framework.Graphics.GraphicsDevice::.ctor (1 overload)",

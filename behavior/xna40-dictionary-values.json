@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "sourceBclAssemblySha256": "5634668d4775b0113f08ea31093b281fea69bfc4e99227f5ca761b4ed98acc63",
+  "derivation": "Foundation 46 Dictionary`2 and LaunchParameters. The BCL half is read out of the admitted Microsoft .NET Framework 4.0 mscorlib. Dictionary`2 is `.class public auto ansi serializable beforefieldinit`, extends System.Object and implements IDictionary<K,V>, ICollection<KeyValuePair<K,V>>, IEnumerable<KeyValuePair<K,V>>, IDictionary, ICollection, IEnumerable, ISerializable and IDeserializationCallback. Its accessibility census settles what a projection owes: six public constructors, one `family` constructor taking SerializationInfo and StreamingContext, twenty-two `private ... newslot virtual final` explicit interface implementations that project to no member at all, and the ordinary public surface get_Comparer, get_Count, get_Keys, get_Values, get_Item, set_Item, Add, Clear, ContainsKey, ContainsValue, GetEnumerator, GetObjectData, OnDeserialization, Remove and TryGetValue. Add is Insert(key, value, add: true) and set_Item is Insert(key, value, add: false); Insert opens with ThrowHelper::ThrowArgumentNullException(ExceptionArgument.key), and finding the key already present throws ArgumentException when add is true and replaces the value and increments version when it is false. get_Item calls FindEntry and ThrowHelper::ThrowKeyNotFoundException() when it answers a negative index. Remove throws on a null key, returns false without touching version when the key is absent, and increments version when an entry goes. Clear returns at its first branch -- `ldfld count; ldc.i4.0; ble.s` straight to `ret` -- so clearing an empty dictionary does not increment version. ContainsValue has a separate null branch answering true for the first null value without consulting a comparer. KeyCollection and ValueCollection each declare exactly four public members -- .ctor(Dictionary<K,V>), get_Count, CopyTo(T[], int32) and GetEnumerator() -- every other member each declares being an explicit interface implementation, including all the mutating ones. The XNA half is read out of the pinned Microsoft.Xna.Framework.Game.dll: LaunchParameters is `.class public auto ansi beforefieldinit` extending Dictionary`2<string,string>, declaring one public parameterless constructor whose body is `base..ctor()` then ParseCommandLineArguments(Environment.GetCommandLineArgs()). ParseCommandLineArguments is `assembly` and ParseKeyValuePair is `private`, so neither is an identity: the trim set is { '/', '-' }, the loop starts at index 1 because element 0 is the executable path, the separator is the FIRST ':' found by String.IndexOf(char), an argument with no colon keeps the whole argument as the key and String.Empty as the value, and the write is guarded by `!ContainsKey(key) && key != String.Empty` over `Add`, so the first occurrence of a name wins and an empty key is skipped. Game::get_LaunchParameters is one ldfld; the field is written in exactly one place, Game..ctor, and nothing in the assembly reads it again.",
+  "observations": [
+    {
+      "id": "dictionary.contract",
+      "operation": "Dictionary.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": ["class", "System.Collections.Generic.Dictionary`2[System.String,System.String]", 10, [], [["constructor", ".ctor"]]]
+    },
+    {
+      "id": "dictionary.register",
+      "operation": "Dictionary.Register",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": ["CNA::Runtime::Dictionary", true, "Object", false, "CNA::Runtime::Dictionary", "KeyError"]
+    },
+    {
+      "id": "dictionary.surface",
+      "operation": "Dictionary.Surface",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [true, true]
+    },
+    {
+      "id": "dictionary.semantics",
+      "operation": "Dictionary.Semantics",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": ["ArgumentError", "9", "KeyError", "ArgumentError", false, true, 0, true]
+    },
+    {
+      "id": "dictionary.views",
+      "operation": "Dictionary.Views",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [1, ["b"], true, "RuntimeError"]
+    },
+    {
+      "id": "dictionary.comparer",
+      "operation": "Dictionary.Comparer",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [null, true, true, "v", "ArgumentError", true]
+    },
+    {
+      "id": "launch_parameters.parse",
+      "operation": "LaunchParameters.Parse",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [4, [["windowed", ""], ["res", "1920x1080"], ["verbose", ""], ["x", "a:b"]], false, 0]
+    },
+    {
+      "id": "launch_parameters.game",
+      "operation": "LaunchParameters.Game",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": ["Microsoft::Xna::Framework::LaunchParameters", true, true, "CNA::Runtime::Dictionary", ["System.String", "System.String"], true]
+    }
+  ]
+}

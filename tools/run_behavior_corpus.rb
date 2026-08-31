@@ -47,6 +47,7 @@ BATCH_REFERENCE = JSON.parse(
 # Derived from the hash-pinned original XNA assemblies by tools/api_compat/build_il_inventory.rb.
 # It carries no Microsoft-owned bytes, only measured structural facts and the assembly hashes.
 IL_INVENTORY = JSON.parse(File.read(File.expand_path("../docs/generated/xna-il-inventory.json", __dir__)))
+BATCH_RULES = JSON.parse(File.read(File.expand_path("api_compat/mapping-rules.json", __dir__)))
 
 def batch_enum_type(clr_name)
   clr_name.split(".").reduce(Object) { |scope, segment| scope.const_get(segment, false) }
@@ -567,6 +568,115 @@ def execute(item)
        outcome.call { game.InactiveSleepTime = -1 },
        outcome.call { game.IsFixedTimeStep = false },
        outcome.call { game.IsMouseVisible = true }]
+    ensure
+      game.Dispose
+    end
+  when "Dictionary.Contract"
+    # LaunchParameters' pinned contract: a Dictionary<string,string> base, ten inherited interfaces,
+    # an empty directInterfaces list and exactly one declared member -- the public parameterless
+    # constructor. Its whole public surface is inherited.
+    reference = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.LaunchParameters")
+    [reference.fetch("kind"), reference.fetch("baseType"),
+     reference.fetch("interfaces").length, reference.fetch("directInterfaces"),
+     reference.fetch("members").map { |member| [member.fetch("kind"), member.fetch("name")] }]
+  when "Dictionary.Register"
+    # One register entry, resolving to a dedicated support class rather than a Hash, and the
+    # committed rules file naming the same mapping.
+    identity = "System.Collections.Generic.Dictionary`2"
+    [CNA::Runtime::BclProjection::TYPES[identity],
+     CNA::Runtime::BclProjection.identities.include?(identity),
+     CNA::Runtime::Dictionary.superclass.name,
+     CNA::Runtime::Dictionary < ::Hash ? true : false,
+     BATCH_RULES.fetch("bclProjection").fetch("types")[identity],
+     CNA::Runtime::BclProjection::THROWN_EXCEPTIONS["System.Collections.Generic.KeyNotFoundException"]]
+  when "Dictionary.Surface"
+    # Twenty-two of the CLR type's methods are explicit interface implementations, which project to
+    # nothing; its SerializationInfo constructor is `family`. What is carried is the ordinary public
+    # surface, and no Ruby-idiomatic second way to mutate exists beside it.
+    present = %i[Comparer Count Keys Values [] []= Add Clear ContainsKey ContainsValue
+                 GetEnumerator Remove TryGetValue GetObjectData OnDeserialization]
+                .all? { |name| CNA::Runtime::Dictionary.public_method_defined?(name) }
+    absent = %i[store merge merge! delete delete_if fetch each_pair update << push]
+               .none? { |name| CNA::Runtime::Dictionary.public_method_defined?(name) }
+    [present, absent]
+  when "Dictionary.Semantics"
+    # Add refuses a duplicate where set_Item replaces it; get_Item throws where Hash#[] answers nil;
+    # every keyed member refuses a null key; Remove answers a Boolean; and Clear returns at its
+    # first branch on an empty dictionary, so it does not bump the version.
+    dictionary = CNA::Runtime::Dictionary.new
+    outcome = lambda do |&block|
+      begin
+        block.call
+        "none"
+      rescue Exception => error
+        error.class.name
+      end
+    end
+    dictionary.Add("a", "1")
+    duplicate = outcome.call { dictionary.Add("a", "2") }
+    dictionary["a"] = "9"
+    missing = outcome.call { dictionary["absent"] }
+    null_key = outcome.call { dictionary.Add(nil, "x") }
+    empty = CNA::Runtime::Dictionary.new
+    before = empty.instance_variable_get(:@version)
+    empty.Clear
+    [duplicate, dictionary["a"], missing, null_key,
+     dictionary.Remove("absent"), dictionary.Remove("a"), dictionary.Count,
+     empty.instance_variable_get(:@version) == before]
+  when "Dictionary.Views"
+    # KeyCollection and ValueCollection store one reference and forward, so they are views rather
+    # than snapshots, they declare no mutation, and they fail fast on the dictionary's own version.
+    dictionary = CNA::Runtime::Dictionary.new
+    dictionary.Add("a", "1")
+    keys = dictionary.Keys
+    dictionary.Add("b", "2")
+    enumerator = dictionary.Values.GetEnumerator
+    dictionary.Remove("a")
+    stale = begin
+      enumerator.to_a
+      "none"
+    rescue Exception => error
+      error.class.name
+    end
+    [keys.Count, keys.to_a, %i[Add Remove Clear []= push <<].none? { |name| keys.respond_to?(name) }, stale]
+  when "Dictionary.Comparer"
+    # EqualityComparer<TKey>.Default is the key's own equality, which is Ruby's own, so the default
+    # projects to nil. A supplied comparer is a duck type answering Equals and GetHashCode, which is
+    # the whole of IEqualityComparer<T>.
+    comparer = Object.new
+    def comparer.Equals(left, right) = left.to_s.downcase == right.to_s.downcase
+    def comparer.GetHashCode(value) = value.to_s.downcase.hash
+    dictionary = CNA::Runtime::Dictionary.new(comparer: comparer)
+    dictionary.Add("Key", "v")
+    duplicate = begin
+      dictionary.Add("KEY", "w")
+      "none"
+    rescue Exception => error
+      error.class.name
+    end
+    [CNA::Runtime::Dictionary.new.Comparer, dictionary.Comparer.equal?(comparer),
+     dictionary.ContainsKey("KEY"), dictionary["kEy"], duplicate, dictionary.Remove("keY")]
+  when "LaunchParameters.Parse"
+    # ParseCommandLineArguments, argument by argument: `/` and `-` trimmed as a run, split on the
+    # FIRST colon, a colonless argument kept with String.Empty, an empty key skipped, and the FIRST
+    # occurrence of a name winning because the guard is ContainsKey and the write is Add.
+    parameters = F::LaunchParameters.new(
+      ["-windowed", "/res:1920x1080", "-res:800x600", "--verbose", "x:a:b", ":", "-", ""]
+    )
+    [parameters.Count, parameters.GetEnumerator.to_a,
+     parameters.ContainsKey(""), F::LaunchParameters.new([]).Count]
+  when "LaunchParameters.Game"
+    # get_LaunchParameters is one ldfld: the same object for the life of the Game, created by the
+    # constructor, needing no native host. The canonical CNA launch-parameter routes are
+    # deliberately unbound -- audited against the pinned IL they parse, add and enumerate
+    # differently on three counts the inherited dictionary surface makes observable.
+    game = F::Game.new
+    begin
+      parameters = game.LaunchParameters
+      [parameters.class.name, parameters.equal?(game.LaunchParameters),
+       game.instance_variable_get(:@host).nil?,
+       F::LaunchParameters.superclass.name, F::LaunchParameters.clr_element_types,
+       CNA::Native::Manifest::FUNCTIONS.map(&:symbol).none? { |s| s.include?("launch_parameters") }]
     ensure
       game.Dispose
     end

@@ -476,11 +476,11 @@ class GameComponentTest < Minitest::Test
     # Foundation 40 added Graphics::IGraphicsDeviceService: one type, five identities, four of them
     # events on a fifth owner. What this milestone owns -- Game's remainder and the partial count --
     # is what stayed put.
-    assert_equal 142, STRICT.fetch("TARGET_TYPES")
-    assert_equal 136, STRICT.fetch("COMPLETE_TYPES")
-    assert_equal 115, STRICT.fetch("MISSING_TYPES")
+    assert_equal 143, STRICT.fetch("TARGET_TYPES")
+    assert_equal 137, STRICT.fetch("COMPLETE_TYPES")
+    assert_equal 114, STRICT.fetch("MISSING_TYPES")
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
-    assert_equal 115, STRICT.fetch("MISSING_MEMBER"),
+    assert_equal 114, STRICT.fetch("MISSING_MEMBER"),
                  "Foundation 41 closed Game's four events and three raisers, 42 its four " \
                  "timing and presentation properties, 43 SuppressDraw and ResetElapsedTime, " \
                  "44 Tick, 45 IsActive"

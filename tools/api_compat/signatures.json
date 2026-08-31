@@ -29852,6 +29852,19 @@
         },
         {
           "kind": "property",
+          "name": "LaunchParameters",
+          "type": "Microsoft.Xna.Framework.LaunchParameters",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
           "name": "IsActive",
           "type": "System.Boolean",
           "static": false,
@@ -35945,6 +35958,48 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Input::Touch::TouchPanel"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.LaunchParameters",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "System.Collections.Generic.Dictionary`2[System.String,System.String]",
+      "interfaces": [
+        "System.Collections.Generic.ICollection`1[System.Collections.Generic.KeyValuePair`2[System.String,System.String]]",
+        "System.Collections.Generic.IDictionary`2[System.String,System.String]",
+        "System.Collections.Generic.IEnumerable`1[System.Collections.Generic.KeyValuePair`2[System.String,System.String]]",
+        "System.Collections.Generic.IReadOnlyCollection`1[System.Collections.Generic.KeyValuePair`2[System.String,System.String]]",
+        "System.Collections.Generic.IReadOnlyDictionary`2[System.String,System.String]",
+        "System.Collections.ICollection",
+        "System.Collections.IDictionary",
+        "System.Collections.IEnumerable",
+        "System.Runtime.Serialization.IDeserializationCallback",
+        "System.Runtime.Serialization.ISerializable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "rubyName": "Microsoft::Xna::Framework::LaunchParameters",
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        }
+      ]
     },
     {
       "name": "Microsoft.Xna.Framework.GameServiceContainer",

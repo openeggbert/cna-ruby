@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, the Foundation 40 graphics device service, the Foundation 41 canonical Game events, the Foundation 42 Game timing and presentation properties, the Foundation 44 Game.Tick projection, and the Foundation 45 Game.IsActive projection separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, the Foundation 40 graphics device service, the Foundation 41 canonical Game events, the Foundation 42 Game timing and presentation properties, the Foundation 44 Game.Tick projection, the Foundation 45 Game.IsActive projection, and the Foundation 46 Dictionary`2 / LaunchParameters projection separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
   "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
@@ -13657,9 +13657,9 @@
       "operation": "MemberLevelDependency.FrontierEffect",
       "args": [],
       "provenance": "RUBY_MAPPING_QUALIFICATION",
-      "note": "Foundation 39 measured this row as IGraphicsDeviceService with 13 il-only blocked candidates. Foundation 40 built that candidate, so it left the candidate list and the row now names the type the refinement uncovered behind it. This is a RUBY_MAPPING_QUALIFICATION row -- a measurement of this projection's own frontier, which a milestone acting on the frontier is expected to move -- not an XNA fact.",
+      "note": "Foundation 39 measured this row as IGraphicsDeviceService with 13 il-only blocked candidates. Foundation 40 built that candidate, so it left the candidate list and the row now names the type the refinement uncovered behind it. This is a RUBY_MAPPING_QUALIFICATION row -- a measurement of this projection's own frontier, which a milestone acting on the frontier is expected to move -- not an XNA fact. Foundation 46 moved it again, from 19 candidates to 18, by projecting Dictionary`2 and consuming LaunchParameters -- the only entry that left.",
       "expected": [
-        19,
+        18,
         0,
         "none-consumable",
         [
@@ -14172,6 +14172,138 @@
         false,
         false
       ]
+    },
+    {
+      "id": "dictionary.contract",
+      "operation": "Dictionary.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Collections.Generic.Dictionary`2[System.String,System.String]",
+        10,
+        [],
+        [
+          [
+            "constructor",
+            ".ctor"
+          ]
+        ]
+      ]
+    },
+    {
+      "id": "dictionary.register",
+      "operation": "Dictionary.Register",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "CNA::Runtime::Dictionary",
+        true,
+        "Object",
+        false,
+        "CNA::Runtime::Dictionary",
+        "KeyError"
+      ]
+    },
+    {
+      "id": "dictionary.surface",
+      "operation": "Dictionary.Surface",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        true
+      ]
+    },
+    {
+      "id": "dictionary.semantics",
+      "operation": "Dictionary.Semantics",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "ArgumentError",
+        "9",
+        "KeyError",
+        "ArgumentError",
+        false,
+        true,
+        0,
+        true
+      ]
+    },
+    {
+      "id": "dictionary.views",
+      "operation": "Dictionary.Views",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        1,
+        [
+          "b"
+        ],
+        true,
+        "RuntimeError"
+      ]
+    },
+    {
+      "id": "dictionary.comparer",
+      "operation": "Dictionary.Comparer",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        null,
+        true,
+        true,
+        "v",
+        "ArgumentError",
+        true
+      ]
+    },
+    {
+      "id": "launch_parameters.parse",
+      "operation": "LaunchParameters.Parse",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        4,
+        [
+          [
+            "windowed",
+            ""
+          ],
+          [
+            "res",
+            "1920x1080"
+          ],
+          [
+            "verbose",
+            ""
+          ],
+          [
+            "x",
+            "a:b"
+          ]
+        ],
+        false,
+        0
+      ]
+    },
+    {
+      "id": "launch_parameters.game",
+      "operation": "LaunchParameters.Game",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "Microsoft::Xna::Framework::LaunchParameters",
+        true,
+        true,
+        "CNA::Runtime::Dictionary",
+        [
+          "System.String",
+          "System.String"
+        ],
+        true
+      ]
     }
   ],
   "milestone31SourceAssemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
@@ -14205,5 +14337,9 @@
   "milestone44MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 24d4e2e104cd88130d814d55d470c75cb1ff0c6138860d27dd8253a776f7e4d6, 484 observations) was proved before appending 7 additive observations",
   "milestone45SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
   "milestone45SourceGamerServicesAssemblySha256": "7c6effed97aa25a95c5e095d9c261f5581e402180cc073271a367b9eef79c8af",
-  "milestone45MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 193008918234132638382d199dd87256f55657c63ac43b5394b741bd4e750a09, 491 observations) was proved before appending 7 additive observations"
+  "milestone45MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 193008918234132638382d199dd87256f55657c63ac43b5394b741bd4e750a09, 491 observations) was proved before appending 7 additive observations",
+  "milestone46SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "milestone46SourceBclAssemblySha256": "5634668d4775b0113f08ea31093b281fea69bfc4e99227f5ca761b4ed98acc63",
+  "milestone46MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 45bd77fdd2926964f4cb3a41db6e9f8eaab13d0d43ee456767b39398b6117728, 498 observations) was proved before appending 8 additive observations",
+  "milestone46CorpusCorrection": "member_level_dependency.frontier_effect pins this projection's own frontier, and its own note records that a milestone acting on the frontier is expected to move it. Foundation 46 did: projecting Dictionary`2 consumed LaunchParameters, so dependencyCompleteCandidates falls from 19 to 18. Exactly that one element changed, and the note now records both moves. A re-serialisation replay was available and was used: byte-preserving serialisation of the pre-correction corpus (SHA-256 ad87beb7a68404775636476db74bbcfac059e916e3c2ba4ca8eb64d50e4ce118, 506 observations) was proved first, and exactly one observation differs afterwards."
 }

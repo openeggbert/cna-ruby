@@ -289,6 +289,90 @@ module Microsoft
         end
       end
 
+      # Derived from the pinned Microsoft.Xna.Framework.Game.dll IL (SHA-256 b5dffdd8…).
+      #
+      # `.class public auto ansi beforefieldinit`, extending
+      # `System.Collections.Generic.Dictionary`2<string,string>` and declaring **one** member of its
+      # own in the selected contract: the public parameterless constructor. Its whole public surface
+      # is therefore inherited, which Ruby class inheritance carries directly, and the ten interfaces
+      # the contract lists are all inherited too -- `directInterfaces` is empty.
+      #
+      # The other two methods it declares are not identities. `ParseCommandLineArguments(string[])`
+      # is `assembly` and `ParseKeyValuePair(string, out string, out string)` is `private`, so only
+      # their *effect* is observable, through the inherited dictionary surface:
+      #
+      #     char[] trim = { '/', '-' };
+      #     if (args.Length <= 1) return;              // element 0 is the executable path
+      #     for (int i = 1; i < args.Length; i++) {
+      #         string argument = args[i].TrimStart(trim);
+      #         key = argument; value = String.Empty;
+      #         int colon = argument.IndexOf(':');     // the FIRST colon only
+      #         if (colon != -1) { key = argument.Substring(0, colon);
+      #                            value = argument.Substring(colon + 1); }
+      #         if (!ContainsKey(key) && key != String.Empty) Add(key, value);
+      #     }
+      #
+      # Three details a summary would get wrong. An argument with **no colon** is kept, with the
+      # empty string as its value -- it is not skipped. The **first** occurrence of a name wins,
+      # because the guard is `ContainsKey` and the write is `Add`, which would otherwise throw. And
+      # the split is on a colon, never an equals sign.
+      #
+      # ## Why this is managed and reads nothing native
+      #
+      # `Game.get_LaunchParameters` is one `ldfld`, the field is written in exactly one place --
+      # `Game..ctor`, `newobj LaunchParameters::.ctor()` -- and **nothing in XNA ever reads it
+      # again**. It is consumer-facing data the loop never consults, which is a stronger case than
+      # the four timing properties, which the loop does read. So the projection is managed state and
+      # creates no host, and `Environment.GetCommandLineArgs()` projects to Ruby's `ARGV`: XNA skips
+      # element 0, the executable path, and `ARGV` already excludes it.
+      #
+      # The canonical CNA launch-parameter routes exist and are deliberately **not** used. Audited
+      # against this IL they implement different semantics on three counts the inherited dictionary
+      # surface makes observable: `cna_game_launch_parameters_parse_ext` documents that "an argument
+      # shorter than three characters or without a colon is skipped silently", where XNA keeps a
+      # colonless argument with an empty value; `cna_game_launch_parameters_add` "overwrites an
+      # existing entry rather than refusing", which is `set_Item` and not `Add`; and its indexed
+      # enumeration is sorted by name, "deliberately not the canonical container's own order". A
+      # binding that read them would report a different map than XNA does.
+      class LaunchParameters < CNA::Runtime::Dictionary
+        clr_element_types! "System.String", "System.String"
+
+        # The trim set is `{ '/', '-' }` -- 0x2F then 0x2D -- and the separator is `':'`, 0x3A.
+        ARGUMENT_PREFIXES = "/-"
+        private_constant :ARGUMENT_PREFIXES
+        SEPARATOR = ":"
+        private_constant :SEPARATOR
+
+        def initialize(arguments = ::ARGV)
+          super()
+          parse_command_line_arguments(arguments)
+        end
+
+        private
+
+        # `ParseCommandLineArguments` is `assembly`, so this is its effect and not an identity. XNA
+        # is handed `GetCommandLineArgs()` and skips element 0; `ARGV` has no element 0 to skip, so
+        # the loop starts at the beginning of what it is given and the `args.Length <= 1` guard
+        # becomes the empty case.
+        def parse_command_line_arguments(arguments)
+          arguments.each do |argument|
+            key, value = parse_key_value_pair(argument.to_s.sub(/\A[#{ARGUMENT_PREFIXES}]+/, ""))
+            self.Add(key, value) unless self.ContainsKey(key) || key.empty?
+          end
+          nil
+        end
+
+        # `ParseKeyValuePair` is `private`. `String.IndexOf(char)` answers the **first** occurrence,
+        # so a value containing a colon keeps it; a missing colon leaves the whole argument as the
+        # key and `String.Empty` as the value.
+        def parse_key_value_pair(argument)
+          colon = argument.index(SEPARATOR)
+          return [argument, ""] if colon.nil?
+
+          [argument[0, colon], argument[(colon + 1)..] || ""]
+        end
+      end
+
       class Game
         extend CNA::Runtime::EventOwner
 
@@ -435,6 +519,7 @@ module Microsoft
           @TargetElapsedTime = CNA::Runtime::BclProjection.time_span(TARGET_ELAPSED_TIME_DEFAULT_TICKS / TICKS_PER_SECOND)
           @InactiveSleepTime = CNA::Runtime::BclProjection.time_span(INACTIVE_SLEEP_TIME_DEFAULT_TICKS / TICKS_PER_SECOND)
           @IsMouseVisible = false
+          @launchParameters = LaunchParameters.new
           @gameComponents = GameComponentCollection.new
           @gameComponents.ComponentAdded.add(method(:game_component_added))
           @gameComponents.ComponentRemoved.add(method(:game_component_removed))
@@ -449,6 +534,10 @@ module Microsoft
         def Components = @gameComponents
 
         def Services = @gameServices
+
+        # `get_LaunchParameters` is one `ldfld` and nothing else, so it answers the same object for
+        # the life of the Game -- the one the constructor created -- and needs no native host.
+        def LaunchParameters = @launchParameters
 
         # `get_IsActive` is thirty bytes and is **not** a field read. In full:
         #

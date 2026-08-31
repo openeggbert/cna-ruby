@@ -170,10 +170,10 @@ unload_content  Disposed
 - The native push routes are owner-thread bound where XNA's setters are not, so a timing setter
   raises off the owner thread once a host exists and does not before.
 
-## Game's remaining six
+## Game's remaining five
 
-`Dispose(Boolean)`, `Finalize`, `ShowMissingRequirementMessage`, `LaunchParameters`, `Window`,
-`Content`. Foundation 44 took `Tick` off this list and Foundation 45 took `IsActive`.
+`Dispose(Boolean)`, `Finalize`, `ShowMissingRequirementMessage`, `Window`, `Content`. Foundation 44
+took `Tick` off this list, Foundation 45 `IsActive` and Foundation 46 `LaunchParameters`.
 
 ## Recommended next frontier
 

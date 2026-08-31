@@ -44,9 +44,11 @@ class NotSupportedErrorTest < Minitest::Test
                   "System.IndexOutOfRangeException" => "IndexError",
                   "System.NotSupportedException" => "CNA::Runtime::NotSupportedError",
                   # Added by Foundation 32; see test_touch_panel.rb.
-                  "System.InvalidOperationException" => "RuntimeError"},
+                  "System.InvalidOperationException" => "RuntimeError",
+                  # Added by Foundation 46; see test_dictionary.rb.
+                  "System.Collections.Generic.KeyNotFoundException" => "KeyError"},
                  B::THROWN_EXCEPTIONS)
-    assert_equal 6, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
+    assert_equal 7, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
     assert_equal B::THROWN_EXCEPTIONS, STRICT.fetch("bclProjection").fetch("thrownExceptions")
   end
 
@@ -65,7 +67,7 @@ class NotSupportedErrorTest < Minitest::Test
   def test_thrown_exceptions_are_a_separate_register_from_the_named_identities
     B::THROWN_EXCEPTIONS.each_key { |identity| refute_includes B.identities, identity }
     assert_equal B::THROWN_EXCEPTIONS.keys.sort, B.thrown_identities
-    assert_equal 10, STRICT.fetch("BCL_PROJECTED_IDENTITIES"), "unchanged by the thrown-exception register"
+    assert_equal 11, STRICT.fetch("BCL_PROJECTED_IDENTITIES"), "unchanged by the thrown-exception register"
 
     frontier = JSON.parse(ROOT.join("docs", "generated", "public-signature-dependency-report.json").read)
     B::THROWN_EXCEPTIONS.each_key { |identity| refute_includes frontier.fetch("mappedBclTypes"), identity }

@@ -54,7 +54,7 @@ class DisposableCollapseTest < Minitest::Test
     refute B::EXCEPTION_BASES.key?(CLR)
     refute B::THROWN_EXCEPTIONS.key?(CLR)
     assert_nil B.ruby_type(CLR)
-    assert_equal 10, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal 11, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
   end
 
   # No constant, anywhere. Not at top level, not in the CNA runtime, not in the XNA namespaces, and
@@ -238,7 +238,9 @@ class DisposableCollapseTest < Minitest::Test
     end
 
     assert_empty FRONTIER.fetch("consumableCandidates")
-    assert_equal({"BCL_PROJECTION" => 5, "BCL_PROJECTION+NATIVE_RUNTIME" => 3,
+    # BCL_PROJECTION was 5 until Foundation 46 projected Dictionary`2 and consumed
+    # LaunchParameters, which is the only entry that left.
+    assert_equal({"BCL_PROJECTION" => 4, "BCL_PROJECTION+NATIVE_RUNTIME" => 3,
                   "NATIVE_RUNTIME" => 5, "NATIVE_RUNTIME+RUNTIME_DATA" => 1, "RUNTIME_DATA" => 5},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
@@ -278,9 +280,9 @@ class DisposableCollapseTest < Minitest::Test
   # runtime type whose Dispose(Boolean) is still missing, and mapping the interface did not move it.
   def test_it_completes_no_type_and_moves_no_missing_member
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
-    assert_equal 115, STRICT.fetch("MISSING_MEMBER")
-    assert_equal 136, STRICT.fetch("COMPLETE_TYPES"),
-                 "Foundation 38 added GameComponent and 40 added IGraphicsDeviceService"
+    assert_equal 114, STRICT.fetch("MISSING_MEMBER")
+    assert_equal 137, STRICT.fetch("COMPLETE_TYPES"),
+                 "Foundation 38 added GameComponent, 40 IGraphicsDeviceService, 46 LaunchParameters"
     assert(STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
                  .any? { |entry| entry.include?("::Dispose") })
   end

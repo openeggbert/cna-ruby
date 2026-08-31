@@ -167,7 +167,7 @@ class InterfaceContractsTest < Minitest::Test
     strict = JSON.parse(Pathname(__dir__).join("..", "docs", "generated", "api-compat-report.json").read)
     # Foundation 37 closed Game::Components and Game::Services, the first two members any deferred
     # partial has lost. Both are pure managed state and neither needed an interface contract.
-    assert_equal 115, strict.fetch("MISSING_MEMBER")
+    assert_equal 114, strict.fetch("MISSING_MEMBER")
     assert_equal 6, strict.fetch("PARTIAL_TYPES")
   end
 
@@ -197,7 +197,8 @@ class InterfaceContractsTest < Minitest::Test
     # in 38, each from its own IL rather than from anything these interfaces imply. What the
     # contracts still imply is nothing: a fresh container is empty, a fresh collection is empty, and
     # a fresh component reaches no device.
-    %i[DrawableGameComponent LaunchParameters GameWindow]
+    # LaunchParameters arrived in Foundation 46, again from its own IL and its own BCL base.
+    %i[DrawableGameComponent GameWindow]
       .each { |name| refute F.const_defined?(name, false), "Framework::#{name}" }
     # Foundation 40 projected IGraphicsDeviceService -- under Graphics, which is where the pinned
     # contract declares it, and never under Framework. Its existence is a contract, not a runtime:

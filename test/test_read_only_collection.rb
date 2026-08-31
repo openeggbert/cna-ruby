@@ -45,7 +45,7 @@ class ReadOnlyCollectionTest < Minitest::Test
     assert_equal "CNA::Runtime::ReadOnlyCollection", B::TYPES.fetch(CLR)
     assert_equal R, Object.const_get(B::TYPES.fetch(CLR), false)
     assert_includes B.identities, CLR
-    assert_equal 10, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal 11, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal B::TYPES, STRICT.fetch("bclProjection").fetch("types")
 
     # It is a class of its own, not any of the shapes that were plausible before it was measured.

@@ -50,8 +50,22 @@ module CNA
       # backing list. That indirection is the type, so the projection declares no Ruby-idiomatic
       # mutation beside it: a `<<` or a `push` would be a second way to mutate that a subclass's
       # hook never sees. A bare Array gets that wrong, and a frozen Array gets the view wrong.
+      # System.Collections.Generic.Dictionary`2 projects to CNA::Runtime::Dictionary, the third
+      # member of the same family and the same measurement applied to a keyed store. One XNA type
+      # takes it as a base -- LaunchParameters, a Dictionary<string, string> -- so the CLR base
+      # relationship has to survive, and Ruby class inheritance is what carries it. The pinned
+      # mscorlib settles how much of the type a projection actually owes: twenty-two of its methods
+      # are explicit interface implementations, which project to nothing under the rule
+      # ReadOnlyCollection's twelve and Collection's fourteen already follow, and its
+      # SerializationInfo constructor is `family`. What is left is one ordinary public surface --
+      # Comparer, Count, Keys, Values, the indexer, Add, Clear, ContainsKey, ContainsValue,
+      # GetEnumerator, Remove, TryGetValue, GetObjectData and OnDeserialization -- and that is what
+      # the support class carries. A Ruby Hash is its private store and never its public projection:
+      # Hash#[] answers nil where get_Item throws, Hash#store overwrites where Add throws, and
+      # Hash#each never fails fast on a version counter.
       TYPES = {
         "System.EventArgs" => "CNA::Runtime::EventArgs",
+        "System.Collections.Generic.Dictionary`2" => "CNA::Runtime::Dictionary",
         "System.TimeSpan" => "Float",
         "System.Attribute" => "CNA::Runtime::Attribute",
         "System.Collections.ObjectModel.ReadOnlyCollection`1" => "CNA::Runtime::ReadOnlyCollection",
@@ -136,7 +150,15 @@ module CNA
         # ReadOnlyCollection follows it -- so Foundation 32 makes the pairing measured rather than
         # implicit. FrozenError would say something about frozen objects the CLR does not, and
         # StandardError itself would lose the identity.
-        "System.InvalidOperationException" => "RuntimeError"
+        "System.InvalidOperationException" => "RuntimeError",
+        # KeyNotFoundException is what Dictionary`2::get_Item throws through
+        # ThrowHelper::ThrowKeyNotFoundException when FindEntry answers a negative index. Ruby's
+        # KeyError is precisely "the key was not found in this keyed collection", it descends from
+        # IndexError and so from StandardError, and it is what Hash#fetch already raises -- so the
+        # projection reuses Ruby's own identity rather than inventing one. IndexError itself would
+        # lose the distinction the CLR draws between an index and a key, which
+        # IndexOutOfRangeException already occupies in this register.
+        "System.Collections.Generic.KeyNotFoundException" => "KeyError"
       }.freeze
 
       module_function
