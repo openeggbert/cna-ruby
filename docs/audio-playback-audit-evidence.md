@@ -97,3 +97,59 @@ Nothing measured here entered the behaviour corpus, and nothing could: that corp
 `never CNA output` by construction, and every number above is CNA output. It lives in
 `docs/generated/audio-native-report.json` under `CNA_NATIVE_EVIDENCE`, the same provenance the
 GamePad native report carries.
+
+## Re-measured against CNA C ABI 0.21.0 — the cluster is reopened
+
+The ABI migration re-ran this audit against the current artifact and against the retired one with
+corrected prototypes. **Three of the four negative findings above do not survive re-measurement**,
+and the fourth has a cause the audit missed.
+
+### Two were defects in this tool, not upstream
+
+- **`cna_sound_effect_get_sample_duration_ticks` is static.** Its canonical prototype is
+  `(int32_t size_in_bytes, int32_t sample_rate, CNA_AudioChannels channels, int64_t* out_ticks)` and
+  it takes **no handle**. The audit called it as `(handle, byte_count, out)`; the refusal it recorded
+  was its own argument error. The **0.7.0 headers already declared the four-argument form**, so this
+  is not a version difference.
+- **`IsLooped` is documented "before playback has begun"**, answering `CNA_RESULT_INVALID_STATE`
+  after. The audit set it **last**, after play and stop, and reported "refused in every state" from
+  that single sample. The tool now measures both orderings: accepted and round-tripping before play,
+  `CNA_RESULT_INVALID_STATE` after — which is the header's rule, not a defect.
+
+### The control that proved "not the null backend" was inert
+
+The audit concluded "**It is not the null backend**: the measurement is identical with `CNA_AUDIO`
+unset and with `CNA_AUDIO=SDL`." **CNA never reads `CNA_AUDIO`.** The audio platform is a build-time
+CMake selection (`cmake/AudioPlatformSelection.cmake`, `CNA_AUDIO_PLATFORM=SDL3|SDL2|NULL`), exactly
+like the renderer platform, and the retired artifact was built `CNA_AUDIO_PLATFORM=NULL`. Setting an
+unread variable to two values and getting the same answer twice is not a control. This is the same
+class of mistake as the scanner anchored on one side of a token: a control has to be able to move the
+thing it controls.
+
+Re-measured against that same 0.7.0 artifact with the corrected prototypes,
+`cna_audio_get_capabilities` answers `is_playback_available = 0`, and both duration routes report
+`CNA_RESULT_SUCCESS` **without writing their output**. So the artifact really did have no audio — for
+the reason the audit ruled out.
+
+### What the current artifact answers
+
+Measured on the CNA `0.21.0` `SDL3`-platform / `SDL3`-audio artifact, one full second of mono PCM16:
+
+| measurement | 0.7.0 artifact | 0.21.0 artifact |
+| --- | --- | --- |
+| `is_playback_available` | 0 | 1 |
+| `cna_sound_effect_get_duration_ticks` | success, output unwritten | 10000000 ticks |
+| `cna_sound_effect_get_sample_duration_ticks` (static, 4-arg) | success, output unwritten | 10000000 ticks |
+| `SoundState` through play/pause/resume/stop | `Stopped` throughout | `Stopped -> Playing -> Paused -> Playing -> Stopped` |
+| `set_is_looped` before play | success, round-trips | success, round-trips |
+| `set_is_looped` after play | — | `CNA_RESULT_INVALID_STATE`, as documented |
+| volume / pitch / pan | round-trip | round-trip |
+
+`SoundEffect` and `SoundEffectInstance` are therefore **reopened**. The `UPSTREAM_CNA_BLOCKED`
+classification is retired; what remains unproven is audible output, which no automated measurement on
+this host can establish either way.
+
+The three types audited alongside them are re-examined separately: `Audio.Cue` still needs an XACT
+engine opened from an `.xgs` settings file, `Graphics.EffectAnnotation` still needs a compiled effect
+with parameters, and `Graphics.TextureCollection` is re-checked against the current 4054-route ABI
+rather than against the retired one.

@@ -35,6 +35,7 @@ u64 = Fiddle::TYPE_UINT64_T
 pointer = Fiddle::TYPE_VOIDP
 float = Fiddle::TYPE_FLOAT
 integer = Fiddle::TYPE_INT
+u32 = Fiddle::TYPE_UINT32_T
 
 route = ->(name, arguments) { Fiddle::Function.new(handle[name], arguments, Fiddle::TYPE_UINT32_T) }
 
@@ -59,9 +60,14 @@ duration_output = library.pointer_for("q", 0)
 duration_result = route.call("cna_sound_effect_get_duration_ticks", [u64, pointer]).call(effect, duration_output)
 duration_ticks = duration_output[0, 8].unpack1("q")
 
+# `cna_sound_effect_get_sample_duration_ticks` is **static**: its canonical prototype is
+# `(int32_t size_in_bytes, int32_t sample_rate, CNA_AudioChannels channels, int64_t* out_ticks)`
+# and it takes no handle at all. Native frontier 4 called it as `(handle, byte_count, out)` and
+# recorded the resulting refusal as an upstream defect; it was this tool's defect. The 0.7.0
+# headers already declared the four-argument form, so the correction is not a version difference.
 sample_output = library.pointer_for("q", 0)
-sample_result = route.call("cna_sound_effect_get_sample_duration_ticks", [u64, u64, pointer])
-                     .call(effect, pcm.bytesize, sample_output)
+sample_result = route.call("cna_sound_effect_get_sample_duration_ticks", [integer, integer, u32, pointer])
+                     .call(pcm.bytesize, SAMPLE_RATE, MONO, sample_output)
 sample_ticks = sample_output[0, 8].unpack1("q")
 
 instance_output = library.pointer_for("Q", 0)
@@ -87,6 +93,12 @@ record = lambda do |label, result|
 end
 
 record.call("initial", 0)
+# `set_is_looped` is documented "before playback has begun", answering `CNA_RESULT_INVALID_STATE`
+# after. Native frontier 4 called it **last**, after play/stop, and recorded the documented refusal
+# as "looping is refused in every state". Both orderings are measured here so the rule is visible
+# rather than inferred from one of its sides.
+record.call("set_is_looped(true) before play",
+            route.call("cna_sound_effect_instance_set_is_looped", [u64, integer]).call(instance, 1))
 record.call("play", route.call("cna_sound_effect_instance_play", [u64]).call(instance))
 3.times { game.Tick }
 record.call("three frame steps", 0)
@@ -101,7 +113,7 @@ record.call("set_pitch(-0.25)",
             route.call("cna_sound_effect_instance_set_pitch", [u64, float]).call(instance, -0.25))
 record.call("set_pan(1.0)",
             route.call("cna_sound_effect_instance_set_pan", [u64, float]).call(instance, 1.0))
-record.call("set_is_looped(true)",
+record.call("set_is_looped(true) after play",
             route.call("cna_sound_effect_instance_set_is_looped", [u64, integer]).call(instance, 1))
 
 route.call("cna_sound_effect_instance_destroy", [u64]).call(instance)
@@ -110,13 +122,16 @@ game.Dispose
 
 states = transitions.map { |entry| entry.fetch("snapshot").fetch("state") }.uniq
 controls = transitions.last.fetch("snapshot")
+looped_before = transitions.find { |entry| entry.fetch("step").start_with?("set_is_looped(true) before") }
+looped_after = transitions.find { |entry| entry.fetch("step").start_with?("set_is_looped(true) after") }
 
 report = {
-  "schemaVersion" => 1,
-  "provenance" => "CNA_NATIVE_EVIDENCE; measured output of the reviewed CNA C ABI 0.7.0 library, never an XNA fact and never part of the behaviour corpus",
+  "schemaVersion" => 2,
+  "provenance" => "CNA_NATIVE_EVIDENCE; measured output of the reviewed CNA C ABI library, never an XNA fact and never part of the behaviour corpus",
   "library" => library.path,
-  "audioBackend" => ENV.fetch("CNA_AUDIO", "(unset)"),
-  "renderer" => ENV.fetch("CNA_RENDERER", "(unset)"),
+  "abiVersion" => format("0x%08x", library.abi_version),
+  "audioPlatform" => "build-time CNA_AUDIO_PLATFORM; not selectable at runtime",
+  "renderer" => "build-time CNA_GRAPHICS_RENDERER, overridable at runtime only among renderers compiled in",
   "capabilities" => {
     "cnaResult" => capability_result,
     "isPlaybackAvailable" => playback_available
@@ -138,15 +153,17 @@ report = {
   "proves" => [
     "the whole canonical path executes: create_pcm16, create_instance, play, pause, resume, stop, the four setters, and both destroys",
     "cna_audio_get_capabilities reports playback available",
+    "one full second of mono PCM16 answers exactly 10000000 ticks from cna_sound_effect_get_duration_ticks",
+    "the static four-argument cna_sound_effect_get_sample_duration_ticks answers the same 10000000 ticks",
+    "SoundState moves Stopped -> Playing -> Paused -> Playing -> Stopped through the canonical routes",
+    "IsLooped is settable before playback and round-trips, and is refused with CNA_RESULT_INVALID_STATE after playback has begun, which is the documented rule",
     "volume, pitch and pan round-trip through the real routes"
   ],
   "doesNotProve" => [
-    "any audible output",
-    "that SoundState ever leaves Stopped: every step above reports success and the state does not move",
-    "that a duration is computed: one full second of PCM answers zero ticks and the sample-duration route fails",
-    "that looping can be enabled: the setter is refused with CNA_RESULT_INVALID_STATE in every state"
+    "any audible output: no listener and no capture device took part in this measurement",
+    "3D positional audio, XACT, Microphone capture or DynamicSoundEffectInstance behaviour"
   ],
-  "conclusion" => "The canonical routes exist, are reachable and report success, but the reviewed artifact does not implement the observable behaviour they document. Projecting SoundEffect and SoundEffectInstance on top would give a State that is a constant, a Duration that is always zero, a Play that reports success and does nothing, and an IsLooped setter that always raises. That is fake completion, so both types stay deferred and the reason is now measured rather than assumed."
+  "conclusion" => "The canonical audio path is behaviourally real on the current artifact. Native frontier 4 measured the opposite against the retired 0.7.0 artifact, and three of its four negative findings do not survive re-measurement: the sample-duration route was called with the wrong arity (it is static and takes no handle, in the 0.7.0 headers too), IsLooped was set only after playback where the header documents a refusal, and the 'not the null backend' control was inert because CNA_AUDIO is not read by CNA at all -- the audio platform is a build-time CMake selection and the retired artifact was built CNA_AUDIO_PLATFORM=NULL. Re-measured against that same 0.7.0 artifact with the corrected prototypes, cna_audio_get_capabilities answers is_playback_available=0 and the duration routes report success without writing their output. SoundEffect and SoundEffectInstance are reopened."
 }
 
 destination = File.expand_path("../docs/generated/audio-native-report.json", __dir__)
@@ -155,5 +172,7 @@ puts "AUDIO_PLAYBACK_AVAILABLE=#{playback_available ? "YES" : "NO"}"
 puts "CANONICAL_PATH_EXECUTES=#{create_result.zero? && instance_result.zero? ? "YES" : "NO"}"
 puts "OBSERVED_STATES=#{states.join(",")}"
 puts "DURATION_TICKS=#{duration_ticks}"
-puts "IS_LOOPED_AFTER_SET=#{controls.fetch("isLooped")}"
-puts "SOUND_EFFECT_PROJECTION=DEFERRED_UPSTREAM_CNA"
+puts "SAMPLE_DURATION_TICKS=#{sample_ticks}"
+puts "IS_LOOPED_BEFORE_PLAY=#{looped_before.fetch("cnaResult")}/#{looped_before.fetch("snapshot").fetch("isLooped")}"
+puts "IS_LOOPED_AFTER_PLAY=#{looped_after.fetch("cnaResult")}"
+puts "SOUND_EFFECT_PROJECTION=REOPENED"
