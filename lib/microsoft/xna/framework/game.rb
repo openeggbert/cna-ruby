@@ -494,6 +494,7 @@ module Microsoft
           @not_yet_initialized = []
           @gameServices = GameServiceContainer.new
           @owner_thread = Thread.current
+          @monitor = ::Monitor.new
           @generation = CNA::Runtime::Generation.new(@owner_thread)
           @host = nil
           @graphics_manager = nil
@@ -592,13 +593,36 @@ module Microsoft
           !guide_visible
         end
 
+        # `Run()` is `RunGame(useBlockingRun: true)`, and `RunGame`'s body is wrapped in two things a
+        # projection of `Run` alone would lose.
+        #
+        # The two `catch` clauses are the reason `ShowMissingRequirementMessage` exists at all:
+        #
+        #     catch (NoSuitableGraphicsDeviceException e) { if (!ShowMissingRequirementMessage(e)) rethrow; }
+        #     catch (NoAudioHardwareException e)          { if (!ShowMissingRequirementMessage(e)) rethrow; }
+        #
+        # Both exception types are projected here, and a subclass's `Initialize`, `LoadContent` or
+        # `Update` can raise either one -- the callback retains it and `GameHost#finish` re-raises it
+        # on this side of C, inside this method -- so the clause is live and observable rather than
+        # decorative. `rethrow` preserves the original exception, which is what a bare Ruby `raise`
+        # inside a `rescue` does.
+        #
+        # The `finally` clears `inRun` unless `endRunRequired`, which only `StartGameLoop` sets and
+        # which this binding never takes. Keeping it here rather than only in the `EndRun` hook is
+        # what makes the flag survive a run that ends by raising, where `EndRun` is never delivered.
         def Run
           raise CNA::DisposedObjectError, "Game is disposed" if disposed?
           raise CNA::InvalidBindingStateError, "Game.Run may only be called once" if @has_run
           assert_owner_thread!
-          ensure_host
-          @has_run = true
-          @host.run
+          begin
+            ensure_host
+            @has_run = true
+            @host.run
+          rescue Graphics::NoSuitableGraphicsDeviceException, Audio::NoAudioHardwareException => error
+            raise unless self.ShowMissingRequirementMessage(error)
+          ensure
+            @in_run = false
+          end
           nil
         end
 
@@ -849,62 +873,90 @@ module Microsoft
         # the contract survives as the member, so testing for the member is the projection of
         # testing for the interface. This is the first place the collapse has an observable
         # consequence.
-        def Dispose
+        # The two CLR overloads project to one Ruby method dispatching on arity, which is the rule
+        # Foundation 38 established for `GameComponent` and which widens the protected overload to
+        # public -- a recorded mapping limitation Ruby cannot avoid, since one name cannot carry two
+        # visibilities.
+        #
+        #     public void Dispose()                 => Dispose(true); GC.SuppressFinalize(this);
+        #     protected virtual void Dispose(bool disposing) {
+        #         if (!disposing) return;
+        #         lock (this) { … }
+        #     }
+        #
+        # `Dispose(false)` returns at its first instruction, so the finalizer path does nothing --
+        # see `Finalize` below. `GC.SuppressFinalize` needs no analogue because no
+        # `ObjectSpace.define_finalizer` is registered anywhere in this binding.
+        #
+        # The `lock (this)` is now taken. Foundation 41 recorded it as a deviation precisely because
+        # it belongs to `Dispose(Boolean)`, which was missing; `::Monitor` is its analogue rather
+        # than `Mutex`, because the CLR lock is reentrant and a `Mutex` would deadlock a `Disposed`
+        # handler that disposed the Game again.
+        #
+        # `UnhookDeviceEvents()` sits between the manager's disposal and the `Disposed` event. Its
+        # whole body is `if (graphicsDeviceService != null) { remove four handlers }`, and that field
+        # is written only by `HookDeviceEvents`, which the graphics-device-service producer audit
+        # deliberately omits. So it is a *genuine* no-op here rather than one made into one, and
+        # nothing is fabricated in its place.
+        def Dispose(disposing = true)
+          return nil unless disposing
           return if disposed?
           assert_owner_thread!
           first_error = nil
-          snapshot = Array.new(@gameComponents.Count)
-          @gameComponents.CopyTo(snapshot, 0)
-          snapshot.each do |component|
-            next unless component.respond_to?(:Dispose)
+          @monitor.synchronize do
+            snapshot = Array.new(@gameComponents.Count)
+            @gameComponents.CopyTo(snapshot, 0)
+            snapshot.each do |component|
+              next unless component.respond_to?(:Dispose)
 
+              begin
+                component.Dispose
+              rescue Exception => error
+                first_error ||= error
+              end
+            end
+            @native_children.reverse_each do |child|
+              begin
+                child.Dispose
+              rescue Exception => error
+                first_error ||= error
+              end
+            end
+            @native_children.clear
             begin
-              component.Dispose
+              @graphics_manager&.__send__(:dispose_native)
             rescue Exception => error
               first_error ||= error
             end
-          end
-          @native_children.reverse_each do |child|
             begin
-              child.Dispose
+              @host&.destroy
             rescue Exception => error
               first_error ||= error
             end
-          end
-          @native_children.clear
-          begin
-            @graphics_manager&.__send__(:dispose_native)
-          rescue Exception => error
-            first_error ||= error
-          end
-          begin
-            @host&.destroy
-          rescue Exception => error
-            first_error ||= error
-          end
-          @generation.invalidate!
-          @disposed = true
-          # `Disposed` is the one Game event with no `On…` raiser: the IL raises it inline at the
-          # end of `Dispose(Boolean)`'s `if (disposing)` body, with `this` as the sender and
-          # `EventArgs.Empty` as the args, after the components and the graphics device manager have
-          # been disposed and after `UnhookDeviceEvents()`. That is exactly this position.
-          #
-          # It is raised from here rather than relayed from CNA's own `CNA_GAME_EVENT_DISPOSED`,
-          # and the reason is measured: that signal only exists once a native host exists, so a Game
-          # that was constructed and disposed without ever running would raise nothing, while XNA
-          # raises it for every disposal. Raising it here is right in both cases.
-          #
-          # Two recorded deviations, both inherited from this method rather than introduced by the
-          # event. XNA's `Dispose(Boolean)` has **no disposed guard at all**, so calling `Dispose()`
-          # twice runs the whole body twice and raises `Disposed` twice -- the same absence
-          # Foundation 38 recorded for `GameComponent`. This binding's `Dispose` returns early when
-          # already disposed, because native destruction is not repeatable, so the event is raised
-          # **once**. And XNA's body runs under `Monitor.Enter(this)`, which belongs to
-          # `Dispose(Boolean)` -- still one of Game's missing members -- and is not taken here.
-          begin
-            self.Disposed.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
-          rescue Exception => error
-            first_error ||= error
+            @generation.invalidate!
+            @disposed = true
+            # `Disposed` is the one Game event with no `On…` raiser: the IL raises it inline at the
+            # end of `Dispose(Boolean)`'s `if (disposing)` body, with `this` as the sender and
+            # `EventArgs.Empty` as the args, after the components and the graphics device manager have
+            # been disposed and after `UnhookDeviceEvents()`. That is exactly this position.
+            #
+            # It is raised from here rather than relayed from CNA's own `CNA_GAME_EVENT_DISPOSED`,
+            # and the reason is measured: that signal only exists once a native host exists, so a Game
+            # that was constructed and disposed without ever running would raise nothing, while XNA
+            # raises it for every disposal. Raising it here is right in both cases.
+            #
+            # Two recorded deviations, both inherited from this method rather than introduced by the
+            # event. XNA's `Dispose(Boolean)` has **no disposed guard at all**, so calling `Dispose()`
+            # twice runs the whole body twice and raises `Disposed` twice -- the same absence
+            # Foundation 38 recorded for `GameComponent`. This binding's `Dispose` returns early when
+            # already disposed, because native destruction is not repeatable, so the event is raised
+            # **once**. And XNA's body runs under `Monitor.Enter(this)`, which belongs to
+            # `Dispose(Boolean)` -- still one of Game's missing members -- and is not taken here.
+            begin
+              self.Disposed.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+            rescue Exception => error
+              first_error ||= error
+            end
           end
           raise first_error if first_error
           nil
@@ -932,6 +984,33 @@ module Microsoft
         def OnDeactivated(sender, args)
           self.Deactivated.__send__(:dispatch, self, args)
           nil
+        end
+
+        # `Finalize()` is `try { Dispose(false); } finally { base.Finalize(); }`, and `Dispose(false)`
+        # returns at its first instruction, so the CLR finalizer for this type does **nothing
+        # observable**. It is projected as the member the contract declares and it does the same
+        # nothing -- the same shape `GameComponent` already ships. Ruby's garbage collector never
+        # calls it: no `ObjectSpace.define_finalizer` is registered here and none is invented.
+        def Finalize
+          self.Dispose(false)
+          nil
+        end
+
+        # `ShowMissingRequirementMessage(Exception)` is `family newslot virtual` and is twenty-three
+        # bytes: `host?.ShowMissingRequirementMessage(exception) ?? false`. `GameHost`'s own body is
+        # `ldc.i4.0; ret` -- an unconditional **false** -- and only `WindowsGameHost` overrides it,
+        # putting up a WinForms `MessageBox` for `NoSuitableGraphicsDeviceException` and
+        # `NoAudioHardwareException`, returning true, and delegating anything else back to that base.
+        #
+        # CNA is the host here and it is not `WindowsGameHost`: the canonical C ABI exposes no
+        # missing-requirement message route at all, so this answers the `GameHost` base's `false`.
+        # That is not a stub standing in for a capability -- `false` is the truthful answer to
+        # "did you show the message?", and it is the answer the abstract base really gives. `RunGame`
+        # rethrows on false, so the exception still reaches the caller, which is the safe half of the
+        # contract. A subclass that overrides this and answers true really does suppress both, which
+        # is what makes the member observable rather than decorative.
+        def ShowMissingRequirementMessage(_exception)
+          false
         end
 
         def OnExiting(sender, args)

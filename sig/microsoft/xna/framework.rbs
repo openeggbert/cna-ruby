@@ -98,7 +98,13 @@ module Microsoft
         # pending request delivered at creation; ResetElapsedTime is then genuinely a no-op.
         def SuppressDraw: () -> nil
         def ResetElapsedTime: () -> nil
-        def Dispose: () -> nil
+        # The two CLR overloads project to one Ruby method dispatching on arity, which widens
+        # the protected one to public -- a recorded mapping limitation Ruby cannot avoid.
+        def Dispose: (?bool disposing) -> nil
+        def Finalize: () -> nil
+        # host?.ShowMissingRequirementMessage(e) ?? false; GameHost's own body is an
+        # unconditional false and CNA is not WindowsGameHost.
+        def ShowMissingRequirementMessage: (Exception exception) -> bool
         # Both answer the same object for the life of the Game, and neither needs a native host.
         def Components: () -> GameComponentCollection
         # The exact XNA expression: isActive && !(GamerServicesDispatcher.IsInitialized &&

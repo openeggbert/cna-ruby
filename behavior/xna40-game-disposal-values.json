@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "derivation": "Foundation 47 Game's protected remainder. All three members are read from the pinned Microsoft.Xna.Framework.Game.dll IL. Game::Dispose() is `Dispose(true)` followed by `GC::SuppressFinalize(this)`. Game::Finalize is `family hidebysig virtual` and is `try { Dispose(false); } finally { base.Finalize(); }`. Game::Dispose(bool) is `family hidebysig newslot virtual` and opens `ldarg.1; brfalse IL_0094`, which is `ret`, so Dispose(false) does nothing at all; when disposing is true it takes `Monitor::Enter(this, ref lockTaken)`, copies gameComponents into a fresh IGameComponent[] through Collection`1::CopyTo, disposes each element that is an IDisposable, disposes graphicsDeviceManager when it is one, calls the private UnhookDeviceEvents(), raises Disposed with `this` and EventArgs.Empty when the delegate field is non-null, and releases the lock in a finally guarded by lockTaken. There is no disposed flag anywhere in the type, so the CLR body runs in full on every call. UnhookDeviceEvents is `if (graphicsDeviceService != null) { remove four handlers }` and that field is written only by HookDeviceEvents, which this binding's graphics-device-service producer audit deliberately omits, so it is a genuine no-op rather than one made into one. Game::ShowMissingRequirementMessage(Exception) is `family hidebysig newslot virtual` and twenty-three bytes: `host?.ShowMissingRequirementMessage(exception)` and otherwise `ldc.i4.0`. GameHost::ShowMissingRequirementMessage is `ldc.i4.0; ret`, an unconditional false, and only WindowsGameHost overrides it, concatenating a localized resource with the exception message for NoSuitableGraphicsDeviceException, using a second resource for NoAudioHardwareException, showing a System.Windows.Forms.MessageBox and returning true, and delegating anything else to that base. RunGame's two catch clauses call it and rethrow when it answers false, and its finally clears inRun unless endRunRequired, which only StartGameLoop sets.",
+  "observations": [
+    {
+      "id": "game_disposal.contract",
+      "operation": "GameDisposal.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [["protected", "System.Void", false], ["protected", "System.Void", false], ["protected", "System.Boolean", false], 2]
+    },
+    {
+      "id": "game_disposal.dispose_false",
+      "operation": "GameDisposal.DisposeFalse",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [[], [], false, -1, true]
+    },
+    {
+      "id": "game_disposal.monitor",
+      "operation": "GameDisposal.Monitor",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": ["Monitor", true]
+    },
+    {
+      "id": "game_disposal.missing_requirement",
+      "operation": "GameDisposal.MissingRequirement",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [false, "Microsoft::Xna::Framework::Graphics::NoSuitableGraphicsDeviceException", "Microsoft::Xna::Framework::Audio::NoAudioHardwareException", "none", "ArgumentError"]
+    }
+  ]
+}

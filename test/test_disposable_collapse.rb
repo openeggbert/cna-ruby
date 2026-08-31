@@ -276,14 +276,16 @@ class DisposableCollapseTest < Minitest::Test
     assert_equal 63, CNA::Native::Manifest::CONSTANTS.length
   end
 
-  # The collapse says nothing about whether a given type's disposal works. Game's is a partial
-  # runtime type whose Dispose(Boolean) is still missing, and mapping the interface did not move it.
+  # The collapse says nothing about whether a given type's disposal works: it maps one interface
+  # identity and moves nothing. Game was the standing example -- a partial runtime type whose
+  # Dispose(Boolean) the collapse did not supply -- and Foundation 47 later supplied it from its own
+  # IL, which is exactly the separation this test exists to state.
   def test_it_completes_no_type_and_moves_no_missing_member
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
-    assert_equal 114, STRICT.fetch("MISSING_MEMBER")
+    assert_equal 111, STRICT.fetch("MISSING_MEMBER")
     assert_equal 137, STRICT.fetch("COMPLETE_TYPES"),
                  "Foundation 38 added GameComponent, 40 IGraphicsDeviceService, 46 LaunchParameters"
-    assert(STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
-                 .any? { |entry| entry.include?("::Dispose") })
+    assert_includes STRICT.fetch("partialTypes").keys, "Microsoft.Xna.Framework.Game"
+    assert_equal 2, CNA::Runtime::BclProjection::STRUCTURAL_COLLAPSE.length
   end
 end

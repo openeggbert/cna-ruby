@@ -480,24 +480,25 @@ class GameComponentTest < Minitest::Test
     assert_equal 137, STRICT.fetch("COMPLETE_TYPES")
     assert_equal 114, STRICT.fetch("MISSING_TYPES")
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
-    assert_equal 114, STRICT.fetch("MISSING_MEMBER"),
+    assert_equal 111, STRICT.fetch("MISSING_MEMBER"),
                  "Foundation 41 closed Game's four events and three raisers, 42 its four " \
                  "timing and presentation properties, 43 SuppressDraw and ResetElapsedTime, " \
-                 "44 Tick, 45 IsActive"
+                 "44 Tick, 45 IsActive, 46 LaunchParameters, 47 Dispose(Boolean), Finalize and " \
+                 "ShowMissingRequirementMessage"
     assert_equal 17, STRICT.fetch("EVENT_IDENTITIES")
     assert_equal 6, STRICT.fetch("EVENT_OWNER_TYPES")
     assert_equal 0, STRICT.fetch("UNEXPECTED_MEMBER")
     assert_equal 0, STRICT.fetch("INTERNAL_TYPE_LEAK")
     assert_equal 0, STRICT.fetch("UNMEASURED_STRUCTURAL_CATEGORY")
 
-    # Game's own Dispose(Boolean) and Finalize stay deferred: only the component pass of Dispose
-    # belongs to this slice. `Disposed` was deferred with them until Foundation 41 closed it -- the
-    # event, not the overload, and the two are independent because the IL raises `Disposed` inline
-    # rather than through an `On...` raiser.
+    # Only the component pass of Game's disposal belongs to this slice. Game's own
+    # Dispose(Boolean) and Finalize were deferred through it and stayed deferred until Foundation
+    # 47 closed them from their own IL; `Disposed` -- the event, not the overload -- was closed
+    # earlier still, by Foundation 41, and the two are independent because the IL raises `Disposed`
+    # inline rather than through an `On...` raiser. What this milestone owns is that the component
+    # pass is exact, which the tests above assert; the remainder is nobody's to pin here beyond the
+    # fact that the event never entered it.
     remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
-    %w[Dispose Finalize].each do |name|
-      assert(remainder.any? { |entry| entry.include?("::#{name} ") }, name)
-    end
     refute(remainder.any? { |entry| entry.include?("::Disposed ") })
   end
 end

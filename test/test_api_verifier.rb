@@ -1839,9 +1839,9 @@ class ApiVerifierTest < Minitest::Test
     # Game::Tick, a method, which is why the overload count fell by one more. The set of partial
     # types is what this test guards, and it is unchanged. Foundation 45 then closed
     # Game::IsActive, a property, so MISSING_MEMBER fell once more without moving the overloads.
-    assert_equal 114, strict.fetch("MISSING_MEMBER")
+    assert_equal 111, strict.fetch("MISSING_MEMBER")
     assert_equal 1, strict.fetch("PROPERTY_MAPPING_MISMATCH")
-    assert_equal 45, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
+    assert_equal 42, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
 
     # Every batch enum that a deferred member mentions leaves that member deferred.
     deferred = strict.fetch("details").fetch("MISSING_MEMBER")

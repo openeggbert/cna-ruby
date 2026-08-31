@@ -67,7 +67,7 @@ class GameTimingPropertiesTest < Minitest::Test
       assert_includes selected, name
       refute(remainder.any? { |entry| entry.include?("::#{name} ") }, name)
     end
-    assert_equal 114, STRICT.fetch("MISSING_MEMBER")
+    assert_equal 111, STRICT.fetch("MISSING_MEMBER")
     assert_equal 0, STRICT.fetch("UNEXPECTED_MEMBER")
     # Unrelated and pre-existing: GraphicsDevice::Viewport, whose setter is deliberately excluded.
     assert_equal ["Microsoft.Xna.Framework.Graphics.GraphicsDevice::Viewport"],
@@ -206,8 +206,7 @@ class GameTimingPropertiesTest < Minitest::Test
   def test_the_remaining_game_members_are_untouched
     remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
                       .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_equal %w[Content Dispose Finalize
-                    ShowMissingRequirementMessage Window].sort, remainder.sort
+    assert_equal %w[Content Window].sort, remainder.sort
   end
 
   private
@@ -255,7 +254,7 @@ class GameLoopStateTest < Minitest::Test
     %w[SuppressDraw ResetElapsedTime].each do |name|
       refute(remainder.any? { |entry| entry.include?("::#{name} ") }, name)
     end
-    assert_equal 114, STRICT.fetch("MISSING_MEMBER")
+    assert_equal 111, STRICT.fetch("MISSING_MEMBER")
   end
 
   # Neither creates a host: ResetElapsedTime on a Game with no loop has no accumulated time to

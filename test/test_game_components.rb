@@ -151,9 +151,10 @@ class GameComponentsTest < Minitest::Test
     refute(game.any? { |entry| entry.include?("::Services") })
     # 21 until Foundation 41 closed the four Game events and their three raisers, 14 until
     # Foundation 42 closed the four timing and presentation properties, 8 until Foundation 44
-    # closed Tick, 7 until Foundation 45 closed IsActive, and 6 until Foundation 46 closed
-    # LaunchParameters.
-    assert_equal 5, game.length
+    # closed Tick, 7 until Foundation 45 closed IsActive, 6 until Foundation 46 closed
+    # LaunchParameters, and 5 until Foundation 47 closed the protected remainder. What is left is
+    # Content and Window, each a missing type rather than a decision.
+    assert_equal 2, game.length
 
     reference = REFERENCE.fetch("types").find { |type| type.fetch("name") == "Microsoft.Xna.Framework.Game" }
     %w[Components Services].each do |name|

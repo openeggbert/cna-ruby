@@ -571,6 +571,80 @@ def execute(item)
     ensure
       game.Dispose
     end
+  when "GameDisposal.Contract"
+    # All three are `family` in the pinned metadata, and Dispose is declared twice -- the public
+    # parameterless overload and the protected Boolean one.
+    members = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.Game").fetch("members")
+    shape = lambda do |name, parameters|
+      member = members.find do |entry|
+        entry.fetch("name") == name && entry.fetch("kind") == "method" &&
+          entry.fetch("parameters").map { |parameter| parameter.fetch("type") } == parameters
+      end
+      [member.fetch("access"), member.fetch("returnType"), member.fetch("static")]
+    end
+    [shape.call("Dispose", ["System.Boolean"]), shape.call("Finalize", []),
+     shape.call("ShowMissingRequirementMessage", ["System.Exception"]),
+     members.count { |member| member.fetch("name") == "Dispose" }]
+  when "GameDisposal.DisposeFalse"
+    # Dispose(Boolean) opens `ldarg.1; brfalse` straight to `ret`, and Finalize is exactly that
+    # call, so neither observes anything. The two overloads are one Ruby method dispatching on
+    # arity, which widens the protected one to public.
+    game = F::Game.new
+    begin
+      raised = []
+      game.Disposed.add { |sender, _args| raised << sender.equal?(game) }
+      game.Dispose(false)
+      after_dispose_false = raised.dup
+      game.__send__(:Finalize)
+      # `raised` is dup'd: the ensure below disposes for real and would otherwise mutate the very
+      # array this row returns, since the tuple would hold a reference to it.
+      [after_dispose_false, raised.dup, game.instance_variable_get(:@disposed),
+       F::Game.instance_method(:Dispose).arity,
+       F::Game.public_method_defined?(:Dispose)]
+    ensure
+      game.Dispose
+    end
+  when "GameDisposal.Monitor"
+    # XNA's Dispose(Boolean) body runs under Monitor.Enter(this). ::Monitor is its analogue rather
+    # than Mutex, because the CLR lock is reentrant and a handler re-entering it must not deadlock.
+    game = F::Game.new
+    owned = nil
+    game.Disposed.add do |_sender, _args|
+      owned = game.instance_variable_get(:@monitor).mon_owned?
+      game.Dispose
+    end
+    game.Dispose
+    [game.instance_variable_get(:@monitor).class.name, owned]
+  when "GameDisposal.MissingRequirement"
+    # GameHost::ShowMissingRequirementMessage is `ldc.i4.0; ret` and only WindowsGameHost overrides
+    # it, so the base's honest false is what this answers -- and RunGame's two catch clauses are
+    # live, rethrowing on false and suppressing on true. An unrelated exception is not caught.
+    outcome = lambda do |klass, override|
+      failing = Class.new(F::Game) do
+        define_method(:Initialize) { raise klass, "missing" }
+        define_method(:ShowMissingRequirementMessage) { |_exception| true } if override
+      end
+      game = failing.new
+      begin
+        game.Run
+        "none"
+      rescue Exception => error
+        error.class.name
+      ensure
+        game.Dispose
+      end
+    end
+    plain = F::Game.new
+    default_answer = begin
+      plain.__send__(:ShowMissingRequirementMessage, StandardError.new)
+    ensure
+      plain.Dispose
+    end
+    [default_answer,
+     outcome.call(G::NoSuitableGraphicsDeviceException, false),
+     outcome.call(F::Audio::NoAudioHardwareException, false),
+     outcome.call(G::NoSuitableGraphicsDeviceException, true),
+     outcome.call(ArgumentError, true)]
   when "Dictionary.Contract"
     # LaunchParameters' pinned contract: a Dictionary<string,string> base, ten inherited interfaces,
     # an empty directInterfaces list and exactly one declared member -- the public parameterless
