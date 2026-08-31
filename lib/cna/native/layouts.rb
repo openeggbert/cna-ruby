@@ -62,6 +62,17 @@ module CNA
         end
       end
 
+      # `CNA_Rectangle` is four `int32_t` in position-then-size order, which is exactly the XNA
+      # Rectangle's own field order. It is the output of `cna_game_window_get_client_bounds`.
+      class Rectangle < Structure
+        layout size: 16, alignment: 4, fields: [
+          Layouts.field("x", "int32_t", 0, 4),
+          Layouts.field("y", "int32_t", 4, 4),
+          Layouts.field("width", "int32_t", 8, 4),
+          Layouts.field("height", "int32_t", 12, 4)
+        ]
+      end
+
       class ErrorInfo < Structure
         layout size: 24, alignment: 8, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4),

@@ -176,10 +176,14 @@ class MemberLevelDependenciesTest < Minitest::Test
                          .map { |edge| edge.split("::", 2).last }
     assert_includes reached, "get_Window"
 
+    # Foundation 48 completed GameWindow and with it Game::Window, so the edge this row measures
+    # now reaches a member that exists. What the measurement owns is the edge itself -- that
+    # GamerServicesComponent's IL reaches `get_Window` at all, which the signature graph cannot
+    # see -- and that is unchanged.
     remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
                       .map { |label| label.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_includes remainder, "Window"
-    assert_includes entry.fetch("ilOnlyUnmetDependencies"), "Microsoft.Xna.Framework.GameWindow"
+    refute_includes remainder, "Window"
+    refute_includes entry.fetch("ilOnlyUnmetDependencies"), "Microsoft.Xna.Framework.GameWindow"
   end
 
   # ------------------------------------------------------------------ the near-misses it exposes
@@ -217,7 +221,7 @@ class MemberLevelDependenciesTest < Minitest::Test
     assert_includes REPORT.fetch("candidatePolicy"), "all XNA public-signature dependencies complete"
     assert_includes REPORT.fetch("candidatePolicy"), "deliberately do not relax"
     # 19 until Foundation 46 took LaunchParameters off the frontier by projecting Dictionary`2.
-    assert_equal 18, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 17, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")

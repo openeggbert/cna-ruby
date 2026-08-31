@@ -85,6 +85,25 @@ module Microsoft
         def initialize: (?Array[String] arguments) -> void
       end
 
+      # A façade over CNA's window, which has no handle of its own: every canonical route is
+      # addressed through the game handle, so there is no second object and no second lifetime.
+      # `new` is private because the CLR constructor is `assembly`.
+      class GameWindow
+        def Title: () -> String
+        def Title=: (String value) -> String
+        def Handle: () -> Integer
+        def AllowUserResizing: () -> bool
+        def AllowUserResizing=: (bool value) -> bool
+        def ClientBounds: () -> Rectangle
+        def ScreenDeviceName: () -> String
+        def CurrentOrientation: () -> DisplayOrientation
+        def BeginScreenDeviceChange: (bool willBeFullScreen) -> nil
+        def EndScreenDeviceChange: (String screenDeviceName, ?Integer clientWidth, ?Integer clientHeight) -> nil
+        def ScreenDeviceNameChanged: () -> CNA::Runtime::Event
+        def ClientSizeChanged: () -> CNA::Runtime::Event
+        def OrientationChanged: () -> CNA::Runtime::Event
+      end
+
       class Game
         attr_reader GraphicsDevice: Graphics::GraphicsDevice?
         def initialize: () -> void
@@ -112,6 +131,9 @@ module Microsoft
         def IsActive: () -> bool
         # One `ldfld`: the same object for the life of the Game, created by the constructor.
         def LaunchParameters: () -> LaunchParameters
+        # `host?.Window`; XNA's null branch is unreachable because its constructor makes the
+        # host, so this completes that deferred step rather than exposing a nil XNA never shows.
+        def Window: () -> GameWindow
         def Services: () -> GameServiceContainer
         # The four canonical Game events. One CLR event, one Ruby reader over the subscription
         # primitive; the three protected raisers are the only public way to raise the first three,

@@ -450,8 +450,8 @@ class EventProjectionTest < Minitest::Test
   # for; Foundation 40 added a third abstract owner carrying four more. The rule is unchanged and
   # the census grew.
   def test_the_strict_report_measures_the_selected_event_identities
-    assert_equal 17, STRICT.fetch("EVENT_IDENTITIES")
-    assert_equal 6, STRICT.fetch("EVENT_OWNER_TYPES")
+    assert_equal 20, STRICT.fetch("EVENT_IDENTITIES")
+    assert_equal 7, STRICT.fetch("EVENT_OWNER_TYPES")
     assert_equal "CNA::Runtime::Event", STRICT.fetch("EVENT_SUPPORT_TYPE")
     assert_equal 0, STRICT.fetch("EVENT_MAPPING_MISMATCH")
     assert_equal 0, STRICT.fetch("UNMEASURED_STRUCTURAL_CATEGORY")
@@ -473,6 +473,9 @@ class EventProjectionTest < Minitest::Test
       Microsoft.Xna.Framework.Game::Deactivated
       Microsoft.Xna.Framework.Game::Exiting
       Microsoft.Xna.Framework.Game::Disposed
+      Microsoft.Xna.Framework.GameWindow::ScreenDeviceNameChanged
+      Microsoft.Xna.Framework.GameWindow::ClientSizeChanged
+      Microsoft.Xna.Framework.GameWindow::OrientationChanged
     ], STRICT.fetch("eventIdentities")
   end
 
@@ -486,7 +489,7 @@ class EventProjectionTest < Minitest::Test
     end
     refute F.const_defined?(:EventArgs, false)
     refute Object.const_defined?(:System, false), "no fabricated ::System namespace"
-    assert_equal 55, CNA::Native::Manifest::FUNCTIONS.length
-    assert_equal 63, CNA::Native::Manifest::CONSTANTS.length
+    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 66, CNA::Native::Manifest::CONSTANTS.length
   end
 end

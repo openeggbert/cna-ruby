@@ -26,11 +26,26 @@ probe_output.each_line do |line|
   records[kind] << values
 end
 
+# An aggregate passed by value is expanded in the manifest into the eightbytes the platform ABI
+# puts in registers, because Fiddle cannot pass an aggregate. The expansion is recorded on the
+# signature, so the C spelling is reconstructed here and compared with what the header really
+# declares -- a decomposition that stopped matching the header fails this probe rather than going
+# unnoticed.
 def ruby_signature(entry)
-  arguments = entry.c_arguments.each_with_index.map do |type, index|
-    prefix = entry.const_arguments[index] ? "const " : ""
-    stars = "*" * entry.pointer_depths[index]
-    "#{prefix}#{type}#{stars}"
+  aggregates = entry.respond_to?(:value_aggregates) ? (entry.value_aggregates || {}) : {}
+  arguments = []
+  index = 0
+  while index < entry.c_arguments.length
+    aggregate = aggregates[index]
+    if aggregate
+      arguments << aggregate.fetch(:c)
+      index += aggregate.fetch(:members)
+    else
+      prefix = entry.const_arguments[index] ? "const " : ""
+      stars = "*" * entry.pointer_depths[index]
+      arguments << "#{prefix}#{entry.c_arguments[index]}#{stars}"
+      index += 1
+    end
   end
   "#{entry.c_return}|#{arguments.join(",")}"
 end

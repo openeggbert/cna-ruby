@@ -167,7 +167,7 @@ class InterfaceContractsTest < Minitest::Test
     strict = JSON.parse(Pathname(__dir__).join("..", "docs", "generated", "api-compat-report.json").read)
     # Foundation 37 closed Game::Components and Game::Services, the first two members any deferred
     # partial has lost. Both are pure managed state and neither needed an interface contract.
-    assert_equal 111, strict.fetch("MISSING_MEMBER")
+    assert_equal 110, strict.fetch("MISSING_MEMBER")
     assert_equal 6, strict.fetch("PARTIAL_TYPES")
   end
 
@@ -197,8 +197,9 @@ class InterfaceContractsTest < Minitest::Test
     # in 38, each from its own IL rather than from anything these interfaces imply. What the
     # contracts still imply is nothing: a fresh container is empty, a fresh collection is empty, and
     # a fresh component reaches no device.
-    # LaunchParameters arrived in Foundation 46, again from its own IL and its own BCL base.
-    %i[DrawableGameComponent GameWindow]
+    # LaunchParameters arrived in Foundation 46 from its own IL and its own BCL base, and
+    # GameWindow in 48 from its own IL over the canonical window routes.
+    %i[DrawableGameComponent]
       .each { |name| refute F.const_defined?(name, false), "Framework::#{name}" }
     # Foundation 40 projected IGraphicsDeviceService -- under Graphics, which is where the pinned
     # contract declares it, and never under Framework. Its existence is a contract, not a runtime:
@@ -218,7 +219,7 @@ class InterfaceContractsTest < Minitest::Test
        IEffectSkinning IVertexType VertexDeclaration].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
-    assert_equal 55, CNA::Native::Manifest::FUNCTIONS.length
-    assert_equal 63, CNA::Native::Manifest::CONSTANTS.length
+    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 66, CNA::Native::Manifest::CONSTANTS.length
   end
 end

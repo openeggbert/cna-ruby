@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 143,
-  "completeTypes": 137,
+  "targetTypes": 144,
+  "completeTypes": 138,
   "partialTypes": [
     "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -11,7 +11,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 114,
+  "missingTypes": 113,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -25,8 +25,7 @@
     "Microsoft.Xna.Framework.Audio.AudioCategory": "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have",
     "Microsoft.Xna.Framework.Media.MediaSource": "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried",
     "Microsoft.Xna.Framework.Media.Video": "its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies; no producer exists",
-    "Microsoft.Xna.Framework.Media.VisualizationData": "filled by MediaPlayer.GetVisualizationData from live playback",
-    "Microsoft.Xna.Framework.GameWindow": "an abstract window whose concrete implementation is the platform window behind Game; projecting it would require the deferred Game/window runtime"
+    "Microsoft.Xna.Framework.Media.VisualizationData": "filled by MediaPlayer.GetVisualizationData from live playback"
   },
   "retiredBlockers": {
     "EVENT_PROJECTION": "retired in Foundation 20; one CLR event projects to one Ruby event reader over CNA::Runtime::Event and the API verifier measures it under EVENT_MAPPING_MISMATCH. The residue is BCL_PROJECTION on the EventHandler`1 support type and, for classes, the IL that decides when the event is raised.",
@@ -90,9 +89,76 @@
     "BCL_PROJECTION+NATIVE_RUNTIME": 3,
     "NATIVE_RUNTIME": 5,
     "NATIVE_RUNTIME+RUNTIME_DATA": 1,
-    "RUNTIME_DATA": 5
+    "RUNTIME_DATA": 4
   },
   "partialDependencySatisfiedCandidates": [
+    {
+      "name": "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent",
+      "kind": "class",
+      "expectedRubyIdentities": 3,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Game",
+        "Microsoft.Xna.Framework.GameComponent",
+        "Microsoft.Xna.Framework.GameTime"
+      ],
+      "unmetDependencies": [
+        "Microsoft.Xna.Framework.Game"
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+        "Microsoft.Xna.Framework.Game": {
+          "reachedMembers": [
+            "Exit",
+            "Services",
+            "Window"
+          ],
+          "reachedButMissing": [
+
+          ]
+        }
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.GameWindow"
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": true,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": false,
+      "blockers": [
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "Initialize",
+        "Update"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Game.dll",
+      "nativeReachableMethods": [
+        "Initialize",
+        "Update"
+      ],
+      "runtimeDataDetail": null
+    },
     {
       "name": "Microsoft.Xna.Framework.DrawableGameComponent",
       "kind": "class",
@@ -237,73 +303,6 @@
         "ResetState",
         "get_Item",
         "set_Item"
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent",
-      "kind": "class",
-      "expectedRubyIdentities": 3,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Game",
-        "Microsoft.Xna.Framework.GameComponent",
-        "Microsoft.Xna.Framework.GameTime"
-      ],
-      "unmetDependencies": [
-        "Microsoft.Xna.Framework.Game"
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-        "Microsoft.Xna.Framework.Game": {
-          "reachedMembers": [
-            "Exit",
-            "Services",
-            "Window"
-          ],
-          "reachedButMissing": [
-            "Window"
-          ]
-        }
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.GameWindow"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.GameWindow"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": false,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "Initialize",
-        "Update"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Game.dll",
-      "nativeReachableMethods": [
-        "Initialize",
-        "Update"
       ],
       "runtimeDataDetail": null
     },
@@ -2076,70 +2075,6 @@
         "get_IsStopping"
       ],
       "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.GameWindow",
-      "kind": "class",
-      "expectedRubyIdentities": 20,
-      "dependencies": [
-        "Microsoft.Xna.Framework.DisplayOrientation",
-        "Microsoft.Xna.Framework.Rectangle"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-
-      ],
-      "ilOnlyUnmetDependencies": [
-
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Game::Window (1 overload)"
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "RUNTIME_DATA"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-        "ScreenDeviceNameChanged",
-        "ClientSizeChanged",
-        "OrientationChanged"
-      ],
-      "behaviourBearingMembers": [
-        "BeginScreenDeviceChange",
-        "EndScreenDeviceChange",
-        "SetTitle",
-        "SetSupportedOrientations",
-        "OnActivated",
-        "OnDeactivated",
-        "OnPaint",
-        "OnScreenDeviceNameChanged",
-        "OnClientSizeChanged",
-        "OnOrientationChanged"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Game.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": "an abstract window whose concrete implementation is the platform window behind Game; projecting it would require the deferred Game/window runtime"
     }
   ],
   "pureManagedEnumCandidates": [

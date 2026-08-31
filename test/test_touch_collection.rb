@@ -386,7 +386,7 @@ class TouchCollectionTest < Minitest::Test
     refute C.public_method_defined?(:Update)
     refute C.private_method_defined?(:Update)
     # No native route was bound for touch.
-    assert_equal 55, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
     assert(CNA::Native::Manifest::FUNCTIONS.none? { |name, _| name.to_s.include?("touch") })
   end
 end

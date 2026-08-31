@@ -50,8 +50,8 @@ class GameDisposalTest < Minitest::Test
   def test_the_remainder_is_now_content_and_window
     remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
                       .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_equal %w[Content Window], remainder.sort
-    assert_equal 111, STRICT.fetch("MISSING_MEMBER")
+    assert_equal %w[Content], remainder
+    assert_equal 110, STRICT.fetch("MISSING_MEMBER")
     assert_equal 42, STRICT.fetch("OVERLOAD_MAPPING_MISMATCH")
   end
 

@@ -329,7 +329,7 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 18, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 17, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -430,15 +430,10 @@ class DependencyFrontierTest < Minitest::Test
   def test_event_declaring_candidates_are_no_longer_blocked_by_their_events
     events = REPORT.fetch("dependencyCompleteCandidates").reject { |item| item.fetch("eventMembers").empty? }
     # Audio.Cue joined the list when AudioEmitter and AudioListener completed its dependencies.
-    assert_equal ["Microsoft.Xna.Framework.Audio.Cue", "Microsoft.Xna.Framework.Audio.Microphone",
-                  "Microsoft.Xna.Framework.GameWindow"],
+    # GameWindow was the third until Foundation 48 built it, which is what an event-declaring
+    # candidate reaching the frontier is for.
+    assert_equal ["Microsoft.Xna.Framework.Audio.Cue", "Microsoft.Xna.Framework.Audio.Microphone"],
                  events.map { |item| item.fetch("name") }.sort
-
-    window = events.find { |item| item.fetch("name") == "Microsoft.Xna.Framework.GameWindow" }
-    assert_equal %w[ScreenDeviceNameChanged ClientSizeChanged OrientationChanged], window.fetch("eventMembers")
-    assert_equal ["RUNTIME_DATA"], window.fetch("blockers")
-    assert_empty window.fetch("unmappedBclTypes")
-    assert_includes window.fetch("runtimeDataDetail"), "window"
 
     # Completing IUpdateable/IDrawable is what projected the EventHandler`1 support type.
     assert_includes REPORT.fetch("mappedBclTypes"), "System.EventHandler`1[System.EventArgs]"
@@ -508,7 +503,6 @@ class DependencyFrontierTest < Minitest::Test
 
   def test_named_frontier_examples_keep_their_expected_blocker
     {
-      "Microsoft.Xna.Framework.GameWindow" => "RUNTIME_DATA",
       "Microsoft.Xna.Framework.Audio.Microphone" => "NATIVE_RUNTIME",
       "Microsoft.Xna.Framework.Graphics.EffectAnnotation" => "NATIVE_RUNTIME",
       "Microsoft.Xna.Framework.Graphics.TextureCollection" => "NATIVE_RUNTIME",

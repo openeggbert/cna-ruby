@@ -58,7 +58,7 @@ class GameIsActiveTest < Minitest::Test
     refute F::Game.method_defined?(:IsActive=), "the contract declares no setter"
     remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
     refute(remainder.any? { |entry| entry.include?("::IsActive ") }, remainder.inspect)
-    assert_equal 111, STRICT.fetch("MISSING_MEMBER")
+    assert_equal 110, STRICT.fetch("MISSING_MEMBER")
   end
 
   # Neither `Guide` nor `GamerServicesDispatcher` is in the selected profile — the whole
@@ -78,7 +78,7 @@ class GameIsActiveTest < Minitest::Test
   def test_all_three_terms_are_bound_canonical_routes
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     ROUTES.each { |route| assert_includes symbols, route }
-    assert_equal 55, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
   end
 
   # The two GamerServices routes project CLR statics, so neither takes a handle.

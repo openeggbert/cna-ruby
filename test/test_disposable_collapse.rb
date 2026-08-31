@@ -239,9 +239,10 @@ class DisposableCollapseTest < Minitest::Test
 
     assert_empty FRONTIER.fetch("consumableCandidates")
     # BCL_PROJECTION was 5 until Foundation 46 projected Dictionary`2 and consumed
-    # LaunchParameters, which is the only entry that left.
+    # LaunchParameters, and RUNTIME_DATA was 5 until Foundation 48 built GameWindow over the
+    # canonical window routes and retired its deferral. Each time exactly one entry left.
     assert_equal({"BCL_PROJECTION" => 4, "BCL_PROJECTION+NATIVE_RUNTIME" => 3,
-                  "NATIVE_RUNTIME" => 5, "NATIVE_RUNTIME+RUNTIME_DATA" => 1, "RUNTIME_DATA" => 5},
+                  "NATIVE_RUNTIME" => 5, "NATIVE_RUNTIME+RUNTIME_DATA" => 1, "RUNTIME_DATA" => 4},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end
@@ -272,8 +273,8 @@ class DisposableCollapseTest < Minitest::Test
     end
 
     # No native symbol was added for any of this.
-    assert_equal 55, CNA::Native::Manifest::FUNCTIONS.length
-    assert_equal 63, CNA::Native::Manifest::CONSTANTS.length
+    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 66, CNA::Native::Manifest::CONSTANTS.length
   end
 
   # The collapse says nothing about whether a given type's disposal works: it maps one interface
@@ -282,9 +283,10 @@ class DisposableCollapseTest < Minitest::Test
   # IL, which is exactly the separation this test exists to state.
   def test_it_completes_no_type_and_moves_no_missing_member
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
-    assert_equal 111, STRICT.fetch("MISSING_MEMBER")
-    assert_equal 137, STRICT.fetch("COMPLETE_TYPES"),
-                 "Foundation 38 added GameComponent, 40 IGraphicsDeviceService, 46 LaunchParameters"
+    assert_equal 110, STRICT.fetch("MISSING_MEMBER")
+    assert_equal 138, STRICT.fetch("COMPLETE_TYPES"),
+                 "Foundation 38 added GameComponent, 40 IGraphicsDeviceService, 46 " \
+                 "LaunchParameters, 48 GameWindow"
     assert_includes STRICT.fetch("partialTypes").keys, "Microsoft.Xna.Framework.Game"
     assert_equal 2, CNA::Runtime::BclProjection::STRUCTURAL_COLLAPSE.length
   end

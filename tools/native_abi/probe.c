@@ -34,6 +34,19 @@ CHECK_FN(cna_game_get_inactive_sleep_time_ticks, CNA_Result, (CNA_Handle, int64_
 CHECK_FN(cna_game_set_inactive_sleep_time_ticks, CNA_Result, (CNA_Handle, int64_t));
 CHECK_FN(cna_game_suppress_draw, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_game_reset_elapsed_time, CNA_Result, (CNA_Handle));
+CHECK_FN(cna_game_set_window_title, CNA_Result, (CNA_Handle, CNA_StringView));
+CHECK_FN(cna_game_window_get_title_size, CNA_Result, (CNA_Handle, uint64_t*));
+CHECK_FN(cna_game_window_copy_title, CNA_Result, (CNA_Handle, char*, uint64_t, uint64_t*));
+CHECK_FN(cna_game_window_get_allow_user_resizing, CNA_Result, (CNA_Handle, CNA_Bool*));
+CHECK_FN(cna_game_window_set_allow_user_resizing, CNA_Result, (CNA_Handle, CNA_Bool));
+CHECK_FN(cna_game_window_get_client_bounds, CNA_Result, (CNA_Handle, CNA_Rectangle*));
+CHECK_FN(cna_game_window_get_current_orientation, CNA_Result, (CNA_Handle, CNA_DisplayOrientation*));
+CHECK_FN(cna_game_window_get_native_handle_ext, CNA_Result, (CNA_Handle, uint64_t*));
+CHECK_FN(cna_game_window_get_screen_device_name_size, CNA_Result, (CNA_Handle, uint64_t*));
+CHECK_FN(cna_game_window_copy_screen_device_name, CNA_Result, (CNA_Handle, char*, uint64_t, uint64_t*));
+CHECK_FN(cna_game_window_begin_screen_device_change, CNA_Result, (CNA_Handle, CNA_Bool));
+CHECK_FN(cna_game_window_end_screen_device_change, CNA_Result, (CNA_Handle, CNA_StringView, int32_t, int32_t));
+CHECK_FN(cna_game_window_subscribe, CNA_Result, (CNA_Handle, CNA_GameWindowEvent, CNA_GameEventCallback, void*, CNA_GameEventRegistrationHandle*));
 CHECK_FN(cna_framework_dispatcher_update, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_graphics_device_manager_create, CNA_Result, (CNA_Handle, CNA_GraphicsDeviceManagerHandle*));
 CHECK_FN(cna_graphics_device_manager_get_graphics_device, CNA_Result, (CNA_GraphicsDeviceManagerHandle, CNA_Handle*));
@@ -101,6 +114,19 @@ int main(void) {
     SIGNATURE(cna_game_set_inactive_sleep_time_ticks, "CNA_Result|CNA_Handle,int64_t");
     SIGNATURE(cna_game_suppress_draw, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_game_reset_elapsed_time, "CNA_Result|CNA_Handle");
+    SIGNATURE(cna_game_set_window_title, "CNA_Result|CNA_Handle,CNA_StringView");
+    SIGNATURE(cna_game_window_get_title_size, "CNA_Result|CNA_Handle,uint64_t*");
+    SIGNATURE(cna_game_window_copy_title, "CNA_Result|CNA_Handle,char*,uint64_t,uint64_t*");
+    SIGNATURE(cna_game_window_get_allow_user_resizing, "CNA_Result|CNA_Handle,CNA_Bool*");
+    SIGNATURE(cna_game_window_set_allow_user_resizing, "CNA_Result|CNA_Handle,CNA_Bool");
+    SIGNATURE(cna_game_window_get_client_bounds, "CNA_Result|CNA_Handle,CNA_Rectangle*");
+    SIGNATURE(cna_game_window_get_current_orientation, "CNA_Result|CNA_Handle,CNA_DisplayOrientation*");
+    SIGNATURE(cna_game_window_get_native_handle_ext, "CNA_Result|CNA_Handle,uint64_t*");
+    SIGNATURE(cna_game_window_get_screen_device_name_size, "CNA_Result|CNA_Handle,uint64_t*");
+    SIGNATURE(cna_game_window_copy_screen_device_name, "CNA_Result|CNA_Handle,char*,uint64_t,uint64_t*");
+    SIGNATURE(cna_game_window_begin_screen_device_change, "CNA_Result|CNA_Handle,CNA_Bool");
+    SIGNATURE(cna_game_window_end_screen_device_change, "CNA_Result|CNA_Handle,CNA_StringView,int32_t,int32_t");
+    SIGNATURE(cna_game_window_subscribe, "CNA_Result|CNA_Handle,CNA_GameWindowEvent,CNA_GameEventCallback,void*,CNA_GameEventRegistrationHandle*");
     SIGNATURE(cna_framework_dispatcher_update, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_graphics_device_manager_create, "CNA_Result|CNA_Handle,CNA_GraphicsDeviceManagerHandle*");
     SIGNATURE(cna_graphics_device_manager_get_graphics_device, "CNA_Result|CNA_GraphicsDeviceManagerHandle,CNA_Handle*");
@@ -132,6 +158,7 @@ int main(void) {
     SIGNATURE(cna_gamepad_set_vibration, "CNA_Result|CNA_Handle,CNA_PlayerIndex,float,float,CNA_Bool*");
 
     STRUCT(CNA_StringView); FIELD(CNA_StringView, data); FIELD(CNA_StringView, byte_length);
+    STRUCT(CNA_Rectangle); FIELD(CNA_Rectangle, x); FIELD(CNA_Rectangle, y); FIELD(CNA_Rectangle, width); FIELD(CNA_Rectangle, height);
     STRUCT(CNA_ErrorInfo); FIELD(CNA_ErrorInfo, struct_size); FIELD(CNA_ErrorInfo, struct_version); FIELD(CNA_ErrorInfo, result); FIELD(CNA_ErrorInfo, category); FIELD(CNA_ErrorInfo, message_byte_length);
     STRUCT(CNA_GameTime); FIELD(CNA_GameTime, total_game_time_ticks); FIELD(CNA_GameTime, elapsed_game_time_ticks); FIELD(CNA_GameTime, is_running_slowly); FIELD(CNA_GameTime, reserved);
     STRUCT(CNA_CallbackError); FIELD(CNA_CallbackError, struct_size); FIELD(CNA_CallbackError, struct_version); FIELD(CNA_CallbackError, message);
@@ -152,6 +179,7 @@ int main(void) {
     CONSTANT(CNA_ABI_VERSION); CONSTANT(CNA_FALSE); CONSTANT(CNA_TRUE);
     CONSTANT(CNA_RESULT_SUCCESS); CONSTANT(CNA_RESULT_NOT_SUPPORTED); CONSTANT(CNA_RESULT_THREAD); CONSTANT(CNA_RESULT_CALLBACK);
     CONSTANT(CNA_GAME_EVENT_ACTIVATED); CONSTANT(CNA_GAME_EVENT_DEACTIVATED); CONSTANT(CNA_GAME_EVENT_DISPOSED); CONSTANT(CNA_GAME_EVENT_EXITING);
+    CONSTANT(CNA_GAME_WINDOW_EVENT_CLIENT_SIZE_CHANGED); CONSTANT(CNA_GAME_WINDOW_EVENT_ORIENTATION_CHANGED); CONSTANT(CNA_GAME_WINDOW_EVENT_SCREEN_DEVICE_NAME_CHANGED);
     CONSTANT(CNA_SPRITE_SORT_MODE_DEFERRED); CONSTANT(CNA_SPRITE_EFFECT_NONE); CONSTANT(CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY); CONSTANT(CNA_SPRITE_EFFECT_FLIP_VERTICALLY);
     CONSTANT(CNA_SURFACE_FORMAT_COLOR);
     CONSTANT(CNA_MOUSE_BUTTON_LEFT); CONSTANT(CNA_MOUSE_BUTTON_MIDDLE); CONSTANT(CNA_MOUSE_BUTTON_RIGHT); CONSTANT(CNA_MOUSE_BUTTON_X1); CONSTANT(CNA_MOUSE_BUTTON_X2);

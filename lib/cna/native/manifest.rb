@@ -7,7 +7,7 @@ module CNA
     Signature = Data.define(
       :symbol, :c_return, :c_arguments, :fiddle_return, :fiddle_arguments,
       :pointer_depths, :const_arguments, :integer_widths, :signedness,
-      :ownership, :result_lifetime, :callback_abi
+      :ownership, :result_lifetime, :callback_abi, :value_aggregates
     )
 
     module Manifest
@@ -24,6 +24,17 @@ module CNA
 
       def signature(symbol, return_type, arguments, ownership:, result_lifetime: "thread-local until next failing call", callback_abi: nil)
         c_arguments = arguments.map { |value| value.fetch(:c) }
+        # An argument declared with `by_value` expands into one entry per eightbyte, and this
+        # records where each aggregate starts and how many entries it occupies, so the C spelling
+        # can be reconstructed exactly and the decomposition can never become silent.
+        value_aggregates = {}
+        arguments.each_with_index do |value, index|
+          next unless value[:value_aggregate]
+
+          next unless value.fetch(:aggregate_start, false)
+
+          value_aggregates[index] = { c: value.fetch(:value_aggregate), members: value.fetch(:aggregate_members) }
+        end
         Signature.new(
           symbol: symbol,
           c_return: return_type.fetch(:c),
@@ -36,7 +47,8 @@ module CNA
           signedness: [return_type.fetch(:signed, nil), *arguments.map { |value| value.fetch(:signed, nil) }],
           ownership: ownership,
           result_lifetime: result_lifetime,
-          callback_abi: callback_abi
+          callback_abi: callback_abi,
+          value_aggregates: value_aggregates.freeze
         )
       end
 
@@ -68,6 +80,25 @@ module CNA
       # A callback typedef is already a function-pointer type, so the parameter carries no star of
       # its own. It is still a pointer at the Fiddle boundary, which is why the depth stays 0 here
       # and only the C spelling differs from `pointer`.
+      # A struct passed **by value**. Fiddle cannot pass an aggregate, so this expands into the
+      # eightbytes the platform ABI really puts in registers, and the expansion is recorded rather
+      # than performed silently.
+      #
+      # The one aggregate this binding passes by value is `CNA_StringView`: two eightbytes, a
+      # `const char*` at offset 0 and a `uint64_t` at offset 8, which the ABI probe already measures
+      # as `size 16, alignment 8`. Under the System V x86-64 classification both eightbytes are
+      # INTEGER, so the aggregate travels in the next two integer registers -- byte for byte what
+      # two separate scalar arguments occupy. That equivalence is the whole of the decomposition,
+      # it is a property of the measured layout rather than an assumption, and it is qualified only
+      # for the one platform this binding qualifies at all. `tools/native_abi/verify.rb`
+      # reconstructs the aggregate's C spelling from `value_aggregates` and compares it with what
+      # the header really declares, so a decomposition that stopped matching would fail the probe.
+      def by_value(c, *members)
+        members.each_with_index.map do |member, index|
+          member.merge(value_aggregate: c, aggregate_start: index.zero?, aggregate_members: members.length)
+        end
+      end
+
       def callback_pointer(c)
         { c: c, fiddle: PTR, pointer_depth: 0 }
       end
@@ -126,6 +157,26 @@ module CNA
         # timing loop, which CNA owns here, so both forward rather than keeping a shadow.
         signature("cna_game_suppress_draw", T[:result], [T[:handle]], ownership: "borrows Game; skips the next frame's draw", result_lifetime: "no result value"),
         signature("cna_game_reset_elapsed_time", T[:result], [T[:handle]], ownership: "borrows Game; forgets accumulated time", result_lifetime: "no result value"),
+        # The canonical window surface. Every route is addressed through the **game** handle: CNA's
+        # window has no handle of its own, which is what lets `Game.Window` project as a façade over
+        # the host rather than a second object with its own lifetime. XNA's abstract `GameWindow`
+        # declares exactly these as abstract members for a concrete host to supply, and the C ABI
+        # supplies them.
+        signature("cna_game_set_window_title", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64])], ownership: "borrows Game; copies the bytes"),
+        signature("cna_game_window_get_title_size", T[:result], [T[:handle], pointer("uint64_t")], ownership: "borrows Game; caller output"),
+        signature("cna_game_window_copy_title", T[:result], [T[:handle], pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows Game; caller output"),
+        signature("cna_game_window_get_allow_user_resizing", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows Game; caller output"),
+        signature("cna_game_window_set_allow_user_resizing", T[:result], [T[:handle], T[:bool]], ownership: "borrows Game; applies to the window"),
+        signature("cna_game_window_get_client_bounds", T[:result], [T[:handle], pointer("CNA_Rectangle")], ownership: "borrows Game; caller MANAGED_VALUE snapshot output"),
+        signature("cna_game_window_get_current_orientation", T[:result], [T[:handle], pointer("CNA_DisplayOrientation")], ownership: "borrows Game; caller output"),
+        signature("cna_game_window_get_native_handle_ext", T[:result], [T[:handle], pointer("uint64_t")], ownership: "borrows Game; BORROWED_EXTERNAL_SCALAR platform token"),
+        signature("cna_game_window_get_screen_device_name_size", T[:result], [T[:handle], pointer("uint64_t")], ownership: "borrows Game; caller output"),
+        signature("cna_game_window_copy_screen_device_name", T[:result], [T[:handle], pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows Game; caller output"),
+        signature("cna_game_window_begin_screen_device_change", T[:result], [T[:handle], T[:bool]], ownership: "borrows Game; records the intent"),
+        signature("cna_game_window_end_screen_device_change", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), T[:i32], T[:i32]], ownership: "borrows Game; applies the change"),
+        # A window registration and a game registration are the same kind of thing, and
+        # `cna_game_unsubscribe` releases both, so no second release route is bound.
+        signature("cna_game_window_subscribe", T[:result], [T[:handle], enum("CNA_GameWindowEvent"), callback_pointer("CNA_GameEventCallback"), T[:ptr], pointer("CNA_GameEventRegistrationHandle")], ownership: "borrows Game; returns OWNED registration; retains callback and context until released"),
         signature("cna_framework_dispatcher_update", T[:result], [T[:handle]], ownership: "borrows Game; pumps the canonical CNA framework dispatcher", result_lifetime: "no result value"),
         signature("cna_graphics_device_manager_create", T[:result], [T[:handle], pointer("CNA_GraphicsDeviceManagerHandle")], ownership: "returns OWNED manager"),
         signature("cna_graphics_device_manager_get_graphics_device", T[:result], [handle("CNA_GraphicsDeviceManagerHandle"), pointer("CNA_Handle")], ownership: "returns callback BORROWED device"),
@@ -174,6 +225,9 @@ module CNA
         "CNA_GAME_EVENT_DEACTIVATED" => 1,
         "CNA_GAME_EVENT_DISPOSED" => 2,
         "CNA_GAME_EVENT_EXITING" => 3,
+        "CNA_GAME_WINDOW_EVENT_CLIENT_SIZE_CHANGED" => 0,
+        "CNA_GAME_WINDOW_EVENT_ORIENTATION_CHANGED" => 1,
+        "CNA_GAME_WINDOW_EVENT_SCREEN_DEVICE_NAME_CHANGED" => 2,
         "CNA_SPRITE_SORT_MODE_DEFERRED" => 0,
         "CNA_SPRITE_EFFECT_NONE" => 0,
         "CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY" => 1,

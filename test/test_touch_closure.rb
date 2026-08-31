@@ -142,8 +142,8 @@ class TouchClosureTest < Minitest::Test
       refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?(fragment) }, fragment
       refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?(fragment) }, fragment
     end
-    assert_equal 55, CNA::Native::Manifest::FUNCTIONS.length
-    assert_equal 63, CNA::Native::Manifest::CONSTANTS.length
+    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 66, CNA::Native::Manifest::CONSTANTS.length
 
     capabilities = JSON.parse(Pathname(__dir__).join("..", "docs", "runtime-capabilities.json").read)
     touch = capabilities.fetch("capabilities").find { |row| row.fetch("id") == "input.touch" }

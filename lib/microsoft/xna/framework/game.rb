@@ -291,6 +291,241 @@ module Microsoft
 
       # Derived from the pinned Microsoft.Xna.Framework.Game.dll IL (SHA-256 b5dffdd8…).
       #
+      # `.class public abstract auto ansi beforefieldinit`, extending `System.Object`. Twenty
+      # selected identities: eleven methods, six properties and three events.
+      #
+      # ## It is a façade over CNA's window, not a second object
+      #
+      # Six of its members are `abstract` -- `Handle`, `AllowUserResizing` both ways, `ClientBounds`,
+      # `ScreenDeviceName`, `CurrentOrientation` -- plus `BeginScreenDeviceChange`, the three-argument
+      # `EndScreenDeviceChange`, `SetTitle` and `SetSupportedOrientations`. XNA leaves every one of
+      # them for a concrete host to supply, and the canonical C ABI supplies exactly that set.
+      #
+      # Every one of those routes is addressed through the **game** handle: CNA's window has no
+      # handle of its own. So there is no second object to invent and no second lifetime to
+      # reconcile -- this class holds one reference to the Game and forwards, which is what the
+      # graphics-device-service producer audit's rule asks for. A route reached after the Game is
+      # disposed raises, because the window it names no longer exists.
+      #
+      # ## What is managed and what is the host's
+      #
+      # `Title`'s getter is one `ldfld` of a private field and its setter is validation plus a push
+      # through the abstract `SetTitle`, which reads like the `IsMouseVisible` shape. It is *not*
+      # projected as managed state, and the reason is measured: the abstract constructor sets
+      # `title = String.Empty`, but `WindowsGameWindow`'s constructor immediately calls
+      # `set_Title(GetDefaultTitleName())`, so the value a consumer actually observes before writing
+      # one is the **host's** default, not the empty string. CNA's host has its own default, carried
+      # by `CNA_GameCreateInfo::window_title`, and `cna_game_window_copy_title` reads it back. So the
+      # read forwards and the write pushes, with the abstract class's own two validations applied
+      # here: `ArgumentNullException` on a null title, and a same-value write suppressed before the
+      # push, which the IL performs with `String::op_Inequality`.
+      #
+      # ## What HEADLESS answers, and why none of it is fabricated
+      #
+      # Measured on the reviewed artifact: `ClientBounds` is `0,0,0,0`, `Handle` is `0`,
+      # `ScreenDeviceName` is empty and `CurrentOrientation` is `Default`. Those are CNA's honest
+      # answers for a platform with no native window -- the same shape `Mouse.WindowHandle` already
+      # reports -- and not one of them is replaced by an invented default. `AllowUserResizing`
+      # round-trips through the real route, and `Title` round-trips through the create info.
+      class GameWindow
+        extend CNA::Runtime::EventOwner
+
+        # The three **public** events. XNA declares six event fields, but `Activated`, `Deactivated`
+        # and `Paint` are `assembly` -- internal plumbing between the host and `Game` -- so they are
+        # not identities and no reader exists for them. The canonical C ABI agrees exactly: it
+        # defines three `CNA_GAME_WINDOW_EVENT_*` identities and they are these three.
+        xna_event :ScreenDeviceNameChanged
+        xna_event :ClientSizeChanged
+        xna_event :OrientationChanged
+
+        # `.ctor()` is `assembly`, so `new` is private under the rule Foundation 25 established:
+        # a CLR class whose only constructor is internal projects with construction made private.
+        # `Game` reaches it through `__send__`.
+        def initialize(game)
+          @game = game
+        end
+        private_class_method :new
+
+        # `get_Title` reads the field the host seeded; here that is CNA's own window title.
+        def Title = read_string("cna_game_window_get_title_size", "cna_game_window_copy_title")
+
+        # `set_Title(string)`, exactly:
+        #
+        #     if (value == null) throw new ArgumentNullException("value", Resources.TitleCannotBeNull);
+        #     if (title != value) { title = value; SetTitle(title); }
+        #
+        # The same-value suppression is observable -- it is why setting the current title pushes
+        # nothing -- so it is reproduced rather than simplified away.
+        def Title=(value)
+          raise ArgumentError, "title must not be nil" if value.nil?
+
+          title = String(value)
+          return title if title == self.Title
+
+          push_title(title)
+          title
+        end
+
+        # `get_Handle` is abstract; the canonical route is documented as the platform's own window
+        # token. On a platform with no native window it is zero, which is what HEADLESS answers and
+        # what this reports rather than hiding. `System.IntPtr` projects to a Ruby Integer under the
+        # established primitive mapping.
+        def Handle = read_u64("cna_game_window_get_native_handle_ext")
+
+        def AllowUserResizing = read_bool("cna_game_window_get_allow_user_resizing")
+
+        def AllowUserResizing=(value)
+          flag = value ? true : false
+          call("cna_game_window_set_allow_user_resizing", flag ? 1 : 0)
+          flag
+        end
+
+        # `get_ClientBounds` is abstract and answers a `Rectangle` by value, so the projection
+        # copies the native POD into a fresh managed value rather than handing out a view.
+        def ClientBounds
+          value = CNA::Native::Layouts::Rectangle.new
+          call("cna_game_window_get_client_bounds", value.pointer)
+          Rectangle.new(value.read_i32(0), value.read_i32(4), value.read_i32(8), value.read_i32(12))
+        end
+
+        def ScreenDeviceName
+          read_string("cna_game_window_get_screen_device_name_size",
+                      "cna_game_window_copy_screen_device_name")
+        end
+
+        def CurrentOrientation = DisplayOrientation.coerce(read_u32("cna_game_window_get_current_orientation"))
+
+        # `BeginScreenDeviceChange(bool)` is abstract, and the C ABI documents the pair the same way
+        # XNA does: this records the intent and the other applies it.
+        def BeginScreenDeviceChange(willBeFullScreen)
+          flag = willBeFullScreen ? true : false
+          call("cna_game_window_begin_screen_device_change", flag ? 1 : 0)
+          nil
+        end
+
+        # Two overloads. The three-argument one is abstract; the one-argument one is concrete and is
+        # thirty bytes: `EndScreenDeviceChange(name, ClientBounds.Width, ClientBounds.Height)`. The C
+        # ABI collapses them into one route that reads a non-positive size as "keep it", so the
+        # one-argument form is projected as XNA writes it -- through the current client bounds --
+        # rather than by passing the sentinel, which keeps the two overloads observably identical to
+        # the CLR pair.
+        def EndScreenDeviceChange(screenDeviceName, clientWidth = nil, clientHeight = nil)
+          raise ArgumentError, "screenDeviceName must not be nil" if screenDeviceName.nil?
+
+          if clientWidth.nil? && clientHeight.nil?
+            bounds = self.ClientBounds
+            clientWidth = bounds.Width
+            clientHeight = bounds.Height
+          end
+          bytes = String(screenDeviceName).encode(Encoding::UTF_8).b
+          call("cna_game_window_end_screen_device_change", Fiddle::Pointer[bytes], bytes.bytesize,
+               CNA::Runtime::Numeric.int32(clientWidth, "clientWidth"),
+               CNA::Runtime::Numeric.int32(clientHeight, "clientHeight"))
+          nil
+        end
+
+        protected
+
+        # The six `family` raisers, each twenty-six bytes: `if (X != null) X(this, EventArgs.Empty)`.
+        # Three raise a public event; the other three raise an `assembly` one that projects to no
+        # reader at all, so they are declared -- the contract names them -- and raise nothing, which
+        # is exactly what an absent invocation list does.
+        def OnScreenDeviceNameChanged
+          self.ScreenDeviceNameChanged.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+          nil
+        end
+
+        def OnClientSizeChanged
+          self.ClientSizeChanged.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+          nil
+        end
+
+        def OnOrientationChanged
+          self.OrientationChanged.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+          nil
+        end
+
+        def OnActivated = nil
+        def OnDeactivated = nil
+        def OnPaint = nil
+
+        # `SetTitle(string)` is `family abstract`, the push half of `Title=`. `WindowsGameWindow`
+        # implements it as `mainForm?.Text = title`; the canonical route is its analogue.
+        def SetTitle(title)
+          raise ArgumentError, "title must not be nil" if title.nil?
+
+          push_title(String(title))
+          nil
+        end
+
+        # `SetSupportedOrientations(DisplayOrientation)` is `famorassem abstract`. The canonical C
+        # ABI exposes **no** route for it -- orientation is readable and not settable there -- so it
+        # is declared, as the contract names it, and refuses rather than pretending to apply an
+        # orientation the runtime never receives.
+        def SetSupportedOrientations(orientations)
+          DisplayOrientation.coerce(orientations)
+          raise CNA::Runtime::NotSupportedError,
+                "the canonical runtime exposes no supported-orientation route"
+        end
+
+        private
+
+        # The bytes a `CNA_StringView` carries, handed to the decomposed route as its two eightbytes.
+        # The buffer is held for the duration of the call and the ABI copies it, which is what the
+        # route documents.
+        def push_title(title)
+          bytes = title.encode(Encoding::UTF_8).b
+          call("cna_game_set_window_title", Fiddle::Pointer[bytes], bytes.bytesize)
+          nil
+        end
+
+        def call(symbol, *arguments)
+          CNA::Native.library.call(symbol, host_handle, *arguments)
+          nil
+        end
+
+        def host_handle
+          handle = @game.__send__(:window_host_handle)
+          raise CNA::DisposedObjectError, "the Game that owns this window is disposed" if handle.nil?
+
+          handle
+        end
+
+        def read_bool(symbol)
+          output = CNA::Native.library.pointer_for("C", 0)
+          call(symbol, output)
+          output[0, 1].unpack1("C") != 0
+        end
+
+        def read_u32(symbol)
+          output = CNA::Native.library.pointer_for("L", 0)
+          call(symbol, output)
+          output[0, 4].unpack1("L")
+        end
+
+        def read_u64(symbol)
+          output = CNA::Native.library.pointer_for("Q", 0)
+          call(symbol, output)
+          output[0, 8].unpack1("Q")
+        end
+
+        # The canonical size-then-copy pair every string route in this ABI uses. An empty value has
+        # size zero and needs no copy, which is what HEADLESS answers for the screen device name.
+        def read_string(size_symbol, copy_symbol)
+          size_output = CNA::Native.library.pointer_for("Q", 0)
+          call(size_symbol, size_output)
+          bytes = size_output[0, 8].unpack1("Q")
+          return "" if bytes.zero?
+
+          buffer = Fiddle::Pointer.malloc(bytes, Fiddle::RUBY_FREE)
+          required = CNA::Native.library.pointer_for("Q", 0)
+          call(copy_symbol, buffer, bytes, required)
+          buffer[0, bytes].force_encoding(Encoding::UTF_8)
+        end
+      end
+
+      # Derived from the pinned Microsoft.Xna.Framework.Game.dll IL (SHA-256 b5dffdd8…).
+      #
       # `.class public auto ansi beforefieldinit`, extending
       # `System.Collections.Generic.Dictionary`2<string,string>` and declaring **one** member of its
       # own in the selected contract: the public parameterless constructor. Its whole public surface
@@ -521,6 +756,7 @@ module Microsoft
           @InactiveSleepTime = CNA::Runtime::BclProjection.time_span(INACTIVE_SLEEP_TIME_DEFAULT_TICKS / TICKS_PER_SECOND)
           @IsMouseVisible = false
           @launchParameters = LaunchParameters.new
+          @gameWindow = GameWindow.__send__(:new, self)
           @gameComponents = GameComponentCollection.new
           @gameComponents.ComponentAdded.add(method(:game_component_added))
           @gameComponents.ComponentRemoved.add(method(:game_component_removed))
@@ -539,6 +775,23 @@ module Microsoft
         # `get_LaunchParameters` is one `ldfld` and nothing else, so it answers the same object for
         # the life of the Game -- the one the constructor created -- and needs no native host.
         def LaunchParameters = @launchParameters
+
+        # `get_Window` is `host?.Window`. XNA's null branch is defensive rather than reachable:
+        # `Game..ctor` calls `EnsureHost()`, so a constructed XNA Game always has a host and this
+        # property is never null. This binding defers that constructor step, so the faithful answer
+        # is to complete it here -- the same `ensure_host` `Run`, `RunOneFrame` and `Tick` already
+        # perform -- rather than to expose a nil XNA never shows. The façade itself is one managed
+        # object created once and answered for the life of the Game, which is what `host.Window` is.
+        #
+        # Recorded deviation: completing the deferred step makes this getter owner-thread bound and
+        # able to fail, where XNA's single `ldfld` chain cannot. That is the same asymmetry every
+        # other native route in this binding carries.
+        def Window
+          raise CNA::DisposedObjectError, "Game is disposed" if disposed?
+          assert_owner_thread!
+          ensure_host
+          @gameWindow
+        end
 
         # `get_IsActive` is thirty bytes and is **not** a field read. In full:
         #
@@ -1027,6 +1280,16 @@ module Microsoft
         attr_reader :owner_thread, :generation
 
         def disposed? = @disposed
+
+        # The one thing `GameWindow` needs from its Game: the handle every canonical window route is
+        # addressed through. Nil once the native game is gone, which is what makes a window member
+        # reached after disposal raise instead of calling into a destroyed handle.
+        def window_host_handle
+          return nil if disposed? || @host.nil? || @host.handle.zero?
+
+          assert_owner_thread!
+          @host.handle
+        end
         def __cna_exiting = nil
 
         def attach_graphics_manager(manager)

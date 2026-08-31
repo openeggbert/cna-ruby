@@ -1706,12 +1706,15 @@ class ApiVerifierTest < Minitest::Test
       Microsoft.Xna.Framework.Game::Deactivated
       Microsoft.Xna.Framework.Game::Exiting
       Microsoft.Xna.Framework.Game::Disposed
+      Microsoft.Xna.Framework.GameWindow::ScreenDeviceNameChanged
+      Microsoft.Xna.Framework.GameWindow::ClientSizeChanged
+      Microsoft.Xna.Framework.GameWindow::OrientationChanged
     ], selected
 
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
     assert_equal selected, strict.fetch("eventIdentities")
     assert_equal selected.length, strict.fetch("EVENT_IDENTITIES")
-    assert_equal 6, strict.fetch("EVENT_OWNER_TYPES")
+    assert_equal 7, strict.fetch("EVENT_OWNER_TYPES")
     assert_equal "CNA::Runtime::Event", strict.fetch("EVENT_SUPPORT_TYPE")
     assert_equal 0, strict.fetch("EVENT_MAPPING_MISMATCH")
 
@@ -1839,7 +1842,7 @@ class ApiVerifierTest < Minitest::Test
     # Game::Tick, a method, which is why the overload count fell by one more. The set of partial
     # types is what this test guards, and it is unchanged. Foundation 45 then closed
     # Game::IsActive, a property, so MISSING_MEMBER fell once more without moving the overloads.
-    assert_equal 111, strict.fetch("MISSING_MEMBER")
+    assert_equal 110, strict.fetch("MISSING_MEMBER")
     assert_equal 1, strict.fetch("PROPERTY_MAPPING_MISMATCH")
     assert_equal 42, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, the Foundation 40 graphics device service, the Foundation 41 canonical Game events, the Foundation 42 Game timing and presentation properties, the Foundation 44 Game.Tick projection, the Foundation 45 Game.IsActive projection, the Foundation 46 Dictionary`2 / LaunchParameters projection, and the Foundation 47 Game protected remainder separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, the Foundation 40 graphics device service, the Foundation 41 canonical Game events, the Foundation 42 Game timing and presentation properties, the Foundation 44 Game.Tick projection, the Foundation 45 Game.IsActive projection, the Foundation 46 Dictionary`2 / LaunchParameters projection, the Foundation 47 Game protected remainder, and the Foundation 48 GameWindow projection separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
   "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
@@ -13657,15 +13657,16 @@
       "operation": "MemberLevelDependency.FrontierEffect",
       "args": [],
       "provenance": "RUBY_MAPPING_QUALIFICATION",
-      "note": "Foundation 39 measured this row as IGraphicsDeviceService with 13 il-only blocked candidates. Foundation 40 built that candidate, so it left the candidate list and the row now names the type the refinement uncovered behind it. This is a RUBY_MAPPING_QUALIFICATION row -- a measurement of this projection's own frontier, which a milestone acting on the frontier is expected to move -- not an XNA fact. Foundation 46 moved it again, from 19 candidates to 18, by projecting Dictionary`2 and consuming LaunchParameters -- the only entry that left.",
+      "note": "Foundation 39 measured this row as IGraphicsDeviceService with 13 il-only blocked candidates. Foundation 40 built that candidate, so it left the candidate list and the row now names the type the refinement uncovered behind it. This is a RUBY_MAPPING_QUALIFICATION row -- a measurement of this projection's own frontier, which a milestone acting on the frontier is expected to move -- not an XNA fact. Foundation 46 moved it again, from 19 candidates to 18, by projecting Dictionary`2 and consuming LaunchParameters -- the only entry that left. Foundation 48 moved it a third time: building GameWindow took the candidate count from 18 to 17, and because GameWindow was GamerServicesComponent's only il-only unmet dependency, that candidate moved from the il-only blocked list -- 12 to 11 -- into partialDependencySatisfied, which is precisely the transition this row exists to observe.",
       "expected": [
-        18,
+        17,
         0,
         "none-consumable",
         [
+          "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent",
           "Microsoft.Xna.Framework.DrawableGameComponent"
         ],
-        12,
+        11,
         6
       ]
     },
@@ -14364,6 +14365,84 @@
         "none",
         "ArgumentError"
       ]
+    },
+    {
+      "id": "game_window.contract",
+      "operation": "GameWindow.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Object",
+        [],
+        20,
+        {
+          "event": 3,
+          "method": 11,
+          "property": 6
+        },
+        [
+          "ScreenDeviceNameChanged",
+          "ClientSizeChanged",
+          "OrientationChanged"
+        ],
+        3
+      ]
+    },
+    {
+      "id": "game_window.facade",
+      "operation": "GameWindow.Facade",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        true,
+        "Microsoft::Xna::Framework::GameWindow",
+        true,
+        false
+      ]
+    },
+    {
+      "id": "game_window.members",
+      "operation": "GameWindow.Members",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "CNA-Ruby",
+        "Ahoj světe ✓",
+        false,
+        true,
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        0,
+        "",
+        "Default"
+      ]
+    },
+    {
+      "id": "game_window.title_validation",
+      "operation": "GameWindow.TitleValidation",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "ArgumentError",
+        "Stable",
+        ""
+      ]
+    },
+    {
+      "id": "game_window.refusals",
+      "operation": "GameWindow.Refusals",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        "CNA::Runtime::NotSupportedError",
+        "CNA::DisposedObjectError",
+        true
+      ]
     }
   ],
   "milestone31SourceAssemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
@@ -14403,5 +14482,8 @@
   "milestone46MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 45bd77fdd2926964f4cb3a41db6e9f8eaab13d0d43ee456767b39398b6117728, 498 observations) was proved before appending 8 additive observations",
   "milestone46CorpusCorrection": "member_level_dependency.frontier_effect pins this projection's own frontier, and its own note records that a milestone acting on the frontier is expected to move it. Foundation 46 did: projecting Dictionary`2 consumed LaunchParameters, so dependencyCompleteCandidates falls from 19 to 18. Exactly that one element changed, and the note now records both moves. A re-serialisation replay was available and was used: byte-preserving serialisation of the pre-correction corpus (SHA-256 ad87beb7a68404775636476db74bbcfac059e916e3c2ba4ca8eb64d50e4ce118, 506 observations) was proved first, and exactly one observation differs afterwards.",
   "milestone47SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
-  "milestone47MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 7161ae93e85256edc495a62497d9ab94a5c999f14c0c9b9213f88e60de8c2eff, 506 observations) was proved before appending 4 additive observations"
+  "milestone47MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 7161ae93e85256edc495a62497d9ab94a5c999f14c0c9b9213f88e60de8c2eff, 506 observations) was proved before appending 4 additive observations",
+  "milestone48SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "milestone48MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 69b5adbce9bb575eeb60a71f0071a23b82b0c0004a942d3dac61162d49b4fb3a, 510 observations) was proved before appending 5 additive observations",
+  "milestone48CorpusCorrection": "member_level_dependency.frontier_effect pins this projection's own frontier, and its own note records that a milestone acting on the frontier is expected to move it. Foundation 48 did: building GameWindow consumed it, so dependencyCompleteCandidates falls from 18 to 17, and because GameWindow was GamerServicesComponent's only il-only unmet dependency that candidate moved into partialDependencySatisfied and the il-only blocked count fell from 12 to 11. Three elements of the one row changed and nothing else did. A re-serialisation replay was available and was used: byte-preserving serialisation of the pre-correction corpus (SHA-256 350d759949fd29de2a42615075a6196369cf42843c229bdfbe878ac271c2cfce, 515 observations) was proved first, and exactly one observation differs afterwards."
 }

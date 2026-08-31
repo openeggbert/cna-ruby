@@ -89,7 +89,10 @@ class DisplayOrientationTest < Minitest::Test
     refute_respond_to ORIENTATION::Portrait, :ToString
     refute_respond_to ORIENTATION::Portrait, :HasFlag
     refute_respond_to ORIENTATION::Portrait, :Apply
-    refute F.const_defined?(:GameWindow, false)
+    # GameWindow arrived in Foundation 48 from its own IL, and it reads CurrentOrientation from
+    # the canonical route while refusing SetSupportedOrientations, for which the ABI has none.
     refute F::GraphicsDeviceManager.public_instance_methods.include?(:SupportedOrientations)
+    refute F::GameWindow.public_method_defined?(:SetSupportedOrientations)
+    refute F::GameWindow.public_method_defined?(:CurrentOrientation=)
   end
 end

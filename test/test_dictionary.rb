@@ -392,7 +392,7 @@ class DictionaryTest < Minitest::Test
   def test_the_cna_launch_parameter_routes_are_deliberately_not_bound
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     refute(symbols.any? { |symbol| symbol.include?("launch_parameters") }, symbols.inspect)
-    assert_equal 55, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
   end
 
   private

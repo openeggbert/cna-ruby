@@ -571,6 +571,98 @@ def execute(item)
     ensure
       game.Dispose
     end
+  when "GameWindow.Contract"
+    # An abstract class over System.Object with twenty identities: eleven methods, six properties
+    # and three events. XNA declares six event fields but three are `assembly`, so only three are
+    # identities -- and the canonical C ABI defines exactly three window-event values.
+    type = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.GameWindow")
+    members = type.fetch("members")
+    [type.fetch("kind"), type.fetch("baseType"), type.fetch("interfaces"), members.length,
+     members.group_by { |member| member.fetch("kind") }.transform_values(&:length).sort.to_h,
+     members.select { |member| member.fetch("kind") == "event" }.map { |member| member.fetch("name") },
+     CNA::Native::Manifest::CONSTANTS.keys.grep(/\ACNA_GAME_WINDOW_EVENT_/).length]
+  when "GameWindow.Facade"
+    # Every canonical window route is addressed through the *game* handle: CNA's window has no
+    # handle of its own, which is what makes a façade the faithful shape and leaves no second
+    # lifetime to reconcile. The Game answers the same façade for its life.
+    routes = %w[cna_game_set_window_title cna_game_window_get_title_size cna_game_window_copy_title
+                cna_game_window_get_allow_user_resizing cna_game_window_set_allow_user_resizing
+                cna_game_window_get_client_bounds cna_game_window_get_current_orientation
+                cna_game_window_get_native_handle_ext
+                cna_game_window_get_screen_device_name_size cna_game_window_copy_screen_device_name
+                cna_game_window_begin_screen_device_change cna_game_window_end_screen_device_change
+                cna_game_window_subscribe]
+    all_through_game = routes.all? do |symbol|
+      entry = CNA::Native::Manifest::FUNCTIONS.find { |function| function.symbol == symbol }
+      !entry.nil? && entry.c_arguments.first == "CNA_Handle"
+    end
+    game = F::Game.new
+    begin
+      window = game.Window
+      [all_through_game, window.class.name, window.equal?(game.Window),
+       F::GameWindow.public_method_defined?(:new)]
+    ensure
+      game.Dispose
+    end
+  when "GameWindow.Members"
+    # What the reviewed HEADLESS artifact really answers. The zero rectangle, zero handle and empty
+    # device name are the host's honest report of a platform with no native window; the title is
+    # the one CNA_GameCreateInfo carried, and allow-user-resizing round-trips through the real
+    # route. Not one of them is replaced by an invented default.
+    game = F::Game.new
+    begin
+      window = game.Window
+      default_title = window.Title
+      window.Title = "Ahoj světe ✓"
+      bounds = window.ClientBounds
+      before = window.AllowUserResizing
+      window.AllowUserResizing = true
+      [default_title, window.Title, before, window.AllowUserResizing,
+       [bounds.X, bounds.Y, bounds.Width, bounds.Height], window.Handle,
+       window.ScreenDeviceName, window.CurrentOrientation.to_s]
+    ensure
+      game.Dispose
+    end
+  when "GameWindow.TitleValidation"
+    # set_Title throws ArgumentNullException on null and suppresses a same-value write with
+    # String::op_Inequality before pushing, which is why setting the current title pushes nothing.
+    game = F::Game.new
+    begin
+      window = game.Window
+      refused = begin
+        window.Title = nil
+        "none"
+      rescue Exception => error
+        error.class.name
+      end
+      window.Title = "Stable"
+      same = (window.Title = window.Title)
+      window.Title = ""
+      [refused, same, window.Title]
+    ensure
+      game.Dispose
+    end
+  when "GameWindow.Refusals"
+    # SetSupportedOrientations is famorassem abstract and the canonical ABI exposes no route for it,
+    # so it refuses rather than pretending. A member reached after the Game is disposed raises,
+    # because the window it names no longer exists.
+    game = F::Game.new
+    window = game.Window
+    orientations = begin
+      window.__send__(:SetSupportedOrientations, F::DisplayOrientation::Portrait)
+      "none"
+    rescue Exception => error
+      error.class.name
+    end
+    game.Dispose
+    disposed = begin
+      window.Title
+      "none"
+    rescue Exception => error
+      error.class.name
+    end
+    [orientations, disposed,
+     CNA::Native::Manifest::FUNCTIONS.map(&:symbol).none? { |s| s.include?("supported_orientation") }]
   when "GameDisposal.Contract"
     # All three are `family` in the pinned metadata, and Dispose is declared twice -- the public
     # parameterless overload and the protected Boolean one.

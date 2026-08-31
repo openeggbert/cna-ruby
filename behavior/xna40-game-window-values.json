@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "derivation": "Foundation 48 GameWindow. Read from the pinned Microsoft.Xna.Framework.Game.dll IL. GameWindow is `.class public abstract auto ansi beforefieldinit` extending System.Object, with twenty selected identities: eleven methods, six properties and three events. It declares six private EventHandler`1 fields -- Activated, Deactivated, Paint, ScreenDeviceNameChanged, ClientSizeChanged, OrientationChanged -- but the add/remove accessors of the first three are `assembly`, so only the last three are identities. Ten members are abstract for a concrete host to supply: get_Handle, get_AllowUserResizing, set_AllowUserResizing, get_ClientBounds, get_ScreenDeviceName, get_CurrentOrientation, BeginScreenDeviceChange(bool), the three-argument EndScreenDeviceChange, the family SetTitle(string) and the famorassem SetSupportedOrientations(DisplayOrientation). get_Title is one ldfld and set_Title throws ArgumentNullException(\"value\", Resources.TitleCannotBeNull) on null, compares with String::op_Inequality and only then writes the field and calls the abstract SetTitle, so a same-value write pushes nothing. The abstract constructor is `assembly` and sets title = String.Empty, but WindowsGameWindow's constructor calls base..ctor() and then set_Title(GetDefaultTitleName()), so the value a consumer observes before writing one is the host's default rather than the empty string. The one-argument EndScreenDeviceChange is concrete and thirty bytes: EndScreenDeviceChange(name, ClientBounds.Width, ClientBounds.Height). The six family On* raisers are each twenty-six bytes, `if (X != null) X(this, EventArgs.Empty)`. Game::get_Window is `host?.Window`, and its null branch is unreachable in XNA because Game..ctor calls EnsureHost().",
+  "observations": [
+    {
+      "id": "game_window.contract",
+      "operation": "GameWindow.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": ["class", "System.Object", [], 20, {"event": 3, "method": 11, "property": 6}, ["ScreenDeviceNameChanged", "ClientSizeChanged", "OrientationChanged"], 3]
+    },
+    {
+      "id": "game_window.facade",
+      "operation": "GameWindow.Facade",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [true, "Microsoft::Xna::Framework::GameWindow", true, false]
+    },
+    {
+      "id": "game_window.members",
+      "operation": "GameWindow.Members",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": ["CNA-Ruby", "Ahoj světe ✓", false, true, [0, 0, 0, 0], 0, "", "Default"]
+    },
+    {
+      "id": "game_window.title_validation",
+      "operation": "GameWindow.TitleValidation",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": ["ArgumentError", "Stable", ""]
+    },
+    {
+      "id": "game_window.refusals",
+      "operation": "GameWindow.Refusals",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": ["CNA::Runtime::NotSupportedError", "CNA::DisposedObjectError", true]
+    }
+  ]
+}

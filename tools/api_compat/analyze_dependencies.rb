@@ -27,9 +27,19 @@ RUNTIME_DATA = {
   "Microsoft.Xna.Framework.Audio.AudioCategory" => "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have",
   "Microsoft.Xna.Framework.Media.MediaSource" => "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried",
   "Microsoft.Xna.Framework.Media.Video" => "its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies; no producer exists",
-  "Microsoft.Xna.Framework.Media.VisualizationData" => "filled by MediaPlayer.GetVisualizationData from live playback",
-  "Microsoft.Xna.Framework.GameWindow" => "an abstract window whose concrete implementation is the platform window behind Game; projecting it would require the deferred Game/window runtime"
+  "Microsoft.Xna.Framework.Media.VisualizationData" => "filled by MediaPlayer.GetVisualizationData from live playback"
 }.freeze
+
+# GameWindow was here until Foundation 48, on the reasoning that it is "an abstract window whose
+# concrete implementation is the platform window behind Game; projecting it would require the
+# deferred Game/window runtime". That reasoning was wrong in the same way FrameworkDispatcher's was:
+# the concrete implementation this binding needs is CNA's, and the canonical C ABI already exposes
+# every member XNA leaves abstract -- title, allow-user-resizing, client bounds, current
+# orientation, the native handle, the screen device name, the screen-device-change pair and the
+# three window events. Every one of those routes is addressed through the *game* handle, so there is
+# no second lifetime to reconcile and no producer to invent. The values HEADLESS answers -- a zero
+# rectangle, a zero handle, an empty device name -- are the host's honest report of a platform with
+# no native window, not missing input, which is what this register is for.
 
 # FrameworkDispatcher was here until the native/CNA expansion audit, on the reasoning that "Update
 # pumps the live audio and media services; with neither present it would be a no-op pretending to

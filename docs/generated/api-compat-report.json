@@ -5,21 +5,21 @@
   "REFERENCE_MEMBERS": 2964,
   "EXPECTED_RUBY_TYPES": 257,
   "EXPECTED_RUBY_MEMBERS": 2915,
-  "TARGET_TYPES": 143,
-  "TARGET_MEMBERS": 1793,
-  "TOTAL_DIAGNOSTICS": 268,
-  "COMPLETE_TYPES": 137,
+  "TARGET_TYPES": 144,
+  "TARGET_MEMBERS": 1814,
+  "TOTAL_DIAGNOSTICS": 266,
+  "COMPLETE_TYPES": 138,
   "PARTIAL_TYPES": 6,
-  "MISSING_TYPES": 114,
+  "MISSING_TYPES": 113,
   "ALLOWLIST_ENTRIES": 0,
-  "EVENT_IDENTITIES": 17,
-  "EVENT_OWNER_TYPES": 6,
+  "EVENT_IDENTITIES": 20,
+  "EVENT_OWNER_TYPES": 7,
   "EVENT_SUPPORT_TYPE": "CNA::Runtime::Event",
   "BCL_PROJECTED_IDENTITIES": 11,
   "BCL_EXCEPTION_BASES": 2,
   "BCL_THROWN_EXCEPTIONS": 7,
-  "MISSING_TYPE": 114,
-  "MISSING_MEMBER": 111,
+  "MISSING_TYPE": 113,
+  "MISSING_MEMBER": 110,
   "UNEXPECTED_TYPE": 0,
   "UNEXPECTED_MEMBER": 0,
   "TYPE_KIND_MISMATCH": 0,
@@ -58,7 +58,10 @@
     "Microsoft.Xna.Framework.Game::Activated",
     "Microsoft.Xna.Framework.Game::Deactivated",
     "Microsoft.Xna.Framework.Game::Exiting",
-    "Microsoft.Xna.Framework.Game::Disposed"
+    "Microsoft.Xna.Framework.Game::Disposed",
+    "Microsoft.Xna.Framework.GameWindow::ScreenDeviceNameChanged",
+    "Microsoft.Xna.Framework.GameWindow::ClientSizeChanged",
+    "Microsoft.Xna.Framework.GameWindow::OrientationChanged"
   ],
   "bclProjection": {
     "types": {
@@ -221,11 +224,11 @@
     "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator",
     "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
     "Microsoft.Xna.Framework.LaunchParameters",
+    "Microsoft.Xna.Framework.GameWindow",
     "Microsoft.Xna.Framework.GameServiceContainer"
   ],
   "partialTypes": {
     "Microsoft.Xna.Framework.Game": [
-      "Microsoft.Xna.Framework.Game::Window (1 overload)",
       "Microsoft.Xna.Framework.Game::Content (1 overload)"
     ],
     "Microsoft.Xna.Framework.GraphicsDeviceManager": [
@@ -352,7 +355,6 @@
     "Microsoft.Xna.Framework.Design.Vector3Converter",
     "Microsoft.Xna.Framework.Design.Vector4Converter",
     "Microsoft.Xna.Framework.DrawableGameComponent",
-    "Microsoft.Xna.Framework.GameWindow",
     "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent",
     "Microsoft.Xna.Framework.Graphics.AlphaTestEffect",
     "Microsoft.Xna.Framework.Graphics.BasicEffect",
@@ -545,7 +547,7 @@
     "Microsoft.Xna.Framework.CurveContinuity": 0,
     "Microsoft.Xna.Framework.CurveLoopType": 0,
     "Microsoft.Xna.Framework.CurveTangent": 0,
-    "Microsoft.Xna.Framework.Game": 2,
+    "Microsoft.Xna.Framework.Game": 1,
     "Microsoft.Xna.Framework.GraphicsDeviceManager": 37,
     "Microsoft.Xna.Framework.Graphics.Viewport": 0,
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice": 73,
@@ -579,6 +581,7 @@
     "Microsoft.Xna.Framework.Input.Touch.TouchCollection+Enumerator": 0,
     "Microsoft.Xna.Framework.Input.Touch.TouchPanel": 0,
     "Microsoft.Xna.Framework.LaunchParameters": 0,
+    "Microsoft.Xna.Framework.GameWindow": 0,
     "Microsoft.Xna.Framework.GameServiceContainer": 0
   },
   "details": {
@@ -614,7 +617,6 @@
       "Microsoft.Xna.Framework.Design.Vector3Converter",
       "Microsoft.Xna.Framework.Design.Vector4Converter",
       "Microsoft.Xna.Framework.DrawableGameComponent",
-      "Microsoft.Xna.Framework.GameWindow",
       "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent",
       "Microsoft.Xna.Framework.Graphics.AlphaTestEffect",
       "Microsoft.Xna.Framework.Graphics.BasicEffect",
@@ -699,7 +701,6 @@
       "Microsoft.Xna.Framework.TitleContainer"
     ],
     "MISSING_MEMBER": [
-      "Microsoft.Xna.Framework.Game::Window (1 overload)",
       "Microsoft.Xna.Framework.Game::Content (1 overload)",
       "Microsoft.Xna.Framework.Graphics.GraphicsDevice::.ctor (1 overload)",
       "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Present (2 overloads)",

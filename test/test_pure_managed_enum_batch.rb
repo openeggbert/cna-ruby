@@ -297,8 +297,8 @@ class PureManagedEnumBatchTest < Minitest::Test
   end
 
   def test_batch_adds_no_native_binding_constant_or_callback
-    assert_equal 55, CNA::Native::Manifest::FUNCTIONS.length
-    assert_equal 63, CNA::Native::Manifest::CONSTANTS.length
+    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 66, CNA::Native::Manifest::CONSTANTS.length
     # Fragments must stay specific: CNA_SURFACE_FORMAT_COLOR legitimately contains "FACE".
     %w[CUBE_MAP CUBEMAP CUBE_FACE BUFFER_USAGE MICROPHONE AUDIO_CHANNEL STOP_OPTION SOUND_STATE MEDIA
        BLEND STENCIL COMPARE TEXTURE_FILTER ADDRESS_MODE CULL FILL_MODE PRESENT_INTERVAL
