@@ -177,6 +177,32 @@ unload_content  Disposed
 then took the serialization cluster off the BCL frontier, completing `Content.ContentLoadException`
 and `Storage.StorageDeviceNotConnectedException`.
 
+## Native frontier 4 — an audit that completed nothing, deliberately
+
+`docs/audio-playback-audit-evidence.md`, measured in `docs/generated/audio-native-report.json`.
+
+`Audio.SoundEffectInstance` reached the frontier as `NATIVE_RUNTIME`, which means only that its own
+IL reaches a native entry point — the reasoning corrected twice already, for `FrameworkDispatcher`
+and for `GameWindow`. The canonical audio path is **complete** in the ABI and executes end to end,
+and `cna_audio_get_capabilities` reports playback **available**.
+
+What is missing is the behaviour those routes document. `SoundState` never leaves `Stopped` through
+play, three frame steps, an explicit dispatcher pump, pause, resume and stop — every call reporting
+success. One full second of PCM answers a **zero** duration and the sample-duration route fails
+outright. `set_is_looped` is refused with `CNA_RESULT_INVALID_STATE` in every state. Volume, pitch
+and pan do round-trip.
+
+**It is not the null backend**: the measurement is identical with `CNA_AUDIO` unset and with
+`CNA_AUDIO=SDL`. Projecting the two types on this would give a constant `State`, an always-zero
+`Duration`, a `Play` that reports success and does nothing and an `IsLooped` setter that always
+raises, so both stay deferred and the blocker is now `UPSTREAM_CNA_BLOCKED`.
+
+Audited with them, each with its own distinct reason: `Audio.Cue` needs an XACT engine opened from
+an `.xgs` settings file plus two missing XNA types; `Graphics.EffectAnnotation` needs a compiled
+effect with parameters, and `cna_effect_create_empty` builds one with none;
+`Graphics.TextureCollection` has **no CNA route at all**, which is the one case where
+`NATIVE_RUNTIME` was the right word.
+
 ## Recommended next frontier
 
 1. **`Game.Tick` — a public architecture decision, not a binding.** `cna_game_tick` exists, but it is

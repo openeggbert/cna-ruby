@@ -30,6 +30,20 @@ RUNTIME_DATA = {
   "Microsoft.Xna.Framework.Media.VisualizationData" => "filled by MediaPlayer.GetVisualizationData from live playback"
 }.freeze
 
+# Native frontier 4 audited the audio-playback cluster and did *not* move it here, deliberately.
+# `Audio.SoundEffectInstance` reports `NATIVE_RUNTIME`, which means only that its own IL reaches a
+# native entry point -- the reasoning corrected twice already. The canonical path is complete in the
+# ABI and executes end to end, and `cna_audio_get_capabilities` reports playback available; what is
+# missing is the observable behaviour those routes document. `SoundState` never leaves `Stopped`
+# through play, frame steps, a dispatcher pump, pause, resume and stop, a full second of PCM answers
+# a zero duration, and `set_is_looped` is refused in every state -- identically with `CNA_AUDIO`
+# unset and with `CNA_AUDIO=SDL`, so it is not the null backend. That is neither a missing runtime
+# value, which is what this register is for, nor a missing route: it is an upstream CNA condition,
+# recorded as the `audio.sound-effect-playback` capability and measured in
+# `docs/generated/audio-native-report.json`. `Audio.Cue`, `Graphics.EffectAnnotation` and
+# `Graphics.TextureCollection` were audited with it and each has its own distinct reason -- a missing
+# `.xgs` asset and two missing types, a compiled effect with parameters, and no CNA route at all.
+
 # GameWindow was here until Foundation 48, on the reasoning that it is "an abstract window whose
 # concrete implementation is the platform window behind Game; projecting it would require the
 # deferred Game/window runtime". That reasoning was wrong in the same way FrameworkDispatcher's was:

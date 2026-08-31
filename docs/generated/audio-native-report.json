@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "provenance": "CNA_NATIVE_EVIDENCE; measured output of the reviewed CNA C ABI 0.7.0 library, never an XNA fact and never part of the behaviour corpus",
+  "library": "/home/robertvokac/deps/cna-c-abi-0.7.0/libcna_c_api.so",
+  "audioBackend": "NULL",
+  "renderer": "HEADLESS",
+  "capabilities": {
+    "cnaResult": 0,
+    "isPlaybackAvailable": true
+  },
+  "creation": {
+    "createPcm16Result": 0,
+    "sampleRate": 44100,
+    "channels": "MONO",
+    "frames": 44100,
+    "expectedDurationTicks": 10000000,
+    "durationTicksResult": 0,
+    "durationTicks": 0,
+    "sampleDurationTicksResult": 1,
+    "sampleDurationTicks": 0,
+    "createInstanceResult": 0
+  },
+  "transitions": [
+    {
+      "step": "initial",
+      "cnaResult": 0,
+      "snapshot": {
+        "state": "Stopped",
+        "isLooped": false,
+        "volume": 1.0,
+        "pitch": 0.0,
+        "pan": 0.0
+      }
+    },
+    {
+      "step": "play",
+      "cnaResult": 0,
+      "snapshot": {
+        "state": "Stopped",
+        "isLooped": false,
+        "volume": 1.0,
+        "pitch": 0.0,
+        "pan": 0.0
+      }
+    },
+    {
+      "step": "three frame steps",
+      "cnaResult": 0,
+      "snapshot": {
+        "state": "Stopped",
+        "isLooped": false,
+        "volume": 1.0,
+        "pitch": 0.0,
+        "pan": 0.0
+      }
+    },
+    {
+      "step": "framework dispatcher pump",
+      "cnaResult": 0,
+      "snapshot": {
+        "state": "Stopped",
+        "isLooped": false,
+        "volume": 1.0,
+        "pitch": 0.0,
+        "pan": 0.0
+      }
+    },
+    {
+      "step": "pause",
+      "cnaResult": 0,
+      "snapshot": {
+        "state": "Stopped",
+        "isLooped": false,
+        "volume": 1.0,
+        "pitch": 0.0,
+        "pan": 0.0
+      }
+    },
+    {
+      "step": "resume",
+      "cnaResult": 0,
+      "snapshot": {
+        "state": "Stopped",
+        "isLooped": false,
+        "volume": 1.0,
+        "pitch": 0.0,
+        "pan": 0.0
+      }
+    },
+    {
+      "step": "stop(immediate)",
+      "cnaResult": 0,
+      "snapshot": {
+        "state": "Stopped",
+        "isLooped": false,
+        "volume": 1.0,
+        "pitch": 0.0,
+        "pan": 0.0
+      }
+    },
+    {
+      "step": "set_volume(0.5)",
+      "cnaResult": 0,
+      "snapshot": {
+        "state": "Stopped",
+        "isLooped": false,
+        "volume": 0.5,
+        "pitch": 0.0,
+        "pan": 0.0
+      }
+    },
+    {
+      "step": "set_pitch(-0.25)",
+      "cnaResult": 0,
+      "snapshot": {
+        "state": "Stopped",
+        "isLooped": false,
+        "volume": 0.5,
+        "pitch": -0.25,
+        "pan": 0.0
+      }
+    },
+    {
+      "step": "set_pan(1.0)",
+      "cnaResult": 0,
+      "snapshot": {
+        "state": "Stopped",
+        "isLooped": false,
+        "volume": 0.5,
+        "pitch": -0.25,
+        "pan": 1.0
+      }
+    },
+    {
+      "step": "set_is_looped(true)",
+      "cnaResult": 3,
+      "snapshot": {
+        "state": "Stopped",
+        "isLooped": false,
+        "volume": 0.5,
+        "pitch": -0.25,
+        "pan": 1.0
+      }
+    }
+  ],
+  "observedStates": [
+    "Stopped"
+  ],
+  "proves": [
+    "the whole canonical path executes: create_pcm16, create_instance, play, pause, resume, stop, the four setters, and both destroys",
+    "cna_audio_get_capabilities reports playback available",
+    "volume, pitch and pan round-trip through the real routes"
+  ],
+  "doesNotProve": [
+    "any audible output",
+    "that SoundState ever leaves Stopped: every step above reports success and the state does not move",
+    "that a duration is computed: one full second of PCM answers zero ticks and the sample-duration route fails",
+    "that looping can be enabled: the setter is refused with CNA_RESULT_INVALID_STATE in every state"
+  ],
+  "conclusion": "The canonical routes exist, are reachable and report success, but the reviewed artifact does not implement the observable behaviour they document. Projecting SoundEffect and SoundEffectInstance on top would give a State that is a constant, a Duration that is always zero, a Play that reports success and does nothing, and an IsLooped setter that always raises. That is fake completion, so both types stay deferred and the reason is now measured rather than assumed."
+}

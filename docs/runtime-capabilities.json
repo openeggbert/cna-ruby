@@ -305,6 +305,12 @@
       "evidence": "39 exports, 124 signatures, 290+290 layout measurements, 2 callbacks, 59 constants"
     },
     {
+      "id": "audio.sound-effect-playback",
+      "category": "UPSTREAM_CNA_BLOCKED",
+      "status": "measured; routes execute, observable behaviour absent",
+      "evidence": "Native frontier 4: the audio-playback audit, docs/audio-playback-audit-evidence.md and docs/generated/audio-native-report.json. Audio.SoundEffectInstance reached the frontier as NATIVE_RUNTIME, which means only that its IL reaches a native entry point -- the reasoning Native frontier 1 corrected for FrameworkDispatcher and Foundation 48 for GameWindow, because the native runtime this binding has is CNA. The canonical path is complete in the ABI: create_pcm16, create_instance, play, pause, resume, stop, get_info, the four setters and both destroys, 74 audio routes in all. Driven end to end with one full second of mono PCM16 at 44100 Hz, every call reports CNA_RESULT_SUCCESS and cna_audio_get_capabilities reports playback available -- yet SoundState never leaves Stopped through play, three frame steps, an explicit framework-dispatcher pump, pause, resume and stop; the duration of a full second of PCM is zero ticks and the sample-duration route fails outright; and set_is_looped is refused with CNA_RESULT_INVALID_STATE in every state. Volume, pitch and pan do round-trip. It is not the null backend: the measurement is identical with CNA_AUDIO unset and with CNA_AUDIO=SDL. Projecting SoundEffect and SoundEffectInstance on this would give a State that is a constant, a Duration that is always zero, a Play that reports success and does nothing and an IsLooped setter that always raises, so both stay deferred. Audited with them: Audio.Cue needs an XACT engine opened from an .xgs settings file plus two missing XNA types, Graphics.EffectAnnotation needs a compiled effect with parameters, and Graphics.TextureCollection has no CNA route at all. This claims no audio engine, SoundEffect, SoundEffectInstance, Cue, Microphone or XACT runtime, and nothing here is ever heard"
+    },
+    {
       "id": "managed.serialization-carrier",
       "category": "VERIFIED_MANAGED",
       "status": "verified complete managed types",
