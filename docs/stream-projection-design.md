@@ -237,3 +237,41 @@ the bad-character list exists to reject Windows path metacharacters. The method 
 - **The four asynchronous members and `Synchronized` are out of reach**, so they are not projected;
   `CanTimeout`/`ReadTimeout`/`WriteTimeout` are reachable only as properties whose CLR base throws,
   which is a behaviour rather than a runtime.
+
+## 6. `System.Byte[]` — the sub-decision `Stream.Read` forces
+
+`Stream.Read(Byte[], Int32, Int32)` writes into the **caller's** buffer, so the projection cannot be
+settled without deciding what a CLR `byte[]` is in Ruby. Measured reach across the selected XNA
+profile: `System.Byte[]` appears in eight signatures over five public members —
+`SoundEffect..ctor` (both overloads), `Microphone.GetData`,
+`DynamicSoundEffectInstance.SubmitBuffer`, `Effect..ctor` and `MediaLibrary.SavePicture` — plus
+`Stream.Read`/`Write` reached through a produced stream.
+
+**It projects to a Ruby `String` in `Encoding::BINARY`.** The candidates and why the other loses:
+
+| candidate | verdict |
+| --- | --- |
+| binary `String` | Ruby's own byte buffer. Mutable in place (`setbyte`, equal-length `[]=`), `bytesize` is the CLR `Length`, and it is already what every native boundary in this binding produces and consumes — `pack`/`unpack`, `Fiddle::Pointer[]`, `cna_texture2d_create_from_encoded_memory`, `cna_sound_effect_create_pcm16`. |
+| `Array` of Integers | needs a conversion at every native boundary, and its `length` equals the byte count only by coincidence of the element type rather than by construction. It reads like a faithful array and behaves like a slower one. |
+
+Two CLR properties a Ruby `String` does not have, which the projection guards rather than ignores:
+
+- **A `byte[]` cannot be resized.** `String#[]=` with a differing length silently resizes, so a
+  write that would change `bytesize` is refused.
+- **A `byte[]` is never frozen.** A frozen string is refused before the write rather than raising
+  `FrozenError` from inside the copy.
+
+Both are falsifiable and both get a mutation control.
+
+## 7. `Texture2D.FromStream` already has an informal contract to reconcile
+
+`Texture2D.FromStream` is implemented today and duck-types its second argument:
+`stream.respond_to?(:read)`, then `stream.read` must return a `String`. That is a **Ruby** stream
+contract, not the projected one, and it predates this decision.
+
+When `CNA::Runtime::Stream` lands, that member becomes the first place the projection is *consumed*,
+and the two contracts have to be one. The reconciliation is not a free choice: the strict verifier
+measures the declared parameter type, and the repository rule is not to Ruby-ify away an XNA
+identity. So the projected type is what the signature names, and accepting a bare Ruby `IO` beside
+it is a separate, explicitly recorded convenience — not the contract.
+
