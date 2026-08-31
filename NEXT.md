@@ -2,13 +2,11 @@
 
 ## Exact current boundary
 
-**Session start HEAD = `88e160e7`**, which was also `origin/develop`. That baseline already carries
-Foundations 16 to 39, Native frontiers 1 to 3, and the evidence and publication-state corrections
-that followed them — including the Foundations 34 to 39 publication sequence, which is published
-history and no longer local to anything.
+**Session start HEAD = `920b0db8`**, which was also `origin/develop`. That baseline carries
+Foundations 16 to 43 and Native frontiers 1 to 3.
 
-The sequence this session added on top of that baseline is **Foundations 40 to 43 plus the
-associated producer-audit, defect-fix and handoff commits**. Resolve where it currently sits with
+The sequence this session added on top of it is **Foundations 44 to 52 plus Native frontier 4**.
+Resolve where it currently sits with
 
 ```sh
 git rev-parse HEAD
@@ -16,261 +14,168 @@ git rev-parse origin/develop
 git log --oneline origin/develop..HEAD    # empty once the sequence is published
 ```
 
-rather than from a count written down here.
+rather than from a count written down here. A handoff outlives the push that follows it, so this
+states the **session-start baseline**, which never moves, and lets git answer everything that does.
 
 | Milestone | What it added | Types | Identities |
 | --- | --- | --- | --- |
-| 16–33, NF1–NF3 | see the published history | 51 | 268 |
-| 34–39 | `Collection<T>`, `GameComponentCollection`, `IDisposable` collapse, the component engine, `GameComponent`, member-level dependency edges | 2 | 23 |
-| 40 | `Graphics.IGraphicsDeviceService` + the interface-producer rule | 1 | 5 |
-| — | `Game#Dispose` defect fix; `GraphicsDeviceManager` producer audit | 0 | 0 |
-| 41 | the four canonical `Game` events + three raisers | 0 | 7 |
-| 42 | `Game`'s four timing/presentation properties | 0 | 4 |
-| 43 | `Game.SuppressDraw` and `Game.ResetElapsedTime` | 0 | 2 |
+| 16–43, NF1–NF3 | see the published history | 136 | — |
+| 44 | `Game.Tick` | 0 | 1 |
+| 45 | `Game.IsActive` | 0 | 1 |
+| 46 | `Dictionary`2` + `LaunchParameters` | 1 | 2 |
+| 47 | `Game`'s protected remainder | 0 | 3 |
+| 48 | `GameWindow` + `Game.Window` | 1 | 21 |
+| 49 | the serialization carrier + two exception types | 2 | 8 |
+| NF4 | the audio-playback audit | **0** | **0** |
+| 50 | `Audio.RendererDetail` | 1 | 7 |
+| 51 | `Media.VisualizationData` | 1 | 3 |
+| 52 | `Media.Video` | 1 | 5 |
 
-The rows are what each milestone added, not what is or is not published. Earlier revisions of this
-file encoded publication state in the prose and in bolded rows, and it went stale twice — once
-already corrected on `origin/develop` by the commit this session started from. A handoff outlives
-the push that follows it, so state the **session-start baseline**, which never moves, and let git
-answer everything that does.
+## Measured state
 
-Strict target **142 types / 1786 member identities**: **136 complete**, six partial native/runtime
-types, 115 missing, **279 deferred diagnostics**. `MISSING_MEMBER` **117**, `PARTIAL_TYPES` 6,
+Strict target **149 types / 1837 member identities**: **143 complete**, six partial native/runtime
+types, 108 missing, **261 deferred diagnostics**. `MISSING_MEMBER` **110**, `PARTIAL_TYPES` 6,
 `PROPERTY_MAPPING_MISMATCH` 1 (`GraphicsDevice::Viewport`, unrelated and pre-existing),
-`OVERLOAD_MAPPING_MISMATCH` **46**, every other structural category 0, allowlist 0, unmeasured 0.
-**17** event identities across **six** owner types.
+`OVERLOAD_MAPPING_MISMATCH` **42**, every other structural category 0, allowlist 0, unmeasured 0.
+**20** event identities across **seven** owner types. **13** projected BCL identities and **8**
+measured thrown exceptions.
 
-CNA ABI **51 / 160 / 290 / 290 / 3 / 63** — up from 39/124/290/290/2/59, twelve additive bindings and
-one new callback type, every symbol already exported by the reviewed library. Zero missing header
-symbols, zero missing library symbols, zero mismatches. **No CNA source was changed and no new
-native binary was built.**
+CNA ABI **68 / 219 / 300 / 300 / 3 / 66** — up from 51/160/290/290/3/63. Seventeen additive bindings,
+three new constants, one new layout, every symbol already exported by the reviewed library. Zero
+missing header symbols, zero missing library symbols, zero mismatches. **No CNA source was changed
+and no new native binary was built.**
 
-## Foundation 40 — the contract, and the rule it forced
+Behaviour corpus **526** observations, zero failures. Suite **1127 runs / 44590 assertions**, zero
+failures, zero skips. Capability registry **103** rows, zero contradictions.
 
-`Graphics.IGraphicsDeviceService` re-derived from the pinned `Graphics.dll`: one get-only
-`GraphicsDevice` property and four events, all four `EventHandler`1<EventArgs>`, every method
-`public hidebysig newslot specialname abstract virtual`. The four `.event` declarations are in the
-order `DeviceDisposing, DeviceReset, DeviceResetting, DeviceCreated`, which is not alphabetical, and
-the projection follows metadata order.
+## Game is one member from complete
 
-It was projectable while `GraphicsDevice` stayed partial because its `externalMemberReferences` are
-**empty** — it names the device in a return position and calls no member of it.
+`Content` alone remains, blocked on the missing `ContentManager`. Foundation 44 took `Tick` off that
+list, 45 `IsActive`, 46 `LaunchParameters`, 47 `Dispose(Boolean)`/`Finalize`/
+`ShowMissingRequirementMessage`, and 48 `Window`.
 
-**Completing it broke the frontier, and closing that is the larger half of the milestone.**
-`DrawableGameComponent` immediately reported `partialDependencySatisfied` with **no blocker**, while
-its `Initialize` still throws `InvalidOperationException(MissingGraphicsDeviceService)`. A producer
-is not a type dependency; it is an *object* that conforms, which a type-level graph cannot see.
+## The one reasoning error this session corrected, three times over
 
-So conformance is measured. An interface has a producer when some type declares it in the pinned
-contract, **and** is complete here, **and** has a Ruby class that actually includes the projected
-module — the third being the only half that proves a live object would answer `is_a?`, which is what
-the `GameServiceContainer` projection of CLR assignability tests. A candidate whose own IL **calls a
-member of** a producerless interface carries `INTERFACE_PRODUCER_MISSING`. Calling is the precise
-test: naming an interface in a signature needs no instance, calling one does.
+Three deferrals were wrong in the same way, and each correction is recorded beside the register entry
+it replaces:
 
-No allowlist, no named type, asked of every interface — and it independently caught a second,
-unrelated pair, `VertexDeclaration` on `IVertexType`. `blockerSummary` is byte-identical to
-Foundation 39's, dependency-complete is still 19, consumable still 0, `selectedNext` still nil.
-
-## The producer audit: deferred, and not for the expected reason
-
-Full evidence in `docs/graphics-device-service-producer-audit.md`.
-
-`GraphicsDeviceManager` implements `IGraphicsDeviceService`, `IDisposable` and
-`IGraphicsDeviceManager`. Its constructor registers **`IGraphicsDeviceManager` first, then
-`IGraphicsDeviceService`**, both under `this`, after an `ArgumentNullException` on a null game and an
-`ArgumentException` duplicate check that tests **only** `IGraphicsDeviceManager`.
-
-The five service members are **public** — implicit implementations. Only `IGraphicsDeviceManager`'s
-three and `IDisposable.Dispose` are explicit. **So the private-protocol precedent was not needed and
-was not invented.**
-
-`get_GraphicsDevice` is `ldfld device`: null from construction until the first creation, non-null
-after, null across a re-creation, null after disposal. `DeviceCreated` is raised at the tail of
-private `CreateDevice`; the other three are relays of `GraphicsDevice.Disposing`, `.DeviceResetting`
-and `.DeviceReset`. In every case the sender is the **manager** and the args are `EventArgs.Empty`.
-
-**Every CNA signal the producer needs already exists.** `cna_graphics_device_manager_subscribe`
-carries all four device events, and `cna_graphics_device_manager_create` — which this binding already
-calls — "registers it as the game's graphics device manager **and graphics device service**".
-Measured from inside every lifecycle callback: both services are registered **before the first
-callback** and unregistered by disposal. `PRODUCER_RUNTIME_MISSING` could not be recorded.
-
-**The blocker is an architecture conflict.** CNA's native `Game` *is* the XNA `Game`; its hook table
-documents that `initialize` runs, then the runtime creates the device, then `load_content`. So Ruby's
-`Game.Initialize` is the *body of the override*, and CNA has already registered both services, run
-its own `HookDeviceEvents` and performed the conditional `LoadContent`. There are two service
-containers, and the C ABI closes the gap deliberately: *"A removal cannot be undone from here, and
-there is deliberately no registration route."*
-
-Restoring XNA's exact `Initialize` tail was measured, not predicted:
-
-```
-device at initialize [nil?, IsDisposed, has borrowed handle]: false, false, true
-LoadContent calls = 2
-```
-
-XNA calls it once, CNA delivers once, Ruby delivers once; registering makes it **two**. No guard can
-hide it, because XNA's lifecycle has no such guard. **Outcome B, taken in full**: unregistered,
-conformance unclaimed, `HookDeviceEvents` still omitted, contract still complete. The four device
-events were deliberately **not** projected onto the manager even though CNA would supply them
-faithfully — that would let the type claim conformance to a service nothing registers.
-
-## The defect this audit found
-
-A `Game` that owned a `GraphicsDeviceManager` **and had actually run** raised
-`CNA::DisposedObjectError` from `Dispose`. `Game#Dispose` releases the manager before destroying the
-host — correctly, per `cna_graphics_device_manager_create`'s "release it before the game" — and
-`cna_game_destroy` then delivers one last `unload_content` whose prologue borrowed the device through
-the just-released handle. A disposed manager now attaches no device, which is the same answer it
-already gave for CNA's `CNA_RESULT_INVALID_STATE`. Two regression tests, both asserting the final
-`unload_content` is still delivered rather than merely that nothing raised.
-
-## Foundations 41–43 — the native Game lifecycle surface
-
-Three facts the IL settles that a summary would get wrong:
-
-- **`OnExiting` loads `ldnull`.** XNA raises `Exiting` with a **null sender** while `OnActivated` and
-  `OnDeactivated` raise with `this`. The projection dispatches `nil`.
-- **`InactiveSleepTime` accepts zero.** Its setter compares with `op_LessThan` while
-  `TargetElapsedTime`'s uses `op_LessThanOrEqual`, so one refuses zero and the other does not —
-  despite the CLR resource being named `InactiveSleepTimeCannotBeZero`. CNA's two routes agree.
-- **`TargetElapsedTime`'s default is `FromTicks(0x28b0b)` = 166667 ticks, which is not `1.0/60`.** A
-  test asserts the two Floats differ so nobody later "simplifies" it.
-
-**`CNA_GameCallbacks::exiting` is the wrong signal for `Exiting`**, and only measurement shows it: it
-fires on every teardown, including `RunOneFrame` that never exited and a `Game` destroyed without
-running, while `CNA_GAME_EVENT_EXITING` fires only on a real loop exit. The C ABI says the callback
-"can stop the game by failing, while these handlers only observe"; XNA's event cannot veto.
-
-**`Disposed` is raised by `Dispose` itself**, not relayed, because CNA's signal only exists once a
-host does and XNA raises the event for every disposal.
-
-The four timing properties are **managed state** — every getter is one `ldfld` — so they answer on a
-Game that never ran, and `CNA_GameCreateInfo` is now built from that state instead of a hardcoded
-pair. `SuppressDraw`/`ResetElapsedTime` are the mirror image: operations on state CNA owns, so they
-forward; before a host exists `ResetElapsedTime` is a *genuine* no-op and `SuppressDraw` is a pending
-request delivered at creation.
-
-Measured order over a real HEADLESS run:
-
-```
-initialize  load_content  begin_run  Activated  update  draw  update  Exiting  end_run
-unload_content  Disposed
-```
-
-`Deactivated` never fires on this host and nothing fabricates one.
-
-## Recorded deviations added by this sequence
-
-- `Game#Dispose` is idempotent because native destruction is not repeatable, so `Disposed` is raised
-  **once** where XNA's unguarded `Dispose(Boolean)` raises it per call. XNA's `Monitor.Enter(this)`
-  belongs to `Dispose(Boolean)`, still missing, and is not taken.
-- TimeSpan seconds are rounded to the nearest whole tick on the way down, not truncated.
-- The native push routes are owner-thread bound where XNA's setters are not, so a timing setter
-  raises off the owner thread once a host exists and does not before.
-
-## Game's remaining one
-
-`Content`, blocked on the missing `ContentManager`. Foundation 44 took `Tick` off this list, 45
-`IsActive`, 46 `LaunchParameters`, 47 the three protected members and 48 `Window`. Foundation 49
-then took the serialization cluster off the BCL frontier, completing `Content.ContentLoadException`
-and `Storage.StorageDeviceNotConnectedException`.
+- **`NATIVE_RUNTIME` means only "this type's IL reaches a native entry point".** It is not a blocker,
+  because **the native runtime this binding has is CNA**. Native frontier 1 first corrected it for
+  `FrameworkDispatcher`; Foundation 48 corrected it for `GameWindow`, whose every abstract member the
+  canonical C ABI already supplies.
+- **A `RUNTIME_DATA` deferral that names a producer is about the producer, not the type.**
+  `RendererDetail` (50), `VisualizationData` (51) and `Video` (52) each had a justification naming
+  the thing that would *fill* them; all three are pure managed and were completed under Foundation
+  25's constructor-free rule. The register is down to two entries, and both are genuine.
+- **A blocker can also be more specific than the register says.** Native frontier 4 measured the
+  audio path rather than assuming it and found the opposite of the other three: the routes exist,
+  execute and report success, but the behaviour is absent. That is `UPSTREAM_CNA_BLOCKED`, not
+  `NATIVE_RUNTIME`.
 
 ## Native frontier 4 — an audit that completed nothing, deliberately
 
-`docs/audio-playback-audit-evidence.md`, measured in `docs/generated/audio-native-report.json`.
+`docs/audio-playback-audit-evidence.md`, measured in `docs/generated/audio-native-report.json` by
+`tools/run_audio_playback_evidence.rb`.
 
-`Audio.SoundEffectInstance` reached the frontier as `NATIVE_RUNTIME`, which means only that its own
-IL reaches a native entry point — the reasoning corrected twice already, for `FrameworkDispatcher`
-and for `GameWindow`. The canonical audio path is **complete** in the ABI and executes end to end,
-and `cna_audio_get_capabilities` reports playback **available**.
+The canonical audio path is **complete** in the ABI — 74 routes, `create_pcm16` through
+`create_instance` to play/pause/resume/stop, the four setters and both destroys — and
+`cna_audio_get_capabilities` reports playback **available**. Driven end to end with one full second
+of mono PCM16, every call reports success, and yet:
 
-What is missing is the behaviour those routes document. `SoundState` never leaves `Stopped` through
-play, three frame steps, an explicit dispatcher pump, pause, resume and stop — every call reporting
-success. One full second of PCM answers a **zero** duration and the sample-duration route fails
-outright. `set_is_looped` is refused with `CNA_RESULT_INVALID_STATE` in every state. Volume, pitch
-and pan do round-trip.
+- `SoundState` **never leaves `Stopped`** through play, three frame steps, an explicit
+  `cna_framework_dispatcher_update`, pause, resume and stop;
+- one full second of PCM answers a **zero** duration, and `get_sample_duration_ticks` **fails**;
+- `set_is_looped` is refused with `CNA_RESULT_INVALID_STATE` in **every** state.
 
-**It is not the null backend**: the measurement is identical with `CNA_AUDIO` unset and with
-`CNA_AUDIO=SDL`. Projecting the two types on this would give a constant `State`, an always-zero
-`Duration`, a `Play` that reports success and does nothing and an `IsLooped` setter that always
-raises, so both stay deferred and the blocker is now `UPSTREAM_CNA_BLOCKED`.
+Volume, pitch and pan do round-trip. **It is not the null backend**: the measurement is identical
+with `CNA_AUDIO` unset and with `CNA_AUDIO=SDL`. Projecting `SoundEffect`/`SoundEffectInstance` on
+this would give a constant `State`, an always-zero `Duration`, a `Play` that reports success and does
+nothing and an `IsLooped` setter that always raises — so both stay deferred.
 
-Audited with them, each with its own distinct reason: `Audio.Cue` needs an XACT engine opened from
-an `.xgs` settings file plus two missing XNA types; `Graphics.EffectAnnotation` needs a compiled
-effect with parameters, and `cna_effect_create_empty` builds one with none;
-`Graphics.TextureCollection` has **no CNA route at all**, which is the one case where
-`NATIVE_RUNTIME` was the right word.
+Audited with them, each with a distinct reason: **`Audio.Cue`** needs an XACT engine opened from an
+`.xgs` settings file plus two missing XNA types; **`Graphics.EffectAnnotation`** needs a compiled
+effect with parameters, and `cna_effect_create_empty` builds one with none; **`Graphics.TextureCollection`**
+has **no CNA route at all**, the one case where `NATIVE_RUNTIME` was the right word.
 
-## Foundation 50 — a deferral that was about the producer
+## Facts a summary would get wrong
 
-`Audio.RendererDetail` sat in the `RUNTIME_DATA` register as "values come from XACT audio renderer
-enumeration; no audio engine exists in this binding and no renderer has been enumerated". That is a
-statement about the **producer**, not the type. The pinned `Xact.dll` shows a sealed value type over
-two private `string` fields whose seven identities are field reads, ordinal string comparisons and an
-XOR — not one native reach among them — so Foundation 25's rule for `Graphics.DisplayMode` applies
-unchanged: an `assembly` constructor projects with construction made private, and completing the type
-implies nothing about the enumerator that would fill it.
+- **`Tick` and `RunOneFrame` are two XNA operations, not one.** `WindowsGameHost.RunOneFrame` is
+  `gameWindow.Tick()`, then `OnIdle()` whose only subscriber is `Game.HostIdle` whose whole body is
+  `this.Tick()`, then the `Guide.IsVisible` relay. The C ABI documents the identical split.
+- **`exitRequested` is written once in the whole assembly and never cleared**, so `Exit()` disables
+  `Tick` permanently. Projected in managed state, because CNA's step after `cna_game_request_exit`
+  still delivers one `Update`.
+- **`Game.IsActive` is not a field read.** It is
+  `isActive && !(GamerServicesDispatcher.IsInitialized && Guide.IsVisible)`, and all three terms have
+  a canonical route. The guide term is *asked*; in this artifact it answers false and
+  `cna_guide_set_is_visible` is accepted without being reflected, so the branch is proved wired by a
+  truth table rather than exercised.
+- **Twenty-two of `Dictionary`2`'s methods are explicit interface implementations** and project to
+  nothing; its `SerializationInfo` constructor is `family`. That is why the serialization question
+  was smaller than it looked.
+- **`Dictionary.Clear` returns at its first branch when empty**, so an empty `Clear` does not bump
+  the version and does not invalidate an enumeration.
+- **`LaunchParameters` keeps a colonless argument** with `String.Empty` as its value; the canonical
+  CNA route skips it. That, plus an upserting `add` and a name-sorted enumeration, is why those
+  routes are deliberately unbound.
+- **Two XNA exception types have two two-argument constructors.** Ruby has no overload by parameter
+  type, which is what forces the serialization carrier to be a nominal identity.
+- **`GameWindow`'s `Title` is the host's**, not a managed shadow: the abstract constructor sets
+  `String.Empty` but `WindowsGameWindow` immediately calls `set_Title(GetDefaultTitleName())`.
+- **`CNA_StringView` is the first aggregate passed by value.** Fiddle cannot pass one, so the
+  manifest expands it into the two System V x86-64 eightbytes and **records the expansion**, which
+  the ABI probe reconstructs and compares against the header.
+- **`Media.Video`'s duration argument is milliseconds**, stored as `new TimeSpan(0, 0, 0, 0, ms)`.
+- **`RendererDetail.ToString` comes from `ValueType`** — the first such case here — and answers the
+  type's own fully-qualified CLR name.
 
-Two facts a summary would round wrong. `GetHashCode` contributes **zero** for an empty *or null*
-component and XORs the two with the name on the left; that shape is exact, while
-`System.String.GetHashCode` is Microsoft-internal and is not reproduced — recorded as a
-language-mapping limitation, since a CLR hash code is documented as implementation-specific. And
-`ToString` is *declared*, forwarding to `ValueType::ToString`, which answers the type's own
-fully-qualified CLR name — a deterministic string belonging to this type rather than a localized
-resource, so it is reproduced literally.
+## Recorded deviations added by this sequence
 
-## Foundation 51 — a deferral that was about the filler
+- `cna_game_tick` is refused from inside a lifecycle callback; XNA has no guard but no usable
+  behaviour there either, so the refusal surfaces as CNA's own translated error.
+- `Game.IsActive` and `Game.Window` are owner-thread bound where XNA's getters are not, and a
+  disposed Game raises where XNA answers a stale field.
+- `Game.Dispose` is still idempotent, so `Disposed` is raised once where XNA raises it per call. The
+  `Monitor.Enter(this)` that Foundation 41 recorded as *not taken* **is now taken**.
+- `GameWindow.SetSupportedOrientations` refuses: the ABI has no route, and orientation is readable
+  there and not settable.
+- `RendererDetail.GetHashCode` reproduces the empty-contributes-zero rule and the XOR exactly, but
+  not `System.String.GetHashCode`.
 
-`Media.VisualizationData` sat in the `RUNTIME_DATA` register as "filled by
-MediaPlayer.GetVisualizationData from live playback". That is a statement about the **filler**, not
-the type. Its constructor is **public** and seventy-five bytes: `new float[0x100]` twice, each
-wrapped in a `ReadOnlyCollection<float>` over the array itself, reaching nothing. Foundation 24
-settled the same case for `AudioListener` and `AudioEmitter`.
+## Measured CNA loop deviations that were **not** re-implemented
 
-Two consequences are measured rather than assumed. Both collections are **256 elements long from
-construction**, every element the CLR `Single` default of zero. And each is a **live view** rather
-than a snapshot, because the CLR constructor stores the array reference and takes no copy — which is
-exactly what would let a filler's writes show through, and exactly what
-`CNA::Runtime::ReadOnlyCollection` has projected since Foundation 29.
+Both belong to the native host, and re-implementing either would double a step CNA performs — the
+rule the `GraphicsDeviceManager` producer audit established:
 
-## Foundation 52 — a deferral that named the producer twice
-
-`Media.Video` sat in the `RUNTIME_DATA` register as "its internal constructor takes a GraphicsDevice,
-one of the deferred partial runtime types, and builds a Duration from tick components the content
-pipeline supplies; no producer exists". **Both halves are about the producer.** Naming a partial type
-in a signature is not a blocker — Foundation 40 established that a type is blocked only when its own
-IL *calls a member* of one, and this constructor merely stores the reference — and "the content
-pipeline supplies the components" says who calls the constructor, not what the type does. Its five
-public identities are one `ldfld` each.
-
-One conversion is measured rather than assumed: `duration` arrives as an `Int32` and is stored as
-`new TimeSpan(0, 0, 0, 0, duration)`, the five-argument form whose last parameter is
-**milliseconds**, so the property answers those milliseconds divided by a thousand.
-
-Retiring the deferral moved the frontier again: `Video` was `Media.VideoPlayer`'s last unmet
-signature dependency, so that candidate entered the il-only blocked list — the same kind of
-transition `GamerServicesComponent` made when `GameWindow` completed.
+- **`doneFirstUpdate`.** XNA sets it at the end of the *base* `Game.Update`, and `DrawFrame` returns
+  early while it is false, so a subclass that overrides `Update` without `super` never draws. Here it
+  does. `RunGame` also sets the flag unconditionally after its priming Update, so a `Run`-driven Game
+  is unaffected either way.
+- **The priming `Update`.** XNA's `RunGame` calls `Update(gameTime)` once with
+  `ElapsedGameTime = TimeSpan.Zero` between `BeginRun()` and the host loop. CNA's `Run` does not.
 
 ## Recommended next frontier
 
-1. **`Game.Tick` — a public architecture decision, not a binding.** `cna_game_tick` exists, but it is
-   documented as "the canonical frame step `cna_game_run_one_frame` wraps; it **does not process host
-   events**", and is refused from inside a lifecycle callback. Projecting it adds a second public
-   frame-step entry point whose semantics differ from `RunOneFrame` in a way a consumer must be told
-   about, plus a re-entrancy contract this binding has no precedent for.
-2. **`Game.IsActive`.** `cna_game_get_is_active` answers the *field*; XNA's property is
-   `isActive && !Guide.IsVisible`. On a host with no GamerServices they agree, but the projection
-   would claim a property whose defining subtlety it cannot observe. Decide explicitly.
-3. **The `Dictionary`2` decision**, unchanged and still the last purely-decisional BCL blocker. It
-   now unblocks something concrete: `LaunchParameters` has a canonical CNA route for every operation
-   and is blocked only on the type.
-4. **The two-container question**, if a graphics-device producer is ever wanted. It cannot be
-   resolved additively: the managed `Game`/`GameServiceContainer` and CNA's native pair are two
-   objects playing the same role, and only CNA's is the one the lifecycle logic runs against.
-5. **A qualification artifact carrying the SDL3 platform**, unchanged and still needing a CNA
-   checkout at `a09196a6…`.
+Twelve dependency-complete candidates remain and **none is consumable**. Four are audited dead ends
+(`SoundEffectInstance`, `Cue`, `EffectAnnotation`, `TextureCollection`), one is `GraphicsAdapter`
+with Native frontier 1's four standing blockers, and `AudioCategory`/`MediaSource` are genuine
+`RUNTIME_DATA`. What is left is three real BCL decisions, in rising order of cost:
+
+1. **`System.IO.Stream`**, which blocks `TitleContainer` (one member, `OpenStream`) and is half of
+   `ContentManager`. The register's rule — project to what the XNA surface can reach — would have to
+   be applied to a base class with a large surface and a real I/O runtime behind it. `storage.h`
+   exposes container routes that may or may not be the right producer; that has **not** been audited.
+2. **`System.Action`1` and the generic `!!0`**, the other half of `ContentManager`, which is also the
+   last member of `Game`.
+3. **`System.ComponentModel`** (`ExpandableObjectConverter`, `ITypeDescriptorContext`,
+   `PropertyDescriptorCollection`), which blocks the whole `Design` converter family.
+
+`SpriteFont` and `Microphone` each keep a small BCL blocker (`System.Char`/`Nullable`1`/
+`StringBuilder`, and `System.Byte[]`) *and* a native one, so neither is unblocked by a BCL decision
+alone.
+
+A qualification artifact carrying the SDL3 platform is unchanged and still needs a CNA checkout at
+`a09196a6…`.
 
 `SELECTED_ONLY=true`
 
@@ -279,26 +184,32 @@ transition `GamerServicesComponent` made when `GameWindow` completed.
 ## Known engineering constraints
 
 - Ruby assignment aliases value objects; copying is enforced at binding boundaries and through `dup`/`clone`.
-- Uppercase XNA instance methods require an explicit receiver in Ruby source (`self.Position`).
+- Uppercase XNA instance methods require an explicit receiver in Ruby source (`self.Position`), and a
+  bare uppercase name in an expression parses as a **constant** — `GetEnumerator.each` is a NameError.
 - Setter methods cannot use Ruby's endless method definition syntax.
 - `NotImplementedError` is a `ScriptError`: a bare `rescue` does not catch an abstract contract member.
-- **Ruby cannot give one method name two visibilities.**
+- **Ruby cannot give one method name two visibilities**, and it cannot overload by parameter type.
 - **`::Monitor`, not `Mutex`, is the analogue of `lock (this)`.**
+- `ValueSemantics#dup` builds through `new`; a type with private construction must override it.
+- **Fiddle cannot pass a struct by value.** The manifest's `by_value` helper expands one into its
+  eightbytes and records the expansion so the ABI probe can check it.
 - `ikdasm` indents nested types, closes with the short name, quotes non-identifier names, wraps long
   operands, and puts a `modopt(...)` return modifier before the method name.
 - **A scanner anchored on one side of a token loses something.** Bound a name on both sides.
-- An IL reference spells a nested type `Parent/Child`; this binding spells it `Parent+Child`.
 - An `implements` list is comma-separated; split only at depth zero.
 - XNA's Framework and Graphics assemblies are mixed-mode C++/CLI; native work is mostly an indirect
   `calli`, not a classic P/Invoke.
 - CNA's platform is a **build-time** selection.
-- **A completed interface is not a provider.** The structural graph cannot see producers; that is
-  what `INTERFACE_PRODUCER_MISSING` measures.
+- **A completed interface is not a provider.** `INTERFACE_PRODUCER_MISSING` measures that.
 - **CNA's native `Game` is the XNA `Game`.** The Ruby `Game` is a callback façade over it, so any
   managed step CNA already performs would be performed twice.
 - The upstream behaviour-corpus source (SHA-256 `398d0201…`) is still absent. Corpus additions are
   merged by documented deterministic replay, which refuses to write unless re-serialising the
-  pre-merge corpus reproduces its bytes exactly. **Fifteen** corrections/merges have been made this
-  way, each proving every retained element unchanged.
+  pre-merge corpus reproduces its bytes exactly. **Twenty-four** merges/corrections have been made
+  this way. A corpus row that censuses this binding's own selection *will* need correcting later;
+  `member_level_dependency.frontier_effect` says so in its own note and moved four times this session.
+- Nothing measured from CNA may enter the behaviour corpus, which is `never CNA output` by
+  construction. Native measurements go to `docs/generated/*-native-report.json` under
+  `CNA_NATIVE_EVIDENCE`.
 - The reconstructed Debian Ruby defaults `GEM_HOME` to the unwritable `/var/lib/gems/3.3.0`, so the
   template's `bundle install` needs one set; `~/deps/cna-ruby-template-bundle` is the standing one.

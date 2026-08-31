@@ -2,7 +2,7 @@
 
 CNA-Ruby is implementing a formally measured Ruby projection of the selected Microsoft XNA Framework 4.0 Windows runtime API over the CNA C ABI.
 
-Native frontier 1 is functional on the qualified Linux x86-64 desktop MRI runtime, but the selected XNA profile is intentionally incomplete. The strict scoreboard targets 135 types and 1714 members from the 257-type / 2915-member Ruby projection; it remains red for genuine deferred work. See `docs/generated/api-compat-report.json` for authoritative counts.
+Native frontier 1 is functional on the qualified Linux x86-64 desktop MRI runtime, but the selected XNA profile is intentionally incomplete. The strict scoreboard targets 149 types and 1837 members from the 257-type / 2915-member Ruby projection; it remains red for genuine deferred work. See `docs/generated/api-compat-report.json` for authoritative counts.
 
 Behaviour is derived from the original Microsoft XNA Framework 4.0 Windows assemblies, located by exact SHA-256 and disassembled with `ikdasm`. `tools/api_compat/reference/XNA_IL_PROVENANCE.md` pins ten of them by hash, size and version; no Microsoft binary is stored in this repository or packaged into the gem.
 

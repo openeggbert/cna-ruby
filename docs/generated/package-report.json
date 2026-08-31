@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "GEM_FILENAME": "cna-ruby-0.1.0.dev0.gem",
   "VERSION": "0.1.0.dev0",
-  "GEM_SHA256": "148b9a1e6fdfc24c71275d9be48ea0c6857b80c5e9048007e00a1d5813cc3ac7",
-  "GEM_ENTRIES": 56,
+  "GEM_SHA256": "3c44934612c4dbc3b5315c1bb6cb5ff364f3b8481aad906588b931de267428c7",
+  "GEM_ENTRIES": 60,
   "FORBIDDEN_ENTRIES": [
 
   ],
@@ -26,6 +26,7 @@
     "lib/cna/runtime/bcl_projection.rb",
     "lib/cna/runtime/collection.rb",
     "lib/cna/runtime/context.rb",
+    "lib/cna/runtime/dictionary.rb",
     "lib/cna/runtime/enum.rb",
     "lib/cna/runtime/event.rb",
     "lib/cna/runtime/exception_support.rb",
@@ -36,6 +37,7 @@
     "lib/cna/runtime/ownership.rb",
     "lib/cna/runtime/packed_vector.rb",
     "lib/cna/runtime/read_only_collection.rb",
+    "lib/cna/runtime/serialization.rb",
     "lib/cna/runtime/value_semantics.rb",
     "lib/cna/runtime/xact_spatial.rb",
     "lib/cna/version.rb",
@@ -55,6 +57,7 @@
     "lib/microsoft/xna/framework/input/touch.rb",
     "lib/microsoft/xna/framework/interfaces.rb",
     "lib/microsoft/xna/framework/media.rb",
+    "lib/microsoft/xna/framework/storage.rb",
     "lib/microsoft/xna/framework/values.rb",
     "sig/cna/runtime_event.rbs",
     "sig/microsoft/xna/audio.rbs",
@@ -68,6 +71,7 @@
     "sig/microsoft/xna/media.rbs",
     "sig/microsoft/xna/packed_vector.rbs",
     "sig/microsoft/xna/presentation_values.rbs",
+    "sig/microsoft/xna/storage.rbs",
     "sig/microsoft/xna/touch.rbs",
     "sig/microsoft/xna/vertex_element.rbs"
   ]
