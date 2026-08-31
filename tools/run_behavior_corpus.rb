@@ -571,6 +571,30 @@ def execute(item)
     ensure
       game.Dispose
     end
+  when "MediaVideo.Contract"
+    # Five get-only properties and no selected constructor: the CLR one is `assembly`, and so are
+    # the two getters GraphicsDevice and Filename, which are therefore not identities.
+    type = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.Media.Video")
+    members = type.fetch("members")
+    [type.fetch("kind"), type.fetch("baseType"), type.fetch("sealed"), members.length,
+     members.to_h { |m| [m.fetch("name"), m.fetch("type")] },
+     members.all? { |m| m.fetch("kind") == "property" && m.fetch("get") && !m.fetch("set") },
+     members.any? { |m| %w[GraphicsDevice Filename].include?(m.fetch("name")) }]
+  when "MediaVideo.Behaviour"
+    # The internal constructor stores all seven arguments with no validation, building duration as
+    # `new TimeSpan(0, 0, 0, 0, duration)` -- the five-argument form, whose last parameter is
+    # milliseconds. TimeSpan projects to Float seconds, and framesPerSecond is a float32 field.
+    build = lambda do |duration, fps|
+      M::Video.__send__(:new, nil, "clip.wmv", duration, 1920, 1080, fps, M::VideoSoundtrackType::Music)
+    end
+    video = build.call(2500, 29.97)
+    [video.Duration, build.call(0, 0.0).Duration, build.call(1, 0.0).Duration,
+     build.call(60_000, 0.0).Duration,
+     video.Width, video.Height, video.VideoSoundtrackType.to_s,
+     video.FramesPerSecond == CNA::Runtime::Numeric.f32(29.97),
+     video.FramesPerSecond == 29.97,
+     M::Video.public_method_defined?(:new),
+     M::Video.method_defined?(:GraphicsDevice), M::Video.method_defined?(:Filename)]
   when "VisualizationData.Contract"
     # Three identities over System.Object: a public parameterless constructor and two get-only
     # ReadOnlyCollection<Single> properties.

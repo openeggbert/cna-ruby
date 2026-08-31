@@ -2,6 +2,16 @@ module Microsoft
   module Xna
     module Framework
       module Media
+        # Five get-only properties, each one `ldfld`. Construction is private because the CLR
+        # constructor is `assembly`; nothing in this binding produces one.
+        class Video
+          attr_reader Duration: Float
+          attr_reader Width: Integer
+          attr_reader Height: Integer
+          attr_reader FramesPerSecond: Float
+          attr_reader VideoSoundtrackType: VideoSoundtrackType
+        end
+
         # A public parameterless constructor allocating two 256-element float arrays, each wrapped
         # in a live ReadOnlyCollection view. Nothing in this binding fills them.
         class VisualizationData

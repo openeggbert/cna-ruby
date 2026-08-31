@@ -25,8 +25,15 @@ il_types = il_inventory.fetch("types")
 RUNTIME_DATA = {
   "Microsoft.Xna.Framework.Audio.AudioCategory" => "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have",
   "Microsoft.Xna.Framework.Media.MediaSource" => "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried",
-  "Microsoft.Xna.Framework.Media.Video" => "its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies; no producer exists"
 }.freeze
+
+# Video was in this register until Foundation 52, on the reasoning that "its internal constructor
+# takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick
+# components the content pipeline supplies; no producer exists". Both halves are about the producer.
+# Naming a partial type in a signature is not a blocker -- Foundation 40 established that a type is
+# blocked only when its own IL *calls a member* of one, and this constructor merely stores the
+# reference -- and "the content pipeline supplies the components" says who calls the constructor,
+# not what the type does. Its five public identities are one ldfld each.
 
 # VisualizationData was in this register until Foundation 51, on the reasoning that it is "filled by
 # MediaPlayer.GetVisualizationData from live playback". That is a statement about the *filler*, not

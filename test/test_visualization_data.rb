@@ -51,7 +51,7 @@ class VisualizationDataTest < Minitest::Test
     assert_includes STRICT.fetch("completeTypeNames"), CLR
     refute_includes FRONTIER.fetch("runtimeDataRegister").keys, CLR
     refute(FRONTIER.fetch("dependencyCompleteCandidates").any? { |c| c.fetch("name") == CLR })
-    assert_equal 142, STRICT.fetch("COMPLETE_TYPES")
+    assert_equal 143, STRICT.fetch("COMPLETE_TYPES")
   end
 
   # ------------------------------------------------------------------------------- the constructor
@@ -106,7 +106,8 @@ class VisualizationDataTest < Minitest::Test
 
   # Completing it implies no filler, which is the whole of what the deferral was about.
   def test_it_implies_no_media_runtime_and_nothing_fills_it
-    %i[MediaPlayer MediaLibrary Song Album Playlist Video VideoPlayer MediaSource]
+    # Video arrived in Foundation 52 from its own IL; it is not a filler either.
+    %i[MediaPlayer MediaLibrary Song Album Playlist VideoPlayer MediaSource]
       .each { |absent| refute F::Media.const_defined?(absent, false), "Media::#{absent}" }
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     refute(symbols.any? { |symbol| symbol.include?("media") || symbol.include?("visualization") })

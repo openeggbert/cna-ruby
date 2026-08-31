@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "17538b1ca9d48a993e2cd88c96b436df08e7abb4aec5d4758eb21feb580d6e06",
+  "derivation": "Foundation 52 Media.Video, read from the pinned Microsoft.Xna.Framework.Video.dll. It is `.class public auto ansi sealed beforefieldinit` extending System.Object over seven private fields -- filename, duration, width, height, framesPerSecond, graphicsDevice and soundtrackType -- with five public get-only properties, each one ldfld, and two `assembly` getters, get_GraphicsDevice and get_Filename, which are not identities. The single constructor is `assembly` and stores all seven arguments with no validation; the one conversion it performs is duration, which arrives as an Int32 and is stored as `new TimeSpan(0, 0, 0, 0, duration)` -- the five-argument form whose last parameter is milliseconds. The constructor's first argument is a Graphics.GraphicsDevice, which it stores and calls no member of, which is why naming a partial type here was never a blocker under the Foundation 40 rule.",
+  "observations": [
+    {
+      "id": "media_video.contract",
+      "operation": "MediaVideo.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": ["class", "System.Object", true, 5, {"Duration": "System.TimeSpan", "Width": "System.Int32", "Height": "System.Int32", "FramesPerSecond": "System.Single", "VideoSoundtrackType": "Microsoft.Xna.Framework.Media.VideoSoundtrackType"}, true, false]
+    },
+    {
+      "id": "media_video.behaviour",
+      "operation": "MediaVideo.Behaviour",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [2.5, 0.0, 0.001, 60.0, 1920, 1080, "Music", true, false, false, false, false]
+    }
+  ]
+}

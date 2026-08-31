@@ -235,6 +235,24 @@ than a snapshot, because the CLR constructor stores the array reference and take
 exactly what would let a filler's writes show through, and exactly what
 `CNA::Runtime::ReadOnlyCollection` has projected since Foundation 29.
 
+## Foundation 52 — a deferral that named the producer twice
+
+`Media.Video` sat in the `RUNTIME_DATA` register as "its internal constructor takes a GraphicsDevice,
+one of the deferred partial runtime types, and builds a Duration from tick components the content
+pipeline supplies; no producer exists". **Both halves are about the producer.** Naming a partial type
+in a signature is not a blocker — Foundation 40 established that a type is blocked only when its own
+IL *calls a member* of one, and this constructor merely stores the reference — and "the content
+pipeline supplies the components" says who calls the constructor, not what the type does. Its five
+public identities are one `ldfld` each.
+
+One conversion is measured rather than assumed: `duration` arrives as an `Int32` and is stored as
+`new TimeSpan(0, 0, 0, 0, duration)`, the five-argument form whose last parameter is
+**milliseconds**, so the property answers those milliseconds divided by a thousand.
+
+Retiring the deferral moved the frontier again: `Video` was `Media.VideoPlayer`'s last unmet
+signature dependency, so that candidate entered the il-only blocked list — the same kind of
+transition `GamerServicesComponent` made when `GameWindow` completed.
+
 ## Recommended next frontier
 
 1. **`Game.Tick` — a public architecture decision, not a binding.** `cna_game_tick` exists, but it is

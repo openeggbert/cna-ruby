@@ -763,7 +763,7 @@ class RbsRuntimeConsistencyTest < Minitest::Test
        %w[AudioChannels AudioStopOptions MicrophoneState SoundState RendererDetail] + exceptions,
      "::Microsoft::Xna::Framework::Media" =>
        %w[MediaSourceType MediaState VideoSoundtrackType VisualizationData
-          VisualizationData::FloatCollection]}.each do |namespace, expected|
+          VisualizationData::FloatCollection Video]}.each do |namespace, expected|
       declared = environment.class_decls.keys.map(&:to_s).select { |name| name.start_with?("#{namespace}::") }
       assert_equal expected.map { |name| "#{namespace}::#{name}" }.sort, declared.sort
       declared.each do |name|
@@ -777,6 +777,9 @@ class RbsRuntimeConsistencyTest < Minitest::Test
         elsif short == "VisualizationData"
           # Foundation 51: an ordinary managed holder, neither enum nor exception.
           assert_equal Object, runtime_type.superclass, name
+        elsif short == "Video"
+          # Foundation 52: an ordinary managed holder, neither enum nor exception.
+          assert_equal Object, runtime_type.superclass, name
         elsif short == "FloatCollection"
           # Its nested ReadOnlyCollection<float>, closed over System.Single.
           assert_operator runtime_type, :<, CNA::Runtime::ReadOnlyCollection, name
@@ -787,8 +790,9 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     end
 
     # Substring checks would match the selected MicrophoneState literal, so assert on declarations.
+    # Video left this list in Foundation 52, projected from its own IL as five ldfld getters.
     %w[SoundEffect Microphone AudioEngine WaveBank SoundBank Cue MediaPlayer MediaLibrary
-       Song Album Video VideoPlayer Playlist].each do |absent|
+       Song Album VideoPlayer Playlist].each do |absent|
       %w[audio.rbs media.rbs].each do |file|
         refute_includes SIGNATURE_ROOT.join("microsoft", "xna", file).read, "class #{absent}\n"
       end

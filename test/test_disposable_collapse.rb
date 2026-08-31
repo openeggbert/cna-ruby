@@ -243,7 +243,7 @@ class DisposableCollapseTest < Minitest::Test
     # window routes, and BCL_PROJECTION fell to 2 when Foundation 49 projected the
     # SerializationInfo/StreamingContext pair and consumed both exception types that named it.
     assert_equal({"BCL_PROJECTION" => 2, "BCL_PROJECTION+NATIVE_RUNTIME" => 3,
-                  "NATIVE_RUNTIME" => 5, "NATIVE_RUNTIME+RUNTIME_DATA" => 1, "RUNTIME_DATA" => 2},
+                  "NATIVE_RUNTIME" => 5, "NATIVE_RUNTIME+RUNTIME_DATA" => 1, "RUNTIME_DATA" => 1},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end
@@ -285,7 +285,7 @@ class DisposableCollapseTest < Minitest::Test
   def test_it_completes_no_type_and_moves_no_missing_member
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
     assert_equal 110, STRICT.fetch("MISSING_MEMBER")
-    assert_equal 142, STRICT.fetch("COMPLETE_TYPES"),
+    assert_equal 143, STRICT.fetch("COMPLETE_TYPES"),
                  "Foundation 38 added GameComponent, 40 IGraphicsDeviceService, 46 " \
                  "LaunchParameters, 48 GameWindow"
     assert_includes STRICT.fetch("partialTypes").keys, "Microsoft.Xna.Framework.Game"

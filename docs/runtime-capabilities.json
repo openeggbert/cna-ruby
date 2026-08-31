@@ -98,7 +98,7 @@
       "id": "managed.pure-enum-batch.media",
       "category": "VERIFIED_MANAGED",
       "status": "verified complete enum metadata contracts",
-      "evidence": "Foundation 16 batch: MediaSourceType (sparse: LocalDevice=0, WindowsMediaConnect=4), MediaState (pinned declaration order Paused=2, Playing=1, Stopped=0), VideoSoundtrackType; 3 types / 8 Ruby identities. Enum metadata contract only. This capability claims no MediaPlayer, MediaLibrary, Song, Video or playback support. Foundation 51 later added VisualizationData to the same namespace from its own IL, a fourth type this batch neither implies nor produces"
+      "evidence": "Foundation 16 batch: MediaSourceType (sparse: LocalDevice=0, WindowsMediaConnect=4), MediaState (pinned declaration order Paused=2, Playing=1, Stopped=0), VideoSoundtrackType; 3 types / 8 Ruby identities. Enum metadata contract only. This capability claims no MediaPlayer, MediaLibrary, Song, Video or playback support. Foundations 51 and 52 later added VisualizationData and Video to the same namespace from their own IL, two types this batch neither implies nor produces"
     },
     {
       "id": "managed.touch-closure",
@@ -303,6 +303,12 @@
       "category": "VERIFIED_NATIVE",
       "status": "verified",
       "evidence": "39 exports, 124 signatures, 290+290 layout measurements, 2 callbacks, 59 constants"
+    },
+    {
+      "id": "managed.media-video",
+      "category": "VERIFIED_MANAGED",
+      "status": "verified complete managed type",
+      "evidence": "Foundation 52: Media.Video, 1 type / 5 identities. Its deferral was RUNTIME_DATA -- its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies -- and both halves are about the producer. Naming a partial type in a signature is not a blocker: Foundation 40 established that a type is blocked only when its own IL calls a member of one, and this constructor merely stores the reference; and the content pipeline supplying the components says who calls the constructor, not what the type does. The pinned Video.dll shows a sealed class over seven private fields with five public get-only properties, each one ldfld, plus two assembly getters -- GraphicsDevice and Filename -- which are not identities and are not projected. The constructor is assembly, so construction is private under the Foundation 25 rule, and it stores all seven arguments with no validation. One conversion is measured rather than assumed: duration arrives as an Int32 and is stored as new TimeSpan(0, 0, 0, 0, duration), the five-argument form whose last parameter is milliseconds, so the property answers those milliseconds divided by a thousand; framesPerSecond is a float32 field and rounds to binary32. Retiring the deferral also moved the frontier: Video was Media.VideoPlayer's last unmet signature dependency, so that candidate entered the il-only blocked list. Completing it claims no MediaPlayer, MediaLibrary, Song, Album, Playlist or VideoPlayer, binds no CNA media or video route, decodes nothing and plays nothing"
     },
     {
       "id": "managed.visualization-data",
@@ -548,7 +554,7 @@
       "id": "audio-media",
       "category": "UNIMPLEMENTED_CNA_RUBY",
       "status": "deferred",
-      "evidence": "Managed contracts only. Audio holds AudioChannels, AudioStopOptions, MicrophoneState, SoundState, InstancePlayLimitException, NoAudioHardwareException, NoMicrophoneConnectedException, AudioListener, AudioEmitter and RendererDetail, the last added by Foundation 50 as a sealed value type over two strings whose producer -- an XACT AudioEngine -- is still absent; Media holds MediaSourceType, MediaState, VideoSoundtrackType and VisualizationData, the last added by Foundation 51 as a constructible holder of two 256-element zero-filled collections whose filler -- MediaPlayer.GetVisualizationData -- is still absent. Every audio and media runtime remains absent and unimplemented: no engine, no device, no playback, no XACT, no MediaPlayer or MediaLibrary, and nothing that produces visualisation data. Exactly one canonical CNA route touches this subsystem: FrameworkDispatcher.Update forwards to cna_framework_dispatcher_update, which drains CNA own pending audio and media work. The drain is real; its managed fan-out reaches nothing here, because none of the five XNA sinks the pinned IL dispatches to has a Ruby projection. Nothing here makes a sound, plays anything or reads a device"
+      "evidence": "Managed contracts only. Audio holds AudioChannels, AudioStopOptions, MicrophoneState, SoundState, InstancePlayLimitException, NoAudioHardwareException, NoMicrophoneConnectedException, AudioListener, AudioEmitter and RendererDetail, the last added by Foundation 50 as a sealed value type over two strings whose producer -- an XACT AudioEngine -- is still absent; Media holds MediaSourceType, MediaState, VideoSoundtrackType, VisualizationData and Video, the last two added by Foundations 51 and 52 -- VisualizationData as a constructible holder of two 256-element zero-filled collections whose filler -- MediaPlayer.GetVisualizationData -- is still absent. Every audio and media runtime remains absent and unimplemented: no engine, no device, no playback, no XACT, no MediaPlayer or MediaLibrary, and nothing that produces visualisation data. Exactly one canonical CNA route touches this subsystem: FrameworkDispatcher.Update forwards to cna_framework_dispatcher_update, which drains CNA own pending audio and media work. The drain is real; its managed fan-out reaches nothing here, because none of the five XNA sinks the pinned IL dispatches to has a Ruby projection. Nothing here makes a sound, plays anything or reads a device"
     },
     {
       "id": "input.touch",

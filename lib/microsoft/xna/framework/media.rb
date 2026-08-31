@@ -72,6 +72,45 @@ module Microsoft
           end
         end
 
+        # Derived from the pinned Microsoft.Xna.Framework.Video.dll IL.
+        #
+        # `.class public auto ansi sealed beforefieldinit` over seven private fields, with five
+        # public get-only properties -- each one `ldfld` -- and two `assembly` getters,
+        # `GraphicsDevice` and `Filename`, which are not identities and are not projected.
+        #
+        # Its deferral was `RUNTIME_DATA`: "its internal constructor takes a GraphicsDevice, one of
+        # the deferred partial runtime types, and builds a Duration from tick components the content
+        # pipeline supplies; no producer exists". Both halves are about the **producer**. Naming a
+        # partial type in a signature is not a blocker -- Foundation 40 established that a type is
+        # blocked only when its own IL *calls a member* of one, and this constructor merely stores
+        # the reference -- and "the content pipeline supplies the components" is a statement about
+        # who calls the constructor, not about what the type does.
+        #
+        # The constructor is `assembly`, so `new` is private under the Foundation 25 rule, and it
+        # stores all seven arguments with no validation. One conversion is worth naming: `duration`
+        # arrives as an `Int32` and the field is built as `new TimeSpan(0, 0, 0, 0, duration)` --
+        # the five-argument form, whose last parameter is **milliseconds**. This binding projects
+        # `System.TimeSpan` as Float seconds, so the property answers those milliseconds divided by
+        # a thousand.
+        class Video
+          N = CNA::Runtime::Numeric
+          private_constant :N
+
+          attr_reader :Duration, :Width, :Height, :FramesPerSecond, :VideoSoundtrackType
+
+          def initialize(device, file, duration, width, height, frames_per_second, soundtrack_type)
+            @graphics_device = device
+            @filename = file.nil? ? nil : String(file).dup.freeze
+            @Duration = CNA::Runtime::BclProjection.time_span(N.int32(duration, "duration") / 1000.0)
+            @Width = N.int32(width, "width")
+            @Height = N.int32(height, "height")
+            @FramesPerSecond = N.f32(frames_per_second)
+            @VideoSoundtrackType = Media::VideoSoundtrackType.coerce(soundtrack_type)
+            freeze
+          end
+          private_class_method :new
+        end
+
         class VideoSoundtrackType < CNA::Runtime::EnumValue
           extend CNA::Runtime::EnumType
           define_values({

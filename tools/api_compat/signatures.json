@@ -36811,6 +36811,91 @@
       ]
     },
     {
+      "name": "Microsoft.Xna.Framework.Media.Video",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Media::Video",
+      "members": [
+        {
+          "kind": "property",
+          "name": "Duration",
+          "type": "System.TimeSpan",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Width",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Height",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "FramesPerSecond",
+          "type": "System.Single",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "VideoSoundtrackType",
+          "type": "Microsoft.Xna.Framework.Media.VideoSoundtrackType",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ]
+    },
+    {
       "name": "Microsoft.Xna.Framework.GameServiceContainer",
       "kind": "class",
       "flags": false,

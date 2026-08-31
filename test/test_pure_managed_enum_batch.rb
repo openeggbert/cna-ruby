@@ -325,7 +325,7 @@ class PureManagedEnumBatchTest < Minitest::Test
     end
     # VisualizationData arrived in Foundation 51 from its own IL: a constructible holder whose
     # filler, MediaPlayer.GetVisualizationData, is still one of the names below.
-    %i[MediaPlayer MediaLibrary MediaSource Song Album Artist Video VideoPlayer Playlist
+    %i[MediaPlayer MediaLibrary MediaSource Song Album Artist VideoPlayer Playlist
        Picture PictureAlbum].each do |name|
       refute M.const_defined?(name, false), "Media::#{name}"
     end
@@ -354,7 +354,7 @@ class PureManagedEnumBatchTest < Minitest::Test
       # types TouchLocation and GestureSample; Audio carries the three Foundation 22 exception
       # types. None of those is an enum.
       value_types = %i[TouchPanelCapabilities TouchLocation GestureSample TouchCollection
-                       TouchPanel AudioListener AudioEmitter RendererDetail VisualizationData]
+                       TouchPanel AudioListener AudioEmitter RendererDetail VisualizationData Video]
       extras = declared & value_types
       extras += declared.grep(/Exception\z/)
       assert_equal (selected + extras).uniq.sort, declared, namespace.name

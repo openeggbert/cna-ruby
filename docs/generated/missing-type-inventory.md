@@ -103,7 +103,6 @@
 - `Microsoft.Xna.Framework.Media.PlaylistCollection`
 - `Microsoft.Xna.Framework.Media.Song`
 - `Microsoft.Xna.Framework.Media.SongCollection`
-- `Microsoft.Xna.Framework.Media.Video`
 - `Microsoft.Xna.Framework.Media.VideoPlayer`
 - `Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs`
 - `Microsoft.Xna.Framework.Storage.StorageContainer`

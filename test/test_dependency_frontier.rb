@@ -329,7 +329,7 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 13, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 12, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -507,7 +507,6 @@ class DependencyFrontierTest < Minitest::Test
       "Microsoft.Xna.Framework.Audio.Microphone" => "NATIVE_RUNTIME",
       "Microsoft.Xna.Framework.Graphics.EffectAnnotation" => "NATIVE_RUNTIME",
       "Microsoft.Xna.Framework.Graphics.TextureCollection" => "NATIVE_RUNTIME",
-      "Microsoft.Xna.Framework.Media.Video" => "RUNTIME_DATA",
       "Microsoft.Xna.Framework.TitleContainer" => "BCL_PROJECTION"
     }.each do |name, expected|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, the Foundation 40 graphics device service, the Foundation 41 canonical Game events, the Foundation 42 Game timing and presentation properties, the Foundation 44 Game.Tick projection, the Foundation 45 Game.IsActive projection, the Foundation 46 Dictionary`2 / LaunchParameters projection, the Foundation 47 Game protected remainder, the Foundation 48 GameWindow projection, the Foundation 49 serialization carrier, the Foundation 50 RendererDetail projection, and the Foundation 51 VisualizationData projection separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, the Foundation 40 graphics device service, the Foundation 41 canonical Game events, the Foundation 42 Game timing and presentation properties, the Foundation 44 Game.Tick projection, the Foundation 45 Game.IsActive projection, the Foundation 46 Dictionary`2 / LaunchParameters projection, the Foundation 47 Game protected remainder, the Foundation 48 GameWindow projection, the Foundation 49 serialization carrier, the Foundation 50 RendererDetail projection, the Foundation 51 VisualizationData projection, and the Foundation 52 Media.Video projection separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
   "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
@@ -13650,16 +13650,16 @@
       "operation": "MemberLevelDependency.FrontierEffect",
       "args": [],
       "provenance": "RUBY_MAPPING_QUALIFICATION",
-      "note": "Foundation 39 measured this row as IGraphicsDeviceService with 13 il-only blocked candidates. Foundation 40 built that candidate, so it left the candidate list and the row now names the type the refinement uncovered behind it. This is a RUBY_MAPPING_QUALIFICATION row -- a measurement of this projection's own frontier, which a milestone acting on the frontier is expected to move -- not an XNA fact. Foundation 46 moved it again, from 19 candidates to 18, by projecting Dictionary`2 and consuming LaunchParameters -- the only entry that left. Foundation 48 moved it a third time: building GameWindow took the candidate count from 18 to 17, and because GameWindow was GamerServicesComponent's only il-only unmet dependency, that candidate moved from the il-only blocked list -- 12 to 11 -- into partialDependencySatisfied, which is precisely the transition this row exists to observe. Foundation 49 moved it a fourth time, 17 candidates to 15, by projecting the SerializationInfo/StreamingContext pair and consuming both exception types that named it. Foundation 50 moved it a fifth time, 15 candidates to 14, by projecting Audio.RendererDetail, whose deferral was about its producer rather than the type. Foundation 51 moved it a sixth time, 14 candidates to 13, by projecting Media.VisualizationData, whose deferral was about its filler rather than the type.",
+      "note": "Foundation 39 measured this row as IGraphicsDeviceService with 13 il-only blocked candidates. Foundation 40 built that candidate, so it left the candidate list and the row now names the type the refinement uncovered behind it. This is a RUBY_MAPPING_QUALIFICATION row -- a measurement of this projection's own frontier, which a milestone acting on the frontier is expected to move -- not an XNA fact. Foundation 46 moved it again, from 19 candidates to 18, by projecting Dictionary`2 and consuming LaunchParameters -- the only entry that left. Foundation 48 moved it a third time: building GameWindow took the candidate count from 18 to 17, and because GameWindow was GamerServicesComponent's only il-only unmet dependency, that candidate moved from the il-only blocked list -- 12 to 11 -- into partialDependencySatisfied, which is precisely the transition this row exists to observe. Foundation 49 moved it a fourth time, 17 candidates to 15, by projecting the SerializationInfo/StreamingContext pair and consuming both exception types that named it. Foundation 50 moved it a fifth time, 15 candidates to 14, by projecting Audio.RendererDetail, whose deferral was about its producer rather than the type. Foundation 51 moved it a sixth time, 14 candidates to 13, by projecting Media.VisualizationData, whose deferral was about its filler rather than the type. Foundation 52 moved it a seventh time, 13 candidates to 12, by projecting Media.Video, whose deferral was about its producer rather than the type. Foundation 52 moved it a seventh time by projecting Media.Video, whose deferral was about its producer rather than the type: 13 candidates to 12, and because Video was Media.VideoPlayer's last unmet signature dependency, that candidate entered the il-only blocked list, 11 to 12.",
       "expected": [
-        13,
+        12,
         0,
         "none-consumable",
         [
           "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent",
           "Microsoft.Xna.Framework.DrawableGameComponent"
         ],
-        11,
+        12,
         6
       ]
     },
@@ -14670,6 +14670,47 @@
         ],
         true
       ]
+    },
+    {
+      "id": "media_video.contract",
+      "operation": "MediaVideo.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "class",
+        "System.Object",
+        true,
+        5,
+        {
+          "Duration": "System.TimeSpan",
+          "Width": "System.Int32",
+          "Height": "System.Int32",
+          "FramesPerSecond": "System.Single",
+          "VideoSoundtrackType": "Microsoft.Xna.Framework.Media.VideoSoundtrackType"
+        },
+        true,
+        false
+      ]
+    },
+    {
+      "id": "media_video.behaviour",
+      "operation": "MediaVideo.Behaviour",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        2.5,
+        0.0,
+        0.001,
+        60.0,
+        1920,
+        1080,
+        "Music",
+        true,
+        false,
+        false,
+        false,
+        false
+      ]
     }
   ],
   "milestone31SourceAssemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
@@ -14723,5 +14764,8 @@
   "milestone50CorpusCorrection": "member_level_dependency.frontier_effect pins this projection's own frontier, and its own note records that a milestone acting on the frontier is expected to move it. Foundation 50 did: Audio.RendererDetail's RUNTIME_DATA deferral was about its producer -- an XACT AudioEngine -- and not about the type, whose seven identities are field reads, ordinal string comparisons and an XOR, so projecting it consumed the candidate and dependencyCompleteCandidates falls from 15 to 14. Exactly that one element changed. A re-serialisation replay was available and was used: byte-preserving serialisation of the pre-correction corpus (SHA-256 9d06051c6f115b89aba4bc745d7f36194f639ebdd47059fdfc4dc688e9c28430, 522 observations) was proved first, and exactly one observation differs afterwards.",
   "milestone51SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
   "milestone51MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 cfdba3d829de934cfb3a70098a34b839e8ca11979e2c8320c6475d43750d5663, 522 observations) was proved before appending 2 additive observations",
-  "milestone51CorpusCorrection": "member_level_dependency.frontier_effect pins this projection's own frontier, and its own note records that a milestone acting on the frontier is expected to move it. Foundation 51 did: Media.VisualizationData's RUNTIME_DATA deferral named MediaPlayer.GetVisualizationData, which is the *filler* and not the type -- its public constructor allocates two float[0x100] arrays, wraps each in a ReadOnlyCollection and reaches nothing -- so projecting it consumed the candidate and dependencyCompleteCandidates falls from 14 to 13. Exactly that one element changed. A re-serialisation replay was available and was used: byte-preserving serialisation of the pre-correction corpus (SHA-256 ff1d9662c704c78223743c59db9563ca7b1af7f34e56e5baa9e34b2a3391832d, 524 observations) was proved first, and exactly one observation differs afterwards."
+  "milestone51CorpusCorrection": "member_level_dependency.frontier_effect pins this projection's own frontier, and its own note records that a milestone acting on the frontier is expected to move it. Foundation 51 did: Media.VisualizationData's RUNTIME_DATA deferral named MediaPlayer.GetVisualizationData, which is the *filler* and not the type -- its public constructor allocates two float[0x100] arrays, wraps each in a ReadOnlyCollection and reaches nothing -- so projecting it consumed the candidate and dependencyCompleteCandidates falls from 14 to 13. Exactly that one element changed. A re-serialisation replay was available and was used: byte-preserving serialisation of the pre-correction corpus (SHA-256 ff1d9662c704c78223743c59db9563ca7b1af7f34e56e5baa9e34b2a3391832d, 524 observations) was proved first, and exactly one observation differs afterwards.",
+  "milestone52SourceAssemblySha256": "17538b1ca9d48a993e2cd88c96b436df08e7abb4aec5d4758eb21feb580d6e06",
+  "milestone52MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 54555ae38b59c3656f3aa465eed950058741caabe78aec9f70784398d93f9987, 524 observations) was proved before appending 2 additive observations",
+  "milestone52CorpusCorrection": "member_level_dependency.frontier_effect pins this projection's own frontier, and its own note records that a milestone acting on the frontier is expected to move it. Foundation 52 did: Media.Video's RUNTIME_DATA deferral named its internal constructor's GraphicsDevice parameter and the content pipeline that supplies its components, both statements about the *producer* rather than the type -- whose five public identities are one ldfld each -- so projecting it consumed the candidate and dependencyCompleteCandidates falls from 13 to 12. Exactly that one element changed. A re-serialisation replay was available and was used: byte-preserving serialisation of the pre-correction corpus (SHA-256 abb1c65030a6a428bca94033bfa8dcd3af7094b145395ab7c936db72cc2282a9, 526 observations) was proved first, and exactly one observation differs afterwards."
 }

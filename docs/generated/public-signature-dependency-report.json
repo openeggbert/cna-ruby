@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 148,
-  "completeTypes": 142,
+  "targetTypes": 149,
+  "completeTypes": 143,
   "partialTypes": [
     "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -11,7 +11,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 109,
+  "missingTypes": 108,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -22,8 +22,7 @@
   },
   "runtimeDataRegister": {
     "Microsoft.Xna.Framework.Audio.AudioCategory": "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have",
-    "Microsoft.Xna.Framework.Media.MediaSource": "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried",
-    "Microsoft.Xna.Framework.Media.Video": "its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies; no producer exists"
+    "Microsoft.Xna.Framework.Media.MediaSource": "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried"
   },
   "retiredBlockers": {
     "EVENT_PROJECTION": "retired in Foundation 20; one CLR event projects to one Ruby event reader over CNA::Runtime::Event and the API verifier measures it under EVENT_MAPPING_MISMATCH. The residue is BCL_PROJECTION on the EventHandler`1 support type and, for classes, the IL that decides when the event is raised.",
@@ -91,7 +90,7 @@
     "BCL_PROJECTION+NATIVE_RUNTIME": 3,
     "NATIVE_RUNTIME": 5,
     "NATIVE_RUNTIME+RUNTIME_DATA": 1,
-    "RUNTIME_DATA": 2
+    "RUNTIME_DATA": 1
   },
   "partialDependencySatisfiedCandidates": [
     {
@@ -888,6 +887,91 @@
       "runtimeDataDetail": null
     },
     {
+      "name": "Microsoft.Xna.Framework.Media.VideoPlayer",
+      "kind": "class",
+      "expectedRubyIdentities": 15,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.Texture2D",
+        "Microsoft.Xna.Framework.Media.MediaState",
+        "Microsoft.Xna.Framework.Media.Video"
+      ],
+      "unmetDependencies": [
+        "Microsoft.Xna.Framework.Graphics.Texture2D"
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+        "Microsoft.Xna.Framework.Graphics.Texture2D": {
+          "reachedMembers": [
+            ".ctor",
+            "Height",
+            "Width"
+          ],
+          "reachedButMissing": [
+            ".ctor"
+          ]
+        }
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
+      ],
+      "ilOnlyUnmetDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": false,
+      "blockers": [
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "Dispose",
+        "Finalize",
+        "Play",
+        "Pause",
+        "Resume",
+        "Stop",
+        "GetTexture"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Video.dll",
+      "nativeReachableMethods": [
+        ".ctor",
+        "AllocateTextures",
+        "DestroyDecoder",
+        "Dispose",
+        "Finalize",
+        "GetTexture",
+        "Pause",
+        "Play",
+        "Resume",
+        "Stop",
+        "get_PlayPosition",
+        "get_State",
+        "set_IsLooped",
+        "set_IsMuted",
+        "set_Volume"
+      ],
+      "runtimeDataDetail": null
+    },
+    {
       "name": "Microsoft.Xna.Framework.Audio.SoundEffectInstance",
       "kind": "class",
       "expectedRubyIdentities": 16,
@@ -1208,58 +1292,6 @@
 
       ],
       "runtimeDataDetail": "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried"
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Media.Video",
-      "kind": "class",
-      "expectedRubyIdentities": 5,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Media.VideoSoundtrackType"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-
-      ],
-      "ilOnlyUnmetDependencies": [
-
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "RUNTIME_DATA"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-
-      ],
-      "ilDerivationRequired": false,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Video.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": "its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies; no producer exists"
     },
     {
       "name": "Microsoft.Xna.Framework.Graphics.SpriteFont",
