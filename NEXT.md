@@ -221,6 +221,20 @@ language-mapping limitation, since a CLR hash code is documented as implementati
 fully-qualified CLR name — a deterministic string belonging to this type rather than a localized
 resource, so it is reproduced literally.
 
+## Foundation 51 — a deferral that was about the filler
+
+`Media.VisualizationData` sat in the `RUNTIME_DATA` register as "filled by
+MediaPlayer.GetVisualizationData from live playback". That is a statement about the **filler**, not
+the type. Its constructor is **public** and seventy-five bytes: `new float[0x100]` twice, each
+wrapped in a `ReadOnlyCollection<float>` over the array itself, reaching nothing. Foundation 24
+settled the same case for `AudioListener` and `AudioEmitter`.
+
+Two consequences are measured rather than assumed. Both collections are **256 elements long from
+construction**, every element the CLR `Single` default of zero. And each is a **live view** rather
+than a snapshot, because the CLR constructor stores the array reference and takes no copy — which is
+exactly what would let a filler's writes show through, and exactly what
+`CNA::Runtime::ReadOnlyCollection` has projected since Foundation 29.
+
 ## Recommended next frontier
 
 1. **`Game.Tick` — a public architecture decision, not a binding.** `cna_game_tick` exists, but it is

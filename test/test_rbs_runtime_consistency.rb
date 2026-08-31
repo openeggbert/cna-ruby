@@ -761,7 +761,9 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     exceptions = %w[InstancePlayLimitException NoAudioHardwareException NoMicrophoneConnectedException]
     {"::Microsoft::Xna::Framework::Audio" =>
        %w[AudioChannels AudioStopOptions MicrophoneState SoundState RendererDetail] + exceptions,
-     "::Microsoft::Xna::Framework::Media" => %w[MediaSourceType MediaState VideoSoundtrackType]}.each do |namespace, expected|
+     "::Microsoft::Xna::Framework::Media" =>
+       %w[MediaSourceType MediaState VideoSoundtrackType VisualizationData
+          VisualizationData::FloatCollection]}.each do |namespace, expected|
       declared = environment.class_decls.keys.map(&:to_s).select { |name| name.start_with?("#{namespace}::") }
       assert_equal expected.map { |name| "#{namespace}::#{name}" }.sort, declared.sort
       declared.each do |name|
@@ -772,6 +774,12 @@ class RbsRuntimeConsistencyTest < Minitest::Test
         elsif short == "RendererDetail"
           # Foundation 50: a value type, not an enum and not an exception.
           assert_includes runtime_type.ancestors, CNA::Runtime::ValueSemantics, name
+        elsif short == "VisualizationData"
+          # Foundation 51: an ordinary managed holder, neither enum nor exception.
+          assert_equal Object, runtime_type.superclass, name
+        elsif short == "FloatCollection"
+          # Its nested ReadOnlyCollection<float>, closed over System.Single.
+          assert_operator runtime_type, :<, CNA::Runtime::ReadOnlyCollection, name
         else
           assert_operator runtime_type, :<, CNA::Runtime::EnumValue, name
         end

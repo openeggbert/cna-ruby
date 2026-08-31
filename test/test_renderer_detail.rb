@@ -51,7 +51,7 @@ class RendererDetailTest < Minitest::Test
     refute_includes STRICT.fetch("missingTypeNames"), CLR
     refute_includes FRONTIER.fetch("runtimeDataRegister").keys, CLR
     refute(FRONTIER.fetch("dependencyCompleteCandidates").any? { |c| c.fetch("name") == CLR })
-    assert_equal 141, STRICT.fetch("COMPLETE_TYPES")
+    assert_equal 142, STRICT.fetch("COMPLETE_TYPES")
   end
 
   # Construction is private because the CLR constructor is `assembly` — the Foundation 25 rule.

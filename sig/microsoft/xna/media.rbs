@@ -2,6 +2,17 @@ module Microsoft
   module Xna
     module Framework
       module Media
+        # A public parameterless constructor allocating two 256-element float arrays, each wrapped
+        # in a live ReadOnlyCollection view. Nothing in this binding fills them.
+        class VisualizationData
+          class FloatCollection < CNA::Runtime::ReadOnlyCollection
+          end
+
+          def initialize: () -> void
+          attr_reader Frequencies: FloatCollection
+          attr_reader Samples: FloatCollection
+        end
+
         class MediaState
           Paused: MediaState
           Playing: MediaState

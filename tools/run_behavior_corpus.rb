@@ -571,6 +571,29 @@ def execute(item)
     ensure
       game.Dispose
     end
+  when "VisualizationData.Contract"
+    # Three identities over System.Object: a public parameterless constructor and two get-only
+    # ReadOnlyCollection<Single> properties.
+    type = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.Media.VisualizationData")
+    members = type.fetch("members")
+    constructor = members.find { |m| m.fetch("kind") == "constructor" }
+    properties = members.select { |m| m.fetch("kind") == "property" }
+    [type.fetch("kind"), type.fetch("baseType"), members.length,
+     [constructor.fetch("access"), constructor.fetch("parameters").length],
+     properties.map { |m| [m.fetch("name"), m.fetch("type"), m.fetch("get"), m.fetch("set")] }]
+  when "VisualizationData.Behaviour"
+    # The constructor is `new float[0x100]` twice, each wrapped in a ReadOnlyCollection over the
+    # array itself -- so both are 256 zeroes and both are live views, not snapshots.
+    data = M::VisualizationData.new
+    backing = data.instance_variable_get(:@frequencies)
+    backing[3] = CNA::Runtime::Numeric.f32(0.5)
+    [data.Frequencies.Count, data.Samples.Count,
+     data.Frequencies.to_a.count { |value| value.zero? },
+     data.Frequencies.equal?(data.Frequencies),
+     data.Frequencies.equal?(data.Samples),
+     data.Frequencies[3], data.Samples[3],
+     M::VisualizationData::FloatCollection.clr_element_types,
+     %i[[]= Add Insert Remove Clear push <<].none? { |name| data.Frequencies.respond_to?(name) }]
   when "RendererDetail.Contract"
     # A sealed value type over System.ValueType with seven identities and no selected constructor:
     # the CLR one is `assembly`.

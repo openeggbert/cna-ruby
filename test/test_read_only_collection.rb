@@ -383,9 +383,9 @@ class ReadOnlyCollectionTest < Minitest::Test
     assert_equal ["NATIVE_RUNTIME"], adapter.fetch("blockers")
     assert_empty adapter.fetch("unmappedBclTypes")
 
-    visualization = by_name.fetch("Microsoft.Xna.Framework.Media.VisualizationData")
-    assert_equal ["RUNTIME_DATA"], visualization.fetch("blockers")
-    assert_empty visualization.fetch("unmappedBclTypes")
+    # VisualizationData dropped to RUNTIME_DATA alone here and left the frontier entirely in
+    # Foundation 51, once that deferral was measured as being about the filler rather than the type.
+    refute(by_name.key?("Microsoft.Xna.Framework.Media.VisualizationData"))
 
     # These two keep a BCL blocker, and it is no longer this one.
     microphone = by_name.fetch("Microsoft.Xna.Framework.Audio.Microphone")
@@ -427,7 +427,6 @@ class ReadOnlyCollectionTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.GraphicsAdapter
       Microsoft.Xna.Framework.Graphics.SpriteFont
       Microsoft.Xna.Framework.Audio.Microphone
-      Microsoft.Xna.Framework.Media.VisualizationData
       Microsoft.Xna.Framework.Graphics.ModelBoneCollection
       Microsoft.Xna.Framework.Graphics.ModelEffectCollection
       Microsoft.Xna.Framework.Graphics.ModelMeshCollection

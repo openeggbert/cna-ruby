@@ -25,9 +25,15 @@ il_types = il_inventory.fetch("types")
 RUNTIME_DATA = {
   "Microsoft.Xna.Framework.Audio.AudioCategory" => "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have",
   "Microsoft.Xna.Framework.Media.MediaSource" => "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried",
-  "Microsoft.Xna.Framework.Media.Video" => "its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies; no producer exists",
-  "Microsoft.Xna.Framework.Media.VisualizationData" => "filled by MediaPlayer.GetVisualizationData from live playback"
+  "Microsoft.Xna.Framework.Media.Video" => "its internal constructor takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick components the content pipeline supplies; no producer exists"
 }.freeze
+
+# VisualizationData was in this register until Foundation 51, on the reasoning that it is "filled by
+# MediaPlayer.GetVisualizationData from live playback". That is a statement about the *filler*, not
+# the type: its constructor is public and seventy-five bytes, allocating two float[0x100] arrays and
+# wrapping each in a ReadOnlyCollection<float>, and it reaches nothing. Foundation 24 settled the
+# same case for AudioListener and AudioEmitter -- managed holders a consumer can build and set,
+# whose effect nothing here ever hears.
 
 # RendererDetail was in this register until Foundation 50, on the reasoning that "values come from
 # XACT audio renderer enumeration; no audio engine exists in this binding and no renderer has been

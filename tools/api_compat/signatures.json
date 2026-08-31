@@ -36752,6 +36752,65 @@
       ]
     },
     {
+      "name": "Microsoft.Xna.Framework.Media.VisualizationData",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Media::VisualizationData",
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Frequencies",
+          "type": "System.Collections.ObjectModel.ReadOnlyCollection`1[System.Single]",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Samples",
+          "type": "System.Collections.ObjectModel.ReadOnlyCollection`1[System.Single]",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ]
+    },
+    {
       "name": "Microsoft.Xna.Framework.GameServiceContainer",
       "kind": "class",
       "flags": false,

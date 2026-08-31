@@ -323,8 +323,10 @@ class PureManagedEnumBatchTest < Minitest::Test
        DynamicSoundEffectInstance].each do |name|
       refute A.const_defined?(name, false), "Audio::#{name}"
     end
+    # VisualizationData arrived in Foundation 51 from its own IL: a constructible holder whose
+    # filler, MediaPlayer.GetVisualizationData, is still one of the names below.
     %i[MediaPlayer MediaLibrary MediaSource Song Album Artist Video VideoPlayer Playlist
-       Picture PictureAlbum VisualizationData].each do |name|
+       Picture PictureAlbum].each do |name|
       refute M.const_defined?(name, false), "Media::#{name}"
     end
     # Keyboard, KeyboardState and Keys predate these batches. Input::Touch was opened by
@@ -352,7 +354,7 @@ class PureManagedEnumBatchTest < Minitest::Test
       # types TouchLocation and GestureSample; Audio carries the three Foundation 22 exception
       # types. None of those is an enum.
       value_types = %i[TouchPanelCapabilities TouchLocation GestureSample TouchCollection
-                       TouchPanel AudioListener AudioEmitter RendererDetail]
+                       TouchPanel AudioListener AudioEmitter RendererDetail VisualizationData]
       extras = declared & value_types
       extras += declared.grep(/Exception\z/)
       assert_equal (selected + extras).uniq.sort, declared, namespace.name

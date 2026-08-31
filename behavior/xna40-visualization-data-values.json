@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+  "derivation": "Foundation 51 Media.VisualizationData, read from the pinned Microsoft.Xna.Framework.dll. It is `.class public auto ansi beforefieldinit` extending System.Object over four fields -- two `assembly float32[]` named frequencies and samples, and two private ReadOnlyCollection`1<float32> named frequenciesCollection and samplesCollection -- and declares three identities: a public parameterless constructor and two get-only properties. The constructor is seventy-five bytes and does exactly four things: newarr System.Single with ldc.i4 0x100 into frequencies, the same into samples, then newobj ReadOnlyCollection`1<float32>::.ctor(IList`1<!0>) over each array in turn. So both collections are 256 elements long from construction, every element the CLR Single default of zero, and each wraps the array itself rather than a copy -- the ReadOnlyCollection constructor stores the reference and takes no copy, which makes each a live view. get_Frequencies and get_Samples are one ldfld each, answering the wrapper rather than the array. Nothing in the type reaches a device, a codec or a media library: its frontier deferral named MediaPlayer.GetVisualizationData, which is the filler, not the type.",
+  "observations": [
+    {
+      "id": "visualization_data.contract",
+      "operation": "VisualizationData.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": ["class", "System.Object", 3, ["public", 0], [["Frequencies", "System.Collections.ObjectModel.ReadOnlyCollection`1[System.Single]", true, false], ["Samples", "System.Collections.ObjectModel.ReadOnlyCollection`1[System.Single]", true, false]]]
+    },
+    {
+      "id": "visualization_data.behaviour",
+      "operation": "VisualizationData.Behaviour",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [256, 256, 255, true, false, 0.5, 0.0, ["System.Single"], true]
+    }
+  ]
+}
