@@ -5,7 +5,7 @@
 **project what the XNA surface can actually reach**, and this file is that rule applied — the
 measurement first, then the reach, then the producer audit, then what the projection has to be.
 
-Nothing here is projected yet. This is the derivation the implementation is built from.
+The projection landed on this derivation: `CNA::Runtime::Stream` with `CNA::Runtime::Stream::SeekOrigin`, and `Microsoft::Xna::Framework::TitleContainer` as the first XNA member that produces one. Sections 1-7 are the derivation; nothing in the implementation departs from them.
 
 ## 1. The type is measured, not remembered
 

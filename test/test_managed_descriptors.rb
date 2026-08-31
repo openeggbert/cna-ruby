@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundation 24 — AudioListener, AudioEmitter, PresentationParameters and
@@ -127,7 +128,7 @@ class ManagedDescriptorsTest < Minitest::Test
   def test_neither_audio_type_implies_an_audio_engine
     %i[SoundEffect SoundEffectInstance Microphone AudioEngine WaveBank SoundBank Cue AudioCategory]
       .each { |absent| refute A.const_defined?(absent, false), "Audio::#{absent}" }
-    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
   end
 
   # ------------------------------------------------------------------- PresentationParameters

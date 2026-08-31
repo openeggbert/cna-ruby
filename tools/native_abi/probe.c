@@ -48,6 +48,10 @@ CHECK_FN(cna_game_window_begin_screen_device_change, CNA_Result, (CNA_Handle, CN
 CHECK_FN(cna_game_window_end_screen_device_change, CNA_Result, (CNA_Handle, CNA_StringView, int32_t, int32_t));
 CHECK_FN(cna_game_window_subscribe, CNA_Result, (CNA_Handle, CNA_GameWindowEvent, CNA_GameEventCallback, void*, CNA_GameEventRegistrationHandle*));
 CHECK_FN(cna_framework_dispatcher_update, CNA_Result, (CNA_Handle));
+CHECK_FN(cna_title_location_get_path_size, CNA_Result, (CNA_Handle, uint64_t*));
+CHECK_FN(cna_title_location_copy_path, CNA_Result, (CNA_Handle, char*, uint64_t, uint64_t*));
+CHECK_FN(cna_title_location_set_path_ext, CNA_Result, (CNA_Handle, CNA_StringView));
+CHECK_FN(cna_title_container_read_ext, CNA_Result, (CNA_Handle, CNA_StringView, uint8_t*, uint64_t, uint64_t*));
 CHECK_FN(cna_graphics_device_manager_create, CNA_Result, (CNA_Handle, CNA_GraphicsDeviceManagerHandle*));
 CHECK_FN(cna_graphics_device_manager_get_graphics_device, CNA_Result, (CNA_GraphicsDeviceManagerHandle, CNA_Handle*));
 CHECK_FN(cna_graphics_device_manager_dispose, CNA_Result, (CNA_GraphicsDeviceManagerHandle));
@@ -128,6 +132,10 @@ int main(void) {
     SIGNATURE(cna_game_window_end_screen_device_change, "CNA_Result|CNA_Handle,CNA_StringView,int32_t,int32_t");
     SIGNATURE(cna_game_window_subscribe, "CNA_Result|CNA_Handle,CNA_GameWindowEvent,CNA_GameEventCallback,void*,CNA_GameEventRegistrationHandle*");
     SIGNATURE(cna_framework_dispatcher_update, "CNA_Result|CNA_Handle");
+    SIGNATURE(cna_title_location_get_path_size, "CNA_Result|CNA_Handle,uint64_t*");
+    SIGNATURE(cna_title_location_copy_path, "CNA_Result|CNA_Handle,char*,uint64_t,uint64_t*");
+    SIGNATURE(cna_title_location_set_path_ext, "CNA_Result|CNA_Handle,CNA_StringView");
+    SIGNATURE(cna_title_container_read_ext, "CNA_Result|CNA_Handle,CNA_StringView,uint8_t*,uint64_t,uint64_t*");
     SIGNATURE(cna_graphics_device_manager_create, "CNA_Result|CNA_Handle,CNA_GraphicsDeviceManagerHandle*");
     SIGNATURE(cna_graphics_device_manager_get_graphics_device, "CNA_Result|CNA_GraphicsDeviceManagerHandle,CNA_Handle*");
     SIGNATURE(cna_graphics_device_manager_dispose, "CNA_Result|CNA_GraphicsDeviceManagerHandle");

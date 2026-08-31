@@ -2,7 +2,7 @@
 
 require_relative "../lib/cna"
 
-# The size of the native boundary, written down **once**.
+# The measurements this suite pins, written down **once**.
 #
 # A pure managed milestone must not grow the Fiddle manifest, and several of this suite's tests say
 # exactly that by pinning the census. They used to pin the numbers as literals, in nine separate
@@ -21,5 +21,22 @@ module NativeSurfaceCensus
 
   # The census the repository last reviewed. `test_native_abi_gate.rb` compares the two, so this
   # file cannot drift from the manifest silently in either direction.
-  REVIEWED = { functions: 68, callbacks: 3, constants: 65, layouts: 18 }.freeze
+  REVIEWED = { functions: 72, callbacks: 3, constants: 65, layouts: 18 }.freeze
+end
+
+# The strict XNA scoreboard, for exactly the same reason and with exactly the same rule: a milestone
+# that completes a type moves these, and a milestone that claims to complete nothing must not.
+# Pinning them as literals in a dozen unrelated tests made every completed type a dozen-file edit
+# and left no single place a reader could call the authority. `docs/generated/api-compat-report.json`
+# is the measurement; this is the reviewed expectation of it.
+module ReviewedScoreboard
+  TARGET_TYPES = 150
+  TARGET_MEMBERS = 1838
+  COMPLETE_TYPES = 144
+  PARTIAL_TYPES = 6
+  MISSING_TYPES = 107
+  MISSING_MEMBER = 110
+  BCL_PROJECTED_IDENTITIES = 15
+  BCL_EXCEPTION_BASES = 2
+  BCL_THROWN_EXCEPTIONS = 8
 end

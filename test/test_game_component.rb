@@ -4,6 +4,7 @@ require "minitest/autorun"
 require "json"
 require "pathname"
 require "objspace"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundation 38 — `Microsoft.Xna.Framework.GameComponent`.
@@ -53,7 +54,7 @@ class GameComponentTest < Minitest::Test
     assert_equal 0, STRICT.fetch("localDiagnostics").fetch(NAME)
     refute IL.fetch("types").fetch(NAME).fetch("nativeReachable")
     assert_empty IL.fetch("types").fetch(NAME).fetch("nativeReachableMethods")
-    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
   end
 
   def test_it_declares_fourteen_identities_over_the_measured_shape
@@ -476,9 +477,9 @@ class GameComponentTest < Minitest::Test
     # Foundation 40 added Graphics::IGraphicsDeviceService: one type, five identities, four of them
     # events on a fifth owner. What this milestone owns -- Game's remainder and the partial count --
     # is what stayed put.
-    assert_equal 149, STRICT.fetch("TARGET_TYPES")
-    assert_equal 143, STRICT.fetch("COMPLETE_TYPES")
-    assert_equal 108, STRICT.fetch("MISSING_TYPES")
+    assert_equal ReviewedScoreboard::TARGET_TYPES, STRICT.fetch("TARGET_TYPES")
+    assert_equal ReviewedScoreboard::COMPLETE_TYPES, STRICT.fetch("COMPLETE_TYPES")
+    assert_equal ReviewedScoreboard::MISSING_TYPES, STRICT.fetch("MISSING_TYPES")
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
     assert_equal 110, STRICT.fetch("MISSING_MEMBER"),
                  "Foundation 41 closed Game's four events and three raisers, 42 its four " \

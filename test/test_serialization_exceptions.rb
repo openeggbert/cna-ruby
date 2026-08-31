@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundation 49 — the `System.Runtime.Serialization` carrier, and the two XNA exception types it
@@ -72,8 +73,8 @@ class SerializationExceptionsTest < Minitest::Test
       refute_includes STRICT.fetch("missingTypeNames"), name
       assert_includes STRICT.fetch("completeTypeNames"), name
     end
-    assert_equal 143, STRICT.fetch("COMPLETE_TYPES")
-    assert_equal 108, STRICT.fetch("MISSING_TYPES")
+    assert_equal ReviewedScoreboard::COMPLETE_TYPES, STRICT.fetch("COMPLETE_TYPES")
+    assert_equal ReviewedScoreboard::MISSING_TYPES, STRICT.fetch("MISSING_TYPES")
   end
 
   # Storage is a new namespace holding exactly one type, the shape Audio and Media took in
@@ -93,7 +94,7 @@ class SerializationExceptionsTest < Minitest::Test
       assert_includes B.identities, identity
       assert_instance_of Class, Object.const_get(B::TYPES.fetch(identity), false)
     end
-    assert_equal 13, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal ReviewedScoreboard::BCL_PROJECTED_IDENTITIES, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal B::TYPES.transform_keys(&:to_s), RULES.fetch("bclProjection").fetch("types")
   end
 

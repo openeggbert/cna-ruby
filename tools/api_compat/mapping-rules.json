@@ -73,6 +73,8 @@
     "scope": "only a CLR identity the selected XNA surface actually names, and whose Ruby projection can be decided without guessing, is admitted",
     "types": {
       "System.EventArgs": "CNA::Runtime::EventArgs",
+      "System.IO.Stream": "CNA::Runtime::Stream",
+      "System.IO.SeekOrigin": "CNA::Runtime::Stream::SeekOrigin",
       "System.Collections.Generic.Dictionary`2": "CNA::Runtime::Dictionary",
       "System.Runtime.Serialization.SerializationInfo": "CNA::Runtime::SerializationInfo",
       "System.Runtime.Serialization.StreamingContext": "CNA::Runtime::StreamingContext",

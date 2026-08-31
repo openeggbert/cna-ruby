@@ -3,7 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
-require_relative "native_surface_census"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 require_relative "../tools/api_compat/verifier"
 

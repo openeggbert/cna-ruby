@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundation 32 — `TouchPanel`, which closes the whole `Input.Touch` namespace.
@@ -56,7 +57,7 @@ class TouchPanelTest < Minitest::Test
                    entry.fetch("assemblySha256"), name
     end
     # And no native symbol was bound for touch.
-    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert(CNA::Native::Manifest::FUNCTIONS.none? { |name, _| name.to_s.include?("touch") })
   end
 

@@ -329,7 +329,7 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 12, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 11, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -507,7 +507,10 @@ class DependencyFrontierTest < Minitest::Test
       "Microsoft.Xna.Framework.Audio.Microphone" => "NATIVE_RUNTIME",
       "Microsoft.Xna.Framework.Graphics.EffectAnnotation" => "NATIVE_RUNTIME",
       "Microsoft.Xna.Framework.Graphics.TextureCollection" => "NATIVE_RUNTIME",
-      "Microsoft.Xna.Framework.TitleContainer" => "BCL_PROJECTION"
+      # TitleContainer used to be here under BCL_PROJECTION and is deliberately not replaced by
+      # another example: the Stream projection consumed it, which is what a retired blocker looks
+      # like. `test_the_stream_projection_consumed_title_container` asserts that directly.
+      "Microsoft.Xna.Framework.Content.ContentManager" => "BCL_PROJECTION"
     }.each do |name, expected|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
       refute_nil candidate, name

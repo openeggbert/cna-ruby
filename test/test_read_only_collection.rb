@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 require_relative "../tools/api_compat/verifier"
 
@@ -45,7 +46,7 @@ class ReadOnlyCollectionTest < Minitest::Test
     assert_equal "CNA::Runtime::ReadOnlyCollection", B::TYPES.fetch(CLR)
     assert_equal R, Object.const_get(B::TYPES.fetch(CLR), false)
     assert_includes B.identities, CLR
-    assert_equal 13, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal ReviewedScoreboard::BCL_PROJECTED_IDENTITIES, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal B::TYPES, STRICT.fetch("bclProjection").fetch("types")
 
     # It is a class of its own, not any of the shapes that were plausible before it was measured.

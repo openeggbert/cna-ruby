@@ -5,6 +5,8 @@ require "fiddle"
 module CNA
   module Native
     class Library
+      RESULT_IO = 5
+      RESULT_BUFFER_TOO_SMALL = 14
       RESULT_NOT_SUPPORTED = 6
       RESULT_THREAD = 8
 

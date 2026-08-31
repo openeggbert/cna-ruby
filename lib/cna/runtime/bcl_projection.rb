@@ -84,8 +84,28 @@ module CNA
       # type it is in the IL, two fields with value equality. StreamingContextStates is deliberately
       # *not* registered: the selected reference never names it, and the register admits only
       # identities that surface really names.
+      # System.IO.Stream projects to CNA::Runtime::Stream, one Ruby class for the whole family. The
+      # CLR type is abstract and the selected XNA surface never names a concrete stream --
+      # TitleContainer hands back a FileStream, StorageContainer something else, and a caller sees
+      # `Stream` either way -- so where the bytes live is a private backing rather than a second
+      # projected identity, and `new` is private for the same reason Foundation 25 made it private
+      # for a class with no public constructor. Seventeen XNA members reach System.IO, in both
+      # directions: OpenStream, OpenFile/CreateFile and four Media getters produce one, while
+      # SoundEffect.FromStream, both Texture2D.FromStream overloads, SaveAsPng/SaveAsJpeg and
+      # MediaLibrary.SavePicture consume one, so a produce-only projection would not have been
+      # enough. The projected surface is the reached surface: the four Begin/End asynchronous
+      # members, Synchronized and the Null field are measured and deliberately absent, each because
+      # projecting it would mean inventing a type the inventory does not carry. Full derivation in
+      # docs/stream-projection-design.md.
+      #
+      # System.IO.SeekOrigin projects to CNA::Runtime::Stream::SeekOrigin. It is the first
+      # transitively demanded BCL identity: no XNA signature names it, System.IO.Stream::Seek does,
+      # and a consumer holding a stream this binding produced needs it to seek at all. Its three
+      # values are read out of the pinned mscorlib -- Begin=0, Current=1, End=2 -- not remembered.
       TYPES = {
         "System.EventArgs" => "CNA::Runtime::EventArgs",
+        "System.IO.Stream" => "CNA::Runtime::Stream",
+        "System.IO.SeekOrigin" => "CNA::Runtime::Stream::SeekOrigin",
         "System.Collections.Generic.Dictionary`2" => "CNA::Runtime::Dictionary",
         "System.Runtime.Serialization.SerializationInfo" => "CNA::Runtime::SerializationInfo",
         "System.Runtime.Serialization.StreamingContext" => "CNA::Runtime::StreamingContext",

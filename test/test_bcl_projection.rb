@@ -23,6 +23,7 @@ class BclProjectionTest < Minitest::Test
 
   ROOT = Pathname(__dir__).join("..").expand_path
   REFERENCE = JSON.parse(ROOT.join("tools", "api_compat", "reference", "xna40-windows-runtime-contract.json").read)
+  BCL_INVENTORY = JSON.parse(ROOT.join("docs", "generated", "bcl-inventory.json").read)
   SIGNATURES = JSON.parse(ROOT.join("tools", "api_compat", "signatures.json").read)
   STRICT = JSON.parse(ROOT.join("docs", "generated", "api-compat-report.json").read)
   BY_NAME = REFERENCE.fetch("types").to_h { |type| [type.fetch("name"), type] }.freeze
@@ -52,7 +53,11 @@ class BclProjectionTest < Minitest::Test
                   # Foundation 34 added the mutable sibling, measured against the same mscorlib.
                   "System.Collections.ObjectModel.Collection`1" => "CNA::Runtime::Collection",
                   # Foundation 33: a type token, and Ruby's is a Module.
-                  "System.Type" => "Module"},
+                  "System.Type" => "Module",
+                  # The Stream projection, and the one identity that reaches this register
+                  # transitively: no XNA signature names SeekOrigin, System.IO.Stream::Seek does.
+                  "System.IO.Stream" => "CNA::Runtime::Stream",
+                  "System.IO.SeekOrigin" => "CNA::Runtime::Stream::SeekOrigin"},
                  B::TYPES)
     # Foundation 33 also records a decision *not* to invent a constant, and Foundation 36 adds
     # the second such decision.
@@ -64,7 +69,7 @@ class BclProjectionTest < Minitest::Test
                   "System.Collections.ObjectModel.Collection`1",
                   "System.Collections.ObjectModel.ReadOnlyCollection`1",
                   "System.EventArgs", "System.Exception", "System.IDisposable",
-                  "System.IServiceProvider",
+                  "System.IO.SeekOrigin", "System.IO.Stream", "System.IServiceProvider",
                   "System.Runtime.InteropServices.ExternalException",
                   "System.Runtime.Serialization.SerializationInfo",
                   "System.Runtime.Serialization.StreamingContext", "System.TimeSpan",
@@ -80,7 +85,9 @@ class BclProjectionTest < Minitest::Test
     # -- which the pinned reference does name, in the protected constructor two XNA exception types
     # declare. StreamingContextStates stays off because that surface never names it: it is a support
     # enum of the projection, not an identity the register admits.
-    %w[System.IO.Stream System.Text.StringBuilder
+    # System.IO.Stream was here until its own projection landed. StringBuilder still is: SpriteFont
+    # names it and nothing has measured it.
+    %w[System.Text.StringBuilder
        System.Runtime.Serialization.StreamingContextStates
        System.Runtime.Serialization.SerializationException]
       .each { |absent| refute_includes B.identities, absent }
@@ -95,13 +102,28 @@ class BclProjectionTest < Minitest::Test
       end
       values.compact
     end.uniq
+    # One entry is admitted transitively rather than directly, and it is named here so the
+    # exception is a decision rather than a hole: `System.IO.SeekOrigin` is named by
+    # `System.IO.Stream::Seek` in the pinned mscorlib and by no XNA signature at all, yet a consumer
+    # holding a stream this binding produced needs it to seek. `docs/generated/bcl-inventory.json`
+    # carries the same rule and records which kind of demand each family has.
+    transitive = { "System.IO.SeekOrigin" => "System.IO.Stream" }
     B.identities.each do |identity|
+      demanded_by = transitive[identity]
+      if demanded_by
+        refute(signatures.any? { |signature| signature.include?(identity) },
+               "#{identity} claims transitive demand but an XNA signature names it")
+        family = BCL_INVENTORY.fetch("families").find { |entry| entry.fetch("family") == identity }
+        assert_equal "transitive", family.fetch("demand"), identity
+        assert_equal ["#{demanded_by}::Seek"], family.fetch("bclConsumers"), identity
+        next
+      end
       assert(signatures.any? { |signature| signature.include?(identity) }, identity)
     end
   end
 
   def test_the_strict_report_measures_the_register
-    assert_equal 13, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal 15, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal 2, STRICT.fetch("BCL_EXCEPTION_BASES")
     assert_equal({"types" => B::TYPES, "exceptionBases" => B::EXCEPTION_BASES,
                   "thrownExceptions" => B::THROWN_EXCEPTIONS},
@@ -155,10 +177,12 @@ class BclProjectionTest < Minitest::Test
     # No Ruby constant is invented for an XNA exception *base*. The one exception class the CNA
     # runtime carries is CNA::Runtime::NotSupportedError, added by Foundation 30, and it is a
     # projection of a CLR exception XNA members *throw*, never a base any XNA type derives from.
+    # Sorted, because the claim is *which* classes exist and not what order Ruby's constant table
+    # happens to list them in -- an ordering that shifts with load order and asserts nothing.
     assert_equal %i[NotSupportedError SerializationError], CNA::Runtime.constants(false).select { |name|
       value = CNA::Runtime.const_get(name, false)
       value.instance_of?(Class) && value <= ::Exception
-    }
+    }.sort
     refute_includes B::EXCEPTION_BASES.values, "CNA::Runtime::NotSupportedError"
     refute_includes B::TYPES.values, "CNA::Runtime::NotSupportedError"
     [Microsoft::Xna::Framework::Audio::InstancePlayLimitException,

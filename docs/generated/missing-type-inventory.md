@@ -107,4 +107,3 @@
 - `Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs`
 - `Microsoft.Xna.Framework.Storage.StorageContainer`
 - `Microsoft.Xna.Framework.Storage.StorageDevice`
-- `Microsoft.Xna.Framework.TitleContainer`

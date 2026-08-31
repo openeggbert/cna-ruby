@@ -3,7 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
-require_relative "native_surface_census"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundation 27 — the five ContentSerializer attributes, and the System.Attribute projection.
@@ -176,7 +176,8 @@ class ContentAttributesTest < Minitest::Test
   end
 
   def test_the_cluster_adds_no_content_pipeline
-    refute F.const_defined?(:TitleContainer, false)
+    # `TitleContainer` exists now and is deliberately still named here: it opens a stream over a
+    # title file and is not a content pipeline, so completing it does not weaken this claim.
     refute F::Graphics.const_defined?(:SpriteFont, false)
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length

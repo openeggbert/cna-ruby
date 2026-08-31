@@ -89,3 +89,29 @@ the canonical dispatcher behind it is static. It answers `CNA_RESULT_SUCCESS` in
 lifecycle callback, `CNA_RESULT_INVALID_HANDLE` for a zero or unknown handle, and
 `CNA_RESULT_THREAD` off the owner thread — each observed against the retained artifact before the
 route was bound.
+
+## The title surface
+
+The `System.IO.Stream` projection binds four already-existing canonical routes and no adjacent
+storage API: `cna_title_location_get_path_size`, `cna_title_location_copy_path`,
+`cna_title_location_set_path_ext` and `cna_title_container_read_ext`. The delta is 68 -> 72 bound
+functions and 219 -> 238 signature measurements; no structure, callback or constant is added, and
+every other measurement is byte-identical. `MISSING_HEADER_SYMBOLS`, `MISSING_LIBRARY_SYMBOLS`,
+`CROSS_VERSION_MISMATCHES` and `ABI_MISMATCHES` stay zero, and all four routes are exported by
+**both** admitted versions, so the admitted set does not shrink.
+
+`cna_title_container_read_ext` is a count/copy pair rather than a stream handle, by CNA's own
+documented design: this ABI has no stream handle for title content. The sizing call answers
+`CNA_RESULT_BUFFER_TOO_SMALL` rather than success for any non-empty file — a zero capacity is
+smaller than any file — and still writes `out_bytes`, so the projection accepts that result as the
+documented answer and treats only `CNA_RESULT_IO` as the missing-file refusal.
+
+`cna_title_location_set_path_ext` is bound for a reason worth stating: the canonical accessor
+resolves the **executable's** directory, which under a Ruby interpreter is the interpreter's, so
+without the override no title read could be qualified against a fixture at all. CNA documents the
+override as process-wide rather than scoped to the game handle it validates.
+
+The three `storage.h` stream handles — `cna_storage_container_open_file` and its two siblings, plus
+`cna_storage_container_create_file` — are deliberately **not** bound. They are the producer for
+XNA's `StorageContainer`, which is a different type and a different lifetime; the audit is in
+`docs/stream-projection-design.md`.

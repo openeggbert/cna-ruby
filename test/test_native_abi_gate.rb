@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "minitest/autorun"
-require_relative "native_surface_census"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 require_relative "../tools/native_abi/gate"
 

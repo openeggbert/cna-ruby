@@ -3,7 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
-require_relative "native_surface_census"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 require_relative "../tools/api_compat/verifier"
 
@@ -55,7 +55,7 @@ class DisposableCollapseTest < Minitest::Test
     refute B::EXCEPTION_BASES.key?(CLR)
     refute B::THROWN_EXCEPTIONS.key?(CLR)
     assert_nil B.ruby_type(CLR)
-    assert_equal 13, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal ReviewedScoreboard::BCL_PROJECTED_IDENTITIES, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
   end
 
   # No constant, anywhere. Not at top level, not in the CNA runtime, not in the XNA namespaces, and
@@ -243,7 +243,8 @@ class DisposableCollapseTest < Minitest::Test
     # LaunchParameters, RUNTIME_DATA was 5 until Foundation 48 built GameWindow over the canonical
     # window routes, and BCL_PROJECTION fell to 2 when Foundation 49 projected the
     # SerializationInfo/StreamingContext pair and consumed both exception types that named it.
-    assert_equal({"BCL_PROJECTION" => 2, "BCL_PROJECTION+NATIVE_RUNTIME" => 3,
+    # BCL_PROJECTION fell again, to 1, when the Stream projection consumed TitleContainer.
+    assert_equal({"BCL_PROJECTION" => 1, "BCL_PROJECTION+NATIVE_RUNTIME" => 3,
                   "NATIVE_RUNTIME" => 5, "NATIVE_RUNTIME+RUNTIME_DATA" => 1, "RUNTIME_DATA" => 1},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
@@ -255,8 +256,11 @@ class DisposableCollapseTest < Minitest::Test
                     .find { |item| item.fetch("name") == "Microsoft.Xna.Framework.Content.ContentManager" }
     assert_includes entry.fetch("blockers"), "BCL_PROJECTION"
     refute_includes entry.fetch("unmappedBclTypes"), CLR
-    assert_includes entry.fetch("unmappedBclTypes"), "System.IO.Stream"
+    # System.IO.Stream left this list when the Stream projection landed; System.Action`1 and the
+    # generic method parameter !!0 are what still keep ContentManager on the frontier.
+    refute_includes entry.fetch("unmappedBclTypes"), "System.IO.Stream"
     assert_includes entry.fetch("unmappedBclTypes"), "System.Action`1"
+    assert_includes entry.fetch("unmappedBclTypes"), "!!0"
   end
 
   # ---------------------------------------------------------------- and exactly what it does not
@@ -286,7 +290,7 @@ class DisposableCollapseTest < Minitest::Test
   def test_it_completes_no_type_and_moves_no_missing_member
     assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
     assert_equal 110, STRICT.fetch("MISSING_MEMBER")
-    assert_equal 143, STRICT.fetch("COMPLETE_TYPES"),
+    assert_equal ReviewedScoreboard::COMPLETE_TYPES, STRICT.fetch("COMPLETE_TYPES"),
                  "Foundation 38 added GameComponent, 40 IGraphicsDeviceService, 46 " \
                  "LaunchParameters, 48 GameWindow"
     assert_includes STRICT.fetch("partialTypes").keys, "Microsoft.Xna.Framework.Game"

@@ -3,7 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
-require_relative "native_surface_census"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundations 18 and 20 — the managed XNA interface contracts.

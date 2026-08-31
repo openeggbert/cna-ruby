@@ -205,6 +205,24 @@ module CNA
         # `cna_game_unsubscribe` releases both, so no second release route is bound.
         signature("cna_game_window_subscribe", T[:result], [T[:handle], enum("CNA_GameWindowEvent"), callback_pointer("CNA_GameEventCallback"), T[:ptr], pointer("CNA_GameEventRegistrationHandle")], ownership: "borrows Game; returns OWNED registration; retains callback and context until released"),
         signature("cna_framework_dispatcher_update", T[:result], [T[:handle]], ownership: "borrows Game; pumps the canonical CNA framework dispatcher", result_lifetime: "no result value"),
+        # The title surface. `TitleContainer.OpenStream` is `File.OpenRead(Path.Combine(
+        # TitleLocation.Path, name))` in XNA, and CNA answers the same question with a count/copy
+        # pair over the whole file: its own header states that this ABI has no stream handle for
+        # title content, so incremental reads over a title stream are not available. The narrowing
+        # is the producer's, recorded in docs/stream-projection-design.md, and the projection wraps
+        # the bytes rather than pretending to have read them lazily.
+        #
+        # The location routes are bound as a pair with the reader for two reasons: the projection's
+        # missing-file message names the base path CNA really resolved rather than one this side
+        # guessed, and `set_path_ext` is the only way a test can point the title at a fixture
+        # directory. The canonical accessor resolves the *executable's* directory, which under a
+        # Ruby interpreter is the interpreter's, so without the setter no title read could be
+        # falsifiable at all. CNA documents the override as process-wide rather than scoped to the
+        # game handle it validates.
+        signature("cna_title_location_get_path_size", T[:result], [T[:handle], pointer("uint64_t")], ownership: "borrows Game; caller output"),
+        signature("cna_title_location_copy_path", T[:result], [T[:handle], pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows Game; caller output"),
+        signature("cna_title_location_set_path_ext", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64])], ownership: "borrows Game; PROCESS_GLOBAL title location; copies the bytes"),
+        signature("cna_title_container_read_ext", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("uint8_t"), T[:u64], pointer("uint64_t")], ownership: "borrows Game; caller output; no partial write on BUFFER_TOO_SMALL"),
         signature("cna_graphics_device_manager_create", T[:result], [T[:handle], pointer("CNA_GraphicsDeviceManagerHandle")], ownership: "returns OWNED manager"),
         signature("cna_graphics_device_manager_get_graphics_device", T[:result], [handle("CNA_GraphicsDeviceManagerHandle"), pointer("CNA_Handle")], ownership: "returns callback BORROWED device"),
         signature("cna_graphics_device_manager_dispose", T[:result], [handle("CNA_GraphicsDeviceManagerHandle")], ownership: "borrows manager; canonical dispose"),

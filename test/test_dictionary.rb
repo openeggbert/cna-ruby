@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundation 46 — `Dictionary`2` and `LaunchParameters`.
@@ -32,7 +33,7 @@ class DictionaryTest < Minitest::Test
     assert_equal "CNA::Runtime::Dictionary", B::TYPES.fetch(CLR)
     assert_equal D, Object.const_get(B::TYPES.fetch(CLR), false)
     assert_includes B.identities, CLR
-    assert_equal 13, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal ReviewedScoreboard::BCL_PROJECTED_IDENTITIES, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal B::TYPES.transform_keys(&:to_s), RULES.fetch("bclProjection").fetch("types")
 
     # It is a class of its own, not any of the shapes a reader might reach for first.
@@ -392,7 +393,7 @@ class DictionaryTest < Minitest::Test
   def test_the_cna_launch_parameter_routes_are_deliberately_not_bound
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     refute(symbols.any? { |symbol| symbol.include?("launch_parameters") }, symbols.inspect)
-    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
   end
 
   private

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 149,
-  "completeTypes": 143,
+  "targetTypes": 150,
+  "completeTypes": 144,
   "partialTypes": [
     "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
@@ -11,7 +11,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 108,
+  "missingTypes": 107,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -49,6 +49,8 @@
     "System.IComparable`1",
     "System.IDisposable",
     "System.IEquatable`1",
+    "System.IO.SeekOrigin",
+    "System.IO.Stream",
     "System.IServiceProvider",
     "System.Int32",
     "System.IntPtr",
@@ -71,6 +73,8 @@
   "bclProjectionRegister": {
     "types": {
       "System.EventArgs": "CNA::Runtime::EventArgs",
+      "System.IO.Stream": "CNA::Runtime::Stream",
+      "System.IO.SeekOrigin": "CNA::Runtime::Stream::SeekOrigin",
       "System.Collections.Generic.Dictionary`2": "CNA::Runtime::Dictionary",
       "System.Runtime.Serialization.SerializationInfo": "CNA::Runtime::SerializationInfo",
       "System.Runtime.Serialization.StreamingContext": "CNA::Runtime::StreamingContext",
@@ -86,7 +90,7 @@
     }
   },
   "blockerSummary": {
-    "BCL_PROJECTION": 2,
+    "BCL_PROJECTION": 1,
     "BCL_PROJECTION+NATIVE_RUNTIME": 3,
     "NATIVE_RUNTIME": 5,
     "NATIVE_RUNTIME+RUNTIME_DATA": 1,
@@ -625,8 +629,7 @@
         "Microsoft.Xna.Framework.TitleContainer"
       ],
       "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Content.ContentReader",
-        "Microsoft.Xna.Framework.TitleContainer"
+        "Microsoft.Xna.Framework.Content.ContentReader"
       ],
       "partialDependencySatisfied": false,
       "partialRemainderReverseEdges": [
@@ -640,8 +643,7 @@
       "unmappedBclTypes": [
         "!!0",
         "System.Action`1",
-        "System.Action`1[System.IDisposable]",
-        "System.IO.Stream"
+        "System.Action`1[System.IDisposable]"
       ],
       "reachedInterfaces": [
 
@@ -1189,58 +1191,6 @@
       "runtimeDataDetail": null
     },
     {
-      "name": "Microsoft.Xna.Framework.TitleContainer",
-      "kind": "class",
-      "expectedRubyIdentities": 1,
-      "dependencies": [
-
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-
-      ],
-      "ilOnlyUnmetDependencies": [
-
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "BCL_PROJECTION"
-      ],
-      "unmappedBclTypes": [
-        "System.IO.Stream"
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        "OpenStream"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    },
-    {
       "name": "Microsoft.Xna.Framework.Media.MediaSource",
       "kind": "class",
       "expectedRubyIdentities": 4,
@@ -1429,8 +1379,7 @@
         "Microsoft.Xna.Framework.TitleContainer"
       ],
       "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Content.ContentReader",
-        "Microsoft.Xna.Framework.TitleContainer"
+        "Microsoft.Xna.Framework.Content.ContentReader"
       ],
       "partialDependencySatisfied": false,
       "partialRemainderReverseEdges": [
@@ -1444,8 +1393,7 @@
       "unmappedBclTypes": [
         "!!0",
         "System.Action`1",
-        "System.Action`1[System.IDisposable]",
-        "System.IO.Stream"
+        "System.Action`1[System.IDisposable]"
       ],
       "reachedInterfaces": [
 

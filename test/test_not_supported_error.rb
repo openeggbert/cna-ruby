@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 require_relative "../tools/api_compat/verifier"
 
@@ -70,7 +71,7 @@ class NotSupportedErrorTest < Minitest::Test
   def test_thrown_exceptions_are_a_separate_register_from_the_named_identities
     B::THROWN_EXCEPTIONS.each_key { |identity| refute_includes B.identities, identity }
     assert_equal B::THROWN_EXCEPTIONS.keys.sort, B.thrown_identities
-    assert_equal 13, STRICT.fetch("BCL_PROJECTED_IDENTITIES"), "unchanged by the thrown-exception register"
+    assert_equal ReviewedScoreboard::BCL_PROJECTED_IDENTITIES, STRICT.fetch("BCL_PROJECTED_IDENTITIES"), "unchanged by the thrown-exception register"
 
     frontier = JSON.parse(ROOT.join("docs", "generated", "public-signature-dependency-report.json").read)
     B::THROWN_EXCEPTIONS.each_key { |identity| refute_includes frontier.fetch("mappedBclTypes"), identity }
@@ -132,7 +133,8 @@ class NotSupportedErrorTest < Minitest::Test
       value = CNA::Runtime.const_get(name, false)
       value.instance_of?(Class) && value <= ::Exception
     end
-    assert_equal %i[NotSupportedError SerializationError], exceptions
+    # Sorted: the claim is which classes exist, not the order Ruby's constant table lists them in.
+    assert_equal %i[NotSupportedError SerializationError], exceptions.sort
   end
 
   # ---------------------------------------------------------- the measured mscorlib behaviour

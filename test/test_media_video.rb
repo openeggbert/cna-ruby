@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundation 52 — `Media.Video`.
@@ -55,7 +56,7 @@ class MediaVideoTest < Minitest::Test
     assert_includes STRICT.fetch("completeTypeNames"), CLR
     refute_includes FRONTIER.fetch("runtimeDataRegister").keys, CLR
     refute(FRONTIER.fetch("dependencyCompleteCandidates").any? { |c| c.fetch("name") == CLR })
-    assert_equal 143, STRICT.fetch("COMPLETE_TYPES")
+    assert_equal ReviewedScoreboard::COMPLETE_TYPES, STRICT.fetch("COMPLETE_TYPES")
   end
 
   def test_construction_is_private
@@ -110,6 +111,6 @@ class MediaVideoTest < Minitest::Test
       .each { |absent| refute M.const_defined?(absent, false), "Media::#{absent}" }
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     refute(symbols.any? { |symbol| symbol.include?("video") || symbol.include?("media") })
-    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
   end
 end

@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundation 48 — `GameWindow`, and the `Game.Window` it closes.
@@ -99,7 +100,7 @@ class GameWindowTest < Minitest::Test
     end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     refute(symbols.any? { |symbol| symbol.include?("CNA_GameWindowHandle") })
-    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
   end
 
   # ------------------------------------------------------------------------------ Title
@@ -255,7 +256,7 @@ class GameWindowTest < Minitest::Test
                       .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
     assert_equal %w[Content], remainder
     assert_equal 110, STRICT.fetch("MISSING_MEMBER")
-    assert_equal 143, STRICT.fetch("COMPLETE_TYPES")
+    assert_equal ReviewedScoreboard::COMPLETE_TYPES, STRICT.fetch("COMPLETE_TYPES")
   end
 
   # `get_Window` is `host?.Window`, and XNA's null branch is unreachable because its constructor

@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundation 45 — `Game.IsActive`.
@@ -78,7 +79,7 @@ class GameIsActiveTest < Minitest::Test
   def test_all_three_terms_are_bound_canonical_routes
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     ROUTES.each { |route| assert_includes symbols, route }
-    assert_equal 68, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
   end
 
   # The two GamerServices routes project CLR statics, so neither takes a handle.

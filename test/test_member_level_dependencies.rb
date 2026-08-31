@@ -220,8 +220,9 @@ class MemberLevelDependenciesTest < Minitest::Test
   def test_the_candidate_policy_and_selection_route_are_unchanged
     assert_includes REPORT.fetch("candidatePolicy"), "all XNA public-signature dependencies complete"
     assert_includes REPORT.fetch("candidatePolicy"), "deliberately do not relax"
-    # 19 until Foundation 46 took LaunchParameters off the frontier by projecting Dictionary`2.
-    assert_equal 12, REPORT.fetch("dependencyCompleteCandidates").length
+    # 19 until Foundation 46 took LaunchParameters off the frontier by projecting Dictionary`2,
+    # and 12 until the Stream projection consumed TitleContainer.
+    assert_equal 11, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")
