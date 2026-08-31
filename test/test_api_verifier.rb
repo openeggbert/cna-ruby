@@ -1837,8 +1837,9 @@ class ApiVerifierTest < Minitest::Test
     # 41 closed Game's four events and their three protected raisers -- the three methods among
     # those are also why the overload count fell by three -- and 117 until Foundation 44 closed
     # Game::Tick, a method, which is why the overload count fell by one more. The set of partial
-    # types is what this test guards, and it is unchanged.
-    assert_equal 116, strict.fetch("MISSING_MEMBER")
+    # types is what this test guards, and it is unchanged. Foundation 45 then closed
+    # Game::IsActive, a property, so MISSING_MEMBER fell once more without moving the overloads.
+    assert_equal 115, strict.fetch("MISSING_MEMBER")
     assert_equal 1, strict.fetch("PROPERTY_MAPPING_MISMATCH")
     assert_equal 45, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
 

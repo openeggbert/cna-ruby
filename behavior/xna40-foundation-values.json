@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "XNA 4.0 Windows runtime",
-  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, the Foundation 40 graphics device service, the Foundation 41 canonical Game events, the Foundation 42 Game timing and presentation properties, and the Foundation 44 Game.Tick projection separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "provenance": "Observation-level provenance: legacy entries default to PURE_XNA_DERIVED; DisplayOrientation, GraphicsDeviceStatus, GraphicsProfile, Viewport, ClearOptions, DepthFormat, PrimitiveType, the Foundation 16 pure managed enum batch, the Foundation 17 Input.Touch closure, the Foundation 18 interface contracts, the Foundation 20 event projection, the Foundation 21 BCL projection, the Foundation 22 XNA exception cluster, the Foundation 23 Input.Touch value types, the Foundation 24 managed descriptors, the Foundation 25 constructor-free classes, the Foundation 26 DisplayModeCollection, the Foundation 27 ContentSerializer attributes, the Foundation 31 TouchCollection pair, the Foundation 32 TouchPanel, the Foundation 33 GameServiceContainer, the Foundation 35 GameComponentCollection, the Foundation 36 IDisposable collapse, the Foundation 37 Game component engine, the Foundation 38 GameComponent, the Foundation 39 member-level dependency edges, the Foundation 40 graphics device service, the Foundation 41 canonical Game events, the Foundation 42 Game timing and presentation properties, the Foundation 44 Game.Tick projection, and the Foundation 45 Game.IsActive projection separate XNA facts from RUBY_MAPPING_QUALIFICATION; never CNA output",
   "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
   "sourceSha256": "398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855",
   "milestone3SourceAssemblySha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
@@ -14064,6 +14064,114 @@
         "CNA::OwnerThreadError",
         "CNA::NativeError"
       ]
+    },
+    {
+      "id": "game_is_active.contract",
+      "operation": "GameIsActive.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        "property",
+        "System.Boolean",
+        true,
+        false,
+        "public",
+        null,
+        false
+      ]
+    },
+    {
+      "id": "game_is_active.il_terms",
+      "operation": "GameIsActive.IlTerms",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [
+        true,
+        true,
+        [
+          "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent"
+        ]
+      ]
+    },
+    {
+      "id": "game_is_active.routes",
+      "operation": "GameIsActive.Routes",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          [
+            "CNA_Handle",
+            "CNA_Bool"
+          ],
+          false
+        ],
+        [
+          [
+            "CNA_Bool"
+          ],
+          true
+        ],
+        [
+          [
+            "CNA_Bool"
+          ],
+          true
+        ],
+        true,
+        false
+      ]
+    },
+    {
+      "id": "game_is_active.hostless",
+      "operation": "GameIsActive.Hostless",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        false,
+        true,
+        false
+      ]
+    },
+    {
+      "id": "game_is_active.run",
+      "operation": "GameIsActive.Run",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        [
+          "Activated",
+          true
+        ],
+        true,
+        true
+      ]
+    },
+    {
+      "id": "game_is_active.truth_table",
+      "operation": "GameIsActive.TruthTable",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        false,
+        true,
+        true,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "id": "game_is_active.guide_unobservable",
+      "operation": "GameIsActive.GuideUnobservable",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [
+        false,
+        true,
+        false,
+        false
+      ]
     }
   ],
   "milestone31SourceAssemblySha256": "b0585224c18022c3661057ae79544644c10f33f1dc529678364f3d6b25151c25",
@@ -14094,5 +14202,8 @@
   "milestone42SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
   "milestone42MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 0d6410b86e4f75bca5365a9dead1d286e9478939bff5b2833aec7200e920fa63, 481 observations) was proved before appending 3 additive observations",
   "milestone44SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
-  "milestone44MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 24d4e2e104cd88130d814d55d470c75cb1ff0c6138860d27dd8253a776f7e4d6, 484 observations) was proved before appending 7 additive observations"
+  "milestone44MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 24d4e2e104cd88130d814d55d470c75cb1ff0c6138860d27dd8253a776f7e4d6, 484 observations) was proved before appending 7 additive observations",
+  "milestone45SourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "milestone45SourceGamerServicesAssemblySha256": "7c6effed97aa25a95c5e095d9c261f5581e402180cc073271a367b9eef79c8af",
+  "milestone45MergeMethod": "deterministic replay; upstream source 398d0201af0e3c719c152f8659a871cb59710a7dfafc079df6694d453c737855 is still absent, so import_behavior_corpus.rb was not run; byte-preserving serialisation of the pre-merge corpus (SHA-256 193008918234132638382d199dd87256f55657c63ac43b5394b741bd4e750a09, 491 observations) was proved before appending 7 additive observations"
 }

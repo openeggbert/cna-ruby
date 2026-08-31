@@ -245,12 +245,24 @@ class GameEventsTest < Minitest::Test
     end
   end
 
-  # IsActive stays deferred and is not implied by Activated/Deactivated: XNA's property is
-  # `isActive && !Guide.IsVisible`, which reaches the GamerServices runtime this binding does not
-  # have. The events read and write the private field, not the property.
-  def test_is_active_stays_deferred
-    refute_respond_to F::Game.new.tap(&:Dispose), :IsActive
-    remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
-    assert(remainder.any? { |entry| entry.include?("::IsActive ") })
+  # `IsActive` is not implied by these events and is not derived from them. XNA's `HostActivated`
+  # and `HostDeactivated` write the private `isActive` field and *then* raise; the raisers this
+  # binding exposes are the second half only, and the property reads CNA's own focus route. So
+  # raising `Activated` by hand -- which a subclass may do, because the raiser is protected and
+  # overridable -- must not make the game report itself active. Foundation 45 completed the
+  # property; this is the seam between the two that must not close.
+  def test_raising_activated_by_hand_does_not_make_the_game_active
+    game = F::Game.new
+    begin
+      game.Tick
+      refute game.IsActive
+      seen = []
+      game.Activated.add { |sender, _args| seen << sender }
+      game.__send__(:OnActivated, game, CNA::Runtime::EventArgs::Empty)
+      assert_equal [game], seen
+      refute game.IsActive, "the event is an observation, not the state"
+    ensure
+      game.Dispose
+    end
   end
 end

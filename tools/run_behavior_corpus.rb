@@ -685,6 +685,97 @@ def execute(item)
       reentrant.Dispose
     end
     [first, second, third]
+  when "GameIsActive.Contract"
+    # A public, get-only, instance Boolean property.
+    member = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.Game").fetch("members")
+                            .find { |entry| entry.fetch("name") == "IsActive" }
+    [member.fetch("kind"), member.fetch("type"), member.fetch("get"), member.fetch("set"),
+     member.fetch("getAccess"), member.fetch("setAccess"), member.fetch("static")]
+  when "GameIsActive.IlTerms"
+    # Game's own IL names both GamerServices terms of the expression, and the whole GamerServices
+    # namespace contributes exactly one type to the selected profile -- GamerServicesComponent --
+    # so neither Guide nor GamerServicesDispatcher is a selected identity this could leak.
+    references = IL_INVENTORY.fetch("types").fetch("Microsoft.Xna.Framework.Game")
+                             .fetch("externalMemberReferences")
+    selected = BATCH_REFERENCE.keys.select { |name| name.include?("GamerServices") }
+    [references.include?("Microsoft.Xna.Framework.GamerServices.GamerServicesDispatcher::get_IsInitialized"),
+     references.include?("Microsoft.Xna.Framework.GamerServices.Guide::get_IsVisible"),
+     selected]
+  when "GameIsActive.Routes"
+    # One canonical route per term. The two GamerServices routes project CLR statics and take no
+    # handle; the game's focus flag does.
+    entries = %w[cna_game_get_is_active cna_guide_get_is_visible
+                 cna_gamer_services_dispatcher_get_is_initialized].map do |symbol|
+      entry = CNA::Native::Manifest::FUNCTIONS.find { |function| function.symbol == symbol }
+      [entry.nil? ? nil : entry.c_arguments, entry.nil? ? nil : entry.ownership.include?("PROCESS_GLOBAL")]
+    end
+    entries + [F::Game.public_method_defined?(:IsActive), F::Game.method_defined?(:IsActive=)]
+  when "GameIsActive.Hostless"
+    # XNA's isActive is a CLR Boolean field at its default, and its getter allocates nothing.
+    game = F::Game.new
+    begin
+      first = game.IsActive
+      [first, game.instance_variable_get(:@host).nil?, Thread.new { game.IsActive }.value]
+    ensure
+      game.Dispose
+    end
+  when "GameIsActive.Run"
+    # HostActivated writes isActive before raising OnActivated, so the property is already true
+    # inside the handler, and nothing clears it when the loop exits.
+    seen = []
+    game = Class.new(F::Game) do
+      define_method(:Update) do |_time|
+        seen << ["update", self.IsActive]
+        self.Exit if seen.count { |entry| entry.first == "update" } >= 2
+      end
+      define_method(:Draw) { |_time| seen << ["draw", self.IsActive] }
+      define_method(:OnActivated) do |sender, args|
+        seen << ["Activated", self.IsActive]
+        super(sender, args)
+      end
+    end.new
+    begin
+      game.Run
+      [seen.first, seen.all? { |_name, active| active }, game.IsActive]
+    ensure
+      game.Dispose
+    end
+  when "GameIsActive.TruthTable"
+    # The pinned expression, driven directly through the private route readers. This qualifies the
+    # mapping, not the runtime: the guide-visible branch cannot be reached through CNA at all.
+    [[false, false, false], [false, false, true], [false, true, true],
+     [true, false, true], [true, true, true], [true, true, false]].map do |initialized, guide, active|
+      game = F::Game.new
+      begin
+        game.Tick
+        answers = {
+          "cna_gamer_services_dispatcher_get_is_initialized" => initialized,
+          "cna_guide_get_is_visible" => guide,
+          "cna_game_get_is_active" => active
+        }
+        game.define_singleton_method(:read_native_flag) { |symbol, *_rest| answers.fetch(symbol) }
+        game.singleton_class.send(:private, :read_native_flag)
+        game.IsActive
+      ensure
+        game.Dispose
+      end
+    end
+  when "GameIsActive.GuideUnobservable"
+    # Why the guide branch is proved wired rather than exercised: the reviewed artifact accepts
+    # cna_guide_set_is_visible and never reflects it, so CNA reports no visible guide either way.
+    library = CNA::Native.library
+    read = lambda do
+      output = library.pointer_for("C", 0)
+      library.call("cna_guide_get_is_visible", output)
+      output[0, 1].unpack1("C") != 0
+    end
+    handle = library.instance_variable_get(:@handle)
+    setter = Fiddle::Function.new(handle["cna_guide_set_is_visible"], [Fiddle::TYPE_INT], Fiddle::TYPE_UINT32_T)
+    before = read.call
+    accepted = setter.call(1).zero?
+    after = read.call
+    setter.call(0)
+    [before, accepted, after, read.call]
   when "GameEvent.Contract"
     # The four Game events and the three protected raisers, re-derived from the pinned metadata.
     # There are three raisers and not four: Disposed has no `On...` method, because the IL raises it

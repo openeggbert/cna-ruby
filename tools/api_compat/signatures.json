@@ -29852,6 +29852,19 @@
         },
         {
           "kind": "property",
+          "name": "IsActive",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
           "name": "Services",
           "type": "Microsoft.Xna.Framework.GameServiceContainer",
           "static": false,

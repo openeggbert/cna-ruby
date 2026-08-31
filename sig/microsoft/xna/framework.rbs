@@ -94,6 +94,9 @@ module Microsoft
         def Dispose: () -> nil
         # Both answer the same object for the life of the Game, and neither needs a native host.
         def Components: () -> GameComponentCollection
+        # The exact XNA expression: isActive && !(GamerServicesDispatcher.IsInitialized &&
+        # Guide.IsVisible), each term read from its own canonical CNA route.
+        def IsActive: () -> bool
         def Services: () -> GameServiceContainer
         # The four canonical Game events. One CLR event, one Ruby reader over the subscription
         # primitive; the three protected raisers are the only public way to raise the first three,

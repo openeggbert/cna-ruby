@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "sourceGamerServicesAssemblySha256": "7c6effed97aa25a95c5e095d9c261f5581e402180cc073271a367b9eef79c8af",
+  "derivation": "Foundation 45 Game.IsActive. Contract rows are read from the pinned XNA 4.0 Windows metadata of Microsoft.Xna.Framework.Game.dll and from the Microsoft-free IL inventory derived from it; the two GamerServices terms are derived from Microsoft.Xna.Framework.GamerServices.dll. Game::get_IsActive is thirty bytes and is not a field read: it initialises a local to false, calls GamerServicesDispatcher::get_IsInitialized and, only when that is true, assigns Guide::get_IsVisible to the local; it then loads isActive and returns false when that is false, and otherwise returns the local compared with zero. So the property is isActive && !(GamerServicesDispatcher.IsInitialized && Guide.IsVisible), and the guard is the only reason it never throws, because Guide::get_IsVisible throws InvalidOperationException(GamerServicesNotInitialized) when the dispatcher is not initialised and otherwise answers isVisible || forceGuideVisible. GamerServicesDispatcher::get_IsInitialized is packetBuffer != null. The backing field isActive is written in exactly two places in the whole assembly, Game::HostActivated and Game::HostDeactivated, each of which returns early when the field already holds the value it would write, writes the field, and only then raises OnActivated or OnDeactivated -- which is why the property is already true inside an Activated handler. Nothing else writes it, so a Game that has never run reports the CLR default false.",
+  "observations": [
+    {
+      "id": "game_is_active.contract",
+      "operation": "GameIsActive.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": ["property", "System.Boolean", true, false, "public", null, false]
+    },
+    {
+      "id": "game_is_active.il_terms",
+      "operation": "GameIsActive.IlTerms",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [true, true, ["Microsoft.Xna.Framework.GamerServices.GamerServicesComponent"]]
+    },
+    {
+      "id": "game_is_active.routes",
+      "operation": "GameIsActive.Routes",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [[["CNA_Handle", "CNA_Bool"], false], [["CNA_Bool"], true], [["CNA_Bool"], true], true, false]
+    },
+    {
+      "id": "game_is_active.hostless",
+      "operation": "GameIsActive.Hostless",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [false, true, false]
+    },
+    {
+      "id": "game_is_active.run",
+      "operation": "GameIsActive.Run",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [["Activated", true], true, true]
+    },
+    {
+      "id": "game_is_active.truth_table",
+      "operation": "GameIsActive.TruthTable",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [false, true, true, true, false, false]
+    },
+    {
+      "id": "game_is_active.guide_unobservable",
+      "operation": "GameIsActive.GuideUnobservable",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [false, true, false, false]
+    }
+  ]
+}

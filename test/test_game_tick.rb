@@ -98,7 +98,7 @@ class GameTickTest < Minitest::Test
   def test_tick_is_no_longer_missing_and_the_remainder_shrank_by_one
     remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
     refute(remainder.any? { |entry| entry.include?("::Tick ") }, remainder.inspect)
-    assert_equal 116, STRICT.fetch("MISSING_MEMBER")
+    assert_equal 115, STRICT.fetch("MISSING_MEMBER")
   end
 
   # ---------------------------------------------------------------- the two are never the same call
@@ -256,9 +256,9 @@ class GameTickTest < Minitest::Test
   # ------------------------------------------------------------------------------- nothing invented
 
   # Tick claims no host-event processing, no Guide relay and no window pump: those are the three
-  # steps `RunOneFrame` has and it does not, and none of them is fabricated here.
+  # steps `RunOneFrame` has and it does not, and none of them is fabricated here. `IsActive` is a
+  # separate identity that Foundation 45 completed from its own IL, not from anything Tick implies.
   def test_tick_adds_no_guide_or_window_surface
-    refute F::Game.public_method_defined?(:IsActive)
     refute F::Game.public_method_defined?(:Window)
     refute F::Game.const_defined?(:Guide, false)
     refute Object.const_defined?(:System)

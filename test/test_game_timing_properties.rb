@@ -67,7 +67,7 @@ class GameTimingPropertiesTest < Minitest::Test
       assert_includes selected, name
       refute(remainder.any? { |entry| entry.include?("::#{name} ") }, name)
     end
-    assert_equal 116, STRICT.fetch("MISSING_MEMBER")
+    assert_equal 115, STRICT.fetch("MISSING_MEMBER")
     assert_equal 0, STRICT.fetch("UNEXPECTED_MEMBER")
     # Unrelated and pre-existing: GraphicsDevice::Viewport, whose setter is deliberately excluded.
     assert_equal ["Microsoft.Xna.Framework.Graphics.GraphicsDevice::Viewport"],
@@ -200,12 +200,13 @@ class GameTimingPropertiesTest < Minitest::Test
 
   # ------------------------------------------------------------------- what this does not claim
 
-  # IsActive stays deferred: XNA's property is `isActive && !Guide.IsVisible`, which reaches the
-  # GamerServices runtime this binding does not have. Tick left this list in Foundation 44.
+  # Tick left this list in Foundation 44 and IsActive in Foundation 45, the latter by implementing
+  # `isActive && !(GamerServicesDispatcher.IsInitialized && Guide.IsVisible)` over the three
+  # canonical CNA routes that answer its three terms.
   def test_the_remaining_game_members_are_untouched
     remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
                       .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_equal %w[Content Dispose Finalize IsActive LaunchParameters
+    assert_equal %w[Content Dispose Finalize LaunchParameters
                     ShowMissingRequirementMessage Window].sort, remainder.sort
   end
 
@@ -254,7 +255,7 @@ class GameLoopStateTest < Minitest::Test
     %w[SuppressDraw ResetElapsedTime].each do |name|
       refute(remainder.any? { |entry| entry.include?("::#{name} ") }, name)
     end
-    assert_equal 116, STRICT.fetch("MISSING_MEMBER")
+    assert_equal 115, STRICT.fetch("MISSING_MEMBER")
   end
 
   # Neither creates a host: ResetElapsedTime on a Game with no loop has no accumulated time to

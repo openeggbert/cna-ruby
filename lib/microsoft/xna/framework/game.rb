@@ -450,6 +450,59 @@ module Microsoft
 
         def Services = @gameServices
 
+        # `get_IsActive` is thirty bytes and is **not** a field read. In full:
+        #
+        #     bool guideVisible = false;
+        #     if (GamerServicesDispatcher.IsInitialized) guideVisible = Guide.IsVisible;
+        #     if (!isActive) return false;
+        #     return guideVisible == false;
+        #
+        # `Guide.get_IsVisible` throws `InvalidOperationException(GamerServicesNotInitialized)` when
+        # the dispatcher is not initialised and otherwise answers `isVisible || forceGuideVisible`;
+        # `GamerServicesDispatcher.get_IsInitialized` is `packetBuffer != null`, so that guard is the
+        # only reason this getter never throws. Both are CLR statics, which is why the projection
+        # reads them without a Game.
+        #
+        # All three terms have exactly one canonical CNA route, so the exact expression is
+        # implemented rather than approximated. Nothing here fabricates a Guide state:
+        # `cna_guide_get_is_visible` is *asked*, and what it answers is CNA's, not this binding's.
+        # In the reviewed artifact it answers false and `cna_guide_set_is_visible` is accepted
+        # without being reflected, so no guide can be raised behind it -- a property of that
+        # runtime, recorded in the evidence, not an assumption baked into this expression.
+        #
+        # The IL's evaluation order is kept: the two GamerServices terms are read first, even when
+        # `isActive` will decide the answer, because that is the order the pinned getter uses and
+        # both routes are process-global, need no host, and work off the owner thread.
+        #
+        # `isActive` is the one term this binding does **not** mirror in managed state. XNA's field
+        # is written by the host's own `HostActivated`/`HostDeactivated` handlers and only read by
+        # consumers, so it is host-owned -- the `SuppressDraw` case, not the `TargetElapsedTime`
+        # case -- and the projection forwards instead of keeping a shadow copy. Measured over a
+        # real run, `cna_game_get_is_active` is false before the loop starts and already true
+        # inside the `Activated` handler, which is exactly where XNA's `HostActivated` leaves the
+        # field: written before the event is raised.
+        #
+        # Before a host exists there is nothing to ask and XNA's field is still at its CLR default,
+        # so the answer is false and **no host is created** -- a getter that allocated a native
+        # game would be a side effect XNA's single `ldfld` does not have.
+        #
+        # Recorded deviations: `cna_game_get_is_active` is owner-thread bound where XNA's getter is
+        # not, so this raises off the owner thread once a host exists and does not before; and a
+        # disposed Game raises rather than answering the last value XNA's field would still hold,
+        # because the native game it would have to ask no longer exists.
+        def IsActive
+          raise CNA::DisposedObjectError, "Game is disposed" if disposed?
+
+          guide_visible = false
+          guide_visible = read_native_flag("cna_guide_get_is_visible") if gamer_services_initialized?
+          return false if @host.nil? || @host.handle.zero?
+
+          assert_owner_thread!
+          return false unless read_native_flag("cna_game_get_is_active", @host.handle)
+
+          !guide_visible
+        end
+
         def Run
           raise CNA::DisposedObjectError, "Game is disposed" if disposed?
           raise CNA::InvalidBindingStateError, "Game.Run may only be called once" if @has_run
@@ -1030,6 +1083,22 @@ module Microsoft
         # a setter called off the owner thread raises once a host exists and does not before. The
         # asymmetry is the native contract's, not this projection's, and it is asserted rather than
         # hidden.
+        # `GamerServicesDispatcher.IsInitialized` and `Guide.IsVisible` are CLR statics, and their
+        # canonical routes are process-global to match: no handle, no owner-thread contract, and
+        # measured to answer with no Game in the process at all.
+        def gamer_services_initialized?
+          read_native_flag("cna_gamer_services_dispatcher_get_is_initialized")
+        end
+
+        # One `CNA_Bool*` output, read back as a Ruby boolean. Every failure travels the single
+        # translation boundary, so a refused route raises rather than answering a default.
+        def read_native_flag(symbol, *arguments)
+          library = CNA::Native.library
+          output = library.pointer_for("C", 0)
+          library.call(symbol, *arguments, output)
+          output[0, 1].unpack1("C") != 0
+        end
+
         def push_native_game_setting(symbol, value)
           return if @host.nil? || @host.handle.zero?
 

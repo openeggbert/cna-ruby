@@ -99,6 +99,20 @@ module CNA
         # Game's four timing/presentation properties. In XNA every getter is one `ldfld` -- they are
         # managed fields the host loop reads, not native queries -- so the projection keeps the
         # managed state authoritative and pushes it down; these are the push routes.
+        # The three routes `Game.IsActive` is made of. XNA's getter is
+        #
+        #     bool guideVisible = false;
+        #     if (GamerServicesDispatcher.IsInitialized) guideVisible = Guide.IsVisible;
+        #     if (!isActive) return false;
+        #     return !guideVisible;
+        #
+        # so it needs the game's own focus flag plus both GamerServices terms, and each has exactly
+        # one canonical route. The two GamerServices routes are process-global: no handle, no owner
+        # thread, and measured to answer with no Game in the process at all -- which is what the
+        # CLR statics they project are.
+        signature("cna_game_get_is_active", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows Game; caller output"),
+        signature("cna_guide_get_is_visible", T[:result], [pointer("CNA_Bool")], ownership: "PROCESS_GLOBAL guide; caller output"),
+        signature("cna_gamer_services_dispatcher_get_is_initialized", T[:result], [pointer("CNA_Bool")], ownership: "PROCESS_GLOBAL dispatcher; caller output"),
         signature("cna_game_get_is_mouse_visible", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows Game; caller output"),
         signature("cna_game_set_is_mouse_visible", T[:result], [T[:handle], T[:bool]], ownership: "borrows Game; shows or hides the window cursor"),
         signature("cna_game_get_is_fixed_time_step", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows Game; caller output"),
