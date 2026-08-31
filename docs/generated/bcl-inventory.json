@@ -3,7 +3,7 @@
   "authority": "Microsoft .NET Framework 4.0 mscorlib, the BCL the pinned XNA 4.0 Windows assemblies bind to",
   "separateFromXna": "mscorlib is not an XNA assembly. Nothing here enters REFERENCE_TYPES, REFERENCE_MEMBERS or docs/generated/xna-il-inventory.json, and no BCL identity is an XNA identity.",
   "provenance": "derived with ikdasm from a Microsoft .NET Framework 4.0 mscorlib admitted by exact SHA-256. No Microsoft-owned bytes, IL text or machine-local path is reproduced here.",
-  "scope": "demand-driven: a family is admitted only when the XNA reference contract names it, and only the surface those consumers can reach is recorded, plus the exception closure that surface throws",
+  "scope": "demand-driven: a family is admitted only when the XNA reference contract names it or an already-admitted family's measured surface does, and only the surface those consumers can reach is recorded, plus the exception closure that surface throws",
   "assembly": {
     "sha256": "5634668d4775b0113f08ea31093b281fea69bfc4e99227f5ca761b4ed98acc63",
     "bytes": 5196112,
@@ -88,9 +88,9 @@
     "ThrowWrongKeyTypeArgumentException": "System.ArgumentException",
     "ThrowWrongValueTypeArgumentException": "System.ArgumentException"
   },
-  "BCL_FAMILIES": 4,
-  "BCL_TYPES": 19,
-  "BCL_MEMBERS": 295,
+  "BCL_FAMILIES": 5,
+  "BCL_TYPES": 20,
+  "BCL_MEMBERS": 299,
   "BCL_EXCEPTION_TYPES": 10,
   "families": [
     {
@@ -109,6 +109,10 @@
         "Microsoft.Xna.Framework.Media.VisualizationData::Samples"
       ],
       "xnaConsumerCount": 10,
+      "bclConsumers": [
+
+      ],
+      "demand": "direct",
       "types": [
         "System.Collections.ObjectModel.ReadOnlyCollection`1"
       ]
@@ -120,6 +124,10 @@
         "Microsoft.Xna.Framework.GameComponentCollection (base)"
       ],
       "xnaConsumerCount": 1,
+      "bclConsumers": [
+
+      ],
+      "demand": "direct",
       "types": [
         "System.Collections.ObjectModel.Collection`1"
       ]
@@ -131,6 +139,10 @@
         "Microsoft.Xna.Framework.LaunchParameters (base)"
       ],
       "xnaConsumerCount": 1,
+      "bclConsumers": [
+
+      ],
+      "demand": "direct",
       "types": [
         "System.Collections.Generic.Dictionary`2",
         "System.Collections.Generic.Dictionary`2+Enumerator",
@@ -160,8 +172,27 @@
         "Microsoft.Xna.Framework.TitleContainer::OpenStream"
       ],
       "xnaConsumerCount": 14,
+      "bclConsumers": [
+
+      ],
+      "demand": "direct",
       "types": [
         "System.IO.Stream"
+      ]
+    },
+    {
+      "family": "System.IO.SeekOrigin",
+      "reason": "the second parameter of System.IO.Stream::Seek, and the only identity a consumer of a stream this binding produces can name in order to seek; demanded transitively through Stream rather than directly by an XNA signature",
+      "xnaConsumers": [
+
+      ],
+      "xnaConsumerCount": 0,
+      "bclConsumers": [
+        "System.IO.Stream::Seek"
+      ],
+      "demand": "transitive",
+      "types": [
+        "System.IO.SeekOrigin"
       ]
     }
   ],
@@ -4627,6 +4658,56 @@
               "method": "System.Exception::get_HResult"
             }
           ]
+        }
+      ]
+    },
+    "System.IO.SeekOrigin": {
+      "kind": "enum",
+      "baseType": "System.Enum",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": true,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "field",
+          "name": "value__",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "public specialname rtspecialname int32 value__"
+        },
+        {
+          "kind": "field",
+          "name": "Begin",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000000)",
+          "declaration": "public static literal valuetype System.IO.SeekOrigin Begin = int32(0x00000000)"
+        },
+        {
+          "kind": "field",
+          "name": "Current",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000001)",
+          "declaration": "public static literal valuetype System.IO.SeekOrigin Current = int32(0x00000001)"
+        },
+        {
+          "kind": "field",
+          "name": "End",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000002)",
+          "declaration": "public static literal valuetype System.IO.SeekOrigin End = int32(0x00000002)"
         }
       ]
     },

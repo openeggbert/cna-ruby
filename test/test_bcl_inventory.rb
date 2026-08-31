@@ -126,7 +126,7 @@ class BclInventoryTest < Minitest::Test
   end
 
   def test_the_bcl_metrics_are_reported_separately_and_add_up
-    assert_equal 4, INVENTORY.fetch("BCL_FAMILIES")
+    assert_equal 5, INVENTORY.fetch("BCL_FAMILIES")
     assert_equal INVENTORY.fetch("families").length, INVENTORY.fetch("BCL_FAMILIES")
     assert_equal types.length, INVENTORY.fetch("BCL_TYPES")
     assert_equal types.values.sum { |entry| entry.fetch("members").length }, INVENTORY.fetch("BCL_MEMBERS")
@@ -148,12 +148,69 @@ class BclInventoryTest < Minitest::Test
       values.compact
     end
 
+    bcl_signatures = INVENTORY.fetch("types").flat_map do |_, record|
+      record.fetch("members").flat_map do |item|
+        [item["returnType"], item["declaration"], *item.fetch("parameters", []).map { |parameter| parameter["type"] }]
+      end
+    end.compact
+
     INVENTORY.fetch("families").each do |family|
       identity = family.fetch("family")
-      assert(signatures.any? { |signature| signature.include?(identity) }, identity)
-      refute_empty family.fetch("xnaConsumers"), identity
       assert_equal family.fetch("xnaConsumers").length, family.fetch("xnaConsumerCount"), identity
       assert_includes family.fetch("types"), identity
+
+      # Demand is direct when an XNA signature names the family, and transitive when an
+      # already-admitted family's *measured* surface does. Both are demand; neither is optional.
+      # A family with an empty consumer list of the kind it claims would be scope creep, and the
+      # builder aborts on it, so this restates the rule independently rather than trusting it.
+      case family.fetch("demand")
+      when "direct"
+        assert(signatures.any? { |signature| signature.include?(identity) }, identity)
+        refute_empty family.fetch("xnaConsumers"), identity
+      when "transitive"
+        assert_empty family.fetch("xnaConsumers"), identity
+        refute(signatures.any? { |signature| signature.include?(identity) },
+               "#{identity} claims transitive demand but an XNA signature names it")
+        refute_empty family.fetch("bclConsumers"), identity
+        family.fetch("bclConsumers").each do |consumer|
+          assert_includes INVENTORY.fetch("types"), consumer.split("::").first, consumer
+        end
+        assert(bcl_signatures.any? { |signature| signature.include?(identity) }, identity)
+      else
+        flunk "#{identity} declares an unknown demand #{family.fetch("demand").inspect}"
+      end
+    end
+  end
+
+  # `System.IO.SeekOrigin` is the first transitively demanded family: no XNA signature names it, and
+  # `System.IO.Stream::Seek` does. Its three members are what a consumer of a produced stream needs
+  # in order to seek at all, and they are read out of the assembly rather than remembered.
+  def test_the_seek_origin_enum_is_measured_and_transitively_demanded
+    record = INVENTORY.fetch("types").fetch("System.IO.SeekOrigin")
+    assert_equal "enum", record.fetch("kind")
+    assert_equal "System.Enum", record.fetch("baseType")
+    literals = record.fetch("members").select { |item| item.key?("literal") }
+                     .to_h { |item| [item.fetch("name"), item.fetch("literal")] }
+    assert_equal({ "Begin" => "int32(0x00000000)", "Current" => "int32(0x00000001)",
+                   "End" => "int32(0x00000002)" }, literals)
+
+    family = INVENTORY.fetch("families").find { |entry| entry.fetch("family") == "System.IO.SeekOrigin" }
+    assert_equal "transitive", family.fetch("demand")
+    assert_equal ["System.IO.Stream::Seek"], family.fetch("bclConsumers")
+  end
+
+  # A literal field's name is bounded on the left by its type and on the right by its `=`. Reading
+  # the last token of the whole declaration names every enum member after its own value, which is
+  # the scanner defect this project has hit before. This is the control for it.
+  def test_a_literal_field_is_named_before_its_value_and_not_after_it
+    INVENTORY.fetch("types").each do |identity, record|
+      record.fetch("members").select { |item| item.fetch("kind") == "field" }.each do |item|
+        refute_match(/\Aint\d|\A[a-z]+\(0x/, item.fetch("name"), "#{identity}::#{item.fetch("name")}")
+        next unless item.key?("literal")
+
+        assert item.fetch("declaration").include?("#{item.fetch("name")} = #{item.fetch("literal")}"),
+               "#{identity}::#{item.fetch("name")}"
+      end
     end
   end
 

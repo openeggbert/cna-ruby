@@ -51,7 +51,9 @@ FAMILIES = {
   "System.Collections.Generic.Dictionary`2" =>
     "the CLR base of LaunchParameters, the one dependency-complete XNA type blocked on it alone",
   "System.IO.Stream" =>
-    "the declared return type of TitleContainer.OpenStream, ContentManager.OpenStream, StorageContainer.OpenFile/CreateFile and four Media getters, and the declared parameter of SoundEffect.FromStream, Texture2D.FromStream and Texture2D.SaveAsPng/SaveAsJpeg -- seventeen XNA members in all"
+    "the declared return type of TitleContainer.OpenStream, ContentManager.OpenStream, StorageContainer.OpenFile/CreateFile and four Media getters, and the declared parameter of SoundEffect.FromStream, Texture2D.FromStream and Texture2D.SaveAsPng/SaveAsJpeg -- seventeen XNA members in all",
+  "System.IO.SeekOrigin" =>
+    "the second parameter of System.IO.Stream::Seek, and the only identity a consumer of a stream this binding produces can name in order to seek; demanded transitively through Stream rather than directly by an XNA signature"
 }.freeze
 
 # Support enums the collection families throw through. Their literal names are what make a derived
@@ -164,11 +166,19 @@ reference.fetch("types").each do |type|
     end
   end
 end
-consumers.each do |family, list|
+consumers.each_value do |list|
   list.uniq!
   list.sort!
-  abort "family #{family} has no XNA consumer; the inventory is demand-driven" if list.empty?
 end
+# Demand is transitive, and has to be. A family can be reachable without any XNA signature naming
+# it: `System.IO.SeekOrigin` is named by `System.IO.Stream::Seek` and by nothing in XNA, yet a
+# consumer holding a stream this binding produced can name it. Admitting it is therefore demand,
+# not scope creep -- the same reasoning the exception closure already follows, which walks into
+# every exception an admitted family throws without any XNA signature naming those either.
+#
+# The transitive check needs the measured surface, so it runs after extraction; what happens here is
+# only the split. A family with neither kind of consumer still aborts.
+transitively_demanded = consumers.select { |_, list| list.empty? }.keys
 
 # ---------------------------------------------------------------------------------------------
 # IL extraction. Nested- and generic-aware, following the same conventions as the XNA inventory:
@@ -367,10 +377,18 @@ end
 
 def field_member(leading)
   declaration = leading.sub(".field ", "").sub(/\s*$/, "")
-  tokens = declaration.split(/\s+/)
+  # A `literal` field carries its constant after an `=`, so the *name* is the last token before it.
+  # Reading `tokens.last` unconditionally names an enum member `int32(0x00000000)` -- the value --
+  # for every constant in the assembly. That is the scanner defect this project has hit before:
+  # a token bounded on one side only. The declaration is split at the assignment first, and the
+  # value is recorded rather than discarded, because for an enum the value *is* the member.
+  signature, value = declaration.split(/\s+=\s+/, 2)
+  tokens = signature.split(/\s+/)
   access = %w[public family private assembly famorassem famandassem].find { |token| tokens.include?(token) } || "public"
-  {kind: "field", name: tokens.last.to_s.tr("'", ""), access: access,
-   static: tokens.include?("static"), declaration: declaration, ops: []}
+  member = {kind: "field", name: tokens.last.to_s.tr("'", ""), access: access,
+            static: tokens.include?("static"), declaration: declaration, ops: []}
+  member[:literal] = value.strip if value
+  member
 end
 
 bodies = type_bodies(il)
@@ -609,6 +627,7 @@ until queue.empty?
     facts = behaviour(member, throw_helper, support_literals)
     entry = {"kind" => member[:kind], "name" => member[:name], "access" => member[:access],
              "static" => member[:static], "explicitInterface" => member[:access] == "private"}
+    entry["literal"] = member[:literal] if member.key?(:literal)
     entry["returnType"] = member[:returnType] if member.key?(:returnType)
     entry["parameters"] = member[:parameters] if member.key?(:parameters)
     entry["declaration"] = member[:declaration] if member.key?(:declaration)
@@ -629,9 +648,30 @@ until queue.empty?
   selected[identity] = record
 end
 
+# The transitive half of the demand rule, measured against what was actually extracted.
+bcl_consumers = FAMILIES.keys.to_h do |family|
+  users = selected.flat_map do |identity, record|
+    next [] if identity == family || identity.start_with?("#{family}+")
+
+    record.fetch("members").filter_map do |member|
+      signatures = [member["returnType"], member["declaration"],
+                    *member.fetch("parameters", []).map { |parameter| parameter["type"] }].compact
+      "#{identity}::#{member.fetch("name")}" if signatures.any? { |signature| signature.include?(family) }
+    end
+  end.uniq.sort
+  [family, users]
+end
+transitively_demanded.each do |family|
+  next unless bcl_consumers.fetch(family).empty?
+
+  abort "family #{family} has no XNA consumer and no admitted-BCL consumer; the inventory is demand-driven"
+end
+
 families = FAMILIES.map do |family, reason|
   {"family" => family, "reason" => reason, "xnaConsumers" => consumers.fetch(family),
    "xnaConsumerCount" => consumers.fetch(family).length,
+   "bclConsumers" => bcl_consumers.fetch(family),
+   "demand" => consumers.fetch(family).empty? ? "transitive" : "direct",
    "types" => selected.keys.select { |identity| identity == family || identity.start_with?("#{family}+") }.sort}
 end
 
@@ -640,7 +680,7 @@ inventory = {
   "authority" => "Microsoft .NET Framework 4.0 mscorlib, the BCL the pinned XNA 4.0 Windows assemblies bind to",
   "separateFromXna" => "mscorlib is not an XNA assembly. Nothing here enters REFERENCE_TYPES, REFERENCE_MEMBERS or docs/generated/xna-il-inventory.json, and no BCL identity is an XNA identity.",
   "provenance" => "derived with ikdasm from a Microsoft .NET Framework 4.0 mscorlib admitted by exact SHA-256. No Microsoft-owned bytes, IL text or machine-local path is reproduced here.",
-  "scope" => "demand-driven: a family is admitted only when the XNA reference contract names it, and only the surface those consumers can reach is recorded, plus the exception closure that surface throws",
+  "scope" => "demand-driven: a family is admitted only when the XNA reference contract names it or an already-admitted family's measured surface does, and only the surface those consumers can reach is recorded, plus the exception closure that surface throws",
   "assembly" => MSCORLIB.merge(
     "derivedPublicKeyToken" => derived_token,
     "publicKeyTokenDerivation" => "SHA-1 of the assembly's own .publickey blob, low eight bytes, reversed",
