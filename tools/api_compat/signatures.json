@@ -29656,6 +29656,19 @@
         },
         {
           "kind": "method",
+          "name": "Tick",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
           "name": "Exit",
           "static": false,
           "access": "public",

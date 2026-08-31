@@ -126,6 +126,32 @@ def corpus_component(label = nil)
   end.new
 end
 
+# The Foundation 44 Tick fixture: a Game that records which overridable members the host delivered,
+# in order, and nothing else.
+def corpus_tick_game(log)
+  Class.new(Microsoft::Xna::Framework::Game) do
+    define_method(:Initialize) { log << "initialize"; super() }
+    define_method(:LoadContent) { log << "load_content" }
+    define_method(:BeginRun) { log << "begin_run" }
+    define_method(:EndRun) { log << "end_run" }
+    define_method(:Update) { |time| log << "update"; super(time) }
+    define_method(:Draw) { |time| log << "draw"; super(time) }
+    define_method(:BeginDraw) { log << "begin_draw"; true }
+    define_method(:EndDraw) { log << "end_draw" }
+  end.new
+end
+
+def tick_delivery
+  log = []
+  game = corpus_tick_game(log)
+  begin
+    yield game
+    log.dup
+  ensure
+    game.Dispose
+  end
+end
+
 # Component fixtures for the Foundation 37 rows: the XNA contracts and nothing else, so the rows
 # depend on no later milestone.
 class CorpusUpdateable
@@ -544,6 +570,121 @@ def execute(item)
     ensure
       game.Dispose
     end
+  when "GameTick.Contract"
+    # Tick and RunOneFrame carry the *same* metadata shape -- public, void, parameterless, instance
+    # -- which is exactly why they could be mistaken for each other. They are two members.
+    members = BATCH_REFERENCE.fetch("Microsoft.Xna.Framework.Game").fetch("members")
+    %w[Tick RunOneFrame].map do |name|
+      member = members.find { |entry| entry.fetch("name") == name && entry.fetch("kind") == "method" }
+      [member.fetch("access"), member.fetch("returnType"), member.fetch("parameters").length,
+       member.fetch("genericParameters").length, member.fetch("static")]
+    end
+  when "GameTick.IlEdges"
+    # The measured IL relationship, from the Microsoft-free inventory. Game names
+    # GameHost::RunOneFrame, which is the whole body of Game.RunOneFrame; it names the three
+    # GameClock calls that are Tick's own body; and its native-reachable method set contains Tick
+    # and HostIdle -- HostIdle only because its whole body is `this.Tick()` -- but not RunOneFrame,
+    # whose native work happens inside the internal host instead.
+    game = IL_INVENTORY.fetch("types").fetch("Microsoft.Xna.Framework.Game")
+    references = game.fetch("externalMemberReferences")
+    reachable = game.fetch("nativeReachableMethods")
+    [references.include?("Microsoft.Xna.Framework.GameHost::RunOneFrame"),
+     references.include?("Microsoft.Xna.Framework.GameClock::UpdateElapsedTime"),
+     references.include?("Microsoft.Xna.Framework.GameClock::get_ElapsedAdjustedTime"),
+     references.include?("Microsoft.Xna.Framework.GameClock::AdvanceFrameTime"),
+     reachable.include?("Tick"), reachable.include?("HostIdle"), reachable.include?("RunOneFrame")]
+  when "GameTick.NotAliased"
+    # Two selected identities, two Ruby methods, two native symbols. Nothing forwards to anything.
+    symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
+    [F::Game.public_method_defined?(:Tick),
+     F::Game.public_method_defined?(:RunOneFrame),
+     F::Game.instance_method(:Tick) == F::Game.instance_method(:RunOneFrame),
+     symbols.include?("cna_game_tick"), symbols.include?("cna_game_run_one_frame")]
+  when "GameTick.Delivery"
+    # Tick is the frame step; RunOneFrame is the host frame wrapped around it. Tick initialises
+    # nothing, which is why XNA keeps Initialize and BeginRun in RunGame rather than here.
+    [tick_delivery { |game| game.Tick }, tick_delivery { |game| game.RunOneFrame }]
+  when "GameTick.ExitLatch"
+    # get_ShouldExit is one `ldfld exitRequested`, and exitRequested is written exactly once in the
+    # whole assembly -- by Game.Exit -- and never cleared, so Exit disables Tick permanently. The
+    # latch is managed state, so an Exit before the first Tick creates no native host at all.
+    log = []
+    game = corpus_tick_game(log)
+    begin
+      game.Tick
+      before = log.length.positive?
+      game.Exit
+      log.clear
+      3.times { game.Tick }
+      [before, log.empty?]
+    ensure
+      game.Dispose
+    end.then do |first|
+      second = corpus_tick_game([])
+      begin
+        second.Exit
+        second.Tick
+        first + [second.instance_variable_get(:@host).nil?]
+      ensure
+        second.Dispose
+      end
+    end
+  when "GameTick.SuppressDraw"
+    # V_0 starts true and is ANDed with suppressDraw after each Update, which clears the field in
+    # the same breath: exactly one frame's draw is skipped.
+    log = []
+    game = corpus_tick_game(log)
+    begin
+      game.Tick
+      log.clear
+      game.SuppressDraw
+      game.Tick
+      suppressed = log.dup
+      log.clear
+      game.Tick
+      [suppressed, log.dup]
+    ensure
+      game.Dispose
+    end
+  when "GameTick.Refusals"
+    # Disposed and owner-thread are this binding's own contracts; the re-entrancy refusal is CNA's,
+    # surfaced as its own translated error rather than pre-empted here.
+    disposed = F::Game.new
+    disposed.Dispose
+    first = begin
+      disposed.Tick
+      "none"
+    rescue Exception => error
+      error.class.name
+    end
+    running = corpus_tick_game([])
+    second = begin
+      running.Tick
+      thread = Thread.new do
+        Thread.current.report_on_exception = false
+        begin
+          running.Tick
+          "none"
+        rescue Exception => error
+          error.class.name
+        end
+      end
+      thread.value
+    ensure
+      running.Dispose
+    end
+    reentrant = Class.new(F::Game) do
+      def Update(gameTime) = self.Tick
+    end.new
+    third = begin
+      reentrant.Tick
+      "none"
+    rescue Exception => error
+      error.class.name
+    ensure
+      reentrant.Dispose
+    end
+    [first, second, third]
   when "GameEvent.Contract"
     # The four Game events and the three protected raisers, re-derived from the pinned metadata.
     # There are three raisers and not four: Disposed has no `On...` method, because the IL raises it

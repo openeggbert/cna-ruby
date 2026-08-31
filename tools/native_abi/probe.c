@@ -16,6 +16,7 @@ CHECK_FN(cna_game_create, CNA_Result, (const CNA_GameCreateInfo*, CNA_Handle*));
 CHECK_FN(cna_game_set_frame_hooks_ext, CNA_Result, (CNA_Handle, const CNA_GameFrameHooks*));
 CHECK_FN(cna_game_run, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_game_run_one_frame, CNA_Result, (CNA_Handle));
+CHECK_FN(cna_game_tick, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_game_request_exit, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_game_destroy, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_game_subscribe, CNA_Result, (CNA_Handle, CNA_GameEvent, CNA_GameEventCallback, void*, CNA_GameEventRegistrationHandle*));
@@ -79,6 +80,7 @@ int main(void) {
     SIGNATURE(cna_game_set_frame_hooks_ext, "CNA_Result|CNA_Handle,const CNA_GameFrameHooks*");
     SIGNATURE(cna_game_run, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_game_run_one_frame, "CNA_Result|CNA_Handle");
+    SIGNATURE(cna_game_tick, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_game_request_exit, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_game_destroy, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_game_subscribe, "CNA_Result|CNA_Handle,CNA_GameEvent,CNA_GameEventCallback,void*,CNA_GameEventRegistrationHandle*");

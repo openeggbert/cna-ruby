@@ -83,6 +83,9 @@ module Microsoft
         def initialize: () -> void
         def Run: () -> nil
         def RunOneFrame: () -> nil
+        # A different XNA operation, not an alias: RunOneFrame is the host frame, Tick is the frame
+        # step it wraps. After Exit the CLR latch makes it a permanent no-op.
+        def Tick: () -> nil
         def Exit: () -> nil
         # Both forward to the timing loop CNA owns. SuppressDraw before the host exists is a
         # pending request delivered at creation; ResetElapsedTime is then genuinely a no-op.

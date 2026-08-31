@@ -467,6 +467,54 @@ module Microsoft
           nil
         end
 
+        # `Tick()` and `RunOneFrame()` are two different XNA operations, and the pinned IL says so
+        # in one line each. `Game.RunOneFrame` is `host?.RunOneFrame()`; `WindowsGameHost` implements
+        # that as three steps -- `gameWindow.Tick()`, which rethrows the exception the WinForms pump
+        # captured, then `GameHost.OnIdle()`, whose *only* subscriber is `Game.HostIdle` and whose
+        # whole body is `this.Tick()`, then the `Guide.IsVisible` relay when GamerServices is
+        # initialised. So `RunOneFrame` is literally host-event processing wrapped around `Tick`.
+        #
+        # The canonical C ABI keeps the identical split -- `cna_game_tick` is documented as "the
+        # canonical frame step `cna_game_run_one_frame` wraps; it does not process host events" --
+        # so the two bind separately and are deliberately **not** aliased. `test_game_tick.rb`
+        # asserts they resolve to different native symbols so nobody later "simplifies" one away.
+        #
+        # `Tick`'s own first instruction is the one part of it that is not CNA's:
+        #
+        #     if (ShouldExit) return;
+        #
+        # `get_ShouldExit` is a single `ldfld exitRequested`, and `exitRequested` is written exactly
+        # once in the whole assembly -- `ldc.i4.1` in `Game.Exit()` -- and **never cleared**. It is
+        # a latch, so after `Exit()` XNA's `Tick` returns before it touches the clock, for the rest
+        # of the Game's life. That field is managed state this binding already keeps and already
+        # writes in exactly the same place, so the guard is projected here rather than delegated:
+        # CNA's step, measured after `cna_game_request_exit`, still delivers one Update and skips
+        # only the Draw, which is one callback more than XNA delivers.
+        #
+        # Everything after the latch is the timing loop, which CNA owns, and it is measured faithful
+        # on the points the loop makes observable: the fixed step advances TotalGameTime by exactly
+        # TargetElapsedTime per tick, a pending SuppressDraw skips exactly one Draw and clears
+        # itself, and no lifecycle callback other than Update/BeginDraw/Draw/EndDraw is delivered --
+        # Tick initialises nothing, which is why XNA's own `Initialize`/`BeginRun` live in `RunGame`
+        # and not here.
+        #
+        # Recorded deviation: `cna_game_tick` is refused from inside a lifecycle callback, "because
+        # a frame step called from within a frame would re-enter the loop it is part of". XNA has no
+        # such guard, but it has no useful behaviour there either -- a `Tick` from inside `Update`
+        # re-enters with `accumulatedElapsedGameTime` not yet decremented by the loop's `finally`,
+        # so the recursive frame's `num` is again at least one and the recursion is unbounded,
+        # ending in a `StackOverflowException` the CLR does not let anyone catch. The refusal is
+        # surfaced as CNA's own translated error rather than pre-empted here, so the message a
+        # consumer sees is the native contract's.
+        def Tick
+          raise CNA::DisposedObjectError, "Game is disposed" if disposed?
+          return nil if @exit_requested
+
+          assert_owner_thread!
+          ensure_host.tick
+          nil
+        end
+
         # `SuppressDraw()` is eight bytes: `suppressDraw = true`, and nothing else. The field's only
         # reader is `DrawFrame`, part of the timing loop CNA owns here, so the projection forwards
         # to the canonical route rather than keeping a shadow copy of a flag nothing else reads.

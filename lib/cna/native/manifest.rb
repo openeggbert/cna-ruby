@@ -81,6 +81,13 @@ module CNA
         signature("cna_game_set_frame_hooks_ext", T[:result], [T[:handle], pointer("CNA_GameFrameHooks", const: true)], ownership: "copies callbacks"),
         signature("cna_game_run", T[:result], [T[:handle]], ownership: "borrows Game"),
         signature("cna_game_run_one_frame", T[:result], [T[:handle]], ownership: "borrows Game"),
+        # XNA's Game.RunOneFrame and Game.Tick are two different operations, and the C ABI keeps the
+        # same split: `cna_game_run_one_frame` is the host frame, and this is "the canonical frame
+        # step `cna_game_run_one_frame` wraps; it does not process host events". That is exactly
+        # what the pinned IL says -- WindowsGameHost::RunOneFrame is gameWindow.Tick(), then
+        # GameHost::OnIdle() whose only subscriber is Game::HostIdle -> Game::Tick(), then the
+        # Guide-visibility relay -- so the two are bound separately and never aliased.
+        signature("cna_game_tick", T[:result], [T[:handle]], ownership: "borrows Game; refused from inside a lifecycle callback"),
         signature("cna_game_request_exit", T[:result], [T[:handle]], ownership: "borrows Game"),
         signature("cna_game_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED Game"),
         # The canonical game-event subscription. XNA's Activated, Deactivated and Exiting are raised

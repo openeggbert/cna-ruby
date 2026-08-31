@@ -127,7 +127,7 @@ class ManagedDescriptorsTest < Minitest::Test
   def test_neither_audio_type_implies_an_audio_engine
     %i[SoundEffect SoundEffectInstance Microphone AudioEngine WaveBank SoundBank Cue AudioCategory]
       .each { |absent| refute A.const_defined?(absent, false), "Audio::#{absent}" }
-    assert_equal 51, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 52, CNA::Native::Manifest::FUNCTIONS.length
   end
 
   # ------------------------------------------------------------------- PresentationParameters

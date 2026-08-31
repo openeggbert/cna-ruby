@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "category": "MIXED_WITH_OBSERVATION_PROVENANCE",
+  "provenance": "Each observation is explicitly classified as PURE_XNA_DERIVED metadata or RUBY_MAPPING_QUALIFICATION; never CNA output",
+  "sourceAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0",
+  "derivation": "Foundation 44 Game.Tick. Contract rows are read from the pinned XNA 4.0 Windows metadata of Microsoft.Xna.Framework.Game.dll and from the Microsoft-free IL inventory derived from it. Tick and RunOneFrame are two different operations, and that assembly's IL settles it: Game::RunOneFrame is `if (host != null) host.RunOneFrame()` and nothing else, and WindowsGameHost::RunOneFrame is three steps -- WindowsGameWindow::Tick(), which rethrows the exception the WinForms pump captured; GameHost::OnIdle(), whose Idle event has exactly one subscriber, Game::HostIdle, whose whole body is `this.Tick()`; and, when GamerServicesDispatcher::get_IsInitialized() is true, gameWindow.IsGuideVisible = Guide.IsVisible. So RunOneFrame is host-event processing wrapped around Tick, which is exactly the split the canonical CNA C ABI documents for cna_game_run_one_frame and cna_game_tick. Game::Tick itself is 682 bytes: `if (ShouldExit) return`, then a Thread.Sleep(inactiveSleepTime) when isActive is false, then GameClock::UpdateElapsedTime, the ElapsedAdjustedTime clamp at TimeSpan.Zero, the forceElapsedTimeToZero consumption, the maximumElapsedTime cap, and either the fixed-step catch-up loop -- snapping to targetElapsedTime when the difference is under targetElapsedTime.Ticks >> 6, dividing the accumulator by targetElapsedTime, returning outright when that quotient is zero, and running Update that many times with a finally that subtracts the step from the accumulator and adds it to lastFrameElapsedGameTime and totalGameTime -- or the variable-step branch. Its local V_0 is initialised to true and ANDed with suppressDraw after every Update, which clears the field, and the method ends `if (!V_0) DrawFrame()`. get_ShouldExit is a single ldfld of exitRequested, and exitRequested is written exactly once in the entire assembly -- ldc.i4.1 in Game::Exit -- and never cleared, so Exit disables Tick permanently.",
+  "observations": [
+    {
+      "id": "game_tick.contract",
+      "operation": "GameTick.Contract",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [["public", "System.Void", 0, 0, false], ["public", "System.Void", 0, 0, false]]
+    },
+    {
+      "id": "game_tick.il_edges",
+      "operation": "GameTick.IlEdges",
+      "args": [],
+      "provenance": "PURE_XNA_DERIVED",
+      "expected": [true, true, true, true, true, true, false]
+    },
+    {
+      "id": "game_tick.not_aliased",
+      "operation": "GameTick.NotAliased",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [true, true, false, true, true]
+    },
+    {
+      "id": "game_tick.delivery",
+      "operation": "GameTick.Delivery",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [["update", "begin_draw", "draw", "end_draw"], ["initialize", "load_content", "update", "begin_draw", "draw", "end_draw"]]
+    },
+    {
+      "id": "game_tick.exit_latch",
+      "operation": "GameTick.ExitLatch",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [true, true, true]
+    },
+    {
+      "id": "game_tick.suppress_draw",
+      "operation": "GameTick.SuppressDraw",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": [["update"], ["update", "begin_draw", "draw", "end_draw"]]
+    },
+    {
+      "id": "game_tick.refusals",
+      "operation": "GameTick.Refusals",
+      "args": [],
+      "provenance": "RUBY_MAPPING_QUALIFICATION",
+      "expected": ["CNA::DisposedObjectError", "CNA::OwnerThreadError", "CNA::NativeError"]
+    }
+  ]
+}

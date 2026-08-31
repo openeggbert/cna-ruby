@@ -71,6 +71,13 @@ module CNA
         finish(@library.function("cna_game_run_one_frame").call(handle), "cna_game_run_one_frame")
       end
 
+      # The frame step without the host frame around it. It goes through `finish` for the same
+      # reason `run_one_frame` does: a Ruby exception raised inside Update or Draw is retained by
+      # the callback and must be re-raised on this side of C, not swallowed into a result code.
+      def tick
+        finish(@library.function("cna_game_tick").call(handle), "cna_game_tick")
+      end
+
       def request_exit
         @library.call("cna_game_request_exit", handle)
       end

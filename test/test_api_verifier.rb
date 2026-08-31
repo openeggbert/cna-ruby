@@ -1833,13 +1833,14 @@ class ApiVerifierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.SpriteBatch
       Microsoft.Xna.Framework.Graphics.Texture2D
     ].sort, partial.keys.sort
-    # 132 until Foundation 37 closed Game::Components and Game::Services, and 130 until Foundation
+    # 132 until Foundation 37 closed Game::Components and Game::Services, 130 until Foundation
     # 41 closed Game's four events and their three protected raisers -- the three methods among
-    # those are also why the overload count fell by three. The set of partial types is what this
-    # test guards, and it is unchanged.
-    assert_equal 117, strict.fetch("MISSING_MEMBER")
+    # those are also why the overload count fell by three -- and 117 until Foundation 44 closed
+    # Game::Tick, a method, which is why the overload count fell by one more. The set of partial
+    # types is what this test guards, and it is unchanged.
+    assert_equal 116, strict.fetch("MISSING_MEMBER")
     assert_equal 1, strict.fetch("PROPERTY_MAPPING_MISMATCH")
-    assert_equal 46, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
+    assert_equal 45, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
 
     # Every batch enum that a deferred member mentions leaves that member deferred.
     deferred = strict.fetch("details").fetch("MISSING_MEMBER")

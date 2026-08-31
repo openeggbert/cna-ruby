@@ -16,11 +16,11 @@ Game disposal runs children in reverse registration order, then the manager, the
 
 ## Callbacks
 
-Every native callback verifies the Ruby owner thread, enters a thread-local current-Game scope, exposes the callback-borrowed graphics device, calls the overridable XNA member, and then removes callback scope. Any Ruby exception is retained and the callback returns `CNA_RESULT_CALLBACK`. GameHost re-raises the retained exception only after `cna_game_run` or `cna_game_run_one_frame` returns. No Ruby exception unwinds through C.
+Every native callback verifies the Ruby owner thread, enters a thread-local current-Game scope, exposes the callback-borrowed graphics device, calls the overridable XNA member, and then removes callback scope. Any Ruby exception is retained and the callback returns `CNA_RESULT_CALLBACK`. GameHost re-raises the retained exception only after `cna_game_run`, `cna_game_run_one_frame` or `cna_game_tick` returns. No Ruby exception unwinds through C.
 
 ## Events
 
-One CLR public event projects to one public Ruby event reader keeping the XNA spelling, whose value is a `CNA::Runtime::Event`. That object's whole public surface is `add`/`remove`; `dispatch` is private, so raising an event is available only to the declaring implementation and never to a consumer. `CNA::Runtime::EventOwner` is the only sanctioned way to declare an event identity, which is what lets the verifier measure selected event identities rather than trust that a reader happens to exist. No event in this binding is raised today: the only event owners are the abstract `IUpdateable` and `IDrawable` contracts, whose readers raise `NotImplementedError`.
+One CLR public event projects to one public Ruby event reader keeping the XNA spelling, whose value is a `CNA::Runtime::Event`. That object's whole public surface is `add`/`remove`; `dispatch` is private, so raising an event is available only to the declaring implementation and never to a consumer. `CNA::Runtime::EventOwner` is the only sanctioned way to declare an event identity, which is what lets the verifier measure selected event identities rather than trust that a reader happens to exist. Seventeen identities are declared across six owner types. Two owners are abstract contracts whose readers raise `NotImplementedError` (`IUpdateable`, `IDrawable`), one is a contract nothing here implements (`Graphics::IGraphicsDeviceService`), and three really raise: `GameComponentCollection`, `GameComponent` and `Game`. `Game` raises `Activated`, `Deactivated` and `Exiting` from CNA's own game-event subscriptions through the protected raisers XNA declares, and raises `Disposed` inline from `Dispose`.
 
 ## Honest absence
 

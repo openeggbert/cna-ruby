@@ -167,7 +167,7 @@ class XnaExceptionsTest < Minitest::Test
     assert_equal %i[ContentSerializerAttribute ContentSerializerCollectionItemNameAttribute
                     ContentSerializerIgnoreAttribute ContentSerializerRuntimeTypeAttribute
                     ContentSerializerTypeVersionAttribute], F::Content.constants(false).sort
-    assert_equal 51, CNA::Native::Manifest::FUNCTIONS.length
+    assert_equal 52, CNA::Native::Manifest::FUNCTIONS.length
     assert_equal 63, CNA::Native::Manifest::CONSTANTS.length
   end
 
