@@ -545,6 +545,31 @@ module Microsoft
           def initialize: (Effect cloneSource) -> void
         end
 
+        class RenderTarget2D < Texture2D
+          def initialize: (GraphicsDevice graphicsDevice, Integer width, Integer height, ?bool mipMap, ?SurfaceFormat preferredFormat, ?DepthFormat preferredDepthFormat, ?Integer preferredMultiSampleCount, ?RenderTargetUsage usage) -> void
+          attr_reader RenderTargetUsage: RenderTargetUsage
+          attr_reader MultiSampleCount: Integer
+          attr_reader DepthStencilFormat: DepthFormat
+          def IsContentLost: () -> bool
+          def ContentLost: () -> CNA::Runtime::Event
+        end
+
+        class RenderTargetCube < TextureCube
+          def initialize: (GraphicsDevice graphicsDevice, Integer size, bool mipMap, SurfaceFormat preferredFormat, DepthFormat preferredDepthFormat, ?Integer preferredMultiSampleCount, ?RenderTargetUsage usage) -> void
+          attr_reader RenderTargetUsage: RenderTargetUsage
+          attr_reader MultiSampleCount: Integer
+          attr_reader DepthStencilFormat: DepthFormat
+          def IsContentLost: () -> bool
+          def ContentLost: () -> CNA::Runtime::Event
+        end
+
+        class RenderTargetBinding
+          def initialize: (RenderTarget2D | RenderTargetCube renderTarget, ?CubeMapFace? cubeMapFace) -> void
+          attr_reader RenderTarget: Texture
+          attr_reader CubeMapFace: CubeMapFace
+          def self.op_Implicit: (RenderTarget2D renderTarget) -> RenderTargetBinding
+        end
+
         class VertexBuffer < GraphicsResource
           def initialize: (GraphicsDevice graphicsDevice, VertexDeclaration | Module vertexDeclarationOrType, Integer vertexCount, BufferUsage bufferUsage) -> void
           attr_reader VertexDeclaration: VertexDeclaration

@@ -211,9 +211,11 @@ class SamplerStateCollectionTest < Minitest::Test
        DrawPrimitives DrawUserPrimitives].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
-    # The nine `Effect` types left this list when the cluster was built; what this milestone
-    # claimed, and still claims, is that **it** built none of them.
-    %i[BasicEffect RenderTarget2D]
+    # The nine `Effect` types left this list when the cluster was built and `RenderTarget2D` when
+    # the render targets were; what this milestone claimed, and still claims, is that **it** built
+    # none of them, and `SetRenderTarget` above is still absent -- a target that exists is not a
+    # target that can be bound.
+    %i[BasicEffect]
       .each { |absent| refute G.const_defined?(absent, false), absent.to_s }
     # XNA's own `Apply` stays unprojected on the state it holds, which is what makes the setter's
     # native step this collection's rather than SamplerState's.

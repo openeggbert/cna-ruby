@@ -166,7 +166,9 @@ class XnaExceptionsTest < Minitest::Test
       .each { |name| assert F::Audio.const_defined?(name, false), "Audio::#{name}" }
     # The nine `Effect` types left this list when the cluster was built; what this milestone
     # claimed, and still claims, is that **it** built none of them.
-    %i[GraphicsAdapter RenderTarget2D].each do |name|
+    # `RenderTarget2D` left this list when the render targets were built, and `DeviceLostException`
+    # is still raised by nothing -- which is what this milestone claimed about them.
+    %i[GraphicsAdapter].each do |name|
       refute F::Graphics.const_defined?(name, false), "Graphics::#{name}"
     end
     # Foundation 49 opened Storage for exactly one type -- the shape Audio and Media took -- and

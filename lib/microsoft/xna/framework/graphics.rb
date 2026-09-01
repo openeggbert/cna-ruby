@@ -2997,6 +2997,231 @@ module Microsoft
           def value_components = [@VertexBuffer, @VertexOffset, @InstanceFrequency]
         end
 
+        # `RenderTarget2D`, `RenderTargetCube` and the `RenderTargetBinding` that names one, derived
+        # from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…).
+        #
+        # ## A render target is a texture, on both sides of the boundary
+        #
+        # XNA derives `RenderTarget2D` from `Texture2D` and `RenderTargetCube` from `TextureCube`,
+        # and CNA agrees: `cna_texture2d_get_data` reads a 2D target back, which is what the renderer
+        # qualification has been doing since Native frontier 6. So each type is its texture base with
+        # a different creator and a different destroyer, and the whole inherited transfer surface
+        # keeps working.
+        #
+        # ## The constructor negotiates rather than records
+        #
+        # `CreateRenderTarget` passes the caller's **preferred** format, depth format and sample count
+        # through `GraphicsAdapter.QueryFormat`, which answers what the adapter can actually give, and
+        # the `RenderTargetHelper` it then builds stores those answers -- which is what the three
+        # properties read. CNA negotiates in the same place, inside its create route, and reports the
+        # result through `cna_render_target_get_info`. This projection therefore reads all four values
+        # back from the info rather than storing what was asked for; a target that asked for
+        # `Depth24Stencil8` and got `None` reports `None`, exactly as XNA does.
+        #
+        # The managed validation that survives the negotiation is `Texture2D.ValidateCreationParameters`,
+        # which is the same null-device and positive-size rule the texture bases already carry.
+        module RenderTargetState
+          # `_contentLost` latches: `get_IsContentLost` returns the field once it is true and
+          # otherwise re-reads the device's own lost state into it. CNA's `is_content_lost` is the
+          # same fact from the renderer's side -- true from a real device reset until the target is
+          # next bound -- so the latch is kept and the field is what a second read answers.
+          #
+          # DEVIATION, recorded: `ContentLost` is projected as a subscribable event and **never
+          # fires**, for the reason the dynamic buffers' does. `is_content_lost` is false on every
+          # renderer family that cannot lose a device, which is all three qualified artifacts, and
+          # `cna_render_target_subscribe_content_lost` exists only in 0.21.0, so binding it would
+          # both deliver nothing and end the retired headers' admission.
+          def IsContentLost
+            return true if @content_lost
+
+            @content_lost = render_target_info.read_u8(40) == 1
+          end
+
+          private
+
+          def render_target_info
+            info = CNA::Native::Layouts::RenderTargetInfo.new
+            CNA::Native.library.call("cna_render_target_get_info", native_handle, info.pointer)
+            info
+          end
+
+          # The four values the helper stores, read back from the negotiation that produced them.
+          def adopt_render_target_state(info)
+            @content_lost = false
+            @Format = SurfaceFormat.coerce(info.read_u32(24))
+            @DepthStencilFormat = Graphics.const_get(:DepthFormat).coerce(info.read_u32(28))
+            @MultiSampleCount = info.read_i32(32)
+            @RenderTargetUsage = Graphics.const_get(:RenderTargetUsage).coerce(info.read_u32(36))
+          end
+
+          def render_target_release
+            lambda { |value| CNA::Native.library.call("cna_render_target_destroy", value) }
+          end
+        end
+        private_constant :RenderTargetState
+
+        class RenderTarget2D < Texture2D
+          public_class_method :new
+          include RenderTargetState
+          extend CNA::Runtime::EventOwner
+          xna_event :ContentLost
+          attr_reader :RenderTargetUsage, :MultiSampleCount, :DepthStencilFormat
+
+          # Three constructors, and the two short ones are the long one with the IL's own literals:
+          # `(device, w, h)` is `mipMap false, Color, None, 0, DiscardContents` and
+          # `(device, w, h, mipMap, format, depthFormat)` adds `0, DiscardContents`.
+          def initialize(graphicsDevice, width, height, mipMap = false,
+                         preferredFormat = SurfaceFormat::Color,
+                         preferredDepthFormat = Graphics.const_get(:DepthFormat)::None,
+                         preferredMultiSampleCount = 0,
+                         usage = Graphics.const_get(:RenderTargetUsage)::DiscardContents)
+            raise ::ArgumentError, "graphicsDevice" if graphicsDevice.nil?
+            unless graphicsDevice.instance_of?(GraphicsDevice)
+              raise ::TypeError, "graphicsDevice must be GraphicsDevice"
+            end
+
+            pixels_wide = CNA::Runtime::Numeric.int32(width, "width")
+            pixels_high = CNA::Runtime::Numeric.int32(height, "height")
+            raise ::RangeError, "width" unless pixels_wide.positive?
+            raise ::RangeError, "height" unless pixels_high.positive?
+            raise ::TypeError, "mipMap" unless mipMap == true || mipMap == false
+
+            samples = CNA::Runtime::Numeric.int32(preferredMultiSampleCount, "preferredMultiSampleCount")
+            create_info = CNA::Native::Layouts::RenderTarget2DCreateInfo.new
+            create_info.write_u32(8, pixels_wide)
+            create_info.write_u32(12, pixels_high)
+            create_info.write_u8(16, mipMap ? 1 : 0)
+            create_info.write_u32(20, SurfaceFormat.coerce(preferredFormat).to_i)
+            create_info.write_u32(24, Graphics.const_get(:DepthFormat).coerce(preferredDepthFormat).to_i)
+            create_info.write_i32(28, samples)
+            create_info.write_u32(32, Graphics.const_get(:RenderTargetUsage).coerce(usage).to_i)
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_render_target2d_create", graphicsDevice.__send__(:native_handle),
+                                     create_info.pointer, output)
+            initialize_from_render_target(graphicsDevice, output[0, 8].unpack1("Q"))
+          end
+
+          private
+
+          def initialize_from_render_target(device, handle)
+            release = render_target_release
+            initialize_resource(device, handle, release)
+            info = render_target_info
+            @Width = info.read_u32(12)
+            @Height = info.read_u32(16)
+            @LevelCount = info.read_u32(20)
+            @Bounds = Rectangle.new(0, 0, @Width, @Height)
+            adopt_render_target_state(info)
+            self
+          rescue Exception
+            if defined?(@native_handle) && @native_handle
+              self.Dispose
+            else
+              release&.call(handle)
+            end
+            raise
+          end
+        end
+
+        # The cube's two constructors take an edge `size` where the 2D pair take width and height,
+        # and it has no three-argument form: the shortest is
+        # `(device, size, mipMap, format, depthFormat)`.
+        class RenderTargetCube < TextureCube
+          public_class_method :new
+          include RenderTargetState
+          extend CNA::Runtime::EventOwner
+          xna_event :ContentLost
+          attr_reader :RenderTargetUsage, :MultiSampleCount, :DepthStencilFormat
+
+          def initialize(graphicsDevice, size, mipMap, preferredFormat, preferredDepthFormat,
+                         preferredMultiSampleCount = 0,
+                         usage = Graphics.const_get(:RenderTargetUsage)::DiscardContents)
+            raise ::ArgumentError, "graphicsDevice" if graphicsDevice.nil?
+            unless graphicsDevice.instance_of?(GraphicsDevice)
+              raise ::TypeError, "graphicsDevice must be GraphicsDevice"
+            end
+
+            edge = CNA::Runtime::Numeric.int32(size, "size")
+            raise ::RangeError, "size" unless edge.positive?
+            raise ::TypeError, "mipMap" unless mipMap == true || mipMap == false
+
+            samples = CNA::Runtime::Numeric.int32(preferredMultiSampleCount, "preferredMultiSampleCount")
+            create_info = CNA::Native::Layouts::RenderTargetCubeCreateInfo.new
+            create_info.write_u32(8, edge)
+            create_info.write_u8(12, mipMap ? 1 : 0)
+            create_info.write_u32(16, SurfaceFormat.coerce(preferredFormat).to_i)
+            create_info.write_u32(20, Graphics.const_get(:DepthFormat).coerce(preferredDepthFormat).to_i)
+            create_info.write_i32(24, samples)
+            create_info.write_u32(28, Graphics.const_get(:RenderTargetUsage).coerce(usage).to_i)
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_render_target_cube_create", graphicsDevice.__send__(:native_handle),
+                                     create_info.pointer, output)
+            initialize_from_render_target(graphicsDevice, output[0, 8].unpack1("Q"))
+          end
+
+          private
+
+          def initialize_from_render_target(device, handle)
+            release = render_target_release
+            initialize_resource(device, handle, release)
+            info = render_target_info
+            @Size = info.read_u32(12)
+            @LevelCount = info.read_u32(20)
+            adopt_render_target_state(info)
+            self
+          rescue Exception
+            if defined?(@native_handle) && @native_handle
+              self.Dispose
+            else
+              release&.call(handle)
+            end
+            raise
+          end
+        end
+
+        # A `sequential sealed` value type over two fields, and the whole type is two stores and two
+        # `ldfld`s: the constructors check the target for null with `NullNotAllowed` and validate
+        # nothing else, not even the cube face. `RenderTarget` is declared as `Texture`, which is why
+        # a cube binding answers the cube.
+        #
+        # There is no `cna_render_target_binding_init` to build one with -- unlike `VertexBufferBinding`,
+        # whose values CNA fills -- because the C structure is only ever consumed by
+        # `cna_graphics_device_set_render_targets`, a `GraphicsDevice` member this binding has not
+        # projected. So this one is assembled here, which is what XNA's own constructor does.
+        class RenderTargetBinding
+          include CNA::Runtime::ValueSemantics
+          attr_reader :RenderTarget, :CubeMapFace
+
+          def initialize(renderTarget, cubeMapFace = nil)
+            raise ::ArgumentError, "renderTarget" if renderTarget.nil?
+
+            if renderTarget.is_a?(Graphics.const_get(:RenderTargetCube))
+              @CubeMapFace = Graphics.const_get(:CubeMapFace).coerce(
+                cubeMapFace.nil? ? Graphics.const_get(:CubeMapFace)::PositiveX : cubeMapFace
+              )
+            elsif renderTarget.is_a?(Graphics.const_get(:RenderTarget2D))
+              unless cubeMapFace.nil?
+                raise ::ArgumentError, "RenderTargetBinding.new takes a cubeMapFace only with a RenderTargetCube"
+              end
+
+              @CubeMapFace = Graphics.const_get(:CubeMapFace)::PositiveX
+            else
+              raise ::TypeError, "renderTarget must be a RenderTarget2D or a RenderTargetCube"
+            end
+            @RenderTarget = renderTarget
+          end
+
+          def self.op_Implicit(renderTarget) = new(renderTarget)
+
+          # XNA declares neither Equals nor GetHashCode here, so what it has is ValueType's --
+          # field-wise equality with a hash the CLR leaves unspecified. See VertexBufferBinding.
+          def hash = value_components.hash
+
+          private
+
+          def value_components = [@RenderTarget, @CubeMapFace]
+        end
+
         # ------------------------------------------------------------------------ the Effect cluster
         #
         # Nine types derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256

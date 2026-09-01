@@ -1762,6 +1762,8 @@ class ApiVerifierTest < Minitest::Test
       Microsoft.Xna.Framework.Audio.Cue::Disposing
       Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer::ContentLost
       Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer::ContentLost
+      Microsoft.Xna.Framework.Graphics.RenderTarget2D::ContentLost
+      Microsoft.Xna.Framework.Graphics.RenderTargetCube::ContentLost
     ], selected
 
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))

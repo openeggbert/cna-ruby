@@ -1,13 +1,13 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 196,
-  "completeTypes": 194,
+  "targetTypes": 199,
+  "completeTypes": 197,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
   ],
-  "missingTypes": 61,
+  "missingTypes": 58,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -721,146 +721,6 @@
       "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
       "nativeReachableMethods": [
         "Draw"
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.RenderTargetCube",
-      "kind": "class",
-      "expectedRubyIdentities": 8,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.DepthFormat",
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
-        "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
-        "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
-        "Microsoft.Xna.Framework.Graphics.TextureCube"
-      ],
-      "unmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
-          "reachedMembers": [
-            "Adapter",
-            "IsDeviceLost"
-          ],
-          "reachedButMissing": [
-            "Adapter"
-          ]
-        }
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsAdapter"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsAdapter"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::SetRenderTarget (2 overloads)"
-      ],
-      "dependencyComplete": false,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-        "ContentLost"
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "Dispose"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-        ".ctor",
-        "CreateRenderTarget",
-        "RecreateAndPopulateObject",
-        "ReleaseNativeObject",
-        "get_IsContentLost"
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.RenderTarget2D",
-      "kind": "class",
-      "expectedRubyIdentities": 9,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.DepthFormat",
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
-        "Microsoft.Xna.Framework.Graphics.RenderTargetUsage",
-        "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
-        "Microsoft.Xna.Framework.Graphics.Texture2D"
-      ],
-      "unmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
-          "reachedMembers": [
-            "Adapter",
-            "IsDeviceLost"
-          ],
-          "reachedButMissing": [
-            "Adapter"
-          ]
-        }
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsAdapter"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsAdapter"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::SetRenderTarget (2 overloads)"
-      ],
-      "dependencyComplete": false,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-        "ContentLost"
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "Dispose"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-        ".ctor",
-        "CreateRenderTarget",
-        "RecreateAndPopulateObject",
-        "ReleaseNativeObject",
-        "get_IsContentLost"
       ],
       "runtimeDataDetail": null
     }

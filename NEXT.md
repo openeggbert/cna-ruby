@@ -63,6 +63,7 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 80 | the nine-type `Effect` cluster, and `SpriteBatch.Begin`'s last two overloads | **9** | 98 |
 | 81 | the vertex and index buffers, and the `VertexBufferBinding` that names one | **5** | 43 |
 | 82 | `DirectionalLight`, `EffectMaterial` and the `IEffectLights` they unblocked | **3** | 12 |
+| 83 | `RenderTarget2D`, `RenderTargetCube`, `RenderTargetBinding`, and an upload CNA drops | **3** | 22 |
 
 ## Measured state
 
@@ -70,22 +71,22 @@ This section had gone stale for eleven milestones — it still described Foundat
 while the report said 193 — which is the same failure the frontier and corpus staleness guards were
 added for. Re-measured from the live reports at Foundation 81:
 
-Strict target **196 types / 2325 member identities**: **194 complete**, **two** partial graphics
-runtime types (`GraphicsDevice` and `GraphicsDeviceManager`), 61 missing, **154 deferred
+Strict target **199 types / 2347 member identities**: **197 complete**, **two** partial graphics
+runtime types (`GraphicsDevice` and `GraphicsDeviceManager`), 58 missing, **151 deferred
 diagnostics**. `MISSING_MEMBER` **65**, `PARTIAL_TYPES` 2,
 `PROPERTY_MAPPING_MISMATCH` 1 (`GraphicsDevice::Viewport`, unrelated and pre-existing),
 `OVERLOAD_MAPPING_MISMATCH` **27**, every other structural category 0, allowlist 0, unmeasured 0.
-**29** event identities across **16** owner types. **22** projected BCL identities.
+**31** event identities across **18** owner types. **22** projected BCL identities.
 
-CNA ABI **349 functions / 5 callbacks / 133 constants / 57 layouts**, on **two admitted encoded
+CNA ABI **353 functions / 5 callbacks / 133 constants / 60 layouts**, on **two admitted encoded
 versions** cross-verified across both header roots. Zero missing header symbols, zero missing library
 symbols, zero cross-version mismatches, zero ABI mismatches. **No CNA source was changed and no new
 native binary was built.**
 
-Behaviour corpus **526** observations, zero failures. Suite **1527 runs / 50101 assertions**, zero
+Behaviour corpus **526** observations, zero failures. Suite **1537 runs / 50290 assertions**, zero
 failures, and 21 skips under the default HEADLESS artifact — every one a renderer capability or
 fixture that artifact does not have: compiled effects, volume storage and cube-face storage. The
-same 1527 runs are green under both real-renderer artifacts, 17 skips on `OPENGL33` and **none** on
+same 1537 runs are green under both real-renderer artifacts, 17 skips on `OPENGL33` and **none** on
 the compiled-effects build, with `SDL_VIDEODRIVER=x11` — which Foundation 81 measured to be load-bearing
 rather than decorative. Capability registry **136** rows, zero contradictions.
 
@@ -96,7 +97,9 @@ looks like when the types built were bases or dependencies (the `Effect` cluster
 followed is what auditing looks like: both of those turned out to be blocked on members this binding
 already projects. What is left is `MathTypeConverter` (`BCL_PROJECTION`), `GraphicsAdapter`
 (`UPSTREAM_CNA_BLOCKED`) and `ModelMeshPart`, whose `Draw` reaches three `GraphicsDevice` members
-that really are absent.
+that really are absent. The il-only blocked list is down to that one entry as well: the two render
+targets left it without either of their two blockers being resolved, because the `GraphicsAdapter`
+half of each existed only to negotiate a format CNA negotiates itself.
 
 ## Game is complete, and so is the whole Audio namespace
 

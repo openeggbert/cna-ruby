@@ -428,6 +428,68 @@ module CNA
       # is exactly the shape of XNA's own ten-argument `Texture3D.SetData` overload; the cube
       # transfer carries a face and a rectangle, which is the shape of `TextureCube`'s six-argument
       # one.
+      # The three render-target structures. `CNA_RenderTargetInfo` carries two more fields than the
+      # retired 0.7.0 headers declare -- a two-byte `reserved` tail -- and neither is read here, so
+      # the layout stops at `renderer_available` and both header roots agree on every field it does
+      # declare.
+      class RenderTarget2DCreateInfo < Structure
+        layout size: 40, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("width", "uint32_t", 8, 4), Layouts.field("height", "uint32_t", 12, 4),
+          Layouts.field("mip_map", "CNA_Bool", 16, 1),
+          Layouts.field("format", "CNA_SurfaceFormat", 20, 4),
+          Layouts.field("depth_format", "CNA_DepthFormat", 24, 4),
+          Layouts.field("multi_sample_count", "int32_t", 28, 4),
+          Layouts.field("usage", "CNA_RenderTargetUsage", 32, 4),
+          Layouts.field("reserved1", "uint32_t", 36, 4)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class RenderTargetCubeCreateInfo < Structure
+        layout size: 32, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("size", "uint32_t", 8, 4),
+          Layouts.field("mip_map", "CNA_Bool", 12, 1),
+          Layouts.field("format", "CNA_SurfaceFormat", 16, 4),
+          Layouts.field("depth_format", "CNA_DepthFormat", 20, 4),
+          Layouts.field("multi_sample_count", "int32_t", 24, 4),
+          Layouts.field("usage", "CNA_RenderTargetUsage", 28, 4)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class RenderTargetInfo < Structure
+        layout size: 44, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("kind", "CNA_RenderTargetKind", 8, 4),
+          Layouts.field("width", "uint32_t", 12, 4), Layouts.field("height", "uint32_t", 16, 4),
+          Layouts.field("level_count", "uint32_t", 20, 4),
+          Layouts.field("format", "CNA_SurfaceFormat", 24, 4),
+          Layouts.field("depth_format", "CNA_DepthFormat", 28, 4),
+          Layouts.field("multi_sample_count", "int32_t", 32, 4),
+          Layouts.field("usage", "CNA_RenderTargetUsage", 36, 4),
+          Layouts.field("is_content_lost", "CNA_Bool", 40, 1),
+          Layouts.field("renderer_available", "CNA_Bool", 41, 1)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       class Texture3DCreateInfo < Structure
         layout size: 32, alignment: 4, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

@@ -145,13 +145,13 @@
         true,
         [
           true,
-          false,
-          false,
+          true,
+          true,
           false
         ],
         false
       ],
-      "note": "Corrected when the four graphics state objects were built: Graphics::DepthStencilState now exists, so the first element of the device-and-render-target census is true. It is a managed value holder with no device, no adapter and no render target in it, so what this row asserts -- that DepthFormat implied no *device* surface -- is unchanged; the other three are still false and the DEPTH_FORMAT constant fragment is still absent. Pre-correction SHA-256 of this file 9cd85b24ee989b09c149c6217a6b7c2c86bb838765b1b496012feafd3e38d2d5, of the replayed aggregate fd6105726e06101ef043a23dfefc0c597d35264d4fb689fb0db42c29a53cb7d5."
+      "note": "Corrected when the four graphics state objects were built: Graphics::DepthStencilState now exists, so the first element of the device-and-render-target census is true. It is a managed value holder with no device, no adapter and no render target in it, so what this row asserts -- that DepthFormat implied no *device* surface -- is unchanged; the other three are still false and the DEPTH_FORMAT constant fragment is still absent. Pre-correction SHA-256 of this file 9cd85b24ee989b09c149c6217a6b7c2c86bb838765b1b496012feafd3e38d2d5, of the replayed aggregate fd6105726e06101ef043a23dfefc0c597d35264d4fb689fb0db42c29a53cb7d5. Corrected when the render targets were built: the fourth element of the census this row ends with is `[DepthStencilState, RenderTarget2D, RenderTargetCube, GraphicsAdapter]`, and the middle two are true now. They are the first types in this binding to carry a `DepthStencilFormat`, which makes them this enum's first real consumer rather than a counter-example -- and what the row asserts about `DepthFormat` is unchanged: it is a pure-managed enum taking its four values from its own IL, no `DEPTH_FORMAT` constant is bound, and `GraphicsAdapter`, the entry this census was written to watch, is still missing. Pre-correction SHA-256 of the aggregate bc7912fc7fb0b14806cbf0dce7b6e38c8959c878cf40c9fafaa8b86889b57b14, of the per-milestone file e02b33f0cf4205a4c4175761c20d4ddf9b4c9b81d2c9fd4bd992e6c2440255fe."
     }
   ],
   "correction": "Foundation 24 dropped the PresentationParameters slot from depth_format.ruby_enum_mapping: that type arrived from its own IL, not from DepthFormat."

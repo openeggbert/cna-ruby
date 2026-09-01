@@ -830,10 +830,16 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     # when they were built; what this batch claimed, and still claims, is that **it** declared none
     # of them -- it declared `BufferUsage`, `IndexElementSize` and `SetDataOptions`, which are the
     # enums a buffer is made of rather than a buffer.
-    %w[RenderTarget2D RenderTargetCube BasicEffect GraphicsAdapter].each do |absent|
+    # The two render targets left this list when they were built; what this batch claimed, and
+    # still claims, is that **it** declared neither -- it declared `DepthFormat` and
+    # `RenderTargetUsage`, which are two of the enums a target's create-info is made of.
+    %w[BasicEffect GraphicsAdapter].each do |absent|
       refute_includes source, "class #{absent}\n"
       refute_includes source, "class #{absent} <"
     end
+    assert_includes source, "class RenderTarget2D < Texture2D"
+    assert_includes source, "class RenderTargetCube < TextureCube"
+    assert_includes source, "class RenderTargetBinding\n"
     %w[VertexBuffer IndexBuffer].each { |present| assert_includes source, "class #{present} < GraphicsResource" }
     { "DynamicVertexBuffer" => "VertexBuffer", "DynamicIndexBuffer" => "IndexBuffer" }
       .each { |derived, base| assert_includes source, "class #{derived} < #{base}" }
@@ -851,6 +857,8 @@ class RbsRuntimeConsistencyTest < Minitest::Test
       .each { |present| assert_includes source, "class #{present}\n" }
     %w[ResourceCreatedEventArgs ResourceDestroyedEventArgs]
       .each { |present| assert_includes source, "class #{present} <" }
+    # `SetRenderTarget` and its two siblings are `GraphicsDevice` members, and a render target that
+    # exists is not a render target that can be bound.
     %w[SetRenderTarget SetRenderTargets DrawPrimitives DrawIndexedPrimitives GetRenderTargets]
       .each { |absent| refute_includes source, absent }
   end

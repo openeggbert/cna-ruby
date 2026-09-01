@@ -120,9 +120,15 @@ class DepthFormatTest < Minitest::Test
     # added no manager property and no state object; the enum alone implies neither.
     assert_equal G::DepthFormat::Depth24, F::GraphicsDeviceManager.new(NullGame.new).PreferredDepthStencilFormat
     refute_includes G::GraphicsDevice.public_instance_methods(false), :DepthStencilState
-    %i[GraphicsAdapter RenderTarget2D RenderTargetCube DepthFormatConverter].each do |name|
+    # The two render targets left this list when they were built: they are the first types in this
+    # binding to carry a `DepthStencilFormat`, which is this enum's first real consumer, and they
+    # still add no manager property and no state object. This batch built neither of them.
+    %i[GraphicsAdapter DepthFormatConverter].each do |name|
       refute G.const_defined?(name, false), name.to_s
     end
+    assert G::RenderTarget2D.public_method_defined?(:DepthStencilFormat),
+           "the render targets are this enum's first real consumer"
+
     assert_equal 1, G::GraphicsDevice.instance_method(:Clear).arity
     refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("DEPTH_FORMAT") }
     # `DepthStencilState` was in that list until the four state objects were built. It is a managed

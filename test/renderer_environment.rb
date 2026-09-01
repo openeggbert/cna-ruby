@@ -81,6 +81,12 @@ module RendererEnvironment
 
   def cube_face_storage? = measurement&.fetch(:cube_face_storage) || false
 
+  # Whether this artifact can read a render target's pixels back. A render target is a texture on
+  # both sides of the boundary, so the question is whether `cna_texture2d_get_data` works over a
+  # render-target handle -- true on the two real renderers, `CNA_RESULT_NOT_SUPPORTED` on HEADLESS,
+  # whose renderer has no readback of any kind.
+  def render_target_readback? = measurement&.fetch(:render_target_readback) || false
+
   # `CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS`. Compiled Effect Framework bytecode needs the
   # MojoShader runtime, which is a **fetched dependency** the EasyGL, SDL_GPU and Vulkan families
   # only carry when their build option is on, so the capability never claims more than the binary
@@ -162,6 +168,7 @@ module RendererEnvironment
       format_support: CLASSIFIED_FORMATS.keys.to_h { |format| [format, format_support_of(device_handle, format)] },
       volume_storage: volume_storage_of(device),
       cube_face_storage: cube_face_storage_of(device),
+      render_target_readback: render_target_readback_of(device),
       compiled_effects: capability_of(device_handle, COMPILED_EFFECTS)
     }
   end
@@ -201,6 +208,19 @@ module RendererEnvironment
       read.first == C.new(5, 6, 7, 8)
     ensure
       texture.Dispose
+    end
+  rescue CNA::CapabilityError
+    false
+  end
+
+  def render_target_readback_of(device)
+    target = G::RenderTarget2D.new(device, 1, 1)
+    begin
+      read = [C.new(9, 9, 9, 9)]
+      target.GetData(C, read)
+      true
+    ensure
+      target.Dispose
     end
   rescue CNA::CapabilityError
     false

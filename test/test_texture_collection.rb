@@ -226,7 +226,9 @@ class TextureCollectionTest < Minitest::Test
     # claimed, and still claims, is that **it** built none of them.
     # The five buffer types left this list when they were built; what this milestone claimed,
     # and still claims, is that **it** built none of them.
-    %i[BasicEffect RenderTarget2D].each do |absent|
+    # `RenderTarget2D` left this list when the render targets were built; `SetRenderTarget` below
+    # is still absent, which is the claim that matters here.
+    %i[BasicEffect].each do |absent|
       refute G.const_defined?(absent, false), absent.to_s
     end
     %i[DrawPrimitives DrawIndexedPrimitives DrawUserPrimitives SetRenderTarget

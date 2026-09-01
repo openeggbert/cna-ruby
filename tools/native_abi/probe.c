@@ -108,6 +108,10 @@ CHECK_FN(cna_texturecube_set_data, CNA_Result, (CNA_Handle, const CNA_TextureCub
 CHECK_FN(cna_texturecube_get_data, CNA_Result, (CNA_Handle, const CNA_TextureCubeTransfer*, CNA_Color*, uint64_t, uint64_t*));
 CHECK_FN(cna_texturecube_get_info, CNA_Result, (CNA_Handle, CNA_TextureCubeInfo*));
 CHECK_FN(cna_texturecube_destroy, CNA_Result, (CNA_Handle));
+CHECK_FN(cna_render_target2d_create, CNA_Result, (CNA_Handle, const CNA_RenderTarget2DCreateInfo*, CNA_Handle*));
+CHECK_FN(cna_render_target_cube_create, CNA_Result, (CNA_Handle, const CNA_RenderTargetCubeCreateInfo*, CNA_Handle*));
+CHECK_FN(cna_render_target_get_info, CNA_Result, (CNA_Handle, CNA_RenderTargetInfo*));
+CHECK_FN(cna_render_target_destroy, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_effect_create_compiled, CNA_Result, (CNA_Handle, const uint8_t*, uint64_t, CNA_EffectHandle*));
 CHECK_FN(cna_effect_clone, CNA_Result, (CNA_EffectHandle, CNA_EffectHandle*));
 CHECK_FN(cna_effect_dispose, CNA_Result, (CNA_EffectHandle));
@@ -473,6 +477,10 @@ int main(void) {
     SIGNATURE(cna_texturecube_get_data, "CNA_Result|CNA_Handle,const CNA_TextureCubeTransfer*,CNA_Color*,uint64_t,uint64_t*");
     SIGNATURE(cna_texturecube_get_info, "CNA_Result|CNA_Handle,CNA_TextureCubeInfo*");
     SIGNATURE(cna_texturecube_destroy, "CNA_Result|CNA_Handle");
+    SIGNATURE(cna_render_target2d_create, "CNA_Result|CNA_Handle,const CNA_RenderTarget2DCreateInfo*,CNA_Handle*");
+    SIGNATURE(cna_render_target_cube_create, "CNA_Result|CNA_Handle,const CNA_RenderTargetCubeCreateInfo*,CNA_Handle*");
+    SIGNATURE(cna_render_target_get_info, "CNA_Result|CNA_Handle,CNA_RenderTargetInfo*");
+    SIGNATURE(cna_render_target_destroy, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_effect_create_compiled, "CNA_Result|CNA_Handle,const uint8_t*,uint64_t,CNA_EffectHandle*");
     SIGNATURE(cna_effect_clone, "CNA_Result|CNA_EffectHandle,CNA_EffectHandle*");
     SIGNATURE(cna_effect_dispose, "CNA_Result|CNA_EffectHandle");
@@ -757,6 +765,9 @@ int main(void) {
     STRUCT(CNA_Texture3DTransfer); FIELD(CNA_Texture3DTransfer, struct_size); FIELD(CNA_Texture3DTransfer, struct_version); FIELD(CNA_Texture3DTransfer, level); FIELD(CNA_Texture3DTransfer, left); FIELD(CNA_Texture3DTransfer, top); FIELD(CNA_Texture3DTransfer, right); FIELD(CNA_Texture3DTransfer, bottom); FIELD(CNA_Texture3DTransfer, front); FIELD(CNA_Texture3DTransfer, back); FIELD(CNA_Texture3DTransfer, reserved); FIELD(CNA_Texture3DTransfer, start_index); FIELD(CNA_Texture3DTransfer, element_count);
     STRUCT(CNA_TextureCubeCreateInfo); FIELD(CNA_TextureCubeCreateInfo, struct_size); FIELD(CNA_TextureCubeCreateInfo, struct_version); FIELD(CNA_TextureCubeCreateInfo, size); FIELD(CNA_TextureCubeCreateInfo, mip_map); FIELD(CNA_TextureCubeCreateInfo, reserved0); FIELD(CNA_TextureCubeCreateInfo, format); FIELD(CNA_TextureCubeCreateInfo, reserved1);
     STRUCT(CNA_TextureCubeInfo); FIELD(CNA_TextureCubeInfo, struct_size); FIELD(CNA_TextureCubeInfo, struct_version); FIELD(CNA_TextureCubeInfo, size); FIELD(CNA_TextureCubeInfo, level_count); FIELD(CNA_TextureCubeInfo, format); FIELD(CNA_TextureCubeInfo, reserved);
+    STRUCT(CNA_RenderTarget2DCreateInfo); FIELD(CNA_RenderTarget2DCreateInfo, struct_size); FIELD(CNA_RenderTarget2DCreateInfo, struct_version); FIELD(CNA_RenderTarget2DCreateInfo, width); FIELD(CNA_RenderTarget2DCreateInfo, height); FIELD(CNA_RenderTarget2DCreateInfo, mip_map); FIELD(CNA_RenderTarget2DCreateInfo, format); FIELD(CNA_RenderTarget2DCreateInfo, depth_format); FIELD(CNA_RenderTarget2DCreateInfo, multi_sample_count); FIELD(CNA_RenderTarget2DCreateInfo, usage); FIELD(CNA_RenderTarget2DCreateInfo, reserved1);
+    STRUCT(CNA_RenderTargetCubeCreateInfo); FIELD(CNA_RenderTargetCubeCreateInfo, struct_size); FIELD(CNA_RenderTargetCubeCreateInfo, struct_version); FIELD(CNA_RenderTargetCubeCreateInfo, size); FIELD(CNA_RenderTargetCubeCreateInfo, mip_map); FIELD(CNA_RenderTargetCubeCreateInfo, format); FIELD(CNA_RenderTargetCubeCreateInfo, depth_format); FIELD(CNA_RenderTargetCubeCreateInfo, multi_sample_count); FIELD(CNA_RenderTargetCubeCreateInfo, usage);
+    STRUCT(CNA_RenderTargetInfo); FIELD(CNA_RenderTargetInfo, struct_size); FIELD(CNA_RenderTargetInfo, struct_version); FIELD(CNA_RenderTargetInfo, kind); FIELD(CNA_RenderTargetInfo, width); FIELD(CNA_RenderTargetInfo, height); FIELD(CNA_RenderTargetInfo, level_count); FIELD(CNA_RenderTargetInfo, format); FIELD(CNA_RenderTargetInfo, depth_format); FIELD(CNA_RenderTargetInfo, multi_sample_count); FIELD(CNA_RenderTargetInfo, usage); FIELD(CNA_RenderTargetInfo, is_content_lost); FIELD(CNA_RenderTargetInfo, renderer_available);
     STRUCT(CNA_TextureCubeTransfer); FIELD(CNA_TextureCubeTransfer, struct_size); FIELD(CNA_TextureCubeTransfer, struct_version); FIELD(CNA_TextureCubeTransfer, face); FIELD(CNA_TextureCubeTransfer, level); FIELD(CNA_TextureCubeTransfer, has_rectangle); FIELD(CNA_TextureCubeTransfer, reserved0); FIELD(CNA_TextureCubeTransfer, rectangle); FIELD(CNA_TextureCubeTransfer, reserved1); FIELD(CNA_TextureCubeTransfer, start_index); FIELD(CNA_TextureCubeTransfer, element_count);
     STRUCT(CNA_Vector3); FIELD(CNA_Vector3, x); FIELD(CNA_Vector3, y); FIELD(CNA_Vector3, z);
     STRUCT(CNA_Vector4); FIELD(CNA_Vector4, x); FIELD(CNA_Vector4, y); FIELD(CNA_Vector4, z); FIELD(CNA_Vector4, w);

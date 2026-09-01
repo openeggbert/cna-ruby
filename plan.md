@@ -231,10 +231,9 @@ delimited and checked against `docs/generated/missing-type-inventory.md` by
 
 <!-- absent-types:begin -->
 `BasicEffect`, `SkinnedEffect`, `AlphaTestEffect`, `DualTextureEffect`, `EnvironmentMapEffect`,
-`RenderTarget2D`, `RenderTargetCube`, `RenderTargetBinding`, `GraphicsAdapter`,
-`OcclusionQuery`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs`,
-`DrawableGameComponent`, `Model`, `ModelBone`, `ModelMesh`, `ModelMeshPart`,
-`ModelBoneCollection`, `ModelMeshCollection`, `ModelMeshPartCollection`,
+`GraphicsAdapter`, `OcclusionQuery`, `GraphicsDeviceInformation`,
+`PreparingDeviceSettingsEventArgs`, `DrawableGameComponent`, `Model`, `ModelBone`, `ModelMesh`,
+`ModelMeshPart`, `ModelBoneCollection`, `ModelMeshCollection`, `ModelMeshPartCollection`,
 `ModelEffectCollection`, `MediaPlayer`, `MediaLibrary`, `MediaQueue`, `Song`, `SongCollection`,
 `Album`, `AlbumCollection`, `Artist`, `ArtistCollection`, `Genre`, `GenreCollection`,
 `Playlist`, `PlaylistCollection`, `Picture`, `PictureAlbum`, `PictureAlbumCollection`,
@@ -246,7 +245,8 @@ delimited and checked against `docs/generated/missing-type-inventory.md` by
 <!-- absent-types:end -->
 
 The graphics runtime is the large remaining area. `GraphicsDevice` still owes thirty-seven members
-and `GraphicsDeviceManager` fifteen, and they are the only two partial types left: `SpriteBatch`
+and `GraphicsDeviceManager` fifteen, and they are the only two partial types left. `SetRenderTarget`
+is one of the thirty-seven, which is why this binding can create a render target and not bind one: `SpriteBatch`
 completed when the `Effect` cluster gave `Begin` its last two overloads.
 
 Types a reader might expect on that list and will not find, because they are **complete**: the
@@ -254,7 +254,8 @@ whole nine-type `Effect` graph -- `Effect`, `EffectParameter`, `EffectAnnotation
 `EffectTechnique` and their four collections --
 `VertexDeclaration` and the four vertex structs, the four buffer types and the
 `VertexBufferBinding` that names one, `DirectionalLight`, `EffectMaterial` and the `IEffectLights`
-contract they unblocked, the four graphics state objects,
+contract they unblocked, `RenderTarget2D`, `RenderTargetCube` and `RenderTargetBinding`,
+the four graphics state objects,
 `SamplerStateCollection`, `TextureCollection`, `SpriteFont`, `Texture2D`, `Texture3D`,
 `TextureCube`, `GraphicsResource`, `ResourceContentManager`, and the whole `Audio` namespace including the XACT cluster. In `Media`,
 `Video`, `VideoPlayer`, `MediaSource` and `VisualizationData` are complete while the media *library*

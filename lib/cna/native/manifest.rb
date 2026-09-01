@@ -345,6 +345,25 @@ module CNA
         signature("cna_texturecube_get_data", T[:result], [T[:handle], pointer("CNA_TextureCubeTransfer", const: true), pointer("CNA_Color"), T[:u64], pointer("uint64_t")], ownership: "borrows texture; caller output"),
         signature("cna_texturecube_get_info", T[:result], [T[:handle], pointer("CNA_TextureCubeInfo")], ownership: "caller output"),
         signature("cna_texturecube_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED TextureCube"),
+        # `RenderTarget2D` and `RenderTargetCube`, whose handles are **textures** as far as the rest
+        # of the C ABI is concerned: `cna_texture2d_get_data` reads a 2D target back, which is what
+        # the renderer qualification has been measuring since Native frontier 6. Creation negotiates
+        # -- the format, depth format and sample count a target ends up with are the adapter's answer
+        # rather than the caller's request, exactly as XNA's `GraphicsAdapter.QueryFormat` makes them
+        # -- so both types read theirs back from `cna_render_target_get_info` rather than storing what
+        # was asked for.
+        #
+        # `cna_render_target_subscribe_content_lost` and its unsubscribe stay unbound for the reason
+        # the dynamic buffers' do: `is_content_lost` is false on every renderer family that cannot
+        # lose a device, which is all three qualified artifacts, so a bound callback would be native
+        # surface with nothing to deliver -- and both routes exist only in 0.21.0, so binding one
+        # would end the retired 0.7.0 headers' admission as well. The pool family is 0.21.0-only and
+        # has no XNA identity at all, and `cna_render_target_usage_preserves_contents` answers a
+        # question no XNA member asks.
+        signature("cna_render_target2d_create", T[:result], [T[:handle], pointer("CNA_RenderTarget2DCreateInfo", const: true), pointer("CNA_Handle")], ownership: "borrows device; returns OWNED render target"),
+        signature("cna_render_target_cube_create", T[:result], [T[:handle], pointer("CNA_RenderTargetCubeCreateInfo", const: true), pointer("CNA_Handle")], ownership: "borrows device; returns OWNED render target"),
+        signature("cna_render_target_get_info", T[:result], [T[:handle], pointer("CNA_RenderTargetInfo")], ownership: "caller output"),
+        signature("cna_render_target_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED render target"),
         # The Effect cluster. Every getter in it returns an **owned view**: `cna_effect_get_parameters`
         # hands back a fresh collection handle on every call, and so does
         # `cna_effect_parameter_collection_get_at` for every element -- measured, two calls answer two

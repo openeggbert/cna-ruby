@@ -237,11 +237,18 @@ class MemberLevelDependenciesTest < Minitest::Test
   #
   # `EffectAnnotation` was the Graphics example until the cluster built it *and* the
   # `EffectParameter` it was blocked on, which is the third resolution of this shape and the same
-  # one: build the second blocker. `RenderTarget2D` and `RenderTargetCube` demonstrate it now --
-  # each is native-blocked and each reaches `GraphicsAdapter`, which is missing.
+  # one: build the second blocker. `RenderTarget2D` and `RenderTargetCube` demonstrated it next --
+  # each native-blocked and each reaching the missing `GraphicsAdapter` -- and both were then built
+  # anyway, which is the **fourth** resolution and a new one: neither blocker was resolved at all.
+  # `CreateRenderTarget` reaches the adapter to *negotiate* a format, and CNA negotiates in the same
+  # place inside its own create route, so the projection reads the answer back from
+  # `cna_render_target_get_info` and needs no `GraphicsAdapter` of its own. A dependency that exists
+  # only to answer a question something else already answers is not a dependency this binding has.
+  #
+  # `ModelMeshPart` demonstrates the shape now, and its second half is three types deep: it is
+  # native-blocked on `Draw` and reaches `GraphicsDevice`, `ModelEffectCollection` and `ModelMesh`.
   def test_a_candidate_can_be_blocked_twice_over
-    {"Microsoft.Xna.Framework.Graphics.RenderTarget2D" => "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
-     "Microsoft.Xna.Framework.Graphics.RenderTargetCube" => "Microsoft.Xna.Framework.Graphics.GraphicsAdapter"}
+    {"Microsoft.Xna.Framework.Graphics.ModelMeshPart" => "Microsoft.Xna.Framework.Graphics.ModelMesh"}
       .each do |name, blocker|
       entry = REPORT.fetch("ilOnlyBlockedCandidates").find { |item| item.fetch("name") == name }
       refute_nil entry, name
@@ -249,6 +256,15 @@ class MemberLevelDependenciesTest < Minitest::Test
       assert_includes entry.fetch("ilOnlyUnmetDependencies"), blocker, "and blocked on a missing type too"
       assert_includes STRICT.fetch("missingTypeNames"), blocker
     end
+    # And the two that were built with both halves still unresolved: their own IL reaches the
+    # adapter, and this binding does not need it.
+    %w[Microsoft.Xna.Framework.Graphics.RenderTarget2D
+       Microsoft.Xna.Framework.Graphics.RenderTargetCube].each do |name|
+      assert_includes STRICT.fetch("completeTypeNames"), name
+      assert_nil REPORT.fetch("ilOnlyBlockedCandidates").find { |item| item.fetch("name") == name }
+    end
+    assert_includes STRICT.fetch("missingTypeNames"), "Microsoft.Xna.Framework.Graphics.GraphicsAdapter"
+
     # And the Graphics example that resolved: both halves of EffectAnnotation's are complete now.
     %w[Microsoft.Xna.Framework.Graphics.EffectAnnotation
        Microsoft.Xna.Framework.Graphics.EffectParameter]

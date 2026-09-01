@@ -36,9 +36,6 @@
 - `Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection`
 - `Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator`
 - `Microsoft.Xna.Framework.Graphics.OcclusionQuery`
-- `Microsoft.Xna.Framework.Graphics.RenderTarget2D`
-- `Microsoft.Xna.Framework.Graphics.RenderTargetBinding`
-- `Microsoft.Xna.Framework.Graphics.RenderTargetCube`
 - `Microsoft.Xna.Framework.Graphics.SkinnedEffect`
 - `Microsoft.Xna.Framework.GraphicsDeviceInformation`
 - `Microsoft.Xna.Framework.Media.Album`
