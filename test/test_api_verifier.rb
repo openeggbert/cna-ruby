@@ -1910,7 +1910,7 @@ class ApiVerifierTest < Minitest::Test
     %w[SetRenderTarget DrawPrimitives].each do |name|
       assert deferred.any? { |label| label.include?(name) }, name
     end
-    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures SamplerStates VertexSamplerStates].sort,
+    assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_SURFACE,
                  Microsoft::Xna::Framework::Graphics::GraphicsDevice.public_instance_methods(false).sort
   end
 

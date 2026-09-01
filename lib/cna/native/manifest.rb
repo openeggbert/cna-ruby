@@ -376,6 +376,35 @@ module CNA
         signature("cna_occlusion_query_get_pixel_count", T[:result], [handle("CNA_OcclusionQueryHandle"), pointer("int32_t")], ownership: "caller output"),
         signature("cna_occlusion_query_has_renderer", T[:result], [handle("CNA_OcclusionQueryHandle"), pointer("CNA_Bool")], ownership: "caller output"),
         signature("cna_occlusion_query_destroy", T[:result], [handle("CNA_OcclusionQueryHandle")], ownership: "consumes OWNED query"),
+        # `GraphicsDevice`'s state slice. The three descriptor routes take the same structures the
+        # state objects already write, so one mapping now has three callers: the state object, the
+        # sampler collection, and the device property.
+        #
+        # Two arguments are aggregates passed **by value**, and both classifications were measured
+        # rather than assumed, on two artifacts. `CNA_Color` is four `uint8_t`s -- four bytes, one
+        # INTEGER eightbyte -- so it travels in the low half of one integer register, which is byte
+        # for byte what a `uint32_t` argument occupies; a packed RGBA written through the expansion
+        # reads back identical. `CNA_Rectangle` is four `int32_t`s -- sixteen bytes, two INTEGER
+        # eightbytes -- so it travels in two integer registers holding `x | y << 32` and
+        # `width | height << 32`; a rectangle written through the expansion reads back field for
+        # field. `cna_graphics_device_get_backbuffer_info` is what XNA's scissor validation needs:
+        # its rule is the current render target's bounds or the back buffer's, and nothing here can
+        # bind a render target.
+        signature("cna_graphics_device_get_blend_state", T[:result], [T[:handle], pointer("CNA_BlendState")], ownership: "caller output"),
+        signature("cna_graphics_device_set_blend_state", T[:result], [T[:handle], pointer("CNA_BlendState", const: true)], ownership: "borrows device; copies the descriptor"),
+        signature("cna_graphics_device_get_depth_stencil_state", T[:result], [T[:handle], pointer("CNA_DepthStencilState")], ownership: "caller output"),
+        signature("cna_graphics_device_set_depth_stencil_state", T[:result], [T[:handle], pointer("CNA_DepthStencilState", const: true)], ownership: "borrows device; copies the descriptor"),
+        signature("cna_graphics_device_get_rasterizer_state", T[:result], [T[:handle], pointer("CNA_RasterizerState")], ownership: "caller output"),
+        signature("cna_graphics_device_set_rasterizer_state", T[:result], [T[:handle], pointer("CNA_RasterizerState", const: true)], ownership: "borrows device; copies the descriptor"),
+        signature("cna_graphics_device_get_blend_factor", T[:result], [T[:handle], pointer("CNA_Color")], ownership: "caller output"),
+        signature("cna_graphics_device_set_blend_factor", T[:result], [T[:handle], *by_value("CNA_Color", T[:u32])], ownership: "borrows device"),
+        signature("cna_graphics_device_get_multi_sample_mask", T[:result], [T[:handle], pointer("int32_t")], ownership: "caller output"),
+        signature("cna_graphics_device_set_multi_sample_mask", T[:result], [T[:handle], T[:i32]], ownership: "borrows device"),
+        signature("cna_graphics_device_get_reference_stencil", T[:result], [T[:handle], pointer("int32_t")], ownership: "caller output"),
+        signature("cna_graphics_device_set_reference_stencil", T[:result], [T[:handle], T[:i32]], ownership: "borrows device"),
+        signature("cna_graphics_device_get_scissor_rectangle", T[:result], [T[:handle], pointer("CNA_Rectangle")], ownership: "caller output"),
+        signature("cna_graphics_device_set_scissor_rectangle", T[:result], [T[:handle], *by_value("CNA_Rectangle", T[:u64], T[:u64])], ownership: "borrows device"),
+        signature("cna_graphics_device_get_backbuffer_info", T[:result], [T[:handle], pointer("CNA_BackBufferInfo")], ownership: "caller output"),
         # The Effect cluster. Every getter in it returns an **owned view**: `cna_effect_get_parameters`
         # hands back a fresh collection handle on every call, and so does
         # `cna_effect_parameter_collection_get_at` for every element -- measured, two calls answer two

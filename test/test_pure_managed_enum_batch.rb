@@ -392,7 +392,7 @@ class PureManagedEnumBatchTest < Minitest::Test
       .each { |name| refute I.const_defined?(name, false), "Input::#{name}" }
     # Foundation 32 added TouchPanel, whose IL reads no device on this profile.
     refute I.const_defined?(:TouchPanel, false), "Input::TouchPanel"
-    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures SamplerStates VertexSamplerStates].sort,
+    assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_SURFACE,
                  G::GraphicsDevice.public_instance_methods(false).sort
   end
 

@@ -841,6 +841,153 @@ module Microsoft
             )
           end
 
+          # ------------------------------------------------------------------ the device's own state
+          #
+          # `InitializeDeviceState` nulls the three cached fields and then assigns
+          # `BlendState.Opaque`, `DepthStencilState.Default` and
+          # `RasterizerState.CullCounterClockwise` **through the setters**, so a fresh XNA device
+          # answers those three preset objects by identity. It runs during device creation; the
+          # earliest reachable moment here is the first touch inside a lifecycle callback, because
+          # nothing can reach the device outside one -- and no observer can tell the two apart, since
+          # the first read or write is what would notice.
+          #
+          # Each getter answers the **object that was assigned**, exactly as `ldfld` does. A state
+          # read back from CNA would be a different object with the same values, and XNA's reference
+          # identity here is observable.
+          def BlendState
+            ensure_initial_device_state
+            @blend_state
+          end
+
+          # `set_BlendState`, in the IL's order: a null is `ArgumentNullException("value")`; the same
+          # object with a clean dirty flag returns untouched; otherwise the state is applied and the
+          # device **takes the state's own `BlendFactor` and `MultiSampleMask` with it**, which is
+          # why writing either of those scalars afterwards marks the blend state dirty -- so that
+          # assigning the same object again really does re-apply it.
+          def BlendState=(value)
+            raise ::ArgumentError, "value" if value.nil?
+            raise ::TypeError, "value must be a BlendState" unless value.instance_of?(BlendState)
+
+            ensure_initial_device_state
+            return value if value.equal?(@blend_state) && !@blend_state_dirty
+
+            apply_blend_state(value)
+            value
+          end
+
+          def DepthStencilState
+            ensure_initial_device_state
+            @depth_stencil_state
+          end
+
+          # The same shape, and it carries `ReferenceStencil` across in place of the blend pair.
+          def DepthStencilState=(value)
+            raise ::ArgumentError, "value" if value.nil?
+            raise ::TypeError, "value must be a DepthStencilState" unless value.instance_of?(DepthStencilState)
+
+            ensure_initial_device_state
+            return value if value.equal?(@depth_stencil_state) && !@depth_stencil_state_dirty
+
+            apply_depth_stencil_state(value)
+            value
+          end
+
+          def RasterizerState
+            ensure_initial_device_state
+            @rasterizer_state
+          end
+
+          # The odd one out: its guard is `beq` on the object alone, with **no dirty flag** -- there
+          # is no scalar property that shadows part of a rasterizer state, so nothing can make an
+          # already-assigned one stale.
+          def RasterizerState=(value)
+            raise ::ArgumentError, "value" if value.nil?
+            raise ::TypeError, "value must be a RasterizerState" unless value.instance_of?(RasterizerState)
+
+            ensure_initial_device_state
+            return value if value.equal?(@rasterizer_state)
+
+            apply_rasterizer_state(value)
+            value
+          end
+
+          def BlendFactor
+            ensure_initial_device_state
+            @blend_factor
+          end
+
+          def BlendFactor=(value)
+            raise ::TypeError, "value must be a Color" unless value.instance_of?(Color)
+
+            ensure_initial_device_state
+            CNA::Native.library.call("cna_graphics_device_set_blend_factor", native_handle,
+                                     value.PackedValue)
+            @blend_factor = value.dup
+            @blend_state_dirty = true
+            value
+          end
+
+          def MultiSampleMask
+            ensure_initial_device_state
+            @multi_sample_mask
+          end
+
+          def MultiSampleMask=(value)
+            mask = CNA::Runtime::Numeric.int32(value, "value")
+            ensure_initial_device_state
+            CNA::Native.library.call("cna_graphics_device_set_multi_sample_mask", native_handle, mask)
+            @multi_sample_mask = mask
+            @blend_state_dirty = true
+            value
+          end
+
+          def ReferenceStencil
+            ensure_initial_device_state
+            @reference_stencil
+          end
+
+          def ReferenceStencil=(value)
+            reference = CNA::Runtime::Numeric.int32(value, "value")
+            ensure_initial_device_state
+            CNA::Native.library.call("cna_graphics_device_set_reference_stencil", native_handle, reference)
+            @reference_stencil = reference
+            @depth_stencil_state_dirty = true
+            value
+          end
+
+          # `get_ScissorRectangle` asks the device rather than a cache, and so does this.
+          def ScissorRectangle
+            output = CNA::Native::Layouts::Rectangle.new
+            CNA::Native.library.call("cna_graphics_device_get_scissor_rectangle", native_handle,
+                                     output.pointer)
+            Rectangle.new(output.read_i32(0), output.read_i32(4), output.read_i32(8), output.read_i32(12))
+          end
+
+          # The setter validates before it writes: the rectangle must lie inside the current render
+          # target's bounds, or the back buffer's when none is bound, and an
+          # `ArgumentException(ScissorInvalid, "value")` is what a rectangle outside them gets.
+          #
+          # Only the back-buffer branch is reachable here, and that is not a partial implementation:
+          # binding a render target is `GraphicsDevice.SetRenderTarget`, which this binding does not
+          # project, so no other bounds exist to check against.
+          #
+          # The rectangle is a sixteen-byte aggregate passed **by value**; the manifest records the
+          # measured two-eightbyte expansion, and this packs the two integers it names.
+          def ScissorRectangle=(value)
+            raise ::TypeError, "value must be a Rectangle" unless value.instance_of?(Rectangle)
+
+            width, height = back_buffer_bounds
+            unless value.X >= 0 && value.Y >= 0 && value.Width >= 0 && value.Height >= 0 &&
+                   value.X + value.Width <= width && value.Y + value.Height <= height
+              raise ::ArgumentError, "ScissorInvalid"
+            end
+
+            low = (value.X & 0xFFFFFFFF) | (value.Y << 32)
+            high = (value.Width & 0xFFFFFFFF) | (value.Height << 32)
+            CNA::Native.library.call("cna_graphics_device_set_scissor_rectangle", native_handle, low, high)
+            value
+          end
+
           def Clear(color)
             raise TypeError, "GraphicsDevice.Clear foundation overload expects Color" unless color.instance_of?(Color)
             divisor = 255.0
@@ -852,6 +999,55 @@ module Microsoft
           end
 
           private
+
+          # `InitializeDeviceState`'s three assignments, at the first moment this projection can
+          # reach the device. The nulls it writes first are what the three instance variables
+          # already are.
+          def ensure_initial_device_state
+            return if @device_state_initialized
+
+            @device_state_initialized = true
+            @blend_state_dirty = true
+            @depth_stencil_state_dirty = true
+            apply_blend_state(BlendState::Opaque)
+            apply_depth_stencil_state(DepthStencilState::Default)
+            apply_rasterizer_state(RasterizerState::CullCounterClockwise)
+            nil
+          end
+
+          def apply_blend_state(value)
+            CNA::Native.library.call("cna_graphics_device_set_blend_state", native_handle,
+                                     value.__send__(:to_native_descriptor).pointer)
+            @blend_state = value
+            @blend_factor = value.BlendFactor
+            @multi_sample_mask = value.MultiSampleMask
+            @blend_state_dirty = false
+            nil
+          end
+
+          def apply_depth_stencil_state(value)
+            CNA::Native.library.call("cna_graphics_device_set_depth_stencil_state", native_handle,
+                                     value.__send__(:to_native_descriptor).pointer)
+            @depth_stencil_state = value
+            @reference_stencil = value.ReferenceStencil
+            @depth_stencil_state_dirty = false
+            nil
+          end
+
+          def apply_rasterizer_state(value)
+            CNA::Native.library.call("cna_graphics_device_set_rasterizer_state", native_handle,
+                                     value.__send__(:to_native_descriptor).pointer)
+            @rasterizer_state = value
+            nil
+          end
+
+          # The logical back buffer, which is what the scissor rule measures against while no render
+          # target can be bound.
+          def back_buffer_bounds
+            info = CNA::Native::Layouts::BackBufferInfo.new
+            CNA::Native.library.call("cna_graphics_device_get_backbuffer_info", native_handle, info.pointer)
+            [info.read_u32(8), info.read_u32(12)]
+          end
 
           def invalidate
             @invalidated = true

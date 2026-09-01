@@ -963,6 +963,62 @@
           "parameters": [
 
           ]
+        },
+        {
+          "kind": "property",
+          "name": "BlendState",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DepthStencilState",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "RasterizerState",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "BlendFactor",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MultiSampleMask",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "ReferenceStencil",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "ScissorRectangle",
+          "static": false,
+          "parameters": [
+
+          ]
         }
       ]
     },

@@ -50,9 +50,11 @@ class SamplerStateCollectionTest < Minitest::Test
                                   .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
     refute_includes remainder, "SamplerStates"
     refute_includes remainder, "VertexSamplerStates"
-    # The three device state properties are deliberately still outstanding: each one's setter ends
-    # an active EffectPass, and no Effect is projected.
-    %w[BlendState DepthStencilState RasterizerState].each { |name| assert_includes remainder, name }
+    # The three device state properties were deliberately outstanding here -- each one's setter
+    # ends an active EffectPass, and no Effect was projected then. Both halves have since landed,
+    # and what this milestone claimed is unchanged: it added the two collections and nothing else.
+    %w[BlendState DepthStencilState RasterizerState].each { |name| refute_includes remainder, name }
+    %w[SetRenderTarget DrawPrimitives Present].each { |name| assert_includes remainder, name }
     refute_includes FRONTIER.fetch("dependencyCompleteCandidates").map { |c| c.fetch("name") }, NAME
   end
 
@@ -64,10 +66,11 @@ class SamplerStateCollectionTest < Minitest::Test
     assert_includes symbols, "cna_graphics_device_set_sampler_state"
     assert_equal 16, CNA::Native::Manifest::CONSTANTS.fetch("CNA_MAX_SAMPLERS")
     assert_equal SSC::MAX_SAMPLERS, CNA::Native::Manifest::CONSTANTS.fetch("CNA_MAX_SAMPLERS")
-    # Still unbound, and for the reason the state-object milestone recorded: applying a whole
-    # pipeline state is GraphicsDevice's surface, not this collection's.
+    # These were unbound here, for the reason the state-object milestone recorded: applying a
+    # whole pipeline state is GraphicsDevice's surface and not this collection's. It is bound now,
+    # by GraphicsDevice's own state slice, which is the same statement from the other side.
     %w[cna_graphics_device_set_blend_state cna_graphics_device_set_depth_stencil_state
-       cna_graphics_device_set_rasterizer_state].each { |symbol| refute_includes symbols, symbol }
+       cna_graphics_device_set_rasterizer_state].each { |symbol| assert_includes symbols, symbol }
   end
 
   # ------------------------------------------------------------------------------ live behaviour
@@ -207,8 +210,9 @@ class SamplerStateCollectionTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_adds_no_device_state_property_effect_or_draw_surface
-    %i[BlendState DepthStencilState RasterizerState SetRenderTarget
-       DrawPrimitives DrawUserPrimitives].each do |absent|
+    # The three state properties left this list when the device's state slice landed; what this
+    # milestone claimed, and still claims, is that **it** added neither them nor any draw surface.
+    %i[SetRenderTarget DrawPrimitives DrawUserPrimitives].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
     # The nine `Effect` types left this list when the cluster was built and `RenderTarget2D` when

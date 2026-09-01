@@ -229,7 +229,7 @@ class ManagedDescriptorsTest < Minitest::Test
     # a depth format and a sample count -- the same three values this descriptor holds -- and no
     # device, adapter or swap chain, so what this test claims is unchanged.
     %i[GraphicsAdapter].each { |absent| refute G.const_defined?(absent, false), "Graphics::#{absent}" }
-    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures SamplerStates VertexSamplerStates].sort, G::GraphicsDevice.public_instance_methods(false).sort
+    assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_SURFACE, G::GraphicsDevice.public_instance_methods(false).sort
   end
 
   # -------------------------------------------------------- GameComponentCollectionEventArgs
@@ -375,7 +375,7 @@ class ManagedDescriptorsTest < Minitest::Test
     %i[ResourceCreated ResourceDestroyed].each do |absent|
       refute G::GraphicsDevice.method_defined?(absent), absent.to_s
     end
-    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures SamplerStates VertexSamplerStates].sort, G::GraphicsDevice.public_instance_methods(false).sort
+    assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_SURFACE, G::GraphicsDevice.public_instance_methods(false).sort
   end
 
   # The event args type still implies neither component class. GameComponentCollection exists as of

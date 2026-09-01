@@ -178,7 +178,10 @@ class SpriteBatchBeginStatesTest < Minitest::Test
   def test_it_adds_no_effect_transform_or_device_state_property
     # `Effect` left this list when the cluster was built; what this milestone claimed, and still
     # claims, is that **it** built none of it -- three Begin overloads and no effect surface.
-    %i[BlendState DepthStencilState RasterizerState].each do |absent|
+    # The three device state properties left this list when the device's own state slice landed;
+    # what this milestone claimed, and still claims, is that **it** added none of them -- it passed
+    # four state descriptors to one SpriteBatch route and touched no device property.
+    %i[SetRenderTarget DrawPrimitives].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)

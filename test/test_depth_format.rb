@@ -119,7 +119,10 @@ class DepthFormatTest < Minitest::Test
     # names a member of this enum. What this milestone claimed, and still claims, is that **it**
     # added no manager property and no state object; the enum alone implies neither.
     assert_equal G::DepthFormat::Depth24, F::GraphicsDeviceManager.new(NullGame.new).PreferredDepthStencilFormat
-    refute_includes G::GraphicsDevice.public_instance_methods(false), :DepthStencilState
+    # The device's own DepthStencilState arrived with its state slice, and it is the second real
+    # consumer of this enum after the render targets. What this milestone claimed is unchanged: it
+    # added no manager property and no state object.
+    assert_includes G::GraphicsDevice.public_instance_methods(false), :DepthStencilState
     # The two render targets left this list when they were built: they are the first types in this
     # binding to carry a `DepthStencilFormat`, which is this enum's first real consumer, and they
     # still add no manager property and no state object. This batch built neither of them.

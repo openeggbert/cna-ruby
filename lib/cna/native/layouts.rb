@@ -428,6 +428,23 @@ module CNA
       # is exactly the shape of XNA's own ten-argument `Texture3D.SetData` overload; the cube
       # transfer carries a face and a rectangle, which is the shape of `TextureCube`'s six-argument
       # one.
+      # The logical back buffer, which XNA's scissor validation needs: its rule is the current
+      # render target's bounds or the back buffer's, and nothing here can bind a render target.
+      class BackBufferInfo < Structure
+        layout size: 24, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("width", "uint32_t", 8, 4), Layouts.field("height", "uint32_t", 12, 4),
+          Layouts.field("format", "CNA_SurfaceFormat", 16, 4),
+          Layouts.field("reserved", "uint32_t", 20, 4)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       # The three render-target structures. `CNA_RenderTargetInfo` carries two more fields than the
       # retired 0.7.0 headers declare -- a two-byte `reserved` tail -- and neither is read here, so
       # the layout stops at `renderer_available` and both header roots agree on every field it does

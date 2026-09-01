@@ -231,8 +231,8 @@ class TextureCollectionTest < Minitest::Test
     %i[BasicEffect].each do |absent|
       refute G.const_defined?(absent, false), absent.to_s
     end
-    %i[DrawPrimitives DrawIndexedPrimitives DrawUserPrimitives SetRenderTarget
-       BlendState DepthStencilState].each do |absent|
+    # `BlendState` and `DepthStencilState` left this list when the device's state slice landed.
+    %i[DrawPrimitives DrawIndexedPrimitives DrawUserPrimitives SetRenderTarget].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
   end

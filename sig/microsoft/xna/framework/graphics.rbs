@@ -273,6 +273,20 @@ module Microsoft
           def Clear: (Color color) -> nil
           def SamplerStates: () -> SamplerStateCollection
           def VertexSamplerStates: () -> SamplerStateCollection
+          def BlendState: () -> BlendState
+          def BlendState=: (BlendState value) -> BlendState
+          def DepthStencilState: () -> DepthStencilState
+          def DepthStencilState=: (DepthStencilState value) -> DepthStencilState
+          def RasterizerState: () -> RasterizerState
+          def RasterizerState=: (RasterizerState value) -> RasterizerState
+          def BlendFactor: () -> Color
+          def BlendFactor=: (Color value) -> Color
+          def MultiSampleMask: () -> Integer
+          def MultiSampleMask=: (Integer value) -> Integer
+          def ReferenceStencil: () -> Integer
+          def ReferenceStencil=: (Integer value) -> Integer
+          def ScissorRectangle: () -> Rectangle
+          def ScissorRectangle=: (Rectangle value) -> Rectangle
         end
 
         class SamplerStateCollection

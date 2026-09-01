@@ -167,7 +167,7 @@ class InterfaceContractsTest < Minitest::Test
         refute_includes type.ancestors, interface, "#{name} must not include #{interface}"
       end
     end
-    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures SamplerStates VertexSamplerStates].sort, G::GraphicsDevice.public_instance_methods(false).sort
+    assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_SURFACE, G::GraphicsDevice.public_instance_methods(false).sort
 
     strict = JSON.parse(Pathname(__dir__).join("..", "docs", "generated", "api-compat-report.json").read)
     # Foundation 37 closed Game::Components and Game::Services, the first two members any deferred

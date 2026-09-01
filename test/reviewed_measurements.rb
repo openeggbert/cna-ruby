@@ -21,7 +21,7 @@ module NativeSurfaceCensus
 
   # The census the repository last reviewed. `test_native_abi_gate.rb` compares the two, so this
   # file cannot drift from the manifest silently in either direction.
-  REVIEWED = { functions: 360, callbacks: 5, constants: 133, layouts: 60 }.freeze
+  REVIEWED = { functions: 375, callbacks: 5, constants: 133, layouts: 61 }.freeze
 end
 
 # The strict XNA scoreboard, for exactly the same reason and with exactly the same rule: a milestone
@@ -31,17 +31,27 @@ end
 # is the measurement; this is the reviewed expectation of it.
 module ReviewedScoreboard
   TARGET_TYPES = 200
-  TARGET_MEMBERS = 2353
+  TARGET_MEMBERS = 2360
   COMPLETE_TYPES = 198
   PARTIAL_TYPES = 2
   MISSING_TYPES = 57
-  MISSING_MEMBER = 65
+  MISSING_MEMBER = 58
   OVERLOAD_MAPPING_MISMATCH = 27
   BCL_PROJECTED_IDENTITIES = 22
   BCL_EXCEPTION_BASES = 2
   BCL_THROWN_EXCEPTIONS = 8
   EVENT_IDENTITIES = 31
   EVENT_OWNER_TYPES = 18
+  # `GraphicsDevice`'s projected surface, in one place and for the same reason the counts are in
+  # one place: it is still a partial type, so every slice that lands on it moves this list, and five
+  # unrelated tests should not each pin it as a literal.
+  GRAPHICS_DEVICE_SURFACE = %i[
+    IsDisposed Viewport Clear Textures VertexTextures SamplerStates VertexSamplerStates
+    BlendState BlendState= DepthStencilState DepthStencilState= RasterizerState RasterizerState=
+    BlendFactor BlendFactor= MultiSampleMask MultiSampleMask= ReferenceStencil ReferenceStencil=
+    ScissorRectangle ScissorRectangle=
+  ].sort.freeze
+
   # The members a type still owes, or `[]` once the strict report calls it complete.
   #
   # Eight tests assert "the member this milestone added is no longer in `Game`'s partial
