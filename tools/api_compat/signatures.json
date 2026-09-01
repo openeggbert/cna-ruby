@@ -33243,6 +33243,74 @@
               "optional": false
             }
           ]
+        },
+        {
+          "kind": "method",
+          "name": "SaveAsJpeg",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "stream",
+              "type": "System.IO.Stream",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "width",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "height",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SaveAsPng",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "stream",
+              "type": "System.IO.Stream",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "width",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "height",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::Texture2D"

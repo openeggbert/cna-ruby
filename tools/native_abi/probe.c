@@ -96,6 +96,8 @@ CHECK_FN(cna_graphics_device_set_texture, CNA_Result, (CNA_Handle, CNA_ShaderSta
 CHECK_FN(cna_texture2d_create_from_encoded_memory, CNA_Result, (CNA_Handle, const uint8_t*, uint64_t, const CNA_Texture2DDecodeInfo*, CNA_Handle*));
 CHECK_FN(cna_texture2d_get_info, CNA_Result, (CNA_Handle, CNA_Texture2DInfo*));
 CHECK_FN(cna_texture2d_destroy, CNA_Result, (CNA_Handle));
+CHECK_FN(cna_texture2d_get_encoded_byte_count, CNA_Result, (CNA_Handle, CNA_TextureImageFormat, uint32_t, uint32_t, uint64_t*));
+CHECK_FN(cna_texture2d_copy_encoded, CNA_Result, (CNA_Handle, CNA_TextureImageFormat, uint32_t, uint32_t, uint8_t*, uint64_t, uint64_t*));
 CHECK_FN(cna_sprite_batch_create, CNA_Result, (CNA_Handle, CNA_Handle*));
 CHECK_FN(cna_sprite_batch_begin, CNA_Result, (CNA_Handle, const CNA_SpriteBatchBeginInfo*));
 CHECK_FN(cna_sprite_batch_submit_scaled_many, CNA_Result, (CNA_Handle, const CNA_SpriteScaledCommand*, uint64_t));
@@ -336,6 +338,8 @@ int main(void) {
     SIGNATURE(cna_texture2d_create_from_encoded_memory, "CNA_Result|CNA_Handle,const uint8_t*,uint64_t,const CNA_Texture2DDecodeInfo*,CNA_Handle*");
     SIGNATURE(cna_texture2d_get_info, "CNA_Result|CNA_Handle,CNA_Texture2DInfo*");
     SIGNATURE(cna_texture2d_destroy, "CNA_Result|CNA_Handle");
+    SIGNATURE(cna_texture2d_get_encoded_byte_count, "CNA_Result|CNA_Handle,CNA_TextureImageFormat,uint32_t,uint32_t,uint64_t*");
+    SIGNATURE(cna_texture2d_copy_encoded, "CNA_Result|CNA_Handle,CNA_TextureImageFormat,uint32_t,uint32_t,uint8_t*,uint64_t,uint64_t*");
     SIGNATURE(cna_sprite_batch_create, "CNA_Result|CNA_Handle,CNA_Handle*");
     SIGNATURE(cna_sprite_batch_begin, "CNA_Result|CNA_Handle,const CNA_SpriteBatchBeginInfo*");
     SIGNATURE(cna_sprite_batch_submit_scaled_many, "CNA_Result|CNA_Handle,const CNA_SpriteScaledCommand*,uint64_t");
@@ -506,6 +510,7 @@ int main(void) {
     CONSTANT(CNA_GAME_EVENT_ACTIVATED); CONSTANT(CNA_GAME_EVENT_DEACTIVATED); CONSTANT(CNA_GAME_EVENT_DISPOSED); CONSTANT(CNA_GAME_EVENT_EXITING);
     CONSTANT(CNA_GAME_WINDOW_EVENT_CLIENT_SIZE_CHANGED); CONSTANT(CNA_GAME_WINDOW_EVENT_ORIENTATION_CHANGED); CONSTANT(CNA_GAME_WINDOW_EVENT_SCREEN_DEVICE_NAME_CHANGED);
     CONSTANT(CNA_SPRITE_SORT_MODE_DEFERRED); CONSTANT(CNA_SPRITE_EFFECT_NONE); CONSTANT(CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY); CONSTANT(CNA_SPRITE_EFFECT_FLIP_VERTICALLY);
+    CONSTANT(CNA_TEXTURE_IMAGE_FORMAT_PNG); CONSTANT(CNA_TEXTURE_IMAGE_FORMAT_JPEG);
     CONSTANT(CNA_MICROPHONE_STATE_STARTED); CONSTANT(CNA_MICROPHONE_STATE_STOPPED); CONSTANT(CNA_MICROPHONE_STATE_MAXIMUM);
     CONSTANT(CNA_SURFACE_FORMAT_COLOR); CONSTANT(CNA_SHADER_STAGE_PIXEL); CONSTANT(CNA_SHADER_STAGE_VERTEX); CONSTANT(CNA_TEXTURE_COLLECTION_MAX_TEXTURES);
     CONSTANT(CNA_MOUSE_BUTTON_LEFT); CONSTANT(CNA_MOUSE_BUTTON_MIDDLE); CONSTANT(CNA_MOUSE_BUTTON_RIGHT); CONSTANT(CNA_MOUSE_BUTTON_X1); CONSTANT(CNA_MOUSE_BUTTON_X2);

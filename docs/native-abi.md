@@ -342,3 +342,18 @@ that would otherwise only be described.
 not bound: `PresentationMode` has no XNA identity. Neither are `create_device`, `begin_draw` and
 `end_draw`, which belong to the device lifecycle CNA's own manager owns —
 `docs/graphics-device-service-producer-audit.md` is why.
+
+## Texture image encoding
+
+Two routes bring the count to 226 and two constants bring those to 73:
+`cna_texture2d_get_encoded_byte_count` and `cna_texture2d_copy_encoded`, asked in that order — size,
+then copy — which is the shape every count/copy pair in this manifest uses.
+
+`CNA_TEXTURE_IMAGE_FORMAT_PNG` is 0 and `CNA_TEXTURE_IMAGE_FORMAT_JPEG` is 1. XNA's own private
+image enum numbers them the other way round — JPEG 0, PNG 2, which is why `SaveAsJpeg` is
+`ldc.i4.0` and `SaveAsPng` is `ldc.i4.2` — so the projection names the CNA constants rather than
+carrying XNA's literals across a boundary where they mean something else.
+
+`cna_texture2d_save_file` is deliberately not bound: it writes a path, and XNA's two members write a
+`Stream`. The rest of the `cna_texture2d_*` family — `create`, `set_data`, `get_data` and the rgba8
+variants — is unbound because `Texture2D`'s constructors and pixel access are still outstanding.

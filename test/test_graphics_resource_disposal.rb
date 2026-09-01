@@ -65,7 +65,10 @@ class GraphicsResourceDisposalTest < Minitest::Test
                    "#{type} inherits the base implementation rather than reimplementing it"
     end
     refute G::SpriteBatch.public_method_defined?(:Effect), "no Effect to dispose"
-    refute G::Texture2D.public_method_defined?(:SaveAsPng), "no saved data to clean"
+    # `SaveAsPng` exists now and still cleans nothing: XNA's `CleanupSavedData` frees a cached
+    # bitmap the saving path keeps, and this projection keeps none -- each save asks CNA to encode
+    # afresh, so there is no saved data for a Dispose override to clean.
+    refute G::Texture2D.private_instance_methods(false).include?(:CleanupSavedData)
   end
 
   # ------------------------------------------------------------------------------ live behaviour
@@ -160,7 +163,7 @@ class GraphicsResourceDisposalTest < Minitest::Test
   end
 
   def test_it_adds_no_draw_or_pixel_surface
-    %i[SetData GetData SaveAsPng SaveAsJpeg].each { |absent| refute G::Texture2D.public_method_defined?(absent) }
+    %i[SetData GetData].each { |absent| refute G::Texture2D.public_method_defined?(absent) }
     %i[DrawString].each { |absent| refute G::SpriteBatch.public_method_defined?(absent) }
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
   end

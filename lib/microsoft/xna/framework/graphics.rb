@@ -1020,7 +1020,63 @@ module Microsoft
             private :new
           end
 
+          # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…).
+          #
+          # Both are one call into a private `SaveAsImage(stream, format, width, height)`, with the
+          # format fixed -- `ldc.i4.0` for JPEG and `ldc.i4.2` for PNG -- and `SaveAsImage` validates
+          # exactly three things:
+          #
+          #   1. `if (stream == null) throw new ArgumentNullException("stream", NullNotAllowed)`
+          #   2. `if (!stream.CanWrite) throw new ArgumentException("stream")`
+          #   3. a format that is neither of those two, which the two public members cannot produce
+          #
+          # There is **no width or height validation at all**: whatever the encoder makes of a zero
+          # or negative size is the encoder's business, and this projection does not invent a rule
+          # XNA does not have. The final failure path is a bare `InvalidOperationException`.
+          #
+          # The stream is accepted on the same terms `FromStream` accepts a reader: the projected
+          # `CNA::Runtime::Stream`, or any Ruby object answering `write`. `CanWrite` is consulted
+          # when the object has it, which is what XNA's check really is.
+          def SaveAsPng(stream, width, height)
+            save_as_image(stream, CNA::Native::Manifest::CONSTANTS.fetch("CNA_TEXTURE_IMAGE_FORMAT_PNG"),
+                          width, height)
+          end
+
+          def SaveAsJpeg(stream, width, height)
+            save_as_image(stream, CNA::Native::Manifest::CONSTANTS.fetch("CNA_TEXTURE_IMAGE_FORMAT_JPEG"),
+                          width, height)
+          end
+
           private
+
+          def save_as_image(stream, image_format, width, height)
+            raise CNA::DisposedObjectError, "Texture2D is disposed" if self.IsDisposed
+            raise ::ArgumentError, "stream" if stream.nil?
+            raise ::TypeError, "stream must respond to write" unless stream.respond_to?(:write) ||
+                                                                     stream.respond_to?(:Write)
+            raise ::ArgumentError, "stream" if stream.respond_to?(:CanWrite) && !stream.CanWrite
+
+            target_width = CNA::Runtime::Numeric.int32(width, "width")
+            target_height = CNA::Runtime::Numeric.int32(height, "height")
+            size = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_texture2d_get_encoded_byte_count", native_handle,
+                                     image_format, target_width, target_height, size)
+            bytes = size[0, 8].unpack1("Q")
+            encoded = "".b
+            if bytes.positive?
+              buffer = Fiddle::Pointer.malloc(bytes, Fiddle::RUBY_FREE)
+              written = CNA::Native.library.pointer_for("Q", 0)
+              CNA::Native.library.call("cna_texture2d_copy_encoded", native_handle, image_format,
+                                       target_width, target_height, buffer, bytes, written)
+              encoded = buffer[0, written[0, 8].unpack1("Q")]
+            end
+            if stream.respond_to?(:Write)
+              stream.Write(encoded, 0, encoded.bytesize)
+            else
+              stream.write(encoded)
+            end
+            nil
+          end
 
           def initialize_from_native(device, handle)
             release = lambda { |value| CNA::Native.library.call("cna_texture2d_destroy", value) }

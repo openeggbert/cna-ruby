@@ -25,16 +25,16 @@ fails when it should.
 
 ## Surface
 
-The strict surface is **165 types / 2003 Ruby member identities**: 161 complete, 4 partial, 92 of the
-257 reference types still missing, with 222 deferred diagnostics of which 91 are missing members and
-36 are the overload category. Every structural category except `MISSING_TYPE`, `MISSING_MEMBER`,
+The strict surface is **165 types / 2005 Ruby member identities**: 161 complete, 4 partial, 92 of the
+257 reference types still missing, with 218 deferred diagnostics of which 89 are missing members and
+34 are the overload category. Every structural category except `MISSING_TYPE`, `MISSING_MEMBER`,
 `OVERLOAD_MAPPING_MISMATCH` and one long-standing `PROPERTY_MAPPING_MISMATCH`
 (`GraphicsDevice::Viewport`) is zero, the allowlist is empty and `UNMEASURED_STRUCTURAL_CATEGORY` is
 zero. **27** event identities are projected across **14** owner types with `EVENT_MAPPING_MISMATCH`
 zero, and **22** BCL identities go through the measured `CNA::Runtime::BclProjection` register.
 
 The four partial types are the graphics runtime: `GraphicsDeviceManager` (15 members outstanding),
-`GraphicsDevice` (39), `Texture2D` (6) and `SpriteBatch` (3) — 63 of the 91
+`GraphicsDevice` (39), `Texture2D` (4) and `SpriteBatch` (3) — 61 of the 89
 outstanding members between them, which is why a qualification artifact with a real renderer is the
 single largest lever this project has left. `GraphicsDeviceManager`'s own remainder is no longer
 about the renderer: eleven of its members were closed by projecting the preferred settings, and the
@@ -68,7 +68,7 @@ Complete clusters, by area:
 - The admitted encoded ABI versions are `0x00000700` and `0x00001500`, cross-verified across both
   header roots; `CROSS_VERSION_MISMATCHES` is zero over the whole bound surface.
 - `CNA_NATIVE_LIBRARY` must be an absolute file path when used.
-- All Fiddle functions come from one manifest: **224** functions, **5** callbacks, **71** constants
+- All Fiddle functions come from one manifest: **226** functions, **5** callbacks, **73** constants
   and **27** struct layouts, each type-checked against the headers by a compiler-backed probe with
   `_Static_assert(__builtin_types_compatible_p(...))`, and each Ruby layout compared field by field
   with the C one. `ABI_MISMATCHES` is zero.

@@ -326,6 +326,11 @@ module CNA
         signature("cna_texture2d_create_from_encoded_memory", T[:result], [T[:handle], pointer("uint8_t", const: true), T[:u64], pointer("CNA_Texture2DDecodeInfo", const: true), pointer("CNA_Handle")], ownership: "returns OWNED Texture2D"),
         signature("cna_texture2d_get_info", T[:result], [T[:handle], pointer("CNA_Texture2DInfo")], ownership: "caller output"),
         signature("cna_texture2d_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED Texture2D"),
+        # The two encode routes `SaveAsPng` and `SaveAsJpeg` need: ask for the size, then copy. CNA
+        # also exports `cna_texture2d_save_file`, which writes a path rather than a stream and has
+        # no XNA identity, so it stays unbound.
+        signature("cna_texture2d_get_encoded_byte_count", T[:result], [T[:handle], enum("CNA_TextureImageFormat"), T[:u32], T[:u32], pointer("uint64_t")], ownership: "borrows texture; caller output"),
+        signature("cna_texture2d_copy_encoded", T[:result], [T[:handle], enum("CNA_TextureImageFormat"), T[:u32], T[:u32], pointer("uint8_t"), T[:u64], pointer("uint64_t")], ownership: "borrows texture; caller output"),
         signature("cna_sprite_batch_create", T[:result], [T[:handle], pointer("CNA_Handle")], ownership: "returns OWNED SpriteBatch"),
         signature("cna_sprite_batch_begin", T[:result], [T[:handle], pointer("CNA_SpriteBatchBeginInfo", const: true)], ownership: "borrows SpriteBatch"),
         signature("cna_sprite_batch_submit_scaled_many", T[:result], [T[:handle], pointer("CNA_SpriteScaledCommand", const: true), T[:u64]], ownership: "copies commands; retains Texture until End"),
@@ -538,6 +543,8 @@ module CNA
         "CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY" => 1,
         "CNA_SPRITE_EFFECT_FLIP_VERTICALLY" => 2,
         "CNA_SURFACE_FORMAT_COLOR" => 0,
+        "CNA_TEXTURE_IMAGE_FORMAT_PNG" => 0,
+        "CNA_TEXTURE_IMAGE_FORMAT_JPEG" => 1,
         "CNA_MICROPHONE_STATE_STARTED" => 0,
         "CNA_MICROPHONE_STATE_STOPPED" => 1,
         "CNA_MICROPHONE_STATE_MAXIMUM" => 1,
