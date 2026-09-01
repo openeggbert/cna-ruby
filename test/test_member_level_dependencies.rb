@@ -203,11 +203,11 @@ class MemberLevelDependenciesTest < Minitest::Test
     # 1 until GraphicsResource completed and put VertexDeclaration and SamplerState here: both are
     # dependency-complete by the signature graph and both reach a type only their IL names --
     # IVertexType for the first, EffectPass for the second.
-    assert_equal 3, signature_complete.length
+    # 3 until SamplerState was built, which took it back to 2.
+    assert_equal 2, signature_complete.length
     names = signature_complete.map { |entry| entry.fetch("name") }.sort
     # ContentManager was here until the Stream and Action`1 projections consumed it.
     assert_equal ["Microsoft.Xna.Framework.Graphics.EffectAnnotation",
-                  "Microsoft.Xna.Framework.Graphics.SamplerState",
                   "Microsoft.Xna.Framework.Graphics.VertexDeclaration"], names
     refute_includes names, "Microsoft.Xna.Framework.Audio.Cue"
   end
@@ -257,7 +257,8 @@ class MemberLevelDependenciesTest < Minitest::Test
     # and ResourceContentManager to 3. Then it *rose* to 9, which is what a frontier advancing
     # looks like: GraphicsResource completing made the four graphics state objects and
     # VertexDeclaration dependency-complete, and Texture2D completing did the same for VideoPlayer.
-    assert_equal 9, REPORT.fetch("dependencyCompleteCandidates").length
+    # and back to 6 when the four state objects were audited and built.
+    assert_equal 6, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")
@@ -271,7 +272,7 @@ class MemberLevelDependenciesTest < Minitest::Test
      REPORT.fetch("ilOnlyBlockedCandidates")).each do |entry|
       refute_includes consumable, entry.fetch("name")
     end
-    assert_equal 3, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
+    assert_equal 2, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
   end
 
   # The one candidate the refinement cleared, and what happened to it. Foundation 39 selected it and

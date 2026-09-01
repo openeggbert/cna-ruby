@@ -120,13 +120,18 @@ class DepthFormatTest < Minitest::Test
     # added no manager property and no state object; the enum alone implies neither.
     assert_equal G::DepthFormat::Depth24, F::GraphicsDeviceManager.new(NullGame.new).PreferredDepthStencilFormat
     refute_includes G::GraphicsDevice.public_instance_methods(false), :DepthStencilState
-    %i[GraphicsAdapter RenderTarget2D RenderTargetCube DepthStencilState
-       DepthFormatConverter].each do |name|
+    %i[GraphicsAdapter RenderTarget2D RenderTargetCube DepthFormatConverter].each do |name|
       refute G.const_defined?(name, false), name.to_s
     end
     assert_equal 1, G::GraphicsDevice.instance_method(:Clear).arity
     refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("DEPTH_FORMAT") }
-    refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("DEPTH_STENCIL") }
+    # `DepthStencilState` was in that list until the four state objects were built. It is a managed
+    # value holder with no device in it, so the claim this test really makes -- that the enum
+    # implied no *device* surface -- is unchanged, and the two constants it named are still absent
+    # from the device half of the manifest.
+    assert G.const_defined?(:DepthStencilState, false)
+    assert_nil G::DepthStencilState.new.GraphicsDevice
+    refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.start_with?("CNA_DEPTH_STENCIL_FORMAT") }
   end
 
   class NullGame < Microsoft::Xna::Framework::Game; end

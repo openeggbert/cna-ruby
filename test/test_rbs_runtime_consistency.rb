@@ -416,8 +416,12 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     refute_includes section, "def |:"
     refute_includes section, "def &:"
     refute_includes section, "def ToString"
-    refute_includes source, "PreferredDepthStencilFormat"
-    refute_includes source, "DepthStencilState"
+    # `PreferredDepthStencilFormat` and `DepthStencilState` were both absent from this file until
+    # the milestones that built them. What this test claims about `DepthFormat` is unchanged, and it
+    # is now stated on the enum's own declared section, which is where the claim always lived: the
+    # enum still declares four identities, no flags operators and no conversion.
+    refute_includes section, "PreferredDepthStencilFormat"
+    refute_includes section, "DepthStencilState"
   end
 
   def test_primitive_type_rbs_retains_exact_four_identity_non_flags_projection
@@ -804,12 +808,16 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     # TextureCube is a declared EffectParameterType literal, so absence is asserted per declaration.
     # Foundation 24 added the PresentationParameters managed descriptor; the renderer and device
     # types it names remain absent.
+    # The four state objects left this list when they were built; what this batch claimed, and
+    # still claims, is that **it** declared none of them -- it declared the eight enums they are
+    # made of and nothing that holds one.
     %w[RenderTarget2D RenderTargetCube TextureCube Texture3D VertexBuffer IndexBuffer
-       VertexDeclaration BlendState DepthStencilState RasterizerState SamplerState Effect
-       BasicEffect GraphicsAdapter].each do |absent|
+       VertexDeclaration Effect BasicEffect GraphicsAdapter].each do |absent|
       refute_includes source, "class #{absent}\n"
       refute_includes source, "class #{absent} <"
     end
+    %w[BlendState DepthStencilState RasterizerState SamplerState]
+      .each { |present| assert_includes source, "class #{present} < GraphicsResource" }
     # Foundation 24 and 25 added these managed descriptors.
     %w[PresentationParameters DisplayMode DisplayModeCollection]
       .each { |present| assert_includes source, "class #{present}\n" }

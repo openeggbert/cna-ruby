@@ -375,3 +375,24 @@ Measured on the 128x128 test PNG, `zoom` is asymmetric and the defect is upstrea
 than wide crops and scales, a target wider than tall fails `INVALID_ARGUMENT` with "ImageLoader:
 crop rectangle lies outside the source image". Reproduced at the C ABI with no Ruby in the path and
 recorded in `docs/texture-decode-upstream-defect.md`; nothing here works around it.
+
+## The four graphics state objects
+
+Four routes bring the count to **233**, sixteen preset identities bring the constants to **100**,
+and four PODs bring the layouts to **34**: `cna_blend_state_init`, `cna_depth_stencil_state_init`,
+`cna_rasterizer_state_init` and `cna_sampler_state_init`, with `CNA_BlendState` (56/4),
+`CNA_DepthStencilState` (64/4), `CNA_RasterizerState` (28/4) and `CNA_SamplerState` (40/4).
+
+Each route takes a preset identity and a caller-owned structure and **no handle at all** — no game,
+no device, no renderer — which is what makes them usable as a headless cross-check. They are bound
+for exactly that: the four state types' values are derived from the pinned XNA IL, and every preset
+is then asserted equal to CNA's own field by field. The two authorities agree on 63 of the 65
+values; the two they do not are recorded in `docs/graphics-state-objects-evidence.md` as an
+UPSTREAM_CNA_DIVERGENCE.
+
+The device-facing half of `graphics_state.h` stays unbound. `cna_graphics_device_get_blend_state`
+and its seven relatives apply a state to a device, which is `GraphicsDevice`'s surface and its own
+milestone; XNA's own `Apply` is `assembly`-visible and is not a projected identity either.
+`cna_sprite_batch_begin_with_states` and `cna_sprite_batch_begin_with_effect` are unbound for the
+same reason — `SpriteBatch.Begin` is one of that type's three outstanding members and belongs to
+whichever milestone closes it.

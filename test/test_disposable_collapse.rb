@@ -274,7 +274,12 @@ class DisposableCollapseTest < Minitest::Test
     # same for Media.VideoPlayer. A blocker count rising is what a frontier advancing looks like --
     # the types behind the ones already built become visible -- and each of the new entries is
     # audited rather than trusted.
-    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 7,
+    # And back from 7 to 4 in the next milestone, which is what auditing a blocker rather than
+    # trusting it does: all four graphics state objects reported NATIVE_RUNTIME, all four were
+    # native-reachable only through the `assembly`-visible `Apply` the contract never selects, and
+    # all four were built. SamplerStateCollection arrived behind SamplerState, so the fall is 4
+    # rather than 5.
+    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 4,
                   "NATIVE_RUNTIME+INTERFACE_PRODUCER_MISSING" => 1},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR

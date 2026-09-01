@@ -334,6 +334,17 @@ module CNA
         # no XNA identity, so it stays unbound.
         signature("cna_texture2d_get_encoded_byte_count", T[:result], [T[:handle], enum("CNA_TextureImageFormat"), T[:u32], T[:u32], pointer("uint64_t")], ownership: "borrows texture; caller output"),
         signature("cna_texture2d_copy_encoded", T[:result], [T[:handle], enum("CNA_TextureImageFormat"), T[:u32], T[:u32], pointer("uint8_t"), T[:u64], pointer("uint64_t")], ownership: "borrows texture; caller output"),
+        # The four graphics state objects. These four routes take **no handle** -- they fill a
+        # caller-owned POD from a native preset identity -- so they need no game, no device and no
+        # renderer. They are the cross-check for the four state types, whose values are derived from
+        # the pinned XNA IL: each projected preset is asserted equal to CNA's own, field by field,
+        # rather than only to itself. `cna_graphics_device_get/set_*_state` stay unbound because
+        # applying a state to a device is `GraphicsDevice`'s surface and XNA's own `Apply` is
+        # `assembly`-visible, so neither is a projected identity yet.
+        signature("cna_blend_state_init", T[:result], [enum("CNA_BlendStatePreset"), pointer("CNA_BlendState")], ownership: "caller output"),
+        signature("cna_depth_stencil_state_init", T[:result], [enum("CNA_DepthStencilStatePreset"), pointer("CNA_DepthStencilState")], ownership: "caller output"),
+        signature("cna_rasterizer_state_init", T[:result], [enum("CNA_RasterizerStatePreset"), pointer("CNA_RasterizerState")], ownership: "caller output"),
+        signature("cna_sampler_state_init", T[:result], [enum("CNA_SamplerStatePreset"), pointer("CNA_SamplerState")], ownership: "caller output"),
         signature("cna_sprite_batch_create", T[:result], [T[:handle], pointer("CNA_Handle")], ownership: "returns OWNED SpriteBatch"),
         signature("cna_sprite_batch_begin", T[:result], [T[:handle], pointer("CNA_SpriteBatchBeginInfo", const: true)], ownership: "borrows SpriteBatch"),
         signature("cna_sprite_batch_submit_scaled_many", T[:result], [T[:handle], pointer("CNA_SpriteScaledCommand", const: true), T[:u64]], ownership: "copies commands; retains Texture until End"),
@@ -559,6 +570,24 @@ module CNA
         "CNA_TEXTURE_DATA_ALPHA8" => 10,
         "CNA_TEXTURE_IMAGE_FORMAT_PNG" => 0,
         "CNA_TEXTURE_IMAGE_FORMAT_JPEG" => 1,
+        # The preset identities the four state-object cross-checks name. Every one is measured
+        # against the header by the ABI probe rather than transcribed on trust.
+        "CNA_BLEND_STATE_PRESET_ADDITIVE" => 1,
+        "CNA_BLEND_STATE_PRESET_ALPHA_BLEND" => 2,
+        "CNA_BLEND_STATE_PRESET_NON_PREMULTIPLIED" => 3,
+        "CNA_BLEND_STATE_PRESET_OPAQUE" => 4,
+        "CNA_DEPTH_STENCIL_STATE_PRESET_DEFAULT" => 0,
+        "CNA_DEPTH_STENCIL_STATE_PRESET_DEPTH_READ" => 1,
+        "CNA_DEPTH_STENCIL_STATE_PRESET_NONE" => 2,
+        "CNA_RASTERIZER_STATE_PRESET_CULL_CLOCKWISE" => 1,
+        "CNA_RASTERIZER_STATE_PRESET_CULL_COUNTER_CLOCKWISE" => 2,
+        "CNA_RASTERIZER_STATE_PRESET_CULL_NONE" => 3,
+        "CNA_SAMPLER_STATE_PRESET_ANISOTROPIC_CLAMP" => 1,
+        "CNA_SAMPLER_STATE_PRESET_ANISOTROPIC_WRAP" => 2,
+        "CNA_SAMPLER_STATE_PRESET_LINEAR_CLAMP" => 3,
+        "CNA_SAMPLER_STATE_PRESET_LINEAR_WRAP" => 4,
+        "CNA_SAMPLER_STATE_PRESET_POINT_CLAMP" => 5,
+        "CNA_SAMPLER_STATE_PRESET_POINT_WRAP" => 6,
         "CNA_MICROPHONE_STATE_STARTED" => 0,
         "CNA_MICROPHONE_STATE_STOPPED" => 1,
         "CNA_MICROPHONE_STATE_MAXIMUM" => 1,

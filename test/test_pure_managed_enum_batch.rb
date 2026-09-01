@@ -302,8 +302,8 @@ class PureManagedEnumBatchTest < Minitest::Test
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length
     # Fragments must stay specific: CNA_SURFACE_FORMAT_COLOR legitimately contains "FACE".
     %w[CUBE_MAP CUBEMAP CUBE_FACE BUFFER_USAGE AUDIO_CHANNEL STOP_OPTION SOUND_STATE MEDIA
-       BLEND STENCIL COMPARE TEXTURE_FILTER ADDRESS_MODE CULL FILL_MODE PRESENT_INTERVAL
-       RENDER_TARGET_USAGE SET_DATA COLOR_WRITE EFFECT_PARAMETER INDEX_ELEMENT].each do |fragment|
+       PRESENT_INTERVAL RENDER_TARGET_USAGE SET_DATA EFFECT_PARAMETER
+       INDEX_ELEMENT].each do |fragment|
       refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?(fragment) }, fragment
     end
     # `sound_` and `audio_` left this list when the audio cluster was built, which is a statement
@@ -322,19 +322,28 @@ class PureManagedEnumBatchTest < Minitest::Test
     # `stencil_` left this list when the GraphicsDeviceManager preferences milestone bound
     # `set_preferred_depth_stencil_format`, for the same reason every other fragment left it: that
     # route belongs to the milestone that bound it, not to this batch's 24 enums.
-    %w[cube_ blend_ sampler_
-       render_target_ index_buffer_ vertex_buffer_].each do |fragment|
+    # `BLEND`, `STENCIL`, `COMPARE`, `TEXTURE_FILTER`, `ADDRESS_MODE`, `CULL`, `FILL_MODE` and
+    # `COLOR_WRITE` left the constant list, and `blend_` and `sampler_` the route list, when the
+    # four graphics state objects were built: those sixteen preset identities and four
+    # `cna_*_state_init` routes belong to that milestone, not to this batch's 24 enums. What this
+    # test claims is unchanged, and every fragment left still proves it.
+    %w[cube_ render_target_ index_buffer_ vertex_buffer_].each do |fragment|
       refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?(fragment) }, fragment
     end
   end
 
   def test_batch_implies_no_renderer_device_audio_media_or_touch_surface
+    # The four state objects exist now; what this batch claimed, and still claims, is that **it**
+    # built none of them -- it selected the eight enums they are made of and nothing that holds one.
     %i[RenderTarget2D RenderTargetCube TextureCube Texture3D VertexBuffer IndexBuffer
-       DynamicVertexBuffer DynamicIndexBuffer VertexDeclaration BlendState DepthStencilState
-       RasterizerState SamplerState SamplerStateCollection Effect BasicEffect
+       DynamicVertexBuffer DynamicIndexBuffer VertexDeclaration
+       SamplerStateCollection Effect BasicEffect
        EffectParameter EffectTechnique GraphicsAdapter
        OcclusionQuery].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
+    end
+    %i[BlendState DepthStencilState RasterizerState SamplerState].each do |name|
+      assert G.const_defined?(name, false), "Graphics::#{name}"
     end
     # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still
     # claims, is that **it** built neither. The list narrows to the audio types nothing here has

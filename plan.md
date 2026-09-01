@@ -25,8 +25,8 @@ fails when it should.
 
 ## Surface
 
-The strict surface is **165 types / 2014 Ruby member identities**: 162 complete, 3 partial, 92 of the
-257 reference types still missing, with 205 deferred diagnostics of which 80 are missing members and
+The strict surface is **169 types / 2079 Ruby member identities**: 166 complete, 3 partial, 88 of the
+257 reference types still missing, with 201 deferred diagnostics of which 80 are missing members and
 30 are the overload category. Every structural category except `MISSING_TYPE`, `MISSING_MEMBER`,
 `OVERLOAD_MAPPING_MISMATCH` and one long-standing `PROPERTY_MAPPING_MISMATCH`
 (`GraphicsDevice::Viewport`) is zero, the allowlist is empty and `UNMEASURED_STRUCTURAL_CATEGORY` is
@@ -60,9 +60,11 @@ Complete clusters, by area:
 - **Input** — Keyboard, Mouse, the ten-type GamePad family and the `Input.Touch` closure.
 - **Media** — `VisualizationData`, `Video` and `MediaSource`.
 - **Graphics** — `Texture2D` end to end (decode, construct, pixel round-trip, PNG and JPEG encode),
-  `GraphicsResource` and its disposal contract, `SpriteFont` over a real MonoGame font, `Viewport`,
-  `TextureCollection`, `Texture`, `DisplayMode`, `DisplayModeCollection`, `PresentationParameters`
-  and the enum closure, beside the three partial runtime types.
+  `GraphicsResource` and its disposal contract, the four state objects `BlendState`,
+  `DepthStencilState`, `RasterizerState` and `SamplerState` with every preset cross-checked against
+  CNA's own, `SpriteFont` over a real MonoGame font, `Viewport`, `TextureCollection`, `Texture`,
+  `DisplayMode`, `DisplayModeCollection`, `PresentationParameters` and the enum closure, beside the
+  three partial runtime types.
 
 ## Admission and safety
 
@@ -101,27 +103,25 @@ with the pre-correction SHA-256.
 
 ## Dependency frontier
 
-`tools/api_compat/analyze_dependencies.rb` classifies every dependency-complete missing type. **Nine
-remain**, and none is consumable. The count *rose* — from three — when `GraphicsResource` and
-`Texture2D` completed, which is what an advancing frontier looks like when the types built are
-bases: six types that had been waiting behind them became visible at once.
+`tools/api_compat/analyze_dependencies.rb` classifies every dependency-complete missing type. **Six
+remain**, and none is consumable. The count went 3 → 9 → 6 in two milestones: completing
+`GraphicsResource` and `Texture2D` made six types behind them visible at once, and auditing four of
+those six found the blocker was not one and built them.
 
 | type | reported blocker | status |
 | --- | --- | --- |
 | `Design.MathTypeConverter` | BCL_PROJECTION | **audited, deferred.** Scope, not authority: it inherits `ExpandableObjectConverter` and returns `PropertyDescriptorCollection`, so projecting it means projecting .NET's type-descriptor system |
 | `Graphics.EffectAnnotation` | NATIVE_RUNTIME | **audited, deferred.** Not the renderer: its eight `GetValue*` members forward to a temporary `EffectParameter`, which is not projected, and nothing in the projected surface produces an annotation |
 | `Graphics.GraphicsAdapter` | NATIVE_RUNTIME | **audited, deferred.** Not the ABI: the qualified artifact compiles only the HEADLESS renderer, and with it every adapter route answers invented data |
-| `Graphics.BlendState` | NATIVE_RUNTIME | **not yet audited** — arrived behind `GraphicsResource` |
-| `Graphics.DepthStencilState` | NATIVE_RUNTIME | **not yet audited** — arrived behind `GraphicsResource` |
-| `Graphics.RasterizerState` | NATIVE_RUNTIME | **not yet audited** — arrived behind `GraphicsResource` |
-| `Graphics.SamplerState` | NATIVE_RUNTIME | **not yet audited** — arrived behind `GraphicsResource`; its IL also reaches the unprojected `EffectPass` |
 | `Graphics.VertexDeclaration` | NATIVE_RUNTIME + INTERFACE_PRODUCER_MISSING | **not yet audited** — the only dependency-complete candidate carrying the producer blocker: its IL calls `IVertexType` members and nothing here conforms |
-| `Media.VideoPlayer` | NATIVE_RUNTIME | **not yet audited** — arrived behind `Texture2D` |
+| `Graphics.SamplerStateCollection` | NATIVE_RUNTIME | **not yet audited** — arrived behind `SamplerState`, which is what completing a base always does |
+| `Media.VideoPlayer` | NATIVE_RUNTIME | **not yet audited** — arrived behind `Texture2D`; unlike the state objects its IL is native in fifteen members including the constructor |
 
 The first three have been **measured** rather than accepted, and each is deferred for a reason its
-reported blocker word does not name. The other six are new and the standing rule applies to them
-unchanged: a `NATIVE_RUNTIME` word is not a finding until the routes and the IL have been read.
-Three earlier entries of this table were removed by being built: `Graphics.SpriteFont` once
+reported blocker word does not name. Four earlier entries left this table in one milestone by being
+audited and built — `BlendState`, `DepthStencilState`, `RasterizerState` and `SamplerState`, whose
+`NATIVE_RUNTIME` was the `assembly`-visible `Apply` the contract never selects, the ninth deferral
+this project has retired that way. Three left it before them: `Graphics.SpriteFont` once
 `System.Char`, `Nullable`1` and `StringBuilder` were decided, `Content.ResourceContentManager` once
 `System.Resources.ResourceManager` was collapsed to the one member it reaches, and
 `Media.MediaSource` once its IL was read at all.

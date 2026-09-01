@@ -325,7 +325,7 @@ class DependencyFrontierTest < Minitest::Test
   # The classifier must agree with what this binding already knows is native.
   def test_native_reachability_agrees_with_the_shipped_native_boundary
     native = IL.fetch("types").select { |_name, entry| entry.fetch("nativeReachable") }.keys
-    # Every partial runtime type except the pure-managed GraphicsResource contract is native.
+    # Every partial runtime type is native, and so are the two that left that list by completing.
     %w[
       Microsoft.Xna.Framework.Game
       Microsoft.Xna.Framework.GraphicsDeviceManager
@@ -333,6 +333,26 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.Texture2D
       Microsoft.Xna.Framework.Graphics.SpriteBatch
     ].each { |name| assert_includes native, name, name }
+
+    # The four graphics state objects are the first complete types that are native-reachable in the
+    # IL while this binding implements **none** of their native boundary -- and that is not a gap.
+    # What makes each of them reachable is `Apply`, which is `assembly`-visible, is not in the
+    # pinned contract, and is therefore not a projected identity; the public surface is a property
+    # bag with static presets and no device in it. So they are separated from the list below rather
+    # than quietly added to it, because that list means something specific.
+    state_objects = %w[
+      Microsoft.Xna.Framework.Graphics.BlendState
+      Microsoft.Xna.Framework.Graphics.DepthStencilState
+      Microsoft.Xna.Framework.Graphics.RasterizerState
+      Microsoft.Xna.Framework.Graphics.SamplerState
+    ]
+    state_objects.each do |name|
+      assert_includes native, name, name
+      assert_includes STRICT.fetch("completeTypeNames"), name, name
+      assert_equal ["Apply"], IL.fetch("types").fetch(name).fetch("nativeReachableMethods"), name
+      refute_includes BY_NAME.fetch(name).fetch("members").map { |member| member.fetch("name") },
+                      "Apply", name
+    end
 
     # The only complete types that are native-reachable are the four whose native routes this
     # binding really implements; every other complete type is pure managed. FrameworkDispatcher
@@ -364,7 +384,7 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.TextureCollection
       Microsoft.Xna.Framework.Input.GamePad
       Microsoft.Xna.Framework.Input.Mouse
-    ], (STRICT.fetch("completeTypeNames") & native).sort
+    ], ((STRICT.fetch("completeTypeNames") & native) - state_objects).sort
     %w[
       Microsoft.Xna.Framework.FrameworkDispatcher
       Microsoft.Xna.Framework.Graphics.Texture
@@ -444,8 +464,10 @@ class DependencyFrontierTest < Minitest::Test
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
     # 3 until the GraphicsResource and Texture2D milestones landed together: completing
     # GraphicsResource made the four graphics state objects and VertexDeclaration
-    # dependency-complete, and completing Texture2D did the same for Media.VideoPlayer.
-    assert_equal 9, REPORT.fetch("dependencyCompleteCandidates").length
+    # dependency-complete, and completing Texture2D did the same for Media.VideoPlayer. Then 6,
+    # when the four state objects were audited and built and SamplerStateCollection appeared behind
+    # SamplerState.
+    assert_equal 6, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -647,7 +669,10 @@ class DependencyFrontierTest < Minitest::Test
       # projection conforms to that interface. The four state objects that arrived with it carry
       # NATIVE_RUNTIME alone and are audited, not assumed -- the frontier's standing rule.
       "Microsoft.Xna.Framework.Graphics.VertexDeclaration" => "INTERFACE_PRODUCER_MISSING",
-      "Microsoft.Xna.Framework.Graphics.BlendState" => "NATIVE_RUNTIME"
+      # BlendState was the example here for exactly one milestone. Its NATIVE_RUNTIME was the
+      # `assembly`-visible `Apply`, so it was built along with its three siblings, and the type
+      # that arrived behind it takes its place -- the ninth deferral this register has retired.
+      "Microsoft.Xna.Framework.Graphics.SamplerStateCollection" => "NATIVE_RUNTIME"
     }.each do |name, expected|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
       refute_nil candidate, name

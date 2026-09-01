@@ -214,7 +214,10 @@ class TextureCollectionTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_adds_no_sampler_state_effect_or_draw_surface
-    %i[SamplerState SamplerStateCollection Effect BasicEffect EffectParameter
+    # `SamplerState` left this list when the four state objects were built; the collection that
+    # holds them, and everything else here, is still absent.
+    assert G.const_defined?(:SamplerState, false)
+    %i[SamplerStateCollection Effect BasicEffect EffectParameter
        RenderTarget2D TextureCube Texture3D VertexBuffer IndexBuffer].each do |absent|
       refute G.const_defined?(absent, false), absent.to_s
     end

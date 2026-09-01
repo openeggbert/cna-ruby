@@ -25,6 +25,8 @@ Behaviour is derived from the original Microsoft XNA Framework 4.0 Windows assem
 - `Texture2D.SaveAsPng` and `SaveAsJpeg`, the first members here that produce a real encoded image -- checked by the formats' own signature bytes, not by a byte count
 - `Texture2D`'s two public constructors, so a texture can be made from nothing -- with a real mip chain, measured as four levels for an 8x8
 - `Texture2D.SetData` and `GetData` -- pixel access over eleven element types, with all four of XNA's validation helpers reproduced and sub-rectangles measured to round-trip exactly
+- `Texture2D.FromStream`'s five-argument overload, completing the type -- and the upstream CNA defect it found: the cover-and-crop path is asymmetric, which is reproduced at the C ABI and asserted as a failure rather than papered over
+- the four graphics state objects `BlendState`, `DepthStencilState`, `RasterizerState` and `SamplerState`, whose `NATIVE_RUNTIME` blocker turned out to be an `assembly`-visible `Apply` the contract never selects; every default and preset is derived from the pinned IL and cross-checked against CNA's own, and the two values where the authorities disagree are recorded as an upstream divergence rather than reconciled
 - `GamerServices.GamerServicesComponent`, the first type of a new namespace, pumping CNA's canonical dispatcher through the managed component engine
 - a real `Graphics.TextureCollection` with `GraphicsDevice.Textures` and `.VertexTextures`, binding real sampler slots on both shader stages
 - real `Audio.SoundEffect` and `Audio.SoundEffectInstance` over CNA's SDL3 audio path -- duration from real PCM, the whole state machine, every IL-derived range including the NaN asymmetry between `DopplerScale` and `DistanceScale`, `Apply3D`/`Pan` state rules and enforced parent/child destruction; no audible output is claimed
@@ -32,7 +34,7 @@ Behaviour is derived from the original Microsoft XNA Framework 4.0 Windows assem
 - the `System.IO.Stream` projection `CNA::Runtime::Stream` and its `SeekOrigin`, measured from the pinned mscorlib and narrowed to the surface the XNA profile can reach, with `Microsoft::Xna::Framework::TitleContainer` as the first member that produces one over CNA's canonical title routes
 - the general BCL projection register `CNA::Runtime::BclProjection`, including the rule that a CLR exception base projects to a Ruby exception superclass rooted at `StandardError` rather than `Object`, and the three-member collection family `ReadOnlyCollection<T>`, `Collection<T>` and `Dictionary<K,V>` measured against the admitted mscorlib
 - 420 green managed observations: 341 explicitly or legacy-defaulted `PURE_XNA_DERIVED` facts and 79 `RUBY_MAPPING_QUALIFICATION` observations, including direct Windows XNA Viewport Project/Unproject bit goldens, the exact ClearOptions no-named-zero flags shape, the DepthFormat ordinary-enum shape, the XNA 4.0 PrimitiveType renumbering, one contract plus one mapping row for each of the 24 Foundation 16 batch enums, the event subscription/dispatch/removal semantics, and the eight XNA exception contracts that record why none is claimed
-- measured partial Game, GraphicsDeviceManager, GraphicsDevice, GraphicsResource, Texture2D, and SpriteBatch types
+- measured partial Game, GraphicsDeviceManager, GraphicsDevice, and SpriteBatch types (`GraphicsResource` and `Texture2D` have since completed)
 - real native Game lifecycle and GameTime callbacks, including `Game.Tick` as a first-class frame step distinct from `Game.RunOneFrame`, `Game.IsActive` as the exact `isActive && !(GamerServicesDispatcher.IsInitialized && Guide.IsVisible)` expression over three canonical CNA routes, and `GameWindow` as a façade over CNA's window, which has no handle of its own
 - real HEADLESS-qualified viewport, Clear, PNG Texture2D stream decode, SpriteBatch scaled draw, keyboard state capture, canonical Mouse state/position/window-handle routes, and all four canonical GamePad state/capability/vibration routes
 
@@ -87,6 +89,8 @@ There is intentionally no `microsoft/xna/framework/content` implementation in Fo
 - `docs/gamepad-evidence.md` — Foundation 7 managed GamePad-family and canonical native controller evidence
 - `docs/vertex-element-evidence.md` — Foundation 8 managed vertex-element descriptor closure
 - `docs/display-orientation-evidence.md` — Foundation 9 managed DisplayOrientation flags enum
+- `docs/graphics-state-objects-evidence.md` — the four graphics state objects, the audit that unblocked them, and the stencil-mask divergence
+- `docs/texture-decode-upstream-defect.md` — the asymmetric cover-and-crop decode, reproduced at the C ABI
 - `docs/graphics-device-status-evidence.md` — Foundation 10 managed GraphicsDeviceStatus non-flags enum
 - `docs/graphics-profile-evidence.md` — Foundation 11 managed GraphicsProfile non-flags enum
 - `docs/viewport-evidence.md` — Foundation 12 exact managed Viewport projection/unprojection closure

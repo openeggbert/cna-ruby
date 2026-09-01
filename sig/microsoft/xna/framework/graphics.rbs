@@ -290,7 +290,64 @@ module Microsoft
           attr_reader Width: Integer
           attr_reader Height: Integer
           attr_reader Bounds: Rectangle
-          def self.FromStream: (GraphicsDevice graphics_device, IO stream) -> Texture2D
+          def self.FromStream: (GraphicsDevice graphics_device, untyped stream, *untyped arguments) -> Texture2D
+        end
+
+        class BlendState < GraphicsResource
+          def initialize: () -> void
+          attr_accessor ColorSourceBlend: Blend
+          attr_accessor ColorDestinationBlend: Blend
+          attr_accessor ColorBlendFunction: BlendFunction
+          attr_accessor AlphaSourceBlend: Blend
+          attr_accessor AlphaDestinationBlend: Blend
+          attr_accessor AlphaBlendFunction: BlendFunction
+          attr_accessor ColorWriteChannels: ColorWriteChannels
+          attr_accessor ColorWriteChannels1: ColorWriteChannels
+          attr_accessor ColorWriteChannels2: ColorWriteChannels
+          attr_accessor ColorWriteChannels3: ColorWriteChannels
+          attr_accessor BlendFactor: Color
+          attr_accessor MultiSampleMask: Integer
+        end
+
+        class DepthStencilState < GraphicsResource
+          def initialize: () -> void
+          attr_accessor DepthBufferEnable: bool
+          attr_accessor DepthBufferWriteEnable: bool
+          attr_accessor DepthBufferFunction: CompareFunction
+          attr_accessor StencilEnable: bool
+          attr_accessor StencilFunction: CompareFunction
+          attr_accessor StencilPass: StencilOperation
+          attr_accessor StencilFail: StencilOperation
+          attr_accessor StencilDepthBufferFail: StencilOperation
+          attr_accessor TwoSidedStencilMode: bool
+          attr_accessor CounterClockwiseStencilFunction: CompareFunction
+          attr_accessor CounterClockwiseStencilPass: StencilOperation
+          attr_accessor CounterClockwiseStencilFail: StencilOperation
+          attr_accessor CounterClockwiseStencilDepthBufferFail: StencilOperation
+          attr_accessor StencilMask: Integer
+          attr_accessor StencilWriteMask: Integer
+          attr_accessor ReferenceStencil: Integer
+        end
+
+        class RasterizerState < GraphicsResource
+          def initialize: () -> void
+          attr_accessor CullMode: CullMode
+          attr_accessor FillMode: FillMode
+          attr_accessor ScissorTestEnable: bool
+          attr_accessor MultiSampleAntiAlias: bool
+          attr_accessor DepthBias: Float
+          attr_accessor SlopeScaleDepthBias: Float
+        end
+
+        class SamplerState < GraphicsResource
+          def initialize: () -> void
+          attr_accessor Filter: TextureFilter
+          attr_accessor AddressU: TextureAddressMode
+          attr_accessor AddressV: TextureAddressMode
+          attr_accessor AddressW: TextureAddressMode
+          attr_accessor MaxAnisotropy: Integer
+          attr_accessor MaxMipLevel: Integer
+          attr_accessor MipMapLevelOfDetailBias: Float
         end
 
         class SpriteBatch < GraphicsResource

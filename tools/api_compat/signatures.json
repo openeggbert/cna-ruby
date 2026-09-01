@@ -36543,6 +36543,757 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::GameServiceContainer"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.BlendState",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+      "interfaces": [
+        "System.IDisposable"
+      ],
+      "directInterfaces": [],
+      "genericParameters": [],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MultiSampleMask",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "BlendFactor",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "ColorWriteChannels3",
+          "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "ColorWriteChannels2",
+          "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "ColorWriteChannels1",
+          "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "ColorWriteChannels",
+          "type": "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "AlphaBlendFunction",
+          "type": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "AlphaDestinationBlend",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "AlphaSourceBlend",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "ColorBlendFunction",
+          "type": "Microsoft.Xna.Framework.Graphics.BlendFunction",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "ColorDestinationBlend",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "ColorSourceBlend",
+          "type": "Microsoft.Xna.Framework.Graphics.Blend",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "field",
+          "name": "Opaque",
+          "type": "Microsoft.Xna.Framework.Graphics.BlendState",
+          "static": true,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "AlphaBlend",
+          "type": "Microsoft.Xna.Framework.Graphics.BlendState",
+          "static": true,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "Additive",
+          "type": "Microsoft.Xna.Framework.Graphics.BlendState",
+          "static": true,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "NonPremultiplied",
+          "type": "Microsoft.Xna.Framework.Graphics.BlendState",
+          "static": true,
+          "constant": false,
+          "value": null
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::BlendState"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DepthStencilState",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+      "interfaces": [
+        "System.IDisposable"
+      ],
+      "directInterfaces": [],
+      "genericParameters": [],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "ReferenceStencil",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "StencilWriteMask",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "StencilMask",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "CounterClockwiseStencilDepthBufferFail",
+          "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "CounterClockwiseStencilFail",
+          "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "CounterClockwiseStencilPass",
+          "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "CounterClockwiseStencilFunction",
+          "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "TwoSidedStencilMode",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "StencilDepthBufferFail",
+          "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "StencilFail",
+          "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "StencilPass",
+          "type": "Microsoft.Xna.Framework.Graphics.StencilOperation",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "StencilFunction",
+          "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "StencilEnable",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "DepthBufferFunction",
+          "type": "Microsoft.Xna.Framework.Graphics.CompareFunction",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "DepthBufferWriteEnable",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "DepthBufferEnable",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "field",
+          "name": "None",
+          "type": "Microsoft.Xna.Framework.Graphics.DepthStencilState",
+          "static": true,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "Default",
+          "type": "Microsoft.Xna.Framework.Graphics.DepthStencilState",
+          "static": true,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "DepthRead",
+          "type": "Microsoft.Xna.Framework.Graphics.DepthStencilState",
+          "static": true,
+          "constant": false,
+          "value": null
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::DepthStencilState"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.RasterizerState",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+      "interfaces": [
+        "System.IDisposable"
+      ],
+      "directInterfaces": [],
+      "genericParameters": [],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "SlopeScaleDepthBias",
+          "type": "System.Single",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "DepthBias",
+          "type": "System.Single",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "MultiSampleAntiAlias",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "ScissorTestEnable",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "FillMode",
+          "type": "Microsoft.Xna.Framework.Graphics.FillMode",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "CullMode",
+          "type": "Microsoft.Xna.Framework.Graphics.CullMode",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "field",
+          "name": "CullNone",
+          "type": "Microsoft.Xna.Framework.Graphics.RasterizerState",
+          "static": true,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "CullClockwise",
+          "type": "Microsoft.Xna.Framework.Graphics.RasterizerState",
+          "static": true,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "CullCounterClockwise",
+          "type": "Microsoft.Xna.Framework.Graphics.RasterizerState",
+          "static": true,
+          "constant": false,
+          "value": null
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::RasterizerState"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.SamplerState",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+      "interfaces": [
+        "System.IDisposable"
+      ],
+      "directInterfaces": [],
+      "genericParameters": [],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MipMapLevelOfDetailBias",
+          "type": "System.Single",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "MaxMipLevel",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "MaxAnisotropy",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "AddressW",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "AddressV",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "AddressU",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "Filter",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureFilter",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "field",
+          "name": "PointWrap",
+          "type": "Microsoft.Xna.Framework.Graphics.SamplerState",
+          "static": true,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "PointClamp",
+          "type": "Microsoft.Xna.Framework.Graphics.SamplerState",
+          "static": true,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "LinearWrap",
+          "type": "Microsoft.Xna.Framework.Graphics.SamplerState",
+          "static": true,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "LinearClamp",
+          "type": "Microsoft.Xna.Framework.Graphics.SamplerState",
+          "static": true,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "AnisotropicWrap",
+          "type": "Microsoft.Xna.Framework.Graphics.SamplerState",
+          "static": true,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "AnisotropicClamp",
+          "type": "Microsoft.Xna.Framework.Graphics.SamplerState",
+          "static": true,
+          "constant": false,
+          "value": null
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::SamplerState"
     }
   ]
 }

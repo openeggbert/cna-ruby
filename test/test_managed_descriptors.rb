@@ -222,8 +222,11 @@ class ManagedDescriptorsTest < Minitest::Test
   end
 
   def test_presentation_parameters_implies_no_device_adapter_or_swap_chain
-    %i[GraphicsAdapter RenderTarget2D RenderTargetCube
-       DepthStencilState].each { |absent| refute G.const_defined?(absent, false), "Graphics::#{absent}" }
+    # `DepthStencilState` left this list when the four state objects were built. It is a managed
+    # value holder with no device, no adapter and no swap chain in it, so what this test claims is
+    # unchanged and is now stated by the device's own surface rather than by that type's absence.
+    %i[GraphicsAdapter RenderTarget2D
+       RenderTargetCube].each { |absent| refute G.const_defined?(absent, false), "Graphics::#{absent}" }
     assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures].sort, G::GraphicsDevice.public_instance_methods(false).sort
   end
 

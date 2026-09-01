@@ -948,6 +948,22 @@ module Microsoft
           end
           private :initialize_resource
 
+          # The four graphics state objects are `GraphicsResource` subclasses that own **no native
+          # handle and no device**: their constructors call `Object::.ctor()` and then `SetDefaults`,
+          # so `GraphicsDevice` really is null on a freshly built one and stays null until the
+          # `assembly`-visible `Apply` binds it -- which is not a projected identity. So they need a
+          # managed disposal flag rather than a handle's, and `IsDisposed` consults whichever the
+          # instance actually has.
+          def initialize_managed_resource
+            @GraphicsDevice = nil
+            @Name = nil
+            @Tag = nil
+            @managed_disposed = false
+          end
+          private :initialize_managed_resource
+
+          def IsDisposed = @native_handle.nil? ? @managed_disposed == true : @native_handle.disposed?
+
           def ToString = @Name.nil? || @Name.empty? ? self.class.name.split("::").last : @Name
 
           # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…),
@@ -973,8 +989,12 @@ module Microsoft
           def Dispose(disposing = true)
             return if self.IsDisposed
 
-            @native_handle.dispose
-            @native_game.__send__(:unregister_native_child, self)
+            if @native_handle.nil?
+              @managed_disposed = true
+            else
+              @native_handle.dispose
+              @native_game.__send__(:unregister_native_child, self)
+            end
             self.Disposing.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty) if disposing
             nil
           end
@@ -988,6 +1008,274 @@ module Microsoft
             self.Dispose(false)
             nil
           end
+        end
+
+        # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…).
+        #
+        #     private void SetDefaults() {
+        #         ColorSourceBlend = Blend.One;   ColorDestinationBlend = Blend.Zero;
+        #         ColorBlendFunction = BlendFunction.Add;
+        #         AlphaSourceBlend = Blend.One;   AlphaDestinationBlend = Blend.Zero;
+        #         AlphaBlendFunction = BlendFunction.Add;
+        #         ColorWriteChannels = ColorWriteChannels1 = ColorWriteChannels2 =
+        #             ColorWriteChannels3 = ColorWriteChannels.All;
+        #         BlendFactor = Color.White;      MultiSampleMask = -1;
+        #     }
+        #
+        # The four presets are one private constructor `(sourceBlend, destinationBlend, name)` that
+        # runs `SetDefaults`, assigns the pair to **both** the colour and the alpha channels, sets
+        # `Name`, and sets `isBound` -- so `BlendState.Opaque.ColorSourceBlend = …` raises where the
+        # same assignment on `new BlendState` succeeds, and both directions are measured.
+        class BlendState < GraphicsResource
+          include CNA::Runtime::GraphicsState
+          public_class_method :new
+
+          state_property :ColorSourceBlend, Blend
+          state_property :ColorDestinationBlend, Blend
+          state_property :ColorBlendFunction, BlendFunction
+          state_property :AlphaSourceBlend, Blend
+          state_property :AlphaDestinationBlend, Blend
+          state_property :AlphaBlendFunction, BlendFunction
+          state_property :ColorWriteChannels, ColorWriteChannels
+          state_property :ColorWriteChannels1, ColorWriteChannels
+          state_property :ColorWriteChannels2, ColorWriteChannels
+          state_property :ColorWriteChannels3, ColorWriteChannels
+          state_property :BlendFactor, Microsoft::Xna::Framework::Color
+          state_property :MultiSampleMask, :int32
+
+          def initialize
+            initialize_managed_resource
+            @is_bound = false
+            set_defaults
+          end
+
+          private
+
+          def set_defaults
+            self.ColorSourceBlend = Blend::One
+            self.ColorDestinationBlend = Blend::Zero
+            self.ColorBlendFunction = BlendFunction::Add
+            self.AlphaSourceBlend = Blend::One
+            self.AlphaDestinationBlend = Blend::Zero
+            self.AlphaBlendFunction = BlendFunction::Add
+            self.ColorWriteChannels = ColorWriteChannels::All
+            self.ColorWriteChannels1 = ColorWriteChannels::All
+            self.ColorWriteChannels2 = ColorWriteChannels::All
+            self.ColorWriteChannels3 = ColorWriteChannels::All
+            self.BlendFactor = Microsoft::Xna::Framework::Color.White
+            self.MultiSampleMask = -1
+          end
+
+          def self.preset(source, destination, name)
+            state = new
+            state.ColorSourceBlend = source
+            state.ColorDestinationBlend = destination
+            state.AlphaSourceBlend = source
+            state.AlphaDestinationBlend = destination
+            state.__send__(:bind_as_preset!, name)
+            state
+          end
+          private_class_method :preset
+
+          Opaque = preset(Blend::One, Blend::Zero, "BlendState.Opaque")
+          AlphaBlend = preset(Blend::One, Blend::InverseSourceAlpha, "BlendState.AlphaBlend")
+          Additive = preset(Blend::SourceAlpha, Blend::One, "BlendState.Additive")
+          NonPremultiplied = preset(Blend::SourceAlpha, Blend::InverseSourceAlpha,
+                                    "BlendState.NonPremultiplied")
+        end
+
+        # Derived from the same IL.
+        #
+        #     private void SetDefaults() {
+        #         DepthBufferEnable = true; DepthBufferWriteEnable = true;
+        #         DepthBufferFunction = CompareFunction.LessEqual;
+        #         StencilEnable = false; StencilFunction = CompareFunction.Always;
+        #         StencilPass = StencilFail = StencilDepthBufferFail = StencilOperation.Keep;
+        #         TwoSidedStencilMode = false;
+        #         CounterClockwiseStencilFunction = CompareFunction.Always;
+        #         CounterClockwiseStencilPass = CounterClockwiseStencilFail =
+        #             CounterClockwiseStencilDepthBufferFail = StencilOperation.Keep;
+        #         StencilMask = StencilWriteMask = -1; ReferenceStencil = 0;
+        #     }
+        #
+        # The three presets are one private constructor `(depthEnable, depthWriteEnable, name)`, so
+        # `DepthStencilState.DepthRead` differs from `Default` in the write flag alone and `None`
+        # turns both off. Everything else in all three is the defaults'.
+        class DepthStencilState < GraphicsResource
+          include CNA::Runtime::GraphicsState
+          public_class_method :new
+
+          state_property :DepthBufferEnable, :boolean
+          state_property :DepthBufferWriteEnable, :boolean
+          state_property :DepthBufferFunction, CompareFunction
+          state_property :StencilEnable, :boolean
+          state_property :StencilFunction, CompareFunction
+          state_property :StencilPass, StencilOperation
+          state_property :StencilFail, StencilOperation
+          state_property :StencilDepthBufferFail, StencilOperation
+          state_property :TwoSidedStencilMode, :boolean
+          state_property :CounterClockwiseStencilFunction, CompareFunction
+          state_property :CounterClockwiseStencilPass, StencilOperation
+          state_property :CounterClockwiseStencilFail, StencilOperation
+          state_property :CounterClockwiseStencilDepthBufferFail, StencilOperation
+          state_property :StencilMask, :int32
+          state_property :StencilWriteMask, :int32
+          state_property :ReferenceStencil, :int32
+
+          def initialize
+            initialize_managed_resource
+            @is_bound = false
+            set_defaults
+          end
+
+          private
+
+          def set_defaults
+            self.DepthBufferEnable = true
+            self.DepthBufferWriteEnable = true
+            self.DepthBufferFunction = CompareFunction::LessEqual
+            self.StencilEnable = false
+            self.StencilFunction = CompareFunction::Always
+            self.StencilPass = StencilOperation::Keep
+            self.StencilFail = StencilOperation::Keep
+            self.StencilDepthBufferFail = StencilOperation::Keep
+            self.TwoSidedStencilMode = false
+            self.CounterClockwiseStencilFunction = CompareFunction::Always
+            self.CounterClockwiseStencilPass = StencilOperation::Keep
+            self.CounterClockwiseStencilFail = StencilOperation::Keep
+            self.CounterClockwiseStencilDepthBufferFail = StencilOperation::Keep
+            self.StencilMask = -1
+            self.StencilWriteMask = -1
+            self.ReferenceStencil = 0
+          end
+
+          def self.preset(depth_enable, depth_write_enable, name)
+            state = new
+            state.DepthBufferEnable = depth_enable
+            state.DepthBufferWriteEnable = depth_write_enable
+            state.__send__(:bind_as_preset!, name)
+            state
+          end
+          private_class_method :preset
+
+          None = preset(false, false, "DepthStencilState.None")
+          Default = preset(true, true, "DepthStencilState.Default")
+          DepthRead = preset(true, false, "DepthStencilState.DepthRead")
+        end
+
+        # Derived from the same IL.
+        #
+        #     private void SetDefaults() {
+        #         CullMode = CullMode.CullCounterClockwiseFace; FillMode = FillMode.Solid;
+        #         ScissorTestEnable = false; MultiSampleAntiAlias = true;
+        #         DepthBias = 0f; SlopeScaleDepthBias = 0f;
+        #     }
+        #
+        # The three presets are one private constructor `(cullMode, name)`, so they differ from the
+        # default state and from each other in the cull mode alone -- `CullCounterClockwise` is
+        # value-identical to `new RasterizerState()` and is asserted to be.
+        class RasterizerState < GraphicsResource
+          include CNA::Runtime::GraphicsState
+          public_class_method :new
+
+          state_property :CullMode, CullMode
+          state_property :FillMode, FillMode
+          state_property :ScissorTestEnable, :boolean
+          state_property :MultiSampleAntiAlias, :boolean
+          state_property :DepthBias, :single
+          state_property :SlopeScaleDepthBias, :single
+
+          def initialize
+            initialize_managed_resource
+            @is_bound = false
+            set_defaults
+          end
+
+          private
+
+          def set_defaults
+            self.CullMode = CullMode::CullCounterClockwiseFace
+            self.FillMode = FillMode::Solid
+            self.ScissorTestEnable = false
+            self.MultiSampleAntiAlias = true
+            self.DepthBias = 0.0
+            self.SlopeScaleDepthBias = 0.0
+          end
+
+          def self.preset(cull_mode, name)
+            state = new
+            state.CullMode = cull_mode
+            state.__send__(:bind_as_preset!, name)
+            state
+          end
+          private_class_method :preset
+
+          CullNone = preset(CullMode::None, "RasterizerState.CullNone")
+          CullClockwise = preset(CullMode::CullClockwiseFace, "RasterizerState.CullClockwise")
+          CullCounterClockwise = preset(CullMode::CullCounterClockwiseFace,
+                                        "RasterizerState.CullCounterClockwise")
+        end
+
+        # Derived from the same IL.
+        #
+        #     private void SetDefaults() {
+        #         Filter = TextureFilter.Linear;
+        #         AddressU = AddressV = AddressW = TextureAddressMode.Wrap;
+        #         MaxAnisotropy = 4; MaxMipLevel = 0; MipMapLevelOfDetailBias = 0f;
+        #     }
+        #
+        # The six presets are one private constructor `(filter, address, name)` that assigns the one
+        # address mode to **all three** coordinates, which is why there is no `PointMirror` or
+        # per-axis preset: the pair is the whole vocabulary.
+        class SamplerState < GraphicsResource
+          include CNA::Runtime::GraphicsState
+          public_class_method :new
+
+          state_property :Filter, TextureFilter
+          state_property :AddressU, TextureAddressMode
+          state_property :AddressV, TextureAddressMode
+          state_property :AddressW, TextureAddressMode
+          state_property :MaxAnisotropy, :int32
+          state_property :MaxMipLevel, :int32
+          state_property :MipMapLevelOfDetailBias, :single
+
+          def initialize
+            initialize_managed_resource
+            @is_bound = false
+            set_defaults
+          end
+
+          private
+
+          def set_defaults
+            self.Filter = TextureFilter::Linear
+            self.AddressU = TextureAddressMode::Wrap
+            self.AddressV = TextureAddressMode::Wrap
+            self.AddressW = TextureAddressMode::Wrap
+            self.MaxAnisotropy = 4
+            self.MaxMipLevel = 0
+            self.MipMapLevelOfDetailBias = 0.0
+          end
+
+          def self.preset(filter, address, name)
+            state = new
+            state.Filter = filter
+            state.AddressU = address
+            state.AddressV = address
+            state.AddressW = address
+            state.__send__(:bind_as_preset!, name)
+            state
+          end
+          private_class_method :preset
+
+          PointWrap = preset(TextureFilter::Point, TextureAddressMode::Wrap, "SamplerState.PointWrap")
+          PointClamp = preset(TextureFilter::Point, TextureAddressMode::Clamp, "SamplerState.PointClamp")
+          LinearWrap = preset(TextureFilter::Linear, TextureAddressMode::Wrap, "SamplerState.LinearWrap")
+          LinearClamp = preset(TextureFilter::Linear, TextureAddressMode::Clamp, "SamplerState.LinearClamp")
+          AnisotropicWrap = preset(TextureFilter::Anisotropic, TextureAddressMode::Wrap,
+                                   "SamplerState.AnisotropicWrap")
+          AnisotropicClamp = preset(TextureFilter::Anisotropic, TextureAddressMode::Clamp,
+                                    "SamplerState.AnisotropicClamp")
         end
 
         class Texture < GraphicsResource

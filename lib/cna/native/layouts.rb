@@ -293,6 +293,77 @@ module CNA
         end
       end
 
+      # The four graphics state PODs. Each is a complete, versioned value with no handle in it: the
+      # `cna_*_state_init` routes fill one from a preset identity, which is what makes them usable
+      # as a cross-check for values derived from the pinned XNA IL.
+      class BlendState < Structure
+        layout size: 56, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("alpha_blend_function", "CNA_BlendFunction", 8, 4),
+          Layouts.field("alpha_destination_blend", "CNA_Blend", 12, 4),
+          Layouts.field("alpha_source_blend", "CNA_Blend", 16, 4),
+          Layouts.field("color_blend_function", "CNA_BlendFunction", 20, 4),
+          Layouts.field("color_destination_blend", "CNA_Blend", 24, 4),
+          Layouts.field("color_source_blend", "CNA_Blend", 28, 4),
+          Layouts.field("color_write_channels", "CNA_ColorWriteChannels", 32, 4),
+          Layouts.field("color_write_channels1", "CNA_ColorWriteChannels", 36, 4),
+          Layouts.field("color_write_channels2", "CNA_ColorWriteChannels", 40, 4),
+          Layouts.field("color_write_channels3", "CNA_ColorWriteChannels", 44, 4),
+          Layouts.field("blend_factor", "CNA_Color", 48, 4),
+          Layouts.field("multi_sample_mask", "int32_t", 52, 4)
+        ]
+      end
+
+      class DepthStencilState < Structure
+        layout size: 64, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("depth_buffer_enable", "CNA_Bool", 8, 1),
+          Layouts.field("depth_buffer_write_enable", "CNA_Bool", 9, 1),
+          Layouts.field("stencil_enable", "CNA_Bool", 10, 1),
+          Layouts.field("two_sided_stencil_mode", "CNA_Bool", 11, 1),
+          Layouts.field("depth_buffer_function", "CNA_CompareFunction", 12, 4),
+          Layouts.field("stencil_function", "CNA_CompareFunction", 16, 4),
+          Layouts.field("stencil_mask", "int32_t", 20, 4),
+          Layouts.field("stencil_write_mask", "int32_t", 24, 4),
+          Layouts.field("reference_stencil", "int32_t", 28, 4),
+          Layouts.field("stencil_fail", "CNA_StencilOperation", 32, 4),
+          Layouts.field("stencil_depth_buffer_fail", "CNA_StencilOperation", 36, 4),
+          Layouts.field("stencil_pass", "CNA_StencilOperation", 40, 4),
+          Layouts.field("counter_clockwise_stencil_function", "CNA_CompareFunction", 44, 4),
+          Layouts.field("counter_clockwise_stencil_fail", "CNA_StencilOperation", 48, 4),
+          Layouts.field("counter_clockwise_stencil_depth_buffer_fail", "CNA_StencilOperation", 52, 4),
+          Layouts.field("counter_clockwise_stencil_pass", "CNA_StencilOperation", 56, 4),
+          Layouts.field("reserved", "uint32_t", 60, 4)
+        ]
+      end
+
+      class RasterizerState < Structure
+        layout size: 28, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("cull_mode", "CNA_CullMode", 8, 4),
+          Layouts.field("fill_mode", "CNA_FillMode", 12, 4),
+          Layouts.field("depth_bias", "float", 16, 4),
+          Layouts.field("slope_scale_depth_bias", "float", 20, 4),
+          Layouts.field("multi_sample_anti_alias", "CNA_Bool", 24, 1),
+          Layouts.field("scissor_test_enable", "CNA_Bool", 25, 1),
+          Layouts.field("reserved", "uint8_t", 26, 2)
+        ]
+      end
+
+      class SamplerState < Structure
+        layout size: 40, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("address_u", "CNA_TextureAddressMode", 8, 4),
+          Layouts.field("address_v", "CNA_TextureAddressMode", 12, 4),
+          Layouts.field("address_w", "CNA_TextureAddressMode", 16, 4),
+          Layouts.field("filter", "CNA_TextureFilter", 20, 4),
+          Layouts.field("max_anisotropy", "int32_t", 24, 4),
+          Layouts.field("max_mip_level", "int32_t", 28, 4),
+          Layouts.field("mip_map_level_of_detail_bias", "float", 32, 4),
+          Layouts.field("reserved", "uint32_t", 36, 4)
+        ]
+      end
+
       class Texture2DTransfer < Structure
         layout size: 48, alignment: 8, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

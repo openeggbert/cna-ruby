@@ -798,6 +798,22 @@
     {
       "name": "Microsoft.Xna.Framework.GameServiceContainer",
       "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.BlendState",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DepthStencilState",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.RasterizerState",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.SamplerState",
+      "complete": true
     }
   ]
 }
