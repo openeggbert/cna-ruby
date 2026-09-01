@@ -272,10 +272,11 @@ class SpriteFontTest < Minitest::Test
     # was built for. What **this** milestone claimed is that it added no drawing of its own, and
     # the SpriteBatch members it named are still what that type owes.
     assert G::SpriteBatch.public_method_defined?(:DrawString)
-    remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Graphics.SpriteBatch")
-                                  .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_equal %w[Begin], remainder.sort
-    %i[Effect EffectParameter EffectAnnotation GraphicsAdapter].each do |absent|
+    assert_empty ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Graphics.SpriteBatch"),
+                 "SpriteBatch completed when the Effect cluster gave Begin its last two overloads"
+    # The nine `Effect` types left this list when the cluster was built; what this milestone
+    # claimed, and still claims, is that **it** built none of them.
+    %i[GraphicsAdapter].each do |absent|
       refute G.const_defined?(absent, false), absent.to_s
     end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)

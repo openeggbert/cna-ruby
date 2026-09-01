@@ -2332,6 +2332,916 @@ module Microsoft
           end
         end
 
+        # ------------------------------------------------------------------------ the Effect cluster
+        #
+        # Nine types derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256
+        # 560080fc…). Eight of them are `sealed` with an `assembly` constructor, so `new` stays
+        # private under Foundation 25's rule and the only producer is `Effect`; `Effect` itself is
+        # the ninth and is the one type here a consumer constructs.
+        #
+        # ## What CNA hands out, and why the tree is built once
+        #
+        # Every getter in CNA's effect surface returns an **owned view**, freshly allocated on each
+        # call: two `cna_effect_get_parameters` calls answer two different collection handles, and
+        # two `cna_effect_parameter_collection_get_at(0)` calls answer two different parameter
+        # handles naming the same parameter. Measured, not assumed.
+        #
+        # XNA's collections are the opposite: `Effect`'s constructor builds one
+        # `List<EffectParameter>` and `get_Parameters` is a single `ldfld`, so `effect.Parameters[0]`
+        # is the **same object** every time and reference equality is observable. A fresh native
+        # handle is therefore not a new XNA object, and the projection builds the whole graph once —
+        # parameters, their elements, structure members and annotations, techniques, their passes and
+        # annotations — holding one Ruby object per logical child and one native view behind it. The
+        # views are released when the `Effect` is disposed, in the order they were taken.
+        class EffectParameter
+          private_class_method :new
+          attr_reader :Name, :Semantic, :RowCount, :ColumnCount, :ParameterClass, :ParameterType,
+                      :Elements, :StructureMembers, :Annotations
+
+          # `EffectParameterClass.Scalar` and `EffectParameterType.String`, the two identities the
+          # getters' guards compare against, and the numeric texture types `GetValueTexture*` accept.
+          SCALAR = 0
+          VECTOR = 1
+          MATRIX_CLASS = 2
+          STRING_TYPE = 4
+          TEXTURE_TYPE = 5
+          private_constant :SCALAR, :VECTOR, :MATRIX_CLASS, :STRING_TYPE, :TEXTURE_TYPE
+
+          # ------------------------------------------------------------------ the scalar getters
+          #
+          # `GetValueBoolean`, `GetValueInt32` and `GetValueSingle` share one guard, and it is
+          # **`Elements`**, not `StructureMembers`:
+          #
+          #     if (_paramClass != Scalar && pElementCollection.Count == 0)
+          #         throw new InvalidCastException();
+          #
+          # `pElementCollection` is what `get_Elements` returns; `pParamCollection` is
+          # `StructureMembers`. The two are easy to swap and the IL is unambiguous.
+          #
+          # `System.InvalidCastException` is not in the thrown-exception register yet and this is
+          # the first member here to raise it: the CLR raises it for a conversion that cannot be
+          # performed, and Ruby's own `TypeError` is what `Integer("x")`-style bad conversions raise.
+          def GetValueBoolean
+            guard_numeric!
+            read_value("CNA_EFFECT_VALUE_BOOLEAN", "L", 4) == 1
+          end
+
+          def GetValueInt32
+            guard_numeric!
+            read_value("CNA_EFFECT_VALUE_INT32", "l", 4)
+          end
+
+          def GetValueSingle
+            guard_numeric!
+            read_value("CNA_EFFECT_VALUE_SINGLE", "f", 4)
+          end
+
+          # ------------------------------------------------------------------ the vector getters
+          #
+          #     result = default;
+          #     if (Elements.Count == 0) {
+          #         if (ParameterClass == Scalar) { f = GetFloat(); broadcast f; return result; }
+          #         if (ParameterClass != Vector) throw new InvalidCastException();
+          #         if (!(ColumnCount == N && RowCount == 1)) throw new InvalidCastException();
+          #     }
+          #     v = GetVector();  // a float4 whatever the declared width
+          #
+          # The scalar branch really does broadcast: `GetValueVector3` on a scalar answers
+          # `(f, f, f)`. `GetValueQuaternion` is the same shape with `ColumnCount == 4`.
+          def GetValueVector2 = vector_value(2) { |c| Vector2.new(c[0], c[1]) }
+          def GetValueVector3 = vector_value(3) { |c| Vector3.new(c[0], c[1], c[2]) }
+          def GetValueVector4 = vector_value(4) { |c| Vector4.new(c[0], c[1], c[2], c[3]) }
+          def GetValueQuaternion = vector_value(4) { |c| Quaternion.new(c[0], c[1], c[2], c[3]) }
+
+          # `GetValueMatrix` and `GetValueMatrixTranspose` share the vector getters' first branch and
+          # then check only the class — there is **no** row/column test:
+          #
+          #     if (Elements.Count == 0) {
+          #         if (ParameterClass == Scalar) { f = GetFloat(); set all sixteen to f; return; }
+          #         if (ParameterClass != Matrix) throw new InvalidCastException();
+          #     }
+          def GetValueMatrix = matrix_value("CNA_EFFECT_VALUE_MATRIX")
+          def GetValueMatrixTranspose = matrix_value("CNA_EFFECT_VALUE_MATRIX_TRANSPOSE")
+
+          # `if (_paramType != String) throw new InvalidCastException();` — the type, not the class.
+          def GetValueString
+            raise ::TypeError, "InvalidCastException" unless @ParameterType.to_i == STRING_TYPE
+
+            CNA::Native.library.counted_string("cna_effect_parameter_get_value_string_byte_count",
+                                               "cna_effect_parameter_copy_value_string", handle)
+          end
+
+          # Each texture getter accepts `Texture` **or** its own dimension:
+          # `if (_paramType != Texture && _paramType != Texture2D) throw new InvalidCastException()`.
+          # A native null answers `nil`, which is what XNA answers when the effect holds none.
+          def GetValueTexture2D = texture_value(7, "CNA_EFFECT_TEXTURE_2D")
+          def GetValueTexture3D = texture_value(8, "CNA_EFFECT_TEXTURE_3D")
+          def GetValueTextureCube = texture_value(9, "CNA_EFFECT_TEXTURE_CUBE")
+
+          # ------------------------------------------------------------------- the array getters
+          #
+          # Every one opens `if (count <= 0) throw new ArgumentOutOfRangeException();` and then
+          # allocates `new T[count]` before reading, so a count larger than the parameter holds
+          # answers a partly-filled array rather than raising. The element type decides what CNA is
+          # asked for; the count it answers is the number it really had.
+          def GetValueBooleanArray(count) = array_value(count, "CNA_EFFECT_VALUE_BOOLEAN", "L", 4) { |v| v == 1 }
+          def GetValueInt32Array(count) = array_value(count, "CNA_EFFECT_VALUE_INT32", "l", 4)
+          def GetValueSingleArray(count) = array_value(count, "CNA_EFFECT_VALUE_SINGLE", "f", 4)
+
+          def GetValueVector2Array(count) = vector_array(count, "CNA_EFFECT_VALUE_VECTOR2", 2) { |c| Vector2.new(c[0], c[1]) }
+          def GetValueVector3Array(count) = vector_array(count, "CNA_EFFECT_VALUE_VECTOR3", 3) { |c| Vector3.new(c[0], c[1], c[2]) }
+          def GetValueVector4Array(count) = vector_array(count, "CNA_EFFECT_VALUE_VECTOR4", 4) { |c| Vector4.new(c[0], c[1], c[2], c[3]) }
+          def GetValueQuaternionArray(count) = vector_array(count, "CNA_EFFECT_VALUE_QUATERNION", 4) { |c| Quaternion.new(c[0], c[1], c[2], c[3]) }
+          def GetValueMatrixArray(count) = matrix_array(count, "CNA_EFFECT_VALUE_MATRIX")
+          def GetValueMatrixTransposeArray(count) = matrix_array(count, "CNA_EFFECT_VALUE_MATRIX_TRANSPOSE")
+
+          # ------------------------------------------------------------------------ the setters
+          #
+          # XNA declares eighteen `SetValue` overloads and two `SetValueTranspose`. Ruby has no
+          # overloading and cannot dispatch on parameter type by declaration, so all eighteen
+          # collapse into one method that dispatches on the **value's own Ruby class** — which is
+          # exactly what the CLR's overload resolution does with the argument's type.
+          def SetValue(value)
+            write_value(value, transpose: false)
+          end
+
+          def SetValueTranspose(value)
+            unless value.instance_of?(Matrix) || (value.is_a?(::Array) && value.all? { |item| item.instance_of?(Matrix) })
+              raise ::TypeError, "SetValueTranspose takes a Matrix or an Array of Matrix"
+            end
+
+            write_value(value, transpose: true)
+          end
+
+          # ------------------------------------------------------------------------------ internals
+
+          private
+
+          def initialize_from_native(effect, handle)
+            @effect = effect
+            @handle = handle
+            info = CNA::Native::Layouts::EffectParameterInfo.new
+            CNA::Native.library.call("cna_effect_parameter_get_info", handle, info.pointer)
+            @RowCount = info.read_i32(8)
+            @ColumnCount = info.read_i32(12)
+            @ParameterClass = EffectParameterClass.coerce(info.read_u32(16))
+            @ParameterType = EffectParameterType.coerce(info.read_u32(20))
+            @Name = CNA::Native.library.counted_string("cna_effect_parameter_get_name_byte_count",
+                                                       "cna_effect_parameter_copy_name", handle)
+            @Semantic = CNA::Native.library.counted_string("cna_effect_parameter_get_semantic_byte_count",
+                                                           "cna_effect_parameter_copy_semantic", handle)
+            @Elements = EffectParameterCollection.__send__(
+              :from_native, effect, effect.__send__(:child_view, "cna_effect_parameter_get_elements",
+                                                    "cna_effect_parameter_collection_destroy", handle)
+            )
+            @StructureMembers = EffectParameterCollection.__send__(
+              :from_native, effect, effect.__send__(:child_view, "cna_effect_parameter_get_structure_members",
+                                                    "cna_effect_parameter_collection_destroy", handle)
+            )
+            @Annotations = EffectAnnotationCollection.__send__(
+              :from_native, effect, effect.__send__(:child_view, "cna_effect_parameter_get_annotations",
+                                                    "cna_effect_annotation_collection_destroy", handle)
+            )
+            self
+          end
+
+          def handle
+            raise CNA::DisposedObjectError, "the Effect that owns this EffectParameter is disposed" if @effect.IsDisposed
+
+            @handle
+          end
+
+          def guard_numeric!
+            return if @ParameterClass.to_i == SCALAR || @Elements.Count.positive?
+
+            raise ::TypeError, "InvalidCastException"
+          end
+
+          def read_value(value_type, format, bytes)
+            buffer = Fiddle::Pointer.malloc(bytes, Fiddle::RUBY_FREE)
+            buffer[0, bytes] = "\0" * bytes
+            CNA::Native.library.call("cna_effect_parameter_get_value",
+                                     handle, CNA::Native::Manifest::CONSTANTS.fetch(value_type), buffer)
+            buffer[0, bytes].unpack1(format)
+          end
+
+          def read_floats(value_type, count)
+            buffer = Fiddle::Pointer.malloc(4 * count, Fiddle::RUBY_FREE)
+            buffer[0, 4 * count] = "\0" * (4 * count)
+            CNA::Native.library.call("cna_effect_parameter_get_value",
+                                     handle, CNA::Native::Manifest::CONSTANTS.fetch(value_type), buffer)
+            buffer[0, 4 * count].unpack("f#{count}")
+          end
+
+          def vector_value(columns)
+            if @Elements.Count.zero?
+              if @ParameterClass.to_i == SCALAR
+                broadcast = read_value("CNA_EFFECT_VALUE_SINGLE", "f", 4)
+                return yield([broadcast] * 4)
+              end
+              raise ::TypeError, "InvalidCastException" unless @ParameterClass.to_i == VECTOR
+              raise ::TypeError, "InvalidCastException" unless @ColumnCount == columns && @RowCount == 1
+            end
+            yield read_floats("CNA_EFFECT_VALUE_VECTOR4", 4)
+          end
+
+          def matrix_value(value_type)
+            if @Elements.Count.zero?
+              if @ParameterClass.to_i == SCALAR
+                broadcast = read_value("CNA_EFFECT_VALUE_SINGLE", "f", 4)
+                return Matrix.new(*([broadcast] * 16))
+              end
+              raise ::TypeError, "InvalidCastException" unless @ParameterClass.to_i == MATRIX_CLASS
+            end
+            Matrix.new(*read_floats(value_type, 16))
+          end
+
+          def texture_value(dimension, texture_type)
+            declared = @ParameterType.to_i
+            unless declared == TEXTURE_TYPE || declared == dimension
+              raise ::TypeError, "InvalidCastException"
+            end
+
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_effect_parameter_get_value_texture", handle,
+                                     CNA::Native::Manifest::CONSTANTS.fetch(texture_type), output)
+            native = output[0, 8].unpack1("Q")
+            native.zero? ? nil : @effect.__send__(:texture_for, native, dimension)
+          end
+
+          def array_count!(count)
+            requested = CNA::Runtime::Numeric.int32(count, "count")
+            raise ::RangeError, "count" unless requested.positive?
+
+            requested
+          end
+
+          def read_array(value_type, count, element_bytes)
+            buffer = Fiddle::Pointer.malloc(element_bytes * count, Fiddle::RUBY_FREE)
+            buffer[0, element_bytes * count] = "\0" * (element_bytes * count)
+            written = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_effect_parameter_get_values", handle,
+                                     CNA::Native::Manifest::CONSTANTS.fetch(value_type), count,
+                                     buffer, count, written)
+            [buffer, written[0, 8].unpack1("Q")]
+          end
+
+          def array_value(count, value_type, format, bytes)
+            requested = array_count!(count)
+            buffer, written = read_array(value_type, requested, bytes)
+            values = buffer[0, bytes * written].unpack("#{format}#{written}")
+            values = values.map { |value| yield(value) } if block_given?
+            values + ::Array.new(requested - written) { block_given? ? yield(0) : (format == "f" ? 0.0 : 0) }
+          end
+
+          def vector_array(count, value_type, columns)
+            requested = array_count!(count)
+            buffer, written = read_array(value_type, requested, 4 * columns)
+            floats = buffer[0, 4 * columns * written].unpack("f#{columns * written}")
+            filled = ::Array.new(written) { |index| yield(floats[index * columns, columns]) }
+            filled + ::Array.new(requested - written) { yield([0.0] * columns) }
+          end
+
+          def matrix_array(count, value_type)
+            requested = array_count!(count)
+            buffer, written = read_array(value_type, requested, 64)
+            floats = buffer[0, 64 * written].unpack("f#{16 * written}")
+            filled = ::Array.new(written) { |index| Matrix.new(*floats[index * 16, 16]) }
+            filled + ::Array.new(requested - written) { Matrix.new(*([0.0] * 16)) }
+          end
+
+          # One dispatch table, keyed by the value's own class, replacing the CLR's overload
+          # resolution. A `Texture` and a `String` are objects rather than tagged numeric values, so
+          # each has its own route.
+          def write_value(value, transpose:)
+            case value
+            when Texture then return write_texture(value)
+            when ::String then return write_string(value)
+            when true, false then return write_scalar("CNA_EFFECT_VALUE_BOOLEAN", [value ? 1 : 0].pack("L"))
+            when ::Integer then return write_scalar("CNA_EFFECT_VALUE_INT32", [CNA::Runtime::Numeric.int32(value, "value")].pack("l"))
+            when ::Float then return write_scalar("CNA_EFFECT_VALUE_SINGLE", [value].pack("f"))
+            when Matrix then return write_scalar(transpose ? "CNA_EFFECT_VALUE_MATRIX_TRANSPOSE" : "CNA_EFFECT_VALUE_MATRIX", pack_matrix(value))
+            when Quaternion then return write_scalar("CNA_EFFECT_VALUE_QUATERNION", [value.X, value.Y, value.Z, value.W].pack("f4"))
+            when Vector4 then return write_scalar("CNA_EFFECT_VALUE_VECTOR4", [value.X, value.Y, value.Z, value.W].pack("f4"))
+            when Vector3 then return write_scalar("CNA_EFFECT_VALUE_VECTOR3", [value.X, value.Y, value.Z].pack("f3"))
+            when Vector2 then return write_scalar("CNA_EFFECT_VALUE_VECTOR2", [value.X, value.Y].pack("f2"))
+            when nil then raise ::ArgumentError, "value"
+            end
+            return write_array(value, transpose: transpose) if value.is_a?(::Array)
+
+            raise ::TypeError, "no SetValue overload takes #{value.class}"
+          end
+
+          def write_array(values, transpose:)
+            raise ::ArgumentError, "value" if values.empty?
+
+            first = values.first
+            values.each { |item| raise ::TypeError, "value" unless item.instance_of?(first.class) || (first == true || first == false ? (item == true || item == false) : false) }
+            case first
+            when true, false then write_values("CNA_EFFECT_VALUE_BOOLEAN", values.map { |v| v ? 1 : 0 }.pack("L*"), values.length)
+            when ::Integer then write_values("CNA_EFFECT_VALUE_INT32", values.map { |v| CNA::Runtime::Numeric.int32(v, "value") }.pack("l*"), values.length)
+            when ::Float then write_values("CNA_EFFECT_VALUE_SINGLE", values.pack("f*"), values.length)
+            when Matrix then write_values(transpose ? "CNA_EFFECT_VALUE_MATRIX_TRANSPOSE" : "CNA_EFFECT_VALUE_MATRIX", values.map { |v| pack_matrix(v) }.join, values.length)
+            when Quaternion then write_values("CNA_EFFECT_VALUE_QUATERNION", values.flat_map { |v| [v.X, v.Y, v.Z, v.W] }.pack("f*"), values.length)
+            when Vector4 then write_values("CNA_EFFECT_VALUE_VECTOR4", values.flat_map { |v| [v.X, v.Y, v.Z, v.W] }.pack("f*"), values.length)
+            when Vector3 then write_values("CNA_EFFECT_VALUE_VECTOR3", values.flat_map { |v| [v.X, v.Y, v.Z] }.pack("f*"), values.length)
+            when Vector2 then write_values("CNA_EFFECT_VALUE_VECTOR2", values.flat_map { |v| [v.X, v.Y] }.pack("f*"), values.length)
+            else raise ::TypeError, "no SetValue overload takes an Array of #{first.class}"
+            end
+          end
+
+          def pack_matrix(value)
+            (1..4).flat_map { |row| (1..4).map { |column| value.__send__("M#{row}#{column}") } }.pack("f16")
+          end
+
+          def write_scalar(value_type, bytes)
+            CNA::Native.library.call("cna_effect_parameter_set_value", handle,
+                                     CNA::Native::Manifest::CONSTANTS.fetch(value_type), Fiddle::Pointer[bytes])
+            nil
+          end
+
+          def write_values(value_type, bytes, count)
+            CNA::Native.library.call("cna_effect_parameter_set_values", handle,
+                                     CNA::Native::Manifest::CONSTANTS.fetch(value_type),
+                                     Fiddle::Pointer[bytes], count)
+            nil
+          end
+
+          def write_string(value)
+            bytes = value.encode(Encoding::UTF_8).b
+            CNA::Native.library.call("cna_effect_parameter_set_value_string", handle,
+                                     Fiddle::Pointer[bytes], bytes.bytesize)
+            nil
+          end
+
+          # XNA's `SetValue(Texture)` is the base overload; the concrete dimension decides which
+          # native slot CNA fills, and `CNA_EFFECT_TEXTURE_BASE` is the one for a plain `Texture`.
+          def write_texture(value)
+            slot = case value
+                   when Texture2D then "CNA_EFFECT_TEXTURE_2D"
+                   when Texture3D then "CNA_EFFECT_TEXTURE_3D"
+                   when TextureCube then "CNA_EFFECT_TEXTURE_CUBE"
+                   else "CNA_EFFECT_TEXTURE_BASE"
+                   end
+            CNA::Native.library.call("cna_effect_parameter_set_value_texture", handle,
+                                     CNA::Native::Manifest::CONSTANTS.fetch(slot),
+                                     value.__send__(:native_handle))
+            nil
+          end
+
+          class << self
+            private
+
+            def from_native(effect, handle) = allocate.__send__(:initialize_from_native, effect, handle)
+          end
+        end
+
+        # The four collections are one shape: a list built once, an `Item[Int32]` that answers
+        # **null** rather than raising for an index outside it, an `Item[String]` that scans by name
+        # with ordinal equality and answers null when nothing matches, a `Count`, and a
+        # `GetEnumerator` over the list in order. Ruby cannot give one name two visibilities or two
+        # parameter types, so `Item` projects to `[]` and dispatches on the key's class — the rule
+        # `Dictionary`2` and `DisplayModeCollection` already follow.
+        class EffectParameterCollection
+          include ::Enumerable
+          private_class_method :new
+
+          def Count = @items.length
+
+          def [](key)
+            case key
+            when ::Integer then key.negative? || key >= @items.length ? nil : @items[key]
+            when ::String then @items.find { |item| item.Name == key }
+            else raise ::TypeError, "EffectParameterCollection[] takes an Integer index or a String name"
+            end
+          end
+
+          # `String.Compare(_semantic, semantic, StringComparison.OrdinalIgnoreCase)` — the one
+          # member in this cluster whose match is **case-insensitive**, which is why CNA's own
+          # `cna_effect_parameter_collection_find_semantic` is not bound: it matches exactly.
+          def GetParameterBySemantic(semantic)
+            return nil if semantic.nil?
+
+            @items.find { |item| item.Semantic.casecmp(semantic).zero? }
+          end
+
+          def GetEnumerator = @items.each
+          def each(&block) = @items.each(&block)
+
+          private
+
+          def initialize_from_native(effect, collection)
+            @items = EffectParameterCollection.__send__(:build, effect, collection).freeze
+            self
+          end
+
+          class << self
+            private
+
+            def from_native(effect, collection) = allocate.__send__(:initialize_from_native, effect, collection)
+
+            def build(effect, collection)
+              count = effect.__send__(:collection_count, "cna_effect_parameter_collection_get_count", collection)
+              ::Array.new(count) do |index|
+                EffectParameter.__send__(
+                  :from_native, effect,
+                  effect.__send__(:child_at, "cna_effect_parameter_collection_get_at",
+                                  "cna_effect_parameter_destroy", collection, index)
+                )
+              end
+            end
+          end
+        end
+
+        # `EffectAnnotation` is `sealed` over six `ldfld` properties and eight `GetValue*` members,
+        # and every one of the eight is the same three instructions: construct a temporary
+        # `EffectParameter(pEffect, null, _handle, -1)` and forward to that type's getter. So an
+        # annotation's value semantics **are** `EffectParameter`'s, including its guards, and the
+        # values themselves come from CNA's own annotation routes.
+        #
+        # DEVIATION, recorded: XNA's temporary parameter builds an element collection from the same
+        # D3DX descriptor, so its `Elements.Count` guard reads whatever the annotation's descriptor
+        # says. CNA's annotation surface exposes no element collection, and an HLSL annotation is a
+        # scalar, vector, matrix or string literal — never an array — so the guard is applied with a
+        # count of zero. That is the one place this type is not a mechanical re-reading of the IL.
+        class EffectAnnotation
+          private_class_method :new
+          attr_reader :Name, :Semantic, :RowCount, :ColumnCount, :ParameterClass, :ParameterType
+
+          def GetValueBoolean
+            guard_numeric!
+            read("cna_effect_annotation_get_value_boolean", "L", 4) == 1
+          end
+
+          def GetValueInt32
+            guard_numeric!
+            read("cna_effect_annotation_get_value_int32", "l", 4)
+          end
+
+          def GetValueSingle
+            guard_numeric!
+            read("cna_effect_annotation_get_value_single", "f", 4)
+          end
+
+          def GetValueVector2 = vector(2, "cna_effect_annotation_get_value_vector2") { |c| Vector2.new(c[0], c[1]) }
+          def GetValueVector3 = vector(3, "cna_effect_annotation_get_value_vector3") { |c| Vector3.new(c[0], c[1], c[2]) }
+          def GetValueVector4 = vector(4, "cna_effect_annotation_get_value_vector4") { |c| Vector4.new(c[0], c[1], c[2], c[3]) }
+
+          def GetValueMatrix
+            if @ParameterClass.to_i.zero?
+              broadcast = read("cna_effect_annotation_get_value_single", "f", 4)
+              return Matrix.new(*([broadcast] * 16))
+            end
+            raise ::TypeError, "InvalidCastException" unless @ParameterClass.to_i == 2
+
+            Matrix.new(*read_floats("cna_effect_annotation_get_value_matrix", 16))
+          end
+
+          def GetValueString
+            raise ::TypeError, "InvalidCastException" unless @ParameterType.to_i == 4
+
+            CNA::Native.library.counted_string("cna_effect_annotation_get_value_string_byte_count",
+                                               "cna_effect_annotation_copy_value_string", handle)
+          end
+
+          private
+
+          def initialize_from_native(effect, handle)
+            @effect = effect
+            @handle = handle
+            info = CNA::Native::Layouts::EffectAnnotationInfo.new
+            CNA::Native.library.call("cna_effect_annotation_get_info", handle, info.pointer)
+            @RowCount = info.read_i32(8)
+            @ColumnCount = info.read_i32(12)
+            @ParameterClass = EffectParameterClass.coerce(info.read_u32(16))
+            @ParameterType = EffectParameterType.coerce(info.read_u32(20))
+            @Name = CNA::Native.library.counted_string("cna_effect_annotation_get_name_byte_count",
+                                                       "cna_effect_annotation_copy_name", handle)
+            @Semantic = CNA::Native.library.counted_string("cna_effect_annotation_get_semantic_byte_count",
+                                                           "cna_effect_annotation_copy_semantic", handle)
+            self
+          end
+
+          def handle
+            raise CNA::DisposedObjectError, "the Effect that owns this EffectAnnotation is disposed" if @effect.IsDisposed
+
+            @handle
+          end
+
+          def guard_numeric!
+            raise ::TypeError, "InvalidCastException" unless @ParameterClass.to_i.zero?
+          end
+
+          def read(symbol, format, bytes)
+            buffer = Fiddle::Pointer.malloc(bytes, Fiddle::RUBY_FREE)
+            buffer[0, bytes] = "\0" * bytes
+            CNA::Native.library.call(symbol, handle, buffer)
+            buffer[0, bytes].unpack1(format)
+          end
+
+          def read_floats(symbol, count)
+            buffer = Fiddle::Pointer.malloc(4 * count, Fiddle::RUBY_FREE)
+            buffer[0, 4 * count] = "\0" * (4 * count)
+            CNA::Native.library.call(symbol, handle, buffer)
+            buffer[0, 4 * count].unpack("f#{count}")
+          end
+
+          def vector(columns, symbol)
+            if @ParameterClass.to_i.zero?
+              broadcast = read("cna_effect_annotation_get_value_single", "f", 4)
+              return yield([broadcast] * 4)
+            end
+            raise ::TypeError, "InvalidCastException" unless @ParameterClass.to_i == 1
+            raise ::TypeError, "InvalidCastException" unless @ColumnCount == columns && @RowCount == 1
+
+            yield read_floats(symbol, columns)
+          end
+
+          class << self
+            private
+
+            def from_native(effect, handle) = allocate.__send__(:initialize_from_native, effect, handle)
+          end
+        end
+
+        class EffectAnnotationCollection
+          include ::Enumerable
+          private_class_method :new
+
+          def Count = @items.length
+
+          def [](key)
+            case key
+            when ::Integer then key.negative? || key >= @items.length ? nil : @items[key]
+            when ::String then @items.find { |item| item.Name == key }
+            else raise ::TypeError, "EffectAnnotationCollection[] takes an Integer index or a String name"
+            end
+          end
+
+          def GetEnumerator = @items.each
+          def each(&block) = @items.each(&block)
+
+          private
+
+          def initialize_from_native(effect, collection)
+            count = effect.__send__(:collection_count, "cna_effect_annotation_collection_get_count", collection)
+            @items = ::Array.new(count) do |index|
+              EffectAnnotation.__send__(
+                :from_native, effect,
+                effect.__send__(:child_at, "cna_effect_annotation_collection_get_at",
+                                "cna_effect_annotation_destroy", collection, index)
+              )
+            end.freeze
+            self
+          end
+
+          class << self
+            private
+
+            def from_native(effect, collection) = allocate.__send__(:initialize_from_native, effect, collection)
+          end
+        end
+
+        # `EffectPass.Apply` is three managed steps before anything native happens:
+        #
+        #     Helpers.CheckDisposed(effect, effect.pComPtr);
+        #     if (effect.CurrentTechnique != _technique)
+        #         throw new InvalidOperationException(NotCurrentTechnique);
+        #     effect.OnApply();
+        #     … native begin/commit …
+        #
+        # The order matters and is reproduced: `OnApply` is a `famorassem` virtual whose XNA body is
+        # a single `ret`, so a subclass overriding it observes the technique check having passed and
+        # the native apply not yet having happened. CNA enforces the same rule itself — measured, a
+        # pass outside the current technique answers `CNA_RESULT_INVALID_STATE` with "Applied a pass
+        # not in the current technique!" — so the managed check is what puts the failure in XNA's
+        # exception class and lets `OnApply` run in XNA's place.
+        class EffectPass
+          private_class_method :new
+          attr_reader :Name, :Annotations
+
+          def Apply
+            raise CNA::DisposedObjectError, "the Effect that owns this EffectPass is disposed" if @effect.IsDisposed
+            raise ::RuntimeError, "NotCurrentTechnique" unless @effect.CurrentTechnique.equal?(@technique)
+
+            @effect.__send__(:OnApply)
+            CNA::Native.library.call("cna_effect_pass_apply", @handle)
+            nil
+          end
+
+          private
+
+          def initialize_from_native(effect, technique, handle)
+            @effect = effect
+            @technique = technique
+            @handle = handle
+            @Name = CNA::Native.library.counted_string("cna_effect_pass_get_name_byte_count",
+                                                       "cna_effect_pass_copy_name", handle)
+            @Annotations = EffectAnnotationCollection.__send__(
+              :from_native, effect, effect.__send__(:child_view, "cna_effect_pass_get_annotations",
+                                                    "cna_effect_annotation_collection_destroy", handle)
+            )
+            self
+          end
+
+          class << self
+            private
+
+            def from_native(effect, technique, handle) = allocate.__send__(:initialize_from_native, effect, technique, handle)
+          end
+        end
+
+        class EffectPassCollection
+          include ::Enumerable
+          private_class_method :new
+
+          def Count = @items.length
+
+          def [](key)
+            case key
+            when ::Integer then key.negative? || key >= @items.length ? nil : @items[key]
+            when ::String then @items.find { |item| item.Name == key }
+            else raise ::TypeError, "EffectPassCollection[] takes an Integer index or a String name"
+            end
+          end
+
+          def GetEnumerator = @items.each
+          def each(&block) = @items.each(&block)
+
+          private
+
+          def initialize_from_native(effect, technique, collection)
+            count = effect.__send__(:collection_count, "cna_effect_pass_collection_get_count", collection)
+            @items = ::Array.new(count) do |index|
+              EffectPass.__send__(
+                :from_native, effect, technique,
+                effect.__send__(:child_at, "cna_effect_pass_collection_get_at",
+                                "cna_effect_pass_destroy", collection, index)
+              )
+            end.freeze
+            self
+          end
+
+          class << self
+            private
+
+            def from_native(effect, technique, collection) = allocate.__send__(:initialize_from_native, effect, technique, collection)
+          end
+        end
+
+        class EffectTechnique
+          private_class_method :new
+          attr_reader :Name, :Passes, :Annotations
+
+          private
+
+          def initialize_from_native(effect, handle)
+            @effect = effect
+            @handle = handle
+            @Name = CNA::Native.library.counted_string("cna_effect_technique_get_name_byte_count",
+                                                       "cna_effect_technique_copy_name", handle)
+            @Annotations = EffectAnnotationCollection.__send__(
+              :from_native, effect, effect.__send__(:child_view, "cna_effect_technique_get_annotations",
+                                                    "cna_effect_annotation_collection_destroy", handle)
+            )
+            @Passes = EffectPassCollection.__send__(
+              :from_native, effect, self,
+              effect.__send__(:child_view, "cna_effect_technique_get_passes",
+                              "cna_effect_pass_collection_destroy", handle)
+            )
+            self
+          end
+
+          def native_handle = @handle
+
+          class << self
+            private
+
+            def from_native(effect, handle) = allocate.__send__(:initialize_from_native, effect, handle)
+          end
+        end
+
+        class EffectTechniqueCollection
+          include ::Enumerable
+          private_class_method :new
+
+          def Count = @items.length
+
+          def [](key)
+            case key
+            when ::Integer then key.negative? || key >= @items.length ? nil : @items[key]
+            when ::String then @items.find { |item| item.Name == key }
+            else raise ::TypeError, "EffectTechniqueCollection[] takes an Integer index or a String name"
+            end
+          end
+
+          def GetEnumerator = @items.each
+          def each(&block) = @items.each(&block)
+
+          private
+
+          def initialize_from_native(effect, collection)
+            count = effect.__send__(:collection_count, "cna_effect_technique_collection_get_count", collection)
+            @items = ::Array.new(count) do |index|
+              EffectTechnique.__send__(
+                :from_native, effect,
+                effect.__send__(:child_at, "cna_effect_technique_collection_get_at",
+                                "cna_effect_technique_destroy", collection, index)
+              )
+            end.freeze
+            self
+          end
+
+          class << self
+            private
+
+            def from_native(effect, collection) = allocate.__send__(:initialize_from_native, effect, collection)
+          end
+        end
+
+        # `Effect` is `public auto ansi beforefieldinit` over `GraphicsResource`, **not sealed** —
+        # every stock effect derives from it — with two constructors, `Clone`, a `famorassem`
+        # `OnApply`, a `family` `Dispose(bool)` and three properties.
+        #
+        # `CreateEffectFromCode`'s validation is reproduced in its own order, which is not the order
+        # a reader would guess: the **bytecode is checked before the device**.
+        #
+        #   1. `effectCode == null || effectCode.Length == 0`
+        #      → `ArgumentNullException("effectCode", NullNotAllowed)`
+        #   2. `effectCode.Length % 4 != 0`
+        #      → `ArgumentException(Format(ArrayMultipleFour, "effectCode"), "effectCode")`
+        #   3. `graphicsDevice == null`
+        #      → `ArgumentNullException("graphicsDevice", DeviceCannotBeNullOnResourceCreate)`
+        #   4. fewer than eight bytes, or a first dword that is not `0xBCF00BCF`
+        #      → `InvalidOperationException(MustUserShaderCode)`
+        #
+        # The magic number is XNA's own effect-container header, and CNA refuses the same bytes for
+        # the same reason, so check four is left to the route: it is the one that knows which
+        # containers this build accepts.
+        #
+        # The `family` `Effect(Effect cloneSource)` constructor is the other producer, and `Clone` is
+        # `newobj Effect::.ctor(Effect); ret`. Ruby has one `initialize`, so the two collapse onto
+        # the argument's own class — `Effect.new(device, bytes)` or `Effect.new(source)`.
+        class Effect < GraphicsResource
+          public_class_method :new
+
+          attr_reader :Parameters, :Techniques
+
+          def initialize(*arguments)
+            case arguments.length
+            when 1 then handle = clone_source_handle(arguments[0])
+            when 2 then handle = compile(arguments[0], arguments[1])
+            else raise ::ArgumentError, "Effect.new takes (graphicsDevice, effectCode) or (cloneSource)"
+            end
+            device = arguments.length == 1 ? arguments[0].GraphicsDevice : arguments[0]
+            release = lambda { |value| CNA::Native.library.call("cna_effect_destroy", value) }
+            @views = []
+            initialize_resource(device, handle, release)
+            build_graph
+          rescue Exception
+            release_views
+            if defined?(@native_handle) && @native_handle
+              self.Dispose
+            elsif handle
+              release&.call(handle)
+            end
+            raise
+          end
+
+          # `newobj Effect::.ctor(Effect); ret` — nothing else.
+          def Clone = Effect.new(self)
+
+          # `ldfld _currentTechnique`. The field, not a native query: CNA hands back a fresh
+          # technique view on every call and XNA hands back the object it holds.
+          def CurrentTechnique = @current_technique
+
+          # `Helpers.CheckDisposed`, then null → `ArgumentNullException("value", NullNotAllowed)`,
+          # then a same-value write returns without touching anything, then a technique belonging to
+          # another effect → a **parameterless** `InvalidOperationException`.
+          def CurrentTechnique=(value)
+            raise CNA::DisposedObjectError, "Effect is disposed" if self.IsDisposed
+            raise ::ArgumentError, "value" if value.nil?
+            return value if value.equal?(@current_technique)
+            raise ::RuntimeError unless @Techniques.include?(value)
+
+            CNA::Native.library.call("cna_effect_set_current_technique", native_handle,
+                                     value.__send__(:native_handle))
+            @current_technique = value
+          end
+
+          # `famorassem hidebysig newslot virtual instance void OnApply()` whose whole body is `ret`.
+          # It exists to be overridden — every stock effect does — and `EffectPass.Apply` calls it.
+          def OnApply = nil
+
+          def Dispose(disposing = true)
+            return if self.IsDisposed
+
+            release_views
+            super
+          end
+
+          private
+
+          def compile(device, effect_code)
+            raise ::ArgumentError, "effectCode" if effect_code.nil?
+            raise ::TypeError, "effectCode must be a String of bytes" unless effect_code.is_a?(::String)
+            raise ::ArgumentError, "effectCode" if effect_code.bytesize.zero?
+            raise ::ArgumentError, "effectCode" unless (effect_code.bytesize % 4).zero?
+            raise ::ArgumentError, "graphicsDevice" if device.nil?
+            raise ::TypeError, "graphicsDevice must be GraphicsDevice" unless device.instance_of?(GraphicsDevice)
+
+            bytes = effect_code.b
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_effect_create_compiled", device.__send__(:native_handle),
+                                     Fiddle::Pointer[bytes], bytes.bytesize, output)
+            output[0, 8].unpack1("Q")
+          end
+
+          def clone_source_handle(source)
+            raise ::ArgumentError, "cloneSource" if source.nil?
+            raise ::TypeError, "cloneSource must be an Effect" unless source.is_a?(Effect)
+            raise CNA::DisposedObjectError, "cloneSource is disposed" if source.IsDisposed
+            raise ::ArgumentError, "graphicsDevice" if source.GraphicsDevice.nil?
+
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_effect_clone", source.__send__(:native_handle), output)
+            output[0, 8].unpack1("Q")
+          end
+
+          # The whole object graph, once, exactly as XNA's constructor builds it.
+          def build_graph
+            @Parameters = EffectParameterCollection.__send__(
+              :from_native, self, child_view("cna_effect_get_parameters",
+                                             "cna_effect_parameter_collection_destroy", native_handle)
+            )
+            @Techniques = EffectTechniqueCollection.__send__(
+              :from_native, self, child_view("cna_effect_get_techniques",
+                                             "cna_effect_technique_collection_destroy", native_handle)
+            )
+            @current_technique = current_technique_from_native
+            self
+          end
+
+          # CNA answers a fresh technique view, so the answer is matched back to the technique this
+          # projection already holds by its native index rather than by its handle.
+          def current_technique_from_native
+            return nil if @Techniques.Count.zero?
+
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_effect_get_current_technique", native_handle, output)
+            view = output[0, 8].unpack1("Q")
+            return @Techniques[0] if view.zero?
+
+            index = CNA::Native.library.pointer_for("L", 0)
+            CNA::Native.library.call("cna_effect_technique_get_index_ext", view, index)
+            selected = index[0, 4].unpack1("L")
+            CNA::Native.library.call("cna_effect_technique_destroy", view)
+            @Techniques[selected] || @Techniques[0]
+          end
+
+          # Every owned view this Effect took, with the route that releases it, released in reverse.
+          def child_view(getter, destroy, owner)
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call(getter, owner, output)
+            record_view(output[0, 8].unpack1("Q"), destroy)
+          end
+
+          def child_at(getter, destroy, collection, index)
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call(getter, collection, index, output)
+            record_view(output[0, 8].unpack1("Q"), destroy)
+          end
+
+          def record_view(handle, destroy)
+            @views << [handle, destroy]
+            handle
+          end
+
+          def collection_count(symbol, collection)
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call(symbol, collection, output)
+            output[0, 8].unpack1("Q")
+          end
+
+          # A texture slot answers a **retained** native handle rather than one this binding
+          # created, and CNA's header states the rule this projection follows everywhere else:
+          # there is no route from a native object back to a handle a consumer owns. So a texture
+          # this Effect never received through `SetValue` is not fabricated as a Ruby `Texture2D` —
+          # the cache is what answers, and a slot filled by native code reads back as `nil`.
+          def texture_for(_native, _dimension) = nil
+
+          def release_views
+            return unless defined?(@views) && @views
+
+            @views.reverse_each do |handle, destroy|
+              CNA::Native.library.call(destroy, handle)
+            rescue CNA::NativeError
+              nil
+            end
+            @views = []
+          end
+        end
+
         class SpriteBatch < GraphicsResource
           public_class_method :new
 
@@ -2372,9 +3282,10 @@ module Microsoft
           # three projected shapes pass, and no overload is offered that could not supply them.
           def Begin(*arguments)
             raise CNA::InvalidBindingStateError, "SpriteBatch.Begin cannot be nested" if @begun
-            unless [0, 2, 5].include?(arguments.length)
-              raise ArgumentError, "Begin takes (), (sortMode, blendState) or " \
-                                   "(sortMode, blendState, samplerState, depthStencilState, rasterizerState)"
+            unless [0, 2, 5, 6, 7].include?(arguments.length)
+              raise ArgumentError, "Begin takes (), (sortMode, blendState), " \
+                                   "(sortMode, blendState, samplerState, depthStencilState, rasterizerState) " \
+                                   "or either of those five plus (effect) and (effect, transformMatrix)"
             end
 
             if arguments.empty?
@@ -2384,7 +3295,7 @@ module Microsoft
               return nil
             end
 
-            sort_mode, blend, sampler, depth, rasterizer = arguments
+            sort_mode, blend, sampler, depth, rasterizer, effect, transform = arguments
             sort = SpriteSortMode.coerce(sort_mode)
             descriptors = [
               state_descriptor(blend, BlendState, BlendState::AlphaBlend, "blendState"),
@@ -2393,8 +3304,33 @@ module Microsoft
               state_descriptor(rasterizer, RasterizerState, RasterizerState::CullCounterClockwise,
                                "rasterizerState")
             ]
+            # `Effect` is stored as given, nulls included: the seven-argument overload's whole body
+            # is seven `stfld`s and the interval checks. A null selects the stock sprite effect,
+            # which is exactly what `CNA_INVALID_HANDLE` selects on the route.
+            unless effect.nil? || effect.is_a?(Effect)
+              raise TypeError, "effect must be an Effect or nil"
+            end
+            raise CNA::DisposedObjectError, "effect is disposed" if effect&.IsDisposed
+
+            # The six-argument overload is `Begin(…, effect, Matrix.Identity)` -- one `call
+            # Matrix::get_Identity` and a forward -- and a null `CNA_Matrix*` is the identity the
+            # route documents, so the two agree without this projection choosing anything.
+            matrix = nil
+            unless transform.nil?
+              raise TypeError, "transformMatrix must be a Matrix" unless transform.instance_of?(Matrix)
+
+              matrix = CNA::Native::Layouts::Matrix.new
+              (1..4).each do |row|
+                (1..4).each do |column|
+                  matrix.write_f32(((row - 1) * 4 + column - 1) * 4,
+                                   CNA::Runtime::Numeric.f32(transform.__send__("M#{row}#{column}")))
+                end
+              end
+            end
             CNA::Native.library.call("cna_sprite_batch_begin_with_effect", native_handle, sort.to_i,
-                                     *descriptors.map(&:pointer), 0, 0)
+                                     *descriptors.map(&:pointer),
+                                     effect ? effect.__send__(:native_handle) : 0,
+                                     matrix ? matrix.pointer : 0)
             @begun = true
             nil
           end

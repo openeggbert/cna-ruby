@@ -27,7 +27,9 @@ class GraphicsResourceDisposalTest < Minitest::Test
   def test_it_is_complete_and_the_partial_count_fell
     assert_includes STRICT.fetch("completeTypeNames"), NAME
     assert_equal ReviewedScoreboard::PARTIAL_TYPES, STRICT.fetch("PARTIAL_TYPES")
-    assert_equal 3, STRICT.fetch("PARTIAL_TYPES"), "GraphicsResource was the fifth; Texture2D the fourth"
+    # GraphicsResource was the fifth partial type to complete and Texture2D the fourth; SpriteBatch
+    # was the sixth, when the Effect cluster gave `Begin` its two remaining overloads.
+    assert_equal 2, STRICT.fetch("PARTIAL_TYPES")
     assert_equal ReviewedScoreboard::COMPLETE_TYPES, STRICT.fetch("COMPLETE_TYPES")
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
     refute_includes STRICT.fetch("partialTypes").keys, NAME
@@ -166,9 +168,8 @@ class GraphicsResourceDisposalTest < Minitest::Test
     # Pixel access arrived in a later milestone, and `DrawString` in one later still. What this
     # milestone claims is that the disposal contract added no draw surface of its own, which the
     # members still outstanding on `SpriteBatch` measure.
-    remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Graphics.SpriteBatch")
-                                  .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_equal %w[Begin], remainder.sort
+    assert_empty ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Graphics.SpriteBatch"),
+                 "SpriteBatch completed when the Effect cluster landed"
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
   end
 end

@@ -54,11 +54,15 @@ class VideoPlayerTest < Minitest::Test
     assert_equal ReviewedScoreboard::TARGET_MEMBERS, STRICT.fetch("TARGET_MEMBERS")
     assert_includes STRICT.fetch("completeTypeNames"), NAME
     assert_equal 0, STRICT.fetch("localDiagnostics").fetch(NAME)
-    # Three candidates left, and every one has been audited and deferred for a measured reason.
+    # Three candidates when this milestone landed; the Effect cluster then built EffectAnnotation
+    # and uncovered EffectMaterial and DirectionalLight behind the Effect base, which is a frontier
+    # advancing rather than regressing. What this test claims -- that VideoPlayer left it -- stands.
+    candidates = FRONTIER.fetch("dependencyCompleteCandidates").map { |c| c.fetch("name") }.sort
     assert_equal %w[Microsoft.Xna.Framework.Design.MathTypeConverter
-                    Microsoft.Xna.Framework.Graphics.EffectAnnotation
-                    Microsoft.Xna.Framework.Graphics.GraphicsAdapter],
-                 FRONTIER.fetch("dependencyCompleteCandidates").map { |c| c.fetch("name") }.sort
+                    Microsoft.Xna.Framework.Graphics.DirectionalLight
+                    Microsoft.Xna.Framework.Graphics.EffectMaterial
+                    Microsoft.Xna.Framework.Graphics.GraphicsAdapter], candidates
+    refute_includes candidates, NAME
     assert_empty FRONTIER.fetch("consumableCandidates")
     # Every Media type this project ever selected is complete now; what is left in that namespace
     # is the MediaPlayer/MediaLibrary half, which was never selected and is missing whole.

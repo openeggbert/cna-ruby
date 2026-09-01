@@ -210,10 +210,13 @@ class MemberLevelDependenciesTest < Minitest::Test
     # IVertexType for the first, EffectPass for the second.
     # 3 until SamplerState was built, which took it back to 2, and 1 when VertexDeclaration
     # followed it: both blockers named members the pinned contract never selects.
-    assert_equal 1, signature_complete.length
+    # 1 until `EffectAnnotation` was built with the rest of the Effect cluster, which emptied this
+    # list: the two render targets that took its place on the il-only blocked list are **not**
+    # signature-complete, because each still reaches the partial GraphicsDevice.
+    assert_equal 0, signature_complete.length
     names = signature_complete.map { |entry| entry.fetch("name") }.sort
     # ContentManager was here until the Stream and Action`1 projections consumed it.
-    assert_equal ["Microsoft.Xna.Framework.Graphics.EffectAnnotation"], names
+    assert_empty names
     refute_includes names, "Microsoft.Xna.Framework.Audio.Cue"
   end
 
@@ -230,14 +233,25 @@ class MemberLevelDependenciesTest < Minitest::Test
   # il-only dependency is `SpriteBatch`, which is **complete**, so what holds it is its own BCL
   # blockers rather than a missing type. `EffectAnnotation`'s `EffectParameter` really is missing,
   # which is the shape this test is about.
+  #
+  # `EffectAnnotation` was the Graphics example until the cluster built it *and* the
+  # `EffectParameter` it was blocked on, which is the third resolution of this shape and the same
+  # one: build the second blocker. `RenderTarget2D` and `RenderTargetCube` demonstrate it now --
+  # each is native-blocked and each reaches `GraphicsAdapter`, which is missing.
   def test_a_candidate_can_be_blocked_twice_over
-    {"Microsoft.Xna.Framework.Graphics.EffectAnnotation" => "Microsoft.Xna.Framework.Graphics.EffectParameter"}
+    {"Microsoft.Xna.Framework.Graphics.RenderTarget2D" => "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
+     "Microsoft.Xna.Framework.Graphics.RenderTargetCube" => "Microsoft.Xna.Framework.Graphics.GraphicsAdapter"}
       .each do |name, blocker|
-      entry = candidate(name)
+      entry = REPORT.fetch("ilOnlyBlockedCandidates").find { |item| item.fetch("name") == name }
+      refute_nil entry, name
       assert_includes entry.fetch("blockers"), "NATIVE_RUNTIME", "still native-blocked"
       assert_includes entry.fetch("ilOnlyUnmetDependencies"), blocker, "and blocked on a missing type too"
       assert_includes STRICT.fetch("missingTypeNames"), blocker
     end
+    # And the Graphics example that resolved: both halves of EffectAnnotation's are complete now.
+    %w[Microsoft.Xna.Framework.Graphics.EffectAnnotation
+       Microsoft.Xna.Framework.Graphics.EffectParameter]
+      .each { |name| assert_includes STRICT.fetch("completeTypeNames"), name }
 
     # Cue's second blocker was AudioEngine; building that cleared this half, and the milestone
     # straight after built Cue itself, so both are complete and neither is a candidate any more.
@@ -266,9 +280,12 @@ class MemberLevelDependenciesTest < Minitest::Test
     # SamplerStateCollection followed them, and 8 when VertexDeclaration and the IVertexType it
     # uncovered were both built -- putting the four vertex structs on the queue, the first
     # consumable candidates since Foundation 32.
-    # ...4 when those four were built, which consumed the queue rather than growing it, and 3 when
-    # Media.VideoPlayer's blocker was audited and found not to be one.
-    assert_equal 3, REPORT.fetch("dependencyCompleteCandidates").length
+    # ...4 when those four were built, which consumed the queue rather than growing it, 3 when
+    # Media.VideoPlayer's blocker was audited and found not to be one, and **4 again** when the
+    # nine-type Effect cluster was built: EffectAnnotation left and EffectMaterial and
+    # DirectionalLight arrived behind the Effect base, which is the same uncovering a completed base
+    # always causes. A rising count is what advancing looks like.
+    assert_equal 4, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")
@@ -282,7 +299,15 @@ class MemberLevelDependenciesTest < Minitest::Test
      REPORT.fetch("ilOnlyBlockedCandidates")).each do |entry|
       refute_includes consumable, entry.fetch("name")
     end
-    assert_equal 1, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
+    # `EffectAnnotation` was the one entry that was both il-only blocked **and** dependency-complete
+    # by the type-level rule, which is exactly the overlap this report exists to show. Building it
+    # left the two render targets, and neither is dependency-complete: each still reaches the
+    # partial `GraphicsDevice`. So the overlap is empty now and the reason it is empty is recorded.
+    assert_equal 0, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
+    REPORT.fetch("ilOnlyBlockedCandidates").each do |entry|
+      assert_includes entry.fetch("unmetDependencies"), "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+                      entry.fetch("name")
+    end
   end
 
   # The one candidate the refinement cleared, and what happened to it. Foundation 39 selected it and

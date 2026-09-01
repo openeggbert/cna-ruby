@@ -301,8 +301,13 @@ class PureManagedEnumBatchTest < Minitest::Test
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length
     # Fragments must stay specific: CNA_SURFACE_FORMAT_COLOR legitimately contains "FACE".
+    # `EFFECT_PARAMETER` left this list when the Effect cluster bound the twenty-eight identities
+    # its parameter and annotation surfaces need, for the same reason every fragment before it
+    # left: those constants belong to the milestone that bound them, not to this batch's 24 enums.
+    # `EffectParameterClass` and `EffectParameterType` are two of the 24 and still take their
+    # values from their own IL rather than from CNA.
     %w[CUBE_MAP CUBEMAP CUBE_FACE BUFFER_USAGE AUDIO_CHANNEL STOP_OPTION SOUND_STATE MEDIA
-       PRESENT_INTERVAL RENDER_TARGET_USAGE SET_DATA EFFECT_PARAMETER
+       PRESENT_INTERVAL RENDER_TARGET_USAGE SET_DATA
        INDEX_ELEMENT].each do |fragment|
       refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?(fragment) }, fragment
     end
@@ -339,17 +344,19 @@ class PureManagedEnumBatchTest < Minitest::Test
   def test_batch_implies_no_renderer_device_audio_media_or_touch_surface
     # The four state objects exist now; what this batch claimed, and still claims, is that **it**
     # built none of them -- it selected the eight enums they are made of and nothing that holds one.
+    # The nine `Effect` types left this list when the cluster was built; what this batch claimed,
+    # and still claims, is that **it** built none of them -- it selected the two enums their
+    # metadata is made of and nothing that holds one.
     %i[RenderTarget2D RenderTargetCube VertexBuffer IndexBuffer
        DynamicVertexBuffer DynamicIndexBuffer
-       Effect BasicEffect
-       EffectParameter EffectTechnique GraphicsAdapter
+       BasicEffect GraphicsAdapter
        OcclusionQuery].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
     # `Texture3D` and `TextureCube` exist now, and this batch built neither: it selected
     # `CubeMapFace`, which `TextureCube.SetData` takes, and nothing that holds one.
     %i[BlendState DepthStencilState RasterizerState SamplerState SamplerStateCollection
-       VertexDeclaration Texture3D TextureCube].each do |name|
+       VertexDeclaration Texture3D TextureCube Effect EffectParameter EffectTechnique].each do |name|
       assert G.const_defined?(name, false), "Graphics::#{name}"
     end
     # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still

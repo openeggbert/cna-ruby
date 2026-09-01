@@ -1,14 +1,13 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 179,
-  "completeTypes": 176,
+  "targetTypes": 188,
+  "completeTypes": 186,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
-    "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
-    "Microsoft.Xna.Framework.Graphics.SpriteBatch"
+    "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
   ],
-  "missingTypes": 78,
+  "missingTypes": 69,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -29,6 +28,7 @@
     "System.Action`1",
     "System.Attribute",
     "System.Boolean",
+    "System.Boolean[]",
     "System.Byte",
     "System.Byte[]",
     "System.Char",
@@ -37,6 +37,7 @@
     "System.Collections.Generic.IEnumerable`1",
     "System.Collections.Generic.IEnumerator`1",
     "System.Collections.Generic.IList`1",
+    "System.Collections.Generic.List`1+Enumerator",
     "System.Collections.ObjectModel.Collection`1",
     "System.Collections.ObjectModel.ReadOnlyCollection`1",
     "System.Enum",
@@ -52,6 +53,7 @@
     "System.IServiceProvider",
     "System.Int16",
     "System.Int32",
+    "System.Int32[]",
     "System.IntPtr",
     "System.Nullable`1",
     "System.Object",
@@ -60,6 +62,7 @@
     "System.Runtime.Serialization.SerializationInfo",
     "System.Runtime.Serialization.StreamingContext",
     "System.Single",
+    "System.Single[]",
     "System.String",
     "System.Text.StringBuilder",
     "System.TimeSpan",
@@ -96,7 +99,7 @@
   },
   "blockerSummary": {
     "BCL_PROJECTION": 1,
-    "NATIVE_RUNTIME": 2
+    "NATIVE_RUNTIME": 3
   },
   "partialDependencySatisfiedCandidates": [
     {
@@ -317,6 +320,161 @@
 
       ],
       "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DualTextureEffect",
+      "kind": "class",
+      "expectedRubyIdentities": 16,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.Effect",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+        "Microsoft.Xna.Framework.Graphics.IEffectFog",
+        "Microsoft.Xna.Framework.Graphics.IEffectMatrices",
+        "Microsoft.Xna.Framework.Graphics.Texture2D",
+        "Microsoft.Xna.Framework.Matrix",
+        "Microsoft.Xna.Framework.Vector3"
+      ],
+      "unmetDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
+          "reachedMembers": [
+
+          ],
+          "reachedButMissing": [
+
+          ]
+        }
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.Graphics.EffectParameter",
+        "Microsoft.Xna.Framework.Graphics.EffectParameterCollection",
+        "Microsoft.Xna.Framework.Vector4"
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": true,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": false,
+      "blockers": [
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "Clone",
+        "OnApply"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+        ".ctor",
+        "Clone",
+        "OnApply",
+        "get_FogColor",
+        "get_Texture",
+        "get_Texture2",
+        "set_FogColor",
+        "set_Texture",
+        "set_Texture2"
+      ],
+      "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.AlphaTestEffect",
+      "kind": "class",
+      "expectedRubyIdentities": 17,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.CompareFunction",
+        "Microsoft.Xna.Framework.Graphics.Effect",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+        "Microsoft.Xna.Framework.Graphics.IEffectFog",
+        "Microsoft.Xna.Framework.Graphics.IEffectMatrices",
+        "Microsoft.Xna.Framework.Graphics.Texture2D",
+        "Microsoft.Xna.Framework.Matrix",
+        "Microsoft.Xna.Framework.Vector3"
+      ],
+      "unmetDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
+          "reachedMembers": [
+
+          ],
+          "reachedButMissing": [
+
+          ]
+        }
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.Graphics.EffectParameter",
+        "Microsoft.Xna.Framework.Graphics.EffectParameterCollection",
+        "Microsoft.Xna.Framework.Vector4"
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": true,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": false,
+      "blockers": [
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "Clone",
+        "OnApply"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+        ".ctor",
+        "Clone",
+        "OnApply",
+        "get_FogColor",
+        "get_Texture",
+        "set_FogColor",
+        "set_Texture"
+      ],
+      "runtimeDataDetail": null
     }
   ],
   "ilOnlyBlockedCandidates": [
@@ -461,18 +619,18 @@
         "get_IsContentLost"
       ],
       "runtimeDataDetail": null
-    },
+    }
+  ],
+  "consumableCandidates": [
+
+  ],
+  "dependencyCompleteCandidates": [
     {
-      "name": "Microsoft.Xna.Framework.Graphics.EffectAnnotation",
+      "name": "Microsoft.Xna.Framework.Graphics.EffectMaterial",
       "kind": "class",
-      "expectedRubyIdentities": 14,
+      "expectedRubyIdentities": 1,
       "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.EffectParameterClass",
-        "Microsoft.Xna.Framework.Graphics.EffectParameterType",
-        "Microsoft.Xna.Framework.Matrix",
-        "Microsoft.Xna.Framework.Vector2",
-        "Microsoft.Xna.Framework.Vector3",
-        "Microsoft.Xna.Framework.Vector4"
+        "Microsoft.Xna.Framework.Graphics.Effect"
       ],
       "unmetDependencies": [
 
@@ -483,10 +641,10 @@
       "partialTypeDependencies": {
       },
       "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Graphics.EffectParameter"
+
       ],
       "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.EffectParameter"
+
       ],
       "partialDependencySatisfied": false,
       "partialRemainderReverseEdges": [
@@ -509,36 +667,73 @@
 
       ],
       "behaviourBearingMembers": [
-        "GetValueBoolean",
-        "GetValueInt32",
-        "GetValueSingle",
-        "GetValueVector2",
-        "GetValueVector3",
-        "GetValueVector4",
-        "GetValueMatrix",
-        "GetValueString"
+        ".ctor"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+        ".ctor"
+      ],
+      "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DirectionalLight",
+      "kind": "class",
+      "expectedRubyIdentities": 5,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.EffectParameter",
+        "Microsoft.Xna.Framework.Vector3"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor"
       ],
       "ilDerivationRequired": true,
       "ilAvailable": true,
       "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
       "nativeReachableMethods": [
         ".ctor",
-        "GetValueBoolean",
-        "GetValueInt32",
-        "GetValueMatrix",
-        "GetValueSingle",
-        "GetValueString",
-        "GetValueVector2",
-        "GetValueVector3",
-        "GetValueVector4"
+        "set_DiffuseColor",
+        "set_Direction",
+        "set_Enabled",
+        "set_SpecularColor"
       ],
       "runtimeDataDetail": null
-    }
-  ],
-  "consumableCandidates": [
-
-  ],
-  "dependencyCompleteCandidates": [
+    },
     {
       "name": "Microsoft.Xna.Framework.Design.MathTypeConverter",
       "kind": "class",
@@ -595,78 +790,6 @@
       "ilAssembly": "Microsoft.Xna.Framework.dll",
       "nativeReachableMethods": [
 
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.EffectAnnotation",
-      "kind": "class",
-      "expectedRubyIdentities": 14,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.EffectParameterClass",
-        "Microsoft.Xna.Framework.Graphics.EffectParameterType",
-        "Microsoft.Xna.Framework.Matrix",
-        "Microsoft.Xna.Framework.Vector2",
-        "Microsoft.Xna.Framework.Vector3",
-        "Microsoft.Xna.Framework.Vector4"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Graphics.EffectParameter"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.EffectParameter"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        "GetValueBoolean",
-        "GetValueInt32",
-        "GetValueSingle",
-        "GetValueVector2",
-        "GetValueVector3",
-        "GetValueVector4",
-        "GetValueMatrix",
-        "GetValueString"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-        ".ctor",
-        "GetValueBoolean",
-        "GetValueInt32",
-        "GetValueMatrix",
-        "GetValueSingle",
-        "GetValueString",
-        "GetValueVector2",
-        "GetValueVector3",
-        "GetValueVector4"
       ],
       "runtimeDataDetail": null
     },

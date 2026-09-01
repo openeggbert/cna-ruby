@@ -32,14 +32,18 @@ class RendererQualificationTest < Minitest::Test
     refute_empty runs
   end
 
-  # The whole point of the milestone: two artifacts, one of which really rasterises.
-  def test_both_qualified_artifacts_are_recorded_and_differ_only_in_the_renderer
-    assert_equal %w[HEADLESS OPENGL33], runs.keys.sort
+  # The whole point of the milestone: artifacts that differ only in the renderer, at least one of
+  # which really rasterises. A third joined when the Effect cluster needed a compiled-effect runtime,
+  # so the assertion is that the two the milestone qualified are still there and that every recorded
+  # artifact is a distinct binary.
+  def test_the_qualified_artifacts_are_recorded_and_differ_only_in_the_renderer
+    assert_equal %w[HEADLESS OPENGL33], (runs.keys & %w[HEADLESS OPENGL33]).sort
     paths = runs.values.map { |run| run.fetch("artifact").fetch("path") }
-    assert_equal 2, paths.uniq.length
+    assert_equal runs.length, paths.uniq.length
     digests = runs.values.map { |run| run.fetch("artifact").fetch("sha256") }
-    assert_equal 2, digests.uniq.length
+    assert_equal runs.length, digests.uniq.length
     assert(digests.all? { |digest| digest.match?(/\A[0-9a-f]{64}\z/) })
+    assert_operator runs.length, :>=, 2
   end
 
   # ------------------------------------------------------------- the fact every branch depends on

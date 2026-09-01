@@ -219,8 +219,9 @@ class InterfaceContractsTest < Minitest::Test
     # `IVertexType` and `VertexDeclaration` left this list when they were built; what this test
     # claims -- that **these** interface contracts imply no component, effect or device runtime --
     # is unchanged, and the interface that arrived is asserted to be abstract like the rest.
-    %i[Effect BasicEffect EffectParameter EffectTechnique DirectionalLight IEffectLights
-       IEffectSkinning].each do |name|
+    # The nine `Effect` types left this list when the cluster was built; what this milestone
+    # claimed, and still claims, is that **it** built none of them.
+    %i[BasicEffect DirectionalLight IEffectLights IEffectSkinning].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
     assert_kind_of Module, G::IVertexType

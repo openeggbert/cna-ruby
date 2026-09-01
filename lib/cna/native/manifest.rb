@@ -345,6 +345,83 @@ module CNA
         signature("cna_texturecube_get_data", T[:result], [T[:handle], pointer("CNA_TextureCubeTransfer", const: true), pointer("CNA_Color"), T[:u64], pointer("uint64_t")], ownership: "borrows texture; caller output"),
         signature("cna_texturecube_get_info", T[:result], [T[:handle], pointer("CNA_TextureCubeInfo")], ownership: "caller output"),
         signature("cna_texturecube_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED TextureCube"),
+        # The Effect cluster. Every getter in it returns an **owned view**: `cna_effect_get_parameters`
+        # hands back a fresh collection handle on every call, and so does
+        # `cna_effect_parameter_collection_get_at` for every element -- measured, two calls answer two
+        # different handles naming the same parameter. That is why the projection builds the whole
+        # object graph once, holds one Ruby object per logical child, and destroys every view when the
+        # Effect is disposed: XNA's collections are built once in the constructor and hand back the
+        # same object every time, and a fresh native handle is not a new XNA object.
+        #
+        # `cna_effect_parameter_collection_find_name` and `find_semantic` are deliberately **not**
+        # bound. XNA's `Item[String]` scans its own managed list with `String::op_Equality` and
+        # `GetParameterBySemantic` scans with `String::Compare(..., OrdinalIgnoreCase)`; CNA's two
+        # routes both match exactly, so binding them would change `GetParameterBySemantic`'s answer.
+        # The scan is managed here for the same reason it is managed in XNA.
+        signature("cna_effect_create_compiled", T[:result], [T[:handle], pointer("uint8_t", const: true), T[:u64], pointer("CNA_EffectHandle")], ownership: "borrows device; returns OWNED effect"),
+        signature("cna_effect_clone", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_EffectHandle")], ownership: "borrows source; returns OWNED clone"),
+        signature("cna_effect_dispose", T[:result], [handle("CNA_EffectHandle")], ownership: "borrows effect; releases its graphics resources without releasing the handle"),
+        signature("cna_effect_destroy", T[:result], [handle("CNA_EffectHandle")], ownership: "consumes OWNED effect"),
+        signature("cna_effect_get_parameters", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_EffectParameterCollectionHandle")], ownership: "borrows effect; returns an OWNED collection view"),
+        signature("cna_effect_get_techniques", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_EffectTechniqueCollectionHandle")], ownership: "borrows effect; returns an OWNED collection view"),
+        signature("cna_effect_get_current_technique", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_EffectTechniqueHandle")], ownership: "borrows effect; returns an OWNED technique view"),
+        signature("cna_effect_set_current_technique", T[:result], [handle("CNA_EffectHandle"), handle("CNA_EffectTechniqueHandle")], ownership: "borrows both"),
+        signature("cna_effect_parameter_collection_get_count", T[:result], [handle("CNA_EffectParameterCollectionHandle"), pointer("uint64_t")], ownership: "borrows collection; caller output"),
+        signature("cna_effect_parameter_collection_get_at", T[:result], [handle("CNA_EffectParameterCollectionHandle"), T[:u64], pointer("CNA_EffectParameterHandle")], ownership: "borrows collection; returns an OWNED element view"),
+        signature("cna_effect_parameter_collection_destroy", T[:result], [handle("CNA_EffectParameterCollectionHandle")], ownership: "consumes OWNED collection view"),
+        signature("cna_effect_parameter_destroy", T[:result], [handle("CNA_EffectParameterHandle")], ownership: "consumes OWNED parameter view"),
+        signature("cna_effect_parameter_get_info", T[:result], [handle("CNA_EffectParameterHandle"), pointer("CNA_EffectParameterInfo")], ownership: "caller output"),
+        signature("cna_effect_parameter_get_name_byte_count", T[:result], [handle("CNA_EffectParameterHandle"), pointer("uint64_t")], ownership: "borrows parameter; caller output"),
+        signature("cna_effect_parameter_copy_name", T[:result], [handle("CNA_EffectParameterHandle"), pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows parameter; caller output"),
+        signature("cna_effect_parameter_get_semantic_byte_count", T[:result], [handle("CNA_EffectParameterHandle"), pointer("uint64_t")], ownership: "borrows parameter; caller output"),
+        signature("cna_effect_parameter_copy_semantic", T[:result], [handle("CNA_EffectParameterHandle"), pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows parameter; caller output"),
+        signature("cna_effect_parameter_get_elements", T[:result], [handle("CNA_EffectParameterHandle"), pointer("CNA_EffectParameterCollectionHandle")], ownership: "borrows parameter; returns an OWNED collection view"),
+        signature("cna_effect_parameter_get_structure_members", T[:result], [handle("CNA_EffectParameterHandle"), pointer("CNA_EffectParameterCollectionHandle")], ownership: "borrows parameter; returns an OWNED collection view"),
+        signature("cna_effect_parameter_get_annotations", T[:result], [handle("CNA_EffectParameterHandle"), pointer("CNA_EffectAnnotationCollectionHandle")], ownership: "borrows parameter; returns an OWNED collection view"),
+        signature("cna_effect_parameter_get_value", T[:result], [handle("CNA_EffectParameterHandle"), enum("CNA_EffectValueType"), T[:ptr]], ownership: "borrows parameter; caller output"),
+        signature("cna_effect_parameter_get_values", T[:result], [handle("CNA_EffectParameterHandle"), enum("CNA_EffectValueType"), T[:u64], T[:ptr], T[:u64], pointer("uint64_t")], ownership: "borrows parameter; caller output"),
+        signature("cna_effect_parameter_set_value", T[:result], [handle("CNA_EffectParameterHandle"), enum("CNA_EffectValueType"), pointer("void", const: true)], ownership: "borrows parameter; copies the value"),
+        signature("cna_effect_parameter_set_values", T[:result], [handle("CNA_EffectParameterHandle"), enum("CNA_EffectValueType"), pointer("void", const: true), T[:u64]], ownership: "borrows parameter; copies the values"),
+        signature("cna_effect_parameter_get_value_string_byte_count", T[:result], [handle("CNA_EffectParameterHandle"), pointer("uint64_t")], ownership: "borrows parameter; caller output"),
+        signature("cna_effect_parameter_copy_value_string", T[:result], [handle("CNA_EffectParameterHandle"), pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows parameter; caller output"),
+        signature("cna_effect_parameter_set_value_string", T[:result], [handle("CNA_EffectParameterHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64])], ownership: "borrows parameter; copies the string"),
+        signature("cna_effect_parameter_get_value_texture", T[:result], [handle("CNA_EffectParameterHandle"), enum("CNA_EffectTextureType"), pointer("CNA_Handle")], ownership: "borrows parameter; returns a RETAINED texture handle"),
+        signature("cna_effect_parameter_set_value_texture", T[:result], [handle("CNA_EffectParameterHandle"), enum("CNA_EffectTextureType"), T[:handle]], ownership: "borrows parameter; retains the texture until the slot is replaced"),
+        signature("cna_effect_annotation_collection_get_count", T[:result], [handle("CNA_EffectAnnotationCollectionHandle"), pointer("uint64_t")], ownership: "borrows collection; caller output"),
+        signature("cna_effect_annotation_collection_get_at", T[:result], [handle("CNA_EffectAnnotationCollectionHandle"), T[:u64], pointer("CNA_EffectAnnotationHandle")], ownership: "borrows collection; returns an OWNED element view"),
+        signature("cna_effect_annotation_collection_destroy", T[:result], [handle("CNA_EffectAnnotationCollectionHandle")], ownership: "consumes OWNED collection view"),
+        signature("cna_effect_annotation_destroy", T[:result], [handle("CNA_EffectAnnotationHandle")], ownership: "consumes OWNED annotation view"),
+        signature("cna_effect_annotation_get_info", T[:result], [handle("CNA_EffectAnnotationHandle"), pointer("CNA_EffectAnnotationInfo")], ownership: "caller output"),
+        signature("cna_effect_annotation_get_name_byte_count", T[:result], [handle("CNA_EffectAnnotationHandle"), pointer("uint64_t")], ownership: "borrows annotation; caller output"),
+        signature("cna_effect_annotation_copy_name", T[:result], [handle("CNA_EffectAnnotationHandle"), pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows annotation; caller output"),
+        signature("cna_effect_annotation_get_semantic_byte_count", T[:result], [handle("CNA_EffectAnnotationHandle"), pointer("uint64_t")], ownership: "borrows annotation; caller output"),
+        signature("cna_effect_annotation_copy_semantic", T[:result], [handle("CNA_EffectAnnotationHandle"), pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows annotation; caller output"),
+        signature("cna_effect_annotation_get_value_boolean", T[:result], [handle("CNA_EffectAnnotationHandle"), pointer("CNA_Bool")], ownership: "borrows annotation; caller output"),
+        signature("cna_effect_annotation_get_value_int32", T[:result], [handle("CNA_EffectAnnotationHandle"), pointer("int32_t")], ownership: "borrows annotation; caller output"),
+        signature("cna_effect_annotation_get_value_single", T[:result], [handle("CNA_EffectAnnotationHandle"), pointer("float")], ownership: "borrows annotation; caller output"),
+        signature("cna_effect_annotation_get_value_vector2", T[:result], [handle("CNA_EffectAnnotationHandle"), pointer("CNA_Vector2")], ownership: "borrows annotation; caller output"),
+        signature("cna_effect_annotation_get_value_vector3", T[:result], [handle("CNA_EffectAnnotationHandle"), pointer("CNA_Vector3")], ownership: "borrows annotation; caller output"),
+        signature("cna_effect_annotation_get_value_vector4", T[:result], [handle("CNA_EffectAnnotationHandle"), pointer("CNA_Vector4")], ownership: "borrows annotation; caller output"),
+        signature("cna_effect_annotation_get_value_matrix", T[:result], [handle("CNA_EffectAnnotationHandle"), pointer("CNA_Matrix")], ownership: "borrows annotation; caller output"),
+        signature("cna_effect_annotation_get_value_string_byte_count", T[:result], [handle("CNA_EffectAnnotationHandle"), pointer("uint64_t")], ownership: "borrows annotation; caller output"),
+        signature("cna_effect_annotation_copy_value_string", T[:result], [handle("CNA_EffectAnnotationHandle"), pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows annotation; caller output"),
+        signature("cna_effect_pass_collection_get_count", T[:result], [handle("CNA_EffectPassCollectionHandle"), pointer("uint64_t")], ownership: "borrows collection; caller output"),
+        signature("cna_effect_pass_collection_get_at", T[:result], [handle("CNA_EffectPassCollectionHandle"), T[:u64], pointer("CNA_EffectPassHandle")], ownership: "borrows collection; returns an OWNED element view"),
+        signature("cna_effect_pass_collection_destroy", T[:result], [handle("CNA_EffectPassCollectionHandle")], ownership: "consumes OWNED collection view"),
+        signature("cna_effect_pass_destroy", T[:result], [handle("CNA_EffectPassHandle")], ownership: "consumes OWNED pass view"),
+        signature("cna_effect_pass_get_name_byte_count", T[:result], [handle("CNA_EffectPassHandle"), pointer("uint64_t")], ownership: "borrows pass; caller output"),
+        signature("cna_effect_pass_copy_name", T[:result], [handle("CNA_EffectPassHandle"), pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows pass; caller output"),
+        signature("cna_effect_pass_get_annotations", T[:result], [handle("CNA_EffectPassHandle"), pointer("CNA_EffectAnnotationCollectionHandle")], ownership: "borrows pass; returns an OWNED collection view"),
+        signature("cna_effect_pass_apply", T[:result], [handle("CNA_EffectPassHandle")], ownership: "borrows pass; selects it on the owning device"),
+        signature("cna_effect_technique_collection_get_count", T[:result], [handle("CNA_EffectTechniqueCollectionHandle"), pointer("uint64_t")], ownership: "borrows collection; caller output"),
+        signature("cna_effect_technique_collection_get_at", T[:result], [handle("CNA_EffectTechniqueCollectionHandle"), T[:u64], pointer("CNA_EffectTechniqueHandle")], ownership: "borrows collection; returns an OWNED element view"),
+        signature("cna_effect_technique_collection_destroy", T[:result], [handle("CNA_EffectTechniqueCollectionHandle")], ownership: "consumes OWNED collection view"),
+        signature("cna_effect_technique_destroy", T[:result], [handle("CNA_EffectTechniqueHandle")], ownership: "consumes OWNED technique view"),
+        signature("cna_effect_technique_get_name_byte_count", T[:result], [handle("CNA_EffectTechniqueHandle"), pointer("uint64_t")], ownership: "borrows technique; caller output"),
+        signature("cna_effect_technique_copy_name", T[:result], [handle("CNA_EffectTechniqueHandle"), pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows technique; caller output"),
+        signature("cna_effect_technique_get_index_ext", T[:result], [handle("CNA_EffectTechniqueHandle"), pointer("uint32_t")], ownership: "borrows technique; caller output"),
+        signature("cna_effect_technique_get_passes", T[:result], [handle("CNA_EffectTechniqueHandle"), pointer("CNA_EffectPassCollectionHandle")], ownership: "borrows technique; returns an OWNED collection view"),
+        signature("cna_effect_technique_get_annotations", T[:result], [handle("CNA_EffectTechniqueHandle"), pointer("CNA_EffectAnnotationCollectionHandle")], ownership: "borrows technique; returns an OWNED collection view"),
         # The two encode routes `SaveAsPng` and `SaveAsJpeg` need: ask for the size, then copy. CNA
         # also exports `cna_texture2d_save_file`, which writes a path rather than a stream and has
         # no XNA identity, so it stays unbound.
@@ -650,6 +727,25 @@ module CNA
         "CNA_SAMPLER_STATE_PRESET_LINEAR_WRAP" => 4,
         "CNA_SAMPLER_STATE_PRESET_POINT_CLAMP" => 5,
         "CNA_SAMPLER_STATE_PRESET_POINT_WRAP" => 6,
+        # The effect-cluster identities. `CNA_EffectValueType` tags which C type a parameter's
+        # value routes carry, `CNA_EffectTextureType` which of XNA's four texture overloads a
+        # texture slot is, and the class/type pairs are what `EffectParameter.ParameterClass` and
+        # `ParameterType` answer. Every one is measured against the header by the ABI probe.
+        "CNA_EFFECT_VALUE_BOOLEAN" => 0, "CNA_EFFECT_VALUE_INT32" => 1,
+        "CNA_EFFECT_VALUE_SINGLE" => 2, "CNA_EFFECT_VALUE_MATRIX" => 3,
+        "CNA_EFFECT_VALUE_MATRIX_TRANSPOSE" => 4, "CNA_EFFECT_VALUE_QUATERNION" => 5,
+        "CNA_EFFECT_VALUE_VECTOR2" => 6, "CNA_EFFECT_VALUE_VECTOR3" => 7,
+        "CNA_EFFECT_VALUE_VECTOR4" => 8,
+        "CNA_EFFECT_TEXTURE_BASE" => 0, "CNA_EFFECT_TEXTURE_2D" => 1,
+        "CNA_EFFECT_TEXTURE_3D" => 2, "CNA_EFFECT_TEXTURE_CUBE" => 3,
+        "CNA_EFFECT_PARAMETER_CLASS_SCALAR" => 0, "CNA_EFFECT_PARAMETER_CLASS_VECTOR" => 1,
+        "CNA_EFFECT_PARAMETER_CLASS_MATRIX" => 2, "CNA_EFFECT_PARAMETER_CLASS_OBJECT" => 3,
+        "CNA_EFFECT_PARAMETER_CLASS_STRUCT" => 4,
+        "CNA_EFFECT_PARAMETER_TYPE_VOID" => 0, "CNA_EFFECT_PARAMETER_TYPE_BOOL" => 1,
+        "CNA_EFFECT_PARAMETER_TYPE_INT32" => 2, "CNA_EFFECT_PARAMETER_TYPE_SINGLE" => 3,
+        "CNA_EFFECT_PARAMETER_TYPE_STRING" => 4, "CNA_EFFECT_PARAMETER_TYPE_TEXTURE" => 5,
+        "CNA_EFFECT_PARAMETER_TYPE_TEXTURE1D" => 6, "CNA_EFFECT_PARAMETER_TYPE_TEXTURE2D" => 7,
+        "CNA_EFFECT_PARAMETER_TYPE_TEXTURE3D" => 8, "CNA_EFFECT_PARAMETER_TYPE_TEXTURE_CUBE" => 9,
         "CNA_MICROPHONE_STATE_STARTED" => 0,
         "CNA_MICROPHONE_STATE_STOPPED" => 1,
         "CNA_MICROPHONE_STATE_MAXIMUM" => 1,

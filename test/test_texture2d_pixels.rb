@@ -222,7 +222,9 @@ class Texture2DFromStreamTest < Minitest::Test
     assert_includes STRICT.fetch("completeTypeNames"), NAME
     refute_includes STRICT.fetch("partialTypes").keys, NAME
     assert_equal ReviewedScoreboard::PARTIAL_TYPES, STRICT.fetch("PARTIAL_TYPES")
-    assert_equal 3, STRICT.fetch("PARTIAL_TYPES"), "Texture2D was the fourth"
+    # Texture2D was the fourth partial type to complete; SpriteBatch was the sixth, when the
+    # Effect cluster landed.
+    assert_equal 2, STRICT.fetch("PARTIAL_TYPES")
     assert_equal ReviewedScoreboard::COMPLETE_TYPES, STRICT.fetch("COMPLETE_TYPES")
   end
 

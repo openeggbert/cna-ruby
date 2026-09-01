@@ -57,8 +57,9 @@ class GameDisposalTest < Minitest::Test
     # 42 until the GraphicsDeviceManager preferences milestone closed ApplyChanges and
     # ToggleFullScreen, and 40 until the GraphicsResource disposal contract closed four more --
     # its own two plus the Texture2D and SpriteBatch overrides that inherit it, and 36 until
-    # SaveAsPng and SaveAsJpeg landed, and 34 until the two Texture2D constructors did.
-    assert_equal 28, STRICT.fetch("OVERLOAD_MAPPING_MISMATCH")
+    # SaveAsPng and SaveAsJpeg landed, and 34 until the two Texture2D constructors did, and 28
+    # until SpriteBatch.Begin's last two overloads did. The reviewed number is named once.
+    assert_equal ReviewedScoreboard::OVERLOAD_MAPPING_MISMATCH, STRICT.fetch("OVERLOAD_MAPPING_MISMATCH")
   end
 
   # Ruby cannot give one name two visibilities, so the arity dispatch widens the protected overload

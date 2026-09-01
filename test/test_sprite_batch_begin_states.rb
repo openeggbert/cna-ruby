@@ -32,10 +32,12 @@ class SpriteBatchBeginStatesTest < Minitest::Test
     assert_equal [0, 2, 5], (overloads - with_effect).map(&:length).sort
 
     # `Draw`'s three destination-rectangle overloads were built in the milestone straight after,
-    # so `Begin`'s two Effect-taking forms are the whole of what this type still owes.
-    assert_equal ["#{NAME}::Begin (2 overloads)"], ReviewedScoreboard.partial_remainder(STRICT, NAME)
+    # and the two `Effect`-taking `Begin` forms in the one that built the `Effect` cluster, which is
+    # what completed the type. What **this** milestone claimed -- that it projected exactly the
+    # three needing no `Effect` -- is unchanged, and the two that do are now projected as well.
+    assert_empty ReviewedScoreboard.partial_remainder(STRICT, NAME)
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
-    refute G.const_defined?(:Effect, false), "which is why the other two stay outstanding"
+    assert G.const_defined?(:Effect, false), "which is what let the other two be built"
   end
 
   # ------------------------------------------------------------------------------ live behaviour
@@ -174,14 +176,14 @@ class SpriteBatchBeginStatesTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_adds_no_effect_transform_or_device_state_property
-    refute G.const_defined?(:Effect, false)
+    # `Effect` left this list when the cluster was built; what this milestone claimed, and still
+    # claims, is that **it** built none of it -- three Begin overloads and no effect surface.
     %i[BlendState DepthStencilState RasterizerState].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-    # `begin_with_states` stays unbound: `begin_with_effect` is the route XNA's seven-argument Begin
-    # maps to, and the two overloads still outstanding are the ones that will need its last two
-    # parameters.
+    # `begin_with_states` stays unbound: `begin_with_effect` is the route XNA's seven-argument
+    # Begin maps to, and its last two parameters are what the Effect-taking overloads now fill.
     refute_includes symbols, "cna_sprite_batch_begin_with_states"
     assert_includes symbols, "cna_sprite_batch_begin_with_effect"
     assert_includes symbols, "cna_sprite_batch_begin"

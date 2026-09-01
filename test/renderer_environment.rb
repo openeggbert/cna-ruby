@@ -51,10 +51,24 @@ module RendererEnvironment
   def measurement
     return @measurement if defined?(@measurement)
 
-    @measurement = available? ? measure : nil
+    @measurement = available? ? measure_safely : nil
   end
 
   def measurement! = measurement
+
+  # The measurement must never take the suite down with it. A windowed renderer acquires the video
+  # subsystem, and on this host a **fresh X connection per game** is a finite resource: creating and
+  # destroying tens of games against one X server intermittently fails inside SDL with
+  # `AcquireSubsystem(Video) failed: x11 not available`, and the failure survives into the next
+  # process. That is an environment limit rather than a defect in this binding -- one long-lived
+  # game is unaffected, 600 frames in a row -- so an unmeasurable environment is reported as
+  # unmeasured, every renderer-conditional test skips and says why, and everything else still runs.
+  def measure_safely
+    measure
+  rescue CNA::NativeError => error
+    warn "renderer environment unmeasurable: #{error.message}"
+    nil
+  end
 
   def renderer_name = measurement&.fetch(:renderer_name)
 
@@ -66,6 +80,22 @@ module RendererEnvironment
   def volume_storage? = measurement&.fetch(:volume_storage) || false
 
   def cube_face_storage? = measurement&.fetch(:cube_face_storage) || false
+
+  # `CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS`. Compiled Effect Framework bytecode needs the
+  # MojoShader runtime, which is a **fetched dependency** the EasyGL, SDL_GPU and Vulkan families
+  # only carry when their build option is on, so the capability never claims more than the binary
+  # contains. It is false on the HEADLESS and OPENGL33 artifacts and true on the OPENGLES3 one
+  # built `-DCNA_EASYGL_COMPILED_EFFECTS=ON`.
+  COMPILED_EFFECTS = 13
+
+  def compiled_effects? = measurement&.fetch(:compiled_effects) || false
+
+  # The compiled-effect fixture, referenced **by path** through an environment variable the way the
+  # XACT and XNB fixtures are, and never copied into this repository.
+  def effect_fixture
+    path = ENV["CNA_TEST_FX"]
+    path if path && File.file?(path)
+  end
 
   # True when this artifact's renderer really creates a native window, which is the single fact the
   # six environment-dependent expectations turn on.
@@ -131,8 +161,17 @@ module RendererEnvironment
       window_system: window_system_of(game_handle),
       format_support: CLASSIFIED_FORMATS.keys.to_h { |format| [format, format_support_of(device_handle, format)] },
       volume_storage: volume_storage_of(device),
-      cube_face_storage: cube_face_storage_of(device)
+      cube_face_storage: cube_face_storage_of(device),
+      compiled_effects: capability_of(device_handle, COMPILED_EFFECTS)
     }
+  end
+
+  def capability_of(device_handle, capability)
+    supported = Fiddle::Pointer.malloc(4, Fiddle::RUBY_FREE)
+    supported[0, 4] = "\0" * 4
+    result = route("cna_graphics_device_supports_capability", [U64, U32, PTR])
+             .call(device_handle, capability, supported)
+    result.zero? && supported[0, 4].unpack1("L") == 1
   end
 
   G = Microsoft::Xna::Framework::Graphics

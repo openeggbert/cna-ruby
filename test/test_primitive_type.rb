@@ -157,9 +157,9 @@ class PrimitiveTypeTest < Minitest::Test
     # value holder that holds no buffer and draws nothing, so the claim is unchanged.
     # `VertexDeclaration` and `IVertexType` left this list when they were built. Neither holds a
     # buffer nor draws anything, so what this test claims is unchanged.
-    %i[VertexBuffer IndexBuffer DynamicVertexBuffer DynamicIndexBuffer
-       Effect BasicEffect
-       PrimitiveTypeConverter].each do |name|
+    # The nine `Effect` types left this list when the cluster was built; what this milestone
+    # claimed, and still claims, is that **it** built none of them.
+    %i[VertexBuffer IndexBuffer DynamicVertexBuffer DynamicIndexBuffer BasicEffect PrimitiveTypeConverter].each do |name|
       refute G.const_defined?(name, false), name.to_s
     end
     %i[SetVertexBuffer Indices DrawUserPrimitives].each do |name|

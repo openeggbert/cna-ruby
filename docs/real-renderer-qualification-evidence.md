@@ -138,6 +138,33 @@ and releases the video subsystem and each acquisition opens a fresh X connection
 defect and not deterministic: the same suite run again passes. One long-lived game — which is what
 the frame-stability runs and any real consumer use — is unaffected, 600 frames in a row.
 
+## A third artifact, and the fresh-X-server rule
+
+Foundation 80 added a third qualified artifact: `cmake-build-debug`'s `OPENGLES3` build with
+`-DCNA_EASYGL_COMPILED_EFFECTS=ON`, staged as
+`~/deps/cna-c-abi-0.21.0-opengles3-fx/libcna_c_api.so`, SHA-256
+`ab055b5e9c10b57d9755445951b118406bc065ca9eaa3fe4c0851a2352bb3e6e`. It passes the same ABI gate, it
+has a real X11 window and volume and cube storage like `OPENGL33`, and it is the only one of the
+three whose `CNA_GRAPHICS_CAPABILITY_COMPILED_EFFECTS` is true — which is what makes `Effect`
+constructible at all.
+
+**The environment limit above has an exact remedy, and it is now the documented procedure.** One X
+connection per game is a finite resource on this host, and it is not reclaimed within a run: a churn
+test created 155 games before the 156th failed, and the *next* process failed at its 9th. Running
+the whole suite under a windowed renderer in a **fresh** X server fixes it completely:
+
+```sh
+CNA_NATIVE_LIBRARY=~/deps/cna-c-abi-0.21.0-opengles3-fx/libcna_c_api.so \
+CNA_TEST_FX=.../CnaConformanceEffect.fxb SDL_VIDEODRIVER=x11 \
+xvfb-run -a -s "-screen 0 1280x800x24 -nolisten tcp" rake test
+```
+
+1503 runs / 0 failures / 0 errors under each of the three artifacts, with 17 skips on `HEADLESS`, 13
+on `OPENGL33` and 2 on the compiled-effects build — the difference being exactly the tests whose
+behaviour needs a capability the artifact does not have, each of which says so. The environment
+measurement itself is failure-tolerant: an unmeasurable environment is reported as unmeasured rather
+than taking the suite down with it.
+
 ## Reproducing
 
 ```sh

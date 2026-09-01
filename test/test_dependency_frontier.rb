@@ -364,7 +364,10 @@ class DependencyFrontierTest < Minitest::Test
     # reaches the host and this projection is a façade over CNA's native Game, and ContentManager's
     # reaches the content pipeline, which is exactly the native route `Load<Texture2D>` calls. Every
     # entry on this list is a type whose native boundary the binding really implements, which is the
-    # property the list exists to check -- not a count that must stay still.
+    # property the list exists to check -- not a count that must stay still. The nine Effect types
+    # joined it together, and `SpriteBatch` joined with them: it was native-reachable all along and
+    # only appears here now because a **partial** type is not on this list, and the two Effect-taking
+    # Begin overloads completed it.
     assert_equal %w[
       Microsoft.Xna.Framework.Audio.AudioCategory
       Microsoft.Xna.Framework.Audio.AudioEngine
@@ -379,7 +382,17 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.FrameworkDispatcher
       Microsoft.Xna.Framework.Game
       Microsoft.Xna.Framework.GamerServices.GamerServicesComponent
+      Microsoft.Xna.Framework.Graphics.Effect
+      Microsoft.Xna.Framework.Graphics.EffectAnnotation
+      Microsoft.Xna.Framework.Graphics.EffectAnnotationCollection
+      Microsoft.Xna.Framework.Graphics.EffectParameter
+      Microsoft.Xna.Framework.Graphics.EffectParameterCollection
+      Microsoft.Xna.Framework.Graphics.EffectPass
+      Microsoft.Xna.Framework.Graphics.EffectPassCollection
+      Microsoft.Xna.Framework.Graphics.EffectTechnique
+      Microsoft.Xna.Framework.Graphics.EffectTechniqueCollection
       Microsoft.Xna.Framework.Graphics.SamplerStateCollection
+      Microsoft.Xna.Framework.Graphics.SpriteBatch
       Microsoft.Xna.Framework.Graphics.SpriteFont
       Microsoft.Xna.Framework.Graphics.Texture
       Microsoft.Xna.Framework.Graphics.Texture2D
@@ -473,9 +486,11 @@ class DependencyFrontierTest < Minitest::Test
     # when the four state objects were audited and built and SamplerStateCollection appeared behind
     # SamplerState; 5 when that collection was built too; 8 when VertexDeclaration and the
     # IVertexType it uncovered were both built, putting the four vertex structs on the queue; 4 when
-    # those four were consumed and nothing arrived behind them; and 3 when Media.VideoPlayer's
-    # blocker was audited and found not to be one either.
-    assert_equal 3, REPORT.fetch("dependencyCompleteCandidates").length
+    # those four were consumed and nothing arrived behind them; 3 when Media.VideoPlayer's
+    # blocker was audited and found not to be one either; and 4 when the nine-type Effect cluster
+    # was built -- EffectAnnotation left it and EffectMaterial and DirectionalLight arrived behind
+    # the Effect base. A frontier that rises when a base completes is advancing, not regressing.
+    assert_equal 4, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -669,7 +684,8 @@ class DependencyFrontierTest < Minitest::Test
       "Microsoft.Xna.Framework.Graphics.GraphicsAdapter" => "NATIVE_RUNTIME",
       # TextureCollection was here until its deferral was checked and turned out to be simply
       # mistaken -- the two routes it needs were exported by the retired artifact too.
-      "Microsoft.Xna.Framework.Graphics.EffectAnnotation" => "NATIVE_RUNTIME",
+      # EffectAnnotation replaced it and has itself been replaced: the Effect cluster built the
+      # EffectParameter its eight getters forward to, and then built the annotation with it.
       # TitleContainer used to be here under BCL_PROJECTION and is deliberately not replaced by
       # another example: the Stream projection consumed it, which is what a retired blocker looks
       # like. `test_the_stream_projection_consumed_title_container` asserts that directly.
@@ -696,8 +712,13 @@ class DependencyFrontierTest < Minitest::Test
       # place for one milestone and then went the same way: fifteen native-reachable members, every
       # one with a working route, the eleventh deferral this register has retired. What is left is
       # the three that were audited and stayed deferred, which is the whole table above -- so this
-      # register has no replacement example to name, and says so.
-      "Microsoft.Xna.Framework.Design.MathTypeConverter" => "BCL_PROJECTION"
+      # register has no replacement example to name, and says so. EffectAnnotation then went the
+      # same way -- built with the cluster whose EffectParameter its getters forward to -- and
+      # EffectMaterial and DirectionalLight took its place, each blocked on NATIVE_RUNTIME and each
+      # still to be audited.
+      "Microsoft.Xna.Framework.Design.MathTypeConverter" => "BCL_PROJECTION",
+      "Microsoft.Xna.Framework.Graphics.EffectMaterial" => "NATIVE_RUNTIME",
+      "Microsoft.Xna.Framework.Graphics.DirectionalLight" => "NATIVE_RUNTIME"
     }.each do |name, expected|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
       refute_nil candidate, name

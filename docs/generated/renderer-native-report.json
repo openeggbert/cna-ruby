@@ -271,6 +271,141 @@
           "seconds": 10.315
         }
       }
+    },
+    "OPENGLES3": {
+      "artifact": {
+        "path": "/home/robertvokac/deps/cna-c-abi-0.21.0-opengles3-fx/libcna_c_api.so",
+        "bytes": 188524184,
+        "sha256": "ab055b5e9c10b57d9755445951b118406bc065ca9eaa3fe4c0851a2352bb3e6e"
+      },
+      "environment": {
+        "DISPLAY": ":107",
+        "WAYLAND_DISPLAY": "wayland-0",
+        "SDL_VIDEODRIVER": "x11"
+      },
+      "renderer": {
+        "rendererInfoResult": 0,
+        "rendererName": "OPENGLES3",
+        "capabilityFlags": 524287,
+        "rendererType": 3,
+        "maxTextureDimension": 16384,
+        "nativeWindowResult": 0,
+        "nativeWindowSystem": 2,
+        "nativeWindowHasDisplayPointer": true,
+        "nativeWindowXid": 2097203,
+        "clientBoundsResult": 0,
+        "clientBounds": [
+          0,
+          0,
+          800,
+          480
+        ],
+        "screenDeviceName": "screen",
+        "capabilities": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true,
+          "10": true,
+          "11": true,
+          "12": true,
+          "13": true,
+          "14": true,
+          "15": true,
+          "16": true,
+          "17": true,
+          "18": true
+        }
+      },
+      "adapter": {
+        "countResult": 0,
+        "count": 1,
+        "description": "Default Display",
+        "deviceName": "\\\\.\\DISPLAY1",
+        "isDefaultAdapter": true,
+        "isWideScreen": true,
+        "vendorId": 4098,
+        "deviceId": 5567,
+        "revision": 0,
+        "subSystemId": 0,
+        "currentDisplayModeResult": 0,
+        "currentDisplayMode": {
+          "width": 800,
+          "height": 480,
+          "aspectRatio": 1.6666666269302368,
+          "format": 0
+        },
+        "supportedDisplayModes": [
+          {
+            "width": 800,
+            "height": 480,
+            "format": 0
+          }
+        ],
+        "monitorHandleResult": 6,
+        "refreshResult": 6
+      },
+      "displayEvidenceConflict": {
+        "windowReportsADisplayNamed": "screen",
+        "adapterReportsDescription": "Default Display",
+        "adapterReportsCurrentMode": [
+          800,
+          480
+        ],
+        "adapterIsTheNoDisplayFallback": true,
+        "windowHasANativeSurface": true,
+        "refreshRefused": true,
+        "adapterContradictsTheWindow": true
+      },
+      "renderTarget": {
+        "createResult": 0,
+        "created": true,
+        "infoResult": 0,
+        "width": 8,
+        "height": 4,
+        "isContentLost": false,
+        "rendererAvailable": true,
+        "format": 0,
+        "levelCount": 1,
+        "bindResult": 0,
+        "clearResult": 0,
+        "unbindResult": 0,
+        "readResult": 0,
+        "elementsWritten": 32,
+        "clearedTo": [
+          64,
+          128,
+          191,
+          255
+        ],
+        "firstPixel": [
+          64,
+          128,
+          191,
+          255
+        ],
+        "allPixelsEqual": true
+      },
+      "frames": {
+        "short": {
+          "requested": 60,
+          "completed": 60,
+          "error": null,
+          "seconds": 1.137
+        },
+        "long": {
+          "requested": 600,
+          "completed": 600,
+          "error": null,
+          "seconds": 10.208
+        }
+      }
     }
   }
 }

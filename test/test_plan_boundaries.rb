@@ -82,11 +82,12 @@ class PlanBoundariesTest < Minitest::Test
     partial = STRICT.fetch("partialTypes")
     device = partial.fetch("Microsoft.Xna.Framework.Graphics.GraphicsDevice")
     manager = partial.fetch("Microsoft.Xna.Framework.GraphicsDeviceManager")
-    batch = partial.fetch("Microsoft.Xna.Framework.Graphics.SpriteBatch")
     assert_equal 37, device.length
     assert_equal 15, manager.length
-    assert_includes SECTION.gsub(/\s+/, " "), "owes thirty-seven members and `GraphicsDeviceManager` fifteen"
-    assert_equal ["Microsoft.Xna.Framework.Graphics.SpriteBatch::Begin (2 overloads)"], batch
-    assert_includes SECTION.gsub(/\s+/, " "), "owes only `Begin`'s two `Effect`-taking overloads"
+    assert_equal 2, partial.length, "SpriteBatch left when the Effect cluster landed"
+    flat = SECTION.gsub(/\s+/, " ")
+    assert_includes flat, "owes thirty-seven members"
+    assert_includes flat, "`GraphicsDeviceManager` fifteen"
+    assert_includes flat, "they are the only two partial types left"
   end
 end

@@ -290,9 +290,10 @@ class DisposableCollapseTest < Minitest::Test
     # members the pinned contract never selects. `NONE` then appeared for the first time since
     # Foundation 32, carrying the four vertex structs the IVertexType projection uncovered.
     # `NONE` lasted one milestone: the four vertex structs it counted were built immediately.
-    # NATIVE_RUNTIME 3 -> 2 when Media.VideoPlayer's blocker was audited and found not to be one:
-    # every candidate left has now been measured and stayed deferred.
-    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 2},
+    # NATIVE_RUNTIME 3 -> 2 when Media.VideoPlayer's blocker was audited and found not to be one,
+    # and 2 -> 3 when the Effect cluster was built: EffectAnnotation left and EffectMaterial and
+    # DirectionalLight arrived behind the Effect base. What this collapse claimed is unchanged.
+    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 3},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end

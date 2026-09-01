@@ -368,6 +368,110 @@ module Microsoft
           def GetData: (Module type, *untyped arguments) -> nil
         end
 
+        class EffectParameter
+          attr_reader Name: String
+          attr_reader Semantic: String
+          attr_reader RowCount: Integer
+          attr_reader ColumnCount: Integer
+          attr_reader ParameterClass: EffectParameterClass
+          attr_reader ParameterType: EffectParameterType
+          attr_reader Elements: EffectParameterCollection
+          attr_reader StructureMembers: EffectParameterCollection
+          attr_reader Annotations: EffectAnnotationCollection
+          def GetValueBoolean: () -> bool
+          def GetValueInt32: () -> Integer
+          def GetValueSingle: () -> Float
+          def GetValueVector2: () -> Vector2
+          def GetValueVector3: () -> Vector3
+          def GetValueVector4: () -> Vector4
+          def GetValueQuaternion: () -> Quaternion
+          def GetValueMatrix: () -> Matrix
+          def GetValueMatrixTranspose: () -> Matrix
+          def GetValueString: () -> String
+          def GetValueTexture2D: () -> Texture2D?
+          def GetValueTexture3D: () -> Texture3D?
+          def GetValueTextureCube: () -> TextureCube?
+          def GetValueBooleanArray: (Integer count) -> Array[bool]
+          def GetValueInt32Array: (Integer count) -> Array[Integer]
+          def GetValueSingleArray: (Integer count) -> Array[Float]
+          def GetValueVector2Array: (Integer count) -> Array[Vector2]
+          def GetValueVector3Array: (Integer count) -> Array[Vector3]
+          def GetValueVector4Array: (Integer count) -> Array[Vector4]
+          def GetValueQuaternionArray: (Integer count) -> Array[Quaternion]
+          def GetValueMatrixArray: (Integer count) -> Array[Matrix]
+          def GetValueMatrixTransposeArray: (Integer count) -> Array[Matrix]
+          def SetValue: (untyped value) -> nil
+          def SetValueTranspose: (untyped value) -> nil
+        end
+
+        class EffectParameterCollection
+          include Enumerable[EffectParameter]
+          def Count: () -> Integer
+          def []: (Integer | String key) -> EffectParameter?
+          def GetParameterBySemantic: (String? semantic) -> EffectParameter?
+          def GetEnumerator: () -> Enumerator[EffectParameter, untyped]
+        end
+
+        class EffectAnnotation
+          attr_reader Name: String
+          attr_reader Semantic: String
+          attr_reader RowCount: Integer
+          attr_reader ColumnCount: Integer
+          attr_reader ParameterClass: EffectParameterClass
+          attr_reader ParameterType: EffectParameterType
+          def GetValueBoolean: () -> bool
+          def GetValueInt32: () -> Integer
+          def GetValueSingle: () -> Float
+          def GetValueVector2: () -> Vector2
+          def GetValueVector3: () -> Vector3
+          def GetValueVector4: () -> Vector4
+          def GetValueMatrix: () -> Matrix
+          def GetValueString: () -> String
+        end
+
+        class EffectAnnotationCollection
+          include Enumerable[EffectAnnotation]
+          def Count: () -> Integer
+          def []: (Integer | String key) -> EffectAnnotation?
+          def GetEnumerator: () -> Enumerator[EffectAnnotation, untyped]
+        end
+
+        class EffectPass
+          attr_reader Name: String
+          attr_reader Annotations: EffectAnnotationCollection
+          def Apply: () -> nil
+        end
+
+        class EffectPassCollection
+          include Enumerable[EffectPass]
+          def Count: () -> Integer
+          def []: (Integer | String key) -> EffectPass?
+          def GetEnumerator: () -> Enumerator[EffectPass, untyped]
+        end
+
+        class EffectTechnique
+          attr_reader Name: String
+          attr_reader Passes: EffectPassCollection
+          attr_reader Annotations: EffectAnnotationCollection
+        end
+
+        class EffectTechniqueCollection
+          include Enumerable[EffectTechnique]
+          def Count: () -> Integer
+          def []: (Integer | String key) -> EffectTechnique?
+          def GetEnumerator: () -> Enumerator[EffectTechnique, untyped]
+        end
+
+        class Effect < GraphicsResource
+          def initialize: (*untyped arguments) -> void
+          attr_reader Parameters: EffectParameterCollection
+          attr_reader Techniques: EffectTechniqueCollection
+          def Clone: () -> Effect
+          def CurrentTechnique: () -> EffectTechnique?
+          def CurrentTechnique=: (EffectTechnique value) -> EffectTechnique
+          def OnApply: () -> nil
+        end
+
         class BlendState < GraphicsResource
           def initialize: () -> void
           attr_accessor ColorSourceBlend: Blend

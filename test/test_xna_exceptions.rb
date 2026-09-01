@@ -164,7 +164,9 @@ class XnaExceptionsTest < Minitest::Test
     # is that **it** built none of it: three exception types and nothing else.
     %i[InstancePlayLimitException NoAudioHardwareException NoMicrophoneConnectedException]
       .each { |name| assert F::Audio.const_defined?(name, false), "Audio::#{name}" }
-    %i[GraphicsAdapter RenderTarget2D Effect].each do |name|
+    # The nine `Effect` types left this list when the cluster was built; what this milestone
+    # claimed, and still claims, is that **it** built none of them.
+    %i[GraphicsAdapter RenderTarget2D].each do |name|
       refute F::Graphics.const_defined?(name, false), "Graphics::#{name}"
     end
     # Foundation 49 opened Storage for exactly one type -- the shape Audio and Media took -- and

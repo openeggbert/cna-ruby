@@ -764,6 +764,79 @@ module CNA
         ]
       end
 
+      # The three remaining math values the effect-parameter routes carry by pointer, and the
+      # sixteen-float row-major matrix whose field order is XNA's own M11..M44.
+      class Vector3 < Structure
+        layout size: 12, alignment: 4, fields: [
+          Layouts.field("x", "float", 0, 4),
+          Layouts.field("y", "float", 4, 4),
+          Layouts.field("z", "float", 8, 4)
+        ]
+      end
+
+      class Vector4 < Structure
+        layout size: 16, alignment: 4, fields: [
+          Layouts.field("x", "float", 0, 4),
+          Layouts.field("y", "float", 4, 4),
+          Layouts.field("z", "float", 8, 4),
+          Layouts.field("w", "float", 12, 4)
+        ]
+      end
+
+      class Quaternion < Structure
+        layout size: 16, alignment: 4, fields: [
+          Layouts.field("x", "float", 0, 4),
+          Layouts.field("y", "float", 4, 4),
+          Layouts.field("z", "float", 8, 4),
+          Layouts.field("w", "float", 12, 4)
+        ]
+      end
+
+      class Matrix < Structure
+        layout size: 64, alignment: 4, fields: (1..4).flat_map { |row|
+          (1..4).map { |column| Layouts.field("m#{row}#{column}", "float", ((row - 1) * 4 + column - 1) * 4, 4) }
+        }
+      end
+
+      class Color < Structure
+        layout size: 4, alignment: 1, fields: [
+          Layouts.field("r", "uint8_t", 0, 1), Layouts.field("g", "uint8_t", 1, 1),
+          Layouts.field("b", "uint8_t", 2, 1), Layouts.field("a", "uint8_t", 3, 1)
+        ]
+      end
+
+      # `CNA_EffectParameterInfo` and `CNA_EffectAnnotationInfo` are the immutable metadata both
+      # types' properties read: a class, a storage type, and a row/column count.
+      class EffectParameterInfo < Structure
+        layout size: 24, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("row_count", "int32_t", 8, 4), Layouts.field("column_count", "int32_t", 12, 4),
+          Layouts.field("parameter_class", "CNA_EffectParameterClass", 16, 4),
+          Layouts.field("parameter_type", "CNA_EffectParameterType", 20, 4)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class EffectAnnotationInfo < Structure
+        layout size: 24, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("row_count", "int32_t", 8, 4), Layouts.field("column_count", "int32_t", 12, 4),
+          Layouts.field("parameter_class", "CNA_EffectParameterClass", 16, 4),
+          Layouts.field("parameter_type", "CNA_EffectParameterType", 20, 4)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       class GamePadAnalogState < Structure
         layout size: 24, alignment: 4, fields: [
           Layouts.field("left_thumb_stick", "CNA_Vector2", 0, 8),

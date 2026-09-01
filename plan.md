@@ -230,28 +230,29 @@ delimited and checked against `docs/generated/missing-type-inventory.md` by
 `test/test_plan_boundaries.rb`, so every name in it is a type the strict report really calls missing.
 
 <!-- absent-types:begin -->
-`Effect`, `EffectParameter`, `EffectParameterCollection`, `EffectAnnotation`,
-`EffectAnnotationCollection`, `EffectPass`, `EffectPassCollection`, `EffectTechnique`,
-`EffectTechniqueCollection`, `EffectMaterial`, `IEffectLights`, `BasicEffect`, `SkinnedEffect`,
-`AlphaTestEffect`, `DualTextureEffect`, `EnvironmentMapEffect`, `DirectionalLight`, `VertexBuffer`,
+`EffectMaterial`, `IEffectLights`, `BasicEffect`, `SkinnedEffect`, `AlphaTestEffect`,
+`DualTextureEffect`, `EnvironmentMapEffect`, `DirectionalLight`, `VertexBuffer`,
 `DynamicVertexBuffer`, `IndexBuffer`, `DynamicIndexBuffer`, `VertexBufferBinding`,
-`RenderTarget2D`, `RenderTargetCube`, `RenderTargetBinding`, `GraphicsAdapter`, `OcclusionQuery`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs`,
-`DrawableGameComponent`, `Model`, `ModelBone`, `ModelMesh`, `ModelMeshPart`, `ModelBoneCollection`,
-`ModelMeshCollection`, `ModelMeshPartCollection`, `ModelEffectCollection`, `MediaPlayer`,
-`MediaLibrary`, `MediaQueue`, `Song`, `SongCollection`, `Album`, `AlbumCollection`, `Artist`,
-`ArtistCollection`, `Genre`, `GenreCollection`, `Playlist`, `PlaylistCollection`, `Picture`,
-`PictureAlbum`, `PictureAlbumCollection`, `PictureCollection`, `ContentReader`, `ContentTypeReader`,
+`RenderTarget2D`, `RenderTargetCube`, `RenderTargetBinding`, `GraphicsAdapter`, `OcclusionQuery`,
+`GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs`, `DrawableGameComponent`,
+`Model`, `ModelBone`, `ModelMesh`, `ModelMeshPart`, `ModelBoneCollection`, `ModelMeshCollection`,
+`ModelMeshPartCollection`, `ModelEffectCollection`, `MediaPlayer`, `MediaLibrary`, `MediaQueue`,
+`Song`, `SongCollection`, `Album`, `AlbumCollection`, `Artist`, `ArtistCollection`, `Genre`,
+`GenreCollection`, `Playlist`, `PlaylistCollection`, `Picture`, `PictureAlbum`,
+`PictureAlbumCollection`, `PictureCollection`, `ContentReader`, `ContentTypeReader`,
 `ContentTypeReaderManager`, `StorageDevice`, `StorageContainer`, `MathTypeConverter`,
 `ColorConverter`, `MatrixConverter`, `PlaneConverter`, `PointConverter`, `QuaternionConverter`,
 `RayConverter`, `RectangleConverter`, `Vector2Converter`, `Vector3Converter`, `Vector4Converter`,
 `BoundingBoxConverter`, `BoundingSphereConverter`
 <!-- absent-types:end -->
 
-The graphics runtime is the large remaining area, and the whole `Effect` graph is the heart of it.
-`GraphicsDevice` still owes thirty-seven members and `GraphicsDeviceManager` fifteen; `SpriteBatch`
-owes only `Begin`'s two `Effect`-taking overloads, and both of those wait on `Effect`.
+The graphics runtime is the large remaining area. `GraphicsDevice` still owes thirty-seven members
+and `GraphicsDeviceManager` fifteen, and they are the only two partial types left: `SpriteBatch`
+completed when the `Effect` cluster gave `Begin` its last two overloads.
 
-Types a reader might expect on that list and will not find, because they are **complete**:
+Types a reader might expect on that list and will not find, because they are **complete**: the
+whole nine-type `Effect` graph -- `Effect`, `EffectParameter`, `EffectAnnotation`, `EffectPass`,
+`EffectTechnique` and their four collections --
 `VertexDeclaration` and the four vertex structs, the four graphics state objects,
 `SamplerStateCollection`, `TextureCollection`, `SpriteFont`, `Texture2D`, `Texture3D`,
 `TextureCube`, `GraphicsResource`, `ResourceContentManager`, and the whole `Audio` namespace including the XACT cluster. In `Media`,

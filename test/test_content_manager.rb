@@ -365,7 +365,9 @@ class ContentManagerTest < Minitest::Test
     refute_includes CM.supported_types, F::Audio::SoundEffect
     # `TextureCube` and `Texture3D` were here until their own milestone built them, and neither is
     # loadable: no reader for either is registered, which is the claim this list is really making.
-    %i[Effect Model].each { |absent| refute G.const_defined?(absent, false), absent.to_s }
+    # The nine `Effect` types left this list when the cluster was built; what this milestone
+    # claimed, and still claims, is that **it** built none of them.
+    %i[Model].each { |absent| refute G.const_defined?(absent, false), absent.to_s }
     [G::TextureCube, G::Texture3D].each { |built| refute_includes CM.supported_types, built }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length

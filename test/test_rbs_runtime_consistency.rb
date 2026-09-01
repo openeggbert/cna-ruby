@@ -822,15 +822,19 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     # The four state objects left this list when they were built; what this batch claimed, and
     # still claims, is that **it** declared none of them -- it declared the eight enums they are
     # made of and nothing that holds one.
-    # `Texture3D` and `TextureCube` left this list when they were built; what this batch claimed,
-    # and still claims, is that **it** declared neither.
+    # `Texture3D`, `TextureCube` and the nine `Effect` types left this list when they were built;
+    # what this batch claimed, and still claims, is that **it** declared none of them.
     %w[RenderTarget2D RenderTargetCube VertexBuffer IndexBuffer
-       Effect BasicEffect GraphicsAdapter].each do |absent|
+       BasicEffect GraphicsAdapter].each do |absent|
       refute_includes source, "class #{absent}\n"
       refute_includes source, "class #{absent} <"
     end
     assert_includes source, "class VertexDeclaration < GraphicsResource"
     %w[Texture3D TextureCube].each { |present| assert_includes source, "class #{present} < Texture" }
+    assert_includes source, "class Effect < GraphicsResource"
+    %w[EffectParameter EffectParameterCollection EffectAnnotation EffectAnnotationCollection
+       EffectPass EffectPassCollection EffectTechnique EffectTechniqueCollection]
+      .each { |present| assert_includes source, "class #{present}\n" }
     %w[BlendState DepthStencilState RasterizerState SamplerState]
       .each { |present| assert_includes source, "class #{present} < GraphicsResource" }
     # Foundation 24 and 25 added these managed descriptors.

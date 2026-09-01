@@ -41,10 +41,10 @@ class SpriteBatchDrawStretchedTest < Minitest::Test
   def test_draw_is_complete_and_only_the_effect_begin_overloads_are_left
     assert_equal ReviewedScoreboard::TARGET_MEMBERS, STRICT.fetch("TARGET_MEMBERS")
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
-    remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME)
-    assert_equal ["#{NAME}::Begin (2 overloads)"], remainder
-    # Both of those need an Effect, which nothing projects.
-    refute G.const_defined?(:Effect, false)
+    # Both of those needed an `Effect`, which the cluster built in the milestone after this one,
+    # completing the type. What **this** milestone claimed -- that `Draw` was finished -- stands.
+    assert_empty ReviewedScoreboard.partial_remainder(STRICT, NAME)
+    assert_equal 7, REFERENCE.fetch(NAME).fetch("members").count { |member| member.fetch("name") == "Draw" }
   end
 
   def test_the_route_and_layout_are_cnas_own_split
@@ -172,7 +172,8 @@ class SpriteBatchDrawStretchedTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_adds_no_effect_or_mesh_surface
-    refute G.const_defined?(:Effect, false)
+    # `Effect` left this list when the cluster was built; what this milestone claimed, and still
+    # claims, is that **it** built none of it.
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     refute_includes symbols, "cna_sprite_batch_draw_mesh_ext"
     refute_includes symbols, "cna_sprite_batch_begin_with_states"

@@ -1877,15 +1877,16 @@ class ApiVerifierTest < Minitest::Test
     assert_empty strict.fetch("missingTypeNames").grep(/\AMicrosoft\.Xna\.Framework\.Input\.Touch\./)
   end
 
-  # Six until `Game.Content` completed Game, which was the first of them to leave, and five until
-  # the disposal contract completed `GraphicsResource`, which was the second.
+  # Six until `Game.Content` completed Game, which was the first of them to leave; five until the
+  # disposal contract completed `GraphicsResource`, the second; four until `Texture2D`, the third;
+  # and three until the `Effect` cluster gave `Begin` its last two overloads and completed
+  # `SpriteBatch`, the fourth. This test guards the *set*, not a count that must stay still.
   def test_batch_does_not_expand_the_deferred_partial_runtime_types
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
     partial = strict.fetch("partialTypes")
     assert_equal %w[
       Microsoft.Xna.Framework.GraphicsDeviceManager
       Microsoft.Xna.Framework.Graphics.GraphicsDevice
-      Microsoft.Xna.Framework.Graphics.SpriteBatch
     ].sort, partial.keys.sort
     # 132 until Foundation 37 closed Game::Components and Game::Services, 130 until Foundation
     # 41 closed Game's four events and their three protected raisers -- the three methods among
@@ -1895,7 +1896,7 @@ class ApiVerifierTest < Minitest::Test
     # Game::IsActive, a property, so MISSING_MEMBER fell once more without moving the overloads.
     assert_equal ReviewedScoreboard::MISSING_MEMBER, strict.fetch("MISSING_MEMBER")
     assert_equal 1, strict.fetch("PROPERTY_MAPPING_MISMATCH")
-    assert_equal 28, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
+    assert_equal ReviewedScoreboard::OVERLOAD_MAPPING_MISMATCH, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
 
     # Every batch enum that a deferred member mentions left that member deferred *by this batch*.
     # `PreferredDepthStencilFormat` was closed by a much later milestone, which is the point rather

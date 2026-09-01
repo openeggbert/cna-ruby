@@ -76,6 +76,20 @@ module CNA
         [nil, nil]
       end
 
+      # The two-call "ask for the size, then copy" shape every counted-string route in this ABI
+      # uses. `leading` is whatever the route takes before the destination -- a handle, or a handle
+      # and an index -- and the answer is UTF-8, never a byte string.
+      def counted_string(size_symbol, copy_symbol, *leading)
+        size = pointer_for("Q", 0)
+        call(size_symbol, *leading, size)
+        bytes = size[0, 8].unpack1("Q")
+        return "" if bytes.zero?
+
+        buffer = Fiddle::Pointer.malloc(bytes, Fiddle::RUBY_FREE)
+        call(copy_symbol, *leading, buffer, bytes, size)
+        buffer[0, bytes].force_encoding(Encoding::UTF_8)
+      end
+
       def pointer_for(format, value = 0)
         data = [value].pack(format)
         pointer = Fiddle::Pointer.malloc(data.bytesize, Fiddle::RUBY_FREE)
