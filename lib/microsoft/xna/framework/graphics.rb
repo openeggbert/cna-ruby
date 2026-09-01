@@ -931,9 +931,14 @@ module Microsoft
 
         class GraphicsResource
           include CNA::Runtime::NativeResource
+          extend CNA::Runtime::EventOwner
           private_class_method :new
           attr_reader :GraphicsDevice
           attr_accessor :Name, :Tag
+
+          # `Disposing` is raised by `Dispose(true)` and by nothing else -- not by the finalizer
+          # path, and not twice.
+          xna_event :Disposing
 
           def initialize_resource(device, handle, release)
             @GraphicsDevice = device
@@ -944,6 +949,45 @@ module Microsoft
           private :initialize_resource
 
           def ToString = @Name.nil? || @Name.empty? ? self.class.name.split("::").last : @Name
+
+          # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…),
+          # which is mixed-mode C++/CLI, so the disposal contract is spread over four methods:
+          #
+          #     void !GraphicsResource()          { isDisposed = true; }
+          #     void ~GraphicsResource()          { if (isDisposed) return;
+          #                                         !GraphicsResource();
+          #                                         Disposing?.Invoke(this, EventArgs.Empty); }
+          #     protected virtual void Dispose(bool disposing)
+          #                                       { if (disposing) ~GraphicsResource();
+          #                                         else !GraphicsResource(); }
+          #     public void Dispose()             { Dispose(true); GC.SuppressFinalize(this); }
+          #     protected override void Finalize(){ Dispose(false); }
+          #
+          # Two things a paraphrase loses. `isDisposed` is set **before** `Disposing` is raised, so a
+          # handler observes `IsDisposed == true` -- and that is asserted rather than assumed. And
+          # the finalizer path raises **nothing**: only an explicit `Dispose()` announces itself.
+          #
+          # Ruby cannot give one name two visibilities, so the public `Dispose()` and the protected
+          # `Dispose(Boolean)` project to one method with a default argument, the rule `Game`,
+          # `ContentManager` and every XACT type already follow.
+          def Dispose(disposing = true)
+            return if self.IsDisposed
+
+            @native_handle.dispose
+            @native_game.__send__(:unregister_native_child, self)
+            self.Disposing.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty) if disposing
+            nil
+          end
+
+          private
+
+          # `Dispose(false)`, and no Ruby finalizer is registered for it: nothing in this binding is
+          # released by the garbage collector, which is why the CLR's `GC.SuppressFinalize` needs no
+          # analogue either.
+          def Finalize
+            self.Dispose(false)
+            nil
+          end
         end
 
         class Texture < GraphicsResource

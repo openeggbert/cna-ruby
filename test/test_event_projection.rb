@@ -475,6 +475,7 @@ class EventProjectionTest < Minitest::Test
       Microsoft.Xna.Framework.Game::Deactivated
       Microsoft.Xna.Framework.Game::Exiting
       Microsoft.Xna.Framework.Game::Disposed
+      Microsoft.Xna.Framework.Graphics.GraphicsResource::Disposing
       Microsoft.Xna.Framework.GameWindow::ScreenDeviceNameChanged
       Microsoft.Xna.Framework.GameWindow::ClientSizeChanged
       Microsoft.Xna.Framework.GameWindow::OrientationChanged

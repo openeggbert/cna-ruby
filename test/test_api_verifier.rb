@@ -1751,6 +1751,7 @@ class ApiVerifierTest < Minitest::Test
       Microsoft.Xna.Framework.Game::Deactivated
       Microsoft.Xna.Framework.Game::Exiting
       Microsoft.Xna.Framework.Game::Disposed
+      Microsoft.Xna.Framework.Graphics.GraphicsResource::Disposing
       Microsoft.Xna.Framework.GameWindow::ScreenDeviceNameChanged
       Microsoft.Xna.Framework.GameWindow::ClientSizeChanged
       Microsoft.Xna.Framework.GameWindow::OrientationChanged
@@ -1764,7 +1765,7 @@ class ApiVerifierTest < Minitest::Test
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
     assert_equal selected, strict.fetch("eventIdentities")
     assert_equal selected.length, strict.fetch("EVENT_IDENTITIES")
-    assert_equal 13, strict.fetch("EVENT_OWNER_TYPES")
+    assert_equal 14, strict.fetch("EVENT_OWNER_TYPES")
     assert_equal "CNA::Runtime::Event", strict.fetch("EVENT_SUPPORT_TYPE")
     assert_equal 0, strict.fetch("EVENT_MAPPING_MISMATCH")
 
@@ -1876,14 +1877,14 @@ class ApiVerifierTest < Minitest::Test
     assert_empty strict.fetch("missingTypeNames").grep(/\AMicrosoft\.Xna\.Framework\.Input\.Touch\./)
   end
 
-  # Six until `Game.Content` completed Game, which is the first of them to leave.
+  # Six until `Game.Content` completed Game, which was the first of them to leave, and five until
+  # the disposal contract completed `GraphicsResource`, which was the second.
   def test_batch_does_not_expand_the_deferred_partial_runtime_types
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
     partial = strict.fetch("partialTypes")
     assert_equal %w[
       Microsoft.Xna.Framework.GraphicsDeviceManager
       Microsoft.Xna.Framework.Graphics.GraphicsDevice
-      Microsoft.Xna.Framework.Graphics.GraphicsResource
       Microsoft.Xna.Framework.Graphics.SpriteBatch
       Microsoft.Xna.Framework.Graphics.Texture2D
     ].sort, partial.keys.sort
@@ -1895,7 +1896,7 @@ class ApiVerifierTest < Minitest::Test
     # Game::IsActive, a property, so MISSING_MEMBER fell once more without moving the overloads.
     assert_equal ReviewedScoreboard::MISSING_MEMBER, strict.fetch("MISSING_MEMBER")
     assert_equal 1, strict.fetch("PROPERTY_MAPPING_MISMATCH")
-    assert_equal 40, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
+    assert_equal 36, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
 
     # Every batch enum that a deferred member mentions left that member deferred *by this batch*.
     # `PreferredDepthStencilFormat` was closed by a much later milestone, which is the point rather

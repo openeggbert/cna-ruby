@@ -31,16 +31,16 @@ end
 # is the measurement; this is the reviewed expectation of it.
 module ReviewedScoreboard
   TARGET_TYPES = 165
-  TARGET_MEMBERS = 1998
-  COMPLETE_TYPES = 160
-  PARTIAL_TYPES = 5
+  TARGET_MEMBERS = 2003
+  COMPLETE_TYPES = 161
+  PARTIAL_TYPES = 4
   MISSING_TYPES = 92
-  MISSING_MEMBER = 96
+  MISSING_MEMBER = 91
   BCL_PROJECTED_IDENTITIES = 22
   BCL_EXCEPTION_BASES = 2
   BCL_THROWN_EXCEPTIONS = 8
-  EVENT_IDENTITIES = 26
-  EVENT_OWNER_TYPES = 13
+  EVENT_IDENTITIES = 27
+  EVENT_OWNER_TYPES = 14
   # The members a type still owes, or `[]` once the strict report calls it complete.
   #
   # Eight tests assert "the member this milestone added is no longer in `Game`'s partial

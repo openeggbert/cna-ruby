@@ -25,16 +25,16 @@ fails when it should.
 
 ## Surface
 
-The strict surface is **165 types / 1998 Ruby member identities**: 160 complete, 5 partial, 92 of the
-257 reference types still missing, with 231 deferred diagnostics of which 96 are missing members and
-40 are the overload category. Every structural category except `MISSING_TYPE`, `MISSING_MEMBER`,
+The strict surface is **165 types / 2003 Ruby member identities**: 161 complete, 4 partial, 92 of the
+257 reference types still missing, with 222 deferred diagnostics of which 91 are missing members and
+36 are the overload category. Every structural category except `MISSING_TYPE`, `MISSING_MEMBER`,
 `OVERLOAD_MAPPING_MISMATCH` and one long-standing `PROPERTY_MAPPING_MISMATCH`
 (`GraphicsDevice::Viewport`) is zero, the allowlist is empty and `UNMEASURED_STRUCTURAL_CATEGORY` is
-zero. **26** event identities are projected across **13** owner types with `EVENT_MAPPING_MISMATCH`
+zero. **27** event identities are projected across **14** owner types with `EVENT_MAPPING_MISMATCH`
 zero, and **22** BCL identities go through the measured `CNA::Runtime::BclProjection` register.
 
-The five partial types are the graphics runtime: `GraphicsDeviceManager` (15 members outstanding),
-`GraphicsDevice` (39), `GraphicsResource` (3), `Texture2D` (7) and `SpriteBatch` (4) — 68 of the 96
+The four partial types are the graphics runtime: `GraphicsDeviceManager` (15 members outstanding),
+`GraphicsDevice` (39), `Texture2D` (6) and `SpriteBatch` (3) — 63 of the 91
 outstanding members between them, which is why a qualification artifact with a real renderer is the
 single largest lever this project has left. `GraphicsDeviceManager`'s own remainder is no longer
 about the renderer: eleven of its members were closed by projecting the preferred settings, and the
