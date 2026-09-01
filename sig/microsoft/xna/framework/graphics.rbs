@@ -529,6 +529,22 @@ module Microsoft
           attr_accessor MipMapLevelOfDetailBias: Float
         end
 
+        class DirectionalLight
+          def initialize: (EffectParameter? directionParameter, EffectParameter? diffuseColorParameter, EffectParameter? specularColorParameter, DirectionalLight? cloneSource) -> void
+          attr_reader Enabled: bool
+          attr_reader Direction: Vector3
+          attr_reader DiffuseColor: Vector3
+          attr_reader SpecularColor: Vector3
+          def Enabled=: (bool value) -> void
+          def Direction=: (Vector3 value) -> Vector3
+          def DiffuseColor=: (Vector3 value) -> Vector3
+          def SpecularColor=: (Vector3 value) -> Vector3
+        end
+
+        class EffectMaterial < Effect
+          def initialize: (Effect cloneSource) -> void
+        end
+
         class VertexBuffer < GraphicsResource
           def initialize: (GraphicsDevice graphicsDevice, VertexDeclaration | Module vertexDeclarationOrType, Integer vertexCount, BufferUsage bufferUsage) -> void
           attr_reader VertexDeclaration: VertexDeclaration

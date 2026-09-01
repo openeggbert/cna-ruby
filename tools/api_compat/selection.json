@@ -1746,6 +1746,18 @@
     {
       "name": "Microsoft.Xna.Framework.Graphics.VertexBufferBinding",
       "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.IEffectLights",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DirectionalLight",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.EffectMaterial",
+      "complete": true
     }
   ]
 }

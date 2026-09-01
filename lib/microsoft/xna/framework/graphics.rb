@@ -373,6 +373,27 @@ module Microsoft
           end
         end
 
+        # The lighting contract, and the one of the three effect interfaces that could not be
+        # projected until something produced a `DirectionalLight`. Six members: `EnableDefaultLighting`
+        # and five properties, three of which are read-only because a light is handed out rather
+        # than assigned. Like every interface here it is an abstract contract -- `BasicEffect`,
+        # `SkinnedEffect` and `EnvironmentMapEffect` are XNA's implementers and none of them is
+        # projected yet, so nothing conforms to it.
+        module IEffectLights
+          def EnableDefaultLighting = raise(NotImplementedError, "IEffectLights#EnableDefaultLighting")
+          def DirectionalLight0 = raise(NotImplementedError, "IEffectLights#DirectionalLight0")
+          def DirectionalLight1 = raise(NotImplementedError, "IEffectLights#DirectionalLight1")
+          def DirectionalLight2 = raise(NotImplementedError, "IEffectLights#DirectionalLight2")
+          def AmbientLightColor = raise(NotImplementedError, "IEffectLights#AmbientLightColor")
+          def AmbientLightColor=(_value)
+            raise NotImplementedError, "IEffectLights#AmbientLightColor="
+          end
+          def LightingEnabled = raise(NotImplementedError, "IEffectLights#LightingEnabled")
+          def LightingEnabled=(_value)
+            raise NotImplementedError, "IEffectLights#LightingEnabled="
+          end
+        end
+
         # The graphics-device service contract, derived from the pinned
         # Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…): one read-only property and
         # four events, every one of them `EventHandler`1<EventArgs>`. The interface declares no
@@ -3883,6 +3904,123 @@ module Microsoft
               nil
             end
             @views = []
+          end
+        end
+
+        # `DirectionalLight` is a `sealed` class over three `EffectParameter` fields, a bool and
+        # three cached `Vector3`s, and every one of its five identities is a field read, a field
+        # write, or a null-guarded `EffectParameter.SetValue(Vector3)`. Its `NATIVE_RUNTIME`
+        # deferral named `.ctor`, `set_DiffuseColor`, `set_Direction` and `set_Enabled` -- all four
+        # because they reach `SetValue`, which is now projected. Nothing here touches the device.
+        #
+        # The three parameters are the effect's own, and every one of them may be null: a
+        # `BasicEffect` with no specular parameter constructs a light with `specularColorParam`
+        # null, and every write to it is skipped. That is why each setter checks.
+        class DirectionalLight
+          public_class_method :new
+          attr_reader :Enabled, :Direction, :DiffuseColor, :SpecularColor
+
+          # The constructor stores the three parameters, and then splits: with a `cloneSource` it
+          # copies the **fields**, so no parameter is written; without one it goes through its own
+          # three setters with `Vector3.Down`, `Vector3.One` and `Vector3.Zero`. `enabled` is still
+          # false at that point, so only `set_Direction` reaches a parameter -- the colour setters
+          # check `enabled` first, which is exactly the asymmetry the IL has.
+          def initialize(directionParameter, diffuseColorParameter, specularColorParameter, cloneSource)
+            @direction_parameter = require_parameter(directionParameter, "directionParameter")
+            @diffuse_parameter = require_parameter(diffuseColorParameter, "diffuseColorParameter")
+            @specular_parameter = require_parameter(specularColorParameter, "specularColorParameter")
+            @Enabled = false
+            @Direction = Vector3.Zero
+            @DiffuseColor = Vector3.Zero
+            @SpecularColor = Vector3.Zero
+            if cloneSource.nil?
+              self.Direction = Vector3.Down
+              self.DiffuseColor = Vector3.One
+              self.SpecularColor = Vector3.Zero
+              return
+            end
+            unless cloneSource.instance_of?(DirectionalLight)
+              raise ::TypeError, "cloneSource must be a DirectionalLight"
+            end
+
+            @Enabled = cloneSource.Enabled
+            @Direction = cloneSource.Direction
+            @DiffuseColor = cloneSource.DiffuseColor
+            @SpecularColor = cloneSource.SpecularColor
+          end
+
+          # `beq.s` on the old value: an unchanged write does nothing at all. Enabling pushes the
+          # two cached colours into their parameters; disabling pushes `Vector3.Zero` into both,
+          # which is how XNA turns a light off in the shader without losing what it was set to.
+          def Enabled=(value)
+            enabled = require_boolean(value)
+            return if enabled == @Enabled
+
+            @Enabled = enabled
+            write(@diffuse_parameter, enabled ? @DiffuseColor : Vector3.Zero)
+            write(@specular_parameter, enabled ? @SpecularColor : Vector3.Zero)
+          end
+
+          # The direction is written whether the light is enabled or not.
+          def Direction=(value)
+            vector = require_vector3(value, "Direction")
+            write(@direction_parameter, vector)
+            @Direction = vector
+          end
+
+          def DiffuseColor=(value)
+            vector = require_vector3(value, "DiffuseColor")
+            write(@diffuse_parameter, vector) if @Enabled
+            @DiffuseColor = vector
+          end
+
+          def SpecularColor=(value)
+            vector = require_vector3(value, "SpecularColor")
+            write(@specular_parameter, vector) if @Enabled
+            @SpecularColor = vector
+          end
+
+          private
+
+          # `brfalse` before every `callvirt`: a null parameter is skipped, not raised on.
+          def write(parameter, vector)
+            parameter&.SetValue(vector)
+          end
+
+          def require_parameter(value, name)
+            return nil if value.nil?
+            raise ::TypeError, "#{name} must be an EffectParameter" unless value.instance_of?(EffectParameter)
+
+            value
+          end
+
+          def require_vector3(value, name)
+            raise ::TypeError, "#{name} must be a Vector3" unless value.instance_of?(Vector3)
+
+            # A CLR struct assignment copies; holding the caller's object would let a later
+            # mutation of it change what this light reports.
+            value.dup
+          end
+
+          def require_boolean(value)
+            return value if value == true || value == false
+
+            raise ::TypeError, "Enabled must be true or false"
+          end
+        end
+
+        # One identity, and it is `ldarg.0; ldarg.1; call Effect::.ctor(Effect); ret`. `EffectMaterial`
+        # adds no member, no field and no override -- it is a *named* effect, the type the content
+        # pipeline gives a material so a `ModelMeshPart` can tell one clone from another. Its
+        # `NATIVE_RUNTIME` deferral named that constructor, which reaches native only through the
+        # `Effect` clone it delegates to.
+        #
+        # It does not override `Clone`, so cloning one answers an `Effect`, exactly as XNA does.
+        class EffectMaterial < Effect
+          public_class_method :new
+
+          def initialize(cloneSource)
+            super(cloneSource)
           end
         end
 

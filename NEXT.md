@@ -62,6 +62,7 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 79 | `Graphics.Texture3D` + `TextureCube`, the two types `EffectParameter` returns | **2** | 20 |
 | 80 | the nine-type `Effect` cluster, and `SpriteBatch.Begin`'s last two overloads | **9** | 98 |
 | 81 | the vertex and index buffers, and the `VertexBufferBinding` that names one | **5** | 43 |
+| 82 | `DirectionalLight`, `EffectMaterial` and the `IEffectLights` they unblocked | **3** | 12 |
 
 ## Measured state
 
@@ -69,8 +70,8 @@ This section had gone stale for eleven milestones — it still described Foundat
 while the report said 193 — which is the same failure the frontier and corpus staleness guards were
 added for. Re-measured from the live reports at Foundation 81:
 
-Strict target **193 types / 2313 member identities**: **191 complete**, **two** partial graphics
-runtime types (`GraphicsDevice` and `GraphicsDeviceManager`), 64 missing, **157 deferred
+Strict target **196 types / 2325 member identities**: **194 complete**, **two** partial graphics
+runtime types (`GraphicsDevice` and `GraphicsDeviceManager`), 61 missing, **154 deferred
 diagnostics**. `MISSING_MEMBER` **65**, `PARTIAL_TYPES` 2,
 `PROPERTY_MAPPING_MISMATCH` 1 (`GraphicsDevice::Viewport`, unrelated and pre-existing),
 `OVERLOAD_MAPPING_MISMATCH` **27**, every other structural category 0, allowlist 0, unmeasured 0.
@@ -81,17 +82,21 @@ versions** cross-verified across both header roots. Zero missing header symbols,
 symbols, zero cross-version mismatches, zero ABI mismatches. **No CNA source was changed and no new
 native binary was built.**
 
-Behaviour corpus **526** observations, zero failures. Suite **1517 runs / 49991 assertions**, zero
-failures, and 17 skips under the default HEADLESS artifact — every one a renderer capability that
-artifact does not have: compiled effects, volume storage and cube-face storage. The same 1517 runs
-are green under both real-renderer artifacts, 13 skips on `OPENGL33` and **none** on the
-compiled-effects build, with `SDL_VIDEODRIVER=x11` — which Foundation 81 measured to be load-bearing
+Behaviour corpus **526** observations, zero failures. Suite **1527 runs / 50101 assertions**, zero
+failures, and 21 skips under the default HEADLESS artifact — every one a renderer capability or
+fixture that artifact does not have: compiled effects, volume storage and cube-face storage. The
+same 1527 runs are green under both real-renderer artifacts, 17 skips on `OPENGL33` and **none** on
+the compiled-effects build, with `SDL_VIDEODRIVER=x11` — which Foundation 81 measured to be load-bearing
 rather than decorative. Capability registry **136** rows, zero contradictions.
 
-The dependency frontier carries **five** candidates and none is consumable. It went
-3 → 9 → 6 → 5 → 8 → 4 → 3 → 4 → 5 — see `plan.md`. A count that rises is what advancing looks like
-when the types built were bases or dependencies: the `Effect` cluster uncovered `EffectMaterial` and
-`DirectionalLight`, and the buffers uncovered `ModelMeshPart`.
+The dependency frontier carries **three** candidates, its fewest ever, and none is consumable. It
+went 3 → 9 → 6 → 5 → 8 → 4 → 3 → 4 → 5 → 3 — see `plan.md`. A count that rises is what advancing
+looks like when the types built were bases or dependencies (the `Effect` cluster uncovered
+`EffectMaterial` and `DirectionalLight`; the buffers uncovered `ModelMeshPart`), and the fall that
+followed is what auditing looks like: both of those turned out to be blocked on members this binding
+already projects. What is left is `MathTypeConverter` (`BCL_PROJECTION`), `GraphicsAdapter`
+(`UPSTREAM_CNA_BLOCKED`) and `ModelMeshPart`, whose `Draw` reaches three `GraphicsDevice` members
+that really are absent.
 
 ## Game is complete, and so is the whole Audio namespace
 

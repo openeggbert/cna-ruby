@@ -288,7 +288,7 @@ class MemberLevelDependenciesTest < Minitest::Test
     # always causes. A rising count is what advancing looks like.
     # ...and 5 when the four buffer types and the binding were built, which made ModelMeshPart
     # dependency-complete: the frontier keeps uncovering what a completed base was hiding.
-    assert_equal 5, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 3, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")

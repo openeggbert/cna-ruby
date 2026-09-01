@@ -382,11 +382,13 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.FrameworkDispatcher
       Microsoft.Xna.Framework.Game
       Microsoft.Xna.Framework.GamerServices.GamerServicesComponent
+      Microsoft.Xna.Framework.Graphics.DirectionalLight
       Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer
       Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer
       Microsoft.Xna.Framework.Graphics.Effect
       Microsoft.Xna.Framework.Graphics.EffectAnnotation
       Microsoft.Xna.Framework.Graphics.EffectAnnotationCollection
+      Microsoft.Xna.Framework.Graphics.EffectMaterial
       Microsoft.Xna.Framework.Graphics.EffectParameter
       Microsoft.Xna.Framework.Graphics.EffectParameterCollection
       Microsoft.Xna.Framework.Graphics.EffectPass
@@ -494,8 +496,10 @@ class DependencyFrontierTest < Minitest::Test
     # blocker was audited and found not to be one either; and 4 when the nine-type Effect cluster
     # was built -- EffectAnnotation left it and EffectMaterial and DirectionalLight arrived behind
     # the Effect base. A frontier that rises when a base completes is advancing, not regressing.
-    # ...and 5 when the buffers uncovered ModelMeshPart behind them.
-    assert_equal 5, REPORT.fetch("dependencyCompleteCandidates").length
+    # ...5 when the buffers uncovered ModelMeshPart behind them; and 3 when DirectionalLight and
+    # EffectMaterial were audited and built, which put the three stock effects that name them onto
+    # the partial list instead. Three is the fewest this frontier has ever carried.
+    assert_equal 3, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -719,11 +723,15 @@ class DependencyFrontierTest < Minitest::Test
       # the three that were audited and stayed deferred, which is the whole table above -- so this
       # register has no replacement example to name, and says so. EffectAnnotation then went the
       # same way -- built with the cluster whose EffectParameter its getters forward to -- and
-      # EffectMaterial and DirectionalLight took its place, each blocked on NATIVE_RUNTIME and each
-      # still to be audited.
+      # EffectMaterial and DirectionalLight took its place. Both were then audited, and both were
+      # the twelfth and thirteenth deferral this register has retired: the light's four native
+      # identities reach EffectParameter::SetValue and the material's one reaches Effect's clone
+      # constructor, and both of those are projected. What is left on the list is ModelMeshPart,
+      # whose Draw reaches three GraphicsDevice members this binding does not project -- the first
+      # NATIVE_RUNTIME here in a long while that names something genuinely absent.
       "Microsoft.Xna.Framework.Design.MathTypeConverter" => "BCL_PROJECTION",
-      "Microsoft.Xna.Framework.Graphics.EffectMaterial" => "NATIVE_RUNTIME",
-      "Microsoft.Xna.Framework.Graphics.DirectionalLight" => "NATIVE_RUNTIME"
+      "Microsoft.Xna.Framework.Graphics.ModelMeshPart" => "NATIVE_RUNTIME",
+      "Microsoft.Xna.Framework.Graphics.GraphicsAdapter" => "NATIVE_RUNTIME"
     }.each do |name, expected|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
       refute_nil candidate, name

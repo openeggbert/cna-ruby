@@ -41,6 +41,17 @@ module Microsoft
           attr_accessor FogColor: Vector3
         end
 
+        # Six members: EnableDefaultLighting and five properties, three of them read-only because
+        # a light is handed out rather than assigned. Abstract throughout, like the two above.
+        module IEffectLights
+          def EnableDefaultLighting: () -> void
+          def DirectionalLight0: () -> DirectionalLight
+          def DirectionalLight1: () -> DirectionalLight
+          def DirectionalLight2: () -> DirectionalLight
+          attr_accessor AmbientLightColor: Vector3
+          attr_accessor LightingEnabled: bool
+        end
+
         # One read-only property and four EventHandler`1<EventArgs> events. Abstract throughout:
         # the property and every event reader raise NotImplementedError.
         module IGraphicsDeviceService

@@ -30,11 +30,11 @@ end
 # and left no single place a reader could call the authority. `docs/generated/api-compat-report.json`
 # is the measurement; this is the reviewed expectation of it.
 module ReviewedScoreboard
-  TARGET_TYPES = 193
-  TARGET_MEMBERS = 2313
-  COMPLETE_TYPES = 191
+  TARGET_TYPES = 196
+  TARGET_MEMBERS = 2325
+  COMPLETE_TYPES = 194
   PARTIAL_TYPES = 2
-  MISSING_TYPES = 64
+  MISSING_TYPES = 61
   MISSING_MEMBER = 65
   OVERLOAD_MAPPING_MISMATCH = 27
   BCL_PROJECTED_IDENTITIES = 22

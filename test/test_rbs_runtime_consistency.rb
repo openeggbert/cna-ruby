@@ -542,10 +542,11 @@ class RbsRuntimeConsistencyTest < Minitest::Test
       Microsoft.Xna.Framework.IGraphicsDeviceManager
       Microsoft.Xna.Framework.Graphics.IEffectMatrices
       Microsoft.Xna.Framework.Graphics.IEffectFog
+      Microsoft.Xna.Framework.Graphics.IEffectLights
     ]
     selected = contract.fetch("types").select { |type| names.include?(type.fetch("name")) }
-    assert_equal 4, selected.length
-    assert_equal 11, selected.sum { |type| type.fetch("members").length }
+    assert_equal 5, selected.length
+    assert_equal 17, selected.sum { |type| type.fetch("members").length }
     assert(selected.all? { |type| type.fetch("kind") == "interface" })
 
     environment = load_environment
@@ -584,7 +585,9 @@ class RbsRuntimeConsistencyTest < Minitest::Test
 
     source = SIGNATURE_ROOT.join("microsoft", "xna", "interfaces.rbs").read
     refute_includes source, "untyped"
-    %w[IEffectLights IEffectSkinning].each do |absent|
+    # `IEffectLights` left this list when `DirectionalLight` was built -- it is the type the
+    # contract hands out, and until something produced one the interface could not be projected.
+    %w[IEffectSkinning].each do |absent|
       refute_includes source, "module #{absent}\n"
     end
     # Foundation 40 projected IGraphicsDeviceService, so it is no longer on the absent list. It is

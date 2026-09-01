@@ -30,7 +30,11 @@ class InterfaceContractsTest < Minitest::Test
     "Microsoft.Xna.Framework.Graphics.IEffectFog" =>
       %i[FogColor FogColor= FogEnabled FogEnabled= FogEnd FogEnd= FogStart FogStart=],
     "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService" =>
-      %i[DeviceCreated DeviceDisposing DeviceReset DeviceResetting GraphicsDevice]
+      %i[DeviceCreated DeviceDisposing DeviceReset DeviceResetting GraphicsDevice],
+    # The third effect contract, projectable only once something produced a `DirectionalLight`.
+    "Microsoft.Xna.Framework.Graphics.IEffectLights" =>
+      %i[AmbientLightColor AmbientLightColor= DirectionalLight0 DirectionalLight1 DirectionalLight2
+         EnableDefaultLighting LightingEnabled LightingEnabled=]
   }.freeze
 
   # Declaration order, which for each entry is the pinned metadata order rather than alphabetical.
@@ -78,7 +82,7 @@ class InterfaceContractsTest < Minitest::Test
       assert_equal pinned.fetch("members"), selected.fetch("members"), clr_name
       assert_equal clr_name.split(".").join("::"), selected.fetch("rubyName")
     end
-    assert_equal 26, CONTRACTS.keys.sum { |name| SIGNATURES.fetch(name).fetch("members").length }
+    assert_equal 32, CONTRACTS.keys.sum { |name| SIGNATURES.fetch(name).fetch("members").length }
   end
 
   def test_every_interface_is_a_module_exposing_exactly_its_declared_projections
@@ -219,11 +223,17 @@ class InterfaceContractsTest < Minitest::Test
     # `IVertexType` and `VertexDeclaration` left this list when they were built; what this test
     # claims -- that **these** interface contracts imply no component, effect or device runtime --
     # is unchanged, and the interface that arrived is asserted to be abstract like the rest.
-    # The nine `Effect` types left this list when the cluster was built; what this milestone
-    # claimed, and still claims, is that **it** built none of them.
-    %i[BasicEffect DirectionalLight IEffectLights IEffectSkinning].each do |name|
+    # The nine `Effect` types left this list when the cluster was built, and `DirectionalLight` and
+    # `IEffectLights` when the light was; what this milestone claimed, and still claims, is that
+    # **it** built none of them. `IEffectLights` is asserted below to be as abstract as the rest.
+    %i[BasicEffect IEffectSkinning].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
+    assert_kind_of Module, G::IEffectLights
+    refute_kind_of Class, G::IEffectLights
+    assert_raises(NotImplementedError) { Object.new.extend(G::IEffectLights).EnableDefaultLighting }
+    # And nothing conforms to it: the light is not an implementer, it is what an implementer hands out.
+    refute_includes G::DirectionalLight.ancestors, G::IEffectLights
     assert_kind_of Module, G::IVertexType
     assert_raises(NotImplementedError) { Object.new.extend(G::IVertexType).VertexDeclaration }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length

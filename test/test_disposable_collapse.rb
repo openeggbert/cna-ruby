@@ -294,7 +294,7 @@ class DisposableCollapseTest < Minitest::Test
     # and 2 -> 3 when the Effect cluster was built: EffectAnnotation left and EffectMaterial and
     # DirectionalLight arrived behind the Effect base. What this collapse claimed is unchanged.
     # And 3 -> 4 when the buffers uncovered ModelMeshPart behind them.
-    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 4},
+    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 2},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end

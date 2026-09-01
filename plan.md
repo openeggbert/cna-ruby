@@ -230,19 +230,19 @@ delimited and checked against `docs/generated/missing-type-inventory.md` by
 `test/test_plan_boundaries.rb`, so every name in it is a type the strict report really calls missing.
 
 <!-- absent-types:begin -->
-`EffectMaterial`, `IEffectLights`, `BasicEffect`, `SkinnedEffect`, `AlphaTestEffect`,
-`DualTextureEffect`, `EnvironmentMapEffect`, `DirectionalLight`, `RenderTarget2D`,
-`RenderTargetCube`, `RenderTargetBinding`, `GraphicsAdapter`, `OcclusionQuery`,
-`GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs`, `DrawableGameComponent`,
-`Model`, `ModelBone`, `ModelMesh`, `ModelMeshPart`, `ModelBoneCollection`, `ModelMeshCollection`,
-`ModelMeshPartCollection`, `ModelEffectCollection`, `MediaPlayer`, `MediaLibrary`, `MediaQueue`,
-`Song`, `SongCollection`, `Album`, `AlbumCollection`, `Artist`, `ArtistCollection`, `Genre`,
-`GenreCollection`, `Playlist`, `PlaylistCollection`, `Picture`, `PictureAlbum`,
-`PictureAlbumCollection`, `PictureCollection`, `ContentReader`, `ContentTypeReader`,
-`ContentTypeReaderManager`, `StorageDevice`, `StorageContainer`, `MathTypeConverter`,
-`ColorConverter`, `MatrixConverter`, `PlaneConverter`, `PointConverter`, `QuaternionConverter`,
-`RayConverter`, `RectangleConverter`, `Vector2Converter`, `Vector3Converter`, `Vector4Converter`,
-`BoundingBoxConverter`, `BoundingSphereConverter`
+`BasicEffect`, `SkinnedEffect`, `AlphaTestEffect`, `DualTextureEffect`, `EnvironmentMapEffect`,
+`RenderTarget2D`, `RenderTargetCube`, `RenderTargetBinding`, `GraphicsAdapter`,
+`OcclusionQuery`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs`,
+`DrawableGameComponent`, `Model`, `ModelBone`, `ModelMesh`, `ModelMeshPart`,
+`ModelBoneCollection`, `ModelMeshCollection`, `ModelMeshPartCollection`,
+`ModelEffectCollection`, `MediaPlayer`, `MediaLibrary`, `MediaQueue`, `Song`, `SongCollection`,
+`Album`, `AlbumCollection`, `Artist`, `ArtistCollection`, `Genre`, `GenreCollection`,
+`Playlist`, `PlaylistCollection`, `Picture`, `PictureAlbum`, `PictureAlbumCollection`,
+`PictureCollection`, `ContentReader`, `ContentTypeReader`, `ContentTypeReaderManager`,
+`StorageDevice`, `StorageContainer`, `MathTypeConverter`, `ColorConverter`, `MatrixConverter`,
+`PlaneConverter`, `PointConverter`, `QuaternionConverter`, `RayConverter`, `RectangleConverter`,
+`Vector2Converter`, `Vector3Converter`, `Vector4Converter`, `BoundingBoxConverter`,
+`BoundingSphereConverter`
 <!-- absent-types:end -->
 
 The graphics runtime is the large remaining area. `GraphicsDevice` still owes thirty-seven members
@@ -253,7 +253,8 @@ Types a reader might expect on that list and will not find, because they are **c
 whole nine-type `Effect` graph -- `Effect`, `EffectParameter`, `EffectAnnotation`, `EffectPass`,
 `EffectTechnique` and their four collections --
 `VertexDeclaration` and the four vertex structs, the four buffer types and the
-`VertexBufferBinding` that names one, the four graphics state objects,
+`VertexBufferBinding` that names one, `DirectionalLight`, `EffectMaterial` and the `IEffectLights`
+contract they unblocked, the four graphics state objects,
 `SamplerStateCollection`, `TextureCollection`, `SpriteFont`, `Texture2D`, `Texture3D`,
 `TextureCube`, `GraphicsResource`, `ResourceContentManager`, and the whole `Audio` namespace including the XACT cluster. In `Media`,
 `Video`, `VideoPlayer`, `MediaSource` and `VisualizationData` are complete while the media *library*

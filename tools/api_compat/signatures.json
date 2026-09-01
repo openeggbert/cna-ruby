@@ -47674,6 +47674,261 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::VertexBufferBinding"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.IEffectLights",
+      "kind": "interface",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": null,
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "EnableDefaultLighting",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DirectionalLight0",
+          "type": "Microsoft.Xna.Framework.Graphics.DirectionalLight",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DirectionalLight1",
+          "type": "Microsoft.Xna.Framework.Graphics.DirectionalLight",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DirectionalLight2",
+          "type": "Microsoft.Xna.Framework.Graphics.DirectionalLight",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "AmbientLightColor",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LightingEnabled",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::IEffectLights"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DirectionalLight",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "directionParameter",
+              "type": "Microsoft.Xna.Framework.Graphics.EffectParameter",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "diffuseColorParameter",
+              "type": "Microsoft.Xna.Framework.Graphics.EffectParameter",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "specularColorParameter",
+              "type": "Microsoft.Xna.Framework.Graphics.EffectParameter",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "cloneSource",
+              "type": "Microsoft.Xna.Framework.Graphics.DirectionalLight",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Enabled",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Direction",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DiffuseColor",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "SpecularColor",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::DirectionalLight"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.EffectMaterial",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "Microsoft.Xna.Framework.Graphics.Effect",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
+        "System.IDisposable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "cloneSource",
+              "type": "Microsoft.Xna.Framework.Graphics.Effect",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::EffectMaterial"
     }
   ]
 }
