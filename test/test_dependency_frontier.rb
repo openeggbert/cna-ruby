@@ -340,18 +340,19 @@ class DependencyFrontierTest < Minitest::Test
     # pinned contract, and is therefore not a projected identity; the public surface is a property
     # bag with static presets and no device in it. So they are separated from the list below rather
     # than quietly added to it, because that list means something specific.
-    state_objects = %w[
-      Microsoft.Xna.Framework.Graphics.BlendState
-      Microsoft.Xna.Framework.Graphics.DepthStencilState
-      Microsoft.Xna.Framework.Graphics.RasterizerState
-      Microsoft.Xna.Framework.Graphics.SamplerState
-    ]
-    state_objects.each do |name|
+    internally_native = {
+      "Microsoft.Xna.Framework.Graphics.BlendState" => %w[Apply],
+      "Microsoft.Xna.Framework.Graphics.DepthStencilState" => %w[Apply],
+      "Microsoft.Xna.Framework.Graphics.RasterizerState" => %w[Apply],
+      "Microsoft.Xna.Framework.Graphics.SamplerState" => %w[Apply],
+      "Microsoft.Xna.Framework.Graphics.VertexDeclaration" => %w[Bind Unbind]
+    }
+    internally_native.each do |name, methods|
       assert_includes native, name, name
       assert_includes STRICT.fetch("completeTypeNames"), name, name
-      assert_equal ["Apply"], IL.fetch("types").fetch(name).fetch("nativeReachableMethods"), name
-      refute_includes BY_NAME.fetch(name).fetch("members").map { |member| member.fetch("name") },
-                      "Apply", name
+      assert_equal methods, IL.fetch("types").fetch(name).fetch("nativeReachableMethods"), name
+      declared = BY_NAME.fetch(name).fetch("members").map { |member| member.fetch("name") }
+      methods.each { |method| refute_includes declared, method, "#{name}::#{method}" }
     end
 
     # The only complete types that are native-reachable are the four whose native routes this
@@ -385,7 +386,7 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.TextureCollection
       Microsoft.Xna.Framework.Input.GamePad
       Microsoft.Xna.Framework.Input.Mouse
-    ], ((STRICT.fetch("completeTypeNames") & native) - state_objects).sort
+    ], ((STRICT.fetch("completeTypeNames") & native) - internally_native.keys).sort
     %w[
       Microsoft.Xna.Framework.FrameworkDispatcher
       Microsoft.Xna.Framework.Graphics.Texture
@@ -467,16 +468,19 @@ class DependencyFrontierTest < Minitest::Test
     # GraphicsResource made the four graphics state objects and VertexDeclaration
     # dependency-complete, and completing Texture2D did the same for Media.VideoPlayer. Then 6,
     # when the four state objects were audited and built and SamplerStateCollection appeared behind
-    # SamplerState -- and 5 when that collection was built too, uncovering nothing behind it.
-    assert_equal 5, REPORT.fetch("dependencyCompleteCandidates").length
+    # SamplerState; 5 when that collection was built too; and 8 when VertexDeclaration and the
+    # IVertexType it uncovered were both built, putting the four vertex structs on the queue.
+    assert_equal 8, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
-    # Foundation 32 consumed it. The queue is empty again and every entry left is blocked.
-    assert_equal 0, REPORT.fetch("consumableCandidates").length
-    refute REPORT.fetch("blockerSummary").key?("NONE")
-    assert_equal "none-consumable", REPORT.fetch("selectionRoute")
-    assert_nil REPORT["selectedNext"]
+    # Foundation 32 consumed it. The queue was empty from then until the vertex structs arrived --
+    # so the frontier is *selecting* again rather than only listing, for the third time ever.
+    assert_equal 4, REPORT.fetch("consumableCandidates").length
+    assert_equal 4, REPORT.fetch("blockerSummary").fetch("NONE")
+    assert_equal "global-consumable-rank", REPORT.fetch("selectionRoute")
+    assert_equal "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
+                 REPORT.fetch("selectedNext").fetch("name")
 
     REPORT.fetch("dependencyCompleteCandidates").each do |candidate|
       %w[EVENT_PROJECTION BEHAVIOR_EVIDENCE].each do |retired|
@@ -499,8 +503,12 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   # Every consumable candidate really is pure managed, hash-pinned and dependency-complete.
+  # Every consumable candidate really is pure managed, hash-pinned and dependency-complete. The
+  # list was empty from Foundation 32 until IVertexType was projected and uncovered the four vertex
+  # structs, so this check finally has subjects again -- which is the point of writing it as a rule
+  # over whatever is there rather than as a count.
   def test_every_consumable_candidate_is_pure_managed_with_available_il
-    assert_empty REPORT.fetch("consumableCandidates")
+    assert_equal 4, REPORT.fetch("consumableCandidates").length
 
     REPORT.fetch("consumableCandidates").each do |candidate|
       name = candidate.fetch("name")
@@ -669,7 +677,10 @@ class DependencyFrontierTest < Minitest::Test
       # carries the producer blocker: its own IL calls IVertexType members and nothing in this
       # projection conforms to that interface. The four state objects that arrived with it carry
       # NATIVE_RUNTIME alone and are audited, not assumed -- the frontier's standing rule.
-      "Microsoft.Xna.Framework.Graphics.VertexDeclaration" => "INTERFACE_PRODUCER_MISSING",
+      # VertexDeclaration was the example here until it was built too. It carried **both** blockers
+      # and both named members the contract never selects -- `Bind`/`Unbind` and the `assembly`
+      # static `FromType` -- so it was the tenth deferral this register has retired, and with it
+      # the last INTERFACE_PRODUCER_MISSING any dependency-complete candidate carried.
       # BlendState was the example here for exactly one milestone. Its NATIVE_RUNTIME was the
       # `assembly`-visible `Apply`, so it was built along with its three siblings, and the type
       # that arrived behind it takes its place -- the ninth deferral this register has retired.

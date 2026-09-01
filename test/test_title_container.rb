@@ -55,7 +55,12 @@ class TitleContainerTest < Minitest::Test
   def test_the_stream_projection_consumed_title_container
     names = FRONTIER.fetch("dependencyCompleteCandidates").map { |item| item.fetch("name") }
     refute_includes names, "Microsoft.Xna.Framework.TitleContainer"
-    assert_empty FRONTIER.fetch("consumableCandidates")
+    # The consumable list was empty from Foundation 32 until IVertexType uncovered the four vertex
+    # structs; what this test claims is that **this** projection made nothing consumable, and none
+    # of the four is here.
+    FRONTIER.fetch("consumableCandidates").each do |entry|
+      assert_match(/VertexPosition/, entry.fetch("name"))
+    end
 
     # ContentManager was the other half of what Stream unblocked, and the Action`1 decision that
     # followed consumed it too, so it is complete rather than waiting.

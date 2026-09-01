@@ -343,6 +343,17 @@ module Microsoft
           end
         end
 
+        # The interface `VertexDeclaration`'s `INTERFACE_PRODUCER_MISSING` blocker named, and the
+        # second type this frontier ever *selected* rather than listed: building the declaration
+        # uncovered it with no blocker at all. One member, one `ldnull`-free contract -- XNA's own
+        # implementers are the vertex structs (`VertexPositionColor` and its family), none of which
+        # is projected, so this is an abstract contract and **nothing conforms to it**. That is
+        # deliberate and is what keeps the producer rule honest: a completed interface is not a
+        # provider, which `test_member_level_dependencies.rb` measures.
+        module IVertexType
+          def VertexDeclaration = raise(NotImplementedError, "IVertexType#VertexDeclaration")
+        end
+
         module IEffectFog
           def FogEnabled = raise(NotImplementedError, "IEffectFog#FogEnabled")
           def FogEnabled=(_value)
@@ -1385,6 +1396,111 @@ module Microsoft
                                    "SamplerState.AnisotropicWrap")
           AnisotropicClamp = preset(TextureFilter::Anisotropic, TextureAddressMode::Clamp,
                                     "SamplerState.AnisotropicClamp")
+        end
+
+        # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…).
+        #
+        # It reached the frontier carrying **two** blockers, `NATIVE_RUNTIME` and
+        # `INTERFACE_PRODUCER_MISSING`, and both name members the pinned contract never selects:
+        # `Bind`/`Unbind` are `assembly` and reach `DeclarationManager`, and the only caller of
+        # `IVertexType::get_VertexDeclaration` is the `assembly` static `FromType`. The public
+        # surface is two constructors, `VertexStride`, `GetVertexElements` and the inherited
+        # `Dispose` -- managed to the last member, exactly as the four state objects were.
+        #
+        #     public VertexDeclaration(params VertexElement[] elements) {
+        #         if (elements == null || elements.Length == 0)
+        #             throw new ArgumentNullException("elements", FrameworkResources.NullNotAllowed);
+        #         _elements = (VertexElement[])elements.Clone();
+        #         _vertexStride = VertexElementValidator.GetVertexStride(_elements);
+        #         VertexElementValidator.Validate(_vertexStride, _elements);
+        #     }
+        #
+        # The two-argument form is the same with the stride supplied instead of computed. Two
+        # details a paraphrase loses: an **empty** array raises `ArgumentNullException`, not
+        # `ArgumentException`, and the elements are cloned on the way in *and* on the way out, so
+        # neither the caller's array nor the one `GetVertexElements` returns is the declaration's.
+        class VertexDeclaration < GraphicsResource
+          public_class_method :new
+
+          # `VertexElementValidator.GetTypeSize`, which is one `switch` over the twelve declared
+          # formats and `0` for anything else. Ruby's enum projection makes "anything else"
+          # unreachable, so the default is not carried.
+          FORMAT_SIZES = { "Single" => 4, "Vector2" => 8, "Vector3" => 12, "Vector4" => 16,
+                           "Color" => 4, "Byte4" => 4, "Short2" => 4, "Short4" => 8,
+                           "NormalizedShort2" => 4, "NormalizedShort4" => 8,
+                           "HalfVector2" => 4, "HalfVector4" => 8 }.freeze
+
+          attr_reader :VertexStride
+
+          def initialize(*arguments)
+            stride = arguments.first.instance_of?(::Integer) ? arguments.shift : nil
+            elements = arguments.length == 1 && arguments.first.instance_of?(::Array) ? arguments.first : arguments
+            raise ArgumentError, "elements" if elements.nil? || elements.empty?
+            unless elements.all? { |element| element.instance_of?(VertexElement) }
+              raise TypeError, "elements must be VertexElement"
+            end
+
+            initialize_managed_resource
+            # `Array.Clone` on a `VertexElement[]` copies the structs, so the declaration owns its
+            # own values; Ruby's `VertexElement` is an object, so the copy has to be element-wise.
+            @elements = elements.map(&:dup).freeze
+            @VertexStride = stride.nil? ? self.class.__send__(:vertex_stride_of, @elements) : CNA::Runtime::Numeric.int32(stride, "vertexStride")
+            self.class.__send__(:validate!, @VertexStride, @elements)
+          end
+
+          # `(VertexElement[])_elements.Clone()` — a fresh array every call, and mutating what it
+          # answers changes nothing.
+          def GetVertexElements = @elements.map(&:dup)
+
+          class << self
+            # `max over the elements of (Offset + GetTypeSize(Format))`, starting at zero. It is a
+            # maximum rather than a sum, so elements may be declared in any order and gaps are kept.
+            def vertex_stride_of(elements)
+              elements.reduce(0) do |stride, element|
+                extent = element.Offset + FORMAT_SIZES.fetch(element.VertexElementFormat.to_s)
+                extent > stride ? extent : stride
+              end
+            end
+            private :vertex_stride_of
+
+            # `VertexElementValidator.Validate`, in the IL's order. The usage-range check it opens
+            # with is unreachable from Ruby -- `VertexElementUsage` is a projected enum, so an
+            # out-of-range usage cannot be constructed -- and is therefore not reproduced.
+            def validate!(stride, elements)
+              raise ::RangeError, "vertexStride" unless stride.positive?
+              raise ArgumentError, "vertex element offset is not a multiple of four" unless (stride & 3).zero?
+
+              occupied = Array.new(stride)
+              elements.each_with_index do |element, index|
+                size = FORMAT_SIZES.fetch(element.VertexElementFormat.to_s)
+                if element.Offset.negative? || element.Offset + size > stride
+                  raise ArgumentError,
+                        "vertex element #{element.VertexElementUsage}#{element.UsageIndex} lies outside the vertex stride"
+                end
+                raise ArgumentError, "vertex element offset is not a multiple of four" unless (element.Offset & 3).zero?
+
+                elements[0, index].each do |earlier|
+                  next unless earlier.VertexElementUsage == element.VertexElementUsage &&
+                              earlier.UsageIndex == element.UsageIndex
+
+                  raise ArgumentError,
+                        "duplicate vertex element #{element.VertexElementUsage}#{element.UsageIndex}"
+                end
+
+                (element.Offset...(element.Offset + size)).each do |byte|
+                  unless occupied[byte].nil?
+                    other = elements[occupied[byte]]
+                    raise ArgumentError,
+                          "vertex elements #{other.VertexElementUsage}#{other.UsageIndex} and " \
+                          "#{element.VertexElementUsage}#{element.UsageIndex} overlap"
+                  end
+                  occupied[byte] = index
+                end
+              end
+              nil
+            end
+            private :validate!
+          end
         end
 
         class Texture < GraphicsResource

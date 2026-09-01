@@ -216,10 +216,15 @@ class InterfaceContractsTest < Minitest::Test
     assert_includes F::GameComponent.ancestors, F::IUpdateable
     refute_includes F::GameComponent.ancestors, F::IDrawable
     assert_nil F::GameServiceContainer.new.GetService(F::IGraphicsDeviceManager)
+    # `IVertexType` and `VertexDeclaration` left this list when they were built; what this test
+    # claims -- that **these** interface contracts imply no component, effect or device runtime --
+    # is unchanged, and the interface that arrived is asserted to be abstract like the rest.
     %i[Effect BasicEffect EffectParameter EffectTechnique DirectionalLight IEffectLights
-       IEffectSkinning IVertexType VertexDeclaration].each do |name|
+       IEffectSkinning].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
+    assert_kind_of Module, G::IVertexType
+    assert_raises(NotImplementedError) { Object.new.extend(G::IVertexType).VertexDeclaration }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length
   end

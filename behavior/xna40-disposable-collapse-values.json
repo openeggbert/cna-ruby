@@ -36,9 +36,10 @@
         true,
         true,
         true,
-        0,
+        4,
         true
-      ]
+      ],
+      "note": "Corrected when Graphics.IVertexType was projected: the fifth element is the frontier's consumable-candidate count, which had been zero since Foundation 32 and is now four -- the vertex structs that interface uncovered. It is a RUBY_MAPPING_QUALIFICATION element about this projection's own frontier, not about the IDisposable collapse, and what this row asserts of the collapse is unchanged: it unblocked two types and made neither of them consumable, which the first four elements still say. Pre-correction SHA-256 of this file a2ba9b713e8b145051f9a341f772b5e5c806c5d2d07981507b8cdc8fa75c78ae, of the replayed aggregate bfbb9d9963041695e3674ff5a361afc205caf5a2e1afde77e07c8f69e0623799."
     }
   ]
 }

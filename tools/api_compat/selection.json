@@ -830,6 +830,14 @@
     {
       "name": "Microsoft.Xna.Framework.Graphics.SamplerStateCollection",
       "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.IVertexType",
+      "complete": true
     }
   ]
 }

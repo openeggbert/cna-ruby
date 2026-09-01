@@ -1,14 +1,14 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 170,
-  "completeTypes": 167,
+  "targetTypes": 172,
+  "completeTypes": 169,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 87,
+  "missingTypes": 85,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -23,7 +23,7 @@
     "EVENT_PROJECTION": "retired in Foundation 20; one CLR event projects to one Ruby event reader over CNA::Runtime::Event and the API verifier measures it under EVENT_MAPPING_MISMATCH. The residue is BCL_PROJECTION on the EventHandler`1 support type and, for classes, the IL that decides when the event is raised.",
     "BEHAVIOR_EVIDENCE": "retired in Foundation 22; the original hash-pinned XNA 4.0 Windows assemblies are available on this host, so declaring a constructor or method is work to do, not missing input. It is reported as the informational ilDerivationRequired flag and split into the IL_UNAVAILABLE, NATIVE_RUNTIME and RUNTIME_DATA blockers, which name what is genuinely absent."
   },
-  "selectionRoute": "none-consumable",
+  "selectionRoute": "global-consumable-rank",
   "mappedBclTypes": [
     "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
     "System.Action`1",
@@ -97,7 +97,7 @@
   "blockerSummary": {
     "BCL_PROJECTION": 1,
     "NATIVE_RUNTIME": 3,
-    "NATIVE_RUNTIME+INTERFACE_PRODUCER_MISSING": 1
+    "NONE": 4
   },
   "partialDependencySatisfiedCandidates": [
     {
@@ -249,6 +249,81 @@
       "runtimeDataDetail": null
     },
     {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexBuffer",
+      "kind": "class",
+      "expectedRubyIdentities": 12,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.BufferUsage",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+        "Microsoft.Xna.Framework.Graphics.VertexDeclaration"
+      ],
+      "unmetDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
+          "reachedMembers": [
+            "GetBufferUsage",
+            "IsDeviceLost",
+            "Resources"
+          ],
+          "reachedButMissing": [
+
+          ]
+        }
+      },
+      "ilOnlyDependencies": [
+
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": true,
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::SetVertexBuffer (2 overloads)"
+      ],
+      "dependencyComplete": false,
+      "blockers": [
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "SetData",
+        "GetData",
+        "Dispose"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+        ".ctor",
+        ".locals",
+        "CreateBuffer",
+        "GetManagedObject",
+        "RecreateAndPopulateObject",
+        "ReleaseNativeObject",
+        "SaveDataForRecreation",
+        "T>"
+      ],
+      "runtimeDataDetail": null
+    },
+    {
       "name": "Microsoft.Xna.Framework.DrawableGameComponent",
       "kind": "class",
       "expectedRubyIdentities": 13,
@@ -323,64 +398,6 @@
     }
   ],
   "ilOnlyBlockedCandidates": [
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
-      "kind": "class",
-      "expectedRubyIdentities": 5,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-        "Microsoft.Xna.Framework.Graphics.VertexElement"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Graphics.IVertexType"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.IVertexType"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawUserIndexedPrimitives (4 overloads)",
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawUserPrimitives (2 overloads)"
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "NATIVE_RUNTIME",
-        "INTERFACE_PRODUCER_MISSING"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-        "Microsoft.Xna.Framework.Graphics.IVertexType"
-      ],
-      "producerlessInterfaces": [
-        "Microsoft.Xna.Framework.Graphics.IVertexType"
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "GetVertexElements",
-        "Dispose"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-        "Bind",
-        "Unbind"
-      ],
-      "runtimeDataDetail": null
-    },
     {
       "name": "Microsoft.Xna.Framework.Graphics.RenderTarget2D",
       "kind": "class",
@@ -609,16 +626,15 @@
     }
   ],
   "consumableCandidates": [
-
-  ],
-  "dependencyCompleteCandidates": [
     {
-      "name": "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
-      "kind": "class",
-      "expectedRubyIdentities": 5,
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
+      "kind": "struct",
+      "expectedRubyIdentities": 9,
       "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-        "Microsoft.Xna.Framework.Graphics.VertexElement"
+        "Microsoft.Xna.Framework.Color",
+        "Microsoft.Xna.Framework.Graphics.IVertexType",
+        "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+        "Microsoft.Xna.Framework.Vector3"
       ],
       "unmetDependencies": [
 
@@ -629,47 +645,234 @@
       "partialTypeDependencies": {
       },
       "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Graphics.IVertexType"
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+        "Microsoft.Xna.Framework.Graphics.VertexElement"
       ],
       "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.IVertexType"
+
       ],
       "partialDependencySatisfied": false,
       "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawUserIndexedPrimitives (4 overloads)",
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawUserPrimitives (2 overloads)"
+
       ],
       "dependencyComplete": true,
       "blockers": [
-        "NATIVE_RUNTIME",
-        "INTERFACE_PRODUCER_MISSING"
+
       ],
       "unmappedBclTypes": [
 
       ],
       "reachedInterfaces": [
-        "Microsoft.Xna.Framework.Graphics.IVertexType"
+
       ],
       "producerlessInterfaces": [
-        "Microsoft.Xna.Framework.Graphics.IVertexType"
+
       ],
       "eventMembers": [
 
       ],
       "behaviourBearingMembers": [
         ".ctor",
-        "GetVertexElements",
-        "Dispose"
+        "GetHashCode",
+        "ToString",
+        "op_Equality",
+        "op_Inequality",
+        "Equals"
       ],
       "ilDerivationRequired": true,
       "ilAvailable": true,
       "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
       "nativeReachableMethods": [
-        "Bind",
-        "Unbind"
+
       ],
       "runtimeDataDetail": null
     },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
+      "kind": "struct",
+      "expectedRubyIdentities": 9,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType",
+        "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+        "Microsoft.Xna.Framework.Vector2",
+        "Microsoft.Xna.Framework.Vector3"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+        "Microsoft.Xna.Framework.Graphics.VertexElement"
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "GetHashCode",
+        "ToString",
+        "op_Equality",
+        "op_Inequality",
+        "Equals"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+
+      ],
+      "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture",
+      "kind": "struct",
+      "expectedRubyIdentities": 10,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Color",
+        "Microsoft.Xna.Framework.Graphics.IVertexType",
+        "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+        "Microsoft.Xna.Framework.Vector2",
+        "Microsoft.Xna.Framework.Vector3"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+        "Microsoft.Xna.Framework.Graphics.VertexElement"
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "GetHashCode",
+        "ToString",
+        "op_Equality",
+        "op_Inequality",
+        "Equals"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+
+      ],
+      "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
+      "kind": "struct",
+      "expectedRubyIdentities": 10,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType",
+        "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+        "Microsoft.Xna.Framework.Vector2",
+        "Microsoft.Xna.Framework.Vector3"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+        "Microsoft.Xna.Framework.Graphics.VertexElement"
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "GetHashCode",
+        "ToString",
+        "op_Equality",
+        "op_Inequality",
+        "Equals"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+
+      ],
+      "runtimeDataDetail": null
+    }
+  ],
+  "dependencyCompleteCandidates": [
     {
       "name": "Microsoft.Xna.Framework.Design.MathTypeConverter",
       "kind": "class",
@@ -724,6 +927,251 @@
       "ilDerivationRequired": true,
       "ilAvailable": true,
       "ilAssembly": "Microsoft.Xna.Framework.dll",
+      "nativeReachableMethods": [
+
+      ],
+      "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
+      "kind": "struct",
+      "expectedRubyIdentities": 9,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Color",
+        "Microsoft.Xna.Framework.Graphics.IVertexType",
+        "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+        "Microsoft.Xna.Framework.Vector3"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+        "Microsoft.Xna.Framework.Graphics.VertexElement"
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "GetHashCode",
+        "ToString",
+        "op_Equality",
+        "op_Inequality",
+        "Equals"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+
+      ],
+      "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
+      "kind": "struct",
+      "expectedRubyIdentities": 9,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType",
+        "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+        "Microsoft.Xna.Framework.Vector2",
+        "Microsoft.Xna.Framework.Vector3"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+        "Microsoft.Xna.Framework.Graphics.VertexElement"
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "GetHashCode",
+        "ToString",
+        "op_Equality",
+        "op_Inequality",
+        "Equals"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+
+      ],
+      "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture",
+      "kind": "struct",
+      "expectedRubyIdentities": 10,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Color",
+        "Microsoft.Xna.Framework.Graphics.IVertexType",
+        "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+        "Microsoft.Xna.Framework.Vector2",
+        "Microsoft.Xna.Framework.Vector3"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+        "Microsoft.Xna.Framework.Graphics.VertexElement"
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "GetHashCode",
+        "ToString",
+        "op_Equality",
+        "op_Inequality",
+        "Equals"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+
+      ],
+      "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
+      "kind": "struct",
+      "expectedRubyIdentities": 10,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType",
+        "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+        "Microsoft.Xna.Framework.Vector2",
+        "Microsoft.Xna.Framework.Vector3"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+        "Microsoft.Xna.Framework.Graphics.VertexElement"
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "GetHashCode",
+        "ToString",
+        "op_Equality",
+        "op_Inequality",
+        "Equals"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
       "nativeReachableMethods": [
 
       ],
@@ -958,5 +1406,67 @@
   "eligibleManagedEnums": [
 
   ],
-  "selectedNext": null
+  "selectedNext": {
+    "name": "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
+    "kind": "struct",
+    "expectedRubyIdentities": 9,
+    "dependencies": [
+      "Microsoft.Xna.Framework.Color",
+      "Microsoft.Xna.Framework.Graphics.IVertexType",
+      "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+      "Microsoft.Xna.Framework.Vector3"
+    ],
+    "unmetDependencies": [
+
+    ],
+    "missingTypeDependencies": [
+
+    ],
+    "partialTypeDependencies": {
+    },
+    "ilOnlyDependencies": [
+      "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+      "Microsoft.Xna.Framework.Graphics.VertexElement"
+    ],
+    "ilOnlyUnmetDependencies": [
+
+    ],
+    "partialDependencySatisfied": false,
+    "partialRemainderReverseEdges": [
+
+    ],
+    "dependencyComplete": true,
+    "blockers": [
+
+    ],
+    "unmappedBclTypes": [
+
+    ],
+    "reachedInterfaces": [
+
+    ],
+    "producerlessInterfaces": [
+
+    ],
+    "eventMembers": [
+
+    ],
+    "behaviourBearingMembers": [
+      ".ctor",
+      "GetHashCode",
+      "ToString",
+      "op_Equality",
+      "op_Inequality",
+      "Equals"
+    ],
+    "ilDerivationRequired": true,
+    "ilAvailable": true,
+    "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+    "nativeReachableMethods": [
+
+    ],
+    "runtimeDataDetail": null,
+    "selectedOnly": true,
+    "started": false
+  }
 }

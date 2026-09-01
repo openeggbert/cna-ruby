@@ -24,34 +24,129 @@
       "operation": "PrimitiveType.RubyEnumMapping",
       "args": [],
       "provenance": "RUBY_MAPPING_QUALIFICATION",
-      "note": "Corrected for the same reason and in the same milestone as depth_format.ruby_enum_mapping: Graphics::RasterizerState now exists, so the fourth element of that census is true. It holds no vertex buffer, no index buffer and no effect, and draws nothing, so what this row asserts is unchanged -- the other four are still false and no primitive, topology or draw_ symbol is bound. Pre-correction SHA-256 of this file 0d020e76733b512d21b7f842a870369d966ec0e9d5aa6fe49b93581b5ad80b41, of the replayed aggregate fd6105726e06101ef043a23dfefc0c597d35264d4fb689fb0db42c29a53cb7d5.",
+      "note": "Corrected for the same reason and in the same milestone as depth_format.ruby_enum_mapping: Graphics::RasterizerState now exists, so the fourth element of that census is true. It holds no vertex buffer, no index buffer and no effect, and draws nothing, so what this row asserts is unchanged -- the other four are still false and no primitive, topology or draw_ symbol is bound. Pre-correction SHA-256 of this file 0d020e76733b512d21b7f842a870369d966ec0e9d5aa6fe49b93581b5ad80b41, of the replayed aggregate fd6105726e06101ef043a23dfefc0c597d35264d4fb689fb0db42c29a53cb7d5. Corrected again when VertexDeclaration was built: the third element of the same census is now true too. It holds no vertex buffer and draws nothing -- its own IL reaches the renderer only through the assembly-visible Bind/Unbind the contract never selects -- so what this row asserts is unchanged, and the two elements left false are VertexBuffer and IndexBuffer, which are what a draw call would really need. Pre-correction SHA-256 of this file e4395db1e47f12336b2a948a974ddaedda2d460a811927d33ee2eacfe56aa160, of the replayed aggregate b977ca28ffe94df5976ace4d6a8b1109ffec46ed360f6b512f83ba66c7cc8836.",
       "expected": [
         true,
         true,
-        [0, 1, 2, 3],
-        [true, true, true, true],
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          true,
+          true,
+          true,
+          true
+        ],
         true,
-        ["RangeError", "RangeError", "RangeError", "RangeError", "RangeError"],
-        ["TypeError", "TypeError", "TypeError", "TypeError", "TypeError", "TypeError", "TypeError"],
-        ["TypeError", "TypeError", "TypeError", "TypeError", "TypeError", "TypeError", "TypeError", "TypeError", "TypeError"],
-        [false, false, false, false, false, false, false, false, false],
-        [null, null, null, null, null, null, null, null, null],
-        ["TypeError", "TypeError", "TypeError"],
+        [
+          "RangeError",
+          "RangeError",
+          "RangeError",
+          "RangeError",
+          "RangeError"
+        ],
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
+        [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          "TypeError",
+          "TypeError",
+          "TypeError"
+        ],
         3,
         false,
         0,
-        ["TriangleList", "TriangleStrip", "LineList", "LineStrip"],
+        [
+          "TriangleList",
+          "TriangleStrip",
+          "LineList",
+          "LineStrip"
+        ],
         [
           "Microsoft::Xna::Framework::Graphics::PrimitiveType::TriangleList",
           "Microsoft::Xna::Framework::Graphics::PrimitiveType::TriangleStrip",
           "Microsoft::Xna::Framework::Graphics::PrimitiveType::LineList",
           "Microsoft::Xna::Framework::Graphics::PrimitiveType::LineStrip"
         ],
-        ["LineList", "LineStrip", "TriangleList", "TriangleStrip"],
-        [false, false, false, false, false],
-        [false, false, false, false, false, false, false, false],
-        [false, false, false, false, false],
-        [false, false, false, true, false],
+        [
+          "LineList",
+          "LineStrip",
+          "TriangleList",
+          "TriangleStrip"
+        ],
+        [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          false,
+          false,
+          true,
+          true,
+          false
+        ],
         false,
         false
       ]

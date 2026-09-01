@@ -341,6 +341,16 @@ module CNA
         # rather than only to itself. `cna_graphics_device_get/set_*_state` stay unbound because
         # applying a state to a device is `GraphicsDevice`'s surface and XNA's own `Apply` is
         # `assembly`-visible, so neither is a projected identity yet.
+        # The vertex-declaration routes. They take **no device and no handle in** -- a declaration
+        # is a value CNA computes a stride for -- which is what makes them usable as the headless
+        # cross-check for `VertexDeclaration`'s own stride arithmetic, derived from the pinned IL.
+        # `create_with_stride`, `create_empty`, `copy_type_name` and `get_type_name_byte_count`
+        # stay unbound: XNA computes nothing in the explicit-stride case, declares no empty
+        # declaration, and has no type-name identity on this type at all.
+        signature("cna_vertex_declaration_create", T[:result], [pointer("CNA_VertexElement", const: true), T[:u64], pointer("CNA_Handle")], ownership: "copies the elements; returns OWNED VertexDeclaration"),
+        signature("cna_vertex_declaration_get_stride", T[:result], [T[:handle], pointer("int32_t")], ownership: "borrows declaration; caller output"),
+        signature("cna_vertex_declaration_copy_elements", T[:result], [T[:handle], pointer("CNA_VertexElement"), T[:u64], pointer("uint64_t")], ownership: "borrows declaration; caller output"),
+        signature("cna_vertex_declaration_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED VertexDeclaration"),
         signature("cna_graphics_device_get_sampler_state", T[:result], [T[:handle], enum("CNA_ShaderStage"), T[:u32], pointer("CNA_SamplerState")], ownership: "borrows device; caller output"),
         signature("cna_graphics_device_set_sampler_state", T[:result], [T[:handle], enum("CNA_ShaderStage"), T[:u32], pointer("CNA_SamplerState", const: true)], ownership: "borrows device; copies the descriptor"),
         signature("cna_blend_state_init", T[:result], [enum("CNA_BlendStatePreset"), pointer("CNA_BlendState")], ownership: "caller output"),

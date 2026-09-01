@@ -37350,6 +37350,129 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::SamplerStateCollection"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+      "interfaces": [
+        "System.IDisposable"
+      ],
+      "directInterfaces": [],
+      "genericParameters": [],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "vertexStride",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elements",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexElement[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "elements",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexElement[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetVertexElements",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Graphics.VertexElement[]",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "VertexStride",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::VertexDeclaration"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.IVertexType",
+      "kind": "interface",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": null,
+      "interfaces": [],
+      "directInterfaces": [],
+      "genericParameters": [],
+      "members": [
+        {
+          "kind": "property",
+          "name": "VertexDeclaration",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::IVertexType"
     }
   ]
 }

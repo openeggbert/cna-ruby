@@ -293,6 +293,17 @@ module CNA
         end
       end
 
+      # `CNA_VertexElement` is the same four fields XNA's value type declares, in the same order,
+      # and it carries no versioned header — it is a plain descriptor rather than a create-info.
+      class VertexElement < Structure
+        layout size: 16, alignment: 4, fields: [
+          Layouts.field("offset", "int32_t", 0, 4),
+          Layouts.field("format", "CNA_VertexElementFormat", 4, 4),
+          Layouts.field("usage", "CNA_VertexElementUsage", 8, 4),
+          Layouts.field("usage_index", "int32_t", 12, 4)
+        ]
+      end
+
       # The four graphics state PODs. Each is a complete, versioned value with no handle in it: the
       # `cna_*_state_init` routes fill one from a preset identity, which is what makes them usable
       # as a cross-check for values derived from the pinned XNA IL.

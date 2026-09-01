@@ -452,8 +452,11 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     refute_includes section, "def |:"
     refute_includes section, "def &:"
     refute_includes section, "def ToString"
+    # `VertexDeclaration` left this list when it was built: it holds no buffer and draws nothing,
+    # and its own renderer contact is the assembly-visible Bind/Unbind the contract never selects.
+    # What this test claims about `PrimitiveType` is unchanged.
     %w[DrawPrimitives DrawIndexedPrimitives DrawInstancedPrimitives DrawUserPrimitives
-       DrawUserIndexedPrimitives VertexBuffer IndexBuffer VertexDeclaration].each do |name|
+       DrawUserIndexedPrimitives VertexBuffer IndexBuffer].each do |name|
       refute_includes source, name
     end
   end
@@ -812,10 +815,11 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     # still claims, is that **it** declared none of them -- it declared the eight enums they are
     # made of and nothing that holds one.
     %w[RenderTarget2D RenderTargetCube TextureCube Texture3D VertexBuffer IndexBuffer
-       VertexDeclaration Effect BasicEffect GraphicsAdapter].each do |absent|
+       Effect BasicEffect GraphicsAdapter].each do |absent|
       refute_includes source, "class #{absent}\n"
       refute_includes source, "class #{absent} <"
     end
+    assert_includes source, "class VertexDeclaration < GraphicsResource"
     %w[BlendState DepthStencilState RasterizerState SamplerState]
       .each { |present| assert_includes source, "class #{present} < GraphicsResource" }
     # Foundation 24 and 25 added these managed descriptors.

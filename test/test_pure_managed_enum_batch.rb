@@ -336,13 +336,14 @@ class PureManagedEnumBatchTest < Minitest::Test
     # The four state objects exist now; what this batch claimed, and still claims, is that **it**
     # built none of them -- it selected the eight enums they are made of and nothing that holds one.
     %i[RenderTarget2D RenderTargetCube TextureCube Texture3D VertexBuffer IndexBuffer
-       DynamicVertexBuffer DynamicIndexBuffer VertexDeclaration
+       DynamicVertexBuffer DynamicIndexBuffer
        Effect BasicEffect
        EffectParameter EffectTechnique GraphicsAdapter
        OcclusionQuery].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
-    %i[BlendState DepthStencilState RasterizerState SamplerState SamplerStateCollection].each do |name|
+    %i[BlendState DepthStencilState RasterizerState SamplerState SamplerStateCollection
+       VertexDeclaration].each do |name|
       assert G.const_defined?(name, false), "Graphics::#{name}"
     end
     # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still

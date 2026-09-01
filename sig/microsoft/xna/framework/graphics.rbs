@@ -280,6 +280,16 @@ module Microsoft
           def []=: (Integer index, SamplerState value) -> SamplerState
         end
 
+        module IVertexType
+          def VertexDeclaration: () -> VertexDeclaration
+        end
+
+        class VertexDeclaration < GraphicsResource
+          def initialize: (*untyped arguments) -> void
+          attr_reader VertexStride: Integer
+          def GetVertexElements: () -> Array[VertexElement]
+        end
+
         class GraphicsResource
           attr_reader IsDisposed: bool
           attr_accessor Tag: untyped

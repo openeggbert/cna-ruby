@@ -155,8 +155,10 @@ class PrimitiveTypeTest < Minitest::Test
   def test_no_vertex_buffer_index_buffer_or_renderer_topology_surface_is_implemented
     # `RasterizerState` left this list when the four state objects were built: it is a managed
     # value holder that holds no buffer and draws nothing, so the claim is unchanged.
-    %i[VertexBuffer IndexBuffer DynamicVertexBuffer DynamicIndexBuffer VertexDeclaration
-       IVertexType Effect BasicEffect VertexPositionColor
+    # `VertexDeclaration` and `IVertexType` left this list when they were built. Neither holds a
+    # buffer nor draws anything, so what this test claims is unchanged.
+    %i[VertexBuffer IndexBuffer DynamicVertexBuffer DynamicIndexBuffer
+       Effect BasicEffect VertexPositionColor
        PrimitiveTypeConverter].each do |name|
       refute G.const_defined?(name, false), name.to_s
     end

@@ -37,7 +37,6 @@
 - `Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect`
 - `Microsoft.Xna.Framework.Graphics.GraphicsAdapter`
 - `Microsoft.Xna.Framework.Graphics.IEffectLights`
-- `Microsoft.Xna.Framework.Graphics.IVertexType`
 - `Microsoft.Xna.Framework.Graphics.IndexBuffer`
 - `Microsoft.Xna.Framework.Graphics.Model`
 - `Microsoft.Xna.Framework.Graphics.ModelBone`
@@ -60,7 +59,6 @@
 - `Microsoft.Xna.Framework.Graphics.TextureCube`
 - `Microsoft.Xna.Framework.Graphics.VertexBuffer`
 - `Microsoft.Xna.Framework.Graphics.VertexBufferBinding`
-- `Microsoft.Xna.Framework.Graphics.VertexDeclaration`
 - `Microsoft.Xna.Framework.Graphics.VertexPositionColor`
 - `Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture`
 - `Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture`

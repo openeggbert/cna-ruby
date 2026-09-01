@@ -211,7 +211,7 @@ class SamplerStateCollectionTest < Minitest::Test
        DrawPrimitives DrawUserPrimitives].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
-    %i[Effect EffectPass BasicEffect RenderTarget2D VertexDeclaration]
+    %i[Effect EffectPass BasicEffect RenderTarget2D]
       .each { |absent| refute G.const_defined?(absent, false), absent.to_s }
     # XNA's own `Apply` stays unprojected on the state it holds, which is what makes the setter's
     # native step this collection's rather than SamplerState's.

@@ -410,3 +410,19 @@ Measured while binding them: **CNA validates `struct_size` and `struct_version` 
 `cna_graphics_device_get_sampler_state` is refused `INVALID_ARGUMENT` with "The sampler-state query
 is invalid", which reads like a bad stage or slot and is not. All four graphics state layouts now
 fill their own header on construction, as every other versioned structure in this manifest does.
+
+## The vertex declaration
+
+Four routes bring the count to **239** and one layout the structures to **35**:
+`cna_vertex_declaration_create`, `get_stride`, `copy_elements` and `destroy`, with
+`CNA_VertexElement` (16/4) — the same four fields XNA's value type declares, in the same order, and
+with no versioned header, because it is a plain descriptor rather than a create-info.
+
+They take **no device and no game**, which is what makes them the headless cross-check for
+`VertexDeclaration`'s stride arithmetic: every stride and all twelve `GetTypeSize` values are
+asserted equal to CNA's own. Nothing in `lib/` calls them — the projection is pure managed, exactly
+as XNA's constructors are, which allocate no native object until the `assembly`-visible `Bind`.
+
+`create_with_stride`, `create_empty`, `copy_type_name` and `get_type_name_byte_count` stay unbound:
+XNA computes nothing in the explicit-stride case, declares no empty declaration, and has no
+type-name identity on this type at all.

@@ -140,12 +140,17 @@ class MemberLevelDependenciesTest < Minitest::Test
               REPORT.fetch("ilOnlyBlockedCandidates"))
              .select { |entry| entry.fetch("blockers").include?("INTERFACE_PRODUCER_MISSING") }
              .to_h { |entry| [entry.fetch("name"), entry.fetch("producerlessInterfaces")] }
+    # VertexDeclaration was the second case until it was built; the rule that caught it is
+    # unchanged and still catches the first. It is worth recording what happened to it: the
+    # interface it reached, IVertexType, has since been projected too and **still has no
+    # producer**, because nothing in this binding conforms to it -- which is the next test's
+    # subject and the reason a completed interface is not a provider.
     assert_equal({
                    "Microsoft.Xna.Framework.DrawableGameComponent" =>
-                     ["Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"],
-                   "Microsoft.Xna.Framework.Graphics.VertexDeclaration" =>
-                     ["Microsoft.Xna.Framework.Graphics.IVertexType"]
+                     ["Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"]
                  }, caught)
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Graphics.IVertexType"
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Graphics.VertexDeclaration"
     assert_includes REPORT.fetch("candidatePolicy"), "INTERFACE_PRODUCER_MISSING"
   end
 
@@ -203,12 +208,12 @@ class MemberLevelDependenciesTest < Minitest::Test
     # 1 until GraphicsResource completed and put VertexDeclaration and SamplerState here: both are
     # dependency-complete by the signature graph and both reach a type only their IL names --
     # IVertexType for the first, EffectPass for the second.
-    # 3 until SamplerState was built, which took it back to 2.
-    assert_equal 2, signature_complete.length
+    # 3 until SamplerState was built, which took it back to 2, and 1 when VertexDeclaration
+    # followed it: both blockers named members the pinned contract never selects.
+    assert_equal 1, signature_complete.length
     names = signature_complete.map { |entry| entry.fetch("name") }.sort
     # ContentManager was here until the Stream and Action`1 projections consumed it.
-    assert_equal ["Microsoft.Xna.Framework.Graphics.EffectAnnotation",
-                  "Microsoft.Xna.Framework.Graphics.VertexDeclaration"], names
+    assert_equal ["Microsoft.Xna.Framework.Graphics.EffectAnnotation"], names
     refute_includes names, "Microsoft.Xna.Framework.Audio.Cue"
   end
 
@@ -257,12 +262,15 @@ class MemberLevelDependenciesTest < Minitest::Test
     # and ResourceContentManager to 3. Then it *rose* to 9, which is what a frontier advancing
     # looks like: GraphicsResource completing made the four graphics state objects and
     # VertexDeclaration dependency-complete, and Texture2D completing did the same for VideoPlayer.
-    # and back to 6 when the four state objects were audited and built, then 5 when
-    # SamplerStateCollection followed them.
-    assert_equal 5, REPORT.fetch("dependencyCompleteCandidates").length
-    assert_empty REPORT.fetch("consumableCandidates")
-    assert_equal "none-consumable", REPORT.fetch("selectionRoute")
-    assert_nil REPORT.fetch("selectedNext")
+    # and back to 6 when the four state objects were audited and built, 5 when
+    # SamplerStateCollection followed them, and 8 when VertexDeclaration and the IVertexType it
+    # uncovered were both built -- putting the four vertex structs on the queue, the first
+    # consumable candidates since Foundation 32.
+    assert_equal 8, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 4, REPORT.fetch("consumableCandidates").length
+    assert_equal "global-consumable-rank", REPORT.fetch("selectionRoute")
+    assert_equal "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
+                 REPORT.fetch("selectedNext").fetch("name")
 
     # Nothing reported here becomes consumable, and the type-level lists are byte-identical to what
     # they were: the two new reports sit beside the policy rather than inside it. Some entries in
@@ -273,7 +281,7 @@ class MemberLevelDependenciesTest < Minitest::Test
      REPORT.fetch("ilOnlyBlockedCandidates")).each do |entry|
       refute_includes consumable, entry.fetch("name")
     end
-    assert_equal 2, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
+    assert_equal 1, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
   end
 
   # The one candidate the refinement cleared, and what happened to it. Foundation 39 selected it and

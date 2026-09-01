@@ -52,28 +52,29 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 70 | `Texture2D.FromStream`'s five-argument overload, completing the type; the upstream zoom defect; the frontier and corpus staleness guards | **0** | 1 |
 | 71 | the four graphics state objects, and the ninth `NATIVE_RUNTIME` deferral that was not one | **4** | 65 |
 | 72 | `Graphics.SamplerStateCollection` + `GraphicsDevice.SamplerStates`/`VertexSamplerStates` | **1** | 4 |
+| 73 | `Graphics.VertexDeclaration` + the `IVertexType` contract it uncovered | **2** | 6 |
 
 ## Measured state
 
-Strict target **170 types / 2082 member identities**: **167 complete**, three partial graphics
-runtime types, 87 missing, **199 deferred diagnostics**. `MISSING_MEMBER` **78**, `PARTIAL_TYPES` 3,
+Strict target **172 types / 2088 member identities**: **169 complete**, three partial graphics
+runtime types, 85 missing, **197 deferred diagnostics**. `MISSING_MEMBER` **78**, `PARTIAL_TYPES` 3,
 `PROPERTY_MAPPING_MISMATCH` 1 (`GraphicsDevice::Viewport`, unrelated and pre-existing),
 `OVERLOAD_MAPPING_MISMATCH` **30**, every other structural category 0, allowlist 0, unmeasured 0.
 **27** event identities across **14** owner types. **22** projected BCL identities.
 
-CNA ABI **235 functions / 5 callbacks / 101 constants / 34 layouts**, on **two admitted encoded
+CNA ABI **239 functions / 5 callbacks / 101 constants / 35 layouts**, on **two admitted encoded
 versions** cross-verified across both header roots. Zero missing header symbols, zero missing library
 symbols, zero cross-version mismatches, zero ABI mismatches. **No CNA source was changed and no new
 native binary was built.**
 
-Behaviour corpus **526** observations, zero failures. Suite **1389 runs / 48104 assertions**, zero
-failures, zero skips. Capability registry **124** rows, zero contradictions.
+Behaviour corpus **526** observations, zero failures. Suite **1400 runs / 48361 assertions**, zero
+failures, zero skips. Capability registry **125** rows, zero contradictions.
 
-The dependency frontier carries **five** candidates. It went 3 → 9 → 6 → 5 in three milestones:
-completing `GraphicsResource` and `Texture2D` made six types behind them visible, auditing four of
-those six found the blocker was not one, and the fifth turned out to have an accurate blocker that
-named a route CNA exports. Three of the five left are audited and deferred; two are not yet
-audited, so the frontier is *not* at rest — see `plan.md`.
+The dependency frontier carries **eight** candidates and, for the first time since Foundation 32,
+**four of them are consumable**: `SELECTION_ROUTE` is `global-consumable-rank` and `SELECTED_NEXT`
+names `Graphics.VertexPositionColor`. It went 3 → 9 → 6 → 5 → 8 in four milestones — see
+`plan.md`. The queue is no longer empty, which is the clearest statement of what to do next this
+handoff has ever been able to make.
 
 ## Game is complete, and so is the whole Audio namespace
 
@@ -200,12 +201,15 @@ being accurate is exactly what made it buildable, because the route that apply n
 exports. So the audit is not a search for wrong blockers; it is a search for *what* the blocker
 names. The same question is the first one to ask of the two that remain.
 
-The two still unaudited, with what to check first rather than what is assumed:
+**The recommended next work is the four vertex structs**, in the order the frontier ranks them:
+`VertexPositionColor` (9 identities), `VertexPositionTexture` (9), `VertexPositionColorTexture`
+(10), `VertexPositionNormalTexture` (10). Every one is consumable with no blocker, every one is
+pure managed with hash-pinned IL, and building them is what would finally give `IVertexType` a
+**producer** — the thing `INTERFACE_PRODUCER_MISSING` measures and that `DrawableGameComponent`
+still waits on for its own interface.
 
-- **`Graphics.VertexDeclaration`** — the only dependency-complete candidate carrying
-  `INTERFACE_PRODUCER_MISSING`: its own IL calls `IVertexType` members and nothing in this
-  projection conforms to that interface. That is a real second blocker, not a restatement of the
-  first, and `VertexElement` — which it is built from — has been complete since Foundation 22.
+The one still unaudited, with what to check first rather than what is assumed:
+
 - **`Media.VideoPlayer`** — arrived behind `Texture2D`, whose completion was its last unmet
   signature dependency. Unlike the state objects its IL is native in **fifteen** members including
   the constructor, `GetTexture` and every transport control, so the blocker word may well be right
@@ -239,9 +243,9 @@ The three already audited:
   whose reachable surface is *one member*, not a base class one inherits from. Projecting it means
   projecting .NET's type-descriptor system for ten design-time converters nothing here consumes.
 
-So the type frontier is **not** at rest. Three candidates are deferred for a measured reason; two
-are unaudited and the standing rule says a blocker word is not a finding until the routes and the IL
-have been read.
+So the type frontier is **not** at rest, and for the first time in a long while the reason is that
+there is work queued rather than that something is unaudited: four consumable candidates, three
+deferred for a measured reason, and one — `Media.VideoPlayer` — not yet audited.
 
 **The single largest lever is still a qualification artifact with a real renderer.** It would
 unblock `GraphicsAdapter` directly and the three partial graphics types behind it —
@@ -252,8 +256,10 @@ from 26 to 15 when its preferred settings were projected, and what is left there
 audit's, not the renderer's.
 
 The `RUNTIME_DATA` register is **empty**. Every entry it ever held described a producer rather than
-the type, and nine `NATIVE_RUNTIME` deferrals went the same way — the ninth being the four state
-objects at once, whose reachability was an `assembly`-visible member the contract never selects. The audit is the rule that
+the type, and ten `NATIVE_RUNTIME` deferrals went the same way — the ninth being the four state
+objects at once and the tenth `VertexDeclaration`, whose reachability was in every case an
+`assembly`-visible member the contract never selects. `INTERFACE_PRODUCER_MISSING` emptied off the
+dependency-complete list with it, for exactly the same reason. The audit is the rule that
 survived: re-measure a deferral before trusting it, especially one that names the thing which would
 *fill* a type.
 

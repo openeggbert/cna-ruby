@@ -5,12 +5,12 @@
   "REFERENCE_MEMBERS": 2964,
   "EXPECTED_RUBY_TYPES": 257,
   "EXPECTED_RUBY_MEMBERS": 2915,
-  "TARGET_TYPES": 170,
-  "TARGET_MEMBERS": 2082,
-  "TOTAL_DIAGNOSTICS": 196,
-  "COMPLETE_TYPES": 167,
+  "TARGET_TYPES": 172,
+  "TARGET_MEMBERS": 2088,
+  "TOTAL_DIAGNOSTICS": 194,
+  "COMPLETE_TYPES": 169,
   "PARTIAL_TYPES": 3,
-  "MISSING_TYPES": 87,
+  "MISSING_TYPES": 85,
   "ALLOWLIST_ENTRIES": 0,
   "EVENT_IDENTITIES": 27,
   "EVENT_OWNER_TYPES": 14,
@@ -18,7 +18,7 @@
   "BCL_PROJECTED_IDENTITIES": 22,
   "BCL_EXCEPTION_BASES": 2,
   "BCL_THROWN_EXCEPTIONS": 8,
-  "MISSING_TYPE": 87,
+  "MISSING_TYPE": 85,
   "MISSING_MEMBER": 78,
   "UNEXPECTED_TYPE": 0,
   "UNEXPECTED_MEMBER": 0,
@@ -271,7 +271,9 @@
     "Microsoft.Xna.Framework.Graphics.DepthStencilState",
     "Microsoft.Xna.Framework.Graphics.RasterizerState",
     "Microsoft.Xna.Framework.Graphics.SamplerState",
-    "Microsoft.Xna.Framework.Graphics.SamplerStateCollection"
+    "Microsoft.Xna.Framework.Graphics.SamplerStateCollection",
+    "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+    "Microsoft.Xna.Framework.Graphics.IVertexType"
   ],
   "partialTypes": {
     "Microsoft.Xna.Framework.GraphicsDeviceManager": [
@@ -374,7 +376,6 @@
     "Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect",
     "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
     "Microsoft.Xna.Framework.Graphics.IEffectLights",
-    "Microsoft.Xna.Framework.Graphics.IVertexType",
     "Microsoft.Xna.Framework.Graphics.IndexBuffer",
     "Microsoft.Xna.Framework.Graphics.Model",
     "Microsoft.Xna.Framework.Graphics.ModelBone",
@@ -397,7 +398,6 @@
     "Microsoft.Xna.Framework.Graphics.TextureCube",
     "Microsoft.Xna.Framework.Graphics.VertexBuffer",
     "Microsoft.Xna.Framework.Graphics.VertexBufferBinding",
-    "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
     "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
     "Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture",
     "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
@@ -595,7 +595,9 @@
     "Microsoft.Xna.Framework.Graphics.DepthStencilState": 0,
     "Microsoft.Xna.Framework.Graphics.RasterizerState": 0,
     "Microsoft.Xna.Framework.Graphics.SamplerState": 0,
-    "Microsoft.Xna.Framework.Graphics.SamplerStateCollection": 0
+    "Microsoft.Xna.Framework.Graphics.SamplerStateCollection": 0,
+    "Microsoft.Xna.Framework.Graphics.VertexDeclaration": 0,
+    "Microsoft.Xna.Framework.Graphics.IVertexType": 0
   },
   "details": {
     "MISSING_TYPE": [
@@ -636,7 +638,6 @@
       "Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect",
       "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
       "Microsoft.Xna.Framework.Graphics.IEffectLights",
-      "Microsoft.Xna.Framework.Graphics.IVertexType",
       "Microsoft.Xna.Framework.Graphics.IndexBuffer",
       "Microsoft.Xna.Framework.Graphics.Model",
       "Microsoft.Xna.Framework.Graphics.ModelBone",
@@ -659,7 +660,6 @@
       "Microsoft.Xna.Framework.Graphics.TextureCube",
       "Microsoft.Xna.Framework.Graphics.VertexBuffer",
       "Microsoft.Xna.Framework.Graphics.VertexBufferBinding",
-      "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
       "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
       "Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture",
       "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
