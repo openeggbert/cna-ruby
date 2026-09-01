@@ -527,6 +527,118 @@ module CNA
         end
       end
 
+      # The vertex- and index-buffer descriptors. Both `*Transfer` structures carry the element
+      # identity, the streaming option and a caller-array window, which is the shape XNA's four
+      # `SetData` overloads differ by.
+      class VertexBufferCreateInfo < Structure
+        layout size: 32, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("vertex_declaration", "CNA_VertexDeclarationHandle", 8, 8),
+          Layouts.field("vertex_count", "int32_t", 16, 4),
+          Layouts.field("buffer_usage", "CNA_BufferUsage", 20, 4),
+          Layouts.field("dynamic", "CNA_Bool", 24, 1)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class VertexBufferInfo < Structure
+        layout size: 32, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("vertex_count", "int32_t", 8, 4),
+          Layouts.field("buffer_usage", "CNA_BufferUsage", 12, 4),
+          Layouts.field("dynamic", "CNA_Bool", 16, 1),
+          Layouts.field("is_content_lost", "CNA_Bool", 17, 1),
+          Layouts.field("has_renderer", "CNA_Bool", 18, 1),
+          Layouts.field("vertex_stride", "int32_t", 20, 4),
+          Layouts.field("vertex_element_count", "uint64_t", 24, 8)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class VertexBufferTransfer < Structure
+        layout size: 32, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("vertex_type", "CNA_VertexType", 8, 4),
+          Layouts.field("options", "CNA_SetDataOptions", 12, 4),
+          Layouts.field("start_index", "uint64_t", 16, 8),
+          Layouts.field("element_count", "uint64_t", 24, 8)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class VertexBufferBinding < Structure
+        layout size: 16, alignment: 8, fields: [
+          Layouts.field("vertex_buffer", "CNA_VertexBufferHandle", 0, 8),
+          Layouts.field("vertex_offset", "int32_t", 8, 4),
+          Layouts.field("instance_frequency", "int32_t", 12, 4)
+        ]
+      end
+
+      class IndexBufferCreateInfo < Structure
+        layout size: 24, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("index_count", "int32_t", 8, 4),
+          Layouts.field("index_element_size", "CNA_IndexElementSize", 12, 4),
+          Layouts.field("buffer_usage", "CNA_BufferUsage", 16, 4),
+          Layouts.field("dynamic", "CNA_Bool", 20, 1)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class IndexBufferInfo < Structure
+        layout size: 24, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("index_count", "int32_t", 8, 4),
+          Layouts.field("index_element_size", "CNA_IndexElementSize", 12, 4),
+          Layouts.field("buffer_usage", "CNA_BufferUsage", 16, 4),
+          Layouts.field("dynamic", "CNA_Bool", 20, 1),
+          Layouts.field("is_content_lost", "CNA_Bool", 21, 1),
+          Layouts.field("has_renderer", "CNA_Bool", 22, 1)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class IndexBufferTransfer < Structure
+        layout size: 32, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("index_element_size", "CNA_IndexElementSize", 8, 4),
+          Layouts.field("options", "CNA_SetDataOptions", 12, 4),
+          Layouts.field("start_index", "uint64_t", 16, 8),
+          Layouts.field("element_count", "uint64_t", 24, 8)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       class Texture2DCreateInfo < Structure
         layout size: 24, alignment: 4, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

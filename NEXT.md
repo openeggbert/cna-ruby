@@ -61,27 +61,37 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | NF6 | the real-renderer qualification artifact, and the adapter defect it found | **0** | **0** |
 | 79 | `Graphics.Texture3D` + `TextureCube`, the two types `EffectParameter` returns | **2** | 20 |
 | 80 | the nine-type `Effect` cluster, and `SpriteBatch.Begin`'s last two overloads | **9** | 98 |
+| 81 | the vertex and index buffers, and the `VertexBufferBinding` that names one | **5** | 43 |
 
 ## Measured state
 
-Strict target **177 types / 2152 member identities**: **174 complete**, three partial graphics
-runtime types, 80 missing, **179 deferred diagnostics**. `MISSING_MEMBER` **67**, `PARTIAL_TYPES` 3,
-`PROPERTY_MAPPING_MISMATCH` 1 (`GraphicsDevice::Viewport`, unrelated and pre-existing),
-`OVERLOAD_MAPPING_MISMATCH` **28**, every other structural category 0, allowlist 0, unmeasured 0.
-**27** event identities across **14** owner types. **22** projected BCL identities.
+This section had gone stale for eleven milestones — it still described Foundation 69's 177 types
+while the report said 193 — which is the same failure the frontier and corpus staleness guards were
+added for. Re-measured from the live reports at Foundation 81:
 
-CNA ABI **260 functions / 5 callbacks / 101 constants / 37 layouts**, on **two admitted encoded
+Strict target **193 types / 2313 member identities**: **191 complete**, **two** partial graphics
+runtime types (`GraphicsDevice` and `GraphicsDeviceManager`), 64 missing, **157 deferred
+diagnostics**. `MISSING_MEMBER` **65**, `PARTIAL_TYPES` 2,
+`PROPERTY_MAPPING_MISMATCH` 1 (`GraphicsDevice::Viewport`, unrelated and pre-existing),
+`OVERLOAD_MAPPING_MISMATCH` **27**, every other structural category 0, allowlist 0, unmeasured 0.
+**29** event identities across **16** owner types. **22** projected BCL identities.
+
+CNA ABI **349 functions / 5 callbacks / 133 constants / 57 layouts**, on **two admitted encoded
 versions** cross-verified across both header roots. Zero missing header symbols, zero missing library
 symbols, zero cross-version mismatches, zero ABI mismatches. **No CNA source was changed and no new
 native binary was built.**
 
-Behaviour corpus **526** observations, zero failures. Suite **1448 runs / 48719 assertions**, zero
-failures, zero skips. Capability registry **130** rows, zero contradictions.
+Behaviour corpus **526** observations, zero failures. Suite **1517 runs / 49991 assertions**, zero
+failures, and 17 skips under the default HEADLESS artifact — every one a renderer capability that
+artifact does not have: compiled effects, volume storage and cube-face storage. The same 1517 runs
+are green under both real-renderer artifacts, 13 skips on `OPENGL33` and **none** on the
+compiled-effects build, with `SDL_VIDEODRIVER=x11` — which Foundation 81 measured to be load-bearing
+rather than decorative. Capability registry **136** rows, zero contradictions.
 
-The dependency frontier carries **three** candidates, none is consumable, and **every one has been
-audited**. It went 3 → 9 → 6 → 5 → 8 → 4 → 3 in six milestones — see `plan.md`. The eight-candidate
-step is the only time this frontier has ever produced a work queue, and the step after it consumed
-the whole thing.
+The dependency frontier carries **five** candidates and none is consumable. It went
+3 → 9 → 6 → 5 → 8 → 4 → 3 → 4 → 5 — see `plan.md`. A count that rises is what advancing looks like
+when the types built were bases or dependencies: the `Effect` cluster uncovered `EffectMaterial` and
+`DirectionalLight`, and the buffers uncovered `ModelMeshPart`.
 
 ## Game is complete, and so is the whole Audio namespace
 

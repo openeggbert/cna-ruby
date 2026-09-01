@@ -484,6 +484,8 @@ class EventProjectionTest < Minitest::Test
       Microsoft.Xna.Framework.Audio.WaveBank::Disposing
       Microsoft.Xna.Framework.Audio.SoundBank::Disposing
       Microsoft.Xna.Framework.Audio.Cue::Disposing
+      Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer::ContentLost
+      Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer::ContentLost
     ], STRICT.fetch("eventIdentities")
   end
 

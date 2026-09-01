@@ -422,6 +422,40 @@ module CNA
         signature("cna_effect_technique_get_index_ext", T[:result], [handle("CNA_EffectTechniqueHandle"), pointer("uint32_t")], ownership: "borrows technique; caller output"),
         signature("cna_effect_technique_get_passes", T[:result], [handle("CNA_EffectTechniqueHandle"), pointer("CNA_EffectPassCollectionHandle")], ownership: "borrows technique; returns an OWNED collection view"),
         signature("cna_effect_technique_get_annotations", T[:result], [handle("CNA_EffectTechniqueHandle"), pointer("CNA_EffectAnnotationCollectionHandle")], ownership: "borrows technique; returns an OWNED collection view"),
+        # The vertex and index buffers.
+        #
+        # XNA's `SetData<T>` is generic over any struct and CNA's **typed** vertex transfer carries
+        # only its seven built-in `CNA_VertexType` layouts, so the static path uses the `_raw`
+        # family -- bytes, a vertex count and a stride -- which the header documents as existing for
+        # exactly that asymmetry.
+        #
+        # The dynamic path needs `SetDataOptions`, and here the **two-version admission policy chose
+        # the route**: `cna_vertex_buffer_set_data_raw_at_with_options` carries both the offset and
+        # the options, and it exists only in 0.21.0. Binding it would make the retired 0.7.0 headers
+        # report a missing symbol and end their admission, which is not a decision a buffer milestone
+        # gets to take on its own. The typed `cna_vertex_buffer_set_data` is declared by both, and
+        # its transfer carries the options -- at the cost of the seven built-in layouts, which are a
+        # superset of the four vertex structs this binding projects. See
+        # `docs/vertex-index-buffer-evidence.md`.
+        #
+        # `cna_index_buffer_set_data_at` needs no such choice: both versions declare it and its
+        # transfer carries the element width and the options, so one route covers all five XNA
+        # `SetData` overloads across the static and dynamic classes.
+        signature("cna_vertex_declaration_create_with_stride", T[:result], [T[:i32], pointer("CNA_VertexElement", const: true), T[:u64], pointer("CNA_VertexDeclarationHandle")], ownership: "copies the elements; returns OWNED VertexDeclaration"),
+        signature("cna_vertex_buffer_create", T[:result], [T[:handle], pointer("CNA_VertexBufferCreateInfo", const: true), pointer("CNA_VertexBufferHandle")], ownership: "borrows device; returns OWNED vertex buffer"),
+        signature("cna_vertex_buffer_destroy", T[:result], [handle("CNA_VertexBufferHandle")], ownership: "consumes OWNED vertex buffer"),
+        signature("cna_vertex_buffer_get_info", T[:result], [handle("CNA_VertexBufferHandle"), pointer("CNA_VertexBufferInfo")], ownership: "caller output"),
+        signature("cna_vertex_buffer_copy_declaration_elements", T[:result], [handle("CNA_VertexBufferHandle"), pointer("CNA_VertexElement"), T[:u64], pointer("uint64_t")], ownership: "borrows buffer; caller output"),
+        signature("cna_vertex_buffer_set_data_raw_at", T[:result], [handle("CNA_VertexBufferHandle"), T[:u64], pointer("void", const: true), T[:u64], T[:u64], T[:u32]], ownership: "borrows buffer; copies the bytes"),
+        signature("cna_vertex_buffer_set_data", T[:result], [handle("CNA_VertexBufferHandle"), pointer("CNA_VertexBufferTransfer", const: true), pointer("void", const: true), T[:u64]], ownership: "borrows buffer; copies the vertices"),
+        signature("cna_vertex_buffer_get_data_raw", T[:result], [handle("CNA_VertexBufferHandle"), T[:u64], T[:ptr], T[:u64], T[:u64], T[:u32]], ownership: "borrows buffer; caller output"),
+        signature("cna_vertex_buffer_binding_init", T[:result], [handle("CNA_VertexBufferHandle"), T[:i32], T[:i32], pointer("CNA_VertexBufferBinding")], ownership: "borrows buffer; caller output"),
+        signature("cna_index_buffer_create", T[:result], [T[:handle], pointer("CNA_IndexBufferCreateInfo", const: true), pointer("CNA_IndexBufferHandle")], ownership: "borrows device; returns OWNED index buffer"),
+        signature("cna_index_buffer_destroy", T[:result], [handle("CNA_IndexBufferHandle")], ownership: "consumes OWNED index buffer"),
+        signature("cna_index_buffer_get_info", T[:result], [handle("CNA_IndexBufferHandle"), pointer("CNA_IndexBufferInfo")], ownership: "caller output"),
+        signature("cna_index_buffer_set_data", T[:result], [handle("CNA_IndexBufferHandle"), pointer("CNA_IndexBufferTransfer", const: true), pointer("void", const: true), T[:u64]], ownership: "borrows buffer; replaces the whole contents"),
+        signature("cna_index_buffer_set_data_at", T[:result], [handle("CNA_IndexBufferHandle"), T[:u64], pointer("CNA_IndexBufferTransfer", const: true), pointer("void", const: true), T[:u64]], ownership: "borrows buffer; copies the indices"),
+        signature("cna_index_buffer_get_data", T[:result], [handle("CNA_IndexBufferHandle"), pointer("CNA_IndexBufferTransfer", const: true), T[:ptr], T[:u64], pointer("uint64_t")], ownership: "borrows buffer; caller output"),
         # The two encode routes `SaveAsPng` and `SaveAsJpeg` need: ask for the size, then copy. CNA
         # also exports `cna_texture2d_save_file`, which writes a path rather than a stream and has
         # no XNA identity, so it stays unbound.
@@ -746,6 +780,11 @@ module CNA
         "CNA_EFFECT_PARAMETER_TYPE_STRING" => 4, "CNA_EFFECT_PARAMETER_TYPE_TEXTURE" => 5,
         "CNA_EFFECT_PARAMETER_TYPE_TEXTURE1D" => 6, "CNA_EFFECT_PARAMETER_TYPE_TEXTURE2D" => 7,
         "CNA_EFFECT_PARAMETER_TYPE_TEXTURE3D" => 8, "CNA_EFFECT_PARAMETER_TYPE_TEXTURE_CUBE" => 9,
+        # The four built-in vertex layouts this binding projects a type for. CNA's typed
+        # vertex-buffer transfer is what carries `SetDataOptions`, and these are the identities it
+        # accepts; the other three built-ins name types no XNA 4.0 profile has.
+        "CNA_VERTEX_TYPE_POSITION_COLOR" => 0, "CNA_VERTEX_TYPE_POSITION_COLOR_TEXTURE" => 1,
+        "CNA_VERTEX_TYPE_POSITION_NORMAL_TEXTURE" => 4, "CNA_VERTEX_TYPE_POSITION_TEXTURE" => 6,
         "CNA_MICROPHONE_STATE_STARTED" => 0,
         "CNA_MICROPHONE_STATE_STOPPED" => 1,
         "CNA_MICROPHONE_STATE_MAXIMUM" => 1,

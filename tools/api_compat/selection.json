@@ -1726,6 +1726,26 @@
     {
       "name": "Microsoft.Xna.Framework.Graphics.Effect",
       "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexBuffer",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.IndexBuffer",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexBufferBinding",
+      "complete": true
     }
   ]
 }

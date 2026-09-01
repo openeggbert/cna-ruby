@@ -159,8 +159,22 @@ CNA_TEST_FX=.../CnaConformanceEffect.fxb SDL_VIDEODRIVER=x11 \
 xvfb-run -a -s "-screen 0 1280x800x24 -nolisten tcp" rake test
 ```
 
-1503 runs / 0 failures / 0 errors under each of the three artifacts, with 17 skips on `HEADLESS`, 13
-on `OPENGL33` and 2 on the compiled-effects build — the difference being exactly the tests whose
+**`SDL_VIDEODRIVER=x11` in that command is load-bearing, and Foundation 81 measured what it is
+worth.** This host runs a Wayland session, and `xvfb-run` sets `DISPLAY` without taking
+`WAYLAND_DISPLAY` — or the default `wayland-0` socket under `XDG_RUNTIME_DIR` — away, so SDL picks
+Wayland unless it is told not to. Under Wayland the `OPENGL33` artifact **segfaults inside
+`cna_game_create`** after about thirty create/destroy cycles in one process: measured at the 30th,
+30th and 35th game in three runs, and the crash is a null dereference in the artifact, not a Ruby
+error. The same churn survives 200 games on `HEADLESS`, on `SOFTWARE`, on `OPENGLES3` and on
+`OPENGL33` **with** `SDL_VIDEODRIVER=x11`. Two other things follow from the same cause and were also
+measured: with SDL on Wayland the `OPENGLES3` artifact reports `CNA_NATIVE_WINDOW_SYSTEM_WAYLAND`
+where the recorded run says `X11`, which is the staleness guard doing its job, and its window is
+never activated, so `Game.Activated` does not fire. Forcing the X11 driver — rather than unsetting
+`XDG_RUNTIME_DIR`, which also takes the audio device away — makes all three artifacts green again.
+
+1517 runs / 0 failures / 0 errors under each of the three artifacts at Foundation 81 — 49994
+assertions and 17 skips on `HEADLESS`, 50008 and 13 on `OPENGL33`, 50075 and **none** on the
+compiled-effects build — the difference being exactly the tests whose
 behaviour needs a capability the artifact does not have, each of which says so. The environment
 measurement itself is failure-tolerant: an unmeasurable environment is reported as unmeasured rather
 than taking the suite down with it.
@@ -172,11 +186,11 @@ Xvfb :77 -screen 0 1280x800x24 -nolisten tcp &
 export CNA_HEADERS=~/deps/cna-c-abi-0.21.0/include
 export CNA_ADMITTED_HEADERS=~/deps/cna-c-abi-0.7.0/include
 export CNA_NATIVE_LIBRARY=~/deps/cna-c-abi-0.21.0-opengl33/libcna_c_api.so
-export DISPLAY=:77 SDL_VIDEODRIVER=x11
+export DISPLAY=:77 SDL_VIDEODRIVER=x11    # the driver is not optional -- see above
 
 ruby -Ilib tools/native_abi/verify.rb            # ABI_MISMATCHES=0 on this artifact too
 ruby -Ilib tools/run_renderer_qualification.rb   # writes docs/generated/renderer-native-report.json
-rake test                                        # 1448 runs, 0 failures, 0 skips
+rake test                                        # 1517 runs, 0 failures, 13 skips on this artifact
 ```
 
 Running it against the HEADLESS artifact writes the second entry of the same report, and the

@@ -61,7 +61,8 @@ class VideoPlayerTest < Minitest::Test
     assert_equal %w[Microsoft.Xna.Framework.Design.MathTypeConverter
                     Microsoft.Xna.Framework.Graphics.DirectionalLight
                     Microsoft.Xna.Framework.Graphics.EffectMaterial
-                    Microsoft.Xna.Framework.Graphics.GraphicsAdapter], candidates
+                    Microsoft.Xna.Framework.Graphics.GraphicsAdapter
+                    Microsoft.Xna.Framework.Graphics.ModelMeshPart], candidates
     refute_includes candidates, NAME
     assert_empty FRONTIER.fetch("consumableCandidates")
     # Every Media type this project ever selected is complete now; what is left in that namespace

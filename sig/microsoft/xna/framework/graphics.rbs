@@ -529,6 +529,43 @@ module Microsoft
           attr_accessor MipMapLevelOfDetailBias: Float
         end
 
+        class VertexBuffer < GraphicsResource
+          def initialize: (GraphicsDevice graphicsDevice, VertexDeclaration | Module vertexDeclarationOrType, Integer vertexCount, BufferUsage bufferUsage) -> void
+          attr_reader VertexDeclaration: VertexDeclaration
+          attr_reader VertexCount: Integer
+          attr_reader BufferUsage: BufferUsage
+          def SetData: (Module type, *untyped arguments) -> nil
+          def GetData: (Module type, *untyped arguments) -> nil
+          def Dispose: (?bool disposing) -> nil
+        end
+
+        class DynamicVertexBuffer < VertexBuffer
+          def IsContentLost: () -> bool
+          def ContentLost: () -> CNA::Runtime::Event
+        end
+
+        class IndexBuffer < GraphicsResource
+          def initialize: (GraphicsDevice graphicsDevice, IndexElementSize | Module indexElementSizeOrType, Integer indexCount, BufferUsage bufferUsage) -> void
+          attr_reader IndexCount: Integer
+          attr_reader IndexElementSize: IndexElementSize
+          attr_reader BufferUsage: BufferUsage
+          def SetData: (Module type, *untyped arguments) -> nil
+          def GetData: (Module type, *untyped arguments) -> nil
+        end
+
+        class DynamicIndexBuffer < IndexBuffer
+          def IsContentLost: () -> bool
+          def ContentLost: () -> CNA::Runtime::Event
+        end
+
+        class VertexBufferBinding
+          def initialize: (VertexBuffer vertexBuffer, ?Integer vertexOffset, ?Integer instanceFrequency) -> void
+          attr_reader VertexBuffer: VertexBuffer
+          attr_reader VertexOffset: Integer
+          attr_reader InstanceFrequency: Integer
+          def self.op_Implicit: (VertexBuffer vertexBuffer) -> VertexBufferBinding
+        end
+
         class SpriteBatch < GraphicsResource
           def initialize: (GraphicsDevice graphics_device) -> void
           def Begin: () -> nil

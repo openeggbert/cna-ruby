@@ -1760,12 +1760,15 @@ class ApiVerifierTest < Minitest::Test
       Microsoft.Xna.Framework.Audio.WaveBank::Disposing
       Microsoft.Xna.Framework.Audio.SoundBank::Disposing
       Microsoft.Xna.Framework.Audio.Cue::Disposing
+      Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer::ContentLost
+      Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer::ContentLost
     ], selected
 
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
     assert_equal selected, strict.fetch("eventIdentities")
     assert_equal selected.length, strict.fetch("EVENT_IDENTITIES")
-    assert_equal 14, strict.fetch("EVENT_OWNER_TYPES")
+    # 16 owners since the two dynamic buffers, each of which declares its own `ContentLost`.
+    assert_equal ReviewedScoreboard::EVENT_OWNER_TYPES, strict.fetch("EVENT_OWNER_TYPES")
     assert_equal "CNA::Runtime::Event", strict.fetch("EVENT_SUPPORT_TYPE")
     assert_equal 0, strict.fetch("EVENT_MAPPING_MISMATCH")
 

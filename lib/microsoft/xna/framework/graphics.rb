@@ -2332,6 +2332,650 @@ module Microsoft
           end
         end
 
+        # ----------------------------------------------------------------- the vertex/index buffers
+        #
+        # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…).
+        #
+        # Four classes and one struct. `VertexBuffer` and `IndexBuffer` derive from
+        # `GraphicsResource` and are **not** sealed -- the dynamic forms derive from them -- and each
+        # declares two public constructors that differ only in how the element layout is given: a
+        # `System.Type` that XNA resolves through `VertexDeclaration.FromType`, or the layout itself.
+        #
+        # ## Which CNA route carries which overload, and why
+        #
+        # XNA's `SetData<T>` is generic over any struct. CNA's **typed** vertex transfer carries only
+        # its seven built-in `CNA_VertexType` layouts, so the static overloads use the `_raw` family,
+        # which takes bytes, a vertex count and a stride and accepts any layout. The dynamic
+        # overloads need `SetDataOptions`, which the raw family carries only in a route 0.21.0 added
+        # and the retired 0.7.0 headers do not declare -- so they use the typed route, whose transfer
+        # has carried the options in both versions. The cost is recorded rather than hidden: a
+        # dynamic `SetData` accepts the four projected vertex structs and refuses another element
+        # type, where XNA accepts any.
+        class VertexBuffer < GraphicsResource
+          public_class_method :new
+          attr_reader :VertexDeclaration, :VertexCount, :BufferUsage
+
+          # CNA's seven built-in vertex identities, and the four this binding projects a type for.
+          # A dynamic `SetData` needs one of these because it is the typed route that carries the
+          # streaming option.
+          NATIVE_VERTEX_TYPES = {
+            "VertexPositionColor" => "CNA_VERTEX_TYPE_POSITION_COLOR",
+            "VertexPositionColorTexture" => "CNA_VERTEX_TYPE_POSITION_COLOR_TEXTURE",
+            "VertexPositionNormalTexture" => "CNA_VERTEX_TYPE_POSITION_NORMAL_TEXTURE",
+            "VertexPositionTexture" => "CNA_VERTEX_TYPE_POSITION_TEXTURE"
+          }.freeze
+
+          # `VertexBuffer(GraphicsDevice, Type, int, BufferUsage)` resolves the type through
+          # `VertexDeclaration.FromType`, which is `assembly`-visible in XNA and therefore not a
+          # projected identity -- but it is exactly what a `Type` argument means here, so the
+          # constructor does what it does: take the type's own `VertexDeclaration`.
+          #
+          # The validation, in the IL's order: a null device is
+          # `ArgumentNullException("graphicsDevice", DeviceCannotBeNullOnResourceCreate)`, a null
+          # declaration or type is `ArgumentNullException`, and a non-positive count is
+          # `ArgumentOutOfRangeException("vertexCount", ResourcesMustBeGreaterThanZeroSize)`.
+          def initialize(graphicsDevice, vertexDeclarationOrType, vertexCount, bufferUsage)
+            declaration = self.class.__send__(:resolve_declaration, vertexDeclarationOrType)
+            raise ::ArgumentError, "graphicsDevice" if graphicsDevice.nil?
+            unless graphicsDevice.instance_of?(GraphicsDevice)
+              raise ::TypeError, "graphicsDevice must be GraphicsDevice"
+            end
+
+            count = CNA::Runtime::Numeric.int32(vertexCount, "vertexCount")
+            raise ::RangeError, "vertexCount" unless count.positive?
+            raise ::TypeError, "bufferUsage" unless bufferUsage.instance_of?(BufferUsage)
+
+            # XNA's `VertexDeclaration` is a `GraphicsResource` with **no native handle** here: its
+            # whole projected surface is managed, so the buffer builds the native declaration CNA
+            # needs from the managed one's elements and its own stride, owns it, and destroys it
+            # with itself.
+            @native_declaration = self.class.__send__(:create_native_declaration, declaration)
+            create_info = CNA::Native::Layouts::VertexBufferCreateInfo.new
+            create_info.write_u64(8, @native_declaration)
+            create_info.write_i32(16, count)
+            create_info.write_u32(20, bufferUsage.to_i)
+            create_info.write_u8(24, dynamic? ? 1 : 0)
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_vertex_buffer_create", graphicsDevice.__send__(:native_handle),
+                                     create_info.pointer, output)
+            @VertexDeclaration = declaration
+            initialize_from_native(graphicsDevice, output[0, 8].unpack1("Q"))
+          end
+
+          #     SetData(type, data)
+          #     SetData(type, data, startIndex, elementCount)
+          #     SetData(type, offsetInBytes, data, startIndex, elementCount, vertexStride)
+          def SetData(type, *arguments)
+            window = transfer_arguments(type, arguments, "SetData")
+            bytes = self.class.__send__(:pack_elements, type, window.fetch(:data),
+                                        window.fetch(:start_index), window.fetch(:element_count),
+                                        window.fetch(:element_size))
+            CNA::Native.library.call("cna_vertex_buffer_set_data_raw_at", native_handle,
+                                     window.fetch(:offset), Fiddle::Pointer[bytes], bytes.bytesize,
+                                     window.fetch(:vertex_count), window.fetch(:stride))
+            nil
+          end
+
+          def GetData(type, *arguments)
+            window = transfer_arguments(type, arguments, "GetData")
+            bytes = window.fetch(:span)
+            buffer = Fiddle::Pointer.malloc([bytes, 1].max, Fiddle::RUBY_FREE)
+            buffer[0, [bytes, 1].max] = "\0" * [bytes, 1].max
+            CNA::Native.library.call("cna_vertex_buffer_get_data_raw", native_handle,
+                                     window.fetch(:offset), buffer, bytes,
+                                     window.fetch(:vertex_count), window.fetch(:stride))
+            self.class.__send__(:unpack_elements, type, buffer, window.fetch(:data),
+                                window.fetch(:start_index), window.fetch(:element_count),
+                                window.fetch(:element_size))
+            nil
+          end
+
+          private
+
+          # `false` here and overridden by `DynamicVertexBuffer`; XNA carries the same distinction in
+          # the `BufferUsage`/pool it passes to `CreateBuffer`.
+          def dynamic? = false
+
+          # `SetData(data)` and `SetData(data, startIndex, elementCount)` both forward to the
+          # five-argument form with `vertexStride = 0`, and `CopyData`'s IL reads a zero stride as
+          # "tightly packed": the gap it adds between elements is zero, so the bytes touched are
+          # `elementCount * sizeof(T)`. A non-zero stride must be **at least** `sizeof(T)` --
+          # `ArgumentOutOfRangeException("vertexStride", VertexStrideTooSmall)` otherwise -- and the
+          # span the copy touches is then `sizeof(T) + (elementCount - 1) * vertexStride`, which
+          # must fit inside the buffer from `offsetInBytes` or the IL throws
+          # `InvalidOperationException(ResourceDataMustBeCorrectSize)`.
+          def transfer_arguments(type, arguments, member)
+            raise CNA::DisposedObjectError, "VertexBuffer is disposed" if self.IsDisposed
+            raise ::TypeError, "type must be a Module" unless type.is_a?(::Module)
+
+            case arguments.length
+            when 1 then offset, data, rest, given_stride = 0, arguments[0], [], 0
+            when 3 then offset, data, rest, given_stride = 0, arguments[0], arguments[1, 2], 0
+            when 5 then offset, data, rest, given_stride = arguments[0], arguments[1], arguments[2, 2], arguments[4]
+            else
+              raise ::ArgumentError, "#{member} takes (type, data), (type, data, startIndex, " \
+                                     "elementCount) or (type, offsetInBytes, data, startIndex, " \
+                                     "elementCount, vertexStride)"
+            end
+            raise ::ArgumentError, "data" if data.nil?
+
+            element_size = self.class.__send__(:element_size, type)
+            length = self.class.__send__(:element_length, type, data)
+            start_index = rest.empty? ? 0 : CNA::Runtime::Numeric.int32(rest[0], "startIndex")
+            element_count = rest.empty? ? length : CNA::Runtime::Numeric.int32(rest[1], "elementCount")
+            Texture.__send__(:validate_copy_parameters, start_index, element_count, length)
+
+            stride = CNA::Runtime::Numeric.int32(given_stride, "vertexStride")
+            raise ::RangeError, "vertexStride" if stride.negative?
+
+            gap = stride.zero? ? 0 : stride - element_size
+            raise ::RangeError, "vertexStride" if gap.negative?
+
+            offset = CNA::Runtime::Numeric.int32(offset, "offsetInBytes")
+            raise ::RangeError, "offsetInBytes" if offset.negative?
+
+            span = (element_count * element_size) + ([element_count - 1, 0].max * gap)
+            declaration_stride = self.VertexDeclaration.VertexStride
+            unless offset + span <= self.VertexCount * declaration_stride
+              raise ::RuntimeError, "ResourceDataMustBeCorrectSize"
+            end
+
+            # MAPPING LIMITATION, measured: CNA's raw routes take a stride and refuse any value but
+            # the buffer's own declaration stride -- "The vertex stride does not match this
+            # VertexBuffer's VertexDeclaration" -- and they address whole vertices. A tightly packed
+            # window that starts on a vertex boundary and covers whole vertices is exactly that
+            # transfer under a different name, and is passed through as one. A strided window --
+            # XNA's way of rewriting one component of every vertex -- has no route here.
+            unless gap.zero? && (offset % declaration_stride).zero? && (span % declaration_stride).zero?
+              raise CNA::Runtime::NotSupportedError,
+                    "CNA's raw vertex routes address whole vertices at the buffer's own " \
+                    "declaration stride (#{declaration_stride}); XNA's strided and partial-vertex " \
+                    "windows have no route"
+            end
+
+            { offset: offset, data: data, start_index: start_index, element_count: element_count,
+              element_size: element_size, span: span, stride: declaration_stride,
+              vertex_count: span / declaration_stride }
+          end
+
+          # The native declaration is this buffer's, so it goes when the buffer does.
+          public
+
+          def Dispose(disposing = true)
+            return if self.IsDisposed
+
+            handle = @native_declaration
+            super
+            if handle
+              begin
+                CNA::Native.library.call("cna_vertex_declaration_destroy", handle)
+              rescue CNA::NativeError
+                nil
+              end
+              @native_declaration = nil
+            end
+            nil
+          end
+
+          class << self
+            private
+
+            def create_native_declaration(declaration)
+              elements = declaration.GetVertexElements
+              buffer = Fiddle::Pointer.malloc([16 * elements.length, 1].max, Fiddle::RUBY_FREE)
+              buffer[0, [16 * elements.length, 1].max] = "\0" * [16 * elements.length, 1].max
+              elements.each_with_index do |element, index|
+                buffer[16 * index, 16] = [element.Offset, element.VertexElementFormat.to_i,
+                                          element.VertexElementUsage.to_i, element.UsageIndex].pack("l4")
+              end
+              output = CNA::Native.library.pointer_for("Q", 0)
+              CNA::Native.library.call("cna_vertex_declaration_create_with_stride",
+                                       declaration.VertexStride, buffer, elements.length, output)
+              output[0, 8].unpack1("Q")
+            end
+
+            # `VertexDeclaration.FromType` for a `Type`, the value itself for a declaration.
+            def resolve_declaration(value)
+              raise ::ArgumentError, "vertexDeclaration" if value.nil?
+              return value if value.instance_of?(Graphics.const_get(:VertexDeclaration))
+              unless value.is_a?(::Module) && value.const_defined?(:VertexDeclaration, false)
+                raise ::TypeError, "expected a VertexDeclaration or a type declaring one"
+              end
+
+              value.const_get(:VertexDeclaration, false)
+            end
+
+            def element_length(type, data)
+              return data.bytesize if type == ::String && data.is_a?(::String)
+              raise ::TypeError, "data must be an Array of #{type}" unless data.is_a?(::Array)
+
+              data.length
+            end
+
+            # `sizeof(T)`, for every element type this binding can lay out in a buffer: a vertex
+            # struct is its declaration's stride, `Color`, `Single` and `Int32` are four bytes, and
+            # a Ruby String -- XNA's `byte[]` -- is one.
+            def element_size(type)
+              return 1 if type == ::String
+              return type.const_get(:VertexDeclaration, false).VertexStride if type.is_a?(::Module) &&
+                                                                              type.include?(CNA::Runtime::VertexStruct)
+              return 4 if [Microsoft::Xna::Framework::Color, ::Float, ::Integer].include?(type)
+
+              raise ::TypeError, "#{type} is not a buffer element type"
+            end
+
+            def pack_elements(type, data, start_index, element_count, element_size)
+              return data.byteslice(start_index, element_count).b if type == ::String
+
+              slice = data[start_index, element_count]
+              slice.each { |value| raise ::TypeError, "data must be an Array of #{type}" unless value.instance_of?(type) }
+              if type.include?(CNA::Runtime::VertexStruct)
+                slice.map { |value| value.__send__(:vertex_words).pack("V*") }.join
+              elsif type == Microsoft::Xna::Framework::Color
+                slice.map { |value| [value.PackedValue].pack("V") }.join
+              elsif type == ::Float
+                slice.pack("f*")
+              elsif type == ::Integer
+                slice.map { |value| [CNA::Runtime::Numeric.int32(value, "value")].pack("l") }.join
+              else
+                raise ::TypeError, "#{type} is not a buffer element type"
+              end
+            end
+
+            def unpack_elements(type, buffer, data, start_index, element_count, element_size)
+              bytes = buffer[0, element_size * element_count]
+              if type == ::String
+                raise ::ArgumentError, "data must not be frozen" if data.frozen?
+
+                data[start_index, element_count] = bytes
+                return data
+              end
+              if type.include?(CNA::Runtime::VertexStruct)
+                declaration = type.const_get(:VertexDeclaration, false)
+                element_count.times do |index|
+                  data[start_index + index] = decode_vertex(type, declaration, bytes[index * element_size, element_size])
+                end
+              elsif type == Microsoft::Xna::Framework::Color
+                bytes.unpack("V#{element_count}").each_with_index do |packed, index|
+                  colour = Microsoft::Xna::Framework::Color.new(0, 0, 0, 0)
+                  colour.PackedValue = packed
+                  data[start_index + index] = colour
+                end
+              elsif type == ::Float
+                bytes.unpack("f#{element_count}").each_with_index { |value, index| data[start_index + index] = value }
+              elsif type == ::Integer
+                bytes.unpack("l#{element_count}").each_with_index { |value, index| data[start_index + index] = value }
+              else
+                raise ::TypeError, "#{type} is not a buffer element type"
+              end
+              data
+            end
+
+            # A vertex struct's constructor takes its components in **declaration order**, which is
+            # true of all four, so the declaration is enough to rebuild one.
+            def decode_vertex(type, declaration, bytes)
+              components = declaration.GetVertexElements.map do |element|
+                offset = element.Offset
+                case element.VertexElementFormat.to_s
+                when "Vector3" then Vector3.new(*bytes[offset, 12].unpack("f3"))
+                when "Vector2" then Vector2.new(*bytes[offset, 8].unpack("f2"))
+                when "Color"
+                  colour = Microsoft::Xna::Framework::Color.new(0, 0, 0, 0)
+                  colour.PackedValue = bytes[offset, 4].unpack1("V")
+                  colour
+                else raise ::TypeError, "no decoder for VertexElementFormat.#{element.VertexElementFormat}"
+                end
+              end
+              type.new(*components)
+            end
+          end
+
+          private
+
+          def initialize_from_native(device, handle)
+            release = lambda { |value| CNA::Native.library.call("cna_vertex_buffer_destroy", value) }
+            initialize_resource(device, handle, release)
+            info = CNA::Native::Layouts::VertexBufferInfo.new
+            CNA::Native.library.call("cna_vertex_buffer_get_info", native_handle, info.pointer)
+            @VertexCount = info.read_i32(8)
+            @BufferUsage = BufferUsage.coerce(info.read_u32(12))
+            self
+          rescue Exception
+            if defined?(@native_handle) && @native_handle
+              self.Dispose
+            else
+              release&.call(handle)
+            end
+            raise
+          end
+
+          def content_lost?
+            info = CNA::Native::Layouts::VertexBufferInfo.new
+            CNA::Native.library.call("cna_vertex_buffer_get_info", native_handle, info.pointer)
+            info.read_u8(17) == 1
+          end
+        end
+
+        # `DynamicVertexBuffer` adds the two option-bearing `SetData` overloads, `IsContentLost` and
+        # the `ContentLost` event.
+        #
+        # DEVIATION, recorded: the option-bearing route is CNA's **typed** one, so its element type
+        # must be one of the four vertex structs this binding projects. XNA accepts any struct there.
+        # The static overloads it inherits keep the raw route and accept every element type.
+        #
+        # DEVIATION, recorded: `ContentLost` is projected as a subscribable event and **never
+        # fires**. CNA exposes `cna_vertex_buffer_subscribe_content_lost`, and it is deliberately
+        # unbound: `CNA_VertexBufferInfo::is_content_lost` is documented false on every renderer
+        # family that cannot lose a device, which is all three qualified artifacts, so a bound
+        # callback would be native surface with nothing to deliver.
+        class DynamicVertexBuffer < VertexBuffer
+          public_class_method :new
+          extend CNA::Runtime::EventOwner
+          xna_event :ContentLost
+
+          def IsContentLost = content_lost?
+
+          #     SetData(type, data, startIndex, elementCount, options)
+          #     SetData(type, offsetInBytes, data, startIndex, elementCount, vertexStride, options)
+          def SetData(type, *arguments)
+            return super unless [4, 6].include?(arguments.length)
+
+            options = SetDataOptions.coerce(arguments.last)
+            identity = VertexBuffer::NATIVE_VERTEX_TYPES[type.to_s.split("::").last]
+            if identity.nil?
+              raise CNA::Runtime::NotSupportedError,
+                    "the option-bearing route is CNA's typed one and carries only its built-in " \
+                    "vertex layouts; XNA accepts any element type here"
+            end
+
+            window = transfer_arguments(type, arguments[0...-1], "SetData")
+            transfer = CNA::Native::Layouts::VertexBufferTransfer.new
+            transfer.write_u32(8, CNA::Native::Manifest::CONSTANTS.fetch(identity))
+            transfer.write_u32(12, options.to_i)
+            transfer.write_u64(16, 0)
+            transfer.write_u64(24, window.fetch(:element_count))
+            # The typed route replaces the whole contents, so it takes no byte offset; XNA's
+            # option-bearing overload that does is refused rather than silently ignoring it.
+            unless window.fetch(:offset).zero?
+              raise CNA::Runtime::NotSupportedError,
+                    "the typed route that carries SetDataOptions replaces the whole buffer and " \
+                    "takes no byte offset"
+            end
+
+            bytes = self.class.__send__(:pack_elements, type, window.fetch(:data),
+                                        window.fetch(:start_index), window.fetch(:element_count),
+                                        window.fetch(:element_size))
+            CNA::Native.library.call("cna_vertex_buffer_set_data", native_handle, transfer.pointer,
+                                     Fiddle::Pointer[bytes], window.fetch(:element_count))
+            nil
+          end
+
+          private
+
+          def dynamic? = true
+        end
+
+        # `IndexBuffer`'s second constructor takes an `IndexElementSize` where the vertex buffer's
+        # takes a declaration, and its `Type` form resolves `short` to sixteen bits and `int` to
+        # thirty-two. Ruby has one `Integer`, so the type form accepts the projected enum's own two
+        # identities and `Integer`, which is thirty-two bits -- the width XNA's `int` overload picks.
+        class IndexBuffer < GraphicsResource
+          public_class_method :new
+          attr_reader :IndexCount, :IndexElementSize, :BufferUsage
+
+          def initialize(graphicsDevice, indexElementSizeOrType, indexCount, bufferUsage)
+            size = self.class.__send__(:resolve_element_size, indexElementSizeOrType)
+            raise ::ArgumentError, "graphicsDevice" if graphicsDevice.nil?
+            unless graphicsDevice.instance_of?(GraphicsDevice)
+              raise ::TypeError, "graphicsDevice must be GraphicsDevice"
+            end
+
+            count = CNA::Runtime::Numeric.int32(indexCount, "indexCount")
+            raise ::RangeError, "indexCount" unless count.positive?
+            raise ::TypeError, "bufferUsage" unless bufferUsage.instance_of?(BufferUsage)
+
+            create_info = CNA::Native::Layouts::IndexBufferCreateInfo.new
+            create_info.write_i32(8, count)
+            create_info.write_u32(12, size.to_i)
+            create_info.write_u32(16, bufferUsage.to_i)
+            create_info.write_u8(20, dynamic? ? 1 : 0)
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_index_buffer_create", graphicsDevice.__send__(:native_handle),
+                                     create_info.pointer, output)
+            initialize_from_native(graphicsDevice, output[0, 8].unpack1("Q"))
+          end
+
+          #     SetData(type, data)
+          #     SetData(type, data, startIndex, elementCount)
+          #     SetData(type, offsetInBytes, data, startIndex, elementCount)
+          def SetData(type, *arguments)
+            offset, data, start_index, element_count, options = index_arguments(type, arguments, "SetData")
+            bytes = self.class.__send__(:pack_indices, data, start_index, element_count, index_width)
+            transfer = index_transfer(element_count, options)
+            # A zero offset is the whole-contents replacement `cna_index_buffer_set_data` performs,
+            # which is what XNA's three-argument `SetData` does; the windowed route composes on the
+            # CPU and re-uploads, and documents that it refuses a `SetDataOptions` that contradicts
+            # keeping the rest.
+            if offset.zero?
+              CNA::Native.library.call("cna_index_buffer_set_data", native_handle,
+                                       transfer.pointer, Fiddle::Pointer[bytes], element_count)
+            else
+              CNA::Native.library.call("cna_index_buffer_set_data_at", native_handle, offset,
+                                       transfer.pointer, Fiddle::Pointer[bytes], element_count)
+            end
+            nil
+          end
+
+          def GetData(type, *arguments)
+            _offset, data, start_index, element_count, options = index_arguments(type, arguments, "GetData")
+            width = index_width
+            buffer = Fiddle::Pointer.malloc(width * element_count, Fiddle::RUBY_FREE)
+            buffer[0, width * element_count] = "\0" * (width * element_count)
+            written = CNA::Native.library.pointer_for("Q", 0)
+            transfer = index_transfer(element_count, options)
+            CNA::Native.library.call("cna_index_buffer_get_data", native_handle, transfer.pointer,
+                                     buffer, element_count, written)
+            self.class.__send__(:unpack_indices, buffer, data, start_index,
+                                written[0, 8].unpack1("Q"), width)
+            nil
+          end
+
+          private
+
+          def dynamic? = false
+
+          def index_width = self.IndexElementSize.to_s == "SixteenBits" ? 2 : 4
+
+          def index_transfer(element_count, options)
+            transfer = CNA::Native::Layouts::IndexBufferTransfer.new
+            transfer.write_u32(8, self.IndexElementSize.to_i)
+            transfer.write_u32(12, options)
+            transfer.write_u64(16, 0)
+            transfer.write_u64(24, element_count)
+            transfer
+          end
+
+          def index_arguments(type, arguments, member)
+            raise CNA::DisposedObjectError, "IndexBuffer is disposed" if self.IsDisposed
+            raise ::TypeError, "type must be a Module" unless type.is_a?(::Module)
+            raise ::TypeError, "index elements are Integer" unless type == ::Integer
+
+            # The overloads are told apart the way the CLR tells them apart: by the **first**
+            # parameter. `(data, …)` and `(offsetInBytes, data, …)` are otherwise the same shapes,
+            # and a four-argument list is `(data, startIndex, elementCount, options)` when it starts
+            # with the array and `(offsetInBytes, data, startIndex, elementCount)` when it does not.
+            # Counting arguments -- or their parity -- reads the elementCount of one as the options
+            # of the other.
+            options = 0
+            if arguments[0].is_a?(::Array) || arguments[0].nil?
+              offset = 0
+              case arguments.length
+              when 1 then data, rest = arguments[0], []
+              when 3 then data, rest = arguments[0], arguments[1, 2]
+              when 4
+                raise ::ArgumentError, "#{member} takes no SetDataOptions on a static buffer" unless dynamic?
+
+                data, rest = arguments[0], arguments[1, 2]
+                options = SetDataOptions.coerce(arguments[3]).to_i
+              else
+                raise ::ArgumentError, "#{member} takes (type, data) or (type, data, startIndex, elementCount)"
+              end
+            else
+              case arguments.length
+              when 4 then offset, data, rest = arguments[0], arguments[1], arguments[2, 2]
+              when 5
+                raise ::ArgumentError, "#{member} takes no SetDataOptions on a static buffer" unless dynamic?
+
+                offset, data, rest = arguments[0], arguments[1], arguments[2, 2]
+                options = SetDataOptions.coerce(arguments[4]).to_i
+              else
+                raise ::ArgumentError, "#{member} takes (type, offsetInBytes, data, startIndex, elementCount)"
+              end
+            end
+            raise ::ArgumentError, "data" if data.nil?
+            raise ::TypeError, "data must be an Array of Integer" unless data.is_a?(::Array)
+
+            start_index = rest.empty? ? 0 : CNA::Runtime::Numeric.int32(rest[0], "startIndex")
+            element_count = rest.empty? ? data.length : CNA::Runtime::Numeric.int32(rest[1], "elementCount")
+            Texture.__send__(:validate_copy_parameters, start_index, element_count, data.length)
+            offset = CNA::Runtime::Numeric.int32(offset, "offsetInBytes")
+            raise ::RangeError, "offsetInBytes" if offset.negative?
+
+            # `CopyData`'s one size rule, and it is simpler than the vertex buffer's because an
+            # index buffer has no stride: `sizeof(T) * elementCount + offsetInBytes` must fit, or
+            # the IL throws `InvalidOperationException(ResourceDataMustBeCorrectSize)`. XNA reads
+            # `sizeof(T)` from the caller's `short`/`int`; Ruby has one `Integer`, so the width is
+            # the buffer's own -- which is the width the elements are packed at either way.
+            width = index_width
+            unless offset + (element_count * width) <= self.IndexCount * width
+              raise ::RuntimeError, "ResourceDataMustBeCorrectSize"
+            end
+
+            [offset, data, start_index, element_count, options]
+          end
+
+          def initialize_from_native(device, handle)
+            release = lambda { |value| CNA::Native.library.call("cna_index_buffer_destroy", value) }
+            initialize_resource(device, handle, release)
+            info = CNA::Native::Layouts::IndexBufferInfo.new
+            CNA::Native.library.call("cna_index_buffer_get_info", native_handle, info.pointer)
+            @IndexCount = info.read_i32(8)
+            @IndexElementSize = Graphics.const_get(:IndexElementSize).coerce(info.read_u32(12))
+            @BufferUsage = BufferUsage.coerce(info.read_u32(16))
+            self
+          rescue Exception
+            if defined?(@native_handle) && @native_handle
+              self.Dispose
+            else
+              release&.call(handle)
+            end
+            raise
+          end
+
+          def content_lost?
+            info = CNA::Native::Layouts::IndexBufferInfo.new
+            CNA::Native.library.call("cna_index_buffer_get_info", native_handle, info.pointer)
+            info.read_u8(21) == 1
+          end
+
+          class << self
+            private
+
+            # `IndexBuffer(GraphicsDevice, Type, …)` accepts `short` and `int` in XNA; Ruby has one
+            # `Integer`, which is the thirty-two-bit form, and the enum identities themselves.
+            def resolve_element_size(value)
+              raise ::ArgumentError, "indexElementSize" if value.nil?
+              return value if value.instance_of?(Graphics.const_get(:IndexElementSize))
+              return Graphics.const_get(:IndexElementSize)::ThirtyTwoBits if value == ::Integer
+
+              raise ::TypeError, "expected an IndexElementSize or Integer"
+            end
+
+            def pack_indices(data, start_index, element_count, width)
+              slice = data[start_index, element_count]
+              format = width == 2 ? "v" : "V"
+              slice.map do |value|
+                number = CNA::Runtime::Numeric.int32(value, "value")
+                raise ::RangeError, "value" if number.negative? || (width == 2 && number > 0xFFFF)
+
+                [number].pack(format)
+              end.join
+            end
+
+            def unpack_indices(buffer, data, start_index, count, width)
+              format = width == 2 ? "v" : "V"
+              buffer[0, width * count].unpack("#{format}#{count}").each_with_index do |value, index|
+                data[start_index + index] = value
+              end
+              data
+            end
+          end
+        end
+
+        # The same two additions the dynamic vertex buffer makes, and the same recorded reason for
+        # the event. Its option-bearing overloads carry no element-type restriction, because
+        # `cna_index_buffer_set_data_at`'s transfer has always carried the options.
+        class DynamicIndexBuffer < IndexBuffer
+          public_class_method :new
+          extend CNA::Runtime::EventOwner
+          xna_event :ContentLost
+
+          def IsContentLost = content_lost?
+
+          private
+
+          def dynamic? = true
+        end
+
+        # `VertexBufferBinding` is a `sealed` value type over three fields with three constructors
+        # and an implicit conversion from a bare `VertexBuffer`. Ruby has no implicit conversion, so
+        # `op_Implicit` projects as a class method the way every other XNA operator does.
+        class VertexBufferBinding
+          include CNA::Runtime::ValueSemantics
+          attr_reader :VertexBuffer, :VertexOffset, :InstanceFrequency
+
+          # `.ctor(VertexBuffer)` is `(buffer, 0, 0)` and `.ctor(VertexBuffer, int)` is
+          # `(buffer, offset, 0)`; the three-argument form validates. A null buffer is
+          # `ArgumentNullException("vertexBuffer")`, a negative offset or frequency is
+          # `ArgumentOutOfRangeException`.
+          def initialize(vertexBuffer, vertexOffset = 0, instanceFrequency = 0)
+            raise ::ArgumentError, "vertexBuffer" if vertexBuffer.nil?
+            unless vertexBuffer.is_a?(Graphics.const_get(:VertexBuffer))
+              raise ::TypeError, "vertexBuffer must be a VertexBuffer"
+            end
+
+            offset = CNA::Runtime::Numeric.int32(vertexOffset, "vertexOffset")
+            frequency = CNA::Runtime::Numeric.int32(instanceFrequency, "instanceFrequency")
+            raise ::RangeError, "vertexOffset" if offset.negative?
+            raise ::RangeError, "instanceFrequency" if frequency.negative?
+
+            # The binding is built by CNA rather than assembled here, so the three values a consumer
+            # reads are the ones the C ABI really holds.
+            binding = CNA::Native::Layouts::VertexBufferBinding.new
+            CNA::Native.library.call("cna_vertex_buffer_binding_init",
+                                     vertexBuffer.__send__(:native_handle), offset, frequency,
+                                     binding.pointer)
+            @VertexBuffer = vertexBuffer
+            @VertexOffset = binding.read_i32(8)
+            @InstanceFrequency = binding.read_i32(12)
+          end
+
+          def self.op_Implicit(vertexBuffer) = new(vertexBuffer)
+
+          # Every other value type in this projection overrides `GetHashCode` in its own IL, and
+          # `ValueSemantics#hash` forwards to it. This one does not: `VertexBufferBinding` declares
+          # no `Equals` and no `GetHashCode`, so what XNA has is `ValueType`'s -- field-wise
+          # equality with a hash the CLR documents as unspecified. Publishing a `GetHashCode`
+          # identity the pinned contract never selects would be inventing one, so `hash` is
+          # answered over the same three components equality uses and nothing is claimed about its
+          # value.
+          def hash = value_components.hash
+
+          private
+
+          def value_components = [@VertexBuffer, @VertexOffset, @InstanceFrequency]
+        end
+
         # ------------------------------------------------------------------------ the Effect cluster
         #
         # Nine types derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256

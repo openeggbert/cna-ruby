@@ -452,11 +452,12 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     refute_includes section, "def |:"
     refute_includes section, "def &:"
     refute_includes section, "def ToString"
-    # `VertexDeclaration` left this list when it was built: it holds no buffer and draws nothing,
-    # and its own renderer contact is the assembly-visible Bind/Unbind the contract never selects.
-    # What this test claims about `PrimitiveType` is unchanged.
+    # `VertexDeclaration` left this list when it was built, and `VertexBuffer` and `IndexBuffer`
+    # when the buffers were: a buffer holds vertices and indices, which is not drawing them. What
+    # this test claims about `PrimitiveType` is unchanged and is now carried entirely by the five
+    # `GraphicsDevice` draw members, none of which is declared anywhere in this file.
     %w[DrawPrimitives DrawIndexedPrimitives DrawInstancedPrimitives DrawUserPrimitives
-       DrawUserIndexedPrimitives VertexBuffer IndexBuffer].each do |name|
+       DrawUserIndexedPrimitives].each do |name|
       refute_includes source, name
     end
   end
@@ -822,13 +823,18 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     # The four state objects left this list when they were built; what this batch claimed, and
     # still claims, is that **it** declared none of them -- it declared the eight enums they are
     # made of and nothing that holds one.
-    # `Texture3D`, `TextureCube` and the nine `Effect` types left this list when they were built;
-    # what this batch claimed, and still claims, is that **it** declared none of them.
-    %w[RenderTarget2D RenderTargetCube VertexBuffer IndexBuffer
-       BasicEffect GraphicsAdapter].each do |absent|
+    # `Texture3D`, `TextureCube`, the nine `Effect` types and the five buffer types left this list
+    # when they were built; what this batch claimed, and still claims, is that **it** declared none
+    # of them -- it declared `BufferUsage`, `IndexElementSize` and `SetDataOptions`, which are the
+    # enums a buffer is made of rather than a buffer.
+    %w[RenderTarget2D RenderTargetCube BasicEffect GraphicsAdapter].each do |absent|
       refute_includes source, "class #{absent}\n"
       refute_includes source, "class #{absent} <"
     end
+    %w[VertexBuffer IndexBuffer].each { |present| assert_includes source, "class #{present} < GraphicsResource" }
+    { "DynamicVertexBuffer" => "VertexBuffer", "DynamicIndexBuffer" => "IndexBuffer" }
+      .each { |derived, base| assert_includes source, "class #{derived} < #{base}" }
+    assert_includes source, "class VertexBufferBinding\n"
     assert_includes source, "class VertexDeclaration < GraphicsResource"
     %w[Texture3D TextureCube].each { |present| assert_includes source, "class #{present} < Texture" }
     assert_includes source, "class Effect < GraphicsResource"

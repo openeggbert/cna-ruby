@@ -336,7 +336,10 @@ class PureManagedEnumBatchTest < Minitest::Test
     # each, for the same reason every fragment before it left: those routes belong to the milestone
     # that bound them, not to this batch's 24 enums. `CubeMapFace` is one of the 24 and still binds
     # nothing of its own.
-    %w[render_target_ index_buffer_ vertex_buffer_].each do |fragment|
+    # `index_buffer_` and `vertex_buffer_` left this list when the four buffer types were built,
+    # for the same reason every fragment before them left. `BufferUsage`, `IndexElementSize` and
+    # `SetDataOptions` are three of this batch's 24 enums and still bind nothing of their own.
+    %w[render_target_].each do |fragment|
       refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?(fragment) }, fragment
     end
   end
@@ -347,10 +350,9 @@ class PureManagedEnumBatchTest < Minitest::Test
     # The nine `Effect` types left this list when the cluster was built; what this batch claimed,
     # and still claims, is that **it** built none of them -- it selected the two enums their
     # metadata is made of and nothing that holds one.
-    %i[RenderTarget2D RenderTargetCube VertexBuffer IndexBuffer
-       DynamicVertexBuffer DynamicIndexBuffer
-       BasicEffect GraphicsAdapter
-       OcclusionQuery].each do |name|
+    # The five buffer types left this list when they were built; what this milestone claimed,
+    # and still claims, is that **it** built none of them.
+    %i[RenderTarget2D RenderTargetCube BasicEffect GraphicsAdapter OcclusionQuery].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
     # `Texture3D` and `TextureCube` exist now, and this batch built neither: it selected

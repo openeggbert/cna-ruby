@@ -41,9 +41,10 @@ class VertexStructsTest < Minitest::Test
     assert_empty FRONTIER.fetch("consumableCandidates"), "the queue was consumed rather than grown"
     assert_equal "none-consumable", FRONTIER.fetch("selectionRoute")
     # 4 until Media.VideoPlayer's blocker was audited in the milestone after this one, 3 until the
-    # Effect cluster uncovered EffectMaterial and DirectionalLight behind the Effect base. What this
-    # test claims -- that the queue these four came from was consumed -- is unchanged.
-    assert_equal 4, FRONTIER.fetch("dependencyCompleteCandidates").length
+    # Effect cluster uncovered EffectMaterial and DirectionalLight behind the Effect base, and 5
+    # when the buffers uncovered ModelMeshPart. What this test claims -- that the queue these four
+    # came from was consumed -- is unchanged.
+    assert_equal 5, FRONTIER.fetch("dependencyCompleteCandidates").length
   end
 
   def test_each_is_a_value_type_declaring_the_interface_with_the_same_six_member_shape
@@ -232,7 +233,9 @@ class VertexStructsTest < Minitest::Test
   def test_they_add_no_buffer_effect_or_draw_surface
     # The nine `Effect` types left this list when the cluster was built; what this milestone
     # claimed, and still claims, is that **it** built none of them.
-    %i[VertexBuffer IndexBuffer DynamicVertexBuffer BasicEffect VertexPositionNormalColorTexture].each do |absent|
+    # The five buffer types left this list when they were built; what this milestone claimed,
+    # and still claims, is that **it** built none of them.
+    %i[BasicEffect VertexPositionNormalColorTexture].each do |absent|
       refute G.const_defined?(absent, false), absent.to_s
     end
     %i[SetVertexBuffer Indices DrawUserPrimitives DrawPrimitives].each do |absent|

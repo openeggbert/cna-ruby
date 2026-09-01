@@ -213,15 +213,23 @@ class VertexDeclarationTest < Minitest::Test
   def test_it_adds_no_buffer_binding_or_vertex_type_producer
     # `VertexPositionColor` left this list when the four vertex structs were built; what **this**
     # milestone claimed is unchanged, and the buffers and the binding manager are still absent.
-    %i[VertexBuffer IndexBuffer DynamicVertexBuffer DeclarationManager]
+    # `VertexBuffer`, `IndexBuffer` and `DynamicVertexBuffer` left this list when the buffers were
+    # built; what this milestone claimed, and still claims, is that **it** built none of them, and
+    # XNA has no identity at all for a declaration manager.
+    %i[DeclarationManager]
       .each { |absent| refute G.const_defined?(absent, false), absent.to_s }
     %i[Bind Unbind FromType].each { |absent| refute VD.public_method_defined?(absent), absent.to_s }
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-    # The stride cross-check is what these are for; nothing in `lib/` calls them, and the three
-    # routes XNA has no identity for stay unbound.
-    %w[cna_vertex_declaration_create_with_stride cna_vertex_declaration_create_empty
-       cna_vertex_declaration_copy_type_name cna_vertex_buffer_create].each do |absent|
+    # The two routes XNA has no identity for stay unbound.
+    %w[cna_vertex_declaration_create_empty
+       cna_vertex_declaration_copy_type_name].each do |absent|
       refute_includes symbols, absent
+    end
+    # These two were unbound here and are bound now: `VertexBuffer` owns a native declaration of its
+    # own -- Ruby's `VertexDeclaration` is managed-only -- and builds it with the stride it was
+    # given, which is exactly what `create_with_stride` is for.
+    %w[cna_vertex_declaration_create_with_stride cna_vertex_buffer_create].each do |present|
+      assert_includes symbols, present
     end
   end
 

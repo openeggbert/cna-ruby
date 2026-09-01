@@ -224,7 +224,9 @@ class TextureCollectionTest < Minitest::Test
     # that hold a `Texture`, not a second texture type.
     # The nine `Effect` types left this list when the cluster was built; what this milestone
     # claimed, and still claims, is that **it** built none of them.
-    %i[BasicEffect RenderTarget2D VertexBuffer IndexBuffer].each do |absent|
+    # The five buffer types left this list when they were built; what this milestone claimed,
+    # and still claims, is that **it** built none of them.
+    %i[BasicEffect RenderTarget2D].each do |absent|
       refute G.const_defined?(absent, false), absent.to_s
     end
     %i[DrawPrimitives DrawIndexedPrimitives DrawUserPrimitives SetRenderTarget

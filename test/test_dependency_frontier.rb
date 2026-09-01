@@ -382,6 +382,8 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.FrameworkDispatcher
       Microsoft.Xna.Framework.Game
       Microsoft.Xna.Framework.GamerServices.GamerServicesComponent
+      Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer
+      Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer
       Microsoft.Xna.Framework.Graphics.Effect
       Microsoft.Xna.Framework.Graphics.EffectAnnotation
       Microsoft.Xna.Framework.Graphics.EffectAnnotationCollection
@@ -391,6 +393,7 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.EffectPassCollection
       Microsoft.Xna.Framework.Graphics.EffectTechnique
       Microsoft.Xna.Framework.Graphics.EffectTechniqueCollection
+      Microsoft.Xna.Framework.Graphics.IndexBuffer
       Microsoft.Xna.Framework.Graphics.SamplerStateCollection
       Microsoft.Xna.Framework.Graphics.SpriteBatch
       Microsoft.Xna.Framework.Graphics.SpriteFont
@@ -399,6 +402,7 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.Texture3D
       Microsoft.Xna.Framework.Graphics.TextureCollection
       Microsoft.Xna.Framework.Graphics.TextureCube
+      Microsoft.Xna.Framework.Graphics.VertexBuffer
       Microsoft.Xna.Framework.Input.GamePad
       Microsoft.Xna.Framework.Input.Mouse
       Microsoft.Xna.Framework.Media.VideoPlayer
@@ -490,7 +494,8 @@ class DependencyFrontierTest < Minitest::Test
     # blocker was audited and found not to be one either; and 4 when the nine-type Effect cluster
     # was built -- EffectAnnotation left it and EffectMaterial and DirectionalLight arrived behind
     # the Effect base. A frontier that rises when a base completes is advancing, not regressing.
-    assert_equal 4, REPORT.fetch("dependencyCompleteCandidates").length
+    # ...and 5 when the buffers uncovered ModelMeshPart behind them.
+    assert_equal 5, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
