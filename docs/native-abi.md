@@ -355,5 +355,6 @@ image enum numbers them the other way round — JPEG 0, PNG 2, which is why `Sav
 carrying XNA's literals across a boundary where they mean something else.
 
 `cna_texture2d_save_file` is deliberately not bound: it writes a path, and XNA's two members write a
-`Stream`. The rest of the `cna_texture2d_*` family — `create`, `set_data`, `get_data` and the rgba8
-variants — is unbound because `Texture2D`'s constructors and pixel access are still outstanding.
+`Stream`. `cna_texture2d_create` and `CNA_Texture2DCreateInfo` (24/4) join them for the two constructors,
+bringing the count to 227 and the layouts to 28. The rest of the family — `set_data`, `get_data` and
+the rgba8 variants — is unbound because `Texture2D`'s pixel access is still outstanding.

@@ -5,7 +5,7 @@
 **Session start HEAD = `920b0db8`**, which was also `origin/develop`. That baseline carries
 Foundations 16 to 43 and Native frontiers 1 to 3.
 
-The sequence this session added on top of it is **Foundations 44 to 67, Native frontiers 4 and 5,
+The sequence this session added on top of it is **Foundations 44 to 68, Native frontiers 4 and 5,
 and the CNA C ABI 0.7.0 -> 0.21.0 migration**. Resolve where it currently sits with
 
 ```sh
@@ -47,22 +47,23 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 65 | `GraphicsDeviceManager`'s nine preferred settings + `ApplyChanges`/`ToggleFullScreen` | **0** | 20 |
 | 66 | `Graphics.GraphicsResource`'s disposal contract, completing it | 1 | 5 |
 | 67 | `Texture2D.SaveAsPng` and `SaveAsJpeg` | **0** | 2 |
+| 68 | `Texture2D`'s two public constructors | **0** | 2 |
 
 ## Measured state
 
-Strict target **165 types / 2005 member identities**: **161 complete**, four partial graphics runtime
-types, 92 missing, **218 deferred diagnostics**. `MISSING_MEMBER` **89**, `PARTIAL_TYPES` 4,
+Strict target **165 types / 2007 member identities**: **161 complete**, four partial graphics runtime
+types, 92 missing, **215 deferred diagnostics**. `MISSING_MEMBER` **87**, `PARTIAL_TYPES` 4,
 `PROPERTY_MAPPING_MISMATCH` 1 (`GraphicsDevice::Viewport`, unrelated and pre-existing),
-`OVERLOAD_MAPPING_MISMATCH` **34**, every other structural category 0, allowlist 0, unmeasured 0.
+`OVERLOAD_MAPPING_MISMATCH` **33**, every other structural category 0, allowlist 0, unmeasured 0.
 **27** event identities across **14** owner types. **22** projected BCL identities.
 
-CNA ABI **226 functions / 5 callbacks / 73 constants / 27 layouts**, on **two admitted encoded
+CNA ABI **227 functions / 5 callbacks / 73 constants / 28 layouts**, on **two admitted encoded
 versions** cross-verified across both header roots. Zero missing header symbols, zero missing library
 symbols, zero cross-version mismatches, zero ABI mismatches. **No CNA source was changed and no new
 native binary was built.**
 
-Behaviour corpus **526** observations, zero failures. Suite **1336 runs / 46083 assertions**, zero
-failures, zero skips. Capability registry **119** rows, zero contradictions.
+Behaviour corpus **526** observations, zero failures. Suite **1341 runs / 46105 assertions**, zero
+failures, zero skips. Capability registry **120** rows, zero contradictions.
 
 ## Game is complete, and so is the whole Audio namespace
 
@@ -206,7 +207,7 @@ measured, and the two largest levers are outside it.
 
 **The single largest lever is a qualification artifact with a real renderer.** It would unblock
 `GraphicsAdapter` directly and the five partial graphics types behind it — `GraphicsDevice`,
-`GraphicsDeviceManager`, `Texture2D` and `SpriteBatch` — which between them owe 61 of the 89
+`GraphicsDeviceManager`, `Texture2D` and `SpriteBatch` — which between them owe 60 of the 87
 outstanding members. `GraphicsResource` left that list when its disposal contract was projected. `GraphicsDeviceManager`'s own share fell from 26 to 15 when its
 preferred settings were projected, and what is left there is the producer audit's, not the
 renderer's. The second is the `Media` runtime, which is missing whole rather

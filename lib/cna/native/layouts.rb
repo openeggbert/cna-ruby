@@ -273,6 +273,23 @@ module CNA
 
       # `CNA_SpriteFontInfo` answers the four scalar properties XNA keeps in fields, plus the
       # character count that sizes the two copy routes.
+      # `CNA_Texture2DCreateInfo` is what XNA's two public constructors reduce to once
+      # `CreateTexture`'s fixed arguments are applied.
+      class Texture2DCreateInfo < Structure
+        layout size: 24, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("width", "uint32_t", 8, 4), Layouts.field("height", "uint32_t", 12, 4),
+          Layouts.field("mip_map", "CNA_Bool", 16, 1), Layouts.field("reserved", "uint8_t", 17, 3),
+          Layouts.field("format", "CNA_SurfaceFormat", 20, 4)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       class SpriteFontInfo < Structure
         layout size: 32, alignment: 8, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

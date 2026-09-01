@@ -21,7 +21,7 @@ module NativeSurfaceCensus
 
   # The census the repository last reviewed. `test_native_abi_gate.rb` compares the two, so this
   # file cannot drift from the manifest silently in either direction.
-  REVIEWED = { functions: 226, callbacks: 5, constants: 73, layouts: 27 }.freeze
+  REVIEWED = { functions: 227, callbacks: 5, constants: 73, layouts: 28 }.freeze
 end
 
 # The strict XNA scoreboard, for exactly the same reason and with exactly the same rule: a milestone
@@ -31,11 +31,11 @@ end
 # is the measurement; this is the reviewed expectation of it.
 module ReviewedScoreboard
   TARGET_TYPES = 165
-  TARGET_MEMBERS = 2005
+  TARGET_MEMBERS = 2007
   COMPLETE_TYPES = 161
   PARTIAL_TYPES = 4
   MISSING_TYPES = 92
-  MISSING_MEMBER = 89
+  MISSING_MEMBER = 87
   BCL_PROJECTED_IDENTITIES = 22
   BCL_EXCEPTION_BASES = 2
   BCL_THROWN_EXCEPTIONS = 8

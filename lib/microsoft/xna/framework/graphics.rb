@@ -1017,7 +1017,59 @@ module Microsoft
               allocate.__send__(:initialize_from_native, graphics_device, handle)
             end
 
-            private :new
+          end
+
+          # XNA declares two **public** constructors, so `new` is public here -- unlike `Texture` and
+          # `GraphicsResource`, whose constructors are `assembly` and whose `new` `GraphicsResource`
+          # makes private for everything that inherits from it. `FromStream` and the content manager
+          # remain the other two producers.
+          public_class_method :new
+
+          # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…).
+          #
+          #   Texture2D(GraphicsDevice g, int w, int h)
+          #       => CreateTexture(g, w, h, false, false, true, SurfaceFormat.Color);
+          #   Texture2D(GraphicsDevice g, int w, int h, bool mipMap, SurfaceFormat format)
+          #       => CreateTexture(g, w, h, mipMap, false, true, format);
+          #
+          # Ruby has no overloading, so the two collapse into one method with defaults -- and the
+          # defaults are the shorter overload's own fixed arguments rather than invented ones.
+          #
+          # `CreateTexture` begins
+          # `if (graphicsDevice == null) throw new ArgumentNullException("graphicsDevice", DeviceCannotBeNullOnResourceCreate)`
+          # and `ValidateCreationParameters` then refuses a non-positive size with
+          # `ArgumentOutOfRangeException` naming `"width"` or `"height"` and
+          # `ResourceDimensionsMustBePositive`. Everything after that is a **profile capability**
+          # check -- the maximum texture size the active `GraphicsProfile` allows -- which is a
+          # device fact rather than a managed rule, so it is CNA's to refuse and not this
+          # projection's to guess.
+          #
+          # DEVIATION, recorded: CNA's create route documents that "the initial bulk-transfer slice
+          # supports `CNA_SURFACE_FORMAT_COLOR`", so any other `SurfaceFormat` is refused natively
+          # where XNA would accept whatever the adapter supports. The refusal surfaces as
+          # `CNA::NativeError`; no managed rule is invented to anticipate it.
+          def initialize(graphicsDevice, width, height, mipMap = false, format = SurfaceFormat::Color)
+            raise ::ArgumentError, "graphicsDevice" if graphicsDevice.nil?
+            unless graphicsDevice.instance_of?(GraphicsDevice)
+              raise ::TypeError, "graphicsDevice must be GraphicsDevice"
+            end
+
+            pixels_wide = CNA::Runtime::Numeric.int32(width, "width")
+            pixels_high = CNA::Runtime::Numeric.int32(height, "height")
+            raise ::RangeError, "width" unless pixels_wide.positive?
+            raise ::RangeError, "height" unless pixels_high.positive?
+            raise ::TypeError, "mipMap" unless mipMap == true || mipMap == false
+            raise ::TypeError, "format" unless format.instance_of?(SurfaceFormat)
+
+            create_info = CNA::Native::Layouts::Texture2DCreateInfo.new
+            create_info.write_u32(8, pixels_wide)
+            create_info.write_u32(12, pixels_high)
+            create_info.write_u8(16, mipMap ? 1 : 0)
+            create_info.write_u32(20, format.to_i)
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_texture2d_create", graphicsDevice.__send__(:native_handle),
+                                     create_info.pointer, output)
+            initialize_from_native(graphicsDevice, output[0, 8].unpack1("Q"))
           end
 
           # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…).

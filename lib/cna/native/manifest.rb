@@ -324,6 +324,7 @@ module CNA
         signature("cna_graphics_device_get_texture", T[:result], [T[:handle], enum("CNA_ShaderStage"), T[:u32], pointer("CNA_TextureSlotInfo")], ownership: "borrows device; caller output"),
         signature("cna_graphics_device_set_texture", T[:result], [T[:handle], enum("CNA_ShaderStage"), T[:u32], T[:handle]], ownership: "borrows device; stores no ownership -- a destroyed texture unbinds itself"),
         signature("cna_texture2d_create_from_encoded_memory", T[:result], [T[:handle], pointer("uint8_t", const: true), T[:u64], pointer("CNA_Texture2DDecodeInfo", const: true), pointer("CNA_Handle")], ownership: "returns OWNED Texture2D"),
+        signature("cna_texture2d_create", T[:result], [T[:handle], pointer("CNA_Texture2DCreateInfo", const: true), pointer("CNA_Handle")], ownership: "borrows device; returns OWNED texture"),
         signature("cna_texture2d_get_info", T[:result], [T[:handle], pointer("CNA_Texture2DInfo")], ownership: "caller output"),
         signature("cna_texture2d_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED Texture2D"),
         # The two encode routes `SaveAsPng` and `SaveAsJpeg` need: ask for the size, then copy. CNA

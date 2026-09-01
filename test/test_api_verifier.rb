@@ -1896,7 +1896,7 @@ class ApiVerifierTest < Minitest::Test
     # Game::IsActive, a property, so MISSING_MEMBER fell once more without moving the overloads.
     assert_equal ReviewedScoreboard::MISSING_MEMBER, strict.fetch("MISSING_MEMBER")
     assert_equal 1, strict.fetch("PROPERTY_MAPPING_MISMATCH")
-    assert_equal 34, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
+    assert_equal 33, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
 
     # Every batch enum that a deferred member mentions left that member deferred *by this batch*.
     # `PreferredDepthStencilFormat` was closed by a much later milestone, which is the point rather

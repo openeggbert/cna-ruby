@@ -35,7 +35,7 @@ class Texture2DSaveTest < Minitest::Test
                                   .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
     refute_includes remainder, "SaveAsPng"
     refute_includes remainder, "SaveAsJpeg"
-    assert_equal %w[.ctor FromStream SetData GetData].sort, remainder.sort
+    assert_equal %w[FromStream SetData GetData].sort, remainder.sort
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
   end
 
@@ -167,5 +167,129 @@ class Texture2DSaveTest < Minitest::Test
     rescue TypeError
       raise ArgumentError
     end
+  end
+end
+
+# `Texture2D`'s two public constructors — the first way this binding makes a texture that did not
+# come from an image or the content pipeline.
+class Texture2DConstructionTest < Minitest::Test
+  F = Microsoft::Xna::Framework
+  G = Microsoft::Xna::Framework::Graphics
+  ROOT = Pathname(__dir__).join("..").expand_path
+  REFERENCE = JSON.parse(
+    ROOT.join("tools", "api_compat", "reference", "xna40-windows-runtime-contract.json").read
+  ).fetch("types").to_h { |type| [type.fetch("name"), type] }.freeze
+  STRICT = JSON.parse(ROOT.join("docs", "generated", "api-compat-report.json").read).freeze
+  NAME = "Microsoft.Xna.Framework.Graphics.Texture2D"
+
+  # XNA declares both constructors **public**, unlike `Texture` and `GraphicsResource`, whose are
+  # `assembly` — so `new` is public here and private on the bases.
+  def test_new_is_public_here_and_private_on_the_bases
+    constructors = REFERENCE.fetch(NAME).fetch("members").select { |m| m.fetch("kind") == "constructor" }
+    assert_equal 2, constructors.length
+    assert_equal %w[public public], constructors.map { |m| m.fetch("access") }
+    assert_equal [["Microsoft.Xna.Framework.Graphics.GraphicsDevice", "System.Int32", "System.Int32"],
+                  ["Microsoft.Xna.Framework.Graphics.GraphicsDevice", "System.Int32", "System.Int32",
+                   "System.Boolean", "Microsoft.Xna.Framework.Graphics.SurfaceFormat"]],
+                 constructors.map { |m| m.fetch("parameters").map { |p| p.fetch("type") } }
+    assert G::Texture2D.singleton_class.public_method_defined?(:new)
+    refute G::Texture.singleton_class.public_method_defined?(:new)
+    refute G::GraphicsResource.singleton_class.public_method_defined?(:new)
+    # Ruby has no overloading, so the two collapse into one method whose defaults are the shorter
+    # overload's own fixed arguments — `false` and `SurfaceFormat.Color` — rather than invented ones.
+    assert_equal(-4, G::Texture2D.instance_method(:initialize).arity)
+  end
+
+  class Host < F::Game
+    attr_reader :result
+
+    def initialize(&body)
+      @body = body
+      @result = nil
+      super()
+      F::GraphicsDeviceManager.new(self)
+    end
+
+    def LoadContent
+      @result = @body.call(self.GraphicsDevice)
+    ensure
+      self.Exit
+    end
+  end
+
+  def with_device
+    skip "CNA_NATIVE_LIBRARY not supplied" unless ENV["CNA_NATIVE_LIBRARY"]
+
+    game = Host.new { |device| yield device }
+    begin
+      game.Run
+      game.result
+    ensure
+      game.Dispose
+    end
+  end
+
+  def test_a_created_texture_has_the_size_it_was_asked_for_and_a_real_mip_chain
+    values = with_device do |device|
+      plain = G::Texture2D.new(device, 4, 3)
+      mipped = G::Texture2D.new(device, 8, 8, true, G::SurfaceFormat::Color)
+      result = [[plain.Width, plain.Height, plain.LevelCount, plain.Format],
+                [plain.Bounds.X, plain.Bounds.Y, plain.Bounds.Width, plain.Bounds.Height],
+                [mipped.Width, mipped.Height, mipped.LevelCount]]
+      plain.Dispose
+      mipped.Dispose
+      result
+    end
+    assert_equal [4, 3, 1, G::SurfaceFormat::Color], values[0]
+    assert_equal [0, 0, 4, 3], values[1], "Bounds is the whole texture"
+    assert_equal [8, 8, 4], values[2], "mipMap true really allocates a chain, 8 -> 4 -> 2 -> 1"
+  end
+
+  # `CreateTexture` refuses a null device and `ValidateCreationParameters` a non-positive size; every
+  # later check is a **profile capability** — a device fact rather than a managed rule — so it is
+  # CNA's to refuse and not this projection's to guess.
+  def test_the_two_managed_refusals_and_the_ones_that_are_cnas
+    values = with_device do |device|
+      err = ->(&block) { begin; block.call.Dispose; :ok; rescue => e; e.class; end }
+      [err.call { G::Texture2D.new(nil, 1, 1) },
+       err.call { G::Texture2D.new(device, 0, 1) },
+       err.call { G::Texture2D.new(device, 1, 0) },
+       err.call { G::Texture2D.new(device, -1, 1) },
+       err.call { G::Texture2D.new("device", 1, 1) },
+       err.call { G::Texture2D.new(device, 1, 1, 1) },
+       err.call { G::Texture2D.new(device, 1, 1, false, G::DepthFormat::Depth24) },
+       err.call { G::Texture2D.new(device, 1, 1, false, G::SurfaceFormat::Bgr565) },
+       err.call { G::Texture2D.new(device, 1, 1) }]
+    end
+    assert_equal ArgumentError, values[0], "a null device is XNA's own first check"
+    assert_equal [RangeError] * 3, values[1..3], "ResourceDimensionsMustBePositive"
+    assert_equal [TypeError] * 3, values[4..6]
+    # DEVIATION, recorded: CNA's create route documents that its bulk-transfer slice supports
+    # `CNA_SURFACE_FORMAT_COLOR`, so another format is refused natively where XNA would accept
+    # whatever the adapter supports. No managed rule is invented to anticipate it.
+    assert_equal CNA::CapabilityError, values[7]
+    assert_equal :ok, values[8]
+  end
+
+  # A texture that came from nowhere encodes like any other, which is what makes it a real texture
+  # rather than a handle.
+  def test_a_created_texture_encodes
+    values = with_device do |device|
+      texture = G::Texture2D.new(device, 4, 3)
+      stream = StringIO.new(+"".b)
+      texture.SaveAsPng(stream, 4, 3)
+      result = [stream.string.bytesize, stream.string.bytes.first(4)]
+      texture.Dispose
+      result
+    end
+    assert_operator values[0], :>, 8
+    assert_equal Texture2DSaveTest::PNG_SIGNATURE.first(4), values[1]
+  end
+
+  def test_the_remainder_is_now_from_stream_and_pixel_access
+    remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME)
+                                  .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
+    assert_equal %w[FromStream GetData SetData], remainder.sort
+    assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
   end
 end
