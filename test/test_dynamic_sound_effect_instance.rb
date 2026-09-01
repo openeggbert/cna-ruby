@@ -263,11 +263,11 @@ class DynamicSoundEffectInstanceTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_adds_no_engine_or_microphone
-    # `Microphone` arrived in the milestone after this one; what this claims is that the streaming
-    # instance built no capture surface of its own.
-    %i[SoundBank WaveBank Cue].each do |absent|
-      refute A.const_defined?(absent, false), absent.to_s
-    end
+    # `Microphone` arrived in the milestone after this one and the XACT cluster in the ones after
+    # that; what this claims is that the streaming instance built none of them, which the native
+    # census below still measures.
+    refute A::DynamicSoundEffectInstance.public_method_defined?(:GetCue)
+    refute A::DynamicSoundEffectInstance.public_method_defined?(:GetCategory)
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:callbacks), CNA::Native::Manifest::CALLBACKS.length
   end

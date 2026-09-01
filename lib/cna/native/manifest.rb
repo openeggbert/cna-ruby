@@ -13,6 +13,7 @@ module CNA
     module Manifest
       U8 = Fiddle::TYPE_UINT8_T
       U32 = Fiddle::TYPE_UINT32_T
+      I16 = Fiddle::TYPE_INT16_T
       I32 = Fiddle::TYPE_INT32_T
       I64 = Fiddle::TYPE_INT64_T
       U64 = Fiddle::TYPE_UINT64_T
@@ -56,6 +57,7 @@ module CNA
         result: { c: "CNA_Result", fiddle: U32, width: 32, signed: false },
         u32: { c: "uint32_t", fiddle: U32, width: 32, signed: false },
         i32: { c: "int32_t", fiddle: I32, width: 32, signed: true },
+        i16: { c: "int16_t", fiddle: I16, width: 16, signed: true },
         i64: { c: "int64_t", fiddle: I64, width: 64, signed: true },
         u64: { c: "uint64_t", fiddle: U64, width: 64, signed: false },
         handle: { c: "CNA_Handle", fiddle: U64, width: 64, signed: false },
@@ -415,6 +417,33 @@ module CNA
         signature("cna_audio_category_stop", T[:result], [T[:handle], enum("CNA_AudioStopOptions")], ownership: "borrows category"),
         signature("cna_audio_category_equals", T[:result], [T[:handle], T[:handle], pointer("CNA_Bool")], ownership: "borrows both; caller output"),
         signature("cna_audio_category_get_hash_code", T[:result], [T[:handle], pointer("int32_t")], ownership: "borrows category; caller output"),
+        # The XACT bank and cue families. A wave bank and a sound bank are each `OWNED` and
+        # engine-parented; a cue is `OWNED` by whoever asked the sound bank for it, which is what
+        # XNA's `Cue.Dispose` says too.
+        signature("cna_wave_bank_create", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("CNA_Handle")], ownership: "borrows engine; returns OWNED wave bank"),
+        signature("cna_wave_bank_create_streaming", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), T[:i32], T[:i16], pointer("CNA_Handle")], ownership: "borrows engine; returns OWNED wave bank"),
+        signature("cna_wave_bank_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED wave bank"),
+        signature("cna_wave_bank_get_is_disposed", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows wave bank; caller output"),
+        signature("cna_wave_bank_get_is_prepared", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows wave bank; caller output"),
+        signature("cna_wave_bank_get_is_in_use", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows wave bank; caller output"),
+        signature("cna_sound_bank_create", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("CNA_Handle")], ownership: "borrows engine; returns OWNED sound bank"),
+        signature("cna_sound_bank_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED sound bank"),
+        signature("cna_sound_bank_get_is_disposed", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows sound bank; caller output"),
+        signature("cna_sound_bank_get_is_in_use", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows sound bank; caller output"),
+        signature("cna_sound_bank_get_cue", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("CNA_Handle")], ownership: "borrows sound bank; returns OWNED cue"),
+        signature("cna_sound_bank_play_cue", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64])], ownership: "borrows sound bank"),
+        signature("cna_sound_bank_play_cue_3d", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("CNA_AudioListener", const: true), pointer("CNA_AudioEmitter", const: true)], ownership: "borrows sound bank; borrows both descriptors"),
+        signature("cna_cue_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED cue"),
+        signature("cna_cue_get_info", T[:result], [T[:handle], pointer("CNA_CueInfo")], ownership: "borrows cue; caller MANAGED_VALUE snapshot output"),
+        signature("cna_cue_get_name_size", T[:result], [T[:handle], pointer("uint64_t")], ownership: "borrows cue; caller output"),
+        signature("cna_cue_copy_name", T[:result], [T[:handle], pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows cue; caller output"),
+        signature("cna_cue_apply_3d", T[:result], [T[:handle], pointer("CNA_AudioListener", const: true), pointer("CNA_AudioEmitter", const: true)], ownership: "borrows cue; borrows both descriptors"),
+        signature("cna_cue_get_variable", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("float")], ownership: "borrows cue; caller output"),
+        signature("cna_cue_set_variable", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), T[:float]], ownership: "borrows cue"),
+        signature("cna_cue_play", T[:result], [T[:handle]], ownership: "borrows cue"),
+        signature("cna_cue_pause", T[:result], [T[:handle]], ownership: "borrows cue"),
+        signature("cna_cue_resume", T[:result], [T[:handle]], ownership: "borrows cue"),
+        signature("cna_cue_stop", T[:result], [T[:handle], enum("CNA_AudioStopOptions")], ownership: "borrows cue"),
         signature("cna_keyboard_get_state", T[:result], [T[:handle], pointer("CNA_KeyboardState")], ownership: "caller MANAGED_VALUE output"),
         signature("cna_keyboard_get_state_for_player", T[:result], [T[:handle], enum("CNA_PlayerIndex"), pointer("CNA_KeyboardState")], ownership: "caller MANAGED_VALUE output"),
         signature("cna_keyboard_state_is_key_down", T[:result], [pointer("CNA_KeyboardState", const: true), enum("CNA_Key"), pointer("CNA_Bool")], ownership: "caller output"),

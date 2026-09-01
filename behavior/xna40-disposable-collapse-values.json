@@ -32,8 +32,8 @@
       "args": [],
       "provenance": "RUBY_MAPPING_QUALIFICATION",
       "expected": [
-        ["NATIVE_RUNTIME"],
-        ["NATIVE_RUNTIME"],
+        true,
+        true,
         true,
         true,
         0,

@@ -270,3 +270,24 @@ Not bound: the `cna_wave_bank_*`, `cna_sound_bank_*` and `cna_cue_*` families, b
 `cna_audio_engine_renderers_equal`, which have no XNA identity — `RendererDetail` publishes
 `FriendlyName` and `RendererId` and compares by ordinal string equality it already implements; and
 the type-name count/copy pairs, for the reason every other family records.
+
+## The XACT banks and cues
+
+Twenty-four routes bring the count to 192, and `CNA_CueInfo` (16/4) brings the layouts to 25. No new
+callback and no new constant.
+
+`CNA_CueInfo` is the interesting one: XNA's seven cue status properties are one XACT bitmask read
+seven times, and CNA answers all seven flags in a single struct. Each projected property still reads
+it once, so the number of native reads is XNA's.
+
+The ownership is the reason this family needed care. CNA states it in its own error text --
+"All C Cue children must be destroyed before their SoundBank" -- and enforces the same rule between
+an engine and its banks. XNA enforces neither. So `cna_sound_bank_get_cue` returns an `OWNED` cue
+whose bank disposes it if the consumer has not, and each bank is `OWNED` by the consumer with its
+engine cascading to it. `docs/xact-banks-evidence.md` §4 records the deviation.
+
+Not bound: `cna_sound_bank_get_cue_index_ext` and the rest of the index-addressed variants, which
+have no XNA identity; the `_subscribe_disposing_ext` routes for the two banks and the cue, because
+`Disposing` is raised by this binding's own `Dispose` rather than by the runtime -- unlike
+`DynamicSoundEffectInstance.BufferNeeded`, which the runtime really raises; and the type-name
+count/copy pairs, for the reason every other family records.

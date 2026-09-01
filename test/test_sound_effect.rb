@@ -384,10 +384,13 @@ class SoundEffectTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_adds_no_engine_microphone_or_dynamic_instance
-    # DynamicSoundEffectInstance was added by the milestone after this one, and Microphone by the
-    # one after that; what this claims is that the SoundEffect cluster built none of them.
-    %i[SoundBank WaveBank Cue].each do |absent|
-      refute A.const_defined?(absent, false), absent.to_s
+    # DynamicSoundEffectInstance, Microphone and the XACT cluster came from later milestones. The
+    # whole Audio namespace is projected now, so this claim is asserted against *this* type's own
+    # surface -- the SoundEffect cluster reaches no engine, bank or cue -- and against the native
+    # census below, which is what really measures that this milestone bound none of their routes.
+    %i[GetCue GetCategory PlayCue].each do |absent|
+      refute A::SoundEffect.public_method_defined?(absent), absent.to_s
+      refute A::SoundEffect.respond_to?(absent), absent.to_s
     end
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length

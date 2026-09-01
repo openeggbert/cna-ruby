@@ -109,6 +109,45 @@ module CNA
         block.write_f32(offset + 4, vector.Y)
         block.write_f32(offset + 8, vector.Z)
       end
+
+      # ------------------------------------------------------------------- the XACT bank helpers
+      #
+      # The three XACT container types share one shape XNA gives each of them separately: a
+      # magic-number check in **managed** code before XACT is asked anything, and null/empty checks
+      # naming the parameter of the overload that raised. They live here rather than in the XNA
+      # namespace because a support module beside a projected type would be an identity XNA does not
+      # declare -- which the API verifier reports as an `INTERNAL_TYPE_LEAK`, and did.
+      #
+      #   AudioEngine  X G S F     WaveBank.CheckWaveBankHeader  W B N D     SoundBank  S D B K
+      #
+      # Each also refuses a file of four bytes or fewer, before the comparison.
+      def verify_magic!(path, magic, argument)
+        head = File.open(path, "rb") { |io| io.read(5) }
+        raise ArgumentError, argument if head.nil? || head.bytesize <= 4
+        raise ArgumentError, argument unless head.byteslice(0, 4) == magic
+      end
+
+      # `if (audioEngine == null) throw new ArgumentNullException("audioEngine", RequireNonNullAudioEngine)`.
+      def validated_engine!(audioEngine)
+        raise ArgumentError, "audioEngine" if audioEngine.nil?
+
+        expected = Microsoft::Xna::Framework::Audio::AudioEngine
+        raise TypeError, "audioEngine must be an AudioEngine" unless audioEngine.instance_of?(expected)
+        raise CNA::DisposedObjectError, "AudioEngine is disposed" if audioEngine.IsDisposed
+
+        audioEngine
+      end
+
+      # `if (string.IsNullOrEmpty(value)) throw new ArgumentNullException(argument, NullNotAllowed)`,
+      # which every XACT member that takes a name or a filename begins with.
+      def validated_name!(value, argument)
+        raise ArgumentError, argument if value.nil?
+
+        text = String(value)
+        raise ArgumentError, argument if text.empty?
+
+        text
+      end
     end
   end
 end

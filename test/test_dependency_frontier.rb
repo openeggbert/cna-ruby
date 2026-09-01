@@ -300,10 +300,13 @@ class DependencyFrontierTest < Minitest::Test
     assert_equal %w[
       Microsoft.Xna.Framework.Audio.AudioCategory
       Microsoft.Xna.Framework.Audio.AudioEngine
+      Microsoft.Xna.Framework.Audio.Cue
       Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance
       Microsoft.Xna.Framework.Audio.Microphone
+      Microsoft.Xna.Framework.Audio.SoundBank
       Microsoft.Xna.Framework.Audio.SoundEffect
       Microsoft.Xna.Framework.Audio.SoundEffectInstance
+      Microsoft.Xna.Framework.Audio.WaveBank
       Microsoft.Xna.Framework.Content.ContentManager
       Microsoft.Xna.Framework.FrameworkDispatcher
       Microsoft.Xna.Framework.Game
@@ -353,7 +356,7 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 8, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 6, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -458,11 +461,12 @@ class DependencyFrontierTest < Minitest::Test
     # GameWindow was the third until Foundation 48 built it, which is what an event-declaring
     # candidate reaching the frontier is for; DynamicSoundEffectInstance was the fourth, arriving
     # the same way when the audio cluster completed its base and leaving again when it was built,
-    # and Microphone the fifth, whose BufferReady is now a projected event identity. WaveBank is
-    # the sixth, and it arrived the way DynamicSoundEffectInstance did: the XACT engine cluster
-    # completed the AudioEngine its constructor names.
-    assert_equal ["Microsoft.Xna.Framework.Audio.Cue", "Microsoft.Xna.Framework.Audio.WaveBank"],
-                 events.map { |item| item.fetch("name") }.sort
+    # and Microphone the fifth, whose BufferReady is now a projected event identity. WaveBank was
+    # the sixth, arriving the way DynamicSoundEffectInstance did -- the XACT engine cluster
+    # completed the AudioEngine its constructor names -- and then the banks and the cue were built
+    # together, which emptied this list. Every event-declaring candidate the frontier ever raised
+    # has now been consumed, so what is asserted is that emptiness rather than a name.
+    assert_empty events.map { |item| item.fetch("name") }
 
     # Completing IUpdateable/IDrawable is what projected the EventHandler`1 support type.
     assert_includes REPORT.fetch("mappedBclTypes"), "System.EventHandler`1[System.EventArgs]"

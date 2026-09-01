@@ -229,10 +229,12 @@ class MemberLevelDependenciesTest < Minitest::Test
       assert_includes STRICT.fetch("missingTypeNames"), blocker
     end
 
-    cue = candidate("Microsoft.Xna.Framework.Audio.Cue")
-    assert_empty cue.fetch("ilOnlyUnmetDependencies"),
-                 "Cue's second blocker was AudioEngine, and building it is what cleared this half"
-    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Audio.AudioEngine"
+    # Cue's second blocker was AudioEngine; building that cleared this half, and the milestone
+    # straight after built Cue itself, so both are complete and neither is a candidate any more.
+    assert_nil REPORT.fetch("dependencyCompleteCandidates")
+                     .find { |item| item.fetch("name") == "Microsoft.Xna.Framework.Audio.Cue" }
+    %w[Microsoft.Xna.Framework.Audio.AudioEngine
+       Microsoft.Xna.Framework.Audio.Cue].each { |name| assert_includes STRICT.fetch("completeTypeNames"), name }
   end
 
   # ------------------------------------------------------------------- the policy is not relaxed
@@ -242,8 +244,10 @@ class MemberLevelDependenciesTest < Minitest::Test
     assert_includes REPORT.fetch("candidatePolicy"), "deliberately do not relax"
     # 19 until Foundation 46 took LaunchParameters off the frontier by projecting Dictionary`2,
     # 12 until the Stream projection consumed TitleContainer, and 9 until Microphone was built. The
-    # XACT engine cluster held it at 8: AudioCategory left and WaveBank arrived behind AudioEngine.
-    assert_equal 8, REPORT.fetch("dependencyCompleteCandidates").length
+    # XACT engine cluster held it at 8 -- AudioCategory left and WaveBank arrived behind
+    # AudioEngine -- and building the banks and the cue took it to 6, which emptied the Audio
+    # namespace off the frontier entirely.
+    assert_equal 6, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")

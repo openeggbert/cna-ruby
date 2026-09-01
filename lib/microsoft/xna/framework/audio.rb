@@ -1455,6 +1455,7 @@ module Microsoft
                                      (seconds * 10_000_000).round,
                                      renderer.read_u64(0), renderer.read_u64(8), output)
             @categories = {}
+            @banks = []
             @registration = 0
             @callback = nil
             initialize_native_resource(
@@ -1555,6 +1556,10 @@ module Microsoft
 
             self.Disposing.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
             release_registration
+            # CNA refuses to destroy an engine while a bank of its own is still alive, the same
+            # requirement the sound bank records for its cues. XNA leaves both to the CLR.
+            @banks.dup.each { |bank| bank.Dispose unless bank.IsDisposed }
+            @banks.clear
             @categories.each_value do |handle|
               begin
                 CNA::Native.library.call("cna_audio_category_destroy", handle)
@@ -1576,6 +1581,14 @@ module Microsoft
             self.Dispose(false)
             nil
           end
+
+          # A `def … = expr unless cond` endless definition binds the modifier to the *definition*,
+          # not the body, so this one is spelled out.
+          def register_bank(bank)
+            @banks << bank unless @banks.any? { |value| value.equal?(bank) }
+          end
+
+          def unregister_bank(bank) = @banks.reject! { |value| value.equal?(bank) }
 
           def verify_settings_magic!(path)
             magic = File.open(path, "rb") { |io| io.read(5) }
@@ -1621,6 +1634,387 @@ module Microsoft
             end
             @registration = 0
             @callback = nil
+          end
+        end
+
+        # `WaveBank(AudioEngine, String)` and `WaveBank(AudioEngine, String, Int32, Int16)`, the
+        # second of which is the streaming form. Nine identities, no member that plays anything: a
+        # wave bank is the data a sound bank's cues draw on.
+        class WaveBank
+          include CNA::Runtime::NativeResource
+          extend CNA::Runtime::EventOwner
+
+          CLR_IDENTITY = "Microsoft.Xna.Framework.Audio.WaveBank"
+
+          # `CheckWaveBankHeader` compares `bytes[0..3]` with `W B N D` -- `ldc.i4.s 87, 66, 78, 68`.
+          MAGIC = "WBND"
+
+          xna_event :Disposing
+
+          # `if (audioEngine == null) throw new ArgumentNullException("audioEngine", RequireNonNullAudioEngine)`
+          # and a null or empty filename raises `ArgumentNullException` naming whichever parameter
+          # this overload has -- `nonStreamingWaveBankFilename` or `streamingWaveBankFilename`. Ruby
+          # collapses the two overloads into one method with defaults, so the *streaming* form is the
+          # one where `offset` is given.
+          def initialize(audioEngine, filename, offset = nil, packetsize = nil)
+            engine = CNA::Runtime::Audio.validated_engine!(audioEngine)
+            streaming = !offset.nil? || !packetsize.nil?
+            argument = streaming ? "streamingWaveBankFilename" : "nonStreamingWaveBankFilename"
+            path = File.expand_path(CNA::Runtime::Audio.validated_name!(filename, argument))
+            CNA::Runtime::Audio.verify_magic!(path, MAGIC, argument)
+
+            output = CNA::Native.library.pointer_for("Q", 0)
+            view = CNA::Native::Layouts::StringView.new(path.b)
+            if streaming
+              CNA::Native.library.call("cna_wave_bank_create_streaming", engine.__send__(:native_handle),
+                                       view.read_u64(0), view.read_u64(8),
+                                       CNA::Runtime::Numeric.int32(offset || 0, "offset"),
+                                       CNA::Runtime::Numeric.int32(packetsize || 0, "packetsize"),
+                                       output)
+            else
+              CNA::Native.library.call("cna_wave_bank_create", engine.__send__(:native_handle),
+                                       view.read_u64(0), view.read_u64(8), output)
+            end
+            @parent = engine
+            engine.__send__(:register_bank, self)
+            initialize_native_resource(
+              CNA::Runtime::Context.__send__(:current_game, "WaveBank"),
+              output[0, 8].unpack1("Q"),
+              lambda { |value| CNA::Native.library.call("cna_wave_bank_destroy", value) }
+            )
+          end
+
+          # `(GetStatus() & 0x80) != 0` and `(GetStatus() & 4) != 0` -- XACT's status bitmask, which
+          # CNA reads out as two flags.
+          def IsInUse = flag("cna_wave_bank_get_is_in_use")
+          def IsPrepared = flag("cna_wave_bank_get_is_prepared")
+
+          # The `Dispose(bool)` shape every XACT type in this file shares. Ruby cannot give one name
+          # two visibilities, so the public `Dispose()` and the protected `Dispose(Boolean)` project
+          # to one method with a default argument.
+          def Dispose(disposing = true)
+            return if self.IsDisposed
+
+            self.Disposing.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty) if disposing
+            @parent.__send__(:unregister_bank, self)
+            @native_handle.dispose
+            @native_game.__send__(:unregister_native_child, self)
+            nil
+          end
+
+          private
+
+          def Finalize
+            self.Dispose(false)
+            nil
+          end
+
+          def flag(symbol)
+            ensure_live!
+            output = CNA::Native.library.pointer_for("C", 0)
+            CNA::Native.library.call(symbol, native_handle, output)
+            !output[0, 1].unpack1("C").zero?
+          end
+
+          def ensure_live!
+            raise CNA::DisposedObjectError, "WaveBank is disposed" if self.IsDisposed
+
+            @native_handle.generation.assert_owner_thread!
+          end
+        end
+
+        # `SoundBank(AudioEngine, String)`, ten identities, and the type that produces every `Cue`.
+        class SoundBank
+          include CNA::Runtime::NativeResource
+          extend CNA::Runtime::EventOwner
+
+          CLR_IDENTITY = "Microsoft.Xna.Framework.Audio.SoundBank"
+
+          # The constructor reads four bytes and compares them with `S D B K` -- `ldc.i4.s 83, 68,
+          # 66, 75` at indices 0..3 -- refusing anything shorter first.
+          MAGIC = "SDBK"
+
+          xna_event :Disposing
+
+          def initialize(audioEngine, filename)
+            engine = CNA::Runtime::Audio.validated_engine!(audioEngine)
+            path = File.expand_path(CNA::Runtime::Audio.validated_name!(filename, "filename"))
+            CNA::Runtime::Audio.verify_magic!(path, MAGIC, "filename")
+
+            output = CNA::Native.library.pointer_for("Q", 0)
+            view = CNA::Native::Layouts::StringView.new(path.b)
+            CNA::Native.library.call("cna_sound_bank_create", engine.__send__(:native_handle),
+                                     view.read_u64(0), view.read_u64(8), output)
+            @parent = engine
+            @cues = []
+            engine.__send__(:register_bank, self)
+            initialize_native_resource(
+              CNA::Runtime::Context.__send__(:current_game, "SoundBank"),
+              output[0, 8].unpack1("Q"),
+              lambda { |value| CNA::Native.library.call("cna_sound_bank_destroy", value) }
+            )
+          end
+
+          def IsInUse
+            ensure_live!
+            output = CNA::Native.library.pointer_for("C", 0)
+            CNA::Native.library.call("cna_sound_bank_get_is_in_use", native_handle, output)
+            !output[0, 1].unpack1("C").zero?
+          end
+
+          # `if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name")`, then XACT. A
+          # name the bank does not know answers `E_INVALIDARG` there, which XNA turns into
+          # `ArgumentException(string.Format(CueNotFound, name))` rather than letting the raw error
+          # through -- so an unknown cue is an argument problem, not a state one.
+          def GetCue(name)
+            ensure_live!
+            key = CNA::Runtime::Audio.validated_name!(name, "name")
+            output = CNA::Native.library.pointer_for("Q", 0)
+            view = CNA::Native::Layouts::StringView.new(key.b)
+            begin
+              CNA::Native.library.call("cna_sound_bank_get_cue", native_handle,
+                                       view.read_u64(0), view.read_u64(8), output)
+            rescue CNA::NativeError
+              raise ::ArgumentError, "cue not found: #{key}"
+            end
+            cue = Cue.__send__(:new, self, key, output[0, 8].unpack1("Q"))
+            @cues << cue
+            cue
+          end
+
+          # `PlayCue(String)` fires and forgets: the cue it makes is never handed back, and the one
+          # error XACT is allowed to answer without raising is `0x8ac70008`, the cue-instance limit.
+          # Anything else becomes `InvalidOperationException(CueNotFound)` -- an *operation* problem
+          # here, where `GetCue` reports an *argument* one for the same underlying error.
+          #
+          # `PlayCue(String, AudioListener, AudioEmitter)` is the same with a 3D apply before the
+          # play, and Ruby collapses the two overloads into one method with defaults.
+          def PlayCue(name, listener = nil, emitter = nil)
+            ensure_live!
+            key = CNA::Runtime::Audio.validated_name!(name, "name")
+            view = CNA::Native::Layouts::StringView.new(key.b)
+            begin
+              if listener.nil? && emitter.nil?
+                CNA::Native.library.call("cna_sound_bank_play_cue", native_handle,
+                                         view.read_u64(0), view.read_u64(8))
+              else
+                raise ::ArgumentError, "listener" if listener.nil?
+                raise ::ArgumentError, "emitter" if emitter.nil?
+
+                CNA::Native.library.call("cna_sound_bank_play_cue_3d", native_handle,
+                                         view.read_u64(0), view.read_u64(8),
+                                         CNA::Runtime::Audio.listener(listener).pointer,
+                                         CNA::Runtime::Audio.emitter(emitter).pointer)
+              end
+            rescue CNA::NativeError
+              raise ::RuntimeError, "cue not found: #{key}"
+            end
+            nil
+          end
+
+          # DEVIATION, recorded: CNA refuses `cna_sound_bank_destroy` while any cue of that bank is
+          # still alive -- "All C Cue children must be destroyed before their SoundBank" -- where
+          # XNA's `SoundBank.Dispose` releases the bank and leaves a live `Cue` behind for the CLR
+          # to collect. So this bank disposes the cues it produced first. That is the same enforced
+          # parent/child destruction the `SoundEffect` cluster records, and it is CNA's requirement
+          # rather than a rule this binding invented.
+          def Dispose(disposing = true)
+            return if self.IsDisposed
+
+            self.Disposing.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty) if disposing
+            @cues.dup.each { |cue| cue.Dispose(disposing) unless cue.IsDisposed }
+            @cues.clear
+            @parent.__send__(:unregister_bank, self)
+            @native_handle.dispose
+            @native_game.__send__(:unregister_native_child, self)
+            nil
+          end
+
+          private
+
+          def Finalize
+            self.Dispose(false)
+            nil
+          end
+
+          def forget_cue(cue) = @cues.reject! { |value| value.equal?(cue) }
+
+          def ensure_live!
+            raise CNA::DisposedObjectError, "SoundBank is disposed" if self.IsDisposed
+
+            @native_handle.generation.assert_owner_thread!
+          end
+        end
+
+        # `Audio.Cue`, nineteen identities, sealed, and the last type of the XACT cluster.
+        #
+        # It has no public constructor: `SoundBank.GetCue` and the three-argument `SoundBank.PlayCue`
+        # are the only producers, which is why `new` is private here.
+        #
+        # The seven state properties are one XACT status bitmask -- `IsCreated` 1, `IsPreparing` 2,
+        # `IsPrepared` 4, `IsPlaying` 8, `IsStopping` 0x10, `IsStopped` 0x20, `IsPaused` 0x40 -- and
+        # each XNA getter calls `GetStatus` afresh. CNA answers all seven at once in `CNA_CueInfo`,
+        # and each projected property reads it once, which is the same number of native reads.
+        class Cue
+          include CNA::Runtime::NativeResource
+          extend CNA::Runtime::EventOwner
+
+          CLR_IDENTITY = "Microsoft.Xna.Framework.Audio.Cue"
+
+          # XACT's cue-instance limit. `Play` tolerates exactly this result and raises on any other,
+          # which is the one place XNA lets a native failure through silently.
+          CUE_INSTANCE_LIMIT_RESULT = 0x8ac7_0008
+
+          xna_event :Disposing
+
+          private_class_method :new
+
+          def initialize(bank, name, handle)
+            @bank = bank
+            @Name = name.dup.freeze
+            @played = false
+            @applied_3d = false
+            initialize_native_resource(
+              CNA::Runtime::Context.__send__(:current_game, "Cue"),
+              handle,
+              lambda { |value| CNA::Native.library.call("cna_cue_destroy", value) }
+            )
+          end
+
+          # One `ldfld` over the name the sound bank was asked for.
+          attr_reader :Name
+
+          def IsCreated = info.read_u8(8) != 0
+          def IsPreparing = info.read_u8(13) != 0
+          def IsPrepared = info.read_u8(12) != 0
+          def IsPlaying = info.read_u8(11) != 0
+          def IsStopping = info.read_u8(15) != 0
+          def IsStopped = info.read_u8(14) != 0
+          def IsPaused = info.read_u8(10) != 0
+
+          # `Play` compares the native result with `0x8ac70008` -- XACT's cue-instance limit -- and
+          # only calls `ThrowExceptionFromResult` when it differs, so that one failure is tolerated
+          # silently and every other raises. `played = true` is set afterwards, and it is what
+          # `Apply3D` guards on.
+          #
+          # DEVIATION, recorded: `CNA_Result` has no code for the cue-instance limit, so the
+          # tolerated failure cannot be told apart from a real one. Nothing is swallowed on a guess:
+          # every native failure raises. The exemption was also **measured unreachable** here --
+          # sixty consecutive plays of one cue all succeeded -- so no behaviour that this artifact
+          # can produce is lost by not implementing it.
+          def Play
+            ensure_live!
+            CNA::Native.library.call("cna_cue_play", native_handle)
+            @played = true
+            nil
+          end
+
+          # `Cue::Pause(handle, 1)` and `Cue::Pause(handle, 0)` -- one entry point with a flag, which
+          # CNA splits into two routes, exactly as it does for `AudioCategory`.
+          def Pause
+            ensure_live!
+            CNA::Native.library.call("cna_cue_pause", native_handle)
+            nil
+          end
+
+          def Resume
+            ensure_live!
+            CNA::Native.library.call("cna_cue_resume", native_handle)
+            nil
+          end
+
+          def Stop(options)
+            ensure_live!
+            raise ::TypeError, "options must be AudioStopOptions" unless options.instance_of?(AudioStopOptions)
+
+            CNA::Native.library.call("cna_cue_stop", native_handle, options.to_i)
+            nil
+          end
+
+          def GetVariable(name)
+            ensure_live!
+            key = CNA::Runtime::Audio.validated_name!(name, "name")
+            output = CNA::Native.library.pointer_for("f", 0.0)
+            view = CNA::Native::Layouts::StringView.new(key.b)
+            CNA::Native.library.call("cna_cue_get_variable", native_handle,
+                                     view.read_u64(0), view.read_u64(8), output)
+            output[0, 4].unpack1("f")
+          end
+
+          def SetVariable(name, value)
+            ensure_live!
+            key = CNA::Runtime::Audio.validated_name!(name, "name")
+            view = CNA::Native::Layouts::StringView.new(key.b)
+            CNA::Native.library.call("cna_cue_set_variable", native_handle,
+                                     view.read_u64(0), view.read_u64(8),
+                                     CNA::Runtime::Numeric.f32(value))
+            nil
+          end
+
+          # `if (listener == null) throw new ArgumentNullException("listener")`, the same for the
+          # emitter, and then the guard that matters:
+          #
+          #     if (!applied3D && played) throw new InvalidOperationException(Apply3DBeforePlay);
+          #
+          # So the *first* apply must happen before the first play, and every later one is allowed.
+          # This is the same rule `SoundEffectInstance.Apply3D` carries, and it is reproduced
+          # managed-side for the same reason: it is a managed rule, not XACT's.
+          def Apply3D(listener, emitter)
+            ensure_live!
+            raise ::ArgumentError, "listener" if listener.nil?
+            raise ::ArgumentError, "emitter" if emitter.nil?
+            raise ::RuntimeError, "Apply3D must be called before Play" if !@applied_3d && @played
+
+            CNA::Native.library.call("cna_cue_apply_3d", native_handle,
+                                     CNA::Runtime::Audio.listener(listener).pointer,
+                                     CNA::Runtime::Audio.emitter(emitter).pointer)
+            @applied_3d = true
+            nil
+          end
+
+          def Dispose(disposing = true)
+            return if self.IsDisposed
+
+            self.Disposing.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty) if disposing
+            @bank.__send__(:forget_cue, self)
+            @native_handle.dispose
+            @native_game.__send__(:unregister_native_child, self)
+            nil
+          end
+
+          private
+
+          def Finalize
+            self.Dispose(false)
+            nil
+          end
+
+          def info
+            ensure_live!
+            output = CNA::Native::Layouts::CueInfo.new
+            CNA::Native.library.call("cna_cue_get_info", native_handle, output.pointer)
+            output
+          end
+
+          # The name XACT reports back, kept reachable so a test can assert it against the name the
+          # sound bank was asked for rather than trusting that they agree.
+          def native_name
+            ensure_live!
+            size = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_cue_get_name_size", native_handle, size)
+            bytes = size[0, 8].unpack1("Q")
+            return "" if bytes.zero?
+
+            buffer = Fiddle::Pointer.malloc(bytes, Fiddle::RUBY_FREE)
+            required = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_cue_copy_name", native_handle, buffer, bytes, required)
+            buffer[0, bytes].force_encoding(Encoding::UTF_8)
+          end
+
+          def ensure_live!
+            raise CNA::DisposedObjectError, "Cue is disposed" if self.IsDisposed
+
+            @native_handle.generation.assert_owner_thread!
           end
         end
       end

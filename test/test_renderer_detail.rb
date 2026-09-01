@@ -138,8 +138,8 @@ class RendererDetailTest < Minitest::Test
     # `AudioEngine` exists now, and it is what *produces* a RendererDetail -- one real
     # `SDL3_mixer` entry on this host. What this milestone claimed, and still claims, is that **it**
     # built no engine; the XACT cluster that did is measured in `test_audio_engine.rb`.
-    %i[SoundBank WaveBank Cue]
-      .each { |absent| refute F::Audio.const_defined?(absent, false), "Audio::#{absent}" }
+    refute F::Audio::RendererDetail.public_method_defined?(:GetCategory)
+    refute F::Audio::RendererDetail.respond_to?(:RendererDetails)
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     # `renderer` and `audio_engine` left this check when the XACT engine cluster bound the routes
     # that really enumerate a renderer -- which is what fills this type, and what Foundation 50

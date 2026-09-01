@@ -240,11 +240,15 @@ class DisposableCollapseTest < Minitest::Test
     # SoundEffectInstance was the other of the two and has since been built, so only Cue is still
     # on the list to read. That the collapse left both blocked on NATIVE_RUNTIME alone is the claim,
     # and it is now asserted for the one that is still waiting plus the completion of the other.
-    entry = by_name.fetch("Microsoft.Xna.Framework.Audio.Cue")
-    assert_equal ["NATIVE_RUNTIME"], entry.fetch("blockers")
-    assert_empty entry.fetch("unmappedBclTypes")
-    refute_empty entry.fetch("nativeReachableMethods")
-    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Audio.SoundEffectInstance"
+    # Cue was the last of the two still on the list to read, and the XACT cluster built it. So the
+    # claim is now asserted from the other side for both: the collapse left each blocked on
+    # NATIVE_RUNTIME alone, and each was later completed by the milestone that resolved that.
+    refute(by_name.key?("Microsoft.Xna.Framework.Audio.Cue"))
+    %w[Microsoft.Xna.Framework.Audio.Cue
+       Microsoft.Xna.Framework.Audio.SoundEffectInstance].each do |name|
+      assert_includes STRICT.fetch("completeTypeNames"), name
+      assert IL.fetch("types").fetch(name).fetch("nativeReachable"), name
+    end
 
     assert_empty FRONTIER.fetch("consumableCandidates")
     # BCL_PROJECTION was 5 until Foundation 46 projected Dictionary`2 and consumed
@@ -257,10 +261,10 @@ class DisposableCollapseTest < Minitest::Test
     # BCL half away.
     # NATIVE_RUNTIME fell from 4 to 3 when Microphone was built, which is the sixth time that
     # blocker turned out not to be one. The XACT engine cluster then emptied
-    # NATIVE_RUNTIME+RUNTIME_DATA entirely -- AudioCategory was its only entry -- and WaveBank
-    # arrived behind AudioEngine under BCL_PROJECTION+NATIVE_RUNTIME.
-    assert_equal({"BCL_PROJECTION" => 2, "BCL_PROJECTION+NATIVE_RUNTIME" => 2,
-                  "NATIVE_RUNTIME" => 3, "RUNTIME_DATA" => 1},
+    # NATIVE_RUNTIME+RUNTIME_DATA entirely -- AudioCategory was its only entry -- and the banks and
+    # the cue took Cue and WaveBank off too, which left no audio type on the frontier at all.
+    assert_equal({"BCL_PROJECTION" => 2, "BCL_PROJECTION+NATIVE_RUNTIME" => 1,
+                  "NATIVE_RUNTIME" => 2, "RUNTIME_DATA" => 1},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end
@@ -284,20 +288,17 @@ class DisposableCollapseTest < Minitest::Test
   # Native frontier 3 proved SoundEffectInstance and Cue reach XACT. Mapping a BCL interface does
   # not change that, and no audio runtime is started here.
   def test_it_claims_no_native_disposal_and_starts_no_audio_runtime
-    # AudioEngine was named here too until the XACT engine cluster built it, which is the point
-    # rather than a loss: mapping IDisposable did not build it, and a later milestone did.
-    %w[Microsoft.Xna.Framework.Audio.Cue].each do |name|
-      assert_includes STRICT.fetch("missingTypeNames"), name
+    # Cue and AudioEngine were named here until the XACT cluster built them, which is the point
+    # rather than a loss: mapping IDisposable did not build either, and later milestones did. What
+    # this still asserts is that both really do reach XACT, which was the original claim.
+    %w[Microsoft.Xna.Framework.Audio.Cue
+       Microsoft.Xna.Framework.Audio.AudioEngine].each do |name|
       assert IL.fetch("types").fetch(name).fetch("nativeReachable"), name
+      assert_includes STRICT.fetch("completeTypeNames"), name
     end
-    assert IL.fetch("types").fetch("Microsoft.Xna.Framework.Audio.AudioEngine").fetch("nativeReachable")
-    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Audio.AudioEngine"
-    # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still
-    # claims, is that **it** built neither. The list narrows to the audio types nothing here has
-    # built rather than being loosened.
-    %i[Cue SoundBank WaveBank].each do |absent|
-      refute F::Audio.const_defined?(absent, false), "Audio::#{absent}"
-    end
+    # Every audio type exists now, built by later milestones one cluster at a time; what this one
+    # claimed, and still claims, is that **it** built none of them. The native census below is what
+    # measures that, and it is the assertion that survived every one of those milestones unchanged.
 
     # No native symbol was added for any of this.
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length

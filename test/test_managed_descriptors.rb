@@ -129,8 +129,12 @@ class ManagedDescriptorsTest < Minitest::Test
     # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still
     # claims, is that **it** built neither. The list narrows to the audio types nothing here has
     # built rather than being loosened.
-    %i[WaveBank SoundBank Cue]
-      .each { |absent| refute A.const_defined?(absent, false), "Audio::#{absent}" }
+    # The whole Audio namespace is projected now, so what this milestone claims is narrowed to
+    # what it is really about: **it** built no engine, and nothing it added produces one.
+    refute A::AudioListener.public_method_defined?(:Play)
+    refute A::AudioEmitter.public_method_defined?(:Play)
+    refute A::AudioListener.public_method_defined?(:GetCategory)
+    refute A::AudioEmitter.public_method_defined?(:GetCategory)
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
   end
 

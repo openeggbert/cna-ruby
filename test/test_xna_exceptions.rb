@@ -160,9 +160,10 @@ class XnaExceptionsTest < Minitest::Test
     # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still
     # claims, is that **it** built neither. The list narrows to the audio types nothing here has
     # built rather than being loosened.
-    %i[WaveBank SoundBank Cue].each do |name|
-      refute F::Audio.const_defined?(name, false), "Audio::#{name}"
-    end
+    # The whole Audio namespace is projected now. What this milestone claimed, and still claims,
+    # is that **it** built none of it: three exception types and nothing else.
+    %i[InstancePlayLimitException NoAudioHardwareException NoMicrophoneConnectedException]
+      .each { |name| assert F::Audio.const_defined?(name, false), "Audio::#{name}" }
     %i[GraphicsAdapter RenderTarget2D Effect].each do |name|
       refute F::Graphics.const_defined?(name, false), "Graphics::#{name}"
     end

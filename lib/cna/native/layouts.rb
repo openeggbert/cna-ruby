@@ -249,6 +249,26 @@ module CNA
         end
       end
 
+      # `CNA_CueInfo` answers all seven of XNA's cue status bits in one read, where XACT's own
+      # `GetStatus` is a bitmask -- `IsCreated` 1, `IsPreparing` 2, `IsPrepared` 4, `IsPlaying` 8,
+      # `IsStopping` 0x10, `IsStopped` 0x20, `IsPaused` 0x40. Each projected property reads the
+      # struct once, which is what XNA does too: every one of its getters calls `GetStatus`.
+      class CueInfo < Structure
+        layout size: 16, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("is_created", "CNA_Bool", 8, 1), Layouts.field("is_disposed", "CNA_Bool", 9, 1),
+          Layouts.field("is_paused", "CNA_Bool", 10, 1), Layouts.field("is_playing", "CNA_Bool", 11, 1),
+          Layouts.field("is_prepared", "CNA_Bool", 12, 1), Layouts.field("is_preparing", "CNA_Bool", 13, 1),
+          Layouts.field("is_stopped", "CNA_Bool", 14, 1), Layouts.field("is_stopping", "CNA_Bool", 15, 1)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       class SoundEffectInstanceInfo < Structure
         layout size: 32, alignment: 4, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

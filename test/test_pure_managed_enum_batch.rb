@@ -333,10 +333,10 @@ class PureManagedEnumBatchTest < Minitest::Test
     # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still
     # claims, is that **it** built neither. The list narrows to the audio types nothing here has
     # built rather than being loosened.
-    %i[WaveBank SoundBank Cue
-      ].each do |name|
-      refute A.const_defined?(name, false), "Audio::#{name}"
-    end
+    # The whole Audio namespace is projected now; what this batch claimed is that **it** built
+    # none of it, which `test_batch_adds_no_native_binding_constant_or_callback` measures directly.
+    %i[AudioChannels AudioStopOptions MicrophoneState SoundState]
+      .each { |name| assert A.const_defined?(name, false), "Audio::#{name}" }
     # VisualizationData arrived in Foundation 51 from its own IL: a constructible holder whose
     # filler, MediaPlayer.GetVisualizationData, is still one of the names below.
     %i[MediaPlayer MediaLibrary MediaSource Song Album Artist VideoPlayer Playlist
@@ -370,7 +370,7 @@ class PureManagedEnumBatchTest < Minitest::Test
       value_types = %i[TouchPanelCapabilities TouchLocation GestureSample TouchCollection
                        TouchPanel AudioListener AudioEmitter RendererDetail VisualizationData Video
                        SoundEffect SoundEffectInstance DynamicSoundEffectInstance Microphone
-                       AudioEngine AudioCategory]
+                       AudioEngine AudioCategory WaveBank SoundBank Cue]
       extras = declared & value_types
       extras += declared.grep(/Exception\z/)
       assert_equal (selected + extras).uniq.sort, declared, namespace.name

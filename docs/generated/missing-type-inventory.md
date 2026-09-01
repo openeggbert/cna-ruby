@@ -1,8 +1,5 @@
 # Missing type inventory
 
-- `Microsoft.Xna.Framework.Audio.Cue`
-- `Microsoft.Xna.Framework.Audio.SoundBank`
-- `Microsoft.Xna.Framework.Audio.WaveBank`
 - `Microsoft.Xna.Framework.Content.ContentReader`
 - `Microsoft.Xna.Framework.Content.ContentTypeReader`
 - `Microsoft.Xna.Framework.Content.ContentTypeReaderManager`

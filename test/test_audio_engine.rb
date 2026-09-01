@@ -53,9 +53,9 @@ class AudioEngineTest < Minitest::Test
     assert_includes STRICT.fetch("completeTypeNames"), ENGINE
     assert_includes STRICT.fetch("completeTypeNames"), CATEGORY
     refute_includes FRONTIER.fetch("runtimeDataRegister").keys, CATEGORY
-    # And what arrived behind the engine, which is what completing a type does.
-    assert_includes FRONTIER.fetch("dependencyCompleteCandidates").map { |c| c.fetch("name") },
-                    "Microsoft.Xna.Framework.Audio.WaveBank"
+    # WaveBank arrived behind the engine, which is what completing a type does, and was built in
+    # the milestone straight after -- so what is asserted now is the end state that produced.
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Audio.WaveBank"
   end
 
   def test_the_engine_declares_the_one_event_and_the_category_declares_none
@@ -306,10 +306,13 @@ class AudioEngineTest < Minitest::Test
 
   # ------------------------------------------------------------------- and exactly what it does not
 
-  def test_the_banks_and_the_cue_are_not_projected_yet
-    %i[WaveBank SoundBank Cue].each { |absent| refute A.const_defined?(absent, false), absent.to_s }
+  # The banks and the cue arrived in the milestone after this one, which is what completing a type
+  # does: WaveBank reached the frontier the moment AudioEngine completed. What this file still
+  # claims is that the engine half needs none of them.
+  def test_the_engine_half_needs_no_bank_or_cue
+    engine_only = A::AudioEngine.public_instance_methods(false) + A::AudioCategory.public_instance_methods(false)
+    refute(engine_only.any? { |name| name.to_s.match?(/Cue|Bank/) })
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-    refute(symbols.any? { |s| s.start_with?("cna_wave_bank_", "cna_sound_bank_", "cna_cue_") })
     # `cna_audio_engine_create` is deliberately unbound: XNA's one-argument constructor delegates to
     # the three-argument one with an explicit 250 ms look-ahead, so the projection always has one.
     refute_includes symbols, "cna_audio_engine_create"
