@@ -1,5 +1,19 @@
 # GraphicsAdapter architecture and CNA capability audit
 
+> **Superseded in part, 2026-09-01 (Native frontier 6).** Everything below about the XNA contract,
+> the IL and the canonical C ABI still stands and was re-measured. **Blocker 2 is wrong.** It
+> concluded that the fabricated adapter data "is a property of the qualified artifact's build
+> configuration, not of CNA's architecture" and that "a CNA build carrying the SDL3 platform would
+> answer truthfully". A second qualified artifact — same source, `CNA_PLATFORM=SDL3`,
+> `CNA_GRAPHICS_RENDERER=OPENGL33`, a real X11 window, a real GL 4.5 context and a live 1280x800
+> display — answers **exactly the same invented values**. The cause is that the adapter list is a
+> static cache filled before the video subsystem is acquired, and the ABI's only refresh route
+> refuses by design. See `docs/graphics-adapter-ordering-upstream-defect.md`.
+>
+> Blocker 1 has also moved: mscorlib **is** admitted now (`tools/api_compat/reference/BCL_PROVENANCE.md`),
+> so `ReadOnlyCollection`1` is measurable rather than unmeasurable — it is a mapping decision that
+> has not been taken, not a missing authority. Blockers 3 and 4 are unchanged and were re-measured.
+
 This is the audit that opened the native/CNA expansion sequence. It was commissioned to decide
 whether `Microsoft.Xna.Framework.Graphics.GraphicsAdapter` could be projected truthfully, and, if
 that required new canonical CNA capability, to design the smallest additive C ABI for it.

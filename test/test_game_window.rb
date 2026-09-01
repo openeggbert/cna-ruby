@@ -4,6 +4,7 @@ require "minitest/autorun"
 require "json"
 require "pathname"
 require_relative "reviewed_measurements"
+require_relative "renderer_environment"
 require_relative "../lib/cna"
 
 # Foundation 48 — `GameWindow`, and the `Game.Window` it closes.
@@ -135,7 +136,10 @@ class GameWindowTest < Minitest::Test
 
   def test_allow_user_resizing_round_trips_through_the_real_route
     with_window do |window, _game|
-      refute window.AllowUserResizing
+      # The initial value is the host's. A build with no native window answers false, which is also
+      # XNA's own field default; a build whose renderer creates one answers CNA's windowed default,
+      # which is true. DEVIATION, recorded: XNA's `WindowsGameWindow` starts false either way.
+      assert_equal RendererEnvironment.windowed?, window.AllowUserResizing
       assert_equal true, (window.AllowUserResizing = true)
       assert window.AllowUserResizing
       window.AllowUserResizing = false
@@ -143,16 +147,32 @@ class GameWindowTest < Minitest::Test
     end
   end
 
-  # HEADLESS has no native window, so the honest answers are a zero rectangle, a zero handle, an
-  # empty device name and the default orientation. Not one of them is replaced by an invention.
-  def test_the_headless_host_answers_are_reported_rather_than_replaced
+  # Whatever the host answers is what a consumer sees; nothing here is replaced by an invention, in
+  # either direction.
+  #
+  # A build with no native window -- HEADLESS, SOFTWARE, STUB, PORTABLEGL, whose descriptors all set
+  # `needsWindow = false` -- answers a zero rectangle, a zero handle, an empty device name and the
+  # default orientation. A build whose renderer really creates one answers a real client rectangle,
+  # a real native handle, the display's own name and the orientation its shape implies. This test
+  # used to write the first column down as literals, which made it an assertion about the
+  # qualification artifact rather than about the projection.
+  def test_the_hosts_own_window_answers_are_reported_rather_than_replaced
     with_window do |window, _game|
       bounds = window.ClientBounds
       assert_instance_of F::Rectangle, bounds
-      assert_equal [0, 0, 0, 0], [bounds.X, bounds.Y, bounds.Width, bounds.Height]
-      assert_equal 0, window.Handle
-      assert_equal "", window.ScreenDeviceName
-      assert_equal F::DisplayOrientation::Default, window.CurrentOrientation
+      assert_equal [0, 0], [bounds.X, bounds.Y], "the client origin is the window's own"
+      if RendererEnvironment.windowed?
+        assert_operator bounds.Width, :>, 0
+        assert_operator bounds.Height, :>, 0
+        refute_equal 0, window.Handle
+        refute_empty window.ScreenDeviceName
+        refute_equal F::DisplayOrientation::Default, window.CurrentOrientation
+      else
+        assert_equal [0, 0], [bounds.Width, bounds.Height]
+        assert_equal 0, window.Handle
+        assert_equal "", window.ScreenDeviceName
+        assert_equal F::DisplayOrientation::Default, window.CurrentOrientation
+      end
     end
   end
 

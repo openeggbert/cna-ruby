@@ -6,6 +6,7 @@ require "pathname"
 require "stringio"
 require_relative "reviewed_measurements"
 require_relative "../lib/cna"
+require_relative "renderer_environment"
 
 # `Texture2D.SaveAsPng` and `SaveAsJpeg` — the first members of this binding that produce a real
 # encoded image, and the first consumer of the `System.IO.Stream` projection on the *writing* side.
@@ -265,10 +266,16 @@ class Texture2DConstructionTest < Minitest::Test
     assert_equal ArgumentError, values[0], "a null device is XNA's own first check"
     assert_equal [RangeError] * 3, values[1..3], "ResourceDimensionsMustBePositive"
     assert_equal [TypeError] * 3, values[4..6]
-    # DEVIATION, recorded: CNA's create route documents that its bulk-transfer slice supports
-    # `CNA_SURFACE_FORMAT_COLOR`, so another format is refused natively where XNA would accept
-    # whatever the adapter supports. No managed rule is invented to anticipate it.
-    assert_equal CNA::CapabilityError, values[7]
+    # Whether a non-`Color` surface format is accepted is the **renderer's** answer and not this
+    # projection's, which is exactly the claim: no managed rule is invented to anticipate it. The
+    # HEADLESS artifact classifies `Bgr565` as known-but-unsupported for texture storage and refuses
+    # it; an `OPENGL33` build reports RGB565 supported and creates the texture. Both are read from
+    # `cna_graphics_device_get_surface_format_support_ext` rather than assumed, and a format this
+    # renderer has not classified at all leaves the outcome unasserted rather than guessed.
+    case RendererEnvironment.texture_storage_support(RendererEnvironment::BGR565)
+    when true then assert_equal :ok, values[7]
+    when false then assert_equal CNA::CapabilityError, values[7]
+    end
     assert_equal :ok, values[8]
   end
 

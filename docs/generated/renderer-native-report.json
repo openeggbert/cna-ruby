@@ -1,0 +1,276 @@
+{
+  "schemaVersion": 1,
+  "CNA_NATIVE_EVIDENCE": true,
+  "runs": {
+    "HEADLESS": {
+      "artifact": {
+        "path": "/home/robertvokac/deps/cna-c-abi-0.21.0/libcna_c_api.so",
+        "bytes": 166420656,
+        "sha256": "c32bfbd307d695664f906ccf2834ec3f9ebc240fa388d544ac21ee3ebaeb731b"
+      },
+      "environment": {
+        "DISPLAY": ":0",
+        "WAYLAND_DISPLAY": "wayland-0",
+        "SDL_VIDEODRIVER": null
+      },
+      "renderer": {
+        "rendererInfoResult": 0,
+        "rendererName": "HEADLESS",
+        "capabilityFlags": 3327,
+        "rendererType": 11,
+        "maxTextureDimension": 16384,
+        "nativeWindowResult": 0,
+        "nativeWindowSystem": 0,
+        "nativeWindowHasDisplayPointer": false,
+        "nativeWindowXid": 0,
+        "clientBoundsResult": 0,
+        "clientBounds": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "screenDeviceName": "\\\\.\\DISPLAY1",
+        "capabilities": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": false,
+          "9": false,
+          "10": true,
+          "11": true,
+          "12": false,
+          "13": false,
+          "14": false,
+          "15": false,
+          "16": false,
+          "17": false,
+          "18": false
+        }
+      },
+      "adapter": {
+        "countResult": 0,
+        "count": 1,
+        "description": "Default Display",
+        "deviceName": "\\\\.\\DISPLAY1",
+        "isDefaultAdapter": true,
+        "isWideScreen": true,
+        "vendorId": 4098,
+        "deviceId": 5567,
+        "revision": 0,
+        "subSystemId": 0,
+        "currentDisplayModeResult": 0,
+        "currentDisplayMode": {
+          "width": 800,
+          "height": 480,
+          "aspectRatio": 1.6666666269302368,
+          "format": 0
+        },
+        "supportedDisplayModes": [
+          {
+            "width": 800,
+            "height": 480,
+            "format": 0
+          }
+        ],
+        "monitorHandleResult": 6,
+        "refreshResult": 6
+      },
+      "displayEvidenceConflict": {
+        "windowReportsADisplayNamed": "\\\\.\\DISPLAY1",
+        "adapterReportsDescription": "Default Display",
+        "adapterReportsCurrentMode": [
+          800,
+          480
+        ],
+        "adapterIsTheNoDisplayFallback": true,
+        "windowHasANativeSurface": false,
+        "refreshRefused": true,
+        "adapterContradictsTheWindow": false
+      },
+      "renderTarget": {
+        "createResult": 0,
+        "created": true,
+        "infoResult": 0,
+        "width": 8,
+        "height": 4,
+        "isContentLost": false,
+        "rendererAvailable": true,
+        "format": 0,
+        "levelCount": 1,
+        "bindResult": 0,
+        "clearResult": 0,
+        "unbindResult": 0,
+        "readResult": 6,
+        "elementsWritten": 32,
+        "clearedTo": [
+          64,
+          128,
+          191,
+          255
+        ],
+        "firstPixel": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "allPixelsEqual": true
+      },
+      "frames": {
+        "short": {
+          "requested": 60,
+          "completed": 60,
+          "error": null,
+          "seconds": 1.021
+        },
+        "long": {
+          "requested": 600,
+          "completed": 600,
+          "error": null,
+          "seconds": 10.035
+        }
+      }
+    },
+    "OPENGL33": {
+      "artifact": {
+        "path": "/home/robertvokac/deps/cna-c-abi-0.21.0-opengl33/libcna_c_api.so",
+        "bytes": 169397088,
+        "sha256": "f7da256097338aacd77cd72eb778e8ab5d80525dd16fddac7cdd9a1885343d5c"
+      },
+      "environment": {
+        "DISPLAY": ":77",
+        "WAYLAND_DISPLAY": "wayland-0",
+        "SDL_VIDEODRIVER": "x11"
+      },
+      "renderer": {
+        "rendererInfoResult": 0,
+        "rendererName": "OPENGL33",
+        "capabilityFlags": 516095,
+        "rendererType": 4,
+        "maxTextureDimension": 16384,
+        "nativeWindowResult": 0,
+        "nativeWindowSystem": 2,
+        "nativeWindowHasDisplayPointer": true,
+        "nativeWindowXid": 2097203,
+        "clientBoundsResult": 0,
+        "clientBounds": [
+          0,
+          0,
+          800,
+          480
+        ],
+        "screenDeviceName": "screen",
+        "capabilities": {
+          "0": true,
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true,
+          "5": true,
+          "6": true,
+          "7": true,
+          "8": true,
+          "9": true,
+          "10": true,
+          "11": true,
+          "12": true,
+          "13": false,
+          "14": true,
+          "15": true,
+          "16": true,
+          "17": true,
+          "18": true
+        }
+      },
+      "adapter": {
+        "countResult": 0,
+        "count": 1,
+        "description": "Default Display",
+        "deviceName": "\\\\.\\DISPLAY1",
+        "isDefaultAdapter": true,
+        "isWideScreen": true,
+        "vendorId": 4098,
+        "deviceId": 5567,
+        "revision": 0,
+        "subSystemId": 0,
+        "currentDisplayModeResult": 0,
+        "currentDisplayMode": {
+          "width": 800,
+          "height": 480,
+          "aspectRatio": 1.6666666269302368,
+          "format": 0
+        },
+        "supportedDisplayModes": [
+          {
+            "width": 800,
+            "height": 480,
+            "format": 0
+          }
+        ],
+        "monitorHandleResult": 6,
+        "refreshResult": 6
+      },
+      "displayEvidenceConflict": {
+        "windowReportsADisplayNamed": "screen",
+        "adapterReportsDescription": "Default Display",
+        "adapterReportsCurrentMode": [
+          800,
+          480
+        ],
+        "adapterIsTheNoDisplayFallback": true,
+        "windowHasANativeSurface": true,
+        "refreshRefused": true,
+        "adapterContradictsTheWindow": true
+      },
+      "renderTarget": {
+        "createResult": 0,
+        "created": true,
+        "infoResult": 0,
+        "width": 8,
+        "height": 4,
+        "isContentLost": false,
+        "rendererAvailable": true,
+        "format": 0,
+        "levelCount": 1,
+        "bindResult": 0,
+        "clearResult": 0,
+        "unbindResult": 0,
+        "readResult": 0,
+        "elementsWritten": 32,
+        "clearedTo": [
+          64,
+          128,
+          191,
+          255
+        ],
+        "firstPixel": [
+          64,
+          128,
+          191,
+          255
+        ],
+        "allPixelsEqual": true
+      },
+      "frames": {
+        "short": {
+          "requested": 60,
+          "completed": 60,
+          "error": null,
+          "seconds": 1.163
+        },
+        "long": {
+          "requested": 600,
+          "completed": 600,
+          "error": null,
+          "seconds": 10.315
+        }
+      }
+    }
+  }
+}

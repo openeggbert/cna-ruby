@@ -5,6 +5,7 @@ require "json"
 require "pathname"
 require_relative "reviewed_measurements"
 require_relative "../lib/cna"
+require_relative "renderer_environment"
 
 # Foundation 41 — the four canonical Game events.
 #
@@ -256,12 +257,15 @@ class GameEventsTest < Minitest::Test
     game = F::Game.new
     begin
       game.Tick
-      refute game.IsActive
+      before = game.IsActive
       seen = []
       game.Activated.add { |sender, _args| seen << sender }
       game.__send__(:OnActivated, game, CNA::Runtime::EventArgs::Empty)
       assert_equal [game], seen
-      refute game.IsActive, "the event is an observation, not the state"
+      assert_equal before, game.IsActive, "the event is an observation, not the state"
+      # On an artifact whose renderer creates no window there is no focus to begin with, so the
+      # seam is visible in its strongest form: the raiser cannot turn a false into a true.
+      refute game.IsActive unless RendererEnvironment.windowed?
     ensure
       game.Dispose
     end

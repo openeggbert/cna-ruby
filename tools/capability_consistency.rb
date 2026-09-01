@@ -13,7 +13,14 @@ require "json"
 # the live Ruby namespaces — rather than from fixed strings, so a future milestone that reintroduces
 # the same class of contradiction fails without anyone having to remember this one.
 module CapabilityConsistency
-  RESOLVED_CATEGORIES = %w[VERIFIED_MANAGED VERIFIED_NATIVE VERIFIED_NATIVE_ROUTE].freeze
+  # `VERIFIED_NATIVE_RENDERER` is not a synonym for `VERIFIED_NATIVE`. Every native claim this
+  # project made before Native frontier 6 was measured against an artifact built
+  # `CNA_GRAPHICS_RENDERER=HEADLESS`, whose descriptor sets `needsWindow = false` and whose
+  # readback route answers `CNA_RESULT_NOT_SUPPORTED`: routes execute and report success, and no
+  # pixel is ever produced. A claim that needs a renderer that really rasterises is a different
+  # claim from one that needs only a canonical route, and conflating the two is exactly how
+  # "verified" came to mean two things.
+  RESOLVED_CATEGORIES = %w[VERIFIED_MANAGED VERIFIED_NATIVE VERIFIED_NATIVE_ROUTE VERIFIED_NATIVE_RENDERER].freeze
   UNRESOLVED_CATEGORIES = %w[
     UNRESOLVED_MAPPING_DECISION UPSTREAM_INPUT_UNAVAILABLE UPSTREAM_CNA_BLOCKED
     UNIMPLEMENTED_CNA_RUBY BACKEND_BLOCKED

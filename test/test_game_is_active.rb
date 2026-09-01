@@ -4,6 +4,7 @@ require "minitest/autorun"
 require "json"
 require "pathname"
 require_relative "reviewed_measurements"
+require_relative "renderer_environment"
 require_relative "../lib/cna"
 
 # Foundation 45 — `Game.IsActive`.
@@ -123,12 +124,22 @@ class GameIsActiveTest < Minitest::Test
     end
   end
 
-  # A host without a loop has no focus, which CNA reports and this does not embellish.
-  def test_a_host_that_never_ran_is_inactive
+  # The property is `cna_game_get_is_active`'s answer, not a managed guess at what it should be.
+  #
+  # This used to assert a literal `false`, and that was an artifact fact rather than an XNA one: a
+  # HEADLESS build creates no window, so a host that never ran has no focus, while a build whose
+  # renderer really creates one is focused the moment it exists. Both are the host reporting itself,
+  # which is the claim -- so it is stated against the route rather than against either answer.
+  def test_a_host_that_never_ran_answers_the_hosts_own_focus
     with_game do |game|
       game.Tick
       refute_nil game.instance_variable_get(:@host)
-      refute game.IsActive
+      handle = game.instance_variable_get(:@host).handle
+      output = CNA::Native.library.pointer_for("C", 0)
+      assert_equal 0, CNA::Native.library.call("cna_game_get_is_active", handle, output)
+      assert_equal output[0, 1].unpack1("C") == 1, game.IsActive
+      # Nothing is embellished in either direction: a host with no native window has no focus.
+      refute game.IsActive unless RendererEnvironment.windowed?
     end
   end
 

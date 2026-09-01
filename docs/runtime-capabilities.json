@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Native frontier 3",
+  "milestone": "Native frontier 6",
   "platform": "Linux x86-64 MRI Ruby 3.3.8",
   "cnaAbi": "0.21.0 (admitted set: 0.7.0, 0.21.0)",
   "capabilities": [
@@ -522,9 +522,27 @@
     },
     {
       "id": "renderer.visible-output",
-      "category": "BACKEND_BLOCKED",
-      "status": "not verified",
-      "evidence": "qualified artifact uses HEADLESS renderer"
+      "category": "HARDWARE_PENDING",
+      "status": "not shown on a physical display",
+      "evidence": "Native frontier 6 retired this row's reason, not the row. It read \"qualified artifact uses HEADLESS renderer\", and that stopped being true: docs/generated/renderer-native-report.json carries a second qualified artifact, CNA_GRAPHICS_RENDERER=OPENGL33, whose EasyGL family reports OpenGL 4.5 Core through Mesa, creates a real X11 window and reads a cleared render target back exactly. What is still not verified is the word visible: the qualification runs against an Xvfb framebuffer, so the pixels are real and rasterised by a real driver but no physical monitor has displayed them. See renderer.real-rasterization for what is verified and hardware.visible-renderer for the remaining question"
+    },
+    {
+      "id": "renderer.real-rasterization",
+      "category": "VERIFIED_NATIVE_RENDERER",
+      "status": "verified; a render target is cleared and read back exactly",
+      "evidence": "docs/generated/renderer-native-report.json, runs.OPENGL33.renderTarget. An 8x4 RenderTarget2D is created through cna_render_target2d_create, reports renderer_available true, is bound with cna_graphics_device_set_render_target2d, cleared to (0.25, 0.5, 0.75, 1.0) with cna_graphics_device_clear_rgba, unbound, and read back through cna_texture2d_get_data -- the same route Texture2D.GetData uses -- as 32 identical pixels of exactly (64, 128, 191, 255). The HEADLESS run performs the identical sequence, reports success from create, bind, clear and unbind, and then answers CNA_RESULT_NOT_SUPPORTED from the readback, which is why no earlier milestone could make this claim. Measured with it: the same probe run from LoadContent rather than Draw reads back transparent black while every call still reports success, because a clear issued outside the renderer's frame has no target to land on"
+    },
+    {
+      "id": "renderer.native-window",
+      "category": "VERIFIED_NATIVE_RENDERER",
+      "status": "verified; a real X11 window with a real XID",
+      "evidence": "runs.OPENGL33.renderer: cna_game_window_get_native_window_ext reports CNA_NATIVE_WINDOW_SYSTEM_X11 with a non-null Display* and a real window XID, client bounds 800x480 and the display's own name. The HEADLESS run answers CNA_NATIVE_WINDOW_SYSTEM_UNKNOWN with every pointer null and a zero rectangle, which CNA's own comment states is deliberate for the four renderers whose descriptors set needsWindow = false -- HEADLESS, SOFTWARE, STUB and PORTABLEGL. SOFTWARE was measured and is one of them: selecting it changes the renderer name and the capability flags and still creates no window, so \"a renderer that is not HEADLESS\" is not the same question as \"a renderer that has a window\""
+    },
+    {
+      "id": "renderer.frame-stability",
+      "category": "VERIFIED_NATIVE_RENDERER",
+      "status": "verified; 60 and 600 frames on both qualified artifacts",
+      "evidence": "runs.*.frames. One game, a real GraphicsDevice.Clear in every Draw, run to 60 and to 600 frames against both the HEADLESS and the OPENGL33 artifact: 60/60 and 600/600 completed with no error on each, the OPENGL33 run presenting through a real GL context and X11 window each frame. Measured alongside it, and not a binding defect: creating and destroying tens of games in one process against a windowed renderer intermittently fails inside SDL with \"x11 not available\", because each game acquires and releases the video subsystem; one long-lived game is unaffected"
     },
     {
       "id": "graphics.viewport-setter",
@@ -601,8 +619,8 @@
     {
       "id": "hardware.visible-renderer",
       "category": "HARDWARE_PENDING",
-      "status": "not run",
-      "evidence": null
+      "status": "not run on an attached display",
+      "evidence": "Native frontier 6 qualified CNA_GRAPHICS_RENDERER=OPENGL33 against an Xvfb X11 display with Mesa's software rasteriser. Running the same artifact against this host's attached display and a hardware GL driver is an environment question this suite deliberately does not take: it would put a window on the developer's desktop and make a qualification result depend on which GPU is present"
     },
     {
       "id": "assets.content-pipeline",
@@ -618,9 +636,9 @@
     },
     {
       "id": "display.adapter-enumeration",
-      "category": "BACKEND_BLOCKED",
-      "status": "not verified",
-      "evidence": "The canonical C ABI already exposes the whole GraphicsAdapter surface (count, info, description, device name, current mode, supported modes, device preferences, profile support and both format negotiations), so no ABI expansion is needed to reach it. What the qualified artifact cannot supply is truthful data: libcna_c_api.so 0.7.0 was linked with the HEADLESS platform, carrying no SDL2 or SDL3 platform, so CNA GetDisplays answers nothing and the native adapter falls back to a synthetic entry described as Default Display with a single 800x480 mode. Binding a Ruby GraphicsAdapter to that would publish invented hardware. The C ABI additionally refuses the native monitor handle by design, returning CNA_RESULT_NOT_SUPPORTED, and answers every adapter query only through a callback-scoped graphics-device handle, while XNA Adapters and DefaultAdapter are statics usable before any device exists"
+      "category": "UPSTREAM_CNA_BLOCKED",
+      "status": "blocked by a measured native ordering defect, not by the renderer",
+      "evidence": "The blocker this row recorded -- \"the qualified artifact was linked with the HEADLESS platform, so CNA GetDisplays answers nothing\" -- was measured again in Native frontier 6 against an artifact that has the SDL3 platform, the OPENGL33 renderer, a real X11 window and a live 1280x800 display, and it is still the no-display fallback: one adapter described \"Default Display\", device name \\\\.\\DISPLAY1, a single fabricated 800x480 mode. The cause is ordering rather than capability. GraphicsAdapter::getAdaptersProperty() fills a static cache on first use; GraphicsDevice's default constructor evaluates GraphicsAdapter::getDefaultAdapterProperty() as a delegated-constructor argument, which is before createOrAttachWindow() acquires the video subsystem, so SDL_GetDisplays answers nothing and the fallback is cached for the life of the process. The evidence needs no SDL and no second process: in one frame with one device, cna_game_window_copy_screen_device_name answers the display's real name \"screen\" while cna_graphics_adapter_copy_description answers \"Default Display\" -- recorded as displayEvidenceConflict.adapterContradictsTheWindow. Initialising SDL's video subsystem before the device is constructed makes the same build report \"screen\" and 1280x800, which is the control. cna_graphics_adapters_refresh refuses by design, so no C consumer can correct it. Binding a Ruby GraphicsAdapter to the cached fallback would publish invented hardware. The two contract facts recorded here before are unchanged: the ABI answers adapter queries only through a callback-scoped graphics-device handle while XNA Adapters and DefaultAdapter are statics, and the native monitor handle is refused by design"
     },
     {
       "id": "managed.not-supported-exception",

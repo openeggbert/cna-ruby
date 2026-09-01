@@ -124,7 +124,7 @@ one.
 | --- | --- | --- |
 | `Design.MathTypeConverter` | BCL_PROJECTION | **audited, deferred.** Scope, not authority: it inherits `ExpandableObjectConverter` and returns `PropertyDescriptorCollection`, so projecting it means projecting .NET's type-descriptor system |
 | `Graphics.EffectAnnotation` | NATIVE_RUNTIME | **audited, deferred.** Not the renderer: its eight `GetValue*` members forward to a temporary `EffectParameter`, which is not projected, and nothing in the projected surface produces an annotation |
-| `Graphics.GraphicsAdapter` | NATIVE_RUNTIME | **audited, deferred.** Not the ABI: the qualified artifact compiles only the HEADLESS renderer, and with it every adapter route answers invented data |
+| `Graphics.GraphicsAdapter` | NATIVE_RUNTIME | **audited twice, deferred.** Not the ABI, and — measured in Native frontier 6 — **not the renderer either**: a second qualified artifact with a real X11 window still answers the same invented data, because the adapter list is cached before the video subsystem exists. `UPSTREAM_CNA_BLOCKED` |
 
 The three blocked entries have been **measured** rather than accepted, and each is deferred for a
 reason its reported blocker word does not name. Four entries left this table in one milestone by
@@ -156,12 +156,21 @@ re-measured before it is trusted.
 
 Two deferrals are now measured rather than assumed, and both stand:
 
-- **`GraphicsAdapter`.** The 0.21.0 artifact does contain `Sdl3Platform` and links SDL3 and X11 —
-  the retired 0.7.0 one had only Headless and Terminal — but the only renderer compiled in is
-  `HEADLESS`. With it every `cna_graphics_adapter_*` route answers `SUCCESS` with invented values:
-  one adapter, `"Default Display"`, `\\.\DISPLAY1`, a single 800x480 mode, and
+- **`GraphicsAdapter`.** Every `cna_graphics_adapter_*` route answers `SUCCESS` with invented
+  values: one adapter, `"Default Display"`, `\\.\DISPLAY1`, a single 800x480 mode, and
   `cna_graphics_adapters_refresh` answering `NOT_SUPPORTED`. Projecting the type would mean
-  reporting invented hardware, so it is not projected.
+  reporting invented hardware, so it is not projected. **The recorded reason for that was wrong, and
+  Native frontier 6 measured it.** It said the cause was the renderer selection — "the only renderer
+  compiled in is `HEADLESS`" — and a second qualified artifact with `CNA_GRAPHICS_RENDERER=OPENGL33`,
+  a real X11 window, a real GL 4.5 context and a live 1280x800 display answers *exactly the same
+  invented values*. The cause is ordering: `GraphicsAdapter::getAdaptersProperty()` fills a static
+  cache, `GraphicsDevice`'s default constructor evaluates `getDefaultAdapterProperty()` as a
+  delegated-constructor argument — before `createOrAttachWindow()` acquires the video subsystem — and
+  `cna_graphics_adapters_refresh` refuses by design, so no consumer can correct it. In one frame with
+  one device, `cna_game_window_copy_screen_device_name` answers the display's real name while
+  `cna_graphics_adapter_copy_description` answers the no-display fallback. See
+  `docs/graphics-adapter-ordering-upstream-defect.md`; the blocker is `UPSTREAM_CNA_BLOCKED`, not the
+  renderer.
 - **`EffectAnnotation`.** Its six properties are one `ldfld` each and CNA can build one standalone —
   `cna_effect_annotation_create` takes no game, device or effect — so the *renderer* does not block
   it. What blocks it is that all eight `GetValue*` members construct a temporary `EffectParameter`
@@ -187,8 +196,18 @@ leak-only mode, verifier self-tests, the RBS/runtime consistency check, the beha
 ABI probe with zero findings, the capability registry with zero contradictions, the gem audit and
 the native canaries.
 
-`HEADLESS` qualifies execution and native calls, not visible output. Specific hardware limits are
-recorded rather than papered over:
+**Two artifacts are qualified**, the same CNA source and the same C ABI differing in one CMake
+variable: `CNA_GRAPHICS_RENDERER=HEADLESS` and `=OPENGL33`. Both pass the whole suite, both pass the
+native ABI gate with `ABI_MISMATCHES=0`, and both are run to 60 and 600 frames by
+`tools/run_renderer_qualification.rb`. `HEADLESS` qualifies execution and native calls and creates
+no window at all — its descriptor sets `needsWindow = false`, as `SOFTWARE`, `STUB` and `PORTABLEGL`
+do, so "a renderer that is not HEADLESS" is not the same question as "a renderer that has a window".
+`OPENGL33` creates a real X11 window and a real GL 4.5 context, and reads a cleared render target
+back exactly; it runs against `Xvfb`, so **rasterisation is verified and visibility on a physical
+monitor is not**. A test whose expectation depends on which artifact is loaded measures the
+difference through `test/renderer_environment.rb` rather than pinning either answer.
+
+Specific hardware limits are recorded rather than papered over:
 
 - No connected controller was attached, so only disconnected GamePad results and route safety are
   qualified; connected state, positive capabilities and physical rumble are `HARDWARE_PENDING`.
@@ -202,14 +221,44 @@ recorded rather than papered over:
 
 ## Deferred boundaries
 
-Completing a managed type implies nothing about the subsystem it names. The graphics runtime is the
-large remaining area: no `Effect`, `EffectParameter`, `BasicEffect`, `Model`, `VertexBuffer`,
-`IndexBuffer`, `VertexDeclaration`, `RenderTarget2D`, `TextureCube`, `Texture3D`, `BlendState`,
-`DepthStencilState`, `RasterizerState`, `SamplerState`, `GraphicsAdapter` or `SpriteFont`, and none
-of the nine deferred `GraphicsDevice` draw overloads. The Media *runtime* is deferred whole:
-`MediaPlayer`, `MediaLibrary`, `MediaQueue`, `Song`, `Album`, `Artist`, `Genre`, `Playlist`,
-`Picture`, `VideoPlayer` and their collections. `Content.ContentReader`, `ContentTypeReader` and
-`ResourceContentManager` are absent, as is the whole `Design` converter family and the `Storage`
-runtime. The nine XNA exception types this binding projects are never raised by it.
-`AudioListener` and `AudioEmitter` remain managed descriptors whose settings are never heard.
-Windows, macOS, browser/Wasm, Android, JRuby, TruffleRuby, MRuby and Opal are not supported targets.
+Completing a managed type implies nothing about the subsystem it names. **This section had gone
+stale** — it listed `VertexDeclaration`, the four graphics state objects, `SpriteFont`,
+`ResourceContentManager` and `VideoPlayer` as absent for milestones after each was complete, which is
+the same defect the dependency frontier and the behaviour corpus's authoring files each had once:
+prose stating measured facts with nothing comparing it to the measurement. The list below is now
+delimited and checked against `docs/generated/missing-type-inventory.md` by
+`test/test_plan_boundaries.rb`, so every name in it is a type the strict report really calls missing.
+
+<!-- absent-types:begin -->
+`Effect`, `EffectParameter`, `EffectParameterCollection`, `EffectAnnotation`,
+`EffectAnnotationCollection`, `EffectPass`, `EffectPassCollection`, `EffectTechnique`,
+`EffectTechniqueCollection`, `EffectMaterial`, `IEffectLights`, `BasicEffect`, `SkinnedEffect`,
+`AlphaTestEffect`, `DualTextureEffect`, `EnvironmentMapEffect`, `DirectionalLight`, `VertexBuffer`,
+`DynamicVertexBuffer`, `IndexBuffer`, `DynamicIndexBuffer`, `VertexBufferBinding`, `Texture3D`,
+`TextureCube`, `RenderTarget2D`, `RenderTargetCube`, `RenderTargetBinding`, `GraphicsAdapter`,
+`OcclusionQuery`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs`,
+`DrawableGameComponent`, `Model`, `ModelBone`, `ModelMesh`, `ModelMeshPart`, `ModelBoneCollection`,
+`ModelMeshCollection`, `ModelMeshPartCollection`, `ModelEffectCollection`, `MediaPlayer`,
+`MediaLibrary`, `MediaQueue`, `Song`, `SongCollection`, `Album`, `AlbumCollection`, `Artist`,
+`ArtistCollection`, `Genre`, `GenreCollection`, `Playlist`, `PlaylistCollection`, `Picture`,
+`PictureAlbum`, `PictureAlbumCollection`, `PictureCollection`, `ContentReader`, `ContentTypeReader`,
+`ContentTypeReaderManager`, `StorageDevice`, `StorageContainer`, `MathTypeConverter`,
+`ColorConverter`, `MatrixConverter`, `PlaneConverter`, `PointConverter`, `QuaternionConverter`,
+`RayConverter`, `RectangleConverter`, `Vector2Converter`, `Vector3Converter`, `Vector4Converter`,
+`BoundingBoxConverter`, `BoundingSphereConverter`
+<!-- absent-types:end -->
+
+The graphics runtime is the large remaining area, and the whole `Effect` graph is the heart of it.
+`GraphicsDevice` still owes thirty-seven members and `GraphicsDeviceManager` fifteen; `SpriteBatch`
+owes only `Begin`'s two `Effect`-taking overloads, and both of those wait on `Effect`.
+
+Types a reader might expect on that list and will not find, because they are **complete**:
+`VertexDeclaration` and the four vertex structs, the four graphics state objects,
+`SamplerStateCollection`, `TextureCollection`, `SpriteFont`, `Texture2D`, `GraphicsResource`,
+`ResourceContentManager`, and the whole `Audio` namespace including the XACT cluster. In `Media`,
+`Video`, `VideoPlayer`, `MediaSource` and `VisualizationData` are complete while the media *library*
+and *player* runtime above is not.
+
+The nine XNA exception types this binding projects are never raised by it. `AudioListener` and
+`AudioEmitter` are complete managed descriptors whose settings are never heard. Windows, macOS,
+browser/Wasm, Android, JRuby, TruffleRuby, MRuby and Opal are not supported targets.

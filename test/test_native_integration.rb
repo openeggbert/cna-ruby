@@ -2,6 +2,7 @@
 
 require "minitest/autorun"
 require_relative "../lib/cna"
+require_relative "renderer_environment"
 
 class NativeIntegrationTest < Minitest::Test
   F = Microsoft::Xna::Framework
@@ -170,7 +171,15 @@ class NativeIntegrationTest < Minitest::Test
     ensure
       game.Dispose
     end
-    assert_equal %i[initialize load_content update draw unload_content Disposed], game.names
+    # `Activated` is the host's, and a build whose renderer creates a real window is focused as soon
+    # as it has one. What this test is about is `Exiting`, which RunOneFrame must never raise --
+    # so the activation is removed from the sequence rather than asserted either way, and then
+    # asserted separately against the same fact the environment measures.
+    assert_equal %i[initialize load_content update draw unload_content Disposed],
+                 game.names - [:Activated]
+    assert_equal 0, game.names.count(:Exiting)
+    assert_equal 0, game.names.count(:Deactivated)
+    assert_equal(RendererEnvironment.windowed? ? 1 : 0, game.names.count(:Activated))
   end
 
   # The registrations are released before the game is destroyed, and releasing them is what stops
