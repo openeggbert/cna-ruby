@@ -562,6 +562,36 @@ module CNA
         end
       end
 
+      # `CNA_SpriteTextCommand` is what XNA's six `DrawString` overloads reduce to once the two
+      # `StringBuilder` forms collapse into their `String` twins and the uniform-scale forms widen
+      # their `Single` into both components of a `Vector2`.
+      class SpriteTextCommand < Structure
+        layout size: 72, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("sprite_font", "CNA_Handle", 8, 8), Layouts.field("text", "CNA_StringView", 16, 16),
+          Layouts.field("position", "CNA_Vector2", 32, 8), Layouts.field("color", "CNA_Color", 40, 4),
+          Layouts.field("rotation", "float", 44, 4), Layouts.field("origin", "CNA_Vector2", 48, 8),
+          Layouts.field("scale", "CNA_Vector2", 56, 8), Layouts.field("effects", "CNA_SpriteEffects", 64, 4),
+          Layouts.field("layer_depth", "float", 68, 4)
+        ]
+
+        def initialize(sprite_font:, text:, position:, color:, rotation:, origin:, scale:, effects:, layer_depth:)
+          super()
+          @text = StringView.new(text)
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+          write_u64(8, sprite_font)
+          write_u64(16, @text.read_u64(0)); write_u64(24, @text.read_u64(8))
+          write_f32(32, position.X); write_f32(36, position.Y)
+          write_u8(40, color.R); write_u8(41, color.G); write_u8(42, color.B); write_u8(43, color.A)
+          write_f32(44, rotation)
+          write_f32(48, origin.X); write_f32(52, origin.Y)
+          write_f32(56, scale.X); write_f32(60, scale.Y)
+          write_u32(64, effects)
+          write_f32(68, layer_depth)
+        end
+      end
+
       class KeyboardState < Structure
         layout size: 40, alignment: 8, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

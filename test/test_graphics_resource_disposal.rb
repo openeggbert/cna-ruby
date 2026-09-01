@@ -163,9 +163,12 @@ class GraphicsResourceDisposalTest < Minitest::Test
   end
 
   def test_it_adds_no_draw_surface
-    # Pixel access arrived in a later milestone; what this one claims is that the disposal contract
-    # added no draw surface, and `DrawString` is still the member that measures it.
-    %i[DrawString].each { |absent| refute G::SpriteBatch.public_method_defined?(absent) }
+    # Pixel access arrived in a later milestone, and `DrawString` in one later still. What this
+    # milestone claims is that the disposal contract added no draw surface of its own, which the
+    # members still outstanding on `SpriteBatch` measure.
+    remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Graphics.SpriteBatch")
+                                  .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
+    assert_equal %w[Begin Draw], remainder.sort
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
   end
 end

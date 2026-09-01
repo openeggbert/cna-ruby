@@ -268,8 +268,13 @@ class SpriteFontTest < Minitest::Test
   end
 
   def test_it_adds_no_sprite_batch_draw_string_or_effect_surface
-    refute G::SpriteBatch.public_method_defined?(:DrawString),
-           "DrawString is a SpriteBatch member this milestone does not add"
+    # `DrawString` arrived in a later milestone -- the one this font's whole measurement surface
+    # was built for. What **this** milestone claimed is that it added no drawing of its own, and
+    # the SpriteBatch members it named are still what that type owes.
+    assert G::SpriteBatch.public_method_defined?(:DrawString)
+    remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Graphics.SpriteBatch")
+                                  .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
+    assert_equal %w[Begin Draw], remainder.sort
     %i[Effect EffectParameter EffectAnnotation GraphicsAdapter].each do |absent|
       refute G.const_defined?(absent, false), absent.to_s
     end

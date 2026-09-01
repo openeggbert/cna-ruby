@@ -1973,6 +1973,61 @@ module Microsoft
             nil
           end
 
+          # Derived from the pinned Graphics IL. All six overloads are two null checks and a forward
+          # to `SpriteFont.InternalDraw`; the method validates **nothing else**, and the interval
+          # rule lives in `InternalDraw`'s own `SpriteBatch` call rather than here.
+          #
+          #     if (spriteFont == null) throw new ArgumentNullException("spriteFont");
+          #     if (text == null)       throw new ArgumentNullException("text");
+          #     spriteFont.InternalDraw(ref proxy, this, position, color,
+          #                             rotation, origin, ref scale, effects, layerDepth);
+          #
+          # Six collapse to two Ruby arities. The `StringBuilder` half of each pair is already the
+          # same call here, because `System.Text.StringBuilder` projects to a Ruby `String` -- the
+          # decision `SpriteFont.MeasureString` recorded. The two nine-argument forms differ only in
+          # whether `scale` is a `Single` or a `Vector2`, and the IL's own `Single` form widens it
+          # into both components, so one method reads the argument it was given and does the same.
+          def DrawString(*arguments)
+            raise CNA::InvalidBindingStateError, "SpriteBatch.DrawString requires Begin" unless @begun
+            unless [4, 9].include?(arguments.length)
+              raise ArgumentError, "DrawString takes (font, text, position, color) or that plus " \
+                                   "(rotation, origin, scale, effects, layerDepth)"
+            end
+
+            font, text, position, color = arguments
+            raise ArgumentError, "spriteFont" if font.nil?
+            raise ArgumentError, "text" if text.nil?
+            raise TypeError, "spriteFont must be SpriteFont" unless font.instance_of?(SpriteFont)
+            raise TypeError, "text must be String" unless text.instance_of?(::String)
+            raise TypeError, "position must be Vector2" unless position.instance_of?(Vector2)
+            raise TypeError, "color must be Color" unless color.instance_of?(Color)
+
+            if arguments.length == 4
+              rotation = 0.0
+              origin = Vector2.Zero
+              scale = Vector2.One
+              effects = SpriteEffects::None
+              depth = 0.0
+            else
+              rotation, origin, scale, effects, depth = arguments[4..]
+              scale = Vector2.new(scale) if scale.instance_of?(Integer) || scale.instance_of?(Float)
+            end
+            raise TypeError, "origin and scale must be Vector2" unless origin.instance_of?(Vector2) && scale.instance_of?(Vector2)
+
+            numeric = [position.X, position.Y, rotation, origin.X, origin.Y, scale.X, scale.Y, depth]
+            raise RangeError, "SpriteBatch transforms must be finite" unless numeric.all? { |value| Float(value).finite? }
+
+            command = CNA::Native::Layouts::SpriteTextCommand.new(
+              sprite_font: font.__send__(:native_handle), text: text.b,
+              position: position, color: color,
+              rotation: CNA::Runtime::Numeric.f32(rotation), origin: origin, scale: scale,
+              effects: SpriteEffects.coerce(effects).to_i,
+              layer_depth: CNA::Runtime::Numeric.f32(depth)
+            )
+            CNA::Native.library.call("cna_sprite_batch_draw_string", native_handle, command.pointer)
+            nil
+          end
+
           def End
             raise CNA::InvalidBindingStateError, "SpriteBatch.End requires Begin" unless @begun
             CNA::Native.library.call("cna_sprite_batch_end", native_handle)

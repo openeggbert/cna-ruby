@@ -168,7 +168,11 @@ class PrimitiveTypeTest < Minitest::Test
     refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("PRIMITIVE") }
     refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("TOPOLOGY") }
     refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?("primitive") }
-    refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?("draw_") }
+    # `cna_sprite_batch_draw_string` left this check when DrawString was built: it draws text
+    # through a SpriteBatch interval, not a primitive topology, and no primitive or topology
+    # constant or route exists at all.
+    refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?("draw_primitive") }
+    refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?("draw_user") }
   end
 
   def test_isolated_graphics_require_does_not_load_cna_native_library

@@ -444,3 +444,17 @@ for its real metadata, played to the `PLAYING` state, and yielding a frame textu
 `cna_video_create*` route is bound even so: XNA's only `Video` producer is
 `ContentManager.Load<Video>`, CNA exports no content route for video, and adding a file factory
 would be adding an identity XNA does not declare.
+
+## Drawing text
+
+One route brings the count to **258** and one layout the structures to **36**:
+`cna_sprite_batch_draw_string` with `CNA_SpriteTextCommand` (72/8). That structure is what XNA's six
+`DrawString` overloads reduce to once the two `StringBuilder` forms collapse into their `String`
+twins -- `System.Text.StringBuilder` projects to a Ruby `String` -- and the uniform-scale forms
+widen their `Single` into both components of a `Vector2`, which is what the IL's own `Single`
+overload does with a single `Vector2` local.
+
+`cna_sprite_batch_draw_mesh_ext` stays unbound: it has no XNA identity.
+`cna_sprite_batch_begin_with_states` and `begin_with_effect` stay unbound too, for now -- the
+state-bearing `Begin` overloads are what `SpriteBatch` still owes, and the last of them needs an
+`Effect` this binding does not project.

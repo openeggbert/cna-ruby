@@ -101,6 +101,7 @@ CHECK_FN(cna_texture2d_get_info, CNA_Result, (CNA_Handle, CNA_Texture2DInfo*));
 CHECK_FN(cna_texture2d_destroy, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_texture2d_get_encoded_byte_count, CNA_Result, (CNA_Handle, CNA_TextureImageFormat, uint32_t, uint32_t, uint64_t*));
 CHECK_FN(cna_texture2d_copy_encoded, CNA_Result, (CNA_Handle, CNA_TextureImageFormat, uint32_t, uint32_t, uint8_t*, uint64_t, uint64_t*));
+CHECK_FN(cna_sprite_batch_draw_string, CNA_Result, (CNA_Handle, const CNA_SpriteTextCommand*));
 CHECK_FN(cna_video_player_create, CNA_Result, (CNA_Handle, CNA_VideoPlayerHandle*));
 CHECK_FN(cna_video_player_get_is_disposed, CNA_Result, (CNA_VideoPlayerHandle, CNA_Bool*));
 CHECK_FN(cna_video_player_get_is_looped, CNA_Result, (CNA_VideoPlayerHandle, CNA_Bool*));
@@ -374,6 +375,7 @@ int main(void) {
     SIGNATURE(cna_texture2d_destroy, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_texture2d_get_encoded_byte_count, "CNA_Result|CNA_Handle,CNA_TextureImageFormat,uint32_t,uint32_t,uint64_t*");
     SIGNATURE(cna_texture2d_copy_encoded, "CNA_Result|CNA_Handle,CNA_TextureImageFormat,uint32_t,uint32_t,uint8_t*,uint64_t,uint64_t*");
+    SIGNATURE(cna_sprite_batch_draw_string, "CNA_Result|CNA_Handle,const CNA_SpriteTextCommand*");
     SIGNATURE(cna_video_player_create, "CNA_Result|CNA_Handle,CNA_Handle*");
     SIGNATURE(cna_video_player_get_is_disposed, "CNA_Result|CNA_Handle,CNA_Bool*");
     SIGNATURE(cna_video_player_get_is_looped, "CNA_Result|CNA_Handle,CNA_Bool*");
@@ -550,6 +552,7 @@ int main(void) {
     STRUCT(CNA_ContentManagerCreateInfo); FIELD(CNA_ContentManagerCreateInfo, struct_size); FIELD(CNA_ContentManagerCreateInfo, struct_version); FIELD(CNA_ContentManagerCreateInfo, root_directory); FIELD(CNA_ContentManagerCreateInfo, reserved);
     STRUCT(CNA_SoundEffectCreateInfo); FIELD(CNA_SoundEffectCreateInfo, struct_size); FIELD(CNA_SoundEffectCreateInfo, struct_version); FIELD(CNA_SoundEffectCreateInfo, sample_rate); FIELD(CNA_SoundEffectCreateInfo, channels); FIELD(CNA_SoundEffectCreateInfo, reserved);
     STRUCT(CNA_Texture2DDecodeInfo); FIELD(CNA_Texture2DDecodeInfo, struct_size); FIELD(CNA_Texture2DDecodeInfo, struct_version); FIELD(CNA_Texture2DDecodeInfo, width); FIELD(CNA_Texture2DDecodeInfo, height); FIELD(CNA_Texture2DDecodeInfo, zoom); FIELD(CNA_Texture2DDecodeInfo, reserved);
+    STRUCT(CNA_SpriteTextCommand); FIELD(CNA_SpriteTextCommand, struct_size); FIELD(CNA_SpriteTextCommand, struct_version); FIELD(CNA_SpriteTextCommand, sprite_font); FIELD(CNA_SpriteTextCommand, text); FIELD(CNA_SpriteTextCommand, position); FIELD(CNA_SpriteTextCommand, color); FIELD(CNA_SpriteTextCommand, rotation); FIELD(CNA_SpriteTextCommand, origin); FIELD(CNA_SpriteTextCommand, scale); FIELD(CNA_SpriteTextCommand, effects); FIELD(CNA_SpriteTextCommand, layer_depth);
     STRUCT(CNA_VertexElement); FIELD(CNA_VertexElement, offset); FIELD(CNA_VertexElement, format); FIELD(CNA_VertexElement, usage); FIELD(CNA_VertexElement, usage_index);
     STRUCT(CNA_BlendState); FIELD(CNA_BlendState, struct_size); FIELD(CNA_BlendState, struct_version); FIELD(CNA_BlendState, alpha_blend_function); FIELD(CNA_BlendState, alpha_destination_blend); FIELD(CNA_BlendState, alpha_source_blend); FIELD(CNA_BlendState, color_blend_function); FIELD(CNA_BlendState, color_destination_blend); FIELD(CNA_BlendState, color_source_blend); FIELD(CNA_BlendState, color_write_channels); FIELD(CNA_BlendState, color_write_channels1); FIELD(CNA_BlendState, color_write_channels2); FIELD(CNA_BlendState, color_write_channels3); FIELD(CNA_BlendState, blend_factor); FIELD(CNA_BlendState, multi_sample_mask);
     STRUCT(CNA_DepthStencilState); FIELD(CNA_DepthStencilState, struct_size); FIELD(CNA_DepthStencilState, struct_version); FIELD(CNA_DepthStencilState, depth_buffer_enable); FIELD(CNA_DepthStencilState, depth_buffer_write_enable); FIELD(CNA_DepthStencilState, stencil_enable); FIELD(CNA_DepthStencilState, two_sided_stencil_mode); FIELD(CNA_DepthStencilState, depth_buffer_function); FIELD(CNA_DepthStencilState, stencil_function); FIELD(CNA_DepthStencilState, stencil_mask); FIELD(CNA_DepthStencilState, stencil_write_mask); FIELD(CNA_DepthStencilState, reference_stencil); FIELD(CNA_DepthStencilState, stencil_fail); FIELD(CNA_DepthStencilState, stencil_depth_buffer_fail); FIELD(CNA_DepthStencilState, stencil_pass); FIELD(CNA_DepthStencilState, counter_clockwise_stencil_function); FIELD(CNA_DepthStencilState, counter_clockwise_stencil_fail); FIELD(CNA_DepthStencilState, counter_clockwise_stencil_depth_buffer_fail); FIELD(CNA_DepthStencilState, counter_clockwise_stencil_pass); FIELD(CNA_DepthStencilState, reserved);

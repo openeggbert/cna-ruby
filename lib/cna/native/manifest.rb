@@ -386,6 +386,7 @@ module CNA
         signature("cna_sprite_batch_create", T[:result], [T[:handle], pointer("CNA_Handle")], ownership: "returns OWNED SpriteBatch"),
         signature("cna_sprite_batch_begin", T[:result], [T[:handle], pointer("CNA_SpriteBatchBeginInfo", const: true)], ownership: "borrows SpriteBatch"),
         signature("cna_sprite_batch_submit_scaled_many", T[:result], [T[:handle], pointer("CNA_SpriteScaledCommand", const: true), T[:u64]], ownership: "copies commands; retains Texture until End"),
+        signature("cna_sprite_batch_draw_string", T[:result], [T[:handle], pointer("CNA_SpriteTextCommand", const: true)], ownership: "borrows SpriteBatch; copies the command and its text"),
         signature("cna_sprite_batch_end", T[:result], [T[:handle]], ownership: "borrows SpriteBatch"),
         signature("cna_sprite_batch_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED SpriteBatch"),
         # The audio surface. Native frontier 4 recorded this cluster UPSTREAM_CNA_BLOCKED against the

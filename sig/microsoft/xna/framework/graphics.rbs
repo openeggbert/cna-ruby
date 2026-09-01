@@ -413,6 +413,7 @@ module Microsoft
           def initialize: (GraphicsDevice graphics_device) -> void
           def Begin: () -> nil
           def Draw: (*untyped arguments) -> nil
+          def DrawString: (*untyped arguments) -> nil
           def End: () -> nil
         end
       end
