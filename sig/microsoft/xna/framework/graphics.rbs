@@ -287,6 +287,11 @@ module Microsoft
           def ReferenceStencil=: (Integer value) -> Integer
           def ScissorRectangle: () -> Rectangle
           def ScissorRectangle=: (Rectangle value) -> Rectangle
+          def Indices: () -> IndexBuffer?
+          def Indices=: (IndexBuffer? value) -> IndexBuffer?
+          def SetVertexBuffer: (VertexBuffer? vertexBuffer, ?Integer? vertexOffset) -> nil
+          def SetVertexBuffers: (?Array[VertexBufferBinding]? vertexBuffers) -> nil
+          def GetVertexBuffers: () -> Array[VertexBufferBinding]
         end
 
         class SamplerStateCollection

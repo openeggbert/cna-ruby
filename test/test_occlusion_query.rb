@@ -119,23 +119,29 @@ class OcclusionQueryTest < Minitest::Test
     assert_equal :ok, values[5], "and one IsComplete read is what lets the next Begin through"
   end
 
-  # An empty interval draws nothing, so a completed query counts nothing. **When** it completes is
-  # the renderer's business: the real GL backends answer asynchronously and may still be pending on
-  # the first read, while HEADLESS answers immediately.
-  def test_an_empty_interval_completes_and_counts_what_was_drawn
+  # An empty interval draws nothing, so a **completed** query counts nothing. Whether it has
+  # completed by any particular read is the renderer's business and nothing here may assert it:
+  # HEADLESS answers on the first read, a real GL backend answers when the GPU has caught up, and
+  # under load that can be later than any fixed number of reads. So both outcomes are asserted for
+  # what they are -- a pending query answers `DataNotAvailable` from `PixelCount`, which is the IL's
+  # own rule, and a completed one counts zero or the boolean one.
+  def test_an_empty_interval_counts_nothing_once_it_completes
     values = with_device do |device|
       query = G::OcclusionQuery.new(device)
       query.Begin
       query.End
-      # Read until it settles, bounded: this is a measurement of a real GPU query, not a spin.
-      completed = 32.times.find { query.IsComplete } ? true : query.IsComplete
-      result = [completed, completed ? query.PixelCount : nil]
+      completed = 64.times.find { query.IsComplete } ? true : query.IsComplete
+      result = [completed, completed ? query.PixelCount : error_of { query.PixelCount }]
       query.Dispose
       result
     end
-    assert values[0], "a submitted query completes within thirty-two reads"
-    assert_operator values[1], :>=, 0
-    assert_operator values[1], :<=, 1, "nothing was drawn, so the count is zero or the boolean one"
+    if values[0]
+      assert_operator values[1], :>=, 0
+      assert_operator values[1], :<=, 1, "nothing was drawn, so the count is zero or the boolean one"
+    else
+      assert_equal [RuntimeError, "DataNotAvailable"], values[1],
+                   "a query the GPU has not finished answers no count at all"
+    end
   end
 
   def test_the_constructor_refusals_are_the_ils_own

@@ -238,7 +238,9 @@ class VertexStructsTest < Minitest::Test
     %i[BasicEffect VertexPositionNormalColorTexture].each do |absent|
       refute G.const_defined?(absent, false), absent.to_s
     end
-    %i[SetVertexBuffer Indices DrawUserPrimitives DrawPrimitives].each do |absent|
+    # `SetVertexBuffer` and `Indices` left this list when the device's binding slice landed; what
+    # this milestone claimed, and still claims, is that **it** added neither, and nothing draws yet.
+    %i[DrawUserPrimitives DrawPrimitives].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
     # The helper module is in CNA::Runtime, not the XNA namespace, which the verifier measures as

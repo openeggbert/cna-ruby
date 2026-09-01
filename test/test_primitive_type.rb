@@ -164,7 +164,9 @@ class PrimitiveTypeTest < Minitest::Test
     %i[BasicEffect PrimitiveTypeConverter].each do |name|
       refute G.const_defined?(name, false), name.to_s
     end
-    %i[SetVertexBuffer Indices DrawUserPrimitives].each do |name|
+    # `SetVertexBuffer` and `Indices` left this list when the device's binding slice landed. A
+    # bound buffer is still not a draw call, which is what this row is about.
+    %i[DrawUserPrimitives DrawPrimitives].each do |name|
       refute G::GraphicsDevice.public_method_defined?(name), name.to_s
     end
     refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("PRIMITIVE") }

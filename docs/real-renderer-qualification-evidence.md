@@ -172,8 +172,19 @@ where the recorded run says `X11`, which is the staleness guard doing its job, a
 never activated, so `Game.Activated` does not fire. Forcing the X11 driver — rather than unsetting
 `XDG_RUNTIME_DIR`, which also takes the audio device away — makes all three artifacts green again.
 
-1552 runs / 0 failures / 0 errors under each of the three artifacts at Foundation 85 — 50463
-assertions and 21 skips on `HEADLESS`, 50478 and 17 on `OPENGL33`, 50564 and **none** on the
+**A second environment flake, measured at Foundation 86 and recorded rather than hidden.** The
+compiled-effects artifact intermittently fails to acquire SDL's video subsystem at
+`cna_game_create`: *"AcquireSubsystem(Video) failed: x11 not available; this SDL build contains
+these video drivers: wayland, x11, kmsdrm, offscreen, dummy, evdev"* — a driver the same message
+lists as present. It appeared once in each of two consecutive whole-suite runs, on a different test
+each time, and once at the sixth game of a 200-game churn; four further churns of forty games each
+saw it not at all, and a rerun of the suite is green. It is rare, non-deterministic and specific to
+the GLES/EGL artifact — `OPENGL33` under the same command has never shown it — so it is classified
+as an environment flake rather than a defect in anything this repository builds. What it costs is
+that a single green run of that artifact is not proof; two are.
+
+1558 runs / 0 failures / 0 errors under each of the three artifacts at Foundation 86 — 50525
+assertions and 21 skips on `HEADLESS`, 50540 and 17 on `OPENGL33`, 50626 and **none** on the
 compiled-effects build — the difference being exactly the tests whose
 behaviour needs a capability the artifact does not have, each of which says so. The environment
 measurement itself is failure-tolerant: an unmeasurable environment is reported as unmeasured rather
@@ -190,7 +201,7 @@ export DISPLAY=:77 SDL_VIDEODRIVER=x11    # the driver is not optional -- see ab
 
 ruby -Ilib tools/native_abi/verify.rb            # ABI_MISMATCHES=0 on this artifact too
 ruby -Ilib tools/run_renderer_qualification.rb   # writes docs/generated/renderer-native-report.json
-rake test                                        # 1552 runs, 0 failures, 17 skips on this artifact
+rake test                                        # 1558 runs, 0 failures, 17 skips on this artifact
 ```
 
 Running it against the HEADLESS artifact writes the second entry of the same report, and the

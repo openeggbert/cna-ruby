@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 85",
+  "milestone": "Foundation 86",
   "platform": "Linux x86-64 MRI Ruby 3.3.8",
   "cnaAbi": "0.21.0 (admitted set: 0.7.0, 0.21.0)",
   "capabilities": [
@@ -843,6 +843,12 @@
       "category": "VERIFIED_NATIVE",
       "status": "seven of GraphicsDevice's thirty-seven; the device stays partial",
       "evidence": "Microsoft.Xna.Framework.Graphics.GraphicsDevice's BlendState, DepthStencilState, RasterizerState, BlendFactor, MultiSampleMask, ReferenceStencil and ScissorRectangle -- MISSING_MEMBER 65 to 58 and TOTAL_DIAGNOSTICS 150 to 143. Each state getter answers the object that was assigned, because XNA's is one ldfld and reference identity is observable; InitializeDeviceState's three presets -- BlendState.Opaque, DepthStencilState.Default, RasterizerState.CullCounterClockwise -- are applied at the first touch inside a lifecycle callback, which is the earliest moment this projection can reach the device and is indistinguishable from XNA's device-creation moment because the first read or write is what would notice. The dirty flags are projected exactly: assigning a state carries its own BlendFactor and MultiSampleMask (or ReferenceStencil) onto the device, writing either scalar afterwards marks that state dirty, and assigning the same object again therefore re-applies it and restores the state's values -- while the rasterizer state has no flag at all, which is measured through cna_graphics_device_get_rasterizer_state rather than asserted. Two aggregates are passed by value and both classifications were measured on two artifacts rather than assumed: CNA_Color is four bytes and one INTEGER eightbyte, expanded as the packed RGBA uint32; CNA_Rectangle is sixteen bytes and two INTEGER eightbytes, expanded as x | y << 32 and width | height << 32. The CNA_Matrix rule is untouched -- 64 bytes is MEMORY class, which is why the stock effects are still missing. The scissor setter validates against the back buffer through cna_graphics_device_get_backbuffer_info; XNA's other branch is the bound render target's bounds, which cannot be reached because SetRenderTarget is not projected. Fifteen routes to 375 and one layout to 61, ABI_MISMATCHES=0. Eight of eight planted defects are caught. Nothing here draws, binds or presents. See docs/graphics-device-state-evidence.md."
+    },
+    {
+      "id": "graphics.device-binding",
+      "category": "VERIFIED_NATIVE",
+      "status": "five more of GraphicsDevice's members; the device stays partial and still draws nothing",
+      "evidence": "Microsoft.Xna.Framework.Graphics.GraphicsDevice's Indices, SetVertexBuffer (both overloads), SetVertexBuffers and GetVertexBuffers -- MISSING_MEMBER 58 to 53, OVERLOAD_MAPPING_MISMATCH 27 to 24 and TOTAL_DIAGNOSTICS 143 to 135. Both getters answer the objects the caller bound, because XNA's are a field read and an Array.Copy over a cached array, and because CNA hands back handles with no route from a native object back to one -- the rule TextureCollection already records. A null vertex buffer unbinds every stream rather than raising, and so does a null or empty binding array; a populated array is validated binding by binding before any of it is applied, with a null entry ArgumentException(NullNotAllowed) and a foreign buffer InvalidOperationException (InvalidDevice), and the test asserts that a refused call left the previous binding in place. One cna_graphics_device_set_vertex_buffers call carries the whole array because that route validates the whole array before applying any of it. DELIBERATELY UNBOUND: get_vertex_buffer_count, copy_vertex_buffers and get_index_buffer -- XNA's getters are field reads so nothing in lib/ would call them, and a route bound for a test is dead native surface; the test reaches all three through raw Fiddle the way renderer_environment.rb does, which is also what lets it prove the offset and frequency went into the right halves of CNA_VertexBufferBinding. Four routes to 379, ABI_MISMATCHES=0. Seven of seven planted defects are caught. Nothing here draws: a bound buffer is not a draw call. See docs/graphics-device-binding-evidence.md."
     }
   ]
 }

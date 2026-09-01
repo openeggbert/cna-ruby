@@ -801,6 +801,8 @@ module Microsoft
             @game = game
             @callback_handle = 0
             @invalidated = false
+            @index_buffer = nil
+            @vertex_buffer_bindings = []
           end
 
           def IsDisposed = @invalidated || @game.__send__(:disposed?)
@@ -988,6 +990,65 @@ module Microsoft
             value
           end
 
+          # ------------------------------------------------------------------ what the device binds
+          #
+          # CNA hands back **handles** for what is bound, and this ABI has no route from a native
+          # object back to a handle -- the rule `TextureCollection` already records. So each getter
+          # answers the Ruby object this device bound, which is what XNA's `ldfld` answers too.
+
+          # `ldfld _currentIB`.
+          def Indices = @index_buffer
+
+          # `set_Indices` checks the device, then binds or clears: a null is
+          # `SetIndices(null)` rather than a refusal.
+          def Indices=(value)
+            unless value.nil? || value.is_a?(IndexBuffer)
+              raise ::TypeError, "value must be an IndexBuffer"
+            end
+
+            require_same_device(value) unless value.nil?
+            CNA::Native.library.call("cna_graphics_device_set_index_buffer", native_handle,
+                                     value.nil? ? 0 : value.__send__(:native_handle))
+            @index_buffer = value
+          end
+
+          #     SetVertexBuffer(vertexBuffer)
+          #     SetVertexBuffer(vertexBuffer, vertexOffset)
+          #
+          # Both build a `VertexBufferBinding` and forward to the internal array form, and a null
+          # buffer forwards `(null, 0)` -- which unbinds every stream rather than raising.
+          def SetVertexBuffer(vertexBuffer, vertexOffset = nil)
+            if vertexBuffer.nil?
+              raise ::ArgumentError, "SetVertexBuffer(nil) takes no vertexOffset" unless vertexOffset.nil?
+
+              return set_vertex_buffer_bindings([])
+            end
+
+            binding = vertexOffset.nil? ? RenderTargetBindingSupport.vertex_binding(vertexBuffer)
+                                        : RenderTargetBindingSupport.vertex_binding(vertexBuffer, vertexOffset)
+            set_vertex_buffer_bindings([binding])
+          end
+
+          # The public array overload: `null` or an empty array is the same unbind the null buffer
+          # performs, and anything else is validated binding by binding **before** any is applied.
+          def SetVertexBuffers(vertexBuffers = nil)
+            return set_vertex_buffer_bindings([]) if vertexBuffers.nil?
+            raise ::TypeError, "vertexBuffers must be an Array" unless vertexBuffers.is_a?(::Array)
+
+            vertexBuffers.each do |binding|
+              raise ::ArgumentError, "NullNotAllowed" if binding.nil?
+              unless binding.instance_of?(VertexBufferBinding)
+                raise ::TypeError, "every entry must be a VertexBufferBinding"
+              end
+
+              require_same_device(binding.VertexBuffer)
+            end
+            set_vertex_buffer_bindings(vertexBuffers.dup)
+          end
+
+          # `newarr` + `Array.Copy`: a fresh array over the same bindings, every call.
+          def GetVertexBuffers = @vertex_buffer_bindings.dup
+
           def Clear(color)
             raise TypeError, "GraphicsDevice.Clear foundation overload expects Color" unless color.instance_of?(Color)
             divisor = 255.0
@@ -1047,6 +1108,32 @@ module Microsoft
             info = CNA::Native::Layouts::BackBufferInfo.new
             CNA::Native.library.call("cna_graphics_device_get_backbuffer_info", native_handle, info.pointer)
             [info.read_u32(8), info.read_u32(12)]
+          end
+
+          # Every binding is applied in one call, because `cna_graphics_device_set_vertex_buffers`
+          # validates the whole array before applying any of it -- which is what XNA's internal
+          # overload does too.
+          def set_vertex_buffer_bindings(bindings)
+            if bindings.empty?
+              CNA::Native.library.call("cna_graphics_device_set_vertex_buffers", native_handle, 0, 0)
+            else
+              buffer = Fiddle::Pointer.malloc(16 * bindings.length, Fiddle::RUBY_FREE)
+              bindings.each_with_index do |binding, index|
+                buffer[16 * index, 8] = [binding.VertexBuffer.__send__(:native_handle)].pack("Q")
+                buffer[(16 * index) + 8, 8] = [binding.VertexOffset, binding.InstanceFrequency].pack("l2")
+              end
+              CNA::Native.library.call("cna_graphics_device_set_vertex_buffers", native_handle,
+                                       buffer, bindings.length)
+            end
+            @vertex_buffer_bindings = bindings
+            nil
+          end
+
+          # `InvalidDevice`: a resource belongs to the device that made it.
+          def require_same_device(resource)
+            return if resource.GraphicsDevice.equal?(self)
+
+            raise ::RuntimeError, "InvalidDevice"
           end
 
           def invalidate
@@ -3302,6 +3389,17 @@ module Microsoft
             output[0, 4].unpack1("l")
           end
         end
+
+        # One place to build a `VertexBufferBinding` from `SetVertexBuffer`'s two arities, so the
+        # constructor's own validation is what refuses a bad offset rather than a second copy of it.
+        module RenderTargetBindingSupport
+          module_function
+
+          def vertex_binding(buffer, offset = nil)
+            offset.nil? ? VertexBufferBinding.new(buffer) : VertexBufferBinding.new(buffer, offset)
+          end
+        end
+        private_constant :RenderTargetBindingSupport
 
         # `RenderTarget2D`, `RenderTargetCube` and the `RenderTargetBinding` that names one, derived
         # from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…).

@@ -405,6 +405,25 @@ module CNA
         signature("cna_graphics_device_get_scissor_rectangle", T[:result], [T[:handle], pointer("CNA_Rectangle")], ownership: "caller output"),
         signature("cna_graphics_device_set_scissor_rectangle", T[:result], [T[:handle], *by_value("CNA_Rectangle", T[:u64], T[:u64])], ownership: "borrows device"),
         signature("cna_graphics_device_get_backbuffer_info", T[:result], [T[:handle], pointer("CNA_BackBufferInfo")], ownership: "caller output"),
+        # `GraphicsDevice`'s binding slice. CNA hands back **handles** for what is bound, and this
+        # ABI has no route from a native object back to a handle, so the projection answers the Ruby
+        # objects it bound -- the rule `TextureCollection` already follows -- and the native count is
+        # what tells "something else owns this now" from "nothing is bound".
+        #
+        # `cna_graphics_device_set_vertex_buffer_offset` is the two-argument `SetVertexBuffer`, and
+        # `cna_graphics_device_set_vertex_buffer` the one-argument one; both are XNA identities
+        # rather than conveniences, so both are bound.
+        #
+        # The three **read-back** routes -- `get_vertex_buffer_count`, `copy_vertex_buffers` and
+        # `get_index_buffer` -- are deliberately **not** bound. XNA's own getters are field reads, so
+        # nothing in `lib/` would call them, and a route bound for a test is dead native surface.
+        # `test/test_graphics_device_binding.rb` reaches them through raw Fiddle for the same reason
+        # `test/renderer_environment.rb` does: measuring what the device really holds must not put a
+        # test-only route in the manifest.
+        signature("cna_graphics_device_set_vertex_buffer", T[:result], [T[:handle], handle("CNA_VertexBufferHandle")], ownership: "borrows device and buffer"),
+        signature("cna_graphics_device_set_vertex_buffer_offset", T[:result], [T[:handle], handle("CNA_VertexBufferHandle"), T[:i32]], ownership: "borrows device and buffer"),
+        signature("cna_graphics_device_set_vertex_buffers", T[:result], [T[:handle], pointer("CNA_VertexBufferBinding", const: true), T[:u64]], ownership: "borrows device; copies the bindings"),
+        signature("cna_graphics_device_set_index_buffer", T[:result], [T[:handle], handle("CNA_IndexBufferHandle")], ownership: "borrows device and buffer"),
         # The Effect cluster. Every getter in it returns an **owned view**: `cna_effect_get_parameters`
         # hands back a fresh collection handle on every call, and so does
         # `cna_effect_parameter_collection_get_at` for every element -- measured, two calls answer two

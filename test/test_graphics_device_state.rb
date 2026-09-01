@@ -195,14 +195,17 @@ class GraphicsDeviceStateTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_adds_no_draw_target_or_presentation_member
+    # `SetVertexBuffer` and `Indices` arrived with the binding slice that followed this one; what
+    # this milestone claimed, and still claims, is that **it** added neither.
     %i[DrawPrimitives DrawIndexedPrimitives DrawUserPrimitives SetRenderTarget SetRenderTargets
-       GetRenderTargets Present Reset Adapter PresentationParameters GraphicsProfile DisplayMode
-       SetVertexBuffer Indices].each do |absent|
+       GetRenderTargets Present Reset Adapter PresentationParameters GraphicsProfile
+       DisplayMode].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-    %w[cna_graphics_device_present cna_graphics_device_reset cna_graphics_device_draw_primitives
-       cna_graphics_device_set_vertex_buffer cna_graphics_device_set_index_buffer]
+    # The two buffer routes left this list when the binding slice landed, which is the same
+    # statement from the other side; nothing here presents or draws.
+    %w[cna_graphics_device_present cna_graphics_device_reset cna_graphics_device_draw_primitives]
       .each { |absent| refute_includes symbols, absent }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:layouts), CNA::Native::Layouts::STRUCTURES.length

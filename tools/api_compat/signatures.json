@@ -32175,6 +32175,100 @@
           "parameters": [
 
           ]
+        },
+        {
+          "kind": "property",
+          "name": "Indices",
+          "type": "Microsoft.Xna.Framework.Graphics.IndexBuffer",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetVertexBuffer",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vertexBuffer",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexBuffer",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetVertexBuffer",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vertexBuffer",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexBuffer",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "vertexOffset",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetVertexBuffers",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "vertexBuffers",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexBufferBinding[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetVertexBuffers",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Graphics.VertexBufferBinding[]",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::GraphicsDevice"

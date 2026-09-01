@@ -1019,6 +1019,47 @@
           "parameters": [
 
           ]
+        },
+        {
+          "kind": "property",
+          "name": "Indices",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetVertexBuffer",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.VertexBuffer"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetVertexBuffer",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.VertexBuffer",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetVertexBuffers",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.VertexBufferBinding[]"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetVertexBuffers",
+          "static": false,
+          "parameters": [
+
+          ]
         }
       ]
     },
