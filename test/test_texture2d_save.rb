@@ -35,7 +35,7 @@ class Texture2DSaveTest < Minitest::Test
                                   .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
     refute_includes remainder, "SaveAsPng"
     refute_includes remainder, "SaveAsJpeg"
-    assert_equal %w[FromStream SetData GetData].sort, remainder.sort
+    assert_equal %w[FromStream], remainder
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
   end
 
@@ -159,9 +159,9 @@ class Texture2DSaveTest < Minitest::Test
 
   # ------------------------------------------------------------------- and exactly what it does not
 
-  def test_it_adds_no_pixel_access_or_second_from_stream_overload
-    %i[SetData GetData].each { |absent| refute G::Texture2D.public_method_defined?(absent) }
-    # `FromStream`'s five-argument overload, which scales on load, is still outstanding.
+  def test_it_adds_no_second_from_stream_overload
+    # Pixel access arrived in a later milestone; `FromStream`'s five-argument overload, which
+    # scales on load, is the one member of this type still outstanding.
     assert_raises(ArgumentError) do
       G::Texture2D.FromStream(nil, StringIO.new(+"".b), 1, 1, false)
     rescue TypeError
@@ -286,10 +286,10 @@ class Texture2DConstructionTest < Minitest::Test
     assert_equal Texture2DSaveTest::PNG_SIGNATURE.first(4), values[1]
   end
 
-  def test_the_remainder_is_now_from_stream_and_pixel_access
+  def test_the_remainder_is_now_only_from_stream
     remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME)
                                   .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_equal %w[FromStream GetData SetData], remainder.sort
+    assert_equal %w[FromStream], remainder
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
   end
 end

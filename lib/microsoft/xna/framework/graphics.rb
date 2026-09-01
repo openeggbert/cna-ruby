@@ -998,6 +998,28 @@ module Microsoft
         class Texture2D < Texture
           attr_reader :Width, :Height, :Bounds
 
+          # The element types both XNA's `T : struct` and CNA's `CNA_TextureDataType` model, each
+          # with its identity and the byte width `sizeof(T)` answers. `System.Byte[]` projects to a
+          # Ruby String, so `::String` stands for `byte` here.
+          TEXTURE_DATA_TYPES = {
+            Microsoft::Xna::Framework::Color => [0, 4],
+            PackedVector::Bgr565 => [1, 2],
+            PackedVector::Bgra5551 => [2, 2],
+            PackedVector::Bgra4444 => [3, 2],
+            ::String => [4, 1],
+            PackedVector::NormalizedByte2 => [5, 2],
+            PackedVector::NormalizedByte4 => [6, 4],
+            PackedVector::Rgba1010102 => [7, 4],
+            PackedVector::Rg32 => [8, 4],
+            PackedVector::Rgba64 => [9, 8],
+            PackedVector::Alpha8 => [10, 1]
+          }.freeze
+
+          # `Texture.GetExpectedByteSizeFromFormat`, for the formats this binding projects.
+          FORMAT_BYTE_SIZES = { "Color" => 4, "Bgr565" => 2, "Bgra5551" => 2, "Bgra4444" => 2,
+                                "Alpha8" => 1, "NormalizedByte2" => 2, "NormalizedByte4" => 4,
+                                "Rgba1010102" => 4, "Rg32" => 4, "Rgba64" => 8 }.freeze
+
           class << self
             def FromStream(graphics_device, stream, *arguments)
               raise TypeError, "graphics_device must be GraphicsDevice" unless graphics_device.instance_of?(GraphicsDevice)
@@ -1097,6 +1119,198 @@ module Microsoft
           def SaveAsJpeg(stream, width, height)
             save_as_image(stream, CNA::Native::Manifest::CONSTANTS.fetch("CNA_TEXTURE_IMAGE_FORMAT_JPEG"),
                           width, height)
+          end
+
+
+          # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…).
+          #
+          # XNA declares three overloads of each, and all six are thin forwards into one 549-byte
+          # `CopyData`. Ruby has no overloading and cannot dispatch on parameter *type*, so the three
+          # collapse into one method that dispatches on **arity**, with the generic type argument
+          # leading — the rule `ContentManager.Load` established for `!!0`:
+          #
+          #     SetData(type, data)
+          #     SetData(type, data, startIndex, elementCount)
+          #     SetData(type, level, rect, data, startIndex, elementCount)
+          #
+          # `CopyData` raises exactly three things of its own, and delegates the rest to four
+          # helpers, every one of which is reproduced here:
+          #
+          #   * `Helpers.ValidateCopyParameters(startIndex, elementCount, data.Length)` -- a start
+          #     index outside the array, or a start plus count past its end, or a non-positive
+          #     count, each `ArgumentOutOfRangeException(MustBeValidIndex)`. Note it names
+          #     **`"dataIndex"`** for the first, not the public parameter's `startIndex`.
+          #   * `Texture.GetAndValidateSizes<T>` -- `ArgumentException(InvalidDataSize)` unless the
+          #     element size equals the format's byte size or divides it exactly.
+          #   * `Texture.GetAndValidateRect` -- `ArgumentException(InvalidRectangle, "rect")` for a
+          #     negative origin, a non-positive extent, or a rectangle reaching past the level.
+          #   * `Texture.ValidateTotalSize` -- `ArgumentException(InvalidTotalSize)` unless the
+          #     elements exactly fill the region: `width * height * formatSize` for an uncompressed
+          #     format, and the DXT block formula for a compressed one.
+          #
+          # DEVIATION, recorded: `CopyData`'s remaining `InvalidOperationException` --
+          # `CannotUseFormatTypeAsManualParameter` -- is reached by asking the **adapter** whether
+          # the element type is usable with the texture's format, through
+          # `GraphicsDevice.Adapter.CurrentDisplayMode`. Every adapter value is fabricated on the
+          # qualified artifact, which `docs/native-abi.md` records, so that check is *not*
+          # reproduced from invented data: CNA's own `cna_texture2d_set_data` refuses a mismatched
+          # data type and that refusal surfaces. The other `InvalidOperationException`,
+          # `MustResolveRenderTarget`, is unreachable because no render target is projected.
+          def SetData(type, *arguments)
+            level, rect, data, start_index, element_count = transfer_arguments(type, arguments, "SetData")
+            data_type, element_size = self.class.__send__(:texture_data_type, type)
+            packed = self.class.__send__(:pack_elements, type, data, start_index, element_count, element_size)
+            transfer = build_transfer(level, rect, 0, element_count, element_size)
+            CNA::Native.library.call("cna_texture2d_set_data", native_handle, data_type,
+                                     transfer.pointer, Fiddle::Pointer[packed], element_count)
+            nil
+          end
+
+          def GetData(type, *arguments)
+            level, rect, data, start_index, element_count = transfer_arguments(type, arguments, "GetData")
+            data_type, element_size = self.class.__send__(:texture_data_type, type)
+            buffer = Fiddle::Pointer.malloc(element_size * element_count, Fiddle::RUBY_FREE)
+            required = CNA::Native.library.pointer_for("Q", 0)
+            transfer = build_transfer(level, rect, 0, element_count, element_size)
+            CNA::Native.library.call("cna_texture2d_get_data", native_handle, data_type,
+                                     transfer.pointer, buffer, element_count, required)
+            self.class.__send__(:unpack_elements, type, buffer, data, start_index,
+                                required[0, 8].unpack1("Q"), element_size)
+            nil
+          end
+
+          private
+
+          # The arity dispatch, and every managed check `CopyData` and its four helpers make.
+          def transfer_arguments(type, arguments, member)
+            raise CNA::DisposedObjectError, "Texture2D is disposed" if self.IsDisposed
+            raise ::TypeError, "type must be a Module" unless type.is_a?(::Module)
+
+            case arguments.length
+            when 1 then level, rect, data = 0, nil, arguments[0]
+            when 3 then level, rect, data = 0, nil, arguments[0]
+            when 5 then level, rect, data = arguments[0], arguments[1], arguments[2]
+            else
+              raise ::ArgumentError, "#{member} takes (type, data), (type, data, startIndex, " \
+                                     "elementCount) or (type, level, rect, data, startIndex, elementCount)"
+            end
+            raise ::ArgumentError, "data" if data.nil?
+
+            _data_type, element_size = self.class.__send__(:texture_data_type, type)
+            length = self.class.__send__(:element_length, type, data)
+            start_index = arguments.length == 1 ? 0 : CNA::Runtime::Numeric.int32(arguments[-2], "startIndex")
+            element_count = arguments.length == 1 ? length : CNA::Runtime::Numeric.int32(arguments[-1], "elementCount")
+
+            # Helpers.ValidateCopyParameters, in its own order and with its own parameter names.
+            if start_index.negative? || start_index > length
+              raise ::RangeError, "dataIndex"
+            end
+            raise ::RangeError, "elementCount" if start_index + element_count > length
+            raise ::RangeError, "elementCount" unless element_count.positive?
+
+            level = CNA::Runtime::Numeric.int32(level, "level")
+            format_size = self.class.__send__(:format_byte_size, self.Format)
+            # Texture.GetAndValidateSizes
+            unless element_size == format_size || (element_size < format_size && (format_size % element_size).zero?)
+              raise ::ArgumentError, "invalid data size"
+            end
+
+            level_width = [self.Width >> level, 1].max
+            level_height = [self.Height >> level, 1].max
+            if rect
+              raise ::TypeError, "rect must be a Rectangle" unless rect.instance_of?(Rectangle)
+              # Texture.GetAndValidateRect
+              if rect.X.negative? || rect.Width <= 0 || rect.Y.negative? || rect.Height <= 0 ||
+                 rect.Left + rect.Width > level_width || rect.Top + rect.Height > level_height
+                raise ::ArgumentError, "rect"
+              end
+
+              level_width = rect.Width
+              level_height = rect.Height
+            end
+            # Texture.ValidateTotalSize -- the uncompressed branch; no DXT format is projected.
+            unless element_count * element_size == level_width * level_height * format_size
+              raise ::ArgumentError, "invalid total size"
+            end
+
+            [level, rect, data, start_index, element_count]
+          end
+
+          def build_transfer(level, rect, start_index, element_count, _element_size)
+            transfer = CNA::Native::Layouts::Texture2DTransfer.new
+            transfer.write_i32(8, level)
+            transfer.write_u8(12, rect ? 1 : 0)
+            if rect
+              transfer.write_i32(16, rect.X)
+              transfer.write_i32(20, rect.Y)
+              transfer.write_i32(24, rect.Width)
+              transfer.write_i32(28, rect.Height)
+            end
+            transfer.write_u64(32, start_index)
+            transfer.write_u64(40, element_count)
+            transfer
+          end
+
+          class << self
+            private
+
+            # The element types CNA models, each with its `CNA_TEXTURE_DATA_*` identity and the byte
+            # width XNA's `sizeof(T)` would answer. `System.Byte[]` projects to a Ruby String, so
+            # `String` stands for `byte` -- the decision `docs/stream-projection-design.md` records.
+            def texture_data_type(type)
+              entry = TEXTURE_DATA_TYPES[type]
+              raise ::TypeError, "#{type} is not a texture element type" if entry.nil?
+
+              entry
+            end
+
+            def format_byte_size(format)
+              FORMAT_BYTE_SIZES.fetch(format.to_s) do
+                raise ::ArgumentError, "no expected byte size for SurfaceFormat.#{format}"
+              end
+            end
+
+            def element_length(type, data)
+              if type == ::String
+                raise ::TypeError, "data must be a String of bytes" unless data.is_a?(::String)
+
+                data.bytesize
+              else
+                raise ::TypeError, "data must be an Array of #{type}" unless data.is_a?(::Array)
+
+                data.length
+              end
+            end
+
+            # Every projected element type answers `PackedValue`, so one path packs them all.
+            def pack_elements(type, data, start_index, element_count, element_size)
+              return data.byteslice(start_index, element_count).b if type == ::String
+
+              format = { 1 => "C", 2 => "v", 4 => "V", 8 => "Q<" }.fetch(element_size)
+              slice = data[start_index, element_count]
+              slice.each do |value|
+                raise ::TypeError, "data must be an Array of #{type}" unless value.instance_of?(type)
+              end
+              slice.map { |value| [value.PackedValue].pack(format) }.join
+            end
+
+            def unpack_elements(type, buffer, data, start_index, count, element_size)
+              bytes = buffer[0, element_size * count]
+              if type == ::String
+                raise ::ArgumentError, "data must not be frozen" if data.frozen?
+
+                data[start_index, count] = bytes
+                return data
+              end
+
+              format = { 1 => "C", 2 => "v", 4 => "V", 8 => "Q<" }.fetch(element_size)
+              bytes.unpack("#{format}#{count}").each_with_index do |packed, index|
+                element = type.allocate
+                element.PackedValue = packed
+                data[start_index + index] = element
+              end
+              data
+            end
           end
 
           private

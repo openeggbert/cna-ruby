@@ -58,7 +58,7 @@ class GameDisposalTest < Minitest::Test
     # ToggleFullScreen, and 40 until the GraphicsResource disposal contract closed four more --
     # its own two plus the Texture2D and SpriteBatch overrides that inherit it, and 36 until
     # SaveAsPng and SaveAsJpeg landed, and 34 until the two Texture2D constructors did.
-    assert_equal 33, STRICT.fetch("OVERLOAD_MAPPING_MISMATCH")
+    assert_equal 31, STRICT.fetch("OVERLOAD_MAPPING_MISMATCH")
   end
 
   # Ruby cannot give one name two visibilities, so the arity dispatch widens the protected overload

@@ -95,6 +95,8 @@ CHECK_FN(cna_graphics_device_get_texture, CNA_Result, (CNA_Handle, CNA_ShaderSta
 CHECK_FN(cna_graphics_device_set_texture, CNA_Result, (CNA_Handle, CNA_ShaderStage, uint32_t, CNA_Handle));
 CHECK_FN(cna_texture2d_create_from_encoded_memory, CNA_Result, (CNA_Handle, const uint8_t*, uint64_t, const CNA_Texture2DDecodeInfo*, CNA_Handle*));
 CHECK_FN(cna_texture2d_create, CNA_Result, (CNA_Handle, const CNA_Texture2DCreateInfo*, CNA_Handle*));
+CHECK_FN(cna_texture2d_set_data, CNA_Result, (CNA_Handle, CNA_TextureDataType, const CNA_Texture2DTransfer*, const void*, uint64_t));
+CHECK_FN(cna_texture2d_get_data, CNA_Result, (CNA_Handle, CNA_TextureDataType, const CNA_Texture2DTransfer*, void*, uint64_t, uint64_t*));
 CHECK_FN(cna_texture2d_get_info, CNA_Result, (CNA_Handle, CNA_Texture2DInfo*));
 CHECK_FN(cna_texture2d_destroy, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_texture2d_get_encoded_byte_count, CNA_Result, (CNA_Handle, CNA_TextureImageFormat, uint32_t, uint32_t, uint64_t*));
@@ -338,6 +340,8 @@ int main(void) {
     SIGNATURE(cna_graphics_device_set_texture, "CNA_Result|CNA_Handle,CNA_ShaderStage,uint32_t,CNA_Handle");
     SIGNATURE(cna_texture2d_create_from_encoded_memory, "CNA_Result|CNA_Handle,const uint8_t*,uint64_t,const CNA_Texture2DDecodeInfo*,CNA_Handle*");
     SIGNATURE(cna_texture2d_create, "CNA_Result|CNA_Handle,const CNA_Texture2DCreateInfo*,CNA_Handle*");
+    SIGNATURE(cna_texture2d_set_data, "CNA_Result|CNA_Handle,CNA_TextureDataType,const CNA_Texture2DTransfer*,const void*,uint64_t");
+    SIGNATURE(cna_texture2d_get_data, "CNA_Result|CNA_Handle,CNA_TextureDataType,const CNA_Texture2DTransfer*,void*,uint64_t,uint64_t*");
     SIGNATURE(cna_texture2d_get_info, "CNA_Result|CNA_Handle,CNA_Texture2DInfo*");
     SIGNATURE(cna_texture2d_destroy, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_texture2d_get_encoded_byte_count, "CNA_Result|CNA_Handle,CNA_TextureImageFormat,uint32_t,uint32_t,uint64_t*");
@@ -489,6 +493,7 @@ int main(void) {
     STRUCT(CNA_GameCreateInfo); FIELD(CNA_GameCreateInfo, struct_size); FIELD(CNA_GameCreateInfo, struct_version); FIELD(CNA_GameCreateInfo, is_fixed_time_step); FIELD(CNA_GameCreateInfo, reserved); FIELD(CNA_GameCreateInfo, target_elapsed_time_ticks); FIELD(CNA_GameCreateInfo, window_title); FIELD(CNA_GameCreateInfo, callbacks);
     STRUCT(CNA_ContentManagerCreateInfo); FIELD(CNA_ContentManagerCreateInfo, struct_size); FIELD(CNA_ContentManagerCreateInfo, struct_version); FIELD(CNA_ContentManagerCreateInfo, root_directory); FIELD(CNA_ContentManagerCreateInfo, reserved);
     STRUCT(CNA_SoundEffectCreateInfo); FIELD(CNA_SoundEffectCreateInfo, struct_size); FIELD(CNA_SoundEffectCreateInfo, struct_version); FIELD(CNA_SoundEffectCreateInfo, sample_rate); FIELD(CNA_SoundEffectCreateInfo, channels); FIELD(CNA_SoundEffectCreateInfo, reserved);
+    STRUCT(CNA_Texture2DTransfer); FIELD(CNA_Texture2DTransfer, struct_size); FIELD(CNA_Texture2DTransfer, struct_version); FIELD(CNA_Texture2DTransfer, level); FIELD(CNA_Texture2DTransfer, has_rectangle); FIELD(CNA_Texture2DTransfer, reserved); FIELD(CNA_Texture2DTransfer, rectangle); FIELD(CNA_Texture2DTransfer, start_index); FIELD(CNA_Texture2DTransfer, element_count);
     STRUCT(CNA_Texture2DCreateInfo); FIELD(CNA_Texture2DCreateInfo, struct_size); FIELD(CNA_Texture2DCreateInfo, struct_version); FIELD(CNA_Texture2DCreateInfo, width); FIELD(CNA_Texture2DCreateInfo, height); FIELD(CNA_Texture2DCreateInfo, mip_map); FIELD(CNA_Texture2DCreateInfo, reserved); FIELD(CNA_Texture2DCreateInfo, format);
     STRUCT(CNA_SpriteFontInfo); FIELD(CNA_SpriteFontInfo, struct_size); FIELD(CNA_SpriteFontInfo, struct_version); FIELD(CNA_SpriteFontInfo, character_count); FIELD(CNA_SpriteFontInfo, line_spacing); FIELD(CNA_SpriteFontInfo, spacing); FIELD(CNA_SpriteFontInfo, default_character); FIELD(CNA_SpriteFontInfo, has_default_character); FIELD(CNA_SpriteFontInfo, reserved);
     STRUCT(CNA_SpriteFontGlyph); FIELD(CNA_SpriteFontGlyph, struct_size); FIELD(CNA_SpriteFontGlyph, struct_version); FIELD(CNA_SpriteFontGlyph, glyph_bounds); FIELD(CNA_SpriteFontGlyph, cropping); FIELD(CNA_SpriteFontGlyph, character); FIELD(CNA_SpriteFontGlyph, reserved); FIELD(CNA_SpriteFontGlyph, kerning);
@@ -513,6 +518,7 @@ int main(void) {
     CONSTANT(CNA_GAME_EVENT_ACTIVATED); CONSTANT(CNA_GAME_EVENT_DEACTIVATED); CONSTANT(CNA_GAME_EVENT_DISPOSED); CONSTANT(CNA_GAME_EVENT_EXITING);
     CONSTANT(CNA_GAME_WINDOW_EVENT_CLIENT_SIZE_CHANGED); CONSTANT(CNA_GAME_WINDOW_EVENT_ORIENTATION_CHANGED); CONSTANT(CNA_GAME_WINDOW_EVENT_SCREEN_DEVICE_NAME_CHANGED);
     CONSTANT(CNA_SPRITE_SORT_MODE_DEFERRED); CONSTANT(CNA_SPRITE_EFFECT_NONE); CONSTANT(CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY); CONSTANT(CNA_SPRITE_EFFECT_FLIP_VERTICALLY);
+    CONSTANT(CNA_TEXTURE_DATA_COLOR); CONSTANT(CNA_TEXTURE_DATA_BGR565); CONSTANT(CNA_TEXTURE_DATA_BGRA5551); CONSTANT(CNA_TEXTURE_DATA_BGRA4444); CONSTANT(CNA_TEXTURE_DATA_BYTE); CONSTANT(CNA_TEXTURE_DATA_NORMALIZED_BYTE2); CONSTANT(CNA_TEXTURE_DATA_NORMALIZED_BYTE4); CONSTANT(CNA_TEXTURE_DATA_RGBA1010102); CONSTANT(CNA_TEXTURE_DATA_RG32); CONSTANT(CNA_TEXTURE_DATA_RGBA64); CONSTANT(CNA_TEXTURE_DATA_ALPHA8);
     CONSTANT(CNA_TEXTURE_IMAGE_FORMAT_PNG); CONSTANT(CNA_TEXTURE_IMAGE_FORMAT_JPEG);
     CONSTANT(CNA_MICROPHONE_STATE_STARTED); CONSTANT(CNA_MICROPHONE_STATE_STOPPED); CONSTANT(CNA_MICROPHONE_STATE_MAXIMUM);
     CONSTANT(CNA_SURFACE_FORMAT_COLOR); CONSTANT(CNA_SHADER_STAGE_PIXEL); CONSTANT(CNA_SHADER_STAGE_VERTEX); CONSTANT(CNA_TEXTURE_COLLECTION_MAX_TEXTURES);

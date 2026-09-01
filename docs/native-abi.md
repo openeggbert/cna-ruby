@@ -355,6 +355,12 @@ image enum numbers them the other way round — JPEG 0, PNG 2, which is why `Sav
 carrying XNA's literals across a boundary where they mean something else.
 
 `cna_texture2d_save_file` is deliberately not bound: it writes a path, and XNA's two members write a
-`Stream`. `cna_texture2d_create` and `CNA_Texture2DCreateInfo` (24/4) join them for the two constructors,
-bringing the count to 227 and the layouts to 28. The rest of the family — `set_data`, `get_data` and
-the rgba8 variants — is unbound because `Texture2D`'s pixel access is still outstanding.
+`Stream`. `cna_texture2d_create` and `CNA_Texture2DCreateInfo` (24/4) join them for the two constructors, and
+`cna_texture2d_set_data`/`get_data` with `CNA_Texture2DTransfer` (48/8) and the eleven
+`CNA_TEXTURE_DATA_*` identities for pixel access — bringing the count to 229, the constants to 84
+and the layouts to 29.
+
+`CNA_Texture2DTransfer` carries exactly what XNA's three overloads of each member differ by: the mip
+level, an optional sub-rectangle, and the caller array's start and count. The rgba8 convenience
+variants stay unbound: the general `set_data`/`get_data` pair already covers every element type XNA
+declares, and binding a second route for one of them would be two ways to say one thing.

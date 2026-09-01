@@ -162,8 +162,9 @@ class GraphicsResourceDisposalTest < Minitest::Test
     refute_includes code, "ObjectSpace"
   end
 
-  def test_it_adds_no_draw_or_pixel_surface
-    %i[SetData GetData].each { |absent| refute G::Texture2D.public_method_defined?(absent) }
+  def test_it_adds_no_draw_surface
+    # Pixel access arrived in a later milestone; what this one claims is that the disposal contract
+    # added no draw surface, and `DrawString` is still the member that measures it.
     %i[DrawString].each { |absent| refute G::SpriteBatch.public_method_defined?(absent) }
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
   end

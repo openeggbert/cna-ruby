@@ -275,6 +275,24 @@ module CNA
       # character count that sizes the two copy routes.
       # `CNA_Texture2DCreateInfo` is what XNA's two public constructors reduce to once
       # `CreateTexture`'s fixed arguments are applied.
+      # `CNA_Texture2DTransfer` carries what XNA's three `SetData`/`GetData` overloads differ by:
+      # the mip level, an optional sub-rectangle, and the caller array's start and count.
+      class Texture2DTransfer < Structure
+        layout size: 48, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("level", "int32_t", 8, 4), Layouts.field("has_rectangle", "CNA_Bool", 12, 1),
+          Layouts.field("reserved", "uint8_t", 13, 3),
+          Layouts.field("rectangle", "CNA_Rectangle", 16, 16),
+          Layouts.field("start_index", "uint64_t", 32, 8), Layouts.field("element_count", "uint64_t", 40, 8)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       class Texture2DCreateInfo < Structure
         layout size: 24, alignment: 4, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

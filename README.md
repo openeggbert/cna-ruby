@@ -24,6 +24,7 @@ Behaviour is derived from the original Microsoft XNA Framework 4.0 Windows assem
 - `Graphics.GraphicsResource`'s disposal contract, completing it: `isDisposed` is set *before* `Disposing` is raised, and the finalizer path raises nothing -- both measured from the mixed-mode C++/CLI IL rather than paraphrased
 - `Texture2D.SaveAsPng` and `SaveAsJpeg`, the first members here that produce a real encoded image -- checked by the formats' own signature bytes, not by a byte count
 - `Texture2D`'s two public constructors, so a texture can be made from nothing -- with a real mip chain, measured as four levels for an 8x8
+- `Texture2D.SetData` and `GetData` -- pixel access over eleven element types, with all four of XNA's validation helpers reproduced and sub-rectangles measured to round-trip exactly
 - `GamerServices.GamerServicesComponent`, the first type of a new namespace, pumping CNA's canonical dispatcher through the managed component engine
 - a real `Graphics.TextureCollection` with `GraphicsDevice.Textures` and `.VertexTextures`, binding real sampler slots on both shader stages
 - real `Audio.SoundEffect` and `Audio.SoundEffectInstance` over CNA's SDL3 audio path -- duration from real PCM, the whole state machine, every IL-derived range including the NaN asymmetry between `DopplerScale` and `DistanceScale`, `Apply3D`/`Pan` state rules and enforced parent/child destruction; no audible output is claimed

@@ -33395,6 +33395,270 @@
               "optional": false
             }
           ]
+        },
+        {
+          "kind": "method",
+          "name": "SetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "startIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementCount",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "level",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "rect",
+              "type": "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "startIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementCount",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "startIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementCount",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "level",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "rect",
+              "type": "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "startIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementCount",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::Texture2D"
