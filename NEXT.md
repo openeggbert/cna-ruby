@@ -5,8 +5,8 @@
 **Session start HEAD = `920b0db8`**, which was also `origin/develop`. That baseline carries
 Foundations 16 to 43 and Native frontiers 1 to 3.
 
-The sequence this session added on top of it is **Foundations 44 to 52 plus Native frontier 4**.
-Resolve where it currently sits with
+The sequence this session added on top of it is **Foundations 44 to 62, Native frontiers 4 and 5,
+and the CNA C ABI 0.7.0 -> 0.21.0 migration**. Resolve where it currently sits with
 
 ```sh
 git rev-parse HEAD
@@ -30,29 +30,41 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 50 | `Audio.RendererDetail` | 1 | 7 |
 | 51 | `Media.VisualizationData` | 1 | 3 |
 | 52 | `Media.Video` | 1 | 5 |
+| ABI | migration to CNA C ABI **0.21.0**, admitted as a measured set | **0** | **0** |
+| NF5 | re-measuring the audio path: the retired artifact was built `CNA_AUDIO_PLATFORM=NULL` | **0** | **0** |
+| 53 | `System.IO.Stream` + `SeekOrigin` + `TitleContainer` | 1 | 1 |
+| 54 | `System.Action`1` + the generic `!!0` + `ContentManager`, completing `Game` | 1 | 15 |
+| 55 | the audio cluster: `SoundEffect` + `SoundEffectInstance` | 2 | 33 |
+| 56 | `Graphics.TextureCollection` + two `GraphicsDevice` members | 1 | 3 |
+| 57 | `GamerServices.GamerServicesComponent`, a new namespace | 1 | 3 |
+| 58 | `Audio.DynamicSoundEffectInstance` | 1 | 10 |
+| 59 | `Audio.Microphone` | 1 | 15 |
+| 60 | `Audio.AudioEngine` + `Audio.AudioCategory` | 2 | 24 |
+| 61 | `Audio.WaveBank` + `SoundBank` + `Cue`, completing the namespace | 3 | 38 |
+| 62 | `Media.MediaSource`, emptying the `RUNTIME_DATA` register | 1 | 4 |
 
 ## Measured state
 
-Strict target **149 types / 1837 member identities**: **143 complete**, six partial native/runtime
-types, 108 missing, **261 deferred diagnostics**. `MISSING_MEMBER` **110**, `PARTIAL_TYPES` 6,
+Strict target **163 types / 1979 member identities**: **158 complete**, five partial graphics runtime
+types, 94 missing, **244 deferred diagnostics**. `MISSING_MEMBER` **107**, `PARTIAL_TYPES` 5,
 `PROPERTY_MAPPING_MISMATCH` 1 (`GraphicsDevice::Viewport`, unrelated and pre-existing),
 `OVERLOAD_MAPPING_MISMATCH` **42**, every other structural category 0, allowlist 0, unmeasured 0.
-**20** event identities across **seven** owner types. **13** projected BCL identities and **8**
-measured thrown exceptions.
+**26** event identities across **13** owner types. **18** projected BCL identities.
 
-CNA ABI **68 / 219 / 300 / 300 / 3 / 66** — up from 51/160/290/290/3/63. Seventeen additive bindings,
-three new constants, one new layout, every symbol already exported by the reviewed library. Zero
-missing header symbols, zero missing library symbols, zero mismatches. **No CNA source was changed
-and no new native binary was built.**
+CNA ABI **196 functions / 5 callbacks / 71 constants / 25 layouts**, on **two admitted encoded
+versions** cross-verified across both header roots. Zero missing header symbols, zero missing library
+symbols, zero cross-version mismatches, zero ABI mismatches. **No CNA source was changed and no new
+native binary was built.**
 
-Behaviour corpus **526** observations, zero failures. Suite **1127 runs / 44590 assertions**, zero
-failures, zero skips. Capability registry **103** rows, zero contradictions.
+Behaviour corpus **526** observations, zero failures. Suite **1293 runs / 45738 assertions**, zero
+failures, zero skips. Capability registry **114** rows, zero contradictions.
 
-## Game is one member from complete
+## Game is complete, and so is the whole Audio namespace
 
-`Content` alone remains, blocked on the missing `ContentManager`. Foundation 44 took `Tick` off that
-list, 45 `IsActive`, 46 `LaunchParameters`, 47 `Dispose(Boolean)`/`Finalize`/
-`ShowMissingRequirementMessage`, and 48 `Window`.
+`Game`'s last member, `Content`, was closed by Foundation 54 — bound to the content manager CNA's own
+game already owns, because one XNA `ContentManager` must be one CNA content manager. Foundations 55
+to 61 then completed every XNA 4.0 `Audio` type, ending with the XACT cluster measured against the
+XNA Spacewar sample's real banks. No audio type is left on the frontier.
 
 ## The one reasoning error this session corrected, three times over
 
@@ -156,26 +168,44 @@ rule the `GraphicsDeviceManager` producer audit established:
 
 ## Recommended next frontier
 
-Twelve dependency-complete candidates remain and **none is consumable**. Four are audited dead ends
-(`SoundEffectInstance`, `Cue`, `EffectAnnotation`, `TextureCollection`), one is `GraphicsAdapter`
-with Native frontier 1's four standing blockers, and `AudioCategory`/`MediaSource` are genuine
-`RUNTIME_DATA`. What is left is three real BCL decisions, in rising order of cost:
+**Five** dependency-complete candidates remain and none is consumable. Two are now measured dead
+ends rather than assumed ones, and three are real BCL decisions.
 
-1. **`System.IO.Stream`**, which blocks `TitleContainer` (one member, `OpenStream`) and is half of
-   `ContentManager`. The register's rule — project to what the XNA surface can reach — would have to
-   be applied to a base class with a large surface and a real I/O runtime behind it. `storage.h`
-   exposes container routes that may or may not be the right producer; that has **not** been audited.
-2. **`System.Action`1` and the generic `!!0`**, the other half of `ContentManager`, which is also the
-   last member of `Game`.
+The two measured dead ends:
+
+- **`Graphics.GraphicsAdapter`.** The 0.21.0 artifact contains `Sdl3Platform` and links SDL3 and
+  X11 — the retired 0.7.0 one had only Headless and Terminal, which is what the old note recorded —
+  but the only **renderer** compiled in is `HEADLESS`: `CNA_GRAPHICS_RENDERER=BGFX` and `=VULKAN`
+  both abort with "not compiled into this build. Available: HEADLESS". With it every
+  `cna_graphics_adapter_*` route answers `SUCCESS` with invented values — one adapter,
+  `"Default Display"`, `\\.\DISPLAY1`, a single 800x480 mode, `adapters_refresh` answering
+  `NOT_SUPPORTED`. All eighteen of its identities *are* display values, so there is nothing left
+  after removing them. Blocked by the **renderer selection**, not by `NATIVE_RUNTIME`.
+- **`Graphics.EffectAnnotation`.** The renderer does not block it: its six properties are one
+  `ldfld` each and `cna_effect_annotation_create` builds one standalone, taking no game, device or
+  effect. What blocks it is that all eight `GetValue*` members construct a temporary
+  `EffectParameter` and forward to it, so their behaviour — including whatever a type mismatch does
+  — is `EffectParameter`'s, and that type is not projected. It is the cheapest of the five to
+  unblock: derive `EffectParameter`'s eight getters from the pinned Graphics IL.
+
+The three BCL decisions, in rising order of cost:
+
+1. **`System.Resources.ResourceManager`**, which blocks `Content.ResourceContentManager` and its two
+   identities. The smallest of the three.
+2. **`System.Char`, `Nullable`1[Char]` and `System.Text.StringBuilder`**, which are `SpriteFont`'s
+   BCL half. `SpriteFont` also carries `NATIVE_RUNTIME`, but its il-only dependency is `SpriteBatch`,
+   which is **complete** — so unlike before, a BCL decision really would move it.
 3. **`System.ComponentModel`** (`ExpandableObjectConverter`, `ITypeDescriptorContext`,
    `PropertyDescriptorCollection`), which blocks the whole `Design` converter family.
 
-`SpriteFont` and `Microphone` each keep a small BCL blocker (`System.Char`/`Nullable`1`/
-`StringBuilder`, and `System.Byte[]`) *and* a native one, so neither is unblocked by a BCL decision
-alone.
+The `RUNTIME_DATA` register is **empty**. Every entry it ever held described a producer rather than
+the type, and eight `NATIVE_RUNTIME` deferrals have gone the same way. The audit is the rule that
+survived: re-measure a deferral before trusting it, especially one that names the thing which would
+*fill* a type.
 
-A qualification artifact carrying the SDL3 platform is unchanged and still needs a CNA checkout at
-`a09196a6…`.
+A qualification artifact carrying a real renderer is what the graphics half needs, and it is the
+single largest lever left: it would unblock `GraphicsAdapter` directly and the five partial graphics
+types behind it.
 
 `SELECTED_ONLY=true`
 
@@ -205,9 +235,14 @@ A qualification artifact carrying the SDL3 platform is unchanged and still needs
   managed step CNA already performs would be performed twice.
 - The upstream behaviour-corpus source (SHA-256 `398d0201…`) is still absent. Corpus additions are
   merged by documented deterministic replay, which refuses to write unless re-serialising the
-  pre-merge corpus reproduces its bytes exactly. **Twenty-four** merges/corrections have been made
-  this way. A corpus row that censuses this binding's own selection *will* need correcting later;
-  `member_level_dependency.frontier_effect` says so in its own note and moved four times this session.
+  pre-merge corpus reproduces its bytes exactly; corrections to existing rows are made as **surgical
+  byte edits**, which is a stronger guarantee than a replay proof because every other byte of the
+  file is provably untouched. Each one records its pre-correction SHA-256. A corpus row that
+  censuses this binding's own selection *will* need correcting later:
+  `member_level_dependency.frontier_effect` says so in its own note and has now moved seventeen
+  times, and `disposable_collapse.frontier_effect` has needed its **operation** corrected three
+  times for one reason — it read a type's blockers out of the candidate list, and the type kept
+  being built.
 - Nothing measured from CNA may enter the behaviour corpus, which is `never CNA output` by
   construction. Native measurements go to `docs/generated/*-native-report.json` under
   `CNA_NATIVE_EVIDENCE`.

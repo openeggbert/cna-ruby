@@ -1,68 +1,159 @@
 # CNA-Ruby Foundation Plan
 
-This file is the normative description of the current architecture and milestone state. Evidence in generated reports takes precedence over prose counts.
+This file is the normative description of the **current** architecture and milestone state. Every
+count in it is a measurement, and the generated reports take precedence over this prose whenever the
+two disagree — `docs/generated/api-compat-report.json`,
+`docs/generated/public-signature-dependency-report.json`,
+`docs/generated/native-abi-report.json`, `docs/generated/behavior-corpus-report.json` and
+`docs/runtime-capabilities.json` are the authorities. `NEXT.md` is the chronological record of how
+the project reached this state; this file is what is true of it now.
 
 ## Boundary
 
-The only native boundary is `Ruby XNA facade -> CNA private runtime -> CNA C ABI 0.7.0 -> CNA`. The binding never resolves C++ symbols and never loads another language binding. MRI Ruby and Fiddle are the only qualified Ruby/native combination.
+The only native boundary is `Ruby XNA facade -> CNA private runtime -> CNA C ABI -> CNA`. The
+binding never resolves C++ symbols and never loads another language binding. MRI Ruby and Fiddle are
+the only qualified Ruby/native combination.
 
-## Native frontier 1 surface
+The admitted ABI is a **measured set**, not a single version and not a version range. The manifest
+admits encoded `0x00000700` (CNA 0.7.0) and `0x00001500` (CNA 0.21.0), because CNA's own contract
+rules out both easy policies: `0.x` is experimental, so a later minor may be incompatible — `0.20.0`
+really was — and the incompatibility travels forward rather than backward, so neither "same major"
+nor "minimum minor" is sound. Admission is qualified by measuring both header roots and requiring
+them to agree over the whole bound surface; `docs/native-abi-migration-evidence.md` records the
+derivation and `test/test_native_abi_gate.rb` carries sixteen mutation controls that prove the gate
+fails when it should.
 
-The runtime exposes real, measured implementations for the types recorded by `tools/api_compat/signatures.json`. Missing XNA types and overloads remain absent. ContentManager, BasicEffect, and the old 3D demo surface remain absent rather than simulated. Matrix is a complete managed XNA value type and does not imply 3D rendering support.
+## Surface
 
-Managed work covers complete MathHelper, Vector2, Vector3, Vector4, Quaternion, Matrix, Plane, Ray, BoundingBox, BoundingSphere, BoundingFrustum, Rectangle, Color, Point, GameTime, ContainmentType, PlaneIntersectionType, and selected enum dependencies. Color includes all XNA constructors and conversions, exact packed/fixed-point behavior, and all 141 predefined properties. Rectangle includes all five collapsed ref/out projections and unchecked Int32 behavior. Foundation 4 completes Curve, CurveKey, CurveKeyCollection, CurveContinuity, CurveLoopType, and CurveTangent. Foundation 5 completes both PackedVector interfaces and all 17 packed structs as one managed closure. Foundation 6 completes ButtonState and the managed MouseState value contract, and exposes the process-global Mouse facade through four reviewed CNA 0.7.0 routes. Foundation 7 completes the ten-type GamePad family through four additional reviewed CNA 0.7.0 routes. Foundation 8 completes the managed `VertexElement`, `VertexElementFormat`, and `VertexElementUsage` descriptor closure with exact XNA construction, mutation, equality, hash, and string behavior. Foundation 9 completes only the root `DisplayOrientation` flags enum through the unchanged controlled Ruby enum policy. Foundation 10 completes only the Graphics-namespace `GraphicsDeviceStatus` non-flags enum. Foundation 11 completes only the Graphics-namespace `GraphicsProfile` non-flags enum with `Reach=0` and `HiDef=1`, again through the unchanged ordinary Ruby enum policy. Foundation 12 completes the managed `Viewport` value contract with exact Windows XNA Project/Unproject Single-domain arithmetic and read-only TitleSafeArea value-copy behavior. Foundation 13 completes only the Graphics-namespace `ClearOptions` flags enum with `Target=1`, `DepthBuffer=2`, and `Stencil=4`; it deliberately has no named zero and adds no `GraphicsDevice.Clear` overload. Foundation 14 completes only the Graphics-namespace `DepthFormat` non-flags enum with `None=0`, `Depth16=1`, `Depth24=2`, and `Depth24Stencil8=3`; `Depth24Stencil8` is one ordinary literal rather than a flags composition, and no `GraphicsDeviceManager.PreferredDepthStencilFormat` property is added. Foundation 15 completes only the Graphics-namespace `PrimitiveType` non-flags enum with `TriangleList=0`, `TriangleStrip=1`, `LineList=2`, and `LineStrip=3`; these are the XNA 4.0 renumbering rather than the XNA 3.1/Direct3D 9 ordering, `PointList` and `TriangleFan` are absent, and no `GraphicsDevice` draw member is added. Foundation 16 is the first batch milestone: PURE MANAGED BATCH A completes 24 dependency-complete pure managed enums and 109 Ruby identities in one run — 17 in Graphics (`Blend`, `BlendFunction`, `BufferUsage`, `ColorWriteChannels`, `CompareFunction`, `CubeMapFace`, `CullMode`, `EffectParameterClass`, `EffectParameterType`, `FillMode`, `IndexElementSize`, `PresentInterval`, `RenderTargetUsage`, `SetDataOptions`, `StencilOperation`, `TextureAddressMode`, `TextureFilter`), four in the new `Audio` namespace (`AudioChannels`, `AudioStopOptions`, `MicrophoneState`, `SoundState`) and three in the new `Media` namespace (`MediaSourceType`, `MediaState`, `VideoSoundtrackType`). `BufferUsage`, `SetDataOptions` and `ColorWriteChannels` are the only flags enums in the batch; their named zero and `ColorWriteChannels.All=15` are read from the pinned metadata rather than invented. `Blend.One=0` and `Blend.Zero=1`, and `MediaState` keeps its pinned declaration order `Paused=2`, `Playing=1`, `Stopped=0`. `Audio` and `Media` contain those enums and nothing else; no audio, media, renderer, device or state-object runtime is added. Foundation 17 closes the `Input.Touch` managed contracts — `TouchLocationState`, the `GestureType` flags enum (mask `0x3FF`, declared `None=0`) and the `TouchPanelCapabilities` struct, whose two get-only properties project the CLR default value because XNA declares no public constructor. Foundation 18 closes four event-free interfaces as abstract Ruby modules — `IGameComponent`, `IGraphicsDeviceManager`, `IEffectMatrices`, `IEffectFog` — whose members raise `NotImplementedError`; no concrete type implements them and no partial runtime type includes them. Foundation 19 adds no XNA type: it replaces the enum-only milestone selector with a tested dependency-frontier classifier that records, for every dependency-complete missing type, whether it is blocked by `EVENT_PROJECTION`, `BCL_PROJECTION` or `BEHAVIOR_EVIDENCE`. Foundation 20 establishes the general Ruby event projection — one CLR public event maps to exactly one public Ruby event reader keeping the XNA spelling, answering the generic `CNA::Runtime::Event` subscription primitive whose whole public surface is `add`/`remove`; dispatch is registration-ordered over a snapshot with unswallowed exceptions, removal takes the last matching occurrence as `Delegate.Remove` does, and raising stays internal to the declaring implementation — and closes `IUpdateable` and `IDrawable` as abstract Ruby modules with that projection, while `System.EventArgs` gains the smallest faithful projection as `CNA::Runtime::EventArgs`. Foundation 21 adds no XNA type: it makes the two BCL decisions Foundation 19 recorded as unmade, in a measured `CNA::Runtime::BclProjection` register that the verifier resolves and the dependency frontier consumes, and establishes the general rule that a CLR exception base projects to a Ruby exception superclass rooted at `StandardError` rather than `Object`. Foundation 22 located the original hash-pinned XNA 4.0 Windows assemblies on this host, pinned ten of them in `tools/api_compat/reference/XNA_IL_PROVENANCE.md`, derived the Microsoft-free `docs/generated/xna-il-inventory.json` from them with `ikdasm`, retired the `BEHAVIOR_EVIDENCE` blocker built on their supposed absence, and completed six XNA exception types whose IL proves every constructor is a pure forward to its CLR exception base. Foundation 23 completed `Input.Touch.TouchLocation` and `GestureSample` and made `System.TimeSpan` a measured projection. Foundation 24 completed `Audio.AudioListener`, `Audio.AudioEmitter`, `Graphics.PresentationParameters` and `GameComponentCollectionEventArgs`. Foundation 25 established that a CLR class whose only constructor is internal projects with `new` made private, and completed `Graphics.DisplayMode`, `ResourceCreatedEventArgs` and `ResourceDestroyedEventArgs`; Foundation 26 added `DisplayModeCollection` and closed a classifier blind spot where a constructed generic hid its BCL definition behind an XNA type argument. Foundation 27 projected `System.Attribute` and completed the five `Content.ContentSerializer*` attributes. Native frontier 1 opened the native/CNA expansion sequence with an architecture audit of `Graphics.GraphicsAdapter` (`docs/graphics-adapter-audit-evidence.md`), which established that the canonical CNA C ABI already exposes the whole adapter surface and that the type is nevertheless blocked on four independent grounds, and completed `FrameworkDispatcher` — the first type taken off the dependency frontier’s `RUNTIME_DATA` register, and the first whose recorded deferral turned out to be wrong rather than merely unresolved. Mouse and GamePad snapshots are copied out of measured native POD layouts; neither facade caches or synthesizes input state.
+The strict surface is **163 types / 1979 Ruby member identities**: 158 complete, 5 partial, 94 of the
+257 reference types still missing, with 244 deferred diagnostics of which 107 are missing members and
+42 are the overload category. Every structural category except `MISSING_TYPE`, `MISSING_MEMBER`,
+`OVERLOAD_MAPPING_MISMATCH` and one long-standing `PROPERTY_MAPPING_MISMATCH`
+(`GraphicsDevice::Viewport`) is zero, the allowlist is empty and `UNMEASURED_STRUCTURAL_CATEGORY` is
+zero. **26** event identities are projected across **13** owner types with `EVENT_MAPPING_MISMATCH`
+zero, and **18** BCL identities go through the measured `CNA::Runtime::BclProjection` register.
 
-The strict surface is now 135 types / 1714 Ruby member identities. All 54 types completed by Foundations 16 to 27, and `FrameworkDispatcher`, are locally strict-zero and complete. Exactly six partial native/runtime types remain, with 132 missing members; the normal strict report has 306 genuine deferred diagnostics. Four selected event identities are measured across two owner types with `EVENT_MAPPING_MISMATCH` zero, and five BCL identities are projected through the measured register. Twenty-one missing types are dependency-complete and **none is consumable**: each is blocked on native or platform support this managed sequence does not add, on device or media values that have not been queried, on IL the disassembler does not emit under a name it can address, or on a BCL cluster no otherwise-unblocked type needs. One decision this project has **not** made now blocks four of them: the `System.Collections.ObjectModel.ReadOnlyCollection`1` public mapping, opened by the Native frontier 1 audit and recorded as `mapping.readonly-collection`. It is undecided rather than deferred by preference — two materially different Ruby designs are plausible, no repository rule chooses between them, and the pinned inventory admits no mscorlib from which the type could be measured.
+The five partial types are the graphics runtime: `GraphicsDeviceManager` (26 members outstanding),
+`GraphicsDevice` (39), `GraphicsResource` (3), `Texture2D` (7) and `SpriteBatch` (4).
+
+Complete clusters, by area:
+
+- **Math and value types** — MathHelper, Vector2/3/4, Quaternion, Matrix, Plane, Ray, BoundingBox,
+  BoundingSphere, BoundingFrustum, Rectangle, Color, Point, the Curve family, the 19-type
+  `Graphics.PackedVector` closure and the `VertexElement` descriptor closure.
+- **Game** — `Game`, `GameTime`, `GameComponent`, `GameComponentCollection`, `GameServiceContainer`,
+  `GameWindow`, `LaunchParameters`, `FrameworkDispatcher`, `TitleContainer` and
+  `GamerServices.GamerServicesComponent`, with a real component engine and real lifecycle events.
+- **Content** — `ContentManager` over CNA's own content pipeline, `Game.Content` bound to the
+  content manager CNA's game already owns, and the five `ContentSerializer*` attributes.
+- **Audio — complete.** Every XNA 4.0 `Audio` type is projected: `SoundEffect`,
+  `SoundEffectInstance`, `DynamicSoundEffectInstance`, `Microphone`, `AudioEngine`, `AudioCategory`,
+  `WaveBank`, `SoundBank`, `Cue`, the managed `AudioListener`/`AudioEmitter`/`RendererDetail`, the
+  four enums and the three exception types.
+- **Input** — Keyboard, Mouse, the ten-type GamePad family and the `Input.Touch` closure.
+- **Media** — `VisualizationData`, `Video` and `MediaSource`.
+- **Graphics** — `Viewport`, `TextureCollection`, `Texture`, `DisplayMode`, `DisplayModeCollection`,
+  `PresentationParameters` and the enum closure, beside the five partial runtime types.
 
 ## Admission and safety
 
-- Only encoded ABI `0x00000700` is admitted.
+- The admitted encoded ABI versions are `0x00000700` and `0x00001500`, cross-verified across both
+  header roots; `CROSS_VERSION_MISMATCHES` is zero over the whole bound surface.
 - `CNA_NATIVE_LIBRARY` must be an absolute file path when used.
-- All Fiddle functions come from one manifest.
+- All Fiddle functions come from one manifest: **196** functions, **5** callbacks, **71** constants
+  and **25** struct layouts, each type-checked against the headers by a compiler-backed probe with
+  `_Static_assert(__builtin_types_compatible_p(...))`, and each Ruby layout compared field by field
+  with the C one. `ABI_MISMATCHES` is zero.
 - Native errors cross one translation boundary.
-- Handles and values have one of OWNED, BORROWED, PARENT_OWNED, PROCESS_GLOBAL, MANAGED_VALUE, or BORROWED_EXTERNAL_SCALAR ownership.
+- Handles and values have one of OWNED, BORROWED, PARENT_OWNED, PROCESS_GLOBAL, MANAGED_VALUE, or
+  BORROWED_EXTERNAL_SCALAR ownership, and the manifest records which for every route.
 - Game generations bind children to one owner thread and one native Game lifetime.
-- Destruction is explicit; no GC finalizer destroys native state.
-- Callback closures are retained for the registration lifetime. Ruby exceptions are captured in the callback and re-raised after the C call returns.
+- Destruction is explicit; **no GC finalizer destroys native state**. Where CNA requires an order
+  XNA does not — a sound bank's cues before the bank, an engine's banks before the engine — the
+  parent cascades, and that is recorded as a deviation rather than presented as XNA behaviour.
+- Callback closures are retained for the registration lifetime. Ruby exceptions are captured in the
+  callback and re-raised after the C call returns.
+- Fiddle cannot pass a struct by value, so `CNA_StringView` is decomposed into the eightbytes the
+  System V x86-64 ABI really puts in registers; the decomposition is recorded in the manifest and
+  reconstructed and checked by the probe rather than performed silently.
+
+## Behaviour authority
+
+Pinned Microsoft XNA 4.0 IL first, FNA/MonoGame for comparison only, intuition last. The reference
+contract is a hash-pinned artifact; the assemblies are pinned by SHA-256 in
+`tools/api_compat/reference/XNA_IL_PROVENANCE.md`; the BCL authority is the authentic Microsoft .NET
+Framework 4.0 `mscorlib` (SHA-256 `5634668d…`).
+
+**Nothing measured from CNA enters the behaviour corpus**, which is `never CNA output` by
+construction. Native measurements go to `docs/generated/*-native-report.json`. The corpus holds 526
+observations with zero failures; its upstream source is absent, so additions and corrections are
+made by documented deterministic replay or by surgical byte edit, and every one of them is recorded
+with the pre-correction SHA-256.
 
 ## Dependency frontier
 
-`tools/api_compat/analyze_dependencies.rb` classifies every dependency-complete missing type and
-reports `SELECTED_NEXT=none` rather than aborting when nothing is safely consumable. A type is
-consumable only when it names no unmapped BCL type, has IL under a name the disassembler emits, does
-not reach a native entry point, and does not appear in the justified `RUNTIME_DATA` register. The
-mapped BCL set is derived from types that are already complete plus the measured
-`CNA::Runtime::BclProjection` register, which the API verifier resolves and shape-checks under
-`LANGUAGE_MAPPING_MISMATCH`, so neither half is a hand-maintained aspirational list. Every signature
-is reduced to the BCL identities it really names — the whole string when it names no XNA type, plus
-the outer generic definition — so a constructed generic cannot hide its BCL definition behind an XNA
-type argument. `test/test_dependency_frontier.rb` restates the rule independently and requires it to
-classify all 54 types shipped by Foundations 16 to 27 as consumable, so the classifier cannot drift
-into justifying whatever was most recently done.
+`tools/api_compat/analyze_dependencies.rb` classifies every dependency-complete missing type. Five
+remain, and **none is consumable**:
 
-Foundation 20 retired the `EVENT_PROJECTION` blocker: declaring a CLR event is no longer a reason to
-defer a type, because one CLR event now projects to one Ruby event reader and the verifier measures
-that projection under `EVENT_MAPPING_MISMATCH`.
+| type | blocker | what is actually missing |
+| --- | --- | --- |
+| `Content.ResourceContentManager` | BCL_PROJECTION | `System.Resources.ResourceManager` |
+| `Design.MathTypeConverter` | BCL_PROJECTION | the `System.ComponentModel` converter family |
+| `Graphics.SpriteFont` | BCL_PROJECTION + NATIVE_RUNTIME | `System.Char`, `Nullable`1[Char]`, `StringBuilder` |
+| `Graphics.EffectAnnotation` | NATIVE_RUNTIME | its eight `GetValue*` members delegate to `EffectParameter`, which is not projected |
+| `Graphics.GraphicsAdapter` | NATIVE_RUNTIME | measured: the qualified artifact compiles only the HEADLESS renderer, and every adapter route answers invented data |
 
-Foundation 22 retired `BEHAVIOR_EVIDENCE`. The original XNA 4.0 Windows assemblies are on this host,
-located by exact SHA-256 and pinned in `tools/api_compat/reference/XNA_IL_PROVENANCE.md`, so
-"behaviour lives in IL" is a statement about work to do rather than about missing input; it is now
-the informational `ilDerivationRequired` flag. Three blockers name what is genuinely absent instead:
-`IL_UNAVAILABLE` when no pinned assembly carries a type's IL under a name the disassembler emits —
-which, since Native frontier 2 taught the extractor to read nested and generic declarations, is no
-longer true of any reference type —
-`NATIVE_RUNTIME` when a type's own IL reaches a native entry point — a P/Invoke or an indirect
-`calli` through an unmanaged calling convention, which is how XNA's mixed-mode C++/CLI assemblies
-reach native code — and `RUNTIME_DATA` when the IL settles a type's semantics but its values come
-only from a device, driver, codec or media library that has not been queried. Native reachability is
-measured over the assemblies' own call graph: 214 native entry points make 61 of 257 reference types
-native-reachable, and of the complete types exactly `Input.Mouse`, `Input.GamePad` and
-`Graphics.Texture` are, which is precisely the native boundary this binding really implements.
+The `RUNTIME_DATA` register is **empty**. Every entry it ever held — `FrameworkDispatcher`,
+`Audio.RendererDetail`, `Media.VisualizationData`, `Media.Video`, `Audio.AudioCategory`,
+`Media.MediaSource` — turned out to describe a *producer* rather than the type, and the same has now
+been true of eight `NATIVE_RUNTIME` deferrals. The rule that survived is the audit itself: a
+deferral that names the thing which would *fill* a type says nothing about the type, and must be
+re-measured before it is trusted.
+
+Two deferrals are now measured rather than assumed, and both stand:
+
+- **`GraphicsAdapter`.** The 0.21.0 artifact does contain `Sdl3Platform` and links SDL3 and X11 —
+  the retired 0.7.0 one had only Headless and Terminal — but the only renderer compiled in is
+  `HEADLESS`. With it every `cna_graphics_adapter_*` route answers `SUCCESS` with invented values:
+  one adapter, `"Default Display"`, `\\.\DISPLAY1`, a single 800x480 mode, and
+  `cna_graphics_adapters_refresh` answering `NOT_SUPPORTED`. Projecting the type would mean
+  reporting invented hardware, so it is not projected.
+- **`EffectAnnotation`.** Its six properties are one `ldfld` each and CNA can build one standalone —
+  `cna_effect_annotation_create` takes no game, device or effect — so the *renderer* does not block
+  it. What blocks it is that all eight `GetValue*` members construct a temporary `EffectParameter`
+  and forward to it, so their behaviour is `EffectParameter`'s, and that type is not projected.
 
 ## Qualification policy
 
-Normal API strict mode is expected to remain red until the full selected XNA profile is implemented. A batch milestone runs the focused gates (tests, structural verifier, RBS/runtime consistency, behavior) after each type, the full suite/verifier/corpus/RBS/leak-only set after every five, and the complete pipeline once at batch end. Leak-only mode, verifier self-tests, the behavior corpus, the ABI probe, unit tests, gem audit, and native canaries must be green for a milestone claim. HEADLESS qualifies execution and native calls, not visible output. The qualified host had no connected controller, so only real disconnected GamePad results and route safety are native-qualified; connected state, positive capabilities, and physical rumble remain `HARDWARE_PENDING`.
+Normal API strict mode is expected to remain red until the full selected XNA profile is implemented;
+what must be green for a milestone claim is: the full test suite, the structural verifier in
+leak-only mode, verifier self-tests, the RBS/runtime consistency check, the behaviour corpus, the
+ABI probe with zero findings, the capability registry with zero contradictions, the gem audit and
+the native canaries.
+
+`HEADLESS` qualifies execution and native calls, not visible output. Specific hardware limits are
+recorded rather than papered over:
+
+- No connected controller was attached, so only disconnected GamePad results and route safety are
+  qualified; connected state, positive capabilities and physical rumble are `HARDWARE_PENDING`.
+- Audio playback is real — a real mixer opens at 44100 Hz stereo and state machines move — but
+  **nothing claims audible output**.
+- The machine has three real capture devices and `Microphone` is complete, but the suite never
+  starts a capture: doing so would record audio from whoever runs it. That is a decision, and the
+  whole managed contract is reachable without it.
+- The XACT fixtures are the XNA Spacewar sample's, referenced by path through `CNA_TEST_XACT_DIR`
+  and never copied into this repository; the XNB fixtures are MonoGame's, referenced the same way.
 
 ## Deferred boundaries
 
-Managed `PrimitiveType` completion does not imply any of the nine deferred `GraphicsDevice` draw overloads (`DrawPrimitives`, `DrawIndexedPrimitives`, `DrawInstancedPrimitives`, `DrawUserPrimitives`, `DrawUserIndexedPrimitives`), `VertexDeclaration`, `IVertexType`, vertex or index buffers, `RasterizerState`, `Effect`, renderer primitive topology mapping, a native topology constant, or GPU drawing. Managed `DepthFormat` completion does not imply `GraphicsDeviceManager.PreferredDepthStencilFormat`, `GraphicsAdapter`, `PresentationParameters`, `RenderTarget2D`, `RenderTargetCube`, `DepthStencilState`, GPU depth or stencil format support, depth/stencil buffer allocation, a native depth-format mapping, or renderer capability. Managed `ClearOptions` completion does not imply the two deferred four-argument `GraphicsDevice.Clear` overloads, depth or stencil clearing, a native clear mask, or renderer support. Managed Viewport completion does not imply the deferred `GraphicsDevice.Viewport` setter, native projection, camera behavior, 3D rendering, GPU state, or renderer capability. `GraphicsProfile` support does not imply either deferred `GraphicsProfile` property, a `GraphicsDevice` constructor, graphics-profile selection, hardware capability detection, feature-level logic, or renderer compatibility. `GraphicsDeviceStatus` support does not imply the deferred `GraphicsDevice.GraphicsDeviceStatus` property, device-loss polling, reset transitions, or device-reset behavior. `DisplayOrientation` support does not imply `GraphicsDeviceManager.SupportedOrientations`, `GameWindow`, orientation events, display rotation, or mobile/platform orientation. `VertexElement` support does not imply `IVertexType`, `VertexDeclaration`, built-in vertex structs, vertex/index buffers, GPU input formats, or draw support. Managed batch-enum completion implies nothing about the subsystems the enums name: `GraphicsDevice.SetRenderTarget`, `RenderTarget2D`, `RenderTargetCube`, `TextureCube`, cube face mapping, `BlendState`, `DepthStencilState`, `RasterizerState`, `SamplerState`, `TextureCollection`, `VertexBuffer`, `IndexBuffer`, `VertexDeclaration`, `Effect`, `EffectParameter`, `GraphicsAdapter`, `PresentationParameters`, `DisplayMode`, every audio engine and `SoundEffect`/`Microphone` type, and every `MediaPlayer`/`Song`/`Video` type remain absent. The `Input.Touch` closure — `TouchLocationState`, `GestureType` and `TouchPanelCapabilities` — is dependency-complete but deliberately deferred whole. Content/XNB, Effects/BasicEffect, 3D rendering/Model, audio, media, Touch, Design converters, Windows, macOS, browser/Wasm, Android, JRuby, TruffleRuby, MRuby, and Opal are not Foundation 19 support. Projecting an abstract interface contract implies no implementation of it, and a managed enum or default-valued struct implies no device, engine or hardware behind it. Establishing the general event projection implies no `GameComponent`, `DrawableGameComponent`, `GameComponentCollection`, `GameWindow`, `Microphone` or `GraphicsDevice` resource-event runtime: `IUpdateable` and `IDrawable` are abstract contracts whose event readers raise, and no `GraphicsDeviceManager` lifecycle event is added. Foundations 35, 38 and 41 later added real raisers: `GameComponentCollection`, `GameComponent` and `Game` each raise their own declared events, `Game`'s three lifecycle events coming from CNA's own game-event subscriptions and its `Disposed` from `Dispose` itself. The six completed XNA exception types are never raised by anything here. The `Input.Touch` value types imply no `TouchPanel`, `TouchCollection`, gesture recognition or touch device, and nothing produces one. `AudioListener` and `AudioEmitter` imply no audio engine, `SoundEffect`, `Microphone` or XACT runtime, so nothing a consumer sets on them is ever heard. `PresentationParameters` is a managed descriptor that creates no `GraphicsDevice`, looks up no native window, enumerates no adapter, builds no swap chain and presents nothing. `DisplayMode` and `DisplayModeCollection` imply no `GraphicsAdapter` and enumerate no display; `ResourceCreatedEventArgs` and `ResourceDestroyedEventArgs` are never raised. The five `ContentSerializer*` attributes imply no `ContentManager`, `ContentReader`, `ContentTypeReader`, XNB support or content pipeline, and nothing in this binding reads an attribute. HEADLESS qualifies the canonical Mouse routes and the returned backend state, but not a physical cursor, visible cursor movement, or a nonzero desktop window handle. Canonical GamePad routes remain qualified with no hardware attached, not positive controller or rumble behavior.
+Completing a managed type implies nothing about the subsystem it names. The graphics runtime is the
+large remaining area: no `Effect`, `EffectParameter`, `BasicEffect`, `Model`, `VertexBuffer`,
+`IndexBuffer`, `VertexDeclaration`, `RenderTarget2D`, `TextureCube`, `Texture3D`, `BlendState`,
+`DepthStencilState`, `RasterizerState`, `SamplerState`, `GraphicsAdapter` or `SpriteFont`, and none
+of the nine deferred `GraphicsDevice` draw overloads. The Media *runtime* is deferred whole:
+`MediaPlayer`, `MediaLibrary`, `MediaQueue`, `Song`, `Album`, `Artist`, `Genre`, `Playlist`,
+`Picture`, `VideoPlayer` and their collections. `Content.ContentReader`, `ContentTypeReader` and
+`ResourceContentManager` are absent, as is the whole `Design` converter family and the `Storage`
+runtime. The nine XNA exception types this binding projects are never raised by it.
+`AudioListener` and `AudioEmitter` remain managed descriptors whose settings are never heard.
+Windows, macOS, browser/Wasm, Android, JRuby, TruffleRuby, MRuby and Opal are not supported targets.
