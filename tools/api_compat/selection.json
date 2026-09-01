@@ -42,7 +42,23 @@
       "complete": true
     },
     {
+      "name": "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent",
+      "complete": true
+    },
+    {
       "name": "Microsoft.Xna.Framework.FrameworkDispatcher",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.TitleContainer",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentManager",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ResourceContentManager",
       "complete": true
     },
     {
@@ -83,6 +99,18 @@
     },
     {
       "name": "Microsoft.Xna.Framework.Audio.MicrophoneState",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.SoundEffect",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.SoundEffectInstance",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance",
       "complete": true
     },
     {
@@ -438,96 +466,310 @@
       "include": [
         {
           "kind": "constructor",
-          "parameters": []
+          "name": ".ctor",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "Run"
+          "kind": "method",
+          "name": "Run",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "RunOneFrame"
+          "kind": "method",
+          "name": "RunOneFrame",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "Exit"
+          "kind": "method",
+          "name": "Tick",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "BeginRun"
+          "kind": "method",
+          "name": "Exit",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "EndRun"
+          "kind": "method",
+          "name": "BeginRun",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "Update"
+          "kind": "method",
+          "name": "EndRun",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "BeginDraw"
+          "kind": "method",
+          "name": "Update",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.GameTime"
+          ]
         },
         {
-          "name": "Draw"
+          "kind": "method",
+          "name": "BeginDraw",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "EndDraw"
+          "kind": "method",
+          "name": "Draw",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.GameTime"
+          ]
         },
         {
-          "name": "Initialize"
+          "kind": "method",
+          "name": "EndDraw",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "LoadContent"
+          "kind": "method",
+          "name": "Initialize",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "UnloadContent"
+          "kind": "method",
+          "name": "LoadContent",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "UnloadContent",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
           "kind": "method",
           "name": "Dispose",
-          "parameters": []
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "GraphicsDevice"
+          "kind": "property",
+          "name": "GraphicsDevice",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "Components"
+          "kind": "property",
+          "name": "Components",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "Services"
+          "kind": "property",
+          "name": "Window",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "Activated"
+          "kind": "property",
+          "name": "Content",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "Deactivated"
+          "kind": "property",
+          "name": "LaunchParameters",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "Exiting"
+          "kind": "property",
+          "name": "IsActive",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "Disposed"
+          "kind": "property",
+          "name": "Services",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "OnActivated"
+          "kind": "event",
+          "name": "Activated",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "OnDeactivated"
+          "kind": "event",
+          "name": "Deactivated",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "OnExiting"
+          "kind": "event",
+          "name": "Exiting",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "IsFixedTimeStep"
+          "kind": "event",
+          "name": "Disposed",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "TargetElapsedTime"
+          "kind": "method",
+          "name": "OnActivated",
+          "static": false,
+          "parameters": [
+            "System.Object",
+            "System.EventArgs"
+          ]
         },
         {
-          "name": "InactiveSleepTime"
+          "kind": "method",
+          "name": "OnDeactivated",
+          "static": false,
+          "parameters": [
+            "System.Object",
+            "System.EventArgs"
+          ]
         },
         {
-          "name": "IsMouseVisible"
+          "kind": "method",
+          "name": "OnExiting",
+          "static": false,
+          "parameters": [
+            "System.Object",
+            "System.EventArgs"
+          ]
         },
         {
-          "name": "SuppressDraw"
+          "kind": "property",
+          "name": "IsFixedTimeStep",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "ResetElapsedTime"
+          "kind": "property",
+          "name": "TargetElapsedTime",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "InactiveSleepTime",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "IsMouseVisible",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "parameters": [
+            "System.Boolean"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Finalize",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ShowMissingRequirementMessage",
+          "static": false,
+          "parameters": [
+            "System.Exception"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SuppressDraw",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ResetElapsedTime",
+          "static": false,
+          "parameters": [
+
+          ]
         }
       ]
     },
@@ -536,18 +778,123 @@
       "include": [
         {
           "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
           "parameters": [
             "Microsoft.Xna.Framework.Game"
           ]
         },
         {
-          "name": "GraphicsDevice"
+          "kind": "property",
+          "name": "GraphicsDevice",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "DefaultBackBufferWidth"
+          "kind": "field",
+          "name": "DefaultBackBufferWidth",
+          "static": true,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "DefaultBackBufferHeight"
+          "kind": "field",
+          "name": "DefaultBackBufferHeight",
+          "static": true,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ApplyChanges",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToggleFullScreen",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "GraphicsProfile",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PreferredDepthStencilFormat",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PreferredBackBufferFormat",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PreferredBackBufferWidth",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PreferredBackBufferHeight",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "IsFullScreen",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "SynchronizeWithVerticalRetrace",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PreferMultiSampling",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "SupportedOrientations",
+          "static": false,
+          "parameters": [
+
+          ]
         }
       ]
     },
@@ -561,30 +908,61 @@
         {
           "kind": "method",
           "name": "Clear",
+          "static": false,
           "parameters": [
             "Microsoft.Xna.Framework.Color"
           ]
         },
         {
-          "name": "IsDisposed"
+          "kind": "property",
+          "name": "IsDisposed",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
+          "kind": "property",
           "name": "Viewport",
+          "static": false,
+          "parameters": [
+
+          ],
           "override": {
             "set": false
           }
         },
         {
-          "name": "Textures"
+          "kind": "property",
+          "name": "Textures",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "VertexTextures"
+          "kind": "property",
+          "name": "VertexTextures",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "SamplerStates"
+          "kind": "property",
+          "name": "SamplerStates",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "VertexSamplerStates"
+          "kind": "property",
+          "name": "VertexSamplerStates",
+          "static": false,
+          "parameters": [
+
+          ]
         }
       ]
     },
@@ -592,26 +970,86 @@
       "name": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
       "include": [
         {
-          "name": "ToString"
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
           "kind": "method",
           "name": "Dispose",
-          "parameters": []
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "IsDisposed"
+          "kind": "property",
+          "name": "IsDisposed",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "Tag"
+          "kind": "property",
+          "name": "Tag",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "Name"
+          "kind": "property",
+          "name": "Name",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "GraphicsDevice"
+          "kind": "property",
+          "name": "GraphicsDevice",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "parameters": [
+            "System.Boolean"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Finalize",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "event",
+          "name": "Disposing",
+          "static": false,
+          "parameters": [
+
+          ]
         }
       ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.TextureCollection",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.SpriteFont",
+      "complete": true
     },
     {
       "name": "Microsoft.Xna.Framework.Graphics.Texture",
@@ -711,19 +1149,157 @@
         {
           "kind": "method",
           "name": "FromStream",
+          "static": true,
           "parameters": [
             "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
             "System.IO.Stream"
           ]
         },
         {
-          "name": "Bounds"
+          "kind": "property",
+          "name": "Bounds",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "Height"
+          "kind": "property",
+          "name": "Height",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "Width"
+          "kind": "property",
+          "name": "Width",
+          "static": false,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "parameters": [
+            "System.Boolean"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SaveAsJpeg",
+          "static": false,
+          "parameters": [
+            "System.IO.Stream",
+            "System.Int32",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SaveAsPng",
+          "static": false,
+          "parameters": [
+            "System.IO.Stream",
+            "System.Int32",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+            "System.Int32",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+            "System.Int32",
+            "System.Int32",
+            "System.Boolean",
+            "Microsoft.Xna.Framework.Graphics.SurfaceFormat"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetData",
+          "static": false,
+          "parameters": [
+            "!!0[]"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetData",
+          "static": false,
+          "parameters": [
+            "!!0[]",
+            "System.Int32",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetData",
+          "static": false,
+          "parameters": [
+            "System.Int32",
+            "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+            "!!0[]",
+            "System.Int32",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetData",
+          "static": false,
+          "parameters": [
+            "!!0[]"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetData",
+          "static": false,
+          "parameters": [
+            "!!0[]",
+            "System.Int32",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetData",
+          "static": false,
+          "parameters": [
+            "System.Int32",
+            "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+            "!!0[]",
+            "System.Int32",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "FromStream",
+          "static": true,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+            "System.IO.Stream",
+            "System.Int32",
+            "System.Int32",
+            "System.Boolean"
+          ]
         }
       ]
     },
@@ -732,6 +1308,8 @@
       "include": [
         {
           "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
           "parameters": [
             "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
           ]
@@ -739,14 +1317,23 @@
         {
           "kind": "method",
           "name": "Begin",
-          "parameters": []
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
-          "name": "End"
+          "kind": "method",
+          "name": "End",
+          "static": false,
+          "parameters": [
+
+          ]
         },
         {
           "kind": "method",
           "name": "Draw",
+          "static": false,
           "parameters": [
             "Microsoft.Xna.Framework.Graphics.Texture2D",
             "Microsoft.Xna.Framework.Vector2",
@@ -756,6 +1343,7 @@
         {
           "kind": "method",
           "name": "Draw",
+          "static": false,
           "parameters": [
             "Microsoft.Xna.Framework.Graphics.Texture2D",
             "Microsoft.Xna.Framework.Vector2",
@@ -766,6 +1354,7 @@
         {
           "kind": "method",
           "name": "Draw",
+          "static": false,
           "parameters": [
             "Microsoft.Xna.Framework.Graphics.Texture2D",
             "Microsoft.Xna.Framework.Vector2",
@@ -781,6 +1370,7 @@
         {
           "kind": "method",
           "name": "Draw",
+          "static": false,
           "parameters": [
             "Microsoft.Xna.Framework.Graphics.Texture2D",
             "Microsoft.Xna.Framework.Vector2",
@@ -788,6 +1378,157 @@
             "Microsoft.Xna.Framework.Color",
             "System.Single",
             "Microsoft.Xna.Framework.Vector2",
+            "Microsoft.Xna.Framework.Vector2",
+            "Microsoft.Xna.Framework.Graphics.SpriteEffects",
+            "System.Single"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "parameters": [
+            "System.Boolean"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "DrawString",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.SpriteFont",
+            "System.String",
+            "Microsoft.Xna.Framework.Vector2",
+            "Microsoft.Xna.Framework.Color"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "DrawString",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.SpriteFont",
+            "System.Text.StringBuilder",
+            "Microsoft.Xna.Framework.Vector2",
+            "Microsoft.Xna.Framework.Color"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "DrawString",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.SpriteFont",
+            "System.String",
+            "Microsoft.Xna.Framework.Vector2",
+            "Microsoft.Xna.Framework.Color",
+            "System.Single",
+            "Microsoft.Xna.Framework.Vector2",
+            "System.Single",
+            "Microsoft.Xna.Framework.Graphics.SpriteEffects",
+            "System.Single"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "DrawString",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.SpriteFont",
+            "System.Text.StringBuilder",
+            "Microsoft.Xna.Framework.Vector2",
+            "Microsoft.Xna.Framework.Color",
+            "System.Single",
+            "Microsoft.Xna.Framework.Vector2",
+            "System.Single",
+            "Microsoft.Xna.Framework.Graphics.SpriteEffects",
+            "System.Single"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "DrawString",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.SpriteFont",
+            "System.String",
+            "Microsoft.Xna.Framework.Vector2",
+            "Microsoft.Xna.Framework.Color",
+            "System.Single",
+            "Microsoft.Xna.Framework.Vector2",
+            "Microsoft.Xna.Framework.Vector2",
+            "Microsoft.Xna.Framework.Graphics.SpriteEffects",
+            "System.Single"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "DrawString",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.SpriteFont",
+            "System.Text.StringBuilder",
+            "Microsoft.Xna.Framework.Vector2",
+            "Microsoft.Xna.Framework.Color",
+            "System.Single",
+            "Microsoft.Xna.Framework.Vector2",
+            "Microsoft.Xna.Framework.Vector2",
+            "Microsoft.Xna.Framework.Graphics.SpriteEffects",
+            "System.Single"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Begin",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.SpriteSortMode",
+            "Microsoft.Xna.Framework.Graphics.BlendState"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Begin",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.SpriteSortMode",
+            "Microsoft.Xna.Framework.Graphics.BlendState",
+            "Microsoft.Xna.Framework.Graphics.SamplerState",
+            "Microsoft.Xna.Framework.Graphics.DepthStencilState",
+            "Microsoft.Xna.Framework.Graphics.RasterizerState"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Draw",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.Texture2D",
+            "Microsoft.Xna.Framework.Rectangle",
+            "Microsoft.Xna.Framework.Color"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Draw",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.Texture2D",
+            "Microsoft.Xna.Framework.Rectangle",
+            "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+            "Microsoft.Xna.Framework.Color"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Draw",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.Texture2D",
+            "Microsoft.Xna.Framework.Rectangle",
+            "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+            "Microsoft.Xna.Framework.Color",
+            "System.Single",
             "Microsoft.Xna.Framework.Vector2",
             "Microsoft.Xna.Framework.Graphics.SpriteEffects",
             "System.Single"
@@ -805,6 +1546,62 @@
     },
     {
       "name": "Microsoft.Xna.Framework.Input.Touch.TouchPanel",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.LaunchParameters",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.GameWindow",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentLoadException",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.RendererDetail",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.Microphone",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.AudioCategory",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.AudioEngine",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.WaveBank",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.SoundBank",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.Cue",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.VisualizationData",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.Video",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.MediaSource",
       "complete": true
     },
     {
