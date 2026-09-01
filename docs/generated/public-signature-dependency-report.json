@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 162,
-  "completeTypes": 157,
+  "targetTypes": 163,
+  "completeTypes": 158,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
@@ -10,7 +10,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 95,
+  "missingTypes": 94,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -20,7 +20,6 @@
     "typesNativeReachable": 77
   },
   "runtimeDataRegister": {
-    "Microsoft.Xna.Framework.Media.MediaSource": "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried"
   },
   "retiredBlockers": {
     "EVENT_PROJECTION": "retired in Foundation 20; one CLR event projects to one Ruby event reader over CNA::Runtime::Event and the API verifier measures it under EVENT_MAPPING_MISMATCH. The residue is BCL_PROJECTION on the EventHandler`1 support type and, for classes, the IL that decides when the event is raised.",
@@ -83,6 +82,7 @@
       "System.Attribute": "CNA::Runtime::Attribute",
       "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection",
       "System.Collections.ObjectModel.Collection`1": "CNA::Runtime::Collection",
+      "System.Collections.Generic.IList`1": "Array",
       "System.Type": "Module"
     },
     "exceptionBases": {
@@ -93,8 +93,7 @@
   "blockerSummary": {
     "BCL_PROJECTION": 2,
     "BCL_PROJECTION+NATIVE_RUNTIME": 1,
-    "NATIVE_RUNTIME": 2,
-    "RUNTIME_DATA": 1
+    "NATIVE_RUNTIME": 2
   },
   "partialDependencySatisfiedCandidates": [
     {
@@ -820,59 +819,6 @@
 
       ],
       "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Media.MediaSource",
-      "kind": "class",
-      "expectedRubyIdentities": 4,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Media.MediaSourceType"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-
-      ],
-      "ilOnlyUnmetDependencies": [
-
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "RUNTIME_DATA"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        "ToString",
-        "GetAvailableMediaSources"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried"
     },
     {
       "name": "Microsoft.Xna.Framework.Graphics.SpriteFont",

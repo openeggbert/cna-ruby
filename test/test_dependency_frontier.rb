@@ -331,9 +331,14 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   # Every runtime-data deferral must name a real type and say exactly what input is missing.
+  #
+  # The register is **empty** now, and that is the assertion: every entry it ever held turned out to
+  # describe a producer rather than the type, the last of them Media.MediaSource, whose
+  # `GetAvailableMediaSources` queries nothing in XNA either. The per-entry rules below still run,
+  # so re-adding an unjustified entry would still fail.
   def test_every_runtime_data_deferral_is_justified
     register = REPORT.fetch("runtimeDataRegister")
-    refute_empty register
+    assert_empty register
     register.each do |name, justification|
       assert BY_NAME.key?(name), name
       refute_empty justification.to_s, name
@@ -356,7 +361,7 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 6, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 5, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and

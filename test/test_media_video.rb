@@ -107,10 +107,13 @@ class MediaVideoTest < Minitest::Test
   # ------------------------------------------------------------------------------- no runtime
 
   def test_it_implies_no_media_runtime_and_nothing_produces_one
-    %i[MediaPlayer MediaLibrary Song Album Playlist VideoPlayer MediaSource]
+    %i[MediaPlayer MediaLibrary Song Album Playlist VideoPlayer]
       .each { |absent| refute M.const_defined?(absent, false), "Media::#{absent}" }
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-    refute(symbols.any? { |symbol| symbol.include?("video") || symbol.include?("media") })
+    # `media_` left this check when MediaSource bound the four routes that measure what CNA answers
+    # for the source XNA builds from a resource string. `video` stays: no route is bound for it.
+    refute(symbols.any? { |symbol| symbol.include?("video") })
+    refute(symbols.any? { |symbol| symbol.include?("media_player") || symbol.include?("media_library") })
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
   end
 end

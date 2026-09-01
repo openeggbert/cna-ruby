@@ -262,9 +262,10 @@ class DisposableCollapseTest < Minitest::Test
     # NATIVE_RUNTIME fell from 4 to 3 when Microphone was built, which is the sixth time that
     # blocker turned out not to be one. The XACT engine cluster then emptied
     # NATIVE_RUNTIME+RUNTIME_DATA entirely -- AudioCategory was its only entry -- and the banks and
-    # the cue took Cue and WaveBank off too, which left no audio type on the frontier at all.
+    # the cue took Cue and WaveBank off too, which left no audio type on the frontier at all, and
+    # Media.MediaSource then emptied RUNTIME_DATA out of the summary as well as out of the register.
     assert_equal({"BCL_PROJECTION" => 2, "BCL_PROJECTION+NATIVE_RUNTIME" => 1,
-                  "NATIVE_RUNTIME" => 2, "RUNTIME_DATA" => 1},
+                  "NATIVE_RUNTIME" => 2},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end

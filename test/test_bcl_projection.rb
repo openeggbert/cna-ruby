@@ -53,6 +53,7 @@ class BclProjectionTest < Minitest::Test
                   "System.Collections.ObjectModel.ReadOnlyCollection`1" => "CNA::Runtime::ReadOnlyCollection",
                   # Foundation 34 added the mutable sibling, measured against the same mscorlib.
                   "System.Collections.ObjectModel.Collection`1" => "CNA::Runtime::Collection",
+                  "System.Collections.Generic.IList`1" => "Array",
                   # Foundation 33: a type token, and Ruby's is a Module.
                   "System.Type" => "Module",
                   # The Stream projection, and the one identity that reaches this register
@@ -70,6 +71,7 @@ class BclProjectionTest < Minitest::Test
                  B::EXCEPTION_BASES)
     assert_equal ["System.Action`1", "System.Attribute", "System.Byte[]",
                   "System.Collections.Generic.Dictionary`2",
+                  "System.Collections.Generic.IList`1",
                   "System.Collections.ObjectModel.Collection`1",
                   "System.Collections.ObjectModel.ReadOnlyCollection`1",
                   "System.EventArgs", "System.Exception", "System.IDisposable",

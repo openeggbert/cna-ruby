@@ -123,6 +123,14 @@ module CNA
         "System.Attribute" => "CNA::Runtime::Attribute",
         "System.Collections.ObjectModel.ReadOnlyCollection`1" => "CNA::Runtime::ReadOnlyCollection",
         "System.Collections.ObjectModel.Collection`1" => "CNA::Runtime::Collection",
+        # `IList`1` is named once in the selected surface, by
+        # `Media.MediaSource.GetAvailableMediaSources`, and what the IL actually returns there is a
+        # plain `MediaSource[]` -- `ldc.i4.1; newarr; stelem.ref; ret`. A CLR array is indexable and
+        # fixed-length, which is what a Ruby Array is; the mutable-view contract `IList<T>` carries
+        # in general is not exercised, because the only producer hands back an array it just built
+        # and keeps no reference to it. `Keys[]` from `KeyboardState.GetPressedKeys` set the same
+        # precedent for a CLR array before this register named it.
+        "System.Collections.Generic.IList`1" => "Array",
         # System.Type is a *type token* everywhere the selected XNA surface names it -- a service
         # key, a content reader's target type, an index element type, a converter's destination --
         # in all twenty-four places. Ruby's type token is a Module, and a Class is one. The single

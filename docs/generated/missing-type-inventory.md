@@ -82,7 +82,6 @@
 - `Microsoft.Xna.Framework.Media.MediaLibrary`
 - `Microsoft.Xna.Framework.Media.MediaPlayer`
 - `Microsoft.Xna.Framework.Media.MediaQueue`
-- `Microsoft.Xna.Framework.Media.MediaSource`
 - `Microsoft.Xna.Framework.Media.Picture`
 - `Microsoft.Xna.Framework.Media.PictureAlbum`
 - `Microsoft.Xna.Framework.Media.PictureAlbumCollection`

@@ -245,9 +245,10 @@ class MemberLevelDependenciesTest < Minitest::Test
     # 19 until Foundation 46 took LaunchParameters off the frontier by projecting Dictionary`2,
     # 12 until the Stream projection consumed TitleContainer, and 9 until Microphone was built. The
     # XACT engine cluster held it at 8 -- AudioCategory left and WaveBank arrived behind
-    # AudioEngine -- and building the banks and the cue took it to 6, which emptied the Audio
-    # namespace off the frontier entirely.
-    assert_equal 6, REPORT.fetch("dependencyCompleteCandidates").length
+    # AudioEngine -- building the banks and the cue took it to 6, which emptied the Audio namespace
+    # off the frontier entirely, and MediaSource took it to 5 and emptied the RUNTIME_DATA register
+    # with it.
+    assert_equal 5, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")

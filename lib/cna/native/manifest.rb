@@ -444,6 +444,13 @@ module CNA
         signature("cna_cue_pause", T[:result], [T[:handle]], ownership: "borrows cue"),
         signature("cna_cue_resume", T[:result], [T[:handle]], ownership: "borrows cue"),
         signature("cna_cue_stop", T[:result], [T[:handle], enum("CNA_AudioStopOptions")], ownership: "borrows cue"),
+        # The media-source enumeration. XNA's `MediaSource.GetAvailableMediaSources` queries nothing
+        # at all -- it builds one object from a resource string -- so these four are bound to
+        # *measure* what CNA answers for the same question, not to answer it.
+        signature("cna_media_source_get_available_count", T[:result], [T[:handle], pointer("uint32_t")], ownership: "borrows Game; caller output"),
+        signature("cna_media_source_get_type_at", T[:result], [T[:handle], T[:u32], pointer("CNA_MediaSourceType")], ownership: "borrows Game; caller output"),
+        signature("cna_media_source_get_name_size_at", T[:result], [T[:handle], T[:u32], pointer("uint64_t")], ownership: "borrows Game; caller output"),
+        signature("cna_media_source_copy_name_at", T[:result], [T[:handle], T[:u32], pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows Game; caller output"),
         signature("cna_keyboard_get_state", T[:result], [T[:handle], pointer("CNA_KeyboardState")], ownership: "caller MANAGED_VALUE output"),
         signature("cna_keyboard_get_state_for_player", T[:result], [T[:handle], enum("CNA_PlayerIndex"), pointer("CNA_KeyboardState")], ownership: "caller MANAGED_VALUE output"),
         signature("cna_keyboard_state_is_key_down", T[:result], [pointer("CNA_KeyboardState", const: true), enum("CNA_Key"), pointer("CNA_Bool")], ownership: "caller output"),

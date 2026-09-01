@@ -108,10 +108,14 @@ class VisualizationDataTest < Minitest::Test
   # Completing it implies no filler, which is the whole of what the deferral was about.
   def test_it_implies_no_media_runtime_and_nothing_fills_it
     # Video arrived in Foundation 52 from its own IL; it is not a filler either.
-    %i[MediaPlayer MediaLibrary Song Album Playlist VideoPlayer MediaSource]
+    %i[MediaPlayer MediaLibrary Song Album Playlist VideoPlayer]
       .each { |absent| refute F::Media.const_defined?(absent, false), "Media::#{absent}" }
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-    refute(symbols.any? { |symbol| symbol.include?("media") || symbol.include?("visualization") })
+    # `media` left this check when MediaSource bound the four routes that measure what CNA answers
+    # for the one source XNA builds from a resource string; `visualization` stays, because nothing
+    # is bound for the filler this type was deferred over.
+    refute(symbols.any? { |symbol| symbol.include?("visualization") })
+    refute(symbols.any? { |symbol| symbol.include?("media_player") || symbol.include?("media_library") })
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
   end
 end

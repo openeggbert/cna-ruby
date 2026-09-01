@@ -35594,6 +35594,60 @@
       ]
     },
     {
+      "name": "Microsoft.Xna.Framework.Media.MediaSource",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [],
+      "directInterfaces": [],
+      "genericParameters": [],
+      "rubyName": "Microsoft::Xna::Framework::Media::MediaSource",
+      "members": [
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "GetAvailableMediaSources",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Collections.Generic.IList`1[Microsoft.Xna.Framework.Media.MediaSource]",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "MediaSourceType",
+          "type": "Microsoft.Xna.Framework.Media.MediaSourceType",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "Name",
+          "type": "System.String",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        }
+      ]
+    },
+    {
       "name": "Microsoft.Xna.Framework.GameServiceContainer",
       "kind": "class",
       "flags": false,

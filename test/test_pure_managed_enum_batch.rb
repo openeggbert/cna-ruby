@@ -316,7 +316,10 @@ class PureManagedEnumBatchTest < Minitest::Test
     # its own IL and is asserted below to be a pure-managed projection.
     # `buffer_` left this list when the streaming audio instance was built; the fragments that
     # remain still prove the 24 enums of *this* batch bound nothing.
-    %w[cube_ media_ blend_ stencil_ sampler_
+    # `media_` left this list when Media.MediaSource bound its four measurement routes, for the
+    # same reason `microphone_`, `sound_`, `audio_` and `buffer_` left it: those routes belong to
+    # the milestones that bound them, not to this batch's 24 enums.
+    %w[cube_ blend_ stencil_ sampler_
        render_target_ index_buffer_ vertex_buffer_].each do |fragment|
       refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?(fragment) }, fragment
     end
@@ -339,7 +342,7 @@ class PureManagedEnumBatchTest < Minitest::Test
       .each { |name| assert A.const_defined?(name, false), "Audio::#{name}" }
     # VisualizationData arrived in Foundation 51 from its own IL: a constructible holder whose
     # filler, MediaPlayer.GetVisualizationData, is still one of the names below.
-    %i[MediaPlayer MediaLibrary MediaSource Song Album Artist VideoPlayer Playlist
+    %i[MediaPlayer MediaLibrary Song Album Artist VideoPlayer Playlist
        Picture PictureAlbum].each do |name|
       refute M.const_defined?(name, false), "Media::#{name}"
     end
@@ -370,7 +373,7 @@ class PureManagedEnumBatchTest < Minitest::Test
       value_types = %i[TouchPanelCapabilities TouchLocation GestureSample TouchCollection
                        TouchPanel AudioListener AudioEmitter RendererDetail VisualizationData Video
                        SoundEffect SoundEffectInstance DynamicSoundEffectInstance Microphone
-                       AudioEngine AudioCategory WaveBank SoundBank Cue]
+                       AudioEngine AudioCategory WaveBank SoundBank Cue MediaSource]
       extras = declared & value_types
       extras += declared.grep(/Exception\z/)
       assert_equal (selected + extras).uniq.sort, declared, namespace.name

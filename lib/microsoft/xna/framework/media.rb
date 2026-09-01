@@ -119,6 +119,87 @@ module Microsoft
             "MusicAndDialog" => 2
           })
         end
+
+        # Derived from the pinned Microsoft.Xna.Framework.dll IL (SHA-256 38e7093f…) and its own
+        # resource table.
+        #
+        # `Media.MediaSource` sat in the frontier's `RUNTIME_DATA` register with the reasoning
+        # "GetAvailableMediaSources enumerates the host media sources; no media stack has been
+        # queried". That is a statement about a producer, and this time the producer does not exist:
+        #
+        #     IL_0000: ldc.i4.1
+        #     IL_0001: newarr Microsoft.Xna.Framework.Media.MediaSource
+        #     IL_0007: ldloc.0
+        #     IL_0009: newobj instance void Microsoft.Xna.Framework.Media.MediaSource::.ctor()
+        #     IL_000e: stelem.ref
+        #     IL_0010: ret
+        #
+        # A one-element array holding one `new MediaSource()`, whose constructor stores
+        # `MediaSourceType.LocalDevice` and one resource string. **XNA queries no media stack
+        # either.** That is the seventh register entry retired for describing the producer rather
+        # than the type, and the plainest of them: there was nothing to query.
+        class MediaSource
+          CLR_IDENTITY = "Microsoft.Xna.Framework.Media.MediaSource"
+
+          # `.ctor` is `mediaSourceType = 0; name = FrameworkResources.WmpMediaSource`. The resource
+          # value was extracted from the pinned assembly's own resource table rather than guessed:
+          # entry `WmpMediaSource`, string record at data-section offset 22969.
+          #
+          # DEVIATION, recorded: this is a **localized** resource string, so XNA's answer depends on
+          # the UI culture; the qualified profile is the en-US assembly and this is its value.
+          # `cna_media_source_copy_name_at` answers `"Local Device"` for the same source, which a
+          # test asserts beside this constant rather than leaving the divergence undescribed.
+          WMP_MEDIA_SOURCE = "Local Windows Media Player library"
+
+          private_class_method :new
+
+          class << self
+            # One array, one element, every call -- so two calls answer two different arrays holding
+            # two different `MediaSource` objects, which is what `newarr` plus `newobj` does.
+            def GetAvailableMediaSources = [__send__(:new)]
+          end
+
+          def initialize
+            @MediaSourceType = MediaSourceType::LocalDevice
+            @Name = WMP_MEDIA_SOURCE
+          end
+
+          # One `ldfld` each.
+          attr_reader :MediaSourceType, :Name
+
+          # `return get_Name()` -- the property, not the field.
+          def ToString = self.Name
+
+          def to_s = self.ToString
+
+          private
+
+          # What CNA reports for the same source, kept reachable so a test can measure the
+          # divergence rather than this comment being the only record of it. It needs a live Game
+          # because every CNA media route is game-scoped, which XNA's static needs no part of.
+          def native_sources
+            host = CNA::Runtime::Context.native_host("MediaSource.native_sources")
+            output = CNA::Native.library.pointer_for("L", 0)
+            CNA::Native.library.call("cna_media_source_get_available_count", host.handle, output)
+            count = output[0, 4].unpack1("L")
+            (0...count).map do |index|
+              type = CNA::Native.library.pointer_for("L", 0)
+              CNA::Native.library.call("cna_media_source_get_type_at", host.handle, index, type)
+              size = CNA::Native.library.pointer_for("Q", 0)
+              CNA::Native.library.call("cna_media_source_get_name_size_at", host.handle, index, size)
+              bytes = size[0, 8].unpack1("Q")
+              name = ""
+              if bytes.positive?
+                buffer = Fiddle::Pointer.malloc(bytes, Fiddle::RUBY_FREE)
+                required = CNA::Native.library.pointer_for("Q", 0)
+                CNA::Native.library.call("cna_media_source_copy_name_at", host.handle, index,
+                                         buffer, bytes, required)
+                name = buffer[0, bytes].force_encoding(Encoding::UTF_8)
+              end
+              [MediaSourceType.coerce(type[0, 4].unpack1("L")), name]
+            end
+          end
+        end
       end
     end
   end

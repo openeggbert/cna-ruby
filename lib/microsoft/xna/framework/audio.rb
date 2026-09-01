@@ -1362,7 +1362,7 @@ module Microsoft
             @parent.nil? ? value : (value ^ @parent.hash)
           end
 
-          def to_s = ToString
+          def to_s = self.ToString
 
           private
 

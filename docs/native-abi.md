@@ -291,3 +291,15 @@ have no XNA identity; the `_subscribe_disposing_ext` routes for the two banks an
 `Disposing` is raised by this binding's own `Dispose` rather than by the runtime -- unlike
 `DynamicSoundEffectInstance.BufferNeeded`, which the runtime really raises; and the type-name
 count/copy pairs, for the reason every other family records.
+
+## The media-source enumeration
+
+Four routes bring the count to 196. They are bound to **measure** rather than to answer: XNA's
+`MediaSource.GetAvailableMediaSources` queries nothing at all, building one object from
+`MediaSourceType.LocalDevice` and a resource string, so the projection answers from the pinned
+resource value and these four exist so a test can hold CNA's answer beside it. CNA reports one
+source too, agrees it is a `LocalDevice`, and names it `"Local Device"` where the pinned assembly
+names it `"Local Windows Media Player library"`.
+
+Not bound: `cna_media_source_get_type_name_size_at` and `cna_media_source_copy_type_name_at`, which
+answer a .NET type name Ruby's own `class` already carries -- the reason every family gives.

@@ -70,7 +70,7 @@
   "expectedTypeFormula": "reference public types",
   "expectedMemberFormula": "reference public members minus enum value__ metadata storage",
   "bclProjection": {
-    "register": "CNA::Runtime::BclProjection; measured, not aspirational — the API verifier resolves every entry and the dependency frontier consumes the same register",
+    "register": "CNA::Runtime::BclProjection; measured, not aspirational \u2014 the API verifier resolves every entry and the dependency frontier consumes the same register",
     "namespace": "a projected BCL identity lives in the CNA runtime; no fabricated Ruby ::System namespace is created",
     "scope": "only a CLR identity the selected XNA surface actually names, and whose Ruby projection can be decided without guessing, is admitted",
     "types": {
@@ -85,6 +85,7 @@
       "System.Attribute": "CNA::Runtime::Attribute",
       "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection",
       "System.Collections.ObjectModel.Collection`1": "CNA::Runtime::Collection",
+      "System.Collections.Generic.IList`1": "Array",
       "System.Type": "Module"
     },
     "exceptions": {

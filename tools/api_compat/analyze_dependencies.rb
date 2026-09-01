@@ -22,9 +22,16 @@ il_types = il_inventory.fetch("types")
 # do, so that its public non-constructibility is part of the contract and a future producer has the
 # internal path the CLR gives it. What keeps a type here is that its values, or the arguments its
 # internal constructor needs, do not exist on this host.
-RUNTIME_DATA = {
-  "Microsoft.Xna.Framework.Media.MediaSource" => "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried",
-}.freeze
+RUNTIME_DATA = {}.freeze
+
+# MediaSource was the register's last entry, until the XACT cluster's audit reached it. The
+# reasoning was "GetAvailableMediaSources enumerates the host media sources; no media stack has been
+# queried" -- another statement about a producer, and the plainest wrong one of the seven, because
+# the producer does not exist: the method is `ldc.i4.1; newarr; newobj; stelem.ref; ret`, a
+# one-element array holding one object built from `MediaSourceType.LocalDevice` and a resource
+# string. XNA queries no media stack either. The register is now empty; the rule it encoded --
+# defer a type whose *values* can only come from a runtime this binding has not measured -- stands,
+# and every entry it ever held turned out to describe a producer instead.
 
 # AudioCategory was in this register until the XACT engine cluster, on the reasoning that it is "an
 # XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding
