@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 86",
+  "milestone": "Foundation 87",
   "platform": "Linux x86-64 MRI Ruby 3.3.8",
   "cnaAbi": "0.21.0 (admitted set: 0.7.0, 0.21.0)",
   "capabilities": [
@@ -849,6 +849,12 @@
       "category": "VERIFIED_NATIVE",
       "status": "five more of GraphicsDevice's members; the device stays partial and still draws nothing",
       "evidence": "Microsoft.Xna.Framework.Graphics.GraphicsDevice's Indices, SetVertexBuffer (both overloads), SetVertexBuffers and GetVertexBuffers -- MISSING_MEMBER 58 to 53, OVERLOAD_MAPPING_MISMATCH 27 to 24 and TOTAL_DIAGNOSTICS 143 to 135. Both getters answer the objects the caller bound, because XNA's are a field read and an Array.Copy over a cached array, and because CNA hands back handles with no route from a native object back to one -- the rule TextureCollection already records. A null vertex buffer unbinds every stream rather than raising, and so does a null or empty binding array; a populated array is validated binding by binding before any of it is applied, with a null entry ArgumentException(NullNotAllowed) and a foreign buffer InvalidOperationException (InvalidDevice), and the test asserts that a refused call left the previous binding in place. One cna_graphics_device_set_vertex_buffers call carries the whole array because that route validates the whole array before applying any of it. DELIBERATELY UNBOUND: get_vertex_buffer_count, copy_vertex_buffers and get_index_buffer -- XNA's getters are field reads so nothing in lib/ would call them, and a route bound for a test is dead native surface; the test reaches all three through raw Fiddle the way renderer_environment.rb does, which is also what lets it prove the offset and frequency went into the right halves of CNA_VertexBufferBinding. Four routes to 379, ABI_MISMATCHES=0. Seven of seven planted defects are caught. Nothing here draws: a bound buffer is not a draw call. See docs/graphics-device-binding-evidence.md."
+    },
+    {
+      "id": "graphics.device-render-targets",
+      "category": "VERIFIED_NATIVE",
+      "status": "four more of GraphicsDevice's members; a target can be made current, and nothing draws",
+      "evidence": "Microsoft.Xna.Framework.Graphics.GraphicsDevice's SetRenderTarget (both overloads), SetRenderTargets and GetRenderTargets -- MISSING_MEMBER 53 to 49, OVERLOAD_MAPPING_MISMATCH 24 to 21 and TOTAL_DIAGNOSTICS 135 to 128. XNA's two single-target overloads build one binding and call the internal array form, and a null target calls it with (null, 0) -- restoring the back buffer rather than raising -- so this projection forwards the same way and CNA's two single-target routes have no production caller and stay unbound. The four managed rules are projected exactly: NullNotAllowed, InvalidDevice, CannotSetAlreadyUsedRenderTarget and RenderTargetsMustMatch, all checked before any binding is applied. The IL's early-out -- an array equal to the one already bound returns untouched -- is projected too, and it is not an optimisation: re-binding a DiscardContents target is what discards its contents, so a redundant call that re-applied would throw a frame away. RenderTargetsMustMatch measures a cube by its edge, which is both of its dimensions, and that is asserted from both sides. The profile limit stays CNA's to answer, as the occlusion query's does; measured beside it, HEADLESS refuses a cube face alongside another target with CNA_RESULT_NOT_SUPPORTED, which is a renderer capability rather than an XNA rule, so the test requires only that the managed answer is not an ArgumentError. One route to 380 and one layout to 62 -- CNA_RenderTargetBinding, whose array_slice this binding never sets because XNA's binding carries a cube face and nothing else. get_render_target_count and copy_render_targets stay unbound and the test reaches them through raw Fiddle. Seven of seven planted defects are caught. Nothing here draws. See docs/graphics-device-render-target-evidence.md."
     }
   ]
 }

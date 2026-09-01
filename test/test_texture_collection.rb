@@ -232,7 +232,7 @@ class TextureCollectionTest < Minitest::Test
       refute G.const_defined?(absent, false), absent.to_s
     end
     # `BlendState` and `DepthStencilState` left this list when the device's state slice landed.
-    %i[DrawPrimitives DrawIndexedPrimitives DrawUserPrimitives SetRenderTarget].each do |absent|
+    %i[DrawPrimitives DrawIndexedPrimitives DrawUserPrimitives].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
   end

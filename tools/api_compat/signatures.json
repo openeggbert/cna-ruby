@@ -32269,6 +32269,87 @@
           "parameters": [
 
           ]
+        },
+        {
+          "kind": "method",
+          "name": "SetRenderTarget",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "renderTarget",
+              "type": "Microsoft.Xna.Framework.Graphics.RenderTarget2D",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetRenderTarget",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "renderTarget",
+              "type": "Microsoft.Xna.Framework.Graphics.RenderTargetCube",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "cubeMapFace",
+              "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetRenderTargets",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "renderTargets",
+              "type": "Microsoft.Xna.Framework.Graphics.RenderTargetBinding[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetRenderTargets",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Graphics.RenderTargetBinding[]",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::GraphicsDevice"

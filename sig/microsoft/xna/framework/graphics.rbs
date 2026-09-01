@@ -292,6 +292,9 @@ module Microsoft
           def SetVertexBuffer: (VertexBuffer? vertexBuffer, ?Integer? vertexOffset) -> nil
           def SetVertexBuffers: (?Array[VertexBufferBinding]? vertexBuffers) -> nil
           def GetVertexBuffers: () -> Array[VertexBufferBinding]
+          def SetRenderTarget: (RenderTarget2D | RenderTargetCube | nil renderTarget, ?CubeMapFace? cubeMapFace) -> nil
+          def SetRenderTargets: (*untyped renderTargets) -> nil
+          def GetRenderTargets: () -> Array[RenderTargetBinding]
         end
 
         class SamplerStateCollection

@@ -178,7 +178,8 @@ class OcclusionQueryTest < Minitest::Test
     # is -- a coverage ratio from a boolean count is 1/area, and CNA says so in its own header.
     refute_includes symbols, "cna_occlusion_query_get_is_pixel_count_precise_ext"
     assert_includes symbols, "cna_occlusion_query_has_renderer"
-    %i[DrawPrimitives DrawIndexedPrimitives SetRenderTarget]
+    # `SetRenderTarget` left this list when the device's render-target slice landed.
+    %i[DrawPrimitives DrawIndexedPrimitives]
       .each { |absent| refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:layouts), CNA::Native::Layouts::STRUCTURES.length

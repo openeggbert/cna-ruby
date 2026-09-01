@@ -21,7 +21,7 @@ module NativeSurfaceCensus
 
   # The census the repository last reviewed. `test_native_abi_gate.rb` compares the two, so this
   # file cannot drift from the manifest silently in either direction.
-  REVIEWED = { functions: 379, callbacks: 5, constants: 133, layouts: 61 }.freeze
+  REVIEWED = { functions: 380, callbacks: 5, constants: 133, layouts: 62 }.freeze
 end
 
 # The strict XNA scoreboard, for exactly the same reason and with exactly the same rule: a milestone
@@ -31,12 +31,12 @@ end
 # is the measurement; this is the reviewed expectation of it.
 module ReviewedScoreboard
   TARGET_TYPES = 200
-  TARGET_MEMBERS = 2365
+  TARGET_MEMBERS = 2369
   COMPLETE_TYPES = 198
   PARTIAL_TYPES = 2
   MISSING_TYPES = 57
-  MISSING_MEMBER = 53
-  OVERLOAD_MAPPING_MISMATCH = 24
+  MISSING_MEMBER = 49
+  OVERLOAD_MAPPING_MISMATCH = 21
   BCL_PROJECTED_IDENTITIES = 22
   BCL_EXCEPTION_BASES = 2
   BCL_THROWN_EXCEPTIONS = 8
@@ -51,6 +51,7 @@ module ReviewedScoreboard
     BlendFactor BlendFactor= MultiSampleMask MultiSampleMask= ReferenceStencil ReferenceStencil=
     ScissorRectangle ScissorRectangle=
     Indices Indices= SetVertexBuffer SetVertexBuffers GetVertexBuffers
+    SetRenderTarget SetRenderTargets GetRenderTargets
   ].sort.freeze
 
   # The members a type still owes, or `[]` once the strict report calls it complete.

@@ -54,7 +54,7 @@ class SamplerStateCollectionTest < Minitest::Test
     # ends an active EffectPass, and no Effect was projected then. Both halves have since landed,
     # and what this milestone claimed is unchanged: it added the two collections and nothing else.
     %w[BlendState DepthStencilState RasterizerState].each { |name| refute_includes remainder, name }
-    %w[SetRenderTarget DrawPrimitives Present].each { |name| assert_includes remainder, name }
+    %w[DrawPrimitives Present Reset].each { |name| assert_includes remainder, name }
     refute_includes FRONTIER.fetch("dependencyCompleteCandidates").map { |c| c.fetch("name") }, NAME
   end
 
@@ -212,7 +212,7 @@ class SamplerStateCollectionTest < Minitest::Test
   def test_it_adds_no_device_state_property_effect_or_draw_surface
     # The three state properties left this list when the device's state slice landed; what this
     # milestone claimed, and still claims, is that **it** added neither them nor any draw surface.
-    %i[SetRenderTarget DrawPrimitives DrawUserPrimitives].each do |absent|
+    %i[DrawPrimitives DrawUserPrimitives DrawIndexedPrimitives].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
     # The nine `Effect` types left this list when the cluster was built and `RenderTarget2D` when

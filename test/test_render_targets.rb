@@ -257,14 +257,18 @@ class RenderTargetsTest < Minitest::Test
     # Binding a target is GraphicsDevice.SetRenderTarget, which this binding does not project, so
     # the two device routes stay unbound and nothing here can make a target current.
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
+    # `set_render_targets` left this list when the device's render-target slice landed -- which is
+    # the same statement from the other side: a target that exists became a target that can be bound,
+    # and **this** milestone bound none. The two single-target routes stay unbound because XNA's own
+    # overloads forward to the array form.
     %w[cna_graphics_device_set_render_target2d cna_graphics_device_set_render_target_cube
-       cna_graphics_device_set_render_targets cna_graphics_device_get_render_target_count
+       cna_graphics_device_get_render_target_count
        cna_render_target_pool_create cna_render_target_pool_acquire
        cna_render_target_subscribe_content_lost
        cna_render_target_usage_preserves_contents].each do |absent|
       refute_includes symbols, absent
     end
-    %i[SetRenderTarget SetRenderTargets GetRenderTargets]
+    %i[DrawPrimitives DrawIndexedPrimitives Present]
       .each { |absent| refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:layouts), CNA::Native::Layouts::STRUCTURES.length

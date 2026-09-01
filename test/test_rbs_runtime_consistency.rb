@@ -858,10 +858,13 @@ class RbsRuntimeConsistencyTest < Minitest::Test
       .each { |present| assert_includes source, "class #{present}\n" }
     %w[ResourceCreatedEventArgs ResourceDestroyedEventArgs]
       .each { |present| assert_includes source, "class #{present} <" }
-    # `SetRenderTarget` and its two siblings are `GraphicsDevice` members, and a render target that
-    # exists is not a render target that can be bound.
-    %w[SetRenderTarget SetRenderTargets DrawPrimitives DrawIndexedPrimitives GetRenderTargets]
+    # `SetRenderTarget` and its two siblings arrived with the device's render-target slice, so a
+    # target that exists is a target that can be bound now. What this batch claimed, and still
+    # claims, is that **it** declared none of it -- and nothing draws yet.
+    %w[DrawPrimitives DrawIndexedPrimitives DrawUserPrimitives]
       .each { |absent| refute_includes source, absent }
+    %w[SetRenderTarget SetRenderTargets GetRenderTargets]
+      .each { |present| assert_includes source, present }
   end
 
   private

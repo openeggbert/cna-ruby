@@ -24,7 +24,7 @@ class GraphicsDeviceStateTest < Minitest::Test
     remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME)
     SLICE.each { |member| refute_includes remainder.join(" "), "::#{member} ", member }
     # The device is still partial, and these are some of what it still owes.
-    %w[DrawPrimitives SetRenderTarget Present Reset Adapter PresentationParameters]
+    %w[DrawPrimitives Present Reset Adapter PresentationParameters]
       .each { |member| assert_includes remainder.join(" "), "::#{member} ", member }
     assert_equal ReviewedScoreboard::PARTIAL_TYPES, STRICT.fetch("PARTIAL_TYPES")
   end
@@ -197,9 +197,10 @@ class GraphicsDeviceStateTest < Minitest::Test
   def test_it_adds_no_draw_target_or_presentation_member
     # `SetVertexBuffer` and `Indices` arrived with the binding slice that followed this one; what
     # this milestone claimed, and still claims, is that **it** added neither.
-    %i[DrawPrimitives DrawIndexedPrimitives DrawUserPrimitives SetRenderTarget SetRenderTargets
-       GetRenderTargets Present Reset Adapter PresentationParameters GraphicsProfile
-       DisplayMode].each do |absent|
+    # The render-target trio arrived two slices later; what this milestone claimed, and still
+    # claims, is that **it** added none of it.
+    %i[DrawPrimitives DrawIndexedPrimitives DrawUserPrimitives Present Reset Adapter
+       PresentationParameters GraphicsProfile DisplayMode].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)

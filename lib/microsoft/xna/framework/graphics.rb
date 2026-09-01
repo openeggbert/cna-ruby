@@ -803,6 +803,7 @@ module Microsoft
             @invalidated = false
             @index_buffer = nil
             @vertex_buffer_bindings = []
+            @render_target_bindings = []
           end
 
           def IsDisposed = @invalidated || @game.__send__(:disposed?)
@@ -1049,6 +1050,49 @@ module Microsoft
           # `newarr` + `Array.Copy`: a fresh array over the same bindings, every call.
           def GetVertexBuffers = @vertex_buffer_bindings.dup
 
+          #     SetRenderTarget(renderTarget)                  -- a RenderTarget2D or null
+          #     SetRenderTarget(renderTarget, cubeMapFace)     -- a RenderTargetCube and a face
+          #
+          # Both forward to the array form, and a null target forwards `(null, 0)`: the back buffer
+          # comes back rather than an exception.
+          def SetRenderTarget(renderTarget, cubeMapFace = nil)
+            if renderTarget.nil?
+              raise ::ArgumentError, "SetRenderTarget(nil) takes no cubeMapFace" unless cubeMapFace.nil?
+
+              return set_render_target_bindings([])
+            end
+
+            binding = cubeMapFace.nil? ? RenderTargetBinding.new(renderTarget)
+                                       : RenderTargetBinding.new(renderTarget, cubeMapFace)
+            set_render_target_bindings([binding])
+          end
+
+          # `params RenderTargetBinding[]`: no argument at all, `nil` and an empty array are the same
+          # restore, and anything else is validated before any of it is applied.
+          def SetRenderTargets(*renderTargets)
+            bindings = renderTargets.length == 1 && (renderTargets[0].nil? || renderTargets[0].is_a?(::Array)) ?
+                         renderTargets[0] : renderTargets
+            return set_render_target_bindings([]) if bindings.nil? || bindings.empty?
+
+            bindings.each_with_index do |binding, index|
+              raise ::ArgumentError, "NullNotAllowed" if binding.nil?
+              unless binding.instance_of?(RenderTargetBinding)
+                raise ::TypeError, "every entry must be a RenderTargetBinding"
+              end
+
+              require_same_device(binding.RenderTarget)
+              if bindings[0...index].any? { |earlier| earlier.RenderTarget.equal?(binding.RenderTarget) }
+                raise ::ArgumentError, "CannotSetAlreadyUsedRenderTarget"
+              end
+              unless same_target_shape?(bindings[0].RenderTarget, binding.RenderTarget)
+                raise ::ArgumentError, "RenderTargetsMustMatch"
+              end
+            end
+            set_render_target_bindings(bindings.dup)
+          end
+
+          def GetRenderTargets = @render_target_bindings.dup
+
           def Clear(color)
             raise TypeError, "GraphicsDevice.Clear foundation overload expects Color" unless color.instance_of?(Color)
             divisor = 255.0
@@ -1127,6 +1171,56 @@ module Microsoft
             end
             @vertex_buffer_bindings = bindings
             nil
+          end
+
+          # Every binding in one call, because `cna_graphics_device_set_render_targets` validates the
+          # whole array before applying any of it -- and an array identical to the one already bound
+          # returns untouched, which is the early-out the IL performs before anything else. That
+          # matters rather than being an optimisation: re-binding a `DiscardContents` target is what
+          # discards its contents.
+          def set_render_target_bindings(bindings)
+            return nil if same_render_target_bindings?(bindings)
+
+            if bindings.empty?
+              CNA::Native.library.call("cna_graphics_device_set_render_targets", native_handle, 0, 0)
+            else
+              buffer = Fiddle::Pointer.malloc(24 * bindings.length, Fiddle::RUBY_FREE)
+              bindings.each_with_index do |binding, index|
+                record = CNA::Native::Layouts::RenderTargetBinding.new
+                record.write_u64(8, binding.RenderTarget.__send__(:native_handle))
+                record.write_i32(16, 0)
+                record.write_u32(20, binding.CubeMapFace.to_i)
+                buffer[24 * index, 24] = record.pointer[0, 24]
+              end
+              CNA::Native.library.call("cna_graphics_device_set_render_targets", native_handle,
+                                       buffer, bindings.length)
+            end
+            @render_target_bindings = bindings
+            nil
+          end
+
+          def same_render_target_bindings?(bindings)
+            return false unless bindings.length == @render_target_bindings.length
+
+            bindings.each_with_index.all? do |binding, index|
+              current = @render_target_bindings[index]
+              current.RenderTarget.equal?(binding.RenderTarget) &&
+                current.CubeMapFace.to_i == binding.CubeMapFace.to_i
+            end
+          end
+
+          # `RenderTargetsMustMatch`: every target in one binding array is the same size and sample
+          # count. A cube's edge is both its dimensions.
+          def same_target_shape?(first, other)
+            target_shape(first) == target_shape(other)
+          end
+
+          def target_shape(target)
+            if target.is_a?(RenderTargetCube)
+              [target.Size, target.Size, target.MultiSampleCount]
+            else
+              [target.Width, target.Height, target.MultiSampleCount]
+            end
           end
 
           # `InvalidDevice`: a resource belongs to the device that made it.

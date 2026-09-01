@@ -486,6 +486,24 @@ module CNA
         end
       end
 
+      # What `cna_graphics_device_set_render_targets` takes. `array_slice` is a 3D/array-target
+      # subresource this binding never sets: XNA's `RenderTargetBinding` carries a cube face and
+      # nothing else, and a non-zero slice is refused by the route anyway.
+      class RenderTargetBinding < Structure
+        layout size: 24, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("render_target", "CNA_Handle", 8, 8),
+          Layouts.field("array_slice", "int32_t", 16, 4),
+          Layouts.field("cube_map_face", "CNA_CubeMapFace", 20, 4)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       class RenderTargetInfo < Structure
         layout size: 44, alignment: 4, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

@@ -1060,6 +1060,39 @@
           "parameters": [
 
           ]
+        },
+        {
+          "kind": "method",
+          "name": "SetRenderTarget",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.RenderTarget2D"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetRenderTarget",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.RenderTargetCube",
+            "Microsoft.Xna.Framework.Graphics.CubeMapFace"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetRenderTargets",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.RenderTargetBinding[]"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetRenderTargets",
+          "static": false,
+          "parameters": [
+
+          ]
         }
       ]
     },

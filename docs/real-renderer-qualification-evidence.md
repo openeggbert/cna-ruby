@@ -159,6 +159,18 @@ CNA_TEST_FX=.../CnaConformanceEffect.fxb SDL_VIDEODRIVER=x11 \
 xvfb-run -a -s "-screen 0 1280x800x24 -nolisten tcp" rake test
 ```
 
+**`xvfb-run` alone is not isolation on this host, and leaving it out has a visible cost.** This
+machine runs a Wayland session; `xvfb-run` sets `DISPLAY` but leaves `WAYLAND_DISPLAY` and
+`XDG_RUNTIME_DIR` alone, and SDL prefers Wayland when it can reach it. A windowed artifact run that
+way does not use the virtual display at all: it opens **real windows on the developer's desktop**,
+one per `Game`, which a churn or a whole-suite run turns into hundreds. That happened during
+Foundation 81-86 development and was stopped when the developer reported it.
+
+The rule, and it is not optional: a windowed artifact runs under `xvfb-run` **and**
+`SDL_VIDEODRIVER=x11`, with `WAYLAND_DISPLAY` unset. The first sends the X traffic to the virtual
+server, the second stops SDL reaching past it. The `HEADLESS` artifact creates no window at all and
+needs neither.
+
 **`SDL_VIDEODRIVER=x11` in that command is load-bearing, and Foundation 81 measured what it is
 worth.** This host runs a Wayland session, and `xvfb-run` sets `DISPLAY` without taking
 `WAYLAND_DISPLAY` — or the default `wayland-0` socket under `XDG_RUNTIME_DIR` — away, so SDL picks
@@ -183,8 +195,8 @@ the GLES/EGL artifact — `OPENGL33` under the same command has never shown it �
 as an environment flake rather than a defect in anything this repository builds. What it costs is
 that a single green run of that artifact is not proof; two are.
 
-1558 runs / 0 failures / 0 errors under each of the three artifacts at Foundation 86 — 50525
-assertions and 21 skips on `HEADLESS`, 50540 and 17 on `OPENGL33`, 50626 and **none** on the
+1567 runs / 0 failures / 0 errors under each of the three artifacts at Foundation 87 — 50582
+assertions and 21 skips on `HEADLESS`, 50600 and 17 on `OPENGL33`, 50686 and **none** on the
 compiled-effects build — the difference being exactly the tests whose
 behaviour needs a capability the artifact does not have, each of which says so. The environment
 measurement itself is failure-tolerant: an unmeasurable environment is reported as unmeasured rather
@@ -201,7 +213,7 @@ export DISPLAY=:77 SDL_VIDEODRIVER=x11    # the driver is not optional -- see ab
 
 ruby -Ilib tools/native_abi/verify.rb            # ABI_MISMATCHES=0 on this artifact too
 ruby -Ilib tools/run_renderer_qualification.rb   # writes docs/generated/renderer-native-report.json
-rake test                                        # 1558 runs, 0 failures, 17 skips on this artifact
+rake test                                        # 1567 runs, 0 failures, 17 skips on this artifact
 ```
 
 Running it against the HEADLESS artifact writes the second entry of the same report, and the

@@ -424,6 +424,12 @@ module CNA
         signature("cna_graphics_device_set_vertex_buffer_offset", T[:result], [T[:handle], handle("CNA_VertexBufferHandle"), T[:i32]], ownership: "borrows device and buffer"),
         signature("cna_graphics_device_set_vertex_buffers", T[:result], [T[:handle], pointer("CNA_VertexBufferBinding", const: true), T[:u64]], ownership: "borrows device; copies the bindings"),
         signature("cna_graphics_device_set_index_buffer", T[:result], [T[:handle], handle("CNA_IndexBufferHandle")], ownership: "borrows device and buffer"),
+        # `SetRenderTarget`'s two overloads forward to the array form in the IL, so this projection
+        # forwards to `cna_graphics_device_set_render_targets` too and the two single-target routes
+        # -- `set_render_target2d` and `set_render_target_cube` -- have no production caller and stay
+        # unbound. `get_render_target_count` and `copy_render_targets` stay unbound for the reason
+        # the vertex read-backs do: `GetRenderTargets` is an `Array.Copy` over a cached array.
+        signature("cna_graphics_device_set_render_targets", T[:result], [T[:handle], pointer("CNA_RenderTargetBinding", const: true), T[:u64]], ownership: "borrows device; copies the bindings"),
         # The Effect cluster. Every getter in it returns an **owned view**: `cna_effect_get_parameters`
         # hands back a fresh collection handle on every call, and so does
         # `cna_effect_parameter_collection_get_at` for every element -- measured, two calls answer two

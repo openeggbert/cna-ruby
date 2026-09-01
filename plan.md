@@ -244,9 +244,10 @@ delimited and checked against `docs/generated/missing-type-inventory.md` by
 `BoundingSphereConverter`
 <!-- absent-types:end -->
 
-The graphics runtime is the large remaining area. `GraphicsDevice` still owes twenty-six members and
+The graphics runtime is the large remaining area. `GraphicsDevice` still owes twenty-three members and
 `GraphicsDeviceManager` fifteen, and they are the only two partial types left. `SetRenderTarget`
-is one of the twenty-six, which is why this binding can create a render target and not bind one: `SpriteBatch`
+is projected now, so a render target can be made current; what is left is the draw calls that
+would use it: `SpriteBatch`
 completed when the `Effect` cluster gave `Begin` its last two overloads.
 
 Types a reader might expect on that list and will not find, because they are **complete**: the
