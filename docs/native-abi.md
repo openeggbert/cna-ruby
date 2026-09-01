@@ -303,3 +303,25 @@ names it `"Local Windows Media Player library"`.
 
 Not bound: `cna_media_source_get_type_name_size_at` and `cna_media_source_copy_type_name_at`, which
 answer a .NET type name Ruby's own `class` already carries -- the reason every family gives.
+
+## The sprite font
+
+Eight routes bring the count to 204, and two layouts bring those to 27: `CNA_SpriteFontInfo` (32/8)
+and `CNA_SpriteFontGlyph` (56/4). No new callback and no new constant.
+
+`CNA_SpriteFontGlyph` is XNA's four parallel `List`s -- `glyphData`, `croppingData`, `characterMap`
+and `kerning` -- as one array of records, and the whole array is read once when a font is produced.
+That is what XNA does too: its lists are built by the content reader and never re-read.
+
+`cna_content_manager_load_sprite_font` answers **two** owned handles, the font and its atlas
+texture, and destroying the font does not release the texture. Since no `Texture2D` is projected for
+it, the font owns both -- `docs/sprite-font-evidence.md` §5 records the deviation that makes a
+non-disposable XNA type disposable here.
+
+`CNA_Char16` is the first 16-bit scalar any bound route passes by value, which is why the manifest
+gained a `char16` entry rather than spelling it as a pointer with depth zero.
+
+Not bound: `cna_sprite_font_create`, because XNA gives a consumer no constructor and the content
+manager is the only producer; and `cna_sprite_font_copy_characters`, because the same characters
+arrive in the glyph array that `MeasureString` needs anyway, so reading them twice would be two
+sources for one fact.

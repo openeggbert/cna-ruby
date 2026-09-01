@@ -54,6 +54,9 @@ class BclProjectionTest < Minitest::Test
                   # Foundation 34 added the mutable sibling, measured against the same mscorlib.
                   "System.Collections.ObjectModel.Collection`1" => "CNA::Runtime::Collection",
                   "System.Collections.Generic.IList`1" => "Array",
+                  "System.Char" => "Integer",
+                  "System.Nullable`1" => "NilClass",
+                  "System.Text.StringBuilder" => "String",
                   # Foundation 33: a type token, and Ruby's is a Module.
                   "System.Type" => "Module",
                   # The Stream projection, and the one identity that reaches this register
@@ -69,17 +72,16 @@ class BclProjectionTest < Minitest::Test
     assert_equal({"System.Exception" => "StandardError",
                   "System.Runtime.InteropServices.ExternalException" => "StandardError"},
                  B::EXCEPTION_BASES)
-    assert_equal ["System.Action`1", "System.Attribute", "System.Byte[]",
-                  "System.Collections.Generic.Dictionary`2",
-                  "System.Collections.Generic.IList`1",
+    assert_equal ["System.Action`1", "System.Attribute", "System.Byte[]", "System.Char",
+                  "System.Collections.Generic.Dictionary`2", "System.Collections.Generic.IList`1",
                   "System.Collections.ObjectModel.Collection`1",
-                  "System.Collections.ObjectModel.ReadOnlyCollection`1",
-                  "System.EventArgs", "System.Exception", "System.IDisposable",
-                  "System.IO.SeekOrigin", "System.IO.Stream", "System.IServiceProvider",
+                  "System.Collections.ObjectModel.ReadOnlyCollection`1", "System.EventArgs",
+                  "System.Exception", "System.IDisposable", "System.IO.SeekOrigin", "System.IO.Stream",
+                  "System.IServiceProvider", "System.Nullable`1",
                   "System.Runtime.InteropServices.ExternalException",
                   "System.Runtime.Serialization.SerializationInfo",
-                  "System.Runtime.Serialization.StreamingContext", "System.TimeSpan",
-                  "System.Type"], B.identities
+                  "System.Runtime.Serialization.StreamingContext", "System.Text.StringBuilder",
+                  "System.TimeSpan", "System.Type"], B.identities
 
     B::TYPES.merge(B::EXCEPTION_BASES).each_value do |path|
       resolved = path.split("::").reduce(Object) { |scope, part| scope.const_get(part, false) }
@@ -91,10 +93,11 @@ class BclProjectionTest < Minitest::Test
     # -- which the pinned reference does name, in the protected constructor two XNA exception types
     # declare. StreamingContextStates stays off because that surface never names it: it is a support
     # enum of the projection, not an identity the register admits.
-    # System.IO.Stream was here until its own projection landed. StringBuilder still is: SpriteFont
-    # names it and nothing has measured it.
-    %w[System.Text.StringBuilder
-       System.Runtime.Serialization.StreamingContextStates
+    # System.IO.Stream was here until its own projection landed, and System.Text.StringBuilder until
+    # SpriteFont's milestone measured it: a CLR StringBuilder is a mutable string and a Ruby String
+    # is one, which is also what collapses SpriteFont's two MeasureString overloads exactly rather
+    # than approximately.
+    %w[System.Runtime.Serialization.StreamingContextStates
        System.Runtime.Serialization.SerializationException]
       .each { |absent| refute_includes B.identities, absent }
   end

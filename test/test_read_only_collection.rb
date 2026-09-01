@@ -394,9 +394,11 @@ class ReadOnlyCollectionTest < Minitest::Test
     # first shipped `ReadOnlyCollection` this projection produces, which is what the assertion
     # below now measures instead of a blocker.
     refute(by_name.key?("Microsoft.Xna.Framework.Audio.Microphone"))
-    font = by_name.fetch("Microsoft.Xna.Framework.Graphics.SpriteFont")
-    assert_equal ["System.Char", "System.Nullable`1[System.Char]", "System.Text.StringBuilder"],
-                 font.fetch("unmappedBclTypes")
+    # `SpriteFont` was the last candidate whose unmapped set this projection could still be read
+    # from -- `System.Char`, `Nullable`1[Char]` and `StringBuilder` -- and its own milestone decided
+    # all three, so it left the frontier too. What survives is the claim that mattered: its
+    # `Characters` is a shipped `ReadOnlyCollection`, the second this projection produces.
+    refute(by_name.key?("Microsoft.Xna.Framework.Graphics.SpriteFont"))
 
     FRONTIER.fetch("dependencyCompleteCandidates").each do |entry|
       assert(entry.fetch("unmappedBclTypes").none? { |identity| identity.include?("ReadOnlyCollection") },
@@ -415,12 +417,14 @@ class ReadOnlyCollectionTest < Minitest::Test
   # projected — the blind spot Foundation 26 closed, seen from the other side.
   def test_a_constructed_form_reduces_to_the_definition_and_its_arguments
     assert_includes FRONTIER.fetch("mappedBclTypes"), "System.Single"
-    refute_includes FRONTIER.fetch("mappedBclTypes"), "System.Char"
-    # Single is mapped, so ReadOnlyCollection`1[System.Single] is fully mapped; Char is not, so the
-    # SpriteFont form still reports the argument rather than the whole constructed string.
-    assert_includes FRONTIER.fetch("dependencyCompleteCandidates")
-                            .find { |entry| entry.fetch("name").end_with?("SpriteFont") }
-                            .fetch("unmappedBclTypes"), "System.Char"
+    # `System.Char` joined the mapped set when SpriteFont's milestone decided it, which is the other
+    # half of the same demonstration: while it was unmapped, the SpriteFont form reported the *type
+    # argument* rather than the whole constructed string, and now that it is mapped the constructed
+    # form reduces completely and the candidate is gone. Both halves are asserted from the report.
+    assert_includes FRONTIER.fetch("mappedBclTypes"), "System.Char"
+    assert_includes FRONTIER.fetch("mappedBclTypes"), "System.Text.StringBuilder"
+    refute(FRONTIER.fetch("dependencyCompleteCandidates")
+                   .any? { |entry| entry.fetch("name").end_with?("SpriteFont") })
   end
 
   # No XNA type was completed *by this projection*. The types that name ReadOnlyCollection`1 were
@@ -429,11 +433,11 @@ class ReadOnlyCollectionTest < Minitest::Test
   #
   # `Microphone` left this list when it was built: its `All` is the first shipped member whose value
   # really is a `ReadOnlyCollection`, which is a later milestone consuming this projection rather
-  # than this projection completing anything. `test_microphone.rb` measures that member.
+  # than this projection completing anything. `test_microphone.rb` measures that member, and
+  # `SpriteFont.Characters` -- the second such member -- left the same way.
   def test_no_xna_type_became_complete_because_of_this_projection
     %w[
       Microsoft.Xna.Framework.Graphics.GraphicsAdapter
-      Microsoft.Xna.Framework.Graphics.SpriteFont
       Microsoft.Xna.Framework.Graphics.ModelBoneCollection
       Microsoft.Xna.Framework.Graphics.ModelEffectCollection
       Microsoft.Xna.Framework.Graphics.ModelMeshCollection

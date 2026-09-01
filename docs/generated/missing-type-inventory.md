@@ -62,7 +62,6 @@
 - `Microsoft.Xna.Framework.Graphics.SamplerState`
 - `Microsoft.Xna.Framework.Graphics.SamplerStateCollection`
 - `Microsoft.Xna.Framework.Graphics.SkinnedEffect`
-- `Microsoft.Xna.Framework.Graphics.SpriteFont`
 - `Microsoft.Xna.Framework.Graphics.Texture3D`
 - `Microsoft.Xna.Framework.Graphics.TextureCube`
 - `Microsoft.Xna.Framework.Graphics.VertexBuffer`

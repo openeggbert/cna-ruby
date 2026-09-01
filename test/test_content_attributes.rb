@@ -177,9 +177,10 @@ class ContentAttributesTest < Minitest::Test
   end
 
   def test_the_cluster_adds_no_content_pipeline
-    # `TitleContainer` exists now and is deliberately still named here: it opens a stream over a
-    # title file and is not a content pipeline, so completing it does not weaken this claim.
-    refute F::Graphics.const_defined?(:SpriteFont, false)
+    # `TitleContainer` and `SpriteFont` exist now; what this milestone claimed, and still claims,
+    # is that **it** built no pipeline. The native census below is what measures that, and it is the
+    # assertion that has survived every later milestone unchanged.
+    refute F::Content.const_defined?(:ContentReader, false)
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length
   end

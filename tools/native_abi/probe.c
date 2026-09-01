@@ -190,6 +190,14 @@ CHECK_FN(cna_media_source_get_available_count, CNA_Result, (CNA_Handle, uint32_t
 CHECK_FN(cna_media_source_get_type_at, CNA_Result, (CNA_Handle, uint32_t, CNA_MediaSourceType*));
 CHECK_FN(cna_media_source_get_name_size_at, CNA_Result, (CNA_Handle, uint32_t, uint64_t*));
 CHECK_FN(cna_media_source_copy_name_at, CNA_Result, (CNA_Handle, uint32_t, char*, uint64_t, uint64_t*));
+CHECK_FN(cna_content_manager_load_sprite_font, CNA_Result, (CNA_Handle, CNA_StringView, CNA_Handle*, CNA_Handle*));
+CHECK_FN(cna_sprite_font_get_info, CNA_Result, (CNA_Handle, CNA_SpriteFontInfo*));
+CHECK_FN(cna_sprite_font_copy_glyphs, CNA_Result, (CNA_Handle, CNA_SpriteFontGlyph*, uint64_t, uint64_t*));
+CHECK_FN(cna_sprite_font_set_default_character, CNA_Result, (CNA_Handle, CNA_Bool, CNA_Char16));
+CHECK_FN(cna_sprite_font_set_line_spacing, CNA_Result, (CNA_Handle, int32_t));
+CHECK_FN(cna_sprite_font_set_spacing, CNA_Result, (CNA_Handle, float));
+CHECK_FN(cna_sprite_font_measure_utf8, CNA_Result, (CNA_Handle, CNA_StringView, CNA_Vector2*));
+CHECK_FN(cna_sprite_font_destroy, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_keyboard_get_state, CNA_Result, (CNA_Handle, CNA_KeyboardState*));
 CHECK_FN(cna_keyboard_get_state_for_player, CNA_Result, (CNA_Handle, CNA_PlayerIndex, CNA_KeyboardState*));
 CHECK_FN(cna_keyboard_state_is_key_down, CNA_Result, (const CNA_KeyboardState*, CNA_Key, CNA_Bool*));
@@ -402,6 +410,14 @@ int main(void) {
     SIGNATURE(cna_media_source_get_type_at, "CNA_Result|CNA_Handle,uint32_t,CNA_MediaSourceType*");
     SIGNATURE(cna_media_source_get_name_size_at, "CNA_Result|CNA_Handle,uint32_t,uint64_t*");
     SIGNATURE(cna_media_source_copy_name_at, "CNA_Result|CNA_Handle,uint32_t,char*,uint64_t,uint64_t*");
+    SIGNATURE(cna_content_manager_load_sprite_font, "CNA_Result|CNA_Handle,CNA_StringView,CNA_Handle*,CNA_Handle*");
+    SIGNATURE(cna_sprite_font_get_info, "CNA_Result|CNA_Handle,CNA_SpriteFontInfo*");
+    SIGNATURE(cna_sprite_font_copy_glyphs, "CNA_Result|CNA_Handle,CNA_SpriteFontGlyph*,uint64_t,uint64_t*");
+    SIGNATURE(cna_sprite_font_set_default_character, "CNA_Result|CNA_Handle,CNA_Bool,CNA_Char16");
+    SIGNATURE(cna_sprite_font_set_line_spacing, "CNA_Result|CNA_Handle,int32_t");
+    SIGNATURE(cna_sprite_font_set_spacing, "CNA_Result|CNA_Handle,float");
+    SIGNATURE(cna_sprite_font_measure_utf8, "CNA_Result|CNA_Handle,CNA_StringView,CNA_Vector2*");
+    SIGNATURE(cna_sprite_font_destroy, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_keyboard_get_state, "CNA_Result|CNA_Handle,CNA_KeyboardState*");
     SIGNATURE(cna_keyboard_get_state_for_player, "CNA_Result|CNA_Handle,CNA_PlayerIndex,CNA_KeyboardState*");
     SIGNATURE(cna_keyboard_state_is_key_down, "CNA_Result|const CNA_KeyboardState*,CNA_Key,CNA_Bool*");
@@ -427,6 +443,8 @@ int main(void) {
     STRUCT(CNA_GameCreateInfo); FIELD(CNA_GameCreateInfo, struct_size); FIELD(CNA_GameCreateInfo, struct_version); FIELD(CNA_GameCreateInfo, is_fixed_time_step); FIELD(CNA_GameCreateInfo, reserved); FIELD(CNA_GameCreateInfo, target_elapsed_time_ticks); FIELD(CNA_GameCreateInfo, window_title); FIELD(CNA_GameCreateInfo, callbacks);
     STRUCT(CNA_ContentManagerCreateInfo); FIELD(CNA_ContentManagerCreateInfo, struct_size); FIELD(CNA_ContentManagerCreateInfo, struct_version); FIELD(CNA_ContentManagerCreateInfo, root_directory); FIELD(CNA_ContentManagerCreateInfo, reserved);
     STRUCT(CNA_SoundEffectCreateInfo); FIELD(CNA_SoundEffectCreateInfo, struct_size); FIELD(CNA_SoundEffectCreateInfo, struct_version); FIELD(CNA_SoundEffectCreateInfo, sample_rate); FIELD(CNA_SoundEffectCreateInfo, channels); FIELD(CNA_SoundEffectCreateInfo, reserved);
+    STRUCT(CNA_SpriteFontInfo); FIELD(CNA_SpriteFontInfo, struct_size); FIELD(CNA_SpriteFontInfo, struct_version); FIELD(CNA_SpriteFontInfo, character_count); FIELD(CNA_SpriteFontInfo, line_spacing); FIELD(CNA_SpriteFontInfo, spacing); FIELD(CNA_SpriteFontInfo, default_character); FIELD(CNA_SpriteFontInfo, has_default_character); FIELD(CNA_SpriteFontInfo, reserved);
+    STRUCT(CNA_SpriteFontGlyph); FIELD(CNA_SpriteFontGlyph, struct_size); FIELD(CNA_SpriteFontGlyph, struct_version); FIELD(CNA_SpriteFontGlyph, glyph_bounds); FIELD(CNA_SpriteFontGlyph, cropping); FIELD(CNA_SpriteFontGlyph, character); FIELD(CNA_SpriteFontGlyph, reserved); FIELD(CNA_SpriteFontGlyph, kerning);
     STRUCT(CNA_CueInfo); FIELD(CNA_CueInfo, struct_size); FIELD(CNA_CueInfo, struct_version); FIELD(CNA_CueInfo, is_created); FIELD(CNA_CueInfo, is_disposed); FIELD(CNA_CueInfo, is_paused); FIELD(CNA_CueInfo, is_playing); FIELD(CNA_CueInfo, is_prepared); FIELD(CNA_CueInfo, is_preparing); FIELD(CNA_CueInfo, is_stopped); FIELD(CNA_CueInfo, is_stopping);
     STRUCT(CNA_SoundEffectInstanceInfo); FIELD(CNA_SoundEffectInstanceInfo, struct_size); FIELD(CNA_SoundEffectInstanceInfo, struct_version); FIELD(CNA_SoundEffectInstanceInfo, state); FIELD(CNA_SoundEffectInstanceInfo, is_looped); FIELD(CNA_SoundEffectInstanceInfo, reserved0); FIELD(CNA_SoundEffectInstanceInfo, volume); FIELD(CNA_SoundEffectInstanceInfo, pitch); FIELD(CNA_SoundEffectInstanceInfo, pan); FIELD(CNA_SoundEffectInstanceInfo, reserved1);
     STRUCT(CNA_AudioListener); FIELD(CNA_AudioListener, struct_size); FIELD(CNA_AudioListener, struct_version); FIELD(CNA_AudioListener, forward); FIELD(CNA_AudioListener, position); FIELD(CNA_AudioListener, up); FIELD(CNA_AudioListener, velocity);

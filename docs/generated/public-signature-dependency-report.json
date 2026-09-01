@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 163,
-  "completeTypes": 158,
+  "targetTypes": 164,
+  "completeTypes": 159,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
@@ -10,7 +10,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 94,
+  "missingTypes": 93,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -32,6 +32,7 @@
     "System.Boolean",
     "System.Byte",
     "System.Byte[]",
+    "System.Char",
     "System.Collections.Generic.Dictionary`2",
     "System.Collections.Generic.ICollection`1",
     "System.Collections.Generic.IEnumerable`1",
@@ -54,13 +55,13 @@
     "System.Int32",
     "System.IntPtr",
     "System.Nullable`1",
-    "System.Nullable`1[System.Single]",
     "System.Object",
     "System.Runtime.InteropServices.ExternalException",
     "System.Runtime.Serialization.SerializationInfo",
     "System.Runtime.Serialization.StreamingContext",
     "System.Single",
     "System.String",
+    "System.Text.StringBuilder",
     "System.TimeSpan",
     "System.Type",
     "System.UInt16",
@@ -83,6 +84,9 @@
       "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection",
       "System.Collections.ObjectModel.Collection`1": "CNA::Runtime::Collection",
       "System.Collections.Generic.IList`1": "Array",
+      "System.Char": "Integer",
+      "System.Nullable`1": "NilClass",
+      "System.Text.StringBuilder": "String",
       "System.Type": "Module"
     },
     "exceptionBases": {
@@ -92,7 +96,6 @@
   },
   "blockerSummary": {
     "BCL_PROJECTION": 2,
-    "BCL_PROJECTION+NATIVE_RUNTIME": 1,
     "NATIVE_RUNTIME": 2
   },
   "partialDependencySatisfiedCandidates": [
@@ -234,62 +237,6 @@
       "nativeReachableMethods": [
         "Bind",
         "Unbind"
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.SpriteFont",
-      "kind": "class",
-      "expectedRubyIdentities": 6,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Vector2"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Graphics.SpriteBatch",
-        "Microsoft.Xna.Framework.Matrix"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.SpriteBatch"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Graphics.SpriteBatch::DrawString (6 overloads)"
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "BCL_PROJECTION",
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-        "System.Char",
-        "System.Nullable`1[System.Char]",
-        "System.Text.StringBuilder"
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        "MeasureString"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-        "InternalDraw"
       ],
       "runtimeDataDetail": null
     },
@@ -817,62 +764,6 @@
       "ilAssembly": "Microsoft.Xna.Framework.dll",
       "nativeReachableMethods": [
 
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.SpriteFont",
-      "kind": "class",
-      "expectedRubyIdentities": 6,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Vector2"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Graphics.SpriteBatch",
-        "Microsoft.Xna.Framework.Matrix"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.SpriteBatch"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Graphics.SpriteBatch::DrawString (6 overloads)"
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "BCL_PROJECTION",
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-        "System.Char",
-        "System.Nullable`1[System.Char]",
-        "System.Text.StringBuilder"
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        "MeasureString"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-        "InternalDraw"
       ],
       "runtimeDataDetail": null
     },

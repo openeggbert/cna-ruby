@@ -197,13 +197,13 @@ class MemberLevelDependenciesTest < Minitest::Test
                                .select { |entry| entry.fetch("unmetDependencies").empty? }
     # 6 until ContentManager completed -- it left this list and so did Microphone, whose only
     # remaining blocker was the `System.Byte[]` the Stream projection decided -- 5 until the audio
-    # cluster took SoundEffectInstance, and 3 until the XACT engine cluster took Cue: its one
-    # il-only unmet dependency was AudioEngine, which is complete now.
-    assert_equal 2, signature_complete.length
+    # cluster took SoundEffectInstance, 3 until the XACT engine cluster took Cue -- its one il-only
+    # unmet dependency was AudioEngine -- and 2 until SpriteFont was built, whose own il-only
+    # dependency, SpriteBatch, had been complete all along.
+    assert_equal 1, signature_complete.length
     names = signature_complete.map { |entry| entry.fetch("name") }
     # ContentManager was here until the Stream and Action`1 projections consumed it.
-    %w[Microsoft.Xna.Framework.Graphics.SpriteFont
-       Microsoft.Xna.Framework.Graphics.EffectAnnotation].each { |name| assert_includes names, name }
+    assert_equal ["Microsoft.Xna.Framework.Graphics.EffectAnnotation"], names
     refute_includes names, "Microsoft.Xna.Framework.Audio.Cue"
   end
 
@@ -246,9 +246,9 @@ class MemberLevelDependenciesTest < Minitest::Test
     # 12 until the Stream projection consumed TitleContainer, and 9 until Microphone was built. The
     # XACT engine cluster held it at 8 -- AudioCategory left and WaveBank arrived behind
     # AudioEngine -- building the banks and the cue took it to 6, which emptied the Audio namespace
-    # off the frontier entirely, and MediaSource took it to 5 and emptied the RUNTIME_DATA register
-    # with it.
-    assert_equal 5, REPORT.fetch("dependencyCompleteCandidates").length
+    # off the frontier entirely, MediaSource took it to 5 and emptied the RUNTIME_DATA register with
+    # it, and SpriteFont took it to 4 -- the first candidate a BCL decision alone really unblocked.
+    assert_equal 4, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")
@@ -262,7 +262,7 @@ class MemberLevelDependenciesTest < Minitest::Test
      REPORT.fetch("ilOnlyBlockedCandidates")).each do |entry|
       refute_includes consumable, entry.fetch("name")
     end
-    assert_equal 2, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
+    assert_equal 1, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
   end
 
   # The one candidate the refinement cleared, and what happened to it. Foundation 39 selected it and

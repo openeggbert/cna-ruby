@@ -28960,6 +28960,100 @@
       "rubyName": "Microsoft::Xna::Framework::Graphics::TextureCollection"
     },
     {
+      "name": "Microsoft.Xna.Framework.Graphics.SpriteFont",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [],
+      "directInterfaces": [],
+      "genericParameters": [],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::SpriteFont",
+      "members": [
+        {
+          "kind": "method",
+          "name": "MeasureString",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector2",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "text",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "MeasureString",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector2",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "text",
+              "type": "System.Text.StringBuilder",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "LineSpacing",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "Spacing",
+          "type": "System.Single",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "DefaultCharacter",
+          "type": "System.Nullable`1[System.Char]",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "Characters",
+          "type": "System.Collections.ObjectModel.ReadOnlyCollection`1[System.Char]",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        }
+      ]
+    },
+    {
       "name": "Microsoft.Xna.Framework.Graphics.Texture",
       "kind": "class",
       "flags": false,

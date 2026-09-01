@@ -1078,6 +1078,260 @@ module Microsoft
             nil
           end
         end
+        # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…).
+        #
+        # Six identities over four parallel `List`s XNA fills from the XNB — `glyphData`,
+        # `croppingData`, `characterMap` and `kerning` — which CNA answers as one array of
+        # `CNA_SpriteFontGlyph` records. The whole array is read once when a font is produced, which
+        # is what XNA does too: its lists are constructed by the content reader and never re-read.
+        #
+        # `SpriteFont` kept a `BCL_PROJECTION` blocker until three decisions were made for it:
+        # `System.Char` is an Integer code unit, `Nullable`1` is `nil`-or-value, and
+        # `System.Text.StringBuilder` is a Ruby String. `CNA::Runtime::BclProjection` records why.
+        # Its second blocker was `NATIVE_RUNTIME`, and its il-only dependency was `SpriteBatch`,
+        # which is complete — so unlike the other native-blocked candidates, this one really was
+        # unblocked by a BCL decision.
+        class SpriteFont
+          include CNA::Runtime::NativeResource
+
+          CLR_IDENTITY = "Microsoft.Xna.Framework.Graphics.SpriteFont"
+
+          # `'\r'` is skipped outright and `'\n'` starts a line; both are IL literals -- `ldc.i4.s 13`
+          # and `ldc.i4.s 10` -- compared against the raw code unit rather than against a platform
+          # newline.
+          CARRIAGE_RETURN = 13
+          LINE_FEED = 10
+
+          private_class_method :new
+
+          # The constructor is `assembly`: a consumer reaches a font only through
+          # `ContentManager.Load(SpriteFont, name)`, which is the producer this binding registers.
+          # DEVIATION, recorded, and it is about ownership rather than behaviour. XNA's `SpriteFont`
+          # is **not** `IDisposable`: the `ContentManager` records the `Texture2D` its reader built
+          # and disposes that on `Unload`, leaving the font object alive with a dead atlas. CNA
+          # hands back two owned handles and no projected `Texture2D`, so the font owns both and
+          # releases both — which the manager triggers, because it records anything answering
+          # `Dispose` and `CNA::Runtime::NativeResource` gives this type one. The widening is that a
+          # consumer can call `font.Dispose`, which XNA does not offer; the safety is that a font
+          # whose atlas is gone reports `IsDisposed` instead of being silently unusable.
+          def initialize(game, handle, texture_handle)
+            @texture_handle = texture_handle
+            initialize_native_resource(game, handle, lambda { |value|
+              CNA::Native.library.call("cna_sprite_font_destroy", value)
+              unless texture_handle.zero?
+                begin
+                  CNA::Native.library.call("cna_texture2d_destroy", texture_handle)
+                rescue CNA::Error
+                  nil
+                end
+              end
+            })
+            read_glyphs
+          end
+
+          # `get_LineSpacing`/`set_LineSpacing` and `get_Spacing`/`set_Spacing` are bare field reads
+          # and writes with **no validation at all** in XNA -- four instructions each.
+          def LineSpacing = info.read_i32(16)
+
+          def LineSpacing=(value)
+            ensure_live!
+            CNA::Native.library.call("cna_sprite_font_set_line_spacing", native_handle,
+                                     CNA::Runtime::Numeric.int32(value, "value"))
+            value
+          end
+
+          def Spacing = info.read_f32(20)
+
+          # DEVIATION, recorded: XNA stores whatever it is given, including `NaN` and infinities;
+          # `cna_sprite_font_set_spacing` documents "must be finite" and answers
+          # `CNA_RESULT_INVALID_ARGUMENT` for a non-finite value. The refusal is CNA's and it
+          # surfaces as `CNA::NativeError` rather than being hidden or reproduced managed-side,
+          # because there is no managed rule to reproduce.
+          def Spacing=(value)
+            ensure_live!
+            CNA::Native.library.call("cna_sprite_font_set_spacing", native_handle,
+                                     CNA::Runtime::Numeric.f32(value))
+            value
+          end
+
+          # `char?` -- so `nil` when the font has no fallback, and an Integer code unit when it does.
+          def DefaultCharacter
+            snapshot = info
+            return nil if snapshot.read_u8(26).zero?
+
+            snapshot.read_u16(24)
+          end
+
+          # `if (value.HasValue && !characterMap.Contains(value.Value)) throw new ArgumentException(...)`
+          # -- so clearing it is always allowed, and setting one the font does not define is not.
+          def DefaultCharacter=(value)
+            ensure_live!
+            if value.nil?
+              CNA::Native.library.call("cna_sprite_font_set_default_character", native_handle, 0, 0)
+              return nil
+            end
+
+            unit = CNA::Runtime::Numeric.int32(value, "value")
+            raise ::TypeError, "value must be a UTF-16 code unit" unless unit.between?(0, 0xffff)
+            raise ::ArgumentError, "character not in font: #{unit}" unless @characters.include?(unit)
+
+            CNA::Native.library.call("cna_sprite_font_set_default_character", native_handle, 1, unit)
+            value
+          end
+
+          # `get_Characters` wraps `characterMap` in a `ReadOnlyCollection<char>` the **first** time
+          # it is asked and caches it, so every later call answers the same object.
+          def Characters = @characters_collection ||= CNA::Runtime::ReadOnlyCollection.new(@characters)
+
+          # `MeasureString(String)` and `MeasureString(StringBuilder)` differ only in which
+          # `StringProxy` they build, and both begin
+          # `if (text == null) throw new ArgumentNullException("text")`. Ruby collapses them, which
+          # the `StringBuilder => String` decision makes exact rather than approximate.
+          #
+          # The arithmetic is `InternalMeasure`, reproduced instruction for instruction below.
+          def MeasureString(text)
+            ensure_live!
+            raise ::ArgumentError, "text" if text.nil?
+            raise ::TypeError, "text must be a String" unless text.is_a?(::String)
+
+            internal_measure(text)
+          end
+
+          private
+
+          # `InternalMeasure(ref StringProxy text)`:
+          #
+          #     if (text.Length == 0) return Vector2.Zero;
+          #     result = Vector2.Zero; result.Y = lineSpacing;
+          #     float pendingRight = 0f; float widest = 0f; int lineBreaks = 0; bool firstOnLine = true;
+          #     for each code unit c:
+          #       if (c == '\r') continue;
+          #       if (c == '\n') {
+          #         result.X += Max(pendingRight, 0f); pendingRight = 0f;
+          #         widest = Max(result.X, widest);
+          #         result = Vector2.Zero; result.Y = lineSpacing;
+          #         firstOnLine = true; lineBreaks++; continue;
+          #       }
+          #       k = kerning[GetIndexForCharacter(c)];
+          #       if (firstOnLine) k.X = Max(k.X, 0f); else result.X += spacing + pendingRight;
+          #       result.X += k.X + k.Y;
+          #       pendingRight = k.Z;
+          #       result.Y = Max(result.Y, croppingData[GetIndexForCharacter(c)].Height);
+          #       firstOnLine = false;
+          #     result.X += Max(pendingRight, 0f);
+          #     result.Y += lineBreaks * lineSpacing;
+          #     result.X = Max(result.X, widest);
+          #
+          # Two details a paraphrase loses. The **first glyph on a line clamps its left bearing** to
+          # zero instead of paying the spacing, which is why a leading `'j'` does not hang off the
+          # left. And the height comes from the **cropping** rectangle, not the glyph bounds.
+          def internal_measure(text)
+            units = text.encode(Encoding::UTF_16LE).unpack("v*")
+            return Vector2.new(0.0, 0.0) if units.empty?
+
+            f32 = ->(value) { CNA::Runtime::Numeric.f32(value) }
+            line_spacing = f32.call(self.LineSpacing)
+            spacing = f32.call(self.Spacing)
+            width = 0.0
+            height = line_spacing
+            widest = 0.0
+            pending_right = 0.0
+            line_breaks = 0
+            first_on_line = true
+
+            units.each do |unit|
+              next if unit == CARRIAGE_RETURN
+
+              if unit == LINE_FEED
+                width = f32.call(width + [pending_right, 0.0].max)
+                pending_right = 0.0
+                widest = [width, widest].max
+                width = 0.0
+                height = line_spacing
+                first_on_line = true
+                line_breaks += 1
+                next
+              end
+
+              index = index_for_character(unit)
+              left, advance, right = @kerning[index]
+              if first_on_line
+                left = [left, 0.0].max
+              else
+                width = f32.call(width + f32.call(spacing + pending_right))
+              end
+              width = f32.call(width + f32.call(left + advance))
+              pending_right = right
+              height = [height, f32.call(@cropping_heights[index])].max
+              first_on_line = false
+            end
+
+            width = f32.call(width + [pending_right, 0.0].max)
+            height = f32.call(height + f32.call(line_breaks * self.LineSpacing))
+            Vector2.new([width, widest].max, height)
+          end
+
+          # `GetIndexForCharacter` is a binary search over the sorted character map. On a miss it
+          # falls back to `defaultCharacter` and recurses **once**; if there is no default, or the
+          # default is the character that just missed, it raises
+          # `ArgumentException(CharacterNotInFont, "character")`.
+          def index_for_character(unit, retried: false)
+            index = @characters.bsearch_index { |value| value >= unit }
+            return index if index && @characters[index] == unit
+
+            fallback = self.DefaultCharacter
+            if !retried && fallback && fallback != unit
+              return index_for_character(fallback, retried: true)
+            end
+
+            raise ::ArgumentError, "character not in font: #{unit}"
+          end
+
+          def info
+            ensure_live!
+            output = CNA::Native::Layouts::SpriteFontInfo.new
+            CNA::Native.library.call("cna_sprite_font_get_info", native_handle, output.pointer)
+            output
+          end
+
+          # XNA's four parallel lists, read once. The character map is what the binary search needs
+          # sorted, and CNA answers it sorted because the XNB stores it that way -- which the test
+          # asserts rather than assumes.
+          def read_glyphs
+            count = info.read_u64(8)
+            @characters = []
+            @kerning = []
+            @cropping_heights = []
+            @glyph_bounds = []
+            return if count.zero?
+
+            size = CNA::Native::Layouts::SpriteFontGlyph.size
+            buffer = Fiddle::Pointer.malloc(size * count, Fiddle::RUBY_FREE)
+            count.times { |index| buffer[index * size, 8] = [size, 1].pack("LL") }
+            written = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_sprite_font_copy_glyphs", native_handle, buffer, count, written)
+            written[0, 8].unpack1("Q").times do |index|
+              record = buffer[index * size, size]
+              @glyph_bounds << record[8, 16].unpack("l4")
+              @cropping_heights << record[24, 16].unpack("l4")[3]
+              @characters << record[40, 2].unpack1("v")
+              @kerning << record[44, 12].unpack("e3")
+            end
+            @characters.freeze
+          end
+
+          # The atlas texture CNA hands back beside the font. XNA's `textureValue` is a private field
+          # with no public reader, so this one has none either -- it is held because the font's own
+          # destruction does not release it.
+          def texture_handle = @texture_handle
+
+          def ensure_live!
+            raise CNA::DisposedObjectError, "SpriteFont is disposed" if self.IsDisposed
+
+            @native_handle.generation.assert_owner_thread!
+          end
+        end
+
       end
 
       class GraphicsDeviceManager
@@ -1151,6 +1405,7 @@ module Microsoft
           @GraphicsDevice.__send__(:invalidate)
           @disposed = true
         end
+
       end
     end
   end
@@ -1196,4 +1451,34 @@ Microsoft::Xna::Framework::Content::ContentManager.__send__(
   end
   Microsoft::Xna::Framework::Graphics::Texture2D.allocate
                                                 .__send__(:initialize_from_native, device, texture_handle)
+end
+
+# `ContentManager.Load(SpriteFont, name)` is the one producer XNA gives a consumer, and
+# `cna_content_manager_load_sprite_font` is its canonical route. It answers **two** owned handles:
+# the font, and the atlas texture behind it — the font's own destruction does not release the
+# texture, so the font holds it. XNA's `textureValue` is a private field with no public reader, so
+# nothing here exposes one either.
+Microsoft::Xna::Framework::Content::ContentManager.__send__(
+  :register_materializer, Microsoft::Xna::Framework::Graphics::SpriteFont
+) do |manager, asset_name|
+  handle = manager.__send__(:native_handle)
+  view = CNA::Native::Layouts::StringView.new(asset_name.b)
+  font = CNA::Native.library.pointer_for("Q", 0)
+  texture = CNA::Native.library.pointer_for("Q", 0)
+  begin
+    CNA::Native.library.call("cna_content_manager_load_sprite_font", handle,
+                             view.read_u64(0), view.read_u64(8), font, texture)
+  rescue CNA::NativeError => error
+    raise Microsoft::Xna::Framework::Content::ContentLoadException,
+          "#{asset_name} could not be loaded as SpriteFont: #{error.message}"
+  end
+  font_handle = font[0, 8].unpack1("Q")
+  if font_handle.zero?
+    raise Microsoft::Xna::Framework::Content::ContentLoadException,
+          "#{asset_name} reported a successful load with no font"
+  end
+  Microsoft::Xna::Framework::Graphics::SpriteFont.__send__(
+    :new, CNA::Runtime::Context.__send__(:current_game, "SpriteFont"),
+    font_handle, texture[0, 8].unpack1("Q")
+  )
 end

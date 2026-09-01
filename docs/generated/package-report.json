@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "GEM_FILENAME": "cna-ruby-0.1.0.dev0.gem",
+  "GEM_FILENAME": "cna-ruby-audit.gem",
   "VERSION": "0.1.0.dev0",
-  "GEM_SHA256": "be289e421b33610ccbf279634e8e94de1757df0e5aea53e76d87abd00bed8f10",
-  "GEM_ENTRIES": 62,
+  "GEM_SHA256": "74a1cf6aa1e907cd7270657884a61c98374a8fc72bf542ea3a20428bb26fde94",
+  "GEM_ENTRIES": 63,
   "FORBIDDEN_ENTRIES": [
 
   ],
@@ -48,6 +48,7 @@
     "lib/microsoft/xna/framework/curve.rb",
     "lib/microsoft/xna/framework/framework_dispatcher.rb",
     "lib/microsoft/xna/framework/game.rb",
+    "lib/microsoft/xna/framework/gamer_services.rb",
     "lib/microsoft/xna/framework/geometry_bounds.rb",
     "lib/microsoft/xna/framework/geometry_matrix.rb",
     "lib/microsoft/xna/framework/geometry_vectors.rb",

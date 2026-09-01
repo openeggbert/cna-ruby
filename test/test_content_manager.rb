@@ -168,8 +168,10 @@ class ContentManagerTest < Minitest::Test
     assert_includes error.message, "Game.Content"
   end
 
+  # The registry is what `Load` really dispatches on, so it grows only when a milestone registers
+  # a materializer. `SpriteFont` joined `Texture2D` when its three BCL blockers were decided.
   def test_the_supported_registry_names_exactly_what_is_implemented
-    assert_equal [G::Texture2D], CM.supported_types
+    assert_equal [G::Texture2D, G::SpriteFont], CM.supported_types
   end
 
   # --------------------------------------------------------------------------- Game.Content
@@ -350,7 +352,10 @@ class ContentManagerTest < Minitest::Test
     # The audio cluster exists, and this milestone did not build it: no `Load<SoundEffect>` reader
     # is registered, which is what the supported-type registry states.
     refute_includes CM.supported_types, F::Audio::SoundEffect
-    %i[SpriteFont TextureCube Texture3D Effect Model].each { |absent| refute G.const_defined?(absent, false), absent.to_s }
+    # `SpriteFont` was here until its own milestone registered the second materializer, which is
+    # what this list is for: it names the readers *this* milestone did not add.
+    refute_includes CM.supported_types, F::Audio::SoundEffect
+    %i[TextureCube Texture3D Effect Model].each { |absent| refute G.const_defined?(absent, false), absent.to_s }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length
   end

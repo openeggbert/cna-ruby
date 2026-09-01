@@ -86,6 +86,9 @@
       "System.Collections.ObjectModel.ReadOnlyCollection`1": "CNA::Runtime::ReadOnlyCollection",
       "System.Collections.ObjectModel.Collection`1": "CNA::Runtime::Collection",
       "System.Collections.Generic.IList`1": "Array",
+      "System.Char": "Integer",
+      "System.Nullable`1": "NilClass",
+      "System.Text.StringBuilder": "String",
       "System.Type": "Module"
     },
     "exceptions": {

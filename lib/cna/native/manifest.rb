@@ -14,6 +14,7 @@ module CNA
       U8 = Fiddle::TYPE_UINT8_T
       U32 = Fiddle::TYPE_UINT32_T
       I16 = Fiddle::TYPE_INT16_T
+      U16 = Fiddle::TYPE_UINT16_T
       I32 = Fiddle::TYPE_INT32_T
       I64 = Fiddle::TYPE_INT64_T
       U64 = Fiddle::TYPE_UINT64_T
@@ -58,6 +59,7 @@ module CNA
         u32: { c: "uint32_t", fiddle: U32, width: 32, signed: false },
         i32: { c: "int32_t", fiddle: I32, width: 32, signed: true },
         i16: { c: "int16_t", fiddle: I16, width: 16, signed: true },
+        char16: { c: "CNA_Char16", fiddle: U16, width: 16, signed: false },
         i64: { c: "int64_t", fiddle: I64, width: 64, signed: true },
         u64: { c: "uint64_t", fiddle: U64, width: 64, signed: false },
         handle: { c: "CNA_Handle", fiddle: U64, width: 64, signed: false },
@@ -451,6 +453,17 @@ module CNA
         signature("cna_media_source_get_type_at", T[:result], [T[:handle], T[:u32], pointer("CNA_MediaSourceType")], ownership: "borrows Game; caller output"),
         signature("cna_media_source_get_name_size_at", T[:result], [T[:handle], T[:u32], pointer("uint64_t")], ownership: "borrows Game; caller output"),
         signature("cna_media_source_copy_name_at", T[:result], [T[:handle], T[:u32], pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows Game; caller output"),
+        # The sprite-font family. `cna_content_manager_load_sprite_font` is the producer XNA's
+        # `ContentManager.Load<SpriteFont>` is, and it answers **two** owned handles: the font and
+        # the atlas texture behind it, which the font's own destruction does not release.
+        signature("cna_content_manager_load_sprite_font", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("CNA_Handle"), pointer("CNA_Handle")], ownership: "borrows content manager; returns OWNED font and OWNED atlas texture"),
+        signature("cna_sprite_font_get_info", T[:result], [T[:handle], pointer("CNA_SpriteFontInfo")], ownership: "borrows font; caller MANAGED_VALUE snapshot output"),
+        signature("cna_sprite_font_copy_glyphs", T[:result], [T[:handle], pointer("CNA_SpriteFontGlyph"), T[:u64], pointer("uint64_t")], ownership: "borrows font; caller output"),
+        signature("cna_sprite_font_set_default_character", T[:result], [T[:handle], T[:bool], T[:char16]], ownership: "borrows font"),
+        signature("cna_sprite_font_set_line_spacing", T[:result], [T[:handle], T[:i32]], ownership: "borrows font"),
+        signature("cna_sprite_font_set_spacing", T[:result], [T[:handle], T[:float]], ownership: "borrows font"),
+        signature("cna_sprite_font_measure_utf8", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("CNA_Vector2")], ownership: "borrows font; caller MANAGED_VALUE output"),
+        signature("cna_sprite_font_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED font"),
         signature("cna_keyboard_get_state", T[:result], [T[:handle], pointer("CNA_KeyboardState")], ownership: "caller MANAGED_VALUE output"),
         signature("cna_keyboard_get_state_for_player", T[:result], [T[:handle], enum("CNA_PlayerIndex"), pointer("CNA_KeyboardState")], ownership: "caller MANAGED_VALUE output"),
         signature("cna_keyboard_state_is_key_down", T[:result], [pointer("CNA_KeyboardState", const: true), enum("CNA_Key"), pointer("CNA_Bool")], ownership: "caller output"),

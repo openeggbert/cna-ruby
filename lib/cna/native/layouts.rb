@@ -31,6 +31,8 @@ module CNA
         def read_u8(offset) = pointer[offset, 1].unpack1("C")
         def write_u32(offset, value) = pointer[offset, 4] = [value].pack("L")
         def read_u32(offset) = pointer[offset, 4].unpack1("L")
+        # `CNA_Char16` is the one 16-bit field any bound layout carries.
+        def read_u16(offset) = pointer[offset, 2].unpack1("S")
         def write_i32(offset, value) = pointer[offset, 4] = [value].pack("l")
         def read_i32(offset) = pointer[offset, 4].unpack1("l")
         def write_u64(offset, value) = pointer[offset, 8] = [value].pack("Q")
@@ -260,6 +262,46 @@ module CNA
           Layouts.field("is_paused", "CNA_Bool", 10, 1), Layouts.field("is_playing", "CNA_Bool", 11, 1),
           Layouts.field("is_prepared", "CNA_Bool", 12, 1), Layouts.field("is_preparing", "CNA_Bool", 13, 1),
           Layouts.field("is_stopped", "CNA_Bool", 14, 1), Layouts.field("is_stopping", "CNA_Bool", 15, 1)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      # `CNA_SpriteFontInfo` answers the four scalar properties XNA keeps in fields, plus the
+      # character count that sizes the two copy routes.
+      class SpriteFontInfo < Structure
+        layout size: 32, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("character_count", "uint64_t", 8, 8),
+          Layouts.field("line_spacing", "int32_t", 16, 4), Layouts.field("spacing", "float", 20, 4),
+          Layouts.field("default_character", "CNA_Char16", 24, 2),
+          Layouts.field("has_default_character", "CNA_Bool", 26, 1),
+          Layouts.field("reserved", "uint8_t", 27, 5)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      # One `CNA_SpriteFontGlyph` per supported character, which is XNA's four parallel `List`s --
+      # `glyphData`, `croppingData`, `characterMap` and `kerning` -- as a single array of records.
+      # `MeasureString` needs the kerning triple and the cropping height, so the whole array is read
+      # once when a font is produced rather than re-read per measurement.
+      class SpriteFontGlyph < Structure
+        layout size: 56, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("glyph_bounds", "CNA_Rectangle", 8, 16),
+          Layouts.field("cropping", "CNA_Rectangle", 24, 16),
+          Layouts.field("character", "CNA_Char16", 40, 2),
+          Layouts.field("reserved", "uint16_t", 42, 2),
+          Layouts.field("kerning", "CNA_Vector3", 44, 12)
         ]
 
         def initialize

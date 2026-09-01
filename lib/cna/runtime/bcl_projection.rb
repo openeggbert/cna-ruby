@@ -131,6 +131,26 @@ module CNA
         # and keeps no reference to it. `Keys[]` from `KeyboardState.GetPressedKeys` set the same
         # precedent for a CLR array before this register named it.
         "System.Collections.Generic.IList`1" => "Array",
+        # `System.Char` is a **UTF-16 code unit**, not a character: the pinned mscorlib declares it
+        # as a 16-bit value type, and `0xD800` is a perfectly valid one. Ruby has no character type,
+        # and the two candidates differ in exactly that place. A one-character Ruby String is a code
+        # *point* in some encoding, so it cannot hold an unpaired surrogate and would force an
+        # encoding decision the CLR type does not have; an Integer holds the code unit exactly. The
+        # register's rule is to project what the XNA surface can reach, and the surface --
+        # `SpriteFont.Characters`, `DefaultCharacter`, and the content pipeline's `CharReader` --
+        # can reach any code unit. So `Integer`, and a consumer writes `"*".ord` rather than `"*"`.
+        # `System.Byte[] => String` was decided the same way and lands the other side of the same
+        # line: a `byte[]` really is a byte sequence, and a Ruby String really is one.
+        "System.Char" => "Integer",
+        # A CLR `Nullable<T>` is "the value, or nothing", which Ruby spells `nil`. There is no
+        # wrapper to project: `HasValue` is `!nil?` and `Value` is the object itself. The one place
+        # the selected surface names it is `SpriteFont.DefaultCharacter`.
+        "System.Nullable`1" => "NilClass",
+        # `System.Text.StringBuilder` is a **mutable** string, and a Ruby String is one. The selected
+        # surface names it once, in the second `MeasureString` overload, and Ruby collapses the two
+        # overloads into one method taking a String -- which is what the no-overloading rule would
+        # produce from this mapping anyway.
+        "System.Text.StringBuilder" => "String",
         # System.Type is a *type token* everywhere the selected XNA surface names it -- a service
         # key, a content reader's target type, an index element type, a converter's destination --
         # in all twenty-four places. Ruby's type token is a Module, and a Class is one. The single
