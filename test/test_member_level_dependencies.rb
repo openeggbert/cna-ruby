@@ -266,8 +266,9 @@ class MemberLevelDependenciesTest < Minitest::Test
     # SamplerStateCollection followed them, and 8 when VertexDeclaration and the IVertexType it
     # uncovered were both built -- putting the four vertex structs on the queue, the first
     # consumable candidates since Foundation 32.
-    # ...and 4 when those four were built, which consumed the queue rather than growing it.
-    assert_equal 4, REPORT.fetch("dependencyCompleteCandidates").length
+    # ...4 when those four were built, which consumed the queue rather than growing it, and 3 when
+    # Media.VideoPlayer's blocker was audited and found not to be one.
+    assert_equal 3, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")

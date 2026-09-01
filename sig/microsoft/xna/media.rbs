@@ -39,6 +39,26 @@ module Microsoft
           Dialog: VideoSoundtrackType
           MusicAndDialog: VideoSoundtrackType
         end
+
+        class VideoPlayer
+          def initialize: () -> void
+          def Dispose: (?bool disposing) -> nil
+          attr_reader IsDisposed: bool
+          def GetTexture: () -> Microsoft::Xna::Framework::Graphics::Texture2D
+          def Play: (Video video) -> nil
+          def Pause: () -> nil
+          def Resume: () -> nil
+          def Stop: () -> nil
+          def Video: () -> Video?
+          def State: () -> MediaState
+          def PlayPosition: () -> Float
+          def IsLooped: () -> bool
+          def IsLooped=: (bool value) -> bool
+          def IsMuted: () -> bool
+          def IsMuted=: (bool value) -> bool
+          def Volume: () -> Float
+          def Volume=: (Float | Integer value) -> Float
+        end
       end
     end
   end

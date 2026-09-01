@@ -111,6 +111,195 @@ module Microsoft
           private_class_method :new
         end
 
+        # Derived from the pinned Microsoft.Xna.Framework.Video.dll IL (SHA-256 17538b1c…).
+        #
+        # It reached the frontier reporting `NATIVE_RUNTIME` over fifteen members, and the audit that
+        # word demands found the word wrong for the eleventh time: every one of the fifteen has a
+        # canonical CNA route, all of them work headless, and the optional video decoder really is
+        # compiled into the qualified artifact -- a real file is probed for its real metadata, `Play`
+        # moves the state machine to `Playing`, and a frame texture exists.
+        # `docs/video-player-audit-evidence.md` is the measurement.
+        #
+        # Every public member follows the same IL shape:
+        #
+        #     lock (decoderHandleLock) {
+        #         ThrowIfDisposed();                          // ObjectDisposedException(GetType())
+        #         if (!IsValidDecoder || activeVideo == null) return;   // or throw, for GetTexture
+        #         … one VideoDecoder_* call …
+        #     }
+        #
+        # `IsLooped`, `IsMuted` and `Volume` are the exception: their **getters** are a bare `ldfld`
+        # with no lock and no disposal check, so they answer after disposal, while their setters take
+        # the lock and throw. That asymmetry is XNA's and is measured in both directions.
+        class VideoPlayer
+          include CNA::Runtime::NativeResource
+
+          # `volume = 1f` in the constructor, and the setter's range check is `if (value < 0f ||
+          # !(value <= 1f)) throw new ArgumentOutOfRangeException("value")`. The second half is
+          # `ble.un` -- **unordered** -- so NaN takes the accepting branch, the same asymmetry
+          # `AudioCategory.SetVolume` records and the opposite of `SoundEffectInstance.Volume`.
+          DEFAULT_VOLUME = 1.0
+
+          # `.ctor()` takes nothing in XNA: it sets its fields and calls `VideoDecoder_Create`.
+          # DEVIATION, recorded: `cna_video_player_create` is **game-parented**, the same asymmetry
+          # every game-scoped audio and window route in this binding records, so a player can only be
+          # built while a game is running.
+          def initialize
+            host = CNA::Runtime::Context.native_host("VideoPlayer.new")
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_video_player_create", host.handle, output)
+            @looping = false
+            @muted = false
+            @volume = DEFAULT_VOLUME
+            initialize_native_resource(
+              CNA::Runtime::Context.__send__(:current_game, "VideoPlayer"),
+              output[0, 8].unpack1("Q"),
+              lambda { |value| CNA::Native.library.call("cna_video_player_destroy", value) }
+            )
+          end
+
+          # `Dispose(true)` sets `disposed`, destroys the decoder and disposes both frame textures.
+          # `Finalize` is `Dispose(false)`; no Ruby finalizer is registered, because nothing in this
+          # binding is released by the garbage collector.
+          def Dispose(disposing = true)
+            return if self.IsDisposed
+
+            CNA::Native.library.call("cna_video_player_dispose", native_handle) if disposing
+            @native_handle.dispose
+            @native_game.__send__(:unregister_native_child, self)
+            nil
+          end
+
+          def Finalize
+            self.Dispose(false)
+            nil
+          end
+
+          # `if (!IsValidDecoder || activeVideo == null) throw new InvalidOperationException()` --
+          # a **bare** InvalidOperationException with no message, which is what the IL constructs and
+          # what the projected `System.InvalidOperationException` maps to. Nothing here can be
+          # playing, for the reason `Play` records, so this is the branch a consumer always reaches.
+          def GetTexture
+            ensure_live!
+            output = CNA::Native.library.pointer_for("Q", 0)
+            available = CNA::Native.library.pointer_for("C", 0)
+            CNA::Native.library.call("cna_video_player_get_texture", native_handle, output, available)
+            raise ::RuntimeError, "VideoPlayer" if available[0, 1].unpack1("C").zero?
+
+            raise CNA::Runtime::NotSupportedError, NO_VIDEO_PRODUCER
+          end
+
+          # `if (video == null) throw new ArgumentNullException("video")` is XNA's own first line and
+          # is reproduced; the type check after it is this binding's.
+          #
+          # DEVIATION, recorded and measured rather than worked around: **nothing in this binding
+          # produces a `Video`.** XNA's only producer is `ContentManager.Load<Video>`, and CNA
+          # exports no content route for video -- its eight `cna_content_manager_load_*` routes cover
+          # effects, models, sound effects, sprite fonts, textures and cubes and nothing else. So
+          # `Media.Video` has been producerless since Foundation 52 and this member cannot be handed
+          # a legal argument. The route it would call is real and works: the audit drove
+          # `cna_video_player_play` against a real file at the C ABI and watched the state machine
+          # reach `Playing` with a frame texture available. What is missing is the argument, and
+          # inventing a `Video` factory XNA does not declare would be inventing an identity.
+          NO_VIDEO_PRODUCER =
+            "no Video producer exists: XNA's is ContentManager.Load<Video> and CNA exports no " \
+            "content route for video (see docs/video-player-audit-evidence.md)"
+
+          def Play(video)
+            ensure_live!
+            raise ::ArgumentError, "video" if video.nil?
+            raise ::TypeError, "video must be Video" unless video.instance_of?(Video)
+
+            raise CNA::Runtime::NotSupportedError, NO_VIDEO_PRODUCER
+          end
+
+          def Pause
+            ensure_live!
+            CNA::Native.library.call("cna_video_player_pause", native_handle)
+            nil
+          end
+
+          def Resume
+            ensure_live!
+            CNA::Native.library.call("cna_video_player_resume", native_handle)
+            nil
+          end
+
+          def Stop
+            ensure_live!
+            CNA::Native.library.call("cna_video_player_stop", native_handle)
+            nil
+          end
+
+          # `get_Video` is `ldfld activeVideo`, so it answers whatever `Play` was last handed --
+          # `nil` until then. CNA reports the same thing through an availability flag.
+          def Video
+            ensure_live!
+            output = CNA::Native.library.pointer_for("Q", 0)
+            available = CNA::Native.library.pointer_for("C", 0)
+            CNA::Native.library.call("cna_video_player_get_video", native_handle, output, available)
+            return nil if available[0, 1].unpack1("C").zero?
+
+            raise CNA::Runtime::NotSupportedError, NO_VIDEO_PRODUCER
+          end
+
+          def State
+            ensure_live!
+            output = CNA::Native.library.pointer_for("L", 0)
+            CNA::Native.library.call("cna_video_player_get_state", native_handle, output)
+            MediaState.coerce(output[0, 4].unpack1("L"))
+          end
+
+          # `TimeSpan.FromMilliseconds(...)` over the decoder's position, projected as seconds by the
+          # measured `System.TimeSpan` decision.
+          def PlayPosition
+            ensure_live!
+            output = CNA::Native.library.pointer_for("q", 0)
+            CNA::Native.library.call("cna_video_player_get_play_position_ticks", native_handle, output)
+            CNA::Runtime::BclProjection.time_span(output[0, 8].unpack1("q") / 10_000_000.0)
+          end
+
+          # The three field getters: no lock, no disposal check, so they answer after disposal.
+          def IsLooped = @looping
+          def IsMuted = @muted
+          def Volume = @volume
+
+          def IsLooped=(value)
+            ensure_live!
+            raise ::TypeError, "value" unless value == true || value == false
+
+            CNA::Native.library.call("cna_video_player_set_is_looped", native_handle, value ? 1 : 0)
+            @looping = value
+          end
+
+          def IsMuted=(value)
+            ensure_live!
+            raise ::TypeError, "value" unless value == true || value == false
+
+            CNA::Native.library.call("cna_video_player_set_is_muted", native_handle, value ? 1 : 0)
+            @muted = value
+          end
+
+          def Volume=(value)
+            ensure_live!
+            number = CNA::Runtime::Numeric.f32(value)
+            raise ::RangeError, "value" if number < 0.0 || (number > 1.0 && !number.nan?)
+
+            CNA::Native.library.call("cna_video_player_set_volume", native_handle, number)
+            @volume = number
+          end
+
+          private
+
+          # `ThrowIfDisposed()` is `if (IsDisposed) throw new ObjectDisposedException(GetType())`,
+          # which this binding maps the way every other disposed-object refusal is mapped.
+          def ensure_live!
+            raise CNA::DisposedObjectError, "VideoPlayer" if self.IsDisposed
+
+            nil
+          end
+        end
+
         class VideoSoundtrackType < CNA::Runtime::EnumValue
           extend CNA::Runtime::EnumType
           define_values({

@@ -40,7 +40,8 @@ class VertexStructsTest < Minitest::Test
     end
     assert_empty FRONTIER.fetch("consumableCandidates"), "the queue was consumed rather than grown"
     assert_equal "none-consumable", FRONTIER.fetch("selectionRoute")
-    assert_equal 4, FRONTIER.fetch("dependencyCompleteCandidates").length
+    # 4 until Media.VideoPlayer's blocker was audited in the milestone after this one.
+    assert_equal 3, FRONTIER.fetch("dependencyCompleteCandidates").length
   end
 
   def test_each_is_a_value_type_declaring_the_interface_with_the_same_six_member_shape

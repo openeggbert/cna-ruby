@@ -32,6 +32,7 @@ Behaviour is derived from the original Microsoft XNA Framework 4.0 Windows assem
 - `Graphics.SamplerStateCollection` with `GraphicsDevice.SamplerStates` and `.VertexSamplerStates` -- where the frontier's blocker word was accurate for once, and being accurate is what made the type buildable; its cache is seeded to the state the device actually reports, measured rather than assumed
 - `Graphics.VertexDeclaration` and the `IVertexType` contract it uncovered -- the only candidate this frontier ever carried with two blockers, both naming members the pinned contract never selects; `VertexElementValidator` is reproduced in the IL's own order and every stride is cross-checked against CNA's own
 - the four vertex structs `VertexPositionColor`, `VertexPositionTexture`, `VertexPositionColorTexture` and `VertexPositionNormalTexture` -- the first types here that really *conform* to a projected interface, and the first work queue this dependency frontier has produced and then consumed
+- `Media.VideoPlayer` over CNA's own player, whose optional video decoder is measured present -- a real file is probed, played and yields a frame texture at the C ABI; nothing produces a `Video`, so `Play` has no legal argument and says so instead of pretending
 - real `Audio.SoundEffect` and `Audio.SoundEffectInstance` over CNA's SDL3 audio path -- duration from real PCM, the whole state machine, every IL-derived range including the NaN asymmetry between `DopplerScale` and `DistanceScale`, `Apply3D`/`Pan` state rules and enforced parent/child destruction; no audible output is claimed
 - a real `Content.ContentManager` over CNA's own content pipeline, with `Game.Content` bound to the content manager CNA's game already owns, XNA's exact cache semantics, and `Load<Texture2D>` qualified against externally produced MonoGame `.xnb` fixtures; `Game` is complete
 - the `System.IO.Stream` projection `CNA::Runtime::Stream` and its `SeekOrigin`, measured from the pinned mscorlib and narrowed to the surface the XNA profile can reach, with `Microsoft::Xna::Framework::TitleContainer` as the first member that produces one over CNA's canonical title routes
@@ -95,6 +96,7 @@ There is intentionally no `microsoft/xna/framework/content` implementation in Fo
 - `docs/graphics-state-objects-evidence.md` — the four graphics state objects, the audit that unblocked them, and the stencil-mask divergence
 - `docs/vertex-declaration-evidence.md` — the only candidate with two blockers, and the validator reproduced in the IL's order
 - `docs/vertex-structs-evidence.md` — the first real interface producers, and the explicit implementation they carry
+- `docs/video-player-audit-evidence.md` — the eleventh `NATIVE_RUNTIME` that was not one, and the producer that really is missing
 - `docs/texture-decode-upstream-defect.md` — the asymmetric cover-and-crop decode, reproduced at the C ABI
 - `docs/graphics-device-status-evidence.md` — Foundation 10 managed GraphicsDeviceStatus non-flags enum
 - `docs/graphics-profile-evidence.md` — Foundation 11 managed GraphicsProfile non-flags enum

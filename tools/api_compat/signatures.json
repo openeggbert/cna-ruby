@@ -38129,6 +38129,182 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::VertexPositionNormalTexture"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.VideoPlayer",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+        "System.IDisposable"
+      ],
+      "directInterfaces": [
+        "System.IDisposable"
+      ],
+      "genericParameters": [],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Finalize",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Play",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "video",
+              "type": "Microsoft.Xna.Framework.Media.Video",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Pause",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Resume",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Stop",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "GetTexture",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Graphics.Texture2D",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "IsDisposed",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "Video",
+          "type": "Microsoft.Xna.Framework.Media.Video",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "State",
+          "type": "Microsoft.Xna.Framework.Media.MediaState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "IsLooped",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "IsMuted",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "Volume",
+          "type": "System.Single",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "PlayPosition",
+          "type": "System.TimeSpan",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Media::VideoPlayer"
     }
   ]
 }

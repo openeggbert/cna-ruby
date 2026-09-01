@@ -854,6 +854,10 @@
     {
       "name": "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
       "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.VideoPlayer",
+      "complete": true
     }
   ]
 }

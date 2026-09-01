@@ -341,6 +341,32 @@ module CNA
         # rather than only to itself. `cna_graphics_device_get/set_*_state` stay unbound because
         # applying a state to a device is `GraphicsDevice`'s surface and XNA's own `Apply` is
         # `assembly`-visible, so neither is a projected identity yet.
+        # `Media.VideoPlayer`. Every one of the fifteen contract members has a canonical route here,
+        # all of them work headless, and the optional video decoder really is compiled into the
+        # qualified artifact -- `docs/video-player-audit-evidence.md` measures a real file being
+        # probed, played and yielding a frame texture. DEVIATION: `cna_video_player_create` takes a
+        # **game** where XNA's constructor takes nothing, the game-scoped asymmetry every audio and
+        # window route in this manifest already records. `set_audio_track_ext`,
+        # `set_video_track_ext`, `get_frame_ext`, `get_type_name_size` and `copy_type_name` stay
+        # unbound: none has an XNA identity.
+        signature("cna_video_player_create", T[:result], [T[:handle], pointer("CNA_Handle")], ownership: "returns OWNED VideoPlayer parented to the game"),
+        signature("cna_video_player_get_is_disposed", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows player; caller output"),
+        signature("cna_video_player_get_is_looped", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows player; caller output"),
+        signature("cna_video_player_set_is_looped", T[:result], [T[:handle], T[:bool]], ownership: "borrows player"),
+        signature("cna_video_player_get_is_muted", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows player; caller output"),
+        signature("cna_video_player_set_is_muted", T[:result], [T[:handle], T[:bool]], ownership: "borrows player"),
+        signature("cna_video_player_get_play_position_ticks", T[:result], [T[:handle], pointer("int64_t")], ownership: "borrows player; caller output"),
+        signature("cna_video_player_get_state", T[:result], [T[:handle], pointer("CNA_MediaState")], ownership: "borrows player; caller output"),
+        signature("cna_video_player_get_video", T[:result], [T[:handle], pointer("CNA_Handle"), pointer("CNA_Bool")], ownership: "borrows player; returns BORROWED video"),
+        signature("cna_video_player_get_volume", T[:result], [T[:handle], pointer("float")], ownership: "borrows player; caller output"),
+        signature("cna_video_player_set_volume", T[:result], [T[:handle], T[:float]], ownership: "borrows player"),
+        signature("cna_video_player_get_texture", T[:result], [T[:handle], pointer("CNA_Handle"), pointer("CNA_Bool")], ownership: "borrows player; returns BORROWED frame texture"),
+        signature("cna_video_player_play", T[:result], [T[:handle], T[:handle]], ownership: "borrows player; borrows the video"),
+        signature("cna_video_player_stop", T[:result], [T[:handle]], ownership: "borrows player"),
+        signature("cna_video_player_pause", T[:result], [T[:handle]], ownership: "borrows player"),
+        signature("cna_video_player_resume", T[:result], [T[:handle]], ownership: "borrows player"),
+        signature("cna_video_player_dispose", T[:result], [T[:handle]], ownership: "borrows player; releases its decoder"),
+        signature("cna_video_player_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED VideoPlayer"),
         # The vertex-declaration routes. They take **no device and no handle in** -- a declaration
         # is a value CNA computes a stride for -- which is what makes them usable as the headless
         # cross-check for `VertexDeclaration`'s own stride arithmetic, derived from the pinned IL.

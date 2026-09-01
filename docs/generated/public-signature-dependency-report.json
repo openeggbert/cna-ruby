@@ -1,14 +1,14 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 176,
-  "completeTypes": 173,
+  "targetTypes": 177,
+  "completeTypes": 174,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 81,
+  "missingTypes": 80,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -96,7 +96,7 @@
   },
   "blockerSummary": {
     "BCL_PROJECTION": 1,
-    "NATIVE_RUNTIME": 3
+    "NATIVE_RUNTIME": 2
   },
   "partialDependencySatisfiedCandidates": [
     {
@@ -756,81 +756,6 @@
         "GetValueVector2",
         "GetValueVector3",
         "GetValueVector4"
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Media.VideoPlayer",
-      "kind": "class",
-      "expectedRubyIdentities": 15,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.Texture2D",
-        "Microsoft.Xna.Framework.Media.MediaState",
-        "Microsoft.Xna.Framework.Media.Video"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
-      ],
-      "ilOnlyUnmetDependencies": [
-
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "Dispose",
-        "Finalize",
-        "Play",
-        "Pause",
-        "Resume",
-        "Stop",
-        "GetTexture"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Video.dll",
-      "nativeReachableMethods": [
-        ".ctor",
-        "AllocateTextures",
-        "DestroyDecoder",
-        "Dispose",
-        "Finalize",
-        "GetTexture",
-        "Pause",
-        "Play",
-        "Resume",
-        "Stop",
-        "get_PlayPosition",
-        "get_State",
-        "set_IsLooped",
-        "set_IsMuted",
-        "set_Volume"
       ],
       "runtimeDataDetail": null
     },

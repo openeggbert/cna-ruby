@@ -140,7 +140,10 @@ class MediaSourceTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_produces_no_media_library_player_or_song
-    %i[MediaLibrary MediaPlayer Song Album Artist Playlist Picture MediaQueue VideoPlayer]
+    # `VideoPlayer` left this list when its NATIVE_RUNTIME was audited and found not to be a
+    # blocker; what **this** milestone claimed is unchanged, and the MediaPlayer/MediaLibrary half
+    # of the namespace is still absent whole.
+    %i[MediaLibrary MediaPlayer Song Album Artist Playlist Picture MediaQueue]
       .each { |absent| refute M.const_defined?(absent, false), "Media::#{absent}" }
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     refute(symbols.any? { |s| s.start_with?("cna_media_player_", "cna_media_library_", "cna_song_") })

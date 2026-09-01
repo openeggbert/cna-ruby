@@ -355,7 +355,10 @@ class PureManagedEnumBatchTest < Minitest::Test
       .each { |name| assert A.const_defined?(name, false), "Audio::#{name}" }
     # VisualizationData arrived in Foundation 51 from its own IL: a constructible holder whose
     # filler, MediaPlayer.GetVisualizationData, is still one of the names below.
-    %i[MediaPlayer MediaLibrary Song Album Artist VideoPlayer Playlist
+    # `VideoPlayer` left this list when its blocker was audited and found not to be one; what this
+    # batch claimed is unchanged, and the filler VisualizationData was deferred over --
+    # MediaPlayer.GetVisualizationData -- is still absent.
+    %i[MediaPlayer MediaLibrary Song Album Artist Playlist
        Picture PictureAlbum].each do |name|
       refute M.const_defined?(name, false), "Media::#{name}"
     end
@@ -386,7 +389,7 @@ class PureManagedEnumBatchTest < Minitest::Test
       value_types = %i[TouchPanelCapabilities TouchLocation GestureSample TouchCollection
                        TouchPanel AudioListener AudioEmitter RendererDetail VisualizationData Video
                        SoundEffect SoundEffectInstance DynamicSoundEffectInstance Microphone
-                       AudioEngine AudioCategory WaveBank SoundBank Cue MediaSource]
+                       AudioEngine AudioCategory WaveBank SoundBank Cue MediaSource VideoPlayer]
       extras = declared & value_types
       extras += declared.grep(/Exception\z/)
       assert_equal (selected + extras).uniq.sort, declared, namespace.name

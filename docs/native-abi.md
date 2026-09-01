@@ -426,3 +426,21 @@ as XNA's constructors are, which allocate no native object until the `assembly`-
 `create_with_stride`, `create_empty`, `copy_type_name` and `get_type_name_byte_count` stay unbound:
 XNA computes nothing in the explicit-stride case, declares no empty declaration, and has no
 type-name identity on this type at all.
+
+## The video player
+
+Eighteen routes bring the count to **257**: the whole `cna_video_player_*` surface except the three
+CNA extensions with no XNA identity (`set_audio_track_ext`, `set_video_track_ext`, `get_frame_ext`)
+and the type-name pair. Every one of `Media.VideoPlayer`'s fifteen contract members maps to exactly
+one of them, and all of them work headless.
+
+`cna_video_player_create` takes a **game**, where XNA's constructor takes nothing. That is the
+game-scoped asymmetry every audio and window route in this manifest already records, and it means a
+player can only be built while a game is running.
+
+The optional video decoder that `cna_video_create`'s header warns may be absent **is compiled into
+the qualified artifact** — `docs/video-player-audit-evidence.md` measures a real file being probed
+for its real metadata, played to the `PLAYING` state, and yielding a frame texture. No
+`cna_video_create*` route is bound even so: XNA's only `Video` producer is
+`ContentManager.Load<Video>`, CNA exports no content route for video, and adding a file factory
+would be adding an identity XNA does not declare.

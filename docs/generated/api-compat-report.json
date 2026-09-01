@@ -5,12 +5,12 @@
   "REFERENCE_MEMBERS": 2964,
   "EXPECTED_RUBY_TYPES": 257,
   "EXPECTED_RUBY_MEMBERS": 2915,
-  "TARGET_TYPES": 176,
-  "TARGET_MEMBERS": 2126,
-  "TOTAL_DIAGNOSTICS": 190,
-  "COMPLETE_TYPES": 173,
+  "TARGET_TYPES": 177,
+  "TARGET_MEMBERS": 2141,
+  "TOTAL_DIAGNOSTICS": 189,
+  "COMPLETE_TYPES": 174,
   "PARTIAL_TYPES": 3,
-  "MISSING_TYPES": 81,
+  "MISSING_TYPES": 80,
   "ALLOWLIST_ENTRIES": 0,
   "EVENT_IDENTITIES": 27,
   "EVENT_OWNER_TYPES": 14,
@@ -18,7 +18,7 @@
   "BCL_PROJECTED_IDENTITIES": 22,
   "BCL_EXCEPTION_BASES": 2,
   "BCL_THROWN_EXCEPTIONS": 8,
-  "MISSING_TYPE": 81,
+  "MISSING_TYPE": 80,
   "MISSING_MEMBER": 78,
   "UNEXPECTED_TYPE": 0,
   "UNEXPECTED_MEMBER": 0,
@@ -277,7 +277,8 @@
     "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
     "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
     "Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture",
-    "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture"
+    "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
+    "Microsoft.Xna.Framework.Media.VideoPlayer"
   ],
   "partialTypes": {
     "Microsoft.Xna.Framework.GraphicsDeviceManager": [
@@ -420,7 +421,6 @@
     "Microsoft.Xna.Framework.Media.PlaylistCollection",
     "Microsoft.Xna.Framework.Media.Song",
     "Microsoft.Xna.Framework.Media.SongCollection",
-    "Microsoft.Xna.Framework.Media.VideoPlayer",
     "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs",
     "Microsoft.Xna.Framework.Storage.StorageContainer",
     "Microsoft.Xna.Framework.Storage.StorageDevice"
@@ -601,7 +601,8 @@
     "Microsoft.Xna.Framework.Graphics.VertexPositionColor": 0,
     "Microsoft.Xna.Framework.Graphics.VertexPositionTexture": 0,
     "Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture": 0,
-    "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture": 0
+    "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture": 0,
+    "Microsoft.Xna.Framework.Media.VideoPlayer": 0
   },
   "details": {
     "MISSING_TYPE": [
@@ -682,7 +683,6 @@
       "Microsoft.Xna.Framework.Media.PlaylistCollection",
       "Microsoft.Xna.Framework.Media.Song",
       "Microsoft.Xna.Framework.Media.SongCollection",
-      "Microsoft.Xna.Framework.Media.VideoPlayer",
       "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs",
       "Microsoft.Xna.Framework.Storage.StorageContainer",
       "Microsoft.Xna.Framework.Storage.StorageDevice"

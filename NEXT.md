@@ -54,26 +54,28 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 72 | `Graphics.SamplerStateCollection` + `GraphicsDevice.SamplerStates`/`VertexSamplerStates` | **1** | 4 |
 | 73 | `Graphics.VertexDeclaration` + the `IVertexType` contract it uncovered | **2** | 6 |
 | 74 | the four vertex structs, the frontier's first consumed work queue | **4** | 38 |
+| 75 | `Media.VideoPlayer`, and the eleventh `NATIVE_RUNTIME` that was not one | **1** | 15 |
 
 ## Measured state
 
-Strict target **176 types / 2126 member identities**: **173 complete**, three partial graphics
-runtime types, 81 missing, **193 deferred diagnostics**. `MISSING_MEMBER` **78**, `PARTIAL_TYPES` 3,
+Strict target **177 types / 2141 member identities**: **174 complete**, three partial graphics
+runtime types, 80 missing, **192 deferred diagnostics**. `MISSING_MEMBER` **78**, `PARTIAL_TYPES` 3,
 `PROPERTY_MAPPING_MISMATCH` 1 (`GraphicsDevice::Viewport`, unrelated and pre-existing),
 `OVERLOAD_MAPPING_MISMATCH` **30**, every other structural category 0, allowlist 0, unmeasured 0.
 **27** event identities across **14** owner types. **22** projected BCL identities.
 
-CNA ABI **239 functions / 5 callbacks / 101 constants / 35 layouts**, on **two admitted encoded
+CNA ABI **257 functions / 5 callbacks / 101 constants / 35 layouts**, on **two admitted encoded
 versions** cross-verified across both header roots. Zero missing header symbols, zero missing library
 symbols, zero cross-version mismatches, zero ABI mismatches. **No CNA source was changed and no new
 native binary was built.**
 
-Behaviour corpus **526** observations, zero failures. Suite **1412 runs / 48430 assertions**, zero
-failures, zero skips. Capability registry **126** rows, zero contradictions.
+Behaviour corpus **526** observations, zero failures. Suite **1424 runs / 48618 assertions**, zero
+failures, zero skips. Capability registry **127** rows, zero contradictions.
 
-The dependency frontier carries **four** candidates and none is consumable. It went
-3 → 9 → 6 → 5 → 8 → 4 in five milestones — see `plan.md`. The eight-candidate step is the only time
-this frontier has ever produced a work queue, and the step after it consumed the whole thing.
+The dependency frontier carries **three** candidates, none is consumable, and **every one has been
+audited**. It went 3 → 9 → 6 → 5 → 8 → 4 → 3 in six milestones — see `plan.md`. The eight-candidate
+step is the only time this frontier has ever produced a work queue, and the step after it consumed
+the whole thing.
 
 ## Game is complete, and so is the whole Audio namespace
 
@@ -200,22 +202,12 @@ being accurate is exactly what made it buildable, because the route that apply n
 exports. So the audit is not a search for wrong blockers; it is a search for *what* the blocker
 names. The same question is the first one to ask of the two that remain.
 
-**The recommended next work is `Media.VideoPlayer`, and it is an audit rather than a build.** It
-is the only candidate on the frontier whose blocker has never been measured, and it is the one most
-likely to be *right*: fifteen of its members are native-reachable, including the constructor,
-`GetTexture` and every transport control. The standing constraint applies -- no legal video or
-audio fixture evidence may be fabricated -- so an audit that completes zero types and records why
-is a legitimate outcome, as `docs/graphics-adapter-audit-evidence.md` already is.
+**Every candidate on the frontier has now been audited.** The type frontier is at rest in the
+strongest sense this project has had: not "nothing looks buildable" but "each of the three left has
+been measured and the measurement stands". The recommended next work is therefore **outside** the
+frontier -- see the two levers below.
 
-The one still unaudited, with what to check first rather than what is assumed:
-
-- **`Media.VideoPlayer`** — arrived behind `Texture2D`, whose completion was its last unmet
-  signature dependency. Unlike the state objects its IL is native in **fifteen** members including
-  the constructor, `GetTexture` and every transport control, so the blocker word may well be right
-  here; that is what an audit is for. The standing constraint applies: no legal video or audio
-  fixture evidence may be fabricated.
-
-The three already audited:
+The three, all audited:
 
 - **`Graphics.GraphicsAdapter`** — blocked by the **renderer selection**. The 0.21.0 artifact
   contains `Sdl3Platform` and links SDL3 and X11 (the retired 0.7.0 one had only Headless and
@@ -242,8 +234,9 @@ The three already audited:
   whose reachable surface is *one member*, not a base class one inherits from. Projecting it means
   projecting .NET's type-descriptor system for ten design-time converters nothing here consumes.
 
-So the type frontier is **not** at rest: three candidates are deferred for a measured reason and
-one — `Media.VideoPlayer` — has never been audited at all.
+So the type frontier **is** at rest, and for the right reason: every remaining candidate was
+measured rather than accepted, and each measurement found something the blocker word does not
+name.
 
 **The single largest lever is still a qualification artifact with a real renderer.** It would
 unblock `GraphicsAdapter` directly and the three partial graphics types behind it —
@@ -254,7 +247,7 @@ from 26 to 15 when its preferred settings were projected, and what is left there
 audit's, not the renderer's.
 
 The `RUNTIME_DATA` register is **empty**. Every entry it ever held described a producer rather than
-the type, and ten `NATIVE_RUNTIME` deferrals went the same way — the ninth being the four state
+the type, and **eleven** `NATIVE_RUNTIME` deferrals went the same way — the ninth being the four state
 objects at once and the tenth `VertexDeclaration`, whose reachability was in every case an
 `assembly`-visible member the contract never selects. `INTERFACE_PRODUCER_MISSING` emptied off the
 dependency-complete list with it, for exactly the same reason. The audit is the rule that

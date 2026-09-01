@@ -108,7 +108,9 @@ class VisualizationDataTest < Minitest::Test
   # Completing it implies no filler, which is the whole of what the deferral was about.
   def test_it_implies_no_media_runtime_and_nothing_fills_it
     # Video arrived in Foundation 52 from its own IL; it is not a filler either.
-    %i[MediaPlayer MediaLibrary Song Album Playlist VideoPlayer]
+    # `VideoPlayer` left this list when its blocker was audited; it is not a filler for this type
+    # either, and what this milestone claimed is unchanged.
+    %i[MediaPlayer MediaLibrary Song Album Playlist]
       .each { |absent| refute F::Media.const_defined?(absent, false), "Media::#{absent}" }
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     # `media` left this check when MediaSource bound the four routes that measure what CNA answers

@@ -386,6 +386,7 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.TextureCollection
       Microsoft.Xna.Framework.Input.GamePad
       Microsoft.Xna.Framework.Input.Mouse
+      Microsoft.Xna.Framework.Media.VideoPlayer
     ], ((STRICT.fetch("completeTypeNames") & native) - internally_native.keys).sort
     %w[
       Microsoft.Xna.Framework.FrameworkDispatcher
@@ -469,9 +470,10 @@ class DependencyFrontierTest < Minitest::Test
     # dependency-complete, and completing Texture2D did the same for Media.VideoPlayer. Then 6,
     # when the four state objects were audited and built and SamplerStateCollection appeared behind
     # SamplerState; 5 when that collection was built too; 8 when VertexDeclaration and the
-    # IVertexType it uncovered were both built, putting the four vertex structs on the queue; and 4
-    # when those four were consumed and nothing arrived behind them.
-    assert_equal 4, REPORT.fetch("dependencyCompleteCandidates").length
+    # IVertexType it uncovered were both built, putting the four vertex structs on the queue; 4 when
+    # those four were consumed and nothing arrived behind them; and 3 when Media.VideoPlayer's
+    # blocker was audited and found not to be one either.
+    assert_equal 3, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -688,9 +690,12 @@ class DependencyFrontierTest < Minitest::Test
       # that arrived behind it takes its place -- the ninth deferral this register has retired.
       # SamplerStateCollection was the example here for one milestone. Its NATIVE_RUNTIME was
       # right -- the setter really does reach the device -- and being right made the type buildable
-      # rather than blocked, because CNA exports precisely the route it needs. VideoPlayer takes
-      # its place: fifteen native-reachable members including the constructor.
-      "Microsoft.Xna.Framework.Media.VideoPlayer" => "NATIVE_RUNTIME"
+      # rather than blocked, because CNA exports precisely the route it needs. VideoPlayer took its
+      # place for one milestone and then went the same way: fifteen native-reachable members, every
+      # one with a working route, the eleventh deferral this register has retired. What is left is
+      # the three that were audited and stayed deferred, which is the whole table above -- so this
+      # register has no replacement example to name, and says so.
+      "Microsoft.Xna.Framework.Design.MathTypeConverter" => "BCL_PROJECTION"
     }.each do |name, expected|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
       refute_nil candidate, name
