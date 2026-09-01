@@ -219,6 +219,20 @@ module CNA
       # The audio value structures. `CNA_AudioListener` and `CNA_AudioEmitter` carry the same four
       # `CNA_Vector3` fields; the emitter adds its own `doppler_scale` ahead of them, which is why
       # the two layouts differ by twelve bytes and not four.
+      class TextureSlotInfo < Structure
+        layout size: 24, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("bound", "CNA_Bool", 8, 1), Layouts.field("reserved", "uint8_t", 9, 7),
+          Layouts.field("texture", "CNA_Handle", 16, 8)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       class SoundEffectCreateInfo < Structure
         layout size: 24, alignment: 8, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

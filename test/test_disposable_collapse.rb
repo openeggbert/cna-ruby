@@ -250,7 +250,7 @@ class DisposableCollapseTest < Minitest::Test
     # GamerServicesComponent appeared behind it, and the System.Byte[] decision took Microphone's
     # BCL half away.
     assert_equal({"BCL_PROJECTION" => 2, "BCL_PROJECTION+NATIVE_RUNTIME" => 1,
-                  "NATIVE_RUNTIME" => 7, "NATIVE_RUNTIME+RUNTIME_DATA" => 1, "RUNTIME_DATA" => 1},
+                  "NATIVE_RUNTIME" => 6, "NATIVE_RUNTIME+RUNTIME_DATA" => 1, "RUNTIME_DATA" => 1},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end

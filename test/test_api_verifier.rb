@@ -1852,7 +1852,7 @@ class ApiVerifierTest < Minitest::Test
     %w[SetRenderTarget PreferredDepthStencilFormat].each do |name|
       assert deferred.any? { |label| label.include?(name) }, name
     end
-    assert_equal %i[IsDisposed Viewport Clear].sort,
+    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures].sort,
                  Microsoft::Xna::Framework::Graphics::GraphicsDevice.public_instance_methods(false).sort
   end
 

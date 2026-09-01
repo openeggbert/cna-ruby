@@ -166,3 +166,18 @@ content reader for it is registered), the whole `cna_dynamic_sound_effect_instan
 `cna_audio_unsubscribe_ext` (no `DynamicSoundEffectInstance` is projected), every
 `cna_microphone_*` route, and the type-name count/copy pairs, which answer a .NET type name that
 Ruby's own `class` already carries.
+
+## The device texture collections
+
+`cna_graphics_device_get_texture` and `cna_graphics_device_set_texture` bring the count to 117 and
+the layouts to 24, adding `CNA_TextureSlotInfo` (24/8) and three constants —
+`CNA_SHADER_STAGE_PIXEL`, `CNA_SHADER_STAGE_VERTEX` and
+`CNA_TEXTURE_COLLECTION_MAX_TEXTURES` = 16.
+
+Worth recording for its own sake: Native frontier 4 concluded that `Graphics.TextureCollection` was
+"the one case where `NATIVE_RUNTIME` was the right word — no CNA route at all". Both routes are
+exported by the **retired 0.7.0 artifact** as well, so no version difference explains it. That
+deferral was simply mistaken.
+
+`cna_graphics_device_unbind_texture` is deliberately not bound: XNA's collection has no member that
+unbinds one texture from every slot, so there is no identity for the route to carry.

@@ -28569,6 +28569,28 @@
           "getAccess": "public",
           "setAccess": "public",
           "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "Textures",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureCollection",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "VertexTextures",
+          "type": "Microsoft.Xna.Framework.Graphics.TextureCollection",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::GraphicsDevice"
@@ -28652,6 +28674,40 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::GraphicsResource"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.TextureCollection",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [],
+      "directInterfaces": [],
+      "genericParameters": [],
+      "members": [
+        {
+          "kind": "property",
+          "name": "Item",
+          "type": "Microsoft.Xna.Framework.Graphics.Texture",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+            {
+              "name": "index",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::TextureCollection"
     },
     {
       "name": "Microsoft.Xna.Framework.Graphics.Texture",

@@ -779,6 +779,20 @@ module Microsoft
             Viewport.from_native(output)
           end
 
+          # `Textures` is `new TextureCollection(this, 0, profileCapabilities.MaxSamplers)` and
+          # `VertexTextures` is `new TextureCollection(this, 0x101, ...MaxVertexSamplers)`. The
+          # offsets are D3D9 sampler register bases -- 0 and `D3DVERTEXTEXTURESAMPLER0` -- and the
+          # CNA analogue of choosing between them is `CNA_ShaderStage`, so the two collections
+          # differ here by stage rather than by register base. Both getters are one `ldfld` over a
+          # field the constructor fills, so each answers the **same object** every time.
+          def Textures
+            @textures ||= TextureCollection.__send__(:new, self, CNA::Native::Manifest::CONSTANTS.fetch("CNA_SHADER_STAGE_PIXEL"))
+          end
+
+          def VertexTextures
+            @vertex_textures ||= TextureCollection.__send__(:new, self, CNA::Native::Manifest::CONSTANTS.fetch("CNA_SHADER_STAGE_VERTEX"))
+          end
+
           def Clear(color)
             raise TypeError, "GraphicsDevice.Clear foundation overload expects Color" unless color.instance_of?(Color)
             divisor = 255.0
@@ -804,6 +818,114 @@ module Microsoft
             raise CNA::DisposedObjectError, "GraphicsDevice is disposed" if self.IsDisposed
             raise CNA::InvalidBindingStateError, "GraphicsDevice native access is valid only inside a CNA lifecycle callback" if @callback_handle.zero?
             @callback_handle
+          end
+        end
+
+        # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…).
+        #
+        # `.class public auto ansi sealed beforefieldinit` over three fields -- the parent device, a
+        # D3D9 sampler register base and a slot count -- with one public identity: the `Item[Int32]`
+        # indexer, get and set. The constructor is `assembly`, so `new` is private under Foundation
+        # 25's rule and a consumer reaches one only through `GraphicsDevice.Textures` or
+        # `.VertexTextures`.
+        #
+        # Native frontier 4 recorded this type as "the one case where NATIVE_RUNTIME was the right
+        # word -- no CNA route at all". That was **wrong**, and not because the ABI moved:
+        # `cna_graphics_device_get_texture` and `cna_graphics_device_set_texture` are exported by the
+        # retired 0.7.0 artifact as well. It is the fourth frontier deferral this session to fail on
+        # inspection, and the first that was simply mistaken rather than reasoned from a wrong
+        # premise.
+        #
+        # ## Why the getter answers from a cache
+        #
+        # `cna_graphics_device_get_texture` answers a `CNA_TextureSlotInfo` whose `bound` flag says
+        # whether *something* occupies the slot and whose `texture` handle is valid only when a C
+        # caller created that texture. CNA's own header states why, and states the consequence for
+        # exactly this projection:
+        #
+        # > There is deliberately no route from a native object back to a handle, here or anywhere
+        # > else in this ABI. … The practical consequence, for a consumer whose own `Textures[i]`
+        # > getter must return the object it set: cache what you bind and answer from the cache, and
+        # > use `bound` to tell "something else owns this slot now" from "the slot is empty".
+        #
+        # So the getter answers the Ruby `Texture` this collection bound, and the native slot is
+        # consulted for the one case a cache cannot cover.
+        #
+        # DEVIATION, recorded: a slot filled by canonical CNA code -- a `SpriteBatch` flush, for
+        # instance -- reads back as `nil` here where XNA would answer the texture the device holds.
+        # That case is **detectable** rather than silent, because `bound` is true while the cache is
+        # empty, and `slot_bound?` exposes exactly that to the tests. Answering a fabricated
+        # `Texture` for a native object this binding never created would be the alternative.
+        #
+        # DEVIATION, recorded: `Length` is CNA's 16 for both stages. XNA's is
+        # `ProfileCapabilities.MaxSamplers` and `MaxVertexSamplers`, which are profile-dependent --
+        # a Reach device has **no** vertex samplers at all -- and this binding has `GraphicsProfile`
+        # as a managed enum with no capability table behind it, so there is nothing measured to take
+        # the number from.
+        class TextureCollection
+          MAX_TEXTURES = CNA::Native::Manifest::CONSTANTS.fetch("CNA_TEXTURE_COLLECTION_MAX_TEXTURES")
+
+          private_class_method :new
+
+          def initialize(device, stage)
+            @device = device
+            @stage = stage
+            @bound = {}
+          end
+
+          # `if (index < 0 || index >= _maxTextures) throw new ArgumentOutOfRangeException("index")`,
+          # after `Helpers.CheckDisposed(_parent, ...)`. An empty slot answers `ldnull`.
+          def [](index)
+            slot = validated(index)
+            ensure_device!
+            @bound[slot]
+          end
+
+          def []=(index, value)
+            slot = validated(index)
+            ensure_device!
+            unless value.nil?
+              raise TypeError, "value must be a Texture" unless value.is_a?(Texture)
+              raise CNA::DisposedObjectError, "the texture is disposed" if value.IsDisposed
+            end
+
+            handle = value.nil? ? 0 : value.__send__(:native_handle)
+            CNA::Native.library.call("cna_graphics_device_set_texture",
+                                     @device.__send__(:native_handle), @stage, slot, handle)
+            if value.nil?
+              @bound.delete(slot)
+            else
+              @bound[slot] = value
+            end
+            value
+          end
+
+          private
+
+          # `_maxTextures` is an `assembly` field and XNA publishes no `Length`, so neither does this.
+          # It is reachable for the tests that pin the deviation and for nothing else.
+          def length = MAX_TEXTURES
+
+          # True when the device reports a texture in the slot, whoever put it there. It is the one
+          # thing the managed cache cannot know, which is why it is measured rather than inferred.
+          def slot_bound?(index)
+            slot = validated(index)
+            ensure_device!
+            info = CNA::Native::Layouts::TextureSlotInfo.new
+            CNA::Native.library.call("cna_graphics_device_get_texture",
+                                     @device.__send__(:native_handle), @stage, slot, info.pointer)
+            info.read_u8(8) == 1
+          end
+
+          def validated(index)
+            slot = CNA::Runtime::Numeric.int32(index, "index")
+            raise ::RangeError, "index" if slot.negative? || slot >= MAX_TEXTURES
+
+            slot
+          end
+
+          def ensure_device!
+            raise CNA::DisposedObjectError, "GraphicsDevice is disposed" if @device.IsDisposed
           end
         end
 

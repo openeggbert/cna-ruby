@@ -267,6 +267,18 @@ module CNA
         signature("cna_graphics_device_manager_destroy", T[:result], [handle("CNA_GraphicsDeviceManagerHandle")], ownership: "consumes OWNED manager"),
         signature("cna_graphics_device_get_viewport", T[:result], [T[:handle], pointer("CNA_Viewport")], ownership: "caller output"),
         signature("cna_graphics_device_clear_rgba", T[:result], [T[:handle], T[:float], T[:float], T[:float], T[:float]], ownership: "borrows device"),
+        # The device texture collections. Native frontier 4 recorded `Graphics.TextureCollection` as
+        # "the one case where NATIVE_RUNTIME was the right word -- no CNA route at all". That was
+        # wrong, and not because the ABI moved: `cna_graphics_device_get_texture` and
+        # `cna_graphics_device_set_texture` are exported by the retired 0.7.0 artifact too. It is the
+        # fourth frontier deferral this session to survive being checked and the first to have been
+        # simply mistaken rather than reasoned from the wrong premise.
+        #
+        # `cna_graphics_device_unbind_texture` is deliberately **not** bound: XNA's collection has no
+        # member that unbinds one texture from every slot, and binding a route with no identity to
+        # carry it would be surface this projection does not have.
+        signature("cna_graphics_device_get_texture", T[:result], [T[:handle], enum("CNA_ShaderStage"), T[:u32], pointer("CNA_TextureSlotInfo")], ownership: "borrows device; caller output"),
+        signature("cna_graphics_device_set_texture", T[:result], [T[:handle], enum("CNA_ShaderStage"), T[:u32], T[:handle]], ownership: "borrows device; stores no ownership -- a destroyed texture unbinds itself"),
         signature("cna_texture2d_create_from_encoded_memory", T[:result], [T[:handle], pointer("uint8_t", const: true), T[:u64], pointer("CNA_Texture2DDecodeInfo", const: true), pointer("CNA_Handle")], ownership: "returns OWNED Texture2D"),
         signature("cna_texture2d_get_info", T[:result], [T[:handle], pointer("CNA_Texture2DInfo")], ownership: "caller output"),
         signature("cna_texture2d_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED Texture2D"),
@@ -368,6 +380,9 @@ module CNA
         "CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY" => 1,
         "CNA_SPRITE_EFFECT_FLIP_VERTICALLY" => 2,
         "CNA_SURFACE_FORMAT_COLOR" => 0,
+        "CNA_SHADER_STAGE_PIXEL" => 0,
+        "CNA_SHADER_STAGE_VERTEX" => 1,
+        "CNA_TEXTURE_COLLECTION_MAX_TEXTURES" => 16,
         "CNA_MOUSE_BUTTON_LEFT" => 1,
         "CNA_MOUSE_BUTTON_MIDDLE" => 2,
         "CNA_MOUSE_BUTTON_RIGHT" => 4,

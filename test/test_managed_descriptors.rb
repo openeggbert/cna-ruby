@@ -220,7 +220,7 @@ class ManagedDescriptorsTest < Minitest::Test
   def test_presentation_parameters_implies_no_device_adapter_or_swap_chain
     %i[GraphicsAdapter RenderTarget2D RenderTargetCube
        DepthStencilState].each { |absent| refute G.const_defined?(absent, false), "Graphics::#{absent}" }
-    assert_equal %i[IsDisposed Viewport Clear].sort, G::GraphicsDevice.public_instance_methods(false).sort
+    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures].sort, G::GraphicsDevice.public_instance_methods(false).sort
   end
 
   # -------------------------------------------------------- GameComponentCollectionEventArgs
@@ -366,7 +366,7 @@ class ManagedDescriptorsTest < Minitest::Test
     %i[ResourceCreated ResourceDestroyed].each do |absent|
       refute G::GraphicsDevice.method_defined?(absent), absent.to_s
     end
-    assert_equal %i[IsDisposed Viewport Clear].sort, G::GraphicsDevice.public_instance_methods(false).sort
+    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures].sort, G::GraphicsDevice.public_instance_methods(false).sort
   end
 
   # The event args type still implies neither component class. GameComponentCollection exists as of

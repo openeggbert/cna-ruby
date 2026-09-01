@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 153,
-  "completeTypes": 148,
+  "targetTypes": 154,
+  "completeTypes": 149,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
@@ -10,7 +10,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 104,
+  "missingTypes": 103,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -93,7 +93,7 @@
   "blockerSummary": {
     "BCL_PROJECTION": 2,
     "BCL_PROJECTION+NATIVE_RUNTIME": 1,
-    "NATIVE_RUNTIME": 7,
+    "NATIVE_RUNTIME": 6,
     "NATIVE_RUNTIME+RUNTIME_DATA": 1,
     "RUNTIME_DATA": 1
   },
@@ -173,69 +173,6 @@
     }
   ],
   "ilOnlyBlockedCandidates": [
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.TextureCollection",
-      "kind": "class",
-      "expectedRubyIdentities": 1,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.Texture"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Graphics.EffectPass",
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-        "Microsoft.Xna.Framework.Graphics.Texture2D",
-        "Microsoft.Xna.Framework.Graphics.Texture3D",
-        "Microsoft.Xna.Framework.Graphics.TextureCube"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.EffectPass",
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-        "Microsoft.Xna.Framework.Graphics.Texture2D",
-        "Microsoft.Xna.Framework.Graphics.Texture3D",
-        "Microsoft.Xna.Framework.Graphics.TextureCube"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Textures (1 overload)",
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::VertexTextures (1 overload)"
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-
-      ],
-      "ilDerivationRequired": false,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-        "ResetState",
-        "get_Item",
-        "set_Item"
-      ],
-      "runtimeDataDetail": null
-    },
     {
       "name": "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
       "kind": "class",
@@ -470,9 +407,7 @@
             "VertexTextures"
           ],
           "reachedButMissing": [
-            "Adapter",
-            "Textures",
-            "VertexTextures"
+            "Adapter"
           ]
         }
       },
@@ -484,8 +419,7 @@
       ],
       "ilOnlyUnmetDependencies": [
         "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-        "Microsoft.Xna.Framework.Graphics.TextureCollection"
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
       ],
       "partialDependencySatisfied": false,
       "partialRemainderReverseEdges": [
@@ -554,8 +488,7 @@
             "VertexTextures"
           ],
           "reachedButMissing": [
-            "Textures",
-            "VertexTextures"
+
           ]
         }
       },
@@ -564,8 +497,7 @@
         "Microsoft.Xna.Framework.Graphics.TextureCollection"
       ],
       "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-        "Microsoft.Xna.Framework.Graphics.TextureCollection"
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
       ],
       "partialDependencySatisfied": false,
       "partialRemainderReverseEdges": [
@@ -913,69 +845,6 @@
 
   ],
   "dependencyCompleteCandidates": [
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.TextureCollection",
-      "kind": "class",
-      "expectedRubyIdentities": 1,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.Texture"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Graphics.EffectPass",
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-        "Microsoft.Xna.Framework.Graphics.Texture2D",
-        "Microsoft.Xna.Framework.Graphics.Texture3D",
-        "Microsoft.Xna.Framework.Graphics.TextureCube"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.EffectPass",
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-        "Microsoft.Xna.Framework.Graphics.Texture2D",
-        "Microsoft.Xna.Framework.Graphics.Texture3D",
-        "Microsoft.Xna.Framework.Graphics.TextureCube"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Textures (1 overload)",
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::VertexTextures (1 overload)"
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-
-      ],
-      "ilDerivationRequired": false,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-        "ResetState",
-        "get_Item",
-        "set_Item"
-      ],
-      "runtimeDataDetail": null
-    },
     {
       "name": "Microsoft.Xna.Framework.Content.ResourceContentManager",
       "kind": "class",

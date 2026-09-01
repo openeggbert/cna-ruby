@@ -318,7 +318,7 @@ class PureManagedEnumBatchTest < Minitest::Test
   def test_batch_implies_no_renderer_device_audio_media_or_touch_surface
     %i[RenderTarget2D RenderTargetCube TextureCube Texture3D VertexBuffer IndexBuffer
        DynamicVertexBuffer DynamicIndexBuffer VertexDeclaration BlendState DepthStencilState
-       RasterizerState SamplerState SamplerStateCollection TextureCollection Effect BasicEffect
+       RasterizerState SamplerState SamplerStateCollection Effect BasicEffect
        EffectParameter EffectTechnique GraphicsAdapter
        OcclusionQuery].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
@@ -347,7 +347,7 @@ class PureManagedEnumBatchTest < Minitest::Test
       .each { |name| refute I.const_defined?(name, false), "Input::#{name}" }
     # Foundation 32 added TouchPanel, whose IL reads no device on this profile.
     refute I.const_defined?(:TouchPanel, false), "Input::TouchPanel"
-    assert_equal %i[IsDisposed Viewport Clear].sort,
+    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures].sort,
                  G::GraphicsDevice.public_instance_methods(false).sort
   end
 

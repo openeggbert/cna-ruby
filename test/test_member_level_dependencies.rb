@@ -197,11 +197,10 @@ class MemberLevelDependenciesTest < Minitest::Test
     # 6 until ContentManager completed -- it left this list and so did Microphone, whose only
     # remaining blocker was the `System.Byte[]` the Stream projection decided -- and 5 until the
     # audio cluster took SoundEffectInstance.
-    assert_equal 4, signature_complete.length
+    assert_equal 3, signature_complete.length
     names = signature_complete.map { |entry| entry.fetch("name") }
     # ContentManager was here until the Stream and Action`1 projections consumed it.
-    %w[Microsoft.Xna.Framework.Graphics.TextureCollection
-       Microsoft.Xna.Framework.Graphics.SpriteFont
+    %w[Microsoft.Xna.Framework.Graphics.SpriteFont
        Microsoft.Xna.Framework.Graphics.EffectAnnotation
        Microsoft.Xna.Framework.Audio.Cue].each { |name| assert_includes names, name }
   end
@@ -226,7 +225,7 @@ class MemberLevelDependenciesTest < Minitest::Test
     assert_includes REPORT.fetch("candidatePolicy"), "deliberately do not relax"
     # 19 until Foundation 46 took LaunchParameters off the frontier by projecting Dictionary`2,
     # and 12 until the Stream projection consumed TitleContainer.
-    assert_equal 12, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 11, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")
@@ -240,7 +239,7 @@ class MemberLevelDependenciesTest < Minitest::Test
      REPORT.fetch("ilOnlyBlockedCandidates")).each do |entry|
       refute_includes consumable, entry.fetch("name")
     end
-    assert_equal 4, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
+    assert_equal 3, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
   end
 
   # The one candidate the refinement cleared, and what happened to it. Foundation 39 selected it and
