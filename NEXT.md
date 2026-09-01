@@ -64,6 +64,7 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 81 | the vertex and index buffers, and the `VertexBufferBinding` that names one | **5** | 43 |
 | 82 | `DirectionalLight`, `EffectMaterial` and the `IEffectLights` they unblocked | **3** | 12 |
 | 83 | `RenderTarget2D`, `RenderTargetCube`, `RenderTargetBinding`, and an upload CNA drops | **3** | 22 |
+| 84 | `OcclusionQuery`, whose getter is what unblocks the next call | **1** | 6 |
 
 ## Measured state
 
@@ -71,22 +72,22 @@ This section had gone stale for eleven milestones — it still described Foundat
 while the report said 193 — which is the same failure the frontier and corpus staleness guards were
 added for. Re-measured from the live reports at Foundation 81:
 
-Strict target **199 types / 2347 member identities**: **197 complete**, **two** partial graphics
-runtime types (`GraphicsDevice` and `GraphicsDeviceManager`), 58 missing, **151 deferred
+Strict target **200 types / 2353 member identities**: **198 complete**, **two** partial graphics
+runtime types (`GraphicsDevice` and `GraphicsDeviceManager`), 57 missing, **150 deferred
 diagnostics**. `MISSING_MEMBER` **65**, `PARTIAL_TYPES` 2,
 `PROPERTY_MAPPING_MISMATCH` 1 (`GraphicsDevice::Viewport`, unrelated and pre-existing),
 `OVERLOAD_MAPPING_MISMATCH` **27**, every other structural category 0, allowlist 0, unmeasured 0.
 **31** event identities across **18** owner types. **22** projected BCL identities.
 
-CNA ABI **353 functions / 5 callbacks / 133 constants / 60 layouts**, on **two admitted encoded
+CNA ABI **360 functions / 5 callbacks / 133 constants / 60 layouts**, on **two admitted encoded
 versions** cross-verified across both header roots. Zero missing header symbols, zero missing library
 symbols, zero cross-version mismatches, zero ABI mismatches. **No CNA source was changed and no new
 native binary was built.**
 
-Behaviour corpus **526** observations, zero failures. Suite **1537 runs / 50290 assertions**, zero
+Behaviour corpus **526** observations, zero failures. Suite **1544 runs / 50359 assertions**, zero
 failures, and 21 skips under the default HEADLESS artifact — every one a renderer capability or
 fixture that artifact does not have: compiled effects, volume storage and cube-face storage. The
-same 1537 runs are green under both real-renderer artifacts, 17 skips on `OPENGL33` and **none** on
+same 1544 runs are green under both real-renderer artifacts, 17 skips on `OPENGL33` and **none** on
 the compiled-effects build, with `SDL_VIDEODRIVER=x11` — which Foundation 81 measured to be load-bearing
 rather than decorative. Capability registry **136** rows, zero contradictions.
 

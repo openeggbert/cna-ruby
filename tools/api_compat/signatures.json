@@ -48539,6 +48539,119 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::RenderTargetBinding"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.OcclusionQuery",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
+        "System.IDisposable"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.IGraphicsResource"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "graphicsDevice",
+              "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Begin",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "End",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PixelCount",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "IsComplete",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::OcclusionQuery"
     }
   ]
 }

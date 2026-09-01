@@ -112,6 +112,13 @@ CHECK_FN(cna_render_target2d_create, CNA_Result, (CNA_Handle, const CNA_RenderTa
 CHECK_FN(cna_render_target_cube_create, CNA_Result, (CNA_Handle, const CNA_RenderTargetCubeCreateInfo*, CNA_Handle*));
 CHECK_FN(cna_render_target_get_info, CNA_Result, (CNA_Handle, CNA_RenderTargetInfo*));
 CHECK_FN(cna_render_target_destroy, CNA_Result, (CNA_Handle));
+CHECK_FN(cna_occlusion_query_create, CNA_Result, (CNA_Handle, CNA_OcclusionQueryHandle*));
+CHECK_FN(cna_occlusion_query_begin, CNA_Result, (CNA_OcclusionQueryHandle));
+CHECK_FN(cna_occlusion_query_end, CNA_Result, (CNA_OcclusionQueryHandle));
+CHECK_FN(cna_occlusion_query_get_is_complete, CNA_Result, (CNA_OcclusionQueryHandle, CNA_Bool*));
+CHECK_FN(cna_occlusion_query_get_pixel_count, CNA_Result, (CNA_OcclusionQueryHandle, int32_t*));
+CHECK_FN(cna_occlusion_query_has_renderer, CNA_Result, (CNA_OcclusionQueryHandle, CNA_Bool*));
+CHECK_FN(cna_occlusion_query_destroy, CNA_Result, (CNA_OcclusionQueryHandle));
 CHECK_FN(cna_effect_create_compiled, CNA_Result, (CNA_Handle, const uint8_t*, uint64_t, CNA_EffectHandle*));
 CHECK_FN(cna_effect_clone, CNA_Result, (CNA_EffectHandle, CNA_EffectHandle*));
 CHECK_FN(cna_effect_dispose, CNA_Result, (CNA_EffectHandle));
@@ -481,6 +488,13 @@ int main(void) {
     SIGNATURE(cna_render_target_cube_create, "CNA_Result|CNA_Handle,const CNA_RenderTargetCubeCreateInfo*,CNA_Handle*");
     SIGNATURE(cna_render_target_get_info, "CNA_Result|CNA_Handle,CNA_RenderTargetInfo*");
     SIGNATURE(cna_render_target_destroy, "CNA_Result|CNA_Handle");
+    SIGNATURE(cna_occlusion_query_create, "CNA_Result|CNA_Handle,CNA_OcclusionQueryHandle*");
+    SIGNATURE(cna_occlusion_query_begin, "CNA_Result|CNA_OcclusionQueryHandle");
+    SIGNATURE(cna_occlusion_query_end, "CNA_Result|CNA_OcclusionQueryHandle");
+    SIGNATURE(cna_occlusion_query_get_is_complete, "CNA_Result|CNA_OcclusionQueryHandle,CNA_Bool*");
+    SIGNATURE(cna_occlusion_query_get_pixel_count, "CNA_Result|CNA_OcclusionQueryHandle,int32_t*");
+    SIGNATURE(cna_occlusion_query_has_renderer, "CNA_Result|CNA_OcclusionQueryHandle,CNA_Bool*");
+    SIGNATURE(cna_occlusion_query_destroy, "CNA_Result|CNA_OcclusionQueryHandle");
     SIGNATURE(cna_effect_create_compiled, "CNA_Result|CNA_Handle,const uint8_t*,uint64_t,CNA_EffectHandle*");
     SIGNATURE(cna_effect_clone, "CNA_Result|CNA_EffectHandle,CNA_EffectHandle*");
     SIGNATURE(cna_effect_dispose, "CNA_Result|CNA_EffectHandle");

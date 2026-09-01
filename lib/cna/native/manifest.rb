@@ -364,6 +364,18 @@ module CNA
         signature("cna_render_target_cube_create", T[:result], [T[:handle], pointer("CNA_RenderTargetCubeCreateInfo", const: true), pointer("CNA_Handle")], ownership: "borrows device; returns OWNED render target"),
         signature("cna_render_target_get_info", T[:result], [T[:handle], pointer("CNA_RenderTargetInfo")], ownership: "caller output"),
         signature("cna_render_target_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED render target"),
+        # `OcclusionQuery`. `has_renderer` is a production route rather than a diagnostic: XNA's
+        # `get_IsComplete` begins by checking whether the query still holds a native object, and
+        # answers `_isAvailable` without asking the device when it does not.
+        # `cna_occlusion_query_get_is_pixel_count_precise_ext` stays unbound -- XNA has no identity
+        # for it, and its own header says so by being an `_ext`.
+        signature("cna_occlusion_query_create", T[:result], [T[:handle], pointer("CNA_OcclusionQueryHandle")], ownership: "borrows device; returns OWNED query"),
+        signature("cna_occlusion_query_begin", T[:result], [handle("CNA_OcclusionQueryHandle")], ownership: "borrows query"),
+        signature("cna_occlusion_query_end", T[:result], [handle("CNA_OcclusionQueryHandle")], ownership: "borrows query"),
+        signature("cna_occlusion_query_get_is_complete", T[:result], [handle("CNA_OcclusionQueryHandle"), pointer("CNA_Bool")], ownership: "caller output"),
+        signature("cna_occlusion_query_get_pixel_count", T[:result], [handle("CNA_OcclusionQueryHandle"), pointer("int32_t")], ownership: "caller output"),
+        signature("cna_occlusion_query_has_renderer", T[:result], [handle("CNA_OcclusionQueryHandle"), pointer("CNA_Bool")], ownership: "caller output"),
+        signature("cna_occlusion_query_destroy", T[:result], [handle("CNA_OcclusionQueryHandle")], ownership: "consumes OWNED query"),
         # The Effect cluster. Every getter in it returns an **owned view**: `cna_effect_get_parameters`
         # hands back a fresh collection handle on every call, and so does
         # `cna_effect_parameter_collection_get_at` for every element -- measured, two calls answer two

@@ -5,12 +5,12 @@
   "REFERENCE_MEMBERS": 2964,
   "EXPECTED_RUBY_TYPES": 257,
   "EXPECTED_RUBY_MEMBERS": 2915,
-  "TARGET_TYPES": 199,
-  "TARGET_MEMBERS": 2347,
-  "TOTAL_DIAGNOSTICS": 151,
-  "COMPLETE_TYPES": 197,
+  "TARGET_TYPES": 200,
+  "TARGET_MEMBERS": 2353,
+  "TOTAL_DIAGNOSTICS": 150,
+  "COMPLETE_TYPES": 198,
   "PARTIAL_TYPES": 2,
-  "MISSING_TYPES": 58,
+  "MISSING_TYPES": 57,
   "ALLOWLIST_ENTRIES": 0,
   "EVENT_IDENTITIES": 31,
   "EVENT_OWNER_TYPES": 18,
@@ -18,7 +18,7 @@
   "BCL_PROJECTED_IDENTITIES": 22,
   "BCL_EXCEPTION_BASES": 2,
   "BCL_THROWN_EXCEPTIONS": 8,
-  "MISSING_TYPE": 58,
+  "MISSING_TYPE": 57,
   "MISSING_MEMBER": 65,
   "UNEXPECTED_TYPE": 0,
   "UNEXPECTED_MEMBER": 0,
@@ -305,7 +305,8 @@
     "Microsoft.Xna.Framework.Graphics.EffectMaterial",
     "Microsoft.Xna.Framework.Graphics.RenderTarget2D",
     "Microsoft.Xna.Framework.Graphics.RenderTargetCube",
-    "Microsoft.Xna.Framework.Graphics.RenderTargetBinding"
+    "Microsoft.Xna.Framework.Graphics.RenderTargetBinding",
+    "Microsoft.Xna.Framework.Graphics.OcclusionQuery"
   ],
   "partialTypes": {
     "Microsoft.Xna.Framework.GraphicsDeviceManager": [
@@ -401,7 +402,6 @@
     "Microsoft.Xna.Framework.Graphics.ModelMeshPart",
     "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection",
     "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator",
-    "Microsoft.Xna.Framework.Graphics.OcclusionQuery",
     "Microsoft.Xna.Framework.Graphics.SkinnedEffect",
     "Microsoft.Xna.Framework.GraphicsDeviceInformation",
     "Microsoft.Xna.Framework.Media.Album",
@@ -624,7 +624,8 @@
     "Microsoft.Xna.Framework.Graphics.EffectMaterial": 0,
     "Microsoft.Xna.Framework.Graphics.RenderTarget2D": 0,
     "Microsoft.Xna.Framework.Graphics.RenderTargetCube": 0,
-    "Microsoft.Xna.Framework.Graphics.RenderTargetBinding": 0
+    "Microsoft.Xna.Framework.Graphics.RenderTargetBinding": 0,
+    "Microsoft.Xna.Framework.Graphics.OcclusionQuery": 0
   },
   "details": {
     "MISSING_TYPE": [
@@ -663,7 +664,6 @@
       "Microsoft.Xna.Framework.Graphics.ModelMeshPart",
       "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection",
       "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator",
-      "Microsoft.Xna.Framework.Graphics.OcclusionQuery",
       "Microsoft.Xna.Framework.Graphics.SkinnedEffect",
       "Microsoft.Xna.Framework.GraphicsDeviceInformation",
       "Microsoft.Xna.Framework.Media.Album",

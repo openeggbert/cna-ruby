@@ -2997,6 +2997,116 @@ module Microsoft
           def value_components = [@VertexBuffer, @VertexOffset, @InstanceFrequency]
         end
 
+        # `OcclusionQuery`, derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL
+        # (SHA-256 560080fc…). Five fields, and the whole type is the state machine they make:
+        #
+        #   Begin()          _isInBeginEndPair          -> InvalidOperationException(EndMustBeCalledBeforeBegin)
+        #                    !_hasIsCompleteBeenQueried -> InvalidOperationException(IsCompleteMustBeCalled)
+        #                    then native begin, and _isAvailable false, _isInBeginEndPair true,
+        #                    _hasCalledBegin true, _hasIsCompleteBeenQueried **false**
+        #   End()            !_isInBeginEndPair         -> InvalidOperationException(BeginMustBeCalledBeforeEnd)
+        #                    then native end, and _isInBeginEndPair false
+        #   IsComplete       sets _hasIsCompleteBeenQueried true **first**, then answers false with
+        #                    no native object or before any Begin, and otherwise asks the device and
+        #                    records the pixel count when the answer is yes
+        #   PixelCount       !IsComplete                -> InvalidOperationException(DataNotAvailable)
+        #
+        # The constructor sets `_hasIsCompleteBeenQueried` true, which is what lets the **first**
+        # `Begin` through: every later one has to be preceded by an `IsComplete` read. That is the
+        # rule a reader would not guess, and it is why `IsComplete` is not a pure query.
+        #
+        # DEVIATION, recorded: XNA refuses construction on a `GraphicsProfile` whose
+        # `ProfileCapabilities.OcclusionQuery` is false -- `Reach` -- with `NotSupportedException`.
+        # That is a device capability rather than a managed rule, and CNA answers the same question
+        # from the backend: `cna_occlusion_query_create` reports `CNA_RESULT_NOT_SUPPORTED` where the
+        # renderer has no query object, which surfaces as `CNA::CapabilityError`. No profile table is
+        # invented here.
+        class OcclusionQuery < GraphicsResource
+          public_class_method :new
+
+          def initialize(graphicsDevice)
+            raise ::ArgumentError, "graphicsDevice" if graphicsDevice.nil?
+            unless graphicsDevice.instance_of?(GraphicsDevice)
+              raise ::TypeError, "graphicsDevice must be GraphicsDevice"
+            end
+
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_occlusion_query_create",
+                                     graphicsDevice.__send__(:native_handle), output)
+            handle = output[0, 8].unpack1("Q")
+            release = lambda { |value| CNA::Native.library.call("cna_occlusion_query_destroy", value) }
+            @pixel_count = 0
+            @is_available = false
+            @in_begin_end_pair = false
+            @has_called_begin = false
+            @has_is_complete_been_queried = true
+            initialize_resource(graphicsDevice, handle, release)
+          rescue Exception
+            if defined?(@native_handle) && @native_handle
+              self.Dispose
+            elsif handle
+              release&.call(handle)
+            end
+            raise
+          end
+
+          def Begin
+            raise ::RuntimeError, "EndMustBeCalledBeforeBegin" if @in_begin_end_pair
+            raise ::RuntimeError, "IsCompleteMustBeCalled" unless @has_is_complete_been_queried
+
+            CNA::Native.library.call("cna_occlusion_query_begin", native_handle)
+            @is_available = false
+            @in_begin_end_pair = true
+            @has_called_begin = true
+            @has_is_complete_been_queried = false
+            nil
+          end
+
+          def End
+            raise ::RuntimeError, "BeginMustBeCalledBeforeEnd" unless @in_begin_end_pair
+
+            CNA::Native.library.call("cna_occlusion_query_end", native_handle)
+            @in_begin_end_pair = false
+            nil
+          end
+
+          # The store happens before every early return, which is what makes a bare `IsComplete`
+          # read enough to unblock the next `Begin` even when it answers false.
+          def IsComplete
+            @has_is_complete_been_queried = true
+            return @is_available unless has_renderer?
+            return @is_available unless @has_called_begin
+
+            available = CNA::Native.library.pointer_for("L", 0)
+            CNA::Native.library.call("cna_occlusion_query_get_is_complete", native_handle, available)
+            @is_available = available[0, 4].unpack1("L") == 1
+            @pixel_count = read_pixel_count if @is_available
+            @is_available
+          end
+
+          def PixelCount
+            raise ::RuntimeError, "DataNotAvailable" unless self.IsComplete
+
+            @pixel_count
+          end
+
+          private
+
+          # `pComPtr` in the IL: with no native query object `IsComplete` answers the field rather
+          # than asking the device.
+          def has_renderer?
+            output = CNA::Native.library.pointer_for("L", 0)
+            CNA::Native.library.call("cna_occlusion_query_has_renderer", native_handle, output)
+            output[0, 4].unpack1("L") == 1
+          end
+
+          def read_pixel_count
+            output = CNA::Native.library.pointer_for("l", 0)
+            CNA::Native.library.call("cna_occlusion_query_get_pixel_count", native_handle, output)
+            output[0, 4].unpack1("l")
+          end
+        end
+
         # `RenderTarget2D`, `RenderTargetCube` and the `RenderTargetBinding` that names one, derived
         # from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…).
         #

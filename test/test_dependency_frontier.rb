@@ -396,6 +396,7 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.EffectTechnique
       Microsoft.Xna.Framework.Graphics.EffectTechniqueCollection
       Microsoft.Xna.Framework.Graphics.IndexBuffer
+      Microsoft.Xna.Framework.Graphics.OcclusionQuery
       Microsoft.Xna.Framework.Graphics.RenderTarget2D
       Microsoft.Xna.Framework.Graphics.RenderTargetCube
       Microsoft.Xna.Framework.Graphics.SamplerStateCollection

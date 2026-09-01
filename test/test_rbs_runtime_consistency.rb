@@ -840,6 +840,7 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     assert_includes source, "class RenderTarget2D < Texture2D"
     assert_includes source, "class RenderTargetCube < TextureCube"
     assert_includes source, "class RenderTargetBinding\n"
+    assert_includes source, "class OcclusionQuery < GraphicsResource"
     %w[VertexBuffer IndexBuffer].each { |present| assert_includes source, "class #{present} < GraphicsResource" }
     { "DynamicVertexBuffer" => "VertexBuffer", "DynamicIndexBuffer" => "IndexBuffer" }
       .each { |derived, base| assert_includes source, "class #{derived} < #{base}" }

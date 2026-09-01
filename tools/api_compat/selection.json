@@ -1770,6 +1770,10 @@
     {
       "name": "Microsoft.Xna.Framework.Graphics.RenderTargetBinding",
       "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.OcclusionQuery",
+      "complete": true
     }
   ]
 }

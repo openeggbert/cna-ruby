@@ -545,6 +545,14 @@ module Microsoft
           def initialize: (Effect cloneSource) -> void
         end
 
+        class OcclusionQuery < GraphicsResource
+          def initialize: (GraphicsDevice graphicsDevice) -> void
+          def Begin: () -> nil
+          def End: () -> nil
+          def IsComplete: () -> bool
+          def PixelCount: () -> Integer
+        end
+
         class RenderTarget2D < Texture2D
           def initialize: (GraphicsDevice graphicsDevice, Integer width, Integer height, ?bool mipMap, ?SurfaceFormat preferredFormat, ?DepthFormat preferredDepthFormat, ?Integer preferredMultiSampleCount, ?RenderTargetUsage usage) -> void
           attr_reader RenderTargetUsage: RenderTargetUsage

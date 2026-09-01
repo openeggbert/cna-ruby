@@ -1,13 +1,13 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 199,
-  "completeTypes": 197,
+  "targetTypes": 200,
+  "completeTypes": 198,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
   ],
-  "missingTypes": 58,
+  "missingTypes": 57,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -103,77 +103,6 @@
     "NATIVE_RUNTIME": 2
   },
   "partialDependencySatisfiedCandidates": [
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.OcclusionQuery",
-      "kind": "class",
-      "expectedRubyIdentities": 6,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
-      ],
-      "unmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
-          "reachedMembers": [
-            "Resources"
-          ],
-          "reachedButMissing": [
-
-          ]
-        }
-      },
-      "ilOnlyDependencies": [
-
-      ],
-      "ilOnlyUnmetDependencies": [
-
-      ],
-      "partialDependencySatisfied": true,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": false,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "Begin",
-        "End",
-        "Dispose"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-        ".ctor",
-        "Begin",
-        "End",
-        "GetManagedObject",
-        "RecreateAndPopulateObject",
-        "ReleaseNativeObject",
-        "get_IsComplete",
-        "get_PixelCount"
-      ],
-      "runtimeDataDetail": null
-    },
     {
       "name": "Microsoft.Xna.Framework.DrawableGameComponent",
       "kind": "class",

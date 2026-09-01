@@ -35,7 +35,6 @@
 - `Microsoft.Xna.Framework.Graphics.ModelMeshPart`
 - `Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection`
 - `Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator`
-- `Microsoft.Xna.Framework.Graphics.OcclusionQuery`
 - `Microsoft.Xna.Framework.Graphics.SkinnedEffect`
 - `Microsoft.Xna.Framework.GraphicsDeviceInformation`
 - `Microsoft.Xna.Framework.Media.Album`

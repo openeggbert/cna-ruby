@@ -231,9 +231,9 @@ delimited and checked against `docs/generated/missing-type-inventory.md` by
 
 <!-- absent-types:begin -->
 `BasicEffect`, `SkinnedEffect`, `AlphaTestEffect`, `DualTextureEffect`, `EnvironmentMapEffect`,
-`GraphicsAdapter`, `OcclusionQuery`, `GraphicsDeviceInformation`,
-`PreparingDeviceSettingsEventArgs`, `DrawableGameComponent`, `Model`, `ModelBone`, `ModelMesh`,
-`ModelMeshPart`, `ModelBoneCollection`, `ModelMeshCollection`, `ModelMeshPartCollection`,
+`GraphicsAdapter`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs`,
+`DrawableGameComponent`, `Model`, `ModelBone`, `ModelMesh`, `ModelMeshPart`,
+`ModelBoneCollection`, `ModelMeshCollection`, `ModelMeshPartCollection`,
 `ModelEffectCollection`, `MediaPlayer`, `MediaLibrary`, `MediaQueue`, `Song`, `SongCollection`,
 `Album`, `AlbumCollection`, `Artist`, `ArtistCollection`, `Genre`, `GenreCollection`,
 `Playlist`, `PlaylistCollection`, `Picture`, `PictureAlbum`, `PictureAlbumCollection`,
@@ -254,7 +254,7 @@ whole nine-type `Effect` graph -- `Effect`, `EffectParameter`, `EffectAnnotation
 `EffectTechnique` and their four collections --
 `VertexDeclaration` and the four vertex structs, the four buffer types and the
 `VertexBufferBinding` that names one, `DirectionalLight`, `EffectMaterial` and the `IEffectLights`
-contract they unblocked, `RenderTarget2D`, `RenderTargetCube` and `RenderTargetBinding`,
+contract they unblocked, `RenderTarget2D`, `RenderTargetCube`, `RenderTargetBinding`, `OcclusionQuery`,
 the four graphics state objects,
 `SamplerStateCollection`, `TextureCollection`, `SpriteFont`, `Texture2D`, `Texture3D`,
 `TextureCube`, `GraphicsResource`, `ResourceContentManager`, and the whole `Audio` namespace including the XACT cluster. In `Media`,
