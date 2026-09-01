@@ -846,6 +846,437 @@ module Microsoft
             number
           end
         end
+
+        # Derived from the pinned Microsoft.Xna.Framework.dll IL (SHA-256 38e7093f…), together with
+        # `Audio.AudioFormat`, `Audio.AudioHelper.MakeFormat` and `Audio.MicrophoneCollection` from
+        # the same assembly, and `System.TimeSpan.Interval` from the pinned Microsoft .NET Framework
+        # 4.0 mscorlib (SHA-256 5634668d…).
+        #
+        # Native frontier 4 recorded this type `NATIVE_RUNTIME`. It is the sixth candidate that word
+        # was wrong about. This machine really has three capture devices, CNA enumerates all three
+        # with their hardware names, and the sixteen `cna_microphone_*` routes are declared
+        # identically by the retired 0.7.0 headers as well -- so the classification was never about
+        # the ABI, and never about the host either.
+        #
+        # ## Identity, and why there is no handle
+        #
+        # XNA's `Microphone` wraps a `uint32` handle from `CreateMicrophone(index, out handle)`.
+        # CNA has **no microphone handle at all**: every route is `(CNA_Handle game, uint64_t index,
+        # …)`, so a device is named by its position in the machine's list and the runtime owns it.
+        # The projection therefore carries a `BORROWED_EXTERNAL_SCALAR` index and nothing else.
+        # Nothing is destroyed, which is also why `Finalize` -- the one member XNA declares that
+        # frees a handle -- projects here as the member that does nothing.
+        #
+        # DEVIATION, recorded: XNA's collection is a **CLR static** built in a static constructor,
+        # so `Microphone.All` needs nothing at all. Every CNA route takes a game handle, so `All`
+        # and `Default` need a live Game on its owner thread. That is the same asymmetry
+        # `FrameworkDispatcher` and the `SoundEffect` statics record.
+        #
+        # ## Where the arithmetic lives, and why it is not CNA's
+        #
+        # CNA exports `cna_microphone_get_sample_duration_ticks_at` and
+        # `cna_microphone_get_sample_size_in_bytes_at`, and they **measurably disagree with XNA**.
+        # XNA computes both in managed code through `AudioFormat`, in `float`, over a format that is
+        # always mono PCM16 at the device rate -- `AudioFormat.Create(GetSampleRate(), 1, 16)` -- and
+        # the float32 rounding is observable:
+        #
+        #     GetSampleSizeInBytes(100ms) : XNA 8818   CNA 8820
+        #     GetSampleSizeInBytes(1000ms): XNA 88198  CNA 88200
+        #     GetSampleDuration(8818)     : XNA 100ms  CNA 99ms
+        #     GetSampleDuration(46)       : XNA 1ms    CNA 0ms
+        #
+        # XNA truncates `duration_ms * (float)(rate / 1000f)` toward zero, and `AudioFormat` is what
+        # produces the 4409-rather-than-4410 samples; CNA computes exactly. In the other direction
+        # `TimeSpan.FromMilliseconds` rounds half away from zero -- `(long)(ms + 0.5) * 10000` in the
+        # pinned mscorlib -- and CNA truncates. So the projection does the arithmetic itself, in the
+        # order the IL does it, and the two CNA routes are bound and reachable through
+        # `native_sample_size_in_bytes` / `native_sample_duration_ticks` so the divergence is
+        # measured by a test rather than only described here.
+        #
+        # `docs/microphone-evidence.md` records every measurement.
+        class Microphone
+          extend CNA::Runtime::EventOwner
+
+          CLR_IDENTITY = "Microsoft.Xna.Framework.Audio.Microphone"
+
+          # `AudioFormat.Create(GetSampleRate(), 1, 16)` in the constructor, and
+          # `MakeFormat(rate, channels, bits)` writes `BlockAlign = channels * bits / 8`. A
+          # microphone is mono PCM16 on every device, so the block align is two bytes and
+          # `samples % Channels` -- which the IL really computes -- is always zero.
+          CHANNELS = 1
+          BITS_PER_SAMPLE = 16
+          BLOCK_ALIGN = 2
+
+          # `set_BufferDuration` refuses outside `[100, 1000]` milliseconds or off a 10 ms boundary,
+          # with `ArgumentOutOfRangeException("value", InvalidMicrophoneBufferDuration)`. The three
+          # literals are `ldc.r8 100`, `ldc.r8 1000` and `ldc.r8 10` in the IL.
+          BUFFER_DURATION_MINIMUM_MILLISECONDS = 100
+          BUFFER_DURATION_MAXIMUM_MILLISECONDS = 1000
+          BUFFER_DURATION_GRANULARITY_MILLISECONDS = 10
+
+          # `new StringBuilder(0x104)` -- MAX_PATH -- is the capacity XNA gives `GetName`. CNA asks
+          # its own size first, so this is recorded rather than used as a limit.
+          XNA_NAME_CAPACITY = 0x104
+
+          # `MicrophoneCollection.OnBufferReady` raises it with `EventArgs.Empty` on the microphone
+          # whose handle matches, so the handler receives the device and an empty argument.
+          xna_event :BufferReady
+
+          private_class_method :new
+
+          class << self
+            # `get_All` is `EnumerateMicrophones(); return collection;` -- it re-enumerates on every
+            # read and answers the **same** `ReadOnlyCollection` object, which wraps a `List` that
+            # only ever grows. `EnumerateMicrophones` throws `InvalidOperationException` when the
+            # device count has **fallen**, because an index that was handed out cannot be withdrawn.
+            def All
+              enumerate
+              @collection
+            end
+
+            # `if (defaultMic == null) SelectDefaultMicrophone(); return defaultMic;`, and
+            # `SelectDefaultMicrophone` takes the first device the platform calls default, falling
+            # back to index 0 when none says so and the collection is not empty. So this answers
+            # `nil` only when the machine has no capture device at all.
+            def Default
+              enumerate
+              return @default if @default
+
+              @default = @devices[default_index] || @devices.first
+            end
+
+            private
+
+            def enumerate
+              host = CNA::Runtime::Context.native_host("Microphone.All")
+              reset_for(host)
+              output = CNA::Native.library.pointer_for("Q", 0)
+              CNA::Native.library.call("cna_microphone_get_count", host.handle, output)
+              count = output[0, 8].unpack1("Q")
+              # `if (count < allMicrophones.Count) throw new InvalidOperationException()`.
+              raise ::RuntimeError, "the microphone count fell from #{@devices.length} to #{count}" if count < @devices.length
+
+              (@devices.length...count).each { |index| @devices << __send__(:new, host, index) }
+              nil
+            end
+
+            # XNA's collection is a process-global static; this one is keyed on the CNA game that
+            # produced it, because the indices only mean anything to that game. A second game gets a
+            # fresh enumeration rather than the first game's devices.
+            def reset_for(host)
+              return if defined?(@host_handle) && @host_handle == host.handle
+
+              @host_handle = host.handle
+              @devices = []
+              @default = nil
+              @collection = CNA::Runtime::ReadOnlyCollection.new(@devices)
+            end
+
+            def default_index
+              host = CNA::Runtime::Context.native_host("Microphone.Default")
+              index = CNA::Native.library.pointer_for("Q", 0)
+              available = CNA::Native.library.pointer_for("C", 0)
+              CNA::Native.library.call("cna_microphone_get_default_index_ext", host.handle, index, available)
+              return nil if available[0, 1].unpack1("C").zero?
+
+              index[0, 8].unpack1("Q")
+            end
+          end
+
+          # `public string Name` is a **field**, not a property: read once in the constructor from
+          # `GetName()` and never written again. A Ruby reader is the field's projection, and the
+          # value is frozen because a CLR string is immutable.
+          attr_reader :Name
+
+          def initialize(host, index)
+            @host = host
+            @index = index
+            @sample_rate = read_sample_rate
+            @Name = read_name.freeze
+            @buffer_duration_ticks = read_buffer_duration_ticks
+            @registration = 0
+            @callback = nil
+            subscribe_buffer_ready
+          end
+
+          # `get_State` reads the device every time: `GetState(Handle, out state)` then
+          # `state == 1 ? Started : Stopped`. The native identity and the managed one are inverted
+          # in XNA and **not** in CNA, whose `CNA_MICROPHONE_STATE_STARTED` is 0 exactly as
+          # `MicrophoneState.Started` is, so the projection passes the value through.
+          def State
+            output = CNA::Native.library.pointer_for("L", 0)
+            call("cna_microphone_get_state_at", output)
+            MicrophoneState.coerce(output[0, 4].unpack1("L"))
+          end
+
+          # `get_SampleRate` answers `format.SampleRate`, and the format is built once in the
+          # constructor. So this is the rate the device reported when it was enumerated, not a fresh
+          # read -- which is observable if a device changes rate under a running game.
+          def SampleRate = @sample_rate
+
+          # DEVIATION, recorded: `isHeadset` has exactly one writer in the whole assembly --
+          # `ldc.i4.1` in the constructor -- so XNA 4.0 on Windows answers `true` for every device,
+          # which is what a program ported from XNA observes. CNA answers the platform truth, and on
+          # this machine that is `false` for all three devices. The projection answers XNA's
+          # constant, because a consumer's branch has to go the way XNA's does; the device's own
+          # answer stays reachable through `native_is_headset` and a test asserts both.
+          def IsHeadset = true
+
+          # `get_BufferDuration` returns the cached field, not a device read -- so it answers what
+          # was last **requested**, which is what makes the deviation below observable rather than
+          # hidden.
+          def BufferDuration = @buffer_duration_ticks / 10_000_000.0
+
+          # `if (ms < 100 || ms > 1000 || ms % 10 != 0) throw new ArgumentOutOfRangeException(...)`,
+          # then `SetCaptureBufferDuration(Handle, (int)ms)`, then store the field.
+          #
+          # DEVIATION, recorded: CNA's accepted domain is `[100, 990]` milliseconds on a 10 ms
+          # boundary -- measured tick by tick, not read from a document -- so the single value XNA
+          # admits that CNA refuses is exactly 1000 ms. That value is also the device's **own
+          # initial** buffer duration, which `cna_microphone_get_buffer_duration_ticks_at` reports as
+          # 10 000 000 ticks, so `set(get())` fails upstream. Rather than raise where XNA does not,
+          # the projection sends the largest duration CNA accepts and caches the requested one, which
+          # is the value XNA's getter would answer. `docs/microphone-evidence.md` §4 records the
+          # sweep and classifies the upstream inconsistency.
+          def BufferDuration=(value)
+            ticks = self.class.__send__(:ticks_from, value, "value")
+            milliseconds = ticks / 10_000.0
+            if milliseconds < BUFFER_DURATION_MINIMUM_MILLISECONDS ||
+               milliseconds > BUFFER_DURATION_MAXIMUM_MILLISECONDS ||
+               (milliseconds % BUFFER_DURATION_GRANULARITY_MILLISECONDS) != 0
+              raise ::RangeError, "value"
+            end
+
+            call("cna_microphone_set_buffer_duration_ticks_at", [ticks, CNA_MAXIMUM_BUFFER_DURATION_TICKS].min)
+            @buffer_duration_ticks = ticks
+            value
+          end
+
+          # `if (sizeInBytes < 0) throw new ArgumentException(InvalidBufferSize)`, `TimeSpan.Zero`
+          # for zero, and `AudioFormat.DurationFromSize` otherwise.
+          def GetSampleDuration(sizeInBytes)
+            size = CNA::Runtime::Numeric.int32(sizeInBytes, "sizeInBytes")
+            raise ::ArgumentError, "sizeInBytes" if size.negative?
+            return 0.0 if size.zero?
+
+            duration_from_size(size) / 10_000_000.0
+          end
+
+          # `if (ms < 0 || !(ms <= int.MaxValue)) throw new ArgumentOutOfRangeException("duration")`
+          # -- the second comparison is `ble.un`, so a NaN passes it and is refused further in, by
+          # the `conv.ovf.i4` whose `OverflowException` the method catches and rethrows as the same
+          # `ArgumentOutOfRangeException("duration")`. Zero answers zero before the format is asked.
+          def GetSampleSizeInBytes(duration)
+            seconds = CNA::Runtime::BclProjection.time_span(duration)
+            raise ::RangeError, "duration" if seconds.nan?
+
+            ticks = (seconds * 10_000_000).round
+            milliseconds = ticks / 10_000.0
+            raise ::RangeError, "duration" if milliseconds.negative? || milliseconds > 2_147_483_647
+            return 0 if ticks.zero?
+
+            size_from_duration(milliseconds)
+          end
+
+          # `Start()` and `Stop()` are one native call each under the instance lock, with no managed
+          # state change of their own: the state machine lives entirely in the device, which is why
+          # `State` re-reads it.
+          def Start
+            call("cna_microphone_start_at")
+            nil
+          end
+
+          def Stop
+            call("cna_microphone_stop_at")
+            nil
+          end
+
+          # `GetData(byte[])` is `GetData(buffer, 0, buffer.Length)` after validating the buffer, and
+          # Ruby collapses the two overloads into one method with defaults, the rule every other
+          # overload set in this binding follows.
+          #
+          # The validation order is the IL's, and each stage names the resource string XNA names:
+          #
+          #   1. null, empty or unaligned buffer          -> InvalidAudioBuffer
+          #   2. offset negative, past the end, unaligned -> InvalidAudioBufferOffset
+          #   3. offset + count overflowing int32         -> InvalidOffsetCountLength
+          #   4. count <= 0, past the end, unaligned, or
+          #      lasting zero milliseconds                -> InvalidOffsetCountLength
+          #
+          # Stage 4's last clause is the one that surprises: `DurationFromSize(count) == Zero` after
+          # `TimeSpan.FromMilliseconds` has rounded, so on a 44 100 Hz device every aligned count
+          # below 46 bytes is refused even though it fits the buffer.
+          #
+          # `if (State != Started) return 0;` is the last step before the read, so a stopped
+          # microphone answers zero rather than raising -- and that is the whole of the managed
+          # contract, reachable without ever opening the device.
+          def GetData(buffer, offset = nil, count = nil)
+            raise ::ArgumentError, "buffer" unless buffer.is_a?(::String)
+
+            length = buffer.bytesize
+            raise ::ArgumentError, "buffer" if length.zero? || (length % BLOCK_ALIGN) != 0
+
+            start = offset.nil? ? 0 : CNA::Runtime::Numeric.int32(offset, "offset")
+            taken = count.nil? ? length : CNA::Runtime::Numeric.int32(count, "count")
+            raise ::ArgumentError, "offset" if start.negative? || start >= length || (start % BLOCK_ALIGN) != 0
+
+            # `add.ovf` inside a `try` whose catch rethrows as InvalidOffsetCountLength.
+            finish = start + taken
+            raise ::ArgumentError, "count" if finish > 2_147_483_647 || finish < -2_147_483_648
+            raise ::ArgumentError, "count" if taken <= 0 || finish <= 0 || finish > length
+            raise ::ArgumentError, "count" if (taken % BLOCK_ALIGN) != 0 || duration_from_size(taken).zero?
+
+            # A CLR `byte[]` is never frozen and cannot be resized; a Ruby String is both, so the
+            # write target is refused rather than resized, which is the rule `CNA::Runtime::Stream`
+            # already sets for every buffer this binding fills.
+            raise ::ArgumentError, "buffer must not be frozen" if buffer.frozen?
+            return 0 unless self.State == MicrophoneState::Started
+
+            destination = Fiddle::Pointer.malloc(taken, Fiddle::RUBY_FREE)
+            read = CNA::Native.library.pointer_for("Q", 0)
+            call("cna_microphone_get_data_at", destination, taken, read)
+            bytes = read[0, 8].unpack1("Q")
+            buffer[start, bytes] = destination[0, bytes] if bytes.positive?
+            bytes
+          end
+
+          protected
+
+          # `try { if (Handle != -1) DestroyMicrophone(Handle); } finally { base.Finalize(); }`.
+          # There is no handle here and CNA's runtime owns the device, so this destroys nothing --
+          # and, as everywhere in this binding, projecting the member registers no Ruby finalizer.
+          # Nothing native is ever released by the garbage collector.
+          def Finalize = nil
+
+          private
+
+          # The largest buffer duration CNA accepts, measured by sweeping every whole millisecond in
+          # `[95, 1005]` and every tick in `[1_000_000, 1_000_020]`: the predicate is
+          # `(ticks / 10_000) % 10 == 0 && 100 <= ticks / 10_000 <= 990`, on integer division.
+          CNA_MAXIMUM_BUFFER_DURATION_TICKS = 9_900_000
+
+          def call(symbol, *arguments)
+            CNA::Native.library.call(symbol, @host.handle, @index, *arguments)
+          end
+
+          def read_sample_rate
+            output = CNA::Native.library.pointer_for("l", 0)
+            call("cna_microphone_get_sample_rate_at", output)
+            output[0, 4].unpack1("l")
+          end
+
+          def read_name
+            size = CNA::Native.library.pointer_for("Q", 0)
+            call("cna_microphone_get_name_size_at", size)
+            bytes = size[0, 8].unpack1("Q")
+            return "" if bytes.zero?
+
+            buffer = Fiddle::Pointer.malloc(bytes, Fiddle::RUBY_FREE)
+            required = CNA::Native.library.pointer_for("Q", 0)
+            call("cna_microphone_copy_name_at", buffer, bytes, required)
+            buffer[0, bytes].force_encoding(Encoding::UTF_8)
+          end
+
+          def read_buffer_duration_ticks
+            output = CNA::Native.library.pointer_for("q", 0)
+            call("cna_microphone_get_buffer_duration_ticks_at", output)
+            output[0, 8].unpack1("q")
+          end
+
+          # The closure is retained for the registration's lifetime, this binding's standing rule for
+          # a callback that crosses into C, and a Ruby exception raised inside it is captured rather
+          # than unwound through native frames.
+          def subscribe_buffer_ready
+            @callback = Fiddle::Closure::BlockCaller.new(Fiddle::TYPE_VOID, [Fiddle::TYPE_VOIDP]) do |_context|
+              begin
+                self.BufferReady.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+              rescue ::Exception # rubocop:disable Lint/RescueException
+                nil
+              end
+              nil
+            end
+            output = CNA::Native.library.pointer_for("Q", 0)
+            call("cna_microphone_subscribe_buffer_ready_at", @callback, nil, output)
+            @registration = output[0, 8].unpack1("Q")
+          rescue CNA::NativeError
+            @registration = 0
+            @callback = nil
+          end
+
+          # `AudioFormat.DurationFromSize`: `TimeSpan.FromMilliseconds((float)(size / BlockAlign) *
+          # 1000f / (float)SampleRate)`, every arithmetic step at binary32 and the result rounded to
+          # a whole millisecond by `TimeSpan.Interval`. Answers ticks, which is what a TimeSpan is.
+          def duration_from_size(size_in_bytes)
+            samples = size_in_bytes / BLOCK_ALIGN
+            scaled = CNA::Runtime::Numeric.f32(CNA::Runtime::Numeric.f32(samples) * 1000.0)
+            milliseconds = CNA::Runtime::Numeric.f32(scaled / CNA::Runtime::Numeric.f32(@sample_rate))
+            self.class.__send__(:ticks_from_milliseconds, milliseconds)
+          end
+
+          # `AudioFormat.SizeFromDuration`: `samples = (int)(ms * ((float)SampleRate / 1000f))` then
+          # `(samples + samples % Channels) * BlockAlign`, with `conv.ovf.i4` on the first step and
+          # `add.ovf`/`mul.ovf` on the second. Every overflow is caught by `GetSampleSizeInBytes` and
+          # rethrown as `ArgumentOutOfRangeException("duration")`.
+          def size_from_duration(milliseconds)
+            scale = CNA::Runtime::Numeric.f32(CNA::Runtime::Numeric.f32(@sample_rate) / 1000.0)
+            product = milliseconds * scale
+            raise ::RangeError, "duration" if product.nan? || product >= 2_147_483_648.0 || product < -2_147_483_648.0
+
+            samples = product.truncate
+            size = (samples + (samples % CHANNELS)) * BLOCK_ALIGN
+            raise ::RangeError, "duration" unless size.between?(-2_147_483_648, 2_147_483_647)
+
+            size
+          end
+
+          # The device's own answers, which the projection does not use because they disagree with
+          # XNA. They exist so the disagreement is measured rather than asserted in prose.
+          def native_is_headset
+            output = CNA::Native.library.pointer_for("C", 0)
+            call("cna_microphone_get_is_headset_at", output)
+            !output[0, 1].unpack1("C").zero?
+          end
+
+          def native_sample_duration_ticks(size_in_bytes)
+            output = CNA::Native.library.pointer_for("q", 0)
+            call("cna_microphone_get_sample_duration_ticks_at", size_in_bytes, output)
+            output[0, 8].unpack1("q")
+          end
+
+          def native_sample_size_in_bytes(ticks)
+            output = CNA::Native.library.pointer_for("l", 0)
+            call("cna_microphone_get_sample_size_in_bytes_at", ticks, output)
+            output[0, 4].unpack1("l")
+          end
+
+          def native_buffer_duration_ticks = read_buffer_duration_ticks
+
+          class << self
+            private
+
+            # A TimeSpan is an integer tick count, and every XNA comparison in this type is on
+            # `TotalMilliseconds`, which is `ticks / 10000.0`. Converting the projected seconds to
+            # ticks first is what makes `100 ms % 10 == 0` exact rather than a binary64 artifact.
+            def ticks_from(value, name)
+              seconds = CNA::Runtime::BclProjection.time_span(value)
+              raise ::RangeError, name if seconds.nan? || seconds.infinite?
+
+              (seconds * 10_000_000).round
+            end
+
+            # `TimeSpan.Interval(value, 1)` from the pinned mscorlib: reject NaN, add half a
+            # millisecond away from zero, refuse beyond ±922 337 203 685 477, truncate, and scale by
+            # 10 000 ticks. So a TimeSpan built this way is always a whole number of milliseconds.
+            def ticks_from_milliseconds(milliseconds)
+              raise ::ArgumentError, "value" if milliseconds.nan?
+
+              rounded = milliseconds + (milliseconds >= 0 ? 0.5 : -0.5)
+              raise ::RangeError, "value" if rounded > 922_337_203_685_477 || rounded < -922_337_203_685_477
+
+              rounded.truncate * 10_000
+            end
+          end
+        end
       end
     end
   end

@@ -21,7 +21,7 @@ module NativeSurfaceCensus
 
   # The census the repository last reviewed. `test_native_abi_gate.rb` compares the two, so this
   # file cannot drift from the manifest silently in either direction.
-  REVIEWED = { functions: 130, callbacks: 5, constants: 68, layouts: 24 }.freeze
+  REVIEWED = { functions: 146, callbacks: 5, constants: 71, layouts: 24 }.freeze
 end
 
 # The strict XNA scoreboard, for exactly the same reason and with exactly the same rule: a milestone
@@ -30,17 +30,17 @@ end
 # and left no single place a reader could call the authority. `docs/generated/api-compat-report.json`
 # is the measurement; this is the reviewed expectation of it.
 module ReviewedScoreboard
-  TARGET_TYPES = 156
-  TARGET_MEMBERS = 1898
-  COMPLETE_TYPES = 151
+  TARGET_TYPES = 157
+  TARGET_MEMBERS = 1913
+  COMPLETE_TYPES = 152
   PARTIAL_TYPES = 5
-  MISSING_TYPES = 101
+  MISSING_TYPES = 100
   MISSING_MEMBER = 107
   BCL_PROJECTED_IDENTITIES = 17
   BCL_EXCEPTION_BASES = 2
   BCL_THROWN_EXCEPTIONS = 8
-  EVENT_IDENTITIES = 21
-  EVENT_OWNER_TYPES = 8
+  EVENT_IDENTITIES = 22
+  EVENT_OWNER_TYPES = 9
   # The members a type still owes, or `[]` once the strict report calls it complete.
   #
   # Eight tests assert "the member this milestone added is no longer in `Game`'s partial

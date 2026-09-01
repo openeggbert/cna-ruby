@@ -135,7 +135,7 @@ class RendererDetailTest < Minitest::Test
     # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still
     # claims, is that **it** built neither. The list narrows to the audio types nothing here has
     # built rather than being loosened.
-    %i[AudioEngine SoundBank WaveBank Cue Microphone]
+    %i[AudioEngine SoundBank WaveBank Cue]
       .each { |absent| refute F::Audio.const_defined?(absent, false), "Audio::#{absent}" }
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     refute(symbols.any? { |symbol| symbol.include?("renderer") || symbol.include?("audio_engine") })

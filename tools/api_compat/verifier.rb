@@ -30,6 +30,23 @@ module CNAApiCompat
   # spelling, whose value is the generic event subscription primitive. add_Name/remove_Name pairs,
   # a writer, an ordinary mutable property and any consumer-facing raise helper are all mapping
   # failures rather than acceptable alternatives.
+  # Fields the pinned XNA IL declares `initonly`, measured rather than assumed.
+  #
+  # The reference contract records a field's type, staticness and constant value but not its
+  # readonlyness, so without this every public instance field would be required to project a writer.
+  # For 104 of the reference's 105 non-constant instance fields that is right -- `Rectangle.X`,
+  # `Vector3.Y`, `CurveKey.Position` and the rest really are assignable. Exactly one is not:
+  #
+  #     .field public initonly string Name      // Microsoft.Xna.Framework.Audio.Microphone
+  #
+  # measured by scanning every `.field` declaration in the pinned assemblies against the reference's
+  # own field inventory, so this register is complete for that reference rather than a list of the
+  # cases that happened to come up. A readonly instance field projects its reader and **no** writer,
+  # which is what the CLR gives a consumer.
+  READONLY_INSTANCE_FIELDS = %w[
+    Microsoft.Xna.Framework.Audio.Microphone::Name
+  ].freeze
+
   EVENT_SUPPORT_TYPE = "CNA::Runtime::Event"
   EVENT_SUPPORT_SURFACE = %i[add remove].freeze
   EVENT_RAISE_NAMES = %i[broadcast call dispatch emit fire invoke notify publish raise_event trigger].freeze
@@ -242,7 +259,7 @@ module CNAApiCompat
         verify_runtime_interfaces(name, type, object, target_types, result)
         verify_runtime_events(name, type, object, result)
         type.fetch("members").each do |member|
-          missing = ruby_projections(member).reject { |projection| projection_exists?(object, projection, member) }
+          missing = ruby_projections(member, name).reject { |projection| projection_exists?(object, projection, member) }
           next if missing.empty?
           result.add("MISSING_MEMBER", "#{name}::#{member["name"]} runtime #{missing.join(",")}", type: name, count: missing.length)
         end
@@ -508,7 +525,7 @@ module CNAApiCompat
       value.instance_of?(resolve_ruby_type(EVENT_SUPPORT_TYPE)) ? :expected : value.class.to_s
     end
 
-    def ruby_projections(member)
+    def ruby_projections(member, owner)
       case member.fetch("kind")
       when "constructor" then ["instance:initialize"]
       when "method"
@@ -524,6 +541,8 @@ module CNAApiCompat
       when "field"
         if member["static"]
           ["constant:#{member["name"]}"]
+        elsif READONLY_INSTANCE_FIELDS.include?("#{owner}::#{member["name"]}")
+          ["instance:#{member["name"]}"]
         else
           ["instance:#{member["name"]}", "instance:#{member["name"]}="]
         end
@@ -565,7 +584,7 @@ module CNAApiCompat
 
       target_types.each do |name, type|
         object = resolve_ruby_type(type.fetch("rubyName"))
-        allowed = type.fetch("members").flat_map { |member| ruby_projections(member) }.map { |value| value.split(":", 2).last.to_sym }.uniq
+        allowed = type.fetch("members").flat_map { |member| ruby_projections(member, name) }.map { |value| value.split(":", 2).last.to_sym }.uniq
         allowed.concat(%i[eql? hash to_s dup clone inspect to_i name value])
         direct = object.public_instance_methods(false) + object.protected_instance_methods(false)
         (direct.uniq - allowed).each do |method_name|

@@ -301,7 +301,7 @@ class PureManagedEnumBatchTest < Minitest::Test
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length
     # Fragments must stay specific: CNA_SURFACE_FORMAT_COLOR legitimately contains "FACE".
-    %w[CUBE_MAP CUBEMAP CUBE_FACE BUFFER_USAGE MICROPHONE AUDIO_CHANNEL STOP_OPTION SOUND_STATE MEDIA
+    %w[CUBE_MAP CUBEMAP CUBE_FACE BUFFER_USAGE AUDIO_CHANNEL STOP_OPTION SOUND_STATE MEDIA
        BLEND STENCIL COMPARE TEXTURE_FILTER ADDRESS_MODE CULL FILL_MODE PRESENT_INTERVAL
        RENDER_TARGET_USAGE SET_DATA COLOR_WRITE EFFECT_PARAMETER INDEX_ELEMENT].each do |fragment|
       refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?(fragment) }, fragment
@@ -309,9 +309,14 @@ class PureManagedEnumBatchTest < Minitest::Test
     # `sound_` and `audio_` left this list when the audio cluster was built, which is a statement
     # about that milestone rather than about this one: what this one claims is that *its* 24 enums
     # bound nothing, and every other fragment still proves it.
+    # `MICROPHONE` and `microphone_` left these lists when `Microphone` was built, and for the same
+    # reason `sound_`, `audio_` and `buffer_` left them: the three CNA_MICROPHONE_STATE_* identities
+    # and the sixteen cna_microphone_* routes belong to that milestone, not to this batch's 24
+    # enums. `MicrophoneState`, the enum this batch really did select, still takes its values from
+    # its own IL and is asserted below to be a pure-managed projection.
     # `buffer_` left this list when the streaming audio instance was built; the fragments that
     # remain still prove the 24 enums of *this* batch bound nothing.
-    %w[cube_ microphone_ media_ blend_ stencil_ sampler_
+    %w[cube_ media_ blend_ stencil_ sampler_
        render_target_ index_buffer_ vertex_buffer_].each do |fragment|
       refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?(fragment) }, fragment
     end
@@ -328,7 +333,7 @@ class PureManagedEnumBatchTest < Minitest::Test
     # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still
     # claims, is that **it** built neither. The list narrows to the audio types nothing here has
     # built rather than being loosened.
-    %i[Microphone AudioEngine WaveBank SoundBank Cue
+    %i[AudioEngine WaveBank SoundBank Cue
       ].each do |name|
       refute A.const_defined?(name, false), "Audio::#{name}"
     end
@@ -364,7 +369,7 @@ class PureManagedEnumBatchTest < Minitest::Test
       # types. None of those is an enum.
       value_types = %i[TouchPanelCapabilities TouchLocation GestureSample TouchCollection
                        TouchPanel AudioListener AudioEmitter RendererDetail VisualizationData Video
-                       SoundEffect SoundEffectInstance DynamicSoundEffectInstance]
+                       SoundEffect SoundEffectInstance DynamicSoundEffectInstance Microphone]
       extras = declared & value_types
       extras += declared.grep(/Exception\z/)
       assert_equal (selected + extras).uniq.sort, declared, namespace.name

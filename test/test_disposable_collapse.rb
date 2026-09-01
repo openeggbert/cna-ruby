@@ -255,8 +255,10 @@ class DisposableCollapseTest < Minitest::Test
     # ContentManager milestone reshaped the rest: ContentManager left, ResourceContentManager and
     # GamerServicesComponent appeared behind it, and the System.Byte[] decision took Microphone's
     # BCL half away.
+    # NATIVE_RUNTIME fell from 4 to 3 when Microphone was built, which is the sixth time that
+    # blocker turned out not to be one.
     assert_equal({"BCL_PROJECTION" => 2, "BCL_PROJECTION+NATIVE_RUNTIME" => 1,
-                  "NATIVE_RUNTIME" => 4, "NATIVE_RUNTIME+RUNTIME_DATA" => 1, "RUNTIME_DATA" => 1},
+                  "NATIVE_RUNTIME" => 3, "NATIVE_RUNTIME+RUNTIME_DATA" => 1, "RUNTIME_DATA" => 1},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end

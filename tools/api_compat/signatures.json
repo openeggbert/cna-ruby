@@ -34264,6 +34264,217 @@
       ]
     },
     {
+      "name": "Microsoft.Xna.Framework.Audio.Microphone",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [],
+      "directInterfaces": [],
+      "genericParameters": [],
+      "rubyName": "Microsoft::Xna::Framework::Audio::Microphone",
+      "members": [
+        {
+          "kind": "method",
+          "name": "Finalize",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "GetSampleSizeInBytes",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "duration",
+              "type": "System.TimeSpan",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetSampleDuration",
+          "static": false,
+          "access": "public",
+          "returnType": "System.TimeSpan",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "sizeInBytes",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Start",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Stop",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "GetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "buffer",
+              "type": "System.Byte[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "buffer",
+              "type": "System.Byte[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "offset",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "count",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "All",
+          "type": "System.Collections.ObjectModel.ReadOnlyCollection`1[Microsoft.Xna.Framework.Audio.Microphone]",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "Default",
+          "type": "Microsoft.Xna.Framework.Audio.Microphone",
+          "static": true,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "State",
+          "type": "Microsoft.Xna.Framework.Audio.MicrophoneState",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "BufferDuration",
+          "type": "System.TimeSpan",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "SampleRate",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "IsHeadset",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        },
+        {
+          "kind": "event",
+          "name": "BufferReady",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "field",
+          "name": "Name",
+          "type": "System.String",
+          "static": false,
+          "constant": false,
+          "value": null
+        }
+      ]
+    },
+    {
       "name": "Microsoft.Xna.Framework.Media.VisualizationData",
       "kind": "class",
       "flags": false,

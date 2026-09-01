@@ -110,6 +110,45 @@ class ApiVerifierTest < Minitest::Test
     assert_operator verify(reference, target).counts["INTERFACE_MAPPING_MISMATCH"], :>, 0
   end
 
+  # The readonly-instance-field register relaxes a check, so it needs a control proving it relaxes
+  # nothing else. A field the register names projects a reader alone; the identical field on any
+  # other type still owes a writer, and the register cannot be widened by spelling.
+  def test_only_a_registered_readonly_field_is_excused_its_writer
+    verifier = CNAApiCompat::Verifier.new(reference: {"types" => []}, target: {"types" => []})
+    field = {"kind" => "field", "name" => "Name", "type" => "System.String", "static" => false,
+             "constant" => false, "value" => nil}
+
+    assert_equal ["instance:Name"],
+                 verifier.__send__(:ruby_projections, field, "Microsoft.Xna.Framework.Audio.Microphone")
+    assert_equal %w[instance:Name instance:Name=],
+                 verifier.__send__(:ruby_projections, field, "Microsoft.Xna.Framework.Audio.SoundEffect")
+    # Not by prefix, not by suffix, not by a differently spelled member on the registered type.
+    assert_equal %w[instance:Name instance:Name=],
+                 verifier.__send__(:ruby_projections, field, "Microsoft.Xna.Framework.Audio.Microphone2")
+    assert_equal %w[instance:Title instance:Title=],
+                 verifier.__send__(:ruby_projections, field.merge("name" => "Title"),
+                                   "Microsoft.Xna.Framework.Audio.Microphone")
+    # And a static field is still a constant, register or no register.
+    assert_equal ["constant:Name"],
+                 verifier.__send__(:ruby_projections, field.merge("static" => true),
+                                   "Microsoft.Xna.Framework.Audio.Microphone")
+  end
+
+  # The register is a measurement of the pinned IL, and its one entry is the whole of it: 105
+  # non-constant instance fields in the reference, exactly one declared `initonly`.
+  def test_the_readonly_field_register_names_one_field_and_that_field_exists
+    assert_equal ["Microsoft.Xna.Framework.Audio.Microphone::Name"],
+                 CNAApiCompat::READONLY_INSTANCE_FIELDS
+    reference = JSON.parse(File.read(File.expand_path("../tools/api_compat/reference/xna40-windows-runtime-contract.json", __dir__)))
+    fields = reference.fetch("types").flat_map do |type|
+      type.fetch("members")
+          .select { |member| member["kind"] == "field" && !member["static"] && !member["constant"] }
+          .map { |member| "#{type.fetch("name")}::#{member.fetch("name")}" }
+    end
+    assert_equal 105, fields.length
+    CNAApiCompat::READONLY_INSTANCE_FIELDS.each { |entry| assert_includes fields, entry }
+  end
+
   def test_enum_value_and_flags
     enum = {"name" => "Microsoft.Xna.Framework.SampleEnum", "rubyName" => "Microsoft::Xna::Framework::SampleEnum", "kind" => "enum", "flags" => true, "baseType" => "System.Enum", "interfaces" => [], "directInterfaces" => [], "genericParameters" => [], "members" => [{"kind" => "field", "name" => "One", "type" => "Microsoft.Xna.Framework.SampleEnum", "static" => true, "access" => "public", "value" => "1"}]}
     target = Marshal.load(Marshal.dump(enum))
@@ -1711,12 +1750,13 @@ class ApiVerifierTest < Minitest::Test
       Microsoft.Xna.Framework.GameWindow::ScreenDeviceNameChanged
       Microsoft.Xna.Framework.GameWindow::ClientSizeChanged
       Microsoft.Xna.Framework.GameWindow::OrientationChanged
+      Microsoft.Xna.Framework.Audio.Microphone::BufferReady
     ], selected
 
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
     assert_equal selected, strict.fetch("eventIdentities")
     assert_equal selected.length, strict.fetch("EVENT_IDENTITIES")
-    assert_equal 8, strict.fetch("EVENT_OWNER_TYPES")
+    assert_equal 9, strict.fetch("EVENT_OWNER_TYPES")
     assert_equal "CNA::Runtime::Event", strict.fetch("EVENT_SUPPORT_TYPE")
     assert_equal 0, strict.fetch("EVENT_MAPPING_MISMATCH")
 
@@ -1743,11 +1783,12 @@ class ApiVerifierTest < Minitest::Test
   def test_event_kind_projects_exactly_one_reader_identity
     verifier = CNAApiCompat::Verifier.new(reference: {"types" => []}, target: {"types" => []})
     instance = {"kind" => "event", "name" => "Changed", "static" => false}
-    assert_equal ["instance:Changed"], verifier.__send__(:ruby_projections, instance)
-    assert_equal ["class:Changed"], verifier.__send__(:ruby_projections, instance.merge("static" => true))
+    owner = "Microsoft.Xna.Framework.Example"
+    assert_equal ["instance:Changed"], verifier.__send__(:ruby_projections, instance, owner)
+    assert_equal ["class:Changed"], verifier.__send__(:ruby_projections, instance.merge("static" => true), owner)
 
     # Never an add_/remove_ pair, never a writer.
-    projections = verifier.__send__(:ruby_projections, instance)
+    projections = verifier.__send__(:ruby_projections, instance, owner)
     refute_includes projections, "instance:add_Changed"
     refute_includes projections, "instance:remove_Changed"
     refute_includes projections, "instance:Changed="

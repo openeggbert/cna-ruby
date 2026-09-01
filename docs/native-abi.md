@@ -165,7 +165,8 @@ Deliberately not bound: `cna_sound_effect_create_from_asset_ext` (that is `Load<
 content reader for it is registered), the whole `cna_dynamic_sound_effect_instance_*` family and
 `cna_audio_unsubscribe_ext` (no `DynamicSoundEffectInstance` is projected), every
 `cna_microphone_*` route, and the type-name count/copy pairs, which answer a .NET type name that
-Ruby's own `class` already carries.
+Ruby's own `class` already carries. The first two of those exclusions were retired by later
+milestones; the type-name pairs are still not bound.
 
 ## The device texture collections
 
@@ -214,3 +215,33 @@ than "no XNA identity": it is the per-instance half of a pump `cna_framework_dis
 already drives, and `FrameworkDispatcher.Update` is the projected member that drives it. Binding it
 would give this binding two pumps for one queue. `submit_float_buffer_ext` and `clear_buffers_ext`
 have no XNA identity at all.
+
+## The microphone family
+
+Sixteen routes bring the count to 146, and three constants — `CNA_MICROPHONE_STATE_STARTED` (0),
+`CNA_MICROPHONE_STATE_STOPPED` (1) and `CNA_MICROPHONE_STATE_MAXIMUM` — bring those to 71. No new
+callback: `cna_microphone_subscribe_buffer_ready_at` reuses `CNA_AudioEventCallback`, and its
+registration is released with the `cna_audio_unsubscribe_ext` the streaming instance already bound.
+
+This family is the first in the binding with **no handle of its own**. Every route is
+`(CNA_Handle game, uint64_t index, …)`, addressing a device by its position in the machine's list,
+because CNA's runtime owns the device — which `audio.h` says in as many words. So the Ruby side
+carries a `BORROWED_EXTERNAL_SCALAR` index, there is nothing to destroy, and the one route that
+looks like a release, `cna_microphone_stop_at`, is a state change.
+
+The single route that is neither game- nor index-addressed is
+`cna_microphone_check_all_buffers_ext`, which takes the game alone: it is the capture-side pump, and
+it is bound for the same reason its playback counterpart is.
+
+Two routes are bound and **deliberately not used by the projection**:
+`cna_microphone_get_sample_duration_ticks_at` and `cna_microphone_get_sample_size_in_bytes_at`
+measurably disagree with XNA's own managed arithmetic — 8818 against 8820 bytes for 100 ms at
+44 100 Hz, and a duration that truncates where `TimeSpan.FromMilliseconds` rounds. Binding them is
+what lets a test assert the divergence instead of a document describing it;
+`docs/microphone-evidence.md` §3 has the table. `cna_microphone_get_is_headset_at` is bound on the
+same footing, because XNA's `IsHeadset` is an unconditional `true` and CNA's answer is the device's.
+
+Native frontier 4 recorded this family `NATIVE_RUNTIME`. Every one of the sixteen routes is exported
+and declared identically by the **retired 0.7.0 headers**, which the gate's cross-version check
+proves, and the host really has three capture devices. That deferral was about neither the ABI nor
+the machine.

@@ -299,6 +299,7 @@ class DependencyFrontierTest < Minitest::Test
     # property the list exists to check -- not a count that must stay still.
     assert_equal %w[
       Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance
+      Microsoft.Xna.Framework.Audio.Microphone
       Microsoft.Xna.Framework.Audio.SoundEffect
       Microsoft.Xna.Framework.Audio.SoundEffectInstance
       Microsoft.Xna.Framework.Content.ContentManager
@@ -350,7 +351,7 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 9, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 8, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -454,8 +455,9 @@ class DependencyFrontierTest < Minitest::Test
     # Audio.Cue joined the list when AudioEmitter and AudioListener completed its dependencies.
     # GameWindow was the third until Foundation 48 built it, which is what an event-declaring
     # candidate reaching the frontier is for; DynamicSoundEffectInstance was the fourth, arriving
-    # the same way when the audio cluster completed its base and leaving again when it was built.
-    assert_equal ["Microsoft.Xna.Framework.Audio.Cue", "Microsoft.Xna.Framework.Audio.Microphone"],
+    # the same way when the audio cluster completed its base and leaving again when it was built,
+    # and Microphone the fifth, whose BufferReady is now a projected event identity.
+    assert_equal ["Microsoft.Xna.Framework.Audio.Cue"],
                  events.map { |item| item.fetch("name") }.sort
 
     # Completing IUpdateable/IDrawable is what projected the EventHandler`1 support type.
@@ -526,8 +528,11 @@ class DependencyFrontierTest < Minitest::Test
 
   def test_named_frontier_examples_keep_their_expected_blocker
     {
-      "Microsoft.Xna.Framework.Audio.Microphone" => "NATIVE_RUNTIME",
-      "Microsoft.Xna.Framework.Graphics.EffectAnnotation" => "NATIVE_RUNTIME",
+      # Microphone was here under NATIVE_RUNTIME until that deferral was checked too, and it was
+      # wrong for a third reason: not the ABI, not the host, but nothing at all. This machine has
+      # three capture devices, CNA enumerates every one, and the retired 0.7.0 headers declare the
+      # same sixteen routes. Graphics.GraphicsAdapter replaces it as the NATIVE_RUNTIME example.
+      "Microsoft.Xna.Framework.Graphics.GraphicsAdapter" => "NATIVE_RUNTIME",
       # TextureCollection was here until its deferral was checked and turned out to be simply
       # mistaken -- the two routes it needs were exported by the retired artifact too.
       "Microsoft.Xna.Framework.Graphics.EffectAnnotation" => "NATIVE_RUNTIME",

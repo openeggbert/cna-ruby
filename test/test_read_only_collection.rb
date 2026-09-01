@@ -389,10 +389,11 @@ class ReadOnlyCollectionTest < Minitest::Test
     refute(by_name.key?("Microsoft.Xna.Framework.Media.VisualizationData"))
 
     # SpriteFont keeps a BCL blocker, and it is no longer this one. Microphone kept `System.Byte[]`
-    # until the Stream projection decided it, and now keeps only NATIVE_RUNTIME.
-    microphone = by_name.fetch("Microsoft.Xna.Framework.Audio.Microphone")
-    assert_empty microphone.fetch("unmappedBclTypes")
-    assert_equal ["NATIVE_RUNTIME"], microphone.fetch("blockers")
+    # until the Stream projection decided it, then only NATIVE_RUNTIME, and then nothing: it was
+    # built, so it left the frontier the way a candidate is supposed to. `Microphone.All` is the
+    # first shipped `ReadOnlyCollection` this projection produces, which is what the assertion
+    # below now measures instead of a blocker.
+    refute(by_name.key?("Microsoft.Xna.Framework.Audio.Microphone"))
     font = by_name.fetch("Microsoft.Xna.Framework.Graphics.SpriteFont")
     assert_equal ["System.Char", "System.Nullable`1[System.Char]", "System.Text.StringBuilder"],
                  font.fetch("unmappedBclTypes")
@@ -422,14 +423,17 @@ class ReadOnlyCollectionTest < Minitest::Test
                             .fetch("unmappedBclTypes"), "System.Char"
   end
 
-  # No XNA type was completed *by this projection*. The four types that name ReadOnlyCollection`1
-  # are all still missing, and no completed type inherits from the support class, so the
+  # No XNA type was completed *by this projection*. The types that name ReadOnlyCollection`1 were
+  # all still missing when it landed, and no completed type inherits from the support class, so the
   # inheritance rule is proved by verifier fixtures rather than by a shipped type.
+  #
+  # `Microphone` left this list when it was built: its `All` is the first shipped member whose value
+  # really is a `ReadOnlyCollection`, which is a later milestone consuming this projection rather
+  # than this projection completing anything. `test_microphone.rb` measures that member.
   def test_no_xna_type_became_complete_because_of_this_projection
     %w[
       Microsoft.Xna.Framework.Graphics.GraphicsAdapter
       Microsoft.Xna.Framework.Graphics.SpriteFont
-      Microsoft.Xna.Framework.Audio.Microphone
       Microsoft.Xna.Framework.Graphics.ModelBoneCollection
       Microsoft.Xna.Framework.Graphics.ModelEffectCollection
       Microsoft.Xna.Framework.Graphics.ModelMeshCollection

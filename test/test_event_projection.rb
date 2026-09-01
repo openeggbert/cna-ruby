@@ -478,6 +478,7 @@ class EventProjectionTest < Minitest::Test
       Microsoft.Xna.Framework.GameWindow::ScreenDeviceNameChanged
       Microsoft.Xna.Framework.GameWindow::ClientSizeChanged
       Microsoft.Xna.Framework.GameWindow::OrientationChanged
+      Microsoft.Xna.Framework.Audio.Microphone::BufferReady
     ], STRICT.fetch("eventIdentities")
   end
 

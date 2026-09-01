@@ -368,6 +368,27 @@ module CNA
         signature("cna_dynamic_sound_effect_instance_get_sample_size_in_bytes", T[:result], [T[:handle], T[:i64], pointer("int32_t")], ownership: "caller output"),
         signature("cna_dynamic_sound_effect_instance_subscribe_buffer_needed", T[:result], [T[:handle], callback_pointer("CNA_AudioEventCallback"), T[:ptr], pointer("CNA_AudioEventRegistrationHandle")], ownership: "borrows instance; returns OWNED registration; retains the callback until released"),
         signature("cna_audio_unsubscribe_ext", T[:result], [handle("CNA_AudioEventRegistrationHandle")], ownership: "consumes OWNED registration"),
+        # The microphone family. Every route is game-scoped and **index-addressed**: CNA has no
+        # microphone handle at all, so a device is named by its position in the machine's list and
+        # the runtime owns it. That makes every one of these BORROWED_EXTERNAL_SCALAR at the Ruby
+        # side -- there is nothing to destroy, and `cna_microphone_stop_at` is a state change rather
+        # than a release.
+        signature("cna_microphone_get_count", T[:result], [T[:handle], pointer("uint64_t")], ownership: "borrows Game; caller output"),
+        signature("cna_microphone_get_default_index_ext", T[:result], [T[:handle], pointer("uint64_t"), pointer("CNA_Bool")], ownership: "borrows Game; caller output"),
+        signature("cna_microphone_get_name_size_at", T[:result], [T[:handle], T[:u64], pointer("uint64_t")], ownership: "borrows Game; caller output"),
+        signature("cna_microphone_copy_name_at", T[:result], [T[:handle], T[:u64], pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows Game; caller output"),
+        signature("cna_microphone_get_buffer_duration_ticks_at", T[:result], [T[:handle], T[:u64], pointer("int64_t")], ownership: "borrows Game; caller output"),
+        signature("cna_microphone_set_buffer_duration_ticks_at", T[:result], [T[:handle], T[:u64], T[:i64]], ownership: "borrows Game; borrows BORROWED_EXTERNAL_SCALAR device index"),
+        signature("cna_microphone_get_is_headset_at", T[:result], [T[:handle], T[:u64], pointer("CNA_Bool")], ownership: "borrows Game; caller output"),
+        signature("cna_microphone_get_sample_rate_at", T[:result], [T[:handle], T[:u64], pointer("int32_t")], ownership: "borrows Game; caller output"),
+        signature("cna_microphone_get_state_at", T[:result], [T[:handle], T[:u64], pointer("CNA_MicrophoneState")], ownership: "borrows Game; caller output"),
+        signature("cna_microphone_start_at", T[:result], [T[:handle], T[:u64]], ownership: "borrows Game; borrows BORROWED_EXTERNAL_SCALAR device index"),
+        signature("cna_microphone_stop_at", T[:result], [T[:handle], T[:u64]], ownership: "borrows Game; borrows BORROWED_EXTERNAL_SCALAR device index"),
+        signature("cna_microphone_get_data_at", T[:result], [T[:handle], T[:u64], pointer("uint8_t"), T[:u64], pointer("uint64_t")], ownership: "borrows Game; caller output"),
+        signature("cna_microphone_get_sample_duration_ticks_at", T[:result], [T[:handle], T[:u64], T[:i32], pointer("int64_t")], ownership: "borrows Game; caller output"),
+        signature("cna_microphone_get_sample_size_in_bytes_at", T[:result], [T[:handle], T[:u64], T[:i64], pointer("int32_t")], ownership: "borrows Game; caller output"),
+        signature("cna_microphone_subscribe_buffer_ready_at", T[:result], [T[:handle], T[:u64], callback_pointer("CNA_AudioEventCallback"), T[:ptr], pointer("CNA_AudioEventRegistrationHandle")], ownership: "borrows Game; returns OWNED registration; retains the callback until released"),
+        signature("cna_microphone_check_all_buffers_ext", T[:result], [T[:handle]], ownership: "borrows Game"),
         signature("cna_keyboard_get_state", T[:result], [T[:handle], pointer("CNA_KeyboardState")], ownership: "caller MANAGED_VALUE output"),
         signature("cna_keyboard_get_state_for_player", T[:result], [T[:handle], enum("CNA_PlayerIndex"), pointer("CNA_KeyboardState")], ownership: "caller MANAGED_VALUE output"),
         signature("cna_keyboard_state_is_key_down", T[:result], [pointer("CNA_KeyboardState", const: true), enum("CNA_Key"), pointer("CNA_Bool")], ownership: "caller output"),
@@ -418,6 +439,9 @@ module CNA
         "CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY" => 1,
         "CNA_SPRITE_EFFECT_FLIP_VERTICALLY" => 2,
         "CNA_SURFACE_FORMAT_COLOR" => 0,
+        "CNA_MICROPHONE_STATE_STARTED" => 0,
+        "CNA_MICROPHONE_STATE_STOPPED" => 1,
+        "CNA_MICROPHONE_STATE_MAXIMUM" => 1,
         "CNA_SHADER_STAGE_PIXEL" => 0,
         "CNA_SHADER_STAGE_VERTEX" => 1,
         "CNA_TEXTURE_COLLECTION_MAX_TEXTURES" => 16,
