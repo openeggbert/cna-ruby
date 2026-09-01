@@ -319,7 +319,10 @@ class PureManagedEnumBatchTest < Minitest::Test
     # `media_` left this list when Media.MediaSource bound its four measurement routes, for the
     # same reason `microphone_`, `sound_`, `audio_` and `buffer_` left it: those routes belong to
     # the milestones that bound them, not to this batch's 24 enums.
-    %w[cube_ blend_ stencil_ sampler_
+    # `stencil_` left this list when the GraphicsDeviceManager preferences milestone bound
+    # `set_preferred_depth_stencil_format`, for the same reason every other fragment left it: that
+    # route belongs to the milestone that bound it, not to this batch's 24 enums.
+    %w[cube_ blend_ sampler_
        render_target_ index_buffer_ vertex_buffer_].each do |fragment|
       refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?(fragment) }, fragment
     end

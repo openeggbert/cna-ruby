@@ -75,8 +75,11 @@ class GraphicsProfileTest < Minitest::Test
     refute_respond_to PROFILE::Reach, :FeatureLevel
     refute_respond_to PROFILE::Reach, :SupportsHiDef?
 
+    # The *device* property is still unselected. The manager's was selected by a later milestone,
+    # and its default really is this enum's `Reach` -- the not-found branch of
+    # `ReadDefaultGraphicsProfile`, which a Ruby program always takes.
     refute_includes G::GraphicsDevice.public_instance_methods(false), :GraphicsProfile
-    refute_includes F::GraphicsDeviceManager.public_instance_methods(false), :GraphicsProfile
+    assert_includes F::GraphicsDeviceManager.public_instance_methods(false), :GraphicsProfile
     refute G.const_defined?(:GraphicsAdapter, false)
     # Foundation 25 added DisplayMode as a non-constructible managed descriptor; no adapter
     # enumerates one.

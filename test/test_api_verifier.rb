@@ -716,10 +716,12 @@ class ApiVerifierTest < Minitest::Test
           .fetch("members") << Marshal.load(Marshal.dump(property))
     assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0
 
+    # `GraphicsDevice.GraphicsProfile` is still unselected; the *manager* property was selected by
+    # a later milestone, so the two are asserted separately rather than together.
     selected = signature_contract.fetch("types")
     refute selected.find { |type| type.fetch("name") == device_name }.fetch("members")
                    .any? { |member| member["name"] == "GraphicsProfile" }
-    refute selected.find { |type| type.fetch("name") == manager_name }.fetch("members")
+    assert selected.find { |type| type.fetch("name") == manager_name }.fetch("members")
                    .any? { |member| member["name"] == "GraphicsProfile" }
   end
 
@@ -968,10 +970,12 @@ class ApiVerifierTest < Minitest::Test
           .fetch("members") << Marshal.load(Marshal.dump(property))
     assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0
 
+    # The manager property was selected by a later milestone, which is what the mutation control
+    # above is really about: an *unselected* member is still caught. Both halves are now asserted.
     selected_manager = signature_contract.fetch("types").find { |type| type.fetch("name") == manager_name }
-    refute selected_manager.fetch("members").any? { |member| member["name"] == "PreferredDepthStencilFormat" }
-    refute Microsoft::Xna::Framework::GraphicsDeviceManager.public_method_defined?(:PreferredDepthStencilFormat)
-    refute Microsoft::Xna::Framework::GraphicsDeviceManager.public_method_defined?(:"PreferredDepthStencilFormat=")
+    assert selected_manager.fetch("members").any? { |member| member["name"] == "PreferredDepthStencilFormat" }
+    assert Microsoft::Xna::Framework::GraphicsDeviceManager.public_method_defined?(:PreferredDepthStencilFormat)
+    assert Microsoft::Xna::Framework::GraphicsDeviceManager.public_method_defined?(:"PreferredDepthStencilFormat=")
   end
 
   def test_primitive_type_missing_type_and_wrong_namespace_are_detected
@@ -1891,11 +1895,13 @@ class ApiVerifierTest < Minitest::Test
     # Game::IsActive, a property, so MISSING_MEMBER fell once more without moving the overloads.
     assert_equal ReviewedScoreboard::MISSING_MEMBER, strict.fetch("MISSING_MEMBER")
     assert_equal 1, strict.fetch("PROPERTY_MAPPING_MISMATCH")
-    assert_equal 42, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
+    assert_equal 40, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
 
-    # Every batch enum that a deferred member mentions leaves that member deferred.
+    # Every batch enum that a deferred member mentions left that member deferred *by this batch*.
+    # `PreferredDepthStencilFormat` was closed by a much later milestone, which is the point rather
+    # than a loss: the enum did not close it, a milestone that bound the manager's routes did.
     deferred = strict.fetch("details").fetch("MISSING_MEMBER")
-    %w[SetRenderTarget PreferredDepthStencilFormat].each do |name|
+    %w[SetRenderTarget DrawPrimitives].each do |name|
       assert deferred.any? { |label| label.include?(name) }, name
     end
     assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures].sort,

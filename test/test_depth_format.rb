@@ -113,9 +113,12 @@ class DepthFormatTest < Minitest::Test
     %i[Parse FromInt32 TryParse GetValues].each { |name| refute_respond_to FORMAT, name }
   end
 
-  def test_no_manager_property_presentation_or_state_surface_is_implemented
-    refute_includes F::GraphicsDeviceManager.public_instance_methods(false), :PreferredDepthStencilFormat
-    refute_includes F::GraphicsDeviceManager.public_instance_methods(false), :"PreferredDepthStencilFormat="
+  def test_no_presentation_or_state_surface_is_implemented
+    # `GraphicsDeviceManager.PreferredDepthStencilFormat` exists now, and its default really is this
+    # enum's `Depth24` -- `ldc.i4.2` in the manager's constructor, which is the one place the IL
+    # names a member of this enum. What this milestone claimed, and still claims, is that **it**
+    # added no manager property and no state object; the enum alone implies neither.
+    assert_equal G::DepthFormat::Depth24, F::GraphicsDeviceManager.new(NullGame.new).PreferredDepthStencilFormat
     refute_includes G::GraphicsDevice.public_instance_methods(false), :DepthStencilState
     %i[GraphicsAdapter RenderTarget2D RenderTargetCube DepthStencilState
        DepthFormatConverter].each do |name|
@@ -124,8 +127,9 @@ class DepthFormatTest < Minitest::Test
     assert_equal 1, G::GraphicsDevice.instance_method(:Clear).arity
     refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("DEPTH_FORMAT") }
     refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("DEPTH_STENCIL") }
-    refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?("depth") }
   end
+
+  class NullGame < Microsoft::Xna::Framework::Game; end
 
   def test_isolated_graphics_require_does_not_load_cna_native_library
     library = File.expand_path("../lib", __dir__)

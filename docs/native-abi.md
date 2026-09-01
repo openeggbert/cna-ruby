@@ -325,3 +325,20 @@ Not bound: `cna_sprite_font_create`, because XNA gives a consumer no constructor
 manager is the only producer; and `cna_sprite_font_copy_characters`, because the same characters
 arrive in the glyph array that `MeasureString` needs anyway, so reading them twice would be two
 sources for one fact.
+
+## The graphics-device manager's preferred settings
+
+Twenty routes bring the count to 224: nine getter/setter pairs, `apply_changes` and
+`toggle_full_screen`. No new callback, constant or layout.
+
+They are the flush target rather than the source of truth. XNA keeps these nine as **managed
+fields** and pushes them at `ChangeDevice`, because a consumer sets them before `Run`; so does this
+projection, and these routes are what the flush writes into when the native manager appears and
+again at `ApplyChanges`. The nine getters are bound too, and used only by the test that asserts the
+flush really landed — the same arrangement `Microphone` and `AudioCategory` use for a divergence
+that would otherwise only be described.
+
+`cna_graphics_device_manager_get_preferred_presentation_mode_ext` and its setter are deliberately
+not bound: `PresentationMode` has no XNA identity. Neither are `create_device`, `begin_draw` and
+`end_draw`, which belong to the device lifecycle CNA's own manager owns —
+`docs/graphics-device-service-producer-audit.md` is why.

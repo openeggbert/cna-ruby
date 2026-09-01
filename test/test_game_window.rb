@@ -212,8 +212,11 @@ class GameWindowTest < Minitest::Test
       end
       assert_match(/no supported-orientation route/, error.message)
     end
+    # The manager has a supported-orientations pair, bound by a later milestone; the *window* has
+    # none, which is what this refusal is about and what the narrowed fragment measures.
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-    refute(symbols.any? { |symbol| symbol.include?("supported_orientation") })
+    refute(symbols.any? { |symbol| symbol.include?("window_set_supported_orientation") })
+    assert(symbols.any? { |symbol| symbol.include?("manager_set_supported_orientations") })
   end
 
   # `SetTitle` is `family`, the push half of `Title=`, so it is not a public identity here.

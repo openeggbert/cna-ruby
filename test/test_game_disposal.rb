@@ -54,7 +54,9 @@ class GameDisposalTest < Minitest::Test
     assert_empty remainder, "Content was the last one"
     assert ReviewedScoreboard.complete?(STRICT, "Microsoft.Xna.Framework.Game")
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
-    assert_equal 42, STRICT.fetch("OVERLOAD_MAPPING_MISMATCH")
+    # 42 until the GraphicsDeviceManager preferences milestone closed ApplyChanges and
+    # ToggleFullScreen, which had been two of the overload mismatches.
+    assert_equal 40, STRICT.fetch("OVERLOAD_MAPPING_MISMATCH")
   end
 
   # Ruby cannot give one name two visibilities, so the arity dispatch widens the protected overload

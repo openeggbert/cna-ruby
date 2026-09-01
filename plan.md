@@ -25,18 +25,22 @@ fails when it should.
 
 ## Surface
 
-The strict surface is **165 types / 1987 Ruby member identities**: 160 complete, 5 partial, 92 of the
-257 reference types still missing, with 242 deferred diagnostics of which 107 are missing members and
-42 are the overload category. Every structural category except `MISSING_TYPE`, `MISSING_MEMBER`,
+The strict surface is **165 types / 1998 Ruby member identities**: 160 complete, 5 partial, 92 of the
+257 reference types still missing, with 231 deferred diagnostics of which 96 are missing members and
+40 are the overload category. Every structural category except `MISSING_TYPE`, `MISSING_MEMBER`,
 `OVERLOAD_MAPPING_MISMATCH` and one long-standing `PROPERTY_MAPPING_MISMATCH`
 (`GraphicsDevice::Viewport`) is zero, the allowlist is empty and `UNMEASURED_STRUCTURAL_CATEGORY` is
 zero. **26** event identities are projected across **13** owner types with `EVENT_MAPPING_MISMATCH`
 zero, and **22** BCL identities go through the measured `CNA::Runtime::BclProjection` register.
 
-The five partial types are the graphics runtime: `GraphicsDeviceManager` (26 members outstanding),
-`GraphicsDevice` (39), `GraphicsResource` (3), `Texture2D` (7) and `SpriteBatch` (4) — 79 of the 107
+The five partial types are the graphics runtime: `GraphicsDeviceManager` (15 members outstanding),
+`GraphicsDevice` (39), `GraphicsResource` (3), `Texture2D` (7) and `SpriteBatch` (4) — 68 of the 96
 outstanding members between them, which is why a qualification artifact with a real renderer is the
-single largest lever this project has left.
+single largest lever this project has left. `GraphicsDeviceManager`'s own remainder is no longer
+about the renderer: eleven of its members were closed by projecting the preferred settings, and the
+fifteen left are the four device events, their raisers, `PreparingDeviceSettings` and
+`Dispose(Boolean)` — which `docs/graphics-device-service-producer-audit.md` defers — plus the three
+that name the missing `GraphicsDeviceInformation`.
 
 Complete clusters, by area:
 
@@ -64,7 +68,7 @@ Complete clusters, by area:
 - The admitted encoded ABI versions are `0x00000700` and `0x00001500`, cross-verified across both
   header roots; `CROSS_VERSION_MISMATCHES` is zero over the whole bound surface.
 - `CNA_NATIVE_LIBRARY` must be an absolute file path when used.
-- All Fiddle functions come from one manifest: **204** functions, **5** callbacks, **71** constants
+- All Fiddle functions come from one manifest: **224** functions, **5** callbacks, **71** constants
   and **27** struct layouts, each type-checked against the headers by a compiler-backed probe with
   `_Static_assert(__builtin_types_compatible_p(...))`, and each Ruby layout compared field by field
   with the C one. `ABI_MISMATCHES` is zero.

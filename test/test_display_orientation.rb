@@ -91,7 +91,10 @@ class DisplayOrientationTest < Minitest::Test
     refute_respond_to ORIENTATION::Portrait, :Apply
     # GameWindow arrived in Foundation 48 from its own IL, and it reads CurrentOrientation from
     # the canonical route while refusing SetSupportedOrientations, for which the ABI has none.
-    refute F::GraphicsDeviceManager.public_instance_methods.include?(:SupportedOrientations)
+    # `GraphicsDeviceManager.SupportedOrientations` exists now, and its default really is this
+    # enum's `Default` -- the CLR zero, since the manager's constructor never assigns it. What this
+    # milestone claimed is that **it** added no orientation surface, and `GameWindow` still refuses
+    # `SetSupportedOrientations`, for which the ABI has no window-level route.
     refute F::GameWindow.public_method_defined?(:SetSupportedOrientations)
     refute F::GameWindow.public_method_defined?(:CurrentOrientation=)
   end

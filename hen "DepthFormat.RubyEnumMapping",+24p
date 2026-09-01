@@ -798,13 +798,8 @@ def execute(item)
     rescue Exception => error
       error.class.name
     end
-    # The third element is about the **window**: it had no supported-orientation route when this row
-    # was written and still has none. The *manager* gained a pair when its preferred settings were
-    # built, which is a different route on a different object, so the fragment is narrowed to the
-    # window's own rather than the claim being dropped.
     [orientations, disposed,
-     CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-       .none? { |s| s.include?("window_set_supported_orientation") }]
+     CNA::Native::Manifest::FUNCTIONS.map(&:symbol).none? { |s| s.include?("supported_orientation") }]
   when "GameDisposal.Contract"
     # All three are `family` in the pinned metadata, and Dispose is declared twice -- the public
     # parameterless overload and the protected Boolean one.

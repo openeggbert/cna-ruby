@@ -1345,10 +1345,205 @@ module Microsoft
           @GraphicsDevice = Graphics::GraphicsDevice.__send__(:new, game)
           @native_handle = nil
           @disposed = false
+          initialize_preferences
           game.__send__(:attach_graphics_manager, self)
         end
 
+        # ------------------------------------------------------------------ the preferred settings
+        #
+        # Derived from the pinned Microsoft.Xna.Framework.Game.dll IL (SHA-256 b5dffdd8…).
+        #
+        # Nine properties, and every one of them is a plain field in XNA: the getters are one
+        # `ldfld` and the setters store the value and set `isDeviceDirty`. They are **preferences**,
+        # not device state — `PreferredBackBufferWidth` is what the next device creation should
+        # aim for, not what the current device has — which is why reading them back never consults
+        # the device.
+        #
+        # So this projection keeps them in managed fields too, exactly as XNA does, and pushes all
+        # nine into CNA's own manager when the native manager appears and again at `ApplyChanges`.
+        # That is not a copy of state CNA owns: a consumer sets these **before** `Run`, when no
+        # native manager exists yet, which is the whole reason XNA buffers them as well.
+        #
+        # The constructor's field initialisers run before `Object::.ctor()` and are, in IL order:
+        # `synchronizeWithVerticalRetrace = true`, `depthStencilFormat = 2` (`Depth24`),
+        # `backBufferWidth = DefaultBackBufferWidth`, `backBufferHeight = DefaultBackBufferHeight`.
+        # Everything else takes its CLR zero — `isFullScreen` and `allowMultiSampling` false,
+        # `backBufferFormat` `Color`, `supportedOrientations` `Default` — and `graphicsProfile` comes
+        # from `ReadDefaultGraphicsProfile`, which reads the manifest resource
+        # `"Microsoft.Xna.Framework.RuntimeProfile"` out of the *game's own assembly* and returns
+        # `Reach` when it is absent or unrecognised. A Ruby program has no such resource, so the
+        # default is always `Reach`, by the IL's own not-found branch rather than by assumption.
+        def PreferredBackBufferWidth = @back_buffer_width
+        def PreferredBackBufferHeight = @back_buffer_height
+        def PreferredBackBufferFormat = @back_buffer_format
+        def PreferredDepthStencilFormat = @depth_stencil_format
+        def IsFullScreen = @is_full_screen
+        def SynchronizeWithVerticalRetrace = @synchronize_with_vertical_retrace
+        def PreferMultiSampling = @prefer_multi_sampling
+        def SupportedOrientations = @supported_orientations
+        def GraphicsProfile = @graphics_profile
+
+        # The two dimension setters are the only ones that validate:
+        # `if (value <= 0) throw new ArgumentOutOfRangeException("value", BackBufferDimMustBePositive)`,
+        # and they also clear `useResizedBackBuffer`, so an explicit size wins over one the window
+        # produced by being resized.
+        def PreferredBackBufferWidth=(value)
+          @back_buffer_width = validated_dimension(value)
+          @use_resized_back_buffer = false
+          @device_dirty = true
+          value
+        end
+
+        def PreferredBackBufferHeight=(value)
+          @back_buffer_height = validated_dimension(value)
+          @use_resized_back_buffer = false
+          @device_dirty = true
+          value
+        end
+
+        # The other seven store and mark dirty, with **no validation at all** — an undeclared
+        # enum value is refused by this binding's enum projection rather than by XNA.
+        def PreferredBackBufferFormat=(value)
+          @back_buffer_format = typed(value, Graphics::SurfaceFormat, "value")
+          @device_dirty = true
+          value
+        end
+
+        def PreferredDepthStencilFormat=(value)
+          @depth_stencil_format = typed(value, Graphics::DepthFormat, "value")
+          @device_dirty = true
+          value
+        end
+
+        def IsFullScreen=(value)
+          @is_full_screen = boolean(value)
+          @device_dirty = true
+          value
+        end
+
+        def SynchronizeWithVerticalRetrace=(value)
+          @synchronize_with_vertical_retrace = boolean(value)
+          @device_dirty = true
+          value
+        end
+
+        def PreferMultiSampling=(value)
+          @prefer_multi_sampling = boolean(value)
+          @device_dirty = true
+          value
+        end
+
+        def SupportedOrientations=(value)
+          @supported_orientations = typed(value, Microsoft::Xna::Framework::DisplayOrientation, "value")
+          @device_dirty = true
+          value
+        end
+
+        def GraphicsProfile=(value)
+          @graphics_profile = typed(value, Graphics::GraphicsProfile, "value")
+          @device_dirty = true
+          value
+        end
+
+        # `if (device != null && !isDeviceDirty) return; ChangeDevice(false);`
+        #
+        # DEVIATION, recorded: XNA's `ChangeDevice` **creates** the device when there is none, and
+        # here device creation belongs to CNA's own manager -- the finding
+        # `docs/graphics-device-service-producer-audit.md` reached. So before the host is up this
+        # marks the settings pending and returns; they are pushed the moment the native manager
+        # exists, which is the observable effect a consumer is after when they set a resolution and
+        # then call `Run`.
+        def ApplyChanges
+          return if !@device_dirty && !@native_handle.nil?
+
+          push_preferences
+          @device_dirty = false
+          nil
+        end
+
+        # `IsFullScreen = !IsFullScreen; ChangeDevice(false);` -- the property setter, so it marks
+        # the device dirty on the way through, and then the same change `ApplyChanges` makes.
+        def ToggleFullScreen
+          self.IsFullScreen = !@is_full_screen
+          self.ApplyChanges
+          nil
+        end
+
         private
+
+        def initialize_preferences
+          @synchronize_with_vertical_retrace = true
+          @depth_stencil_format = Graphics::DepthFormat::Depth24
+          @back_buffer_width = DefaultBackBufferWidth
+          @back_buffer_height = DefaultBackBufferHeight
+          @back_buffer_format = Graphics::SurfaceFormat::Color
+          @is_full_screen = false
+          @prefer_multi_sampling = false
+          @supported_orientations = Microsoft::Xna::Framework::DisplayOrientation::Default
+          @graphics_profile = Graphics::GraphicsProfile::Reach
+          @device_dirty = false
+        end
+
+        def validated_dimension(value)
+          number = CNA::Runtime::Numeric.int32(value, "value")
+          raise ::RangeError, "value" unless number.positive?
+
+          number
+        end
+
+        def typed(value, type, name)
+          raise ::TypeError, name unless value.instance_of?(type)
+
+          value
+        end
+
+        def boolean(value)
+          raise ::TypeError, "value" unless value == true || value == false
+
+          value
+        end
+
+        # The flush. Every one of the nine goes to CNA's own manager, then
+        # `cna_graphics_device_manager_apply_changes` does what XNA's `ChangeDevice` does.
+        def push_preferences
+          return if @native_handle.nil? || @disposed
+
+          handle = @native_handle.value
+          library = CNA::Native.library
+          library.call("cna_graphics_device_manager_set_preferred_back_buffer_width", handle, @back_buffer_width)
+          library.call("cna_graphics_device_manager_set_preferred_back_buffer_height", handle, @back_buffer_height)
+          library.call("cna_graphics_device_manager_set_preferred_back_buffer_format", handle, @back_buffer_format.to_i)
+          library.call("cna_graphics_device_manager_set_preferred_depth_stencil_format", handle, @depth_stencil_format.to_i)
+          library.call("cna_graphics_device_manager_set_is_full_screen", handle, @is_full_screen ? 1 : 0)
+          library.call("cna_graphics_device_manager_set_synchronize_with_vertical_retrace", handle,
+                       @synchronize_with_vertical_retrace ? 1 : 0)
+          library.call("cna_graphics_device_manager_set_prefer_multi_sampling", handle, @prefer_multi_sampling ? 1 : 0)
+          library.call("cna_graphics_device_manager_set_supported_orientations", handle, @supported_orientations.to_i)
+          library.call("cna_graphics_device_manager_set_graphics_profile", handle, @graphics_profile.to_i)
+          library.call("cna_graphics_device_manager_apply_changes", handle)
+          nil
+        end
+
+        # What CNA's own manager reports, kept reachable so a test can assert that the flush really
+        # landed rather than trusting that it did.
+        def native_preferences
+          handle = @native_handle.value
+          library = CNA::Native.library
+          read = lambda do |symbol, format, size|
+            output = CNA::Native.library.pointer_for(format, 0)
+            library.call(symbol, handle, output)
+            output[0, size].unpack1(format)
+          end
+          { width: read.call("cna_graphics_device_manager_get_preferred_back_buffer_width", "l", 4),
+            height: read.call("cna_graphics_device_manager_get_preferred_back_buffer_height", "l", 4),
+            format: read.call("cna_graphics_device_manager_get_preferred_back_buffer_format", "L", 4),
+            depth: read.call("cna_graphics_device_manager_get_preferred_depth_stencil_format", "L", 4),
+            full_screen: read.call("cna_graphics_device_manager_get_is_full_screen", "C", 1),
+            vsync: read.call("cna_graphics_device_manager_get_synchronize_with_vertical_retrace", "C", 1),
+            multi_sampling: read.call("cna_graphics_device_manager_get_prefer_multi_sampling", "C", 1),
+            orientations: read.call("cna_graphics_device_manager_get_supported_orientations", "L", 4),
+            profile: read.call("cna_graphics_device_manager_get_graphics_profile", "L", 4) }
+        end
 
         def create_native(game_handle)
           output = CNA::Native.library.pointer_for("Q", 0)
@@ -1362,6 +1557,9 @@ module Microsoft
               CNA::Native.library.call("cna_graphics_device_manager_destroy", value)
             end
           )
+          # Whatever the consumer set before `Run` is pushed now, which is the moment XNA's own
+          # `ChangeDevice` would first have run.
+          push_preferences
         rescue Exception
           if handle && (!defined?(@native_handle) || !@native_handle)
             CNA::Native.library.call("cna_graphics_device_manager_dispose", handle)
