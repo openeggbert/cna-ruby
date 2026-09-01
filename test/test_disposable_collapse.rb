@@ -251,16 +251,10 @@ class DisposableCollapseTest < Minitest::Test
       assert IL.fetch("types").fetch(name).fetch("nativeReachable"), name
     end
 
-    # Empty until `IVertexType` was projected, which uncovered the four vertex structs -- the
-    # first consumable candidates the frontier has carried since Foundation 32, and the types that
-    # would give that interface a producer. What this test claims is unchanged: nothing **it**
-    # unblocked became consumable.
-    assert_equal %w[
-      Microsoft.Xna.Framework.Graphics.VertexPositionColor
-      Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture
-      Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture
-      Microsoft.Xna.Framework.Graphics.VertexPositionTexture
-    ], FRONTIER.fetch("consumableCandidates").map { |item| item.fetch("name") }.sort
+    # Empty for one milestone, when `IVertexType` uncovered the four vertex structs; those were
+    # built immediately after, so it is empty again. What this test claims is unchanged: nothing
+    # **it** unblocked became consumable.
+    assert_empty FRONTIER.fetch("consumableCandidates")
     # BCL_PROJECTION was 5 until Foundation 46 projected Dictionary`2 and consumed
     # LaunchParameters, RUNTIME_DATA was 5 until Foundation 48 built GameWindow over the canonical
     # window routes, and BCL_PROJECTION fell to 2 when Foundation 49 projected the
@@ -295,7 +289,8 @@ class DisposableCollapseTest < Minitest::Test
     # dependency-complete candidate that ever carried that blocker, and both of its blockers named
     # members the pinned contract never selects. `NONE` then appeared for the first time since
     # Foundation 32, carrying the four vertex structs the IVertexType projection uncovered.
-    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 3, "NONE" => 4},
+    # `NONE` lasted one milestone: the four vertex structs it counted were built immediately.
+    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 3},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end

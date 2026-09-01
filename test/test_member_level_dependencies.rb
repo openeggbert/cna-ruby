@@ -266,11 +266,11 @@ class MemberLevelDependenciesTest < Minitest::Test
     # SamplerStateCollection followed them, and 8 when VertexDeclaration and the IVertexType it
     # uncovered were both built -- putting the four vertex structs on the queue, the first
     # consumable candidates since Foundation 32.
-    assert_equal 8, REPORT.fetch("dependencyCompleteCandidates").length
-    assert_equal 4, REPORT.fetch("consumableCandidates").length
-    assert_equal "global-consumable-rank", REPORT.fetch("selectionRoute")
-    assert_equal "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
-                 REPORT.fetch("selectedNext").fetch("name")
+    # ...and 4 when those four were built, which consumed the queue rather than growing it.
+    assert_equal 4, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_empty REPORT.fetch("consumableCandidates")
+    assert_equal "none-consumable", REPORT.fetch("selectionRoute")
+    assert_nil REPORT.fetch("selectedNext")
 
     # Nothing reported here becomes consumable, and the type-level lists are byte-identical to what
     # they were: the two new reports sit beside the policy rather than inside it. Some entries in

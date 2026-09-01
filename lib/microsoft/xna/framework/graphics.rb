@@ -2591,3 +2591,5 @@ Microsoft::Xna::Framework::Content::ContentManager.__send__(
     font_handle, texture[0, 8].unpack1("Q")
   )
 end
+
+require_relative "graphics/vertex_structs"

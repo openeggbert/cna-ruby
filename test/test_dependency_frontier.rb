@@ -468,19 +468,19 @@ class DependencyFrontierTest < Minitest::Test
     # GraphicsResource made the four graphics state objects and VertexDeclaration
     # dependency-complete, and completing Texture2D did the same for Media.VideoPlayer. Then 6,
     # when the four state objects were audited and built and SamplerStateCollection appeared behind
-    # SamplerState; 5 when that collection was built too; and 8 when VertexDeclaration and the
-    # IVertexType it uncovered were both built, putting the four vertex structs on the queue.
-    assert_equal 8, REPORT.fetch("dependencyCompleteCandidates").length
+    # SamplerState; 5 when that collection was built too; 8 when VertexDeclaration and the
+    # IVertexType it uncovered were both built, putting the four vertex structs on the queue; and 4
+    # when those four were consumed and nothing arrived behind them.
+    assert_equal 4, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
     # Foundation 32 consumed it. The queue was empty from then until the vertex structs arrived --
     # so the frontier is *selecting* again rather than only listing, for the third time ever.
-    assert_equal 4, REPORT.fetch("consumableCandidates").length
-    assert_equal 4, REPORT.fetch("blockerSummary").fetch("NONE")
-    assert_equal "global-consumable-rank", REPORT.fetch("selectionRoute")
-    assert_equal "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
-                 REPORT.fetch("selectedNext").fetch("name")
+    assert_equal 0, REPORT.fetch("consumableCandidates").length
+    refute REPORT.fetch("blockerSummary").key?("NONE")
+    assert_equal "none-consumable", REPORT.fetch("selectionRoute")
+    assert_nil REPORT["selectedNext"]
 
     REPORT.fetch("dependencyCompleteCandidates").each do |candidate|
       %w[EVENT_PROJECTION BEHAVIOR_EVIDENCE].each do |retired|
@@ -508,7 +508,9 @@ class DependencyFrontierTest < Minitest::Test
   # structs, so this check finally has subjects again -- which is the point of writing it as a rule
   # over whatever is there rather than as a count.
   def test_every_consumable_candidate_is_pure_managed_with_available_il
-    assert_equal 4, REPORT.fetch("consumableCandidates").length
+    # Empty again: the four vertex structs it briefly held were built in the very next milestone.
+    # The rule below is still written over whatever is there, which is why it survives both states.
+    assert_empty REPORT.fetch("consumableCandidates")
 
     REPORT.fetch("consumableCandidates").each do |candidate|
       name = candidate.fetch("name")

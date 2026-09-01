@@ -838,6 +838,22 @@
     {
       "name": "Microsoft.Xna.Framework.Graphics.IVertexType",
       "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
+      "complete": true
     }
   ]
 }

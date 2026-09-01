@@ -37473,6 +37473,662 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::IVertexType"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType"
+      ],
+      "genericParameters": [],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "position",
+              "type": "Microsoft.Xna.Framework.Vector3",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "color",
+              "type": "Microsoft.Xna.Framework.Color",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionColor",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "field",
+          "name": "Position",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "Color",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": false,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "VertexDeclaration",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+          "static": true,
+          "constant": false,
+          "value": null
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::VertexPositionColor"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType"
+      ],
+      "genericParameters": [],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "position",
+              "type": "Microsoft.Xna.Framework.Vector3",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "textureCoordinate",
+              "type": "Microsoft.Xna.Framework.Vector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionTexture",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "field",
+          "name": "Position",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "TextureCoordinate",
+          "type": "Microsoft.Xna.Framework.Vector2",
+          "static": false,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "VertexDeclaration",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+          "static": true,
+          "constant": false,
+          "value": null
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::VertexPositionTexture"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType"
+      ],
+      "genericParameters": [],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "position",
+              "type": "Microsoft.Xna.Framework.Vector3",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "color",
+              "type": "Microsoft.Xna.Framework.Color",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "textureCoordinate",
+              "type": "Microsoft.Xna.Framework.Vector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "field",
+          "name": "Position",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "Color",
+          "type": "Microsoft.Xna.Framework.Color",
+          "static": false,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "TextureCoordinate",
+          "type": "Microsoft.Xna.Framework.Vector2",
+          "static": false,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "VertexDeclaration",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+          "static": true,
+          "constant": false,
+          "value": null
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::VertexPositionColorTexture"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType"
+      ],
+      "genericParameters": [],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "position",
+              "type": "Microsoft.Xna.Framework.Vector3",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "normal",
+              "type": "Microsoft.Xna.Framework.Vector3",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "textureCoordinate",
+              "type": "Microsoft.Xna.Framework.Vector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "left",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "field",
+          "name": "Position",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "Normal",
+          "type": "Microsoft.Xna.Framework.Vector3",
+          "static": false,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "TextureCoordinate",
+          "type": "Microsoft.Xna.Framework.Vector2",
+          "static": false,
+          "constant": false,
+          "value": null
+        },
+        {
+          "kind": "field",
+          "name": "VertexDeclaration",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+          "static": true,
+          "constant": false,
+          "value": null
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::VertexPositionNormalTexture"
     }
   ]
 }

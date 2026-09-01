@@ -25,8 +25,8 @@ fails when it should.
 
 ## Surface
 
-The strict surface is **172 types / 2088 Ruby member identities**: 169 complete, 3 partial, 85 of the
-257 reference types still missing, with 197 deferred diagnostics of which 78 are missing members and
+The strict surface is **176 types / 2126 Ruby member identities**: 173 complete, 3 partial, 81 of the
+257 reference types still missing, with 193 deferred diagnostics of which 78 are missing members and
 30 are the overload category. Every structural category except `MISSING_TYPE`, `MISSING_MEMBER`,
 `OVERLOAD_MAPPING_MISMATCH` and one long-standing `PROPERTY_MAPPING_MISMATCH`
 (`GraphicsDevice::Viewport`) is zero, the allowlist is empty and `UNMEASURED_STRUCTURAL_CATEGORY` is
@@ -64,7 +64,8 @@ Complete clusters, by area:
   `DepthStencilState`, `RasterizerState` and `SamplerState` with every preset cross-checked against
   CNA's own, `SamplerStateCollection` over real sampler slots on both shader stages,
   `VertexDeclaration` with `VertexElementValidator` reproduced in the IL's order and every stride
-  cross-checked against CNA's, the abstract `IVertexType` contract,
+  cross-checked against CNA's, `IVertexType` with the four vertex structs that really conform to
+  it,
   `SpriteFont` over a real MonoGame font, `Viewport`, `TextureCollection`, `Texture`,
   `DisplayMode`, `DisplayModeCollection`, `PresentationParameters` and the enum closure, beside the
   three partial runtime types.
@@ -107,23 +108,18 @@ with the pre-correction SHA-256.
 ## Dependency frontier
 
 `tools/api_compat/analyze_dependencies.rb` classifies every dependency-complete missing type.
-**Eight remain, and four of them are consumable** — the first time this frontier has had a
-non-empty work queue since Foundation 32, and only the third time it has *selected* rather than
-listed. The count went 3 → 9 → 6 → 5 → 8 in four milestones: completing `GraphicsResource` and
-`Texture2D` made six types behind them visible at once, auditing four of those six found the
-blocker was not one, `SamplerStateCollection` turned out to have an accurate `NATIVE_RUNTIME` that
-named a route CNA exports, and `VertexDeclaration` plus the `IVertexType` it uncovered put the four
-vertex structs on the queue with no blocker at all.
+**Four remain**, and none is consumable. The count went 3 → 9 → 6 → 5 → 8 → 4 in five milestones:
+completing `GraphicsResource` and `Texture2D` made six types behind them visible at once, auditing
+four of those six found the blocker was not one, `SamplerStateCollection` turned out to have an
+accurate `NATIVE_RUNTIME` that named a route CNA exports, `VertexDeclaration` plus the `IVertexType`
+it uncovered put the four vertex structs on the queue with no blocker at all — and then those four
+were **built**, which is the first work queue this frontier has ever produced and consumed.
 
 | type | reported blocker | status |
 | --- | --- | --- |
 | `Design.MathTypeConverter` | BCL_PROJECTION | **audited, deferred.** Scope, not authority: it inherits `ExpandableObjectConverter` and returns `PropertyDescriptorCollection`, so projecting it means projecting .NET's type-descriptor system |
 | `Graphics.EffectAnnotation` | NATIVE_RUNTIME | **audited, deferred.** Not the renderer: its eight `GetValue*` members forward to a temporary `EffectParameter`, which is not projected, and nothing in the projected surface produces an annotation |
 | `Graphics.GraphicsAdapter` | NATIVE_RUNTIME | **audited, deferred.** Not the ABI: the qualified artifact compiles only the HEADLESS renderer, and with it every adapter route answers invented data |
-| `Graphics.VertexPositionColor` | — | **consumable, and selected.** `SELECTION_ROUTE` is `global-consumable-rank` and `SELECTED_NEXT` names it |
-| `Graphics.VertexPositionTexture` | — | **consumable** |
-| `Graphics.VertexPositionColorTexture` | — | **consumable** |
-| `Graphics.VertexPositionNormalTexture` | — | **consumable** |
 | `Media.VideoPlayer` | NATIVE_RUNTIME | **not yet audited** — arrived behind `Texture2D`; unlike the state objects its IL is native in fifteen members including the constructor |
 
 The three blocked entries have been **measured** rather than accepted, and each is deferred for a

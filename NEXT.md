@@ -53,11 +53,12 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 71 | the four graphics state objects, and the ninth `NATIVE_RUNTIME` deferral that was not one | **4** | 65 |
 | 72 | `Graphics.SamplerStateCollection` + `GraphicsDevice.SamplerStates`/`VertexSamplerStates` | **1** | 4 |
 | 73 | `Graphics.VertexDeclaration` + the `IVertexType` contract it uncovered | **2** | 6 |
+| 74 | the four vertex structs, the frontier's first consumed work queue | **4** | 38 |
 
 ## Measured state
 
-Strict target **172 types / 2088 member identities**: **169 complete**, three partial graphics
-runtime types, 85 missing, **197 deferred diagnostics**. `MISSING_MEMBER` **78**, `PARTIAL_TYPES` 3,
+Strict target **176 types / 2126 member identities**: **173 complete**, three partial graphics
+runtime types, 81 missing, **193 deferred diagnostics**. `MISSING_MEMBER` **78**, `PARTIAL_TYPES` 3,
 `PROPERTY_MAPPING_MISMATCH` 1 (`GraphicsDevice::Viewport`, unrelated and pre-existing),
 `OVERLOAD_MAPPING_MISMATCH` **30**, every other structural category 0, allowlist 0, unmeasured 0.
 **27** event identities across **14** owner types. **22** projected BCL identities.
@@ -67,14 +68,12 @@ versions** cross-verified across both header roots. Zero missing header symbols,
 symbols, zero cross-version mismatches, zero ABI mismatches. **No CNA source was changed and no new
 native binary was built.**
 
-Behaviour corpus **526** observations, zero failures. Suite **1400 runs / 48361 assertions**, zero
-failures, zero skips. Capability registry **125** rows, zero contradictions.
+Behaviour corpus **526** observations, zero failures. Suite **1412 runs / 48430 assertions**, zero
+failures, zero skips. Capability registry **126** rows, zero contradictions.
 
-The dependency frontier carries **eight** candidates and, for the first time since Foundation 32,
-**four of them are consumable**: `SELECTION_ROUTE` is `global-consumable-rank` and `SELECTED_NEXT`
-names `Graphics.VertexPositionColor`. It went 3 → 9 → 6 → 5 → 8 in four milestones — see
-`plan.md`. The queue is no longer empty, which is the clearest statement of what to do next this
-handoff has ever been able to make.
+The dependency frontier carries **four** candidates and none is consumable. It went
+3 → 9 → 6 → 5 → 8 → 4 in five milestones — see `plan.md`. The eight-candidate step is the only time
+this frontier has ever produced a work queue, and the step after it consumed the whole thing.
 
 ## Game is complete, and so is the whole Audio namespace
 
@@ -201,12 +200,12 @@ being accurate is exactly what made it buildable, because the route that apply n
 exports. So the audit is not a search for wrong blockers; it is a search for *what* the blocker
 names. The same question is the first one to ask of the two that remain.
 
-**The recommended next work is the four vertex structs**, in the order the frontier ranks them:
-`VertexPositionColor` (9 identities), `VertexPositionTexture` (9), `VertexPositionColorTexture`
-(10), `VertexPositionNormalTexture` (10). Every one is consumable with no blocker, every one is
-pure managed with hash-pinned IL, and building them is what would finally give `IVertexType` a
-**producer** — the thing `INTERFACE_PRODUCER_MISSING` measures and that `DrawableGameComponent`
-still waits on for its own interface.
+**The recommended next work is `Media.VideoPlayer`, and it is an audit rather than a build.** It
+is the only candidate on the frontier whose blocker has never been measured, and it is the one most
+likely to be *right*: fifteen of its members are native-reachable, including the constructor,
+`GetTexture` and every transport control. The standing constraint applies -- no legal video or
+audio fixture evidence may be fabricated -- so an audit that completes zero types and records why
+is a legitimate outcome, as `docs/graphics-adapter-audit-evidence.md` already is.
 
 The one still unaudited, with what to check first rather than what is assumed:
 
@@ -243,9 +242,8 @@ The three already audited:
   whose reachable surface is *one member*, not a base class one inherits from. Projecting it means
   projecting .NET's type-descriptor system for ten design-time converters nothing here consumes.
 
-So the type frontier is **not** at rest, and for the first time in a long while the reason is that
-there is work queued rather than that something is unaudited: four consumable candidates, three
-deferred for a measured reason, and one — `Media.VideoPlayer` — not yet audited.
+So the type frontier is **not** at rest: three candidates are deferred for a measured reason and
+one — `Media.VideoPlayer` — has never been audited at all.
 
 **The single largest lever is still a qualification artifact with a real renderer.** It would
 unblock `GraphicsAdapter` directly and the three partial graphics types behind it —

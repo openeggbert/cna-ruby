@@ -116,16 +116,10 @@ class ContentManagerTest < Minitest::Test
   def test_the_stream_and_action_projections_consumed_content_manager
     names = FRONTIER.fetch("dependencyCompleteCandidates").map { |item| item.fetch("name") }
     refute_includes names, "Microsoft.Xna.Framework.Content.ContentManager"
-    # Empty until `IVertexType` was projected, which uncovered the four vertex structs -- the
-    # first consumable candidates the frontier has carried since Foundation 32, and the types that
-    # would give that interface a producer. What this test claims is unchanged: nothing **it**
-    # unblocked became consumable.
-    assert_equal %w[
-      Microsoft.Xna.Framework.Graphics.VertexPositionColor
-      Microsoft.Xna.Framework.Graphics.VertexPositionColorTexture
-      Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture
-      Microsoft.Xna.Framework.Graphics.VertexPositionTexture
-    ], FRONTIER.fetch("consumableCandidates").map { |item| item.fetch("name") }.sort
+    # Empty for one milestone, when `IVertexType` uncovered the four vertex structs; those were
+    # built immediately after, so it is empty again. What this test claims is unchanged: nothing
+    # **it** unblocked became consumable.
+    assert_empty FRONTIER.fetch("consumableCandidates")
     # Completing it uncovered what it was hiding: ResourceContentManager derives from it. That
     # candidate has since been built too -- once System.Resources.ResourceManager was collapsed to
     # the one member it reaches -- so what is asserted now is the end state that produced.

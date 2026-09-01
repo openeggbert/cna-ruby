@@ -290,6 +290,48 @@ module Microsoft
           def GetVertexElements: () -> Array[VertexElement]
         end
 
+        class VertexPositionColor
+          include IVertexType
+          def initialize: (?Vector3 position, ?Color color) -> void
+          attr_accessor Position: Vector3
+          attr_accessor Color: Color
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def to_s: () -> String
+        end
+
+        class VertexPositionTexture
+          include IVertexType
+          def initialize: (?Vector3 position, ?Vector2 texture_coordinate) -> void
+          attr_accessor Position: Vector3
+          attr_accessor TextureCoordinate: Vector2
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def to_s: () -> String
+        end
+
+        class VertexPositionColorTexture
+          include IVertexType
+          def initialize: (?Vector3 position, ?Color color, ?Vector2 texture_coordinate) -> void
+          attr_accessor Position: Vector3
+          attr_accessor Color: Color
+          attr_accessor TextureCoordinate: Vector2
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def to_s: () -> String
+        end
+
+        class VertexPositionNormalTexture
+          include IVertexType
+          def initialize: (?Vector3 position, ?Vector3 normal, ?Vector2 texture_coordinate) -> void
+          attr_accessor Position: Vector3
+          attr_accessor Normal: Vector3
+          attr_accessor TextureCoordinate: Vector2
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def to_s: () -> String
+        end
+
         class GraphicsResource
           attr_reader IsDisposed: bool
           attr_accessor Tag: untyped

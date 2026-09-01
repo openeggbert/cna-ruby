@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "GEM_FILENAME": "cna-ruby-0.1.0.dev0.gem",
   "VERSION": "0.1.0.dev0",
-  "GEM_SHA256": "7fb8d4adb0e7d7e67e34a775428a6cd242395284c1a8594dc8a439c9c0559440",
-  "GEM_ENTRIES": 64,
+  "GEM_SHA256": "6ab68e7d7ea1df5eded2fd8260f7b80ea2995a61a22adc7080b3a634c1b0b15f",
+  "GEM_ENTRIES": 66,
   "FORBIDDEN_ENTRIES": [
 
   ],
@@ -41,6 +41,7 @@
     "lib/cna/runtime/serialization.rb",
     "lib/cna/runtime/stream.rb",
     "lib/cna/runtime/value_semantics.rb",
+    "lib/cna/runtime/vertex_struct.rb",
     "lib/cna/runtime/xact_spatial.rb",
     "lib/cna/version.rb",
     "lib/microsoft/xna/framework.rb",
@@ -56,6 +57,7 @@
     "lib/microsoft/xna/framework/graphics.rb",
     "lib/microsoft/xna/framework/graphics/packed_vector.rb",
     "lib/microsoft/xna/framework/graphics/vertex_element.rb",
+    "lib/microsoft/xna/framework/graphics/vertex_structs.rb",
     "lib/microsoft/xna/framework/input.rb",
     "lib/microsoft/xna/framework/input/touch.rb",
     "lib/microsoft/xna/framework/interfaces.rb",

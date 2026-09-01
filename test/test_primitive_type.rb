@@ -158,7 +158,7 @@ class PrimitiveTypeTest < Minitest::Test
     # `VertexDeclaration` and `IVertexType` left this list when they were built. Neither holds a
     # buffer nor draws anything, so what this test claims is unchanged.
     %i[VertexBuffer IndexBuffer DynamicVertexBuffer DynamicIndexBuffer
-       Effect BasicEffect VertexPositionColor
+       Effect BasicEffect
        PrimitiveTypeConverter].each do |name|
       refute G.const_defined?(name, false), name.to_s
     end

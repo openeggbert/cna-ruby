@@ -60,7 +60,11 @@ class VertexDeclarationTest < Minitest::Test
     # structs in turn -- the first consumable candidates this frontier has carried since
     # Foundation 32.
     assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Graphics.IVertexType"
-    assert_equal 4, FRONTIER.fetch("consumableCandidates").length
+    # ...and the milestone straight after built all four of them, so the queue is empty again and
+    # the interface finally has real producers.
+    assert_empty FRONTIER.fetch("consumableCandidates")
+    assert_includes STRICT.fetch("completeTypeNames"),
+                    "Microsoft.Xna.Framework.Graphics.VertexPositionColor"
   end
 
   # ---------------------------------------------------------------------- the contract shape
@@ -207,7 +211,9 @@ class VertexDeclarationTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_adds_no_buffer_binding_or_vertex_type_producer
-    %i[VertexBuffer IndexBuffer DynamicVertexBuffer DeclarationManager VertexPositionColor]
+    # `VertexPositionColor` left this list when the four vertex structs were built; what **this**
+    # milestone claimed is unchanged, and the buffers and the binding manager are still absent.
+    %i[VertexBuffer IndexBuffer DynamicVertexBuffer DeclarationManager]
       .each { |absent| refute G.const_defined?(absent, false), absent.to_s }
     %i[Bind Unbind FromType].each { |absent| refute VD.public_method_defined?(absent), absent.to_s }
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
