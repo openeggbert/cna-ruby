@@ -21,7 +21,7 @@ class GraphicsDeviceBindingTest < Minitest::Test
     remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME).join(" ")
     %w[SetVertexBuffer SetVertexBuffers GetVertexBuffers Indices]
       .each { |member| refute_includes remainder, "::#{member} ", member }
-    %w[DrawPrimitives Present Reset].each { |member| assert_includes remainder, "::#{member} ", member }
+    %w[DrawUserPrimitives Present Reset].each { |member| assert_includes remainder, "::#{member} ", member }
   end
 
   class BindGame < F::Game
@@ -218,11 +218,15 @@ class GraphicsDeviceBindingTest < Minitest::Test
   def test_it_draws_nothing_and_binds_no_render_target
     # The render-target trio arrived with the slice that followed this one; what this milestone
     # claimed, and still claims, is that **it** bound no render target and drew nothing.
-    %i[DrawPrimitives DrawIndexedPrimitives DrawUserPrimitives Present Reset].each do |absent|
+    # The three device-buffer draw calls left this list when the draw slice landed; what is
+    # still absent is the user-primitive families, which take the vertices as an argument.
+    %i[DrawUserPrimitives DrawUserIndexedPrimitives Present Reset].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-    %w[cna_graphics_device_draw_primitives cna_graphics_device_draw_indexed_primitives
+    # The two draw routes left this list when the draw slice landed, and the single-target route
+    # is unbound because XNA's own overloads forward to the array form.
+    %w[cna_graphics_device_draw_user_primitives cna_graphics_device_draw_user_indexed_primitives
        cna_graphics_device_set_render_target2d].each { |absent| refute_includes symbols, absent }
     # And the three read-back routes this file measures through raw Fiddle stay out of the manifest,
     # because nothing in `lib/` would call them: XNA's own getters are field reads.

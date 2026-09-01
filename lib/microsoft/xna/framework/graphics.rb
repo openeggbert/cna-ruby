@@ -1093,6 +1093,68 @@ module Microsoft
 
           def GetRenderTargets = @render_target_bindings.dup
 
+          # ------------------------------------------------------------------ what the device draws
+          #
+          # The three draw calls that read the device's **own** bound buffers. Their managed
+          # validation is short and identical in shape:
+          #
+          #   primitiveCount <= 0        -> ArgumentOutOfRangeException("primitiveCount", MustDrawSomething)
+          #   numVertices <= 0           -> ArgumentOutOfRangeException("numVertices", NumberVerticesMustBeGreaterZero)
+          #   instanceCount <= 0         -> ArgumentOutOfRangeException("instanceCount", MustDrawSomething)
+          #   a stream with a non-zero InstanceFrequency, on the two non-instanced calls
+          #                              -> InvalidOperationException(NonZeroInstanceFrequency)
+          #   primitiveCount > the profile's maximum -> ProfileMaxPrimitiveCount
+          #
+          # The last of those is a profile capability rather than a managed rule, so it is CNA's to
+          # refuse -- the same decision the occlusion query's profile check records. What is a
+          # managed rule is the instance-frequency guard, and this projection has the fact it needs:
+          # the bindings it cached when they were set.
+          def DrawPrimitives(primitiveType, startVertex, primitiveCount)
+            topology = PrimitiveType.coerce(primitiveType)
+            first = CNA::Runtime::Numeric.int32(startVertex, "startVertex")
+            count = require_primitive_count(primitiveCount)
+            require_no_instance_frequency
+            CNA::Native.library.call("cna_graphics_device_draw_primitives", native_handle,
+                                     topology.to_i, first, count)
+            nil
+          end
+
+          def DrawIndexedPrimitives(primitiveType, baseVertex, minVertexIndex, numVertices,
+                                    startIndex, primitiveCount)
+            topology = PrimitiveType.coerce(primitiveType)
+            base = CNA::Runtime::Numeric.int32(baseVertex, "baseVertex")
+            minimum = CNA::Runtime::Numeric.int32(minVertexIndex, "minVertexIndex")
+            vertices = CNA::Runtime::Numeric.int32(numVertices, "numVertices")
+            raise ::RangeError, "numVertices" unless vertices.positive?
+
+            start = CNA::Runtime::Numeric.int32(startIndex, "startIndex")
+            count = require_primitive_count(primitiveCount)
+            require_no_instance_frequency
+            CNA::Native.library.call("cna_graphics_device_draw_indexed_primitives", native_handle,
+                                     topology.to_i, base, minimum, vertices, start, count)
+            nil
+          end
+
+          # The instanced call has no instance-frequency guard -- a non-zero frequency is what it is
+          # **for** -- and one extra count of its own.
+          def DrawInstancedPrimitives(primitiveType, baseVertex, minVertexIndex, numVertices,
+                                      startIndex, primitiveCount, instanceCount)
+            topology = PrimitiveType.coerce(primitiveType)
+            base = CNA::Runtime::Numeric.int32(baseVertex, "baseVertex")
+            minimum = CNA::Runtime::Numeric.int32(minVertexIndex, "minVertexIndex")
+            vertices = CNA::Runtime::Numeric.int32(numVertices, "numVertices")
+            raise ::RangeError, "numVertices" unless vertices.positive?
+
+            start = CNA::Runtime::Numeric.int32(startIndex, "startIndex")
+            count = require_primitive_count(primitiveCount)
+            instances = CNA::Runtime::Numeric.int32(instanceCount, "instanceCount")
+            raise ::RangeError, "instanceCount" unless instances.positive?
+
+            CNA::Native.library.call("cna_graphics_device_draw_instanced_primitives", native_handle,
+                                     topology.to_i, base, minimum, vertices, start, count, instances)
+            nil
+          end
+
           def Clear(color)
             raise TypeError, "GraphicsDevice.Clear foundation overload expects Color" unless color.instance_of?(Color)
             divisor = 255.0
@@ -1221,6 +1283,22 @@ module Microsoft
             else
               [target.Width, target.Height, target.MultiSampleCount]
             end
+          end
+
+          def require_primitive_count(value)
+            count = CNA::Runtime::Numeric.int32(value, "primitiveCount")
+            raise ::RangeError, "primitiveCount" unless count.positive?
+
+            count
+          end
+
+          # `instanceStreamMask`: XNA records whether any bound stream carries a non-zero
+          # `InstanceFrequency`, and the two non-instanced draw calls refuse while one does. The
+          # cached bindings are that record here.
+          def require_no_instance_frequency
+            return unless @vertex_buffer_bindings.any? { |binding| binding.InstanceFrequency.positive? }
+
+            raise ::RuntimeError, "NonZeroInstanceFrequency"
           end
 
           # `InvalidDevice`: a resource belongs to the device that made it.

@@ -82,11 +82,11 @@ class PlanBoundariesTest < Minitest::Test
     partial = STRICT.fetch("partialTypes")
     device = partial.fetch("Microsoft.Xna.Framework.Graphics.GraphicsDevice")
     manager = partial.fetch("Microsoft.Xna.Framework.GraphicsDeviceManager")
-    assert_equal 23, device.length
+    assert_equal 20, device.length
     assert_equal 15, manager.length
     assert_equal 2, partial.length, "SpriteBatch left when the Effect cluster landed"
     flat = SECTION.gsub(/\s+/, " ")
-    assert_includes flat, "owes twenty-three members"
+    assert_includes flat, "owes twenty members"
     assert_includes flat, "`GraphicsDeviceManager` fifteen"
     assert_includes flat, "they are the only two partial types left"
   end

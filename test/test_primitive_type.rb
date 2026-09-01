@@ -141,9 +141,15 @@ class PrimitiveTypeTest < Minitest::Test
     end
   end
 
-  def test_no_graphics_device_draw_member_is_implemented
-    %i[DrawPrimitives DrawIndexedPrimitives DrawInstancedPrimitives
-       DrawUserPrimitives DrawUserIndexedPrimitives].each do |name|
+  # The three device-buffer draw calls arrived with the device's draw slice, and they are the
+  # first real consumers this enum has ever had -- each takes a `PrimitiveType` as its first
+  # argument. What this milestone claimed is unchanged: it added none of them, and the two
+  # user-primitive families are still absent.
+  def test_the_draw_members_that_exist_take_this_enum_and_the_rest_are_absent
+    %i[DrawPrimitives DrawIndexedPrimitives DrawInstancedPrimitives].each do |name|
+      assert G::GraphicsDevice.public_method_defined?(name), name.to_s
+    end
+    %i[DrawUserPrimitives DrawUserIndexedPrimitives].each do |name|
       refute G::GraphicsDevice.public_method_defined?(name), name.to_s
       refute G::GraphicsDevice.private_method_defined?(name), name.to_s
       refute G::GraphicsDevice.protected_method_defined?(name), name.to_s
@@ -166,16 +172,19 @@ class PrimitiveTypeTest < Minitest::Test
     end
     # `SetVertexBuffer` and `Indices` left this list when the device's binding slice landed. A
     # bound buffer is still not a draw call, which is what this row is about.
-    %i[DrawUserPrimitives DrawPrimitives].each do |name|
+    # The three device-buffer draw calls left this list when the draw slice landed; what is
+    # still absent is the user-primitive families, which take the vertices as an argument.
+    %i[DrawUserPrimitives DrawUserIndexedPrimitives].each do |name|
       refute G::GraphicsDevice.public_method_defined?(name), name.to_s
     end
     refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("PRIMITIVE") }
     refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("TOPOLOGY") }
-    refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?("primitive") }
+    # The three draw routes are bound now, and they take the topology as a scalar argument rather
+    # than through any constant: this enum's values are its own, from its own IL.
+    assert CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?("draw_primitives") }
     # `cna_sprite_batch_draw_string` left this check when DrawString was built: it draws text
     # through a SpriteBatch interval, not a primitive topology, and no primitive or topology
     # constant or route exists at all.
-    refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?("draw_primitive") }
     refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?("draw_user") }
   end
 
@@ -188,7 +197,7 @@ class PrimitiveTypeTest < Minitest::Test
       abort "wrong TriangleList" unless topology::TriangleList.to_i == 0
       abort "wrong LineStrip" unless topology::LineStrip.to_i == 3
       abort "flags leaked" if topology.instance_variable_get(:@enum_flags)
-      abort "draw leaked" if Microsoft::Xna::Framework::Graphics::GraphicsDevice.public_method_defined?(:DrawPrimitives)
+      abort "user draw leaked" if Microsoft::Xna::Framework::Graphics::GraphicsDevice.public_method_defined?(:DrawUserPrimitives)
       abort "native library loaded" if CNA::Native.instance_variable_defined?(:@library)
     RUBY
     environment = {"CNA_NATIVE_LIBRARY" => nil, "RUBYLIB" => ENV["RUBYLIB"], "RUBYOPT" => nil}

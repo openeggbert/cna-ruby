@@ -295,6 +295,9 @@ module Microsoft
           def SetRenderTarget: (RenderTarget2D | RenderTargetCube | nil renderTarget, ?CubeMapFace? cubeMapFace) -> nil
           def SetRenderTargets: (*untyped renderTargets) -> nil
           def GetRenderTargets: () -> Array[RenderTargetBinding]
+          def DrawPrimitives: (PrimitiveType | Integer primitiveType, Integer startVertex, Integer primitiveCount) -> nil
+          def DrawIndexedPrimitives: (PrimitiveType | Integer primitiveType, Integer baseVertex, Integer minVertexIndex, Integer numVertices, Integer startIndex, Integer primitiveCount) -> nil
+          def DrawInstancedPrimitives: (PrimitiveType | Integer primitiveType, Integer baseVertex, Integer minVertexIndex, Integer numVertices, Integer startIndex, Integer primitiveCount, Integer instanceCount) -> nil
         end
 
         class SamplerStateCollection

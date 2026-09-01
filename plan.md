@@ -244,7 +244,7 @@ delimited and checked against `docs/generated/missing-type-inventory.md` by
 `BoundingSphereConverter`
 <!-- absent-types:end -->
 
-The graphics runtime is the large remaining area. `GraphicsDevice` still owes twenty-three members and
+The graphics runtime is the large remaining area. `GraphicsDevice` still owes twenty members and
 `GraphicsDeviceManager` fifteen, and they are the only two partial types left. `SetRenderTarget`
 is projected now, so a render target can be made current; what is left is the draw calls that
 would use it: `SpriteBatch`

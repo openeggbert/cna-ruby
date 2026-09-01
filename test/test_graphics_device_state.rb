@@ -24,7 +24,7 @@ class GraphicsDeviceStateTest < Minitest::Test
     remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME)
     SLICE.each { |member| refute_includes remainder.join(" "), "::#{member} ", member }
     # The device is still partial, and these are some of what it still owes.
-    %w[DrawPrimitives Present Reset Adapter PresentationParameters]
+    %w[DrawUserPrimitives Present Reset Adapter PresentationParameters]
       .each { |member| assert_includes remainder.join(" "), "::#{member} ", member }
     assert_equal ReviewedScoreboard::PARTIAL_TYPES, STRICT.fetch("PARTIAL_TYPES")
   end
@@ -199,15 +199,17 @@ class GraphicsDeviceStateTest < Minitest::Test
     # this milestone claimed, and still claims, is that **it** added neither.
     # The render-target trio arrived two slices later; what this milestone claimed, and still
     # claims, is that **it** added none of it.
-    %i[DrawPrimitives DrawIndexedPrimitives DrawUserPrimitives Present Reset Adapter
+    # The three device-buffer draw calls left this list when the draw slice landed; what is
+    # still absent is the user-primitive families, which take the vertices as an argument.
+    %i[DrawUserPrimitives DrawUserIndexedPrimitives Present Reset Adapter
        PresentationParameters GraphicsProfile DisplayMode].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     # The two buffer routes left this list when the binding slice landed, which is the same
     # statement from the other side; nothing here presents or draws.
-    %w[cna_graphics_device_present cna_graphics_device_reset cna_graphics_device_draw_primitives]
-      .each { |absent| refute_includes symbols, absent }
+    %w[cna_graphics_device_present cna_graphics_device_reset
+       cna_graphics_device_draw_user_primitives].each { |absent| refute_includes symbols, absent }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:layouts), CNA::Native::Layouts::STRUCTURES.length
   end

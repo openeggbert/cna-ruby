@@ -430,6 +430,11 @@ module CNA
         # unbound. `get_render_target_count` and `copy_render_targets` stay unbound for the reason
         # the vertex read-backs do: `GetRenderTargets` is an `Array.Copy` over a cached array.
         signature("cna_graphics_device_set_render_targets", T[:result], [T[:handle], pointer("CNA_RenderTargetBinding", const: true), T[:u64]], ownership: "borrows device; copies the bindings"),
+        # The three draw calls that read the device's own bound buffers. Every parameter is a
+        # scalar, so nothing here is passed by value and nothing is allocated.
+        signature("cna_graphics_device_draw_primitives", T[:result], [T[:handle], enum("CNA_PrimitiveType"), T[:i32], T[:i32]], ownership: "borrows device; draws from the bound buffers"),
+        signature("cna_graphics_device_draw_indexed_primitives", T[:result], [T[:handle], enum("CNA_PrimitiveType"), T[:i32], T[:i32], T[:i32], T[:i32], T[:i32]], ownership: "borrows device; draws from the bound buffers"),
+        signature("cna_graphics_device_draw_instanced_primitives", T[:result], [T[:handle], enum("CNA_PrimitiveType"), T[:i32], T[:i32], T[:i32], T[:i32], T[:i32], T[:i32]], ownership: "borrows device; draws from the bound buffers"),
         # The Effect cluster. Every getter in it returns an **owned view**: `cna_effect_get_parameters`
         # hands back a fresh collection handle on every call, and so does
         # `cna_effect_parameter_collection_get_at` for every element -- measured, two calls answer two

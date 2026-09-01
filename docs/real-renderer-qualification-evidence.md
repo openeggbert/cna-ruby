@@ -195,9 +195,10 @@ the GLES/EGL artifact — `OPENGL33` under the same command has never shown it �
 as an environment flake rather than a defect in anything this repository builds. What it costs is
 that a single green run of that artifact is not proof; two are.
 
-1567 runs / 0 failures / 0 errors under each of the three artifacts at Foundation 87 — 50582
-assertions and 21 skips on `HEADLESS`, 50600 and 17 on `OPENGL33`, 50686 and **none** on the
-compiled-effects build — the difference being exactly the tests whose
+1573 runs / 0 failures / 0 errors under each of the three artifacts at Foundation 88 — 50620
+assertions and 22 skips on `HEADLESS`, 50635 and 18 on `OPENGL33`, 50719 and **one** on the
+compiled-effects build (the draw test's no-effect branch, which only an artifact without compiled
+effects can take) — the difference being exactly the tests whose
 behaviour needs a capability the artifact does not have, each of which says so. The environment
 measurement itself is failure-tolerant: an unmeasurable environment is reported as unmeasured rather
 than taking the suite down with it.
@@ -213,7 +214,7 @@ export DISPLAY=:77 SDL_VIDEODRIVER=x11    # the driver is not optional -- see ab
 
 ruby -Ilib tools/native_abi/verify.rb            # ABI_MISMATCHES=0 on this artifact too
 ruby -Ilib tools/run_renderer_qualification.rb   # writes docs/generated/renderer-native-report.json
-rake test                                        # 1567 runs, 0 failures, 17 skips on this artifact
+rake test                                        # 1573 runs, 0 failures, 18 skips on this artifact
 ```
 
 Running it against the HEADLESS artifact writes the second entry of the same report, and the

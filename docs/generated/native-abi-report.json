@@ -11,8 +11,8 @@
     "/home/robertvokac/deps/cna-c-abi-0.7.0/include"
   ],
   "library": "/home/robertvokac/deps/cna-c-abi-0.21.0/libcna_c_api.so",
-  "BOUND_FUNCTIONS": 380,
-  "SIGNATURE_MEASUREMENTS": 1340,
+  "BOUND_FUNCTIONS": 383,
+  "SIGNATURE_MEASUREMENTS": 1362,
   "C_LAYOUT_MEASUREMENTS": 1066,
   "RUBY_LAYOUT_MEASUREMENTS": 1066,
   "CALLBACKS": 5,

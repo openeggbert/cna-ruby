@@ -1106,13 +1106,16 @@ class ApiVerifierTest < Minitest::Test
     topology&.instance_variable_set(:@enum_flags, original_flags) unless original_flags.nil?
   end
 
+  # The three device-buffer draw calls are selected and projected now; the two user-primitive
+  # families are not, and this check is about the ones that are still absent. What it measures is
+  # unchanged: a member the selection does not carry is `UNEXPECTED_MEMBER` when it appears anyway,
+  # and one it does not project is `MISSING_MEMBER`.
   def test_primitive_type_selected_surface_rejects_accidental_graphics_device_draw_members
     device_name = "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
-    draw_names = %w[DrawIndexedPrimitives DrawInstancedPrimitives DrawPrimitives
-                    DrawUserIndexedPrimitives DrawUserPrimitives]
+    draw_names = %w[DrawUserIndexedPrimitives DrawUserPrimitives]
     reference_device = reference_contract.fetch("types").find { |type| type.fetch("name") == device_name }
     draw_members = reference_device.fetch("members").select { |member| draw_names.include?(member["name"]) }
-    assert_equal 9, draw_members.length
+    assert_equal 6, draw_members.length
     assert draw_members.all? { |member|
       member.fetch("parameters").any? { |parameter| parameter.fetch("type") == primitive_type_name }
     }
@@ -1127,7 +1130,7 @@ class ApiVerifierTest < Minitest::Test
     end
 
     selected_device = signature_contract.fetch("types").find { |type| type.fetch("name") == device_name }
-    refute selected_device.fetch("members").any? { |member| member.fetch("name").start_with?("Draw") }
+    refute selected_device.fetch("members").any? { |member| draw_names.include?(member.fetch("name")) }
     draw_names.each do |name|
       refute Microsoft::Xna::Framework::Graphics::GraphicsDevice.public_method_defined?(name), name
     end
@@ -1907,7 +1910,7 @@ class ApiVerifierTest < Minitest::Test
     # `PreferredDepthStencilFormat` was closed by a much later milestone, which is the point rather
     # than a loss: the enum did not close it, a milestone that bound the manager's routes did.
     deferred = strict.fetch("details").fetch("MISSING_MEMBER")
-    %w[Present DrawPrimitives].each do |name|
+    %w[Present DrawUserPrimitives].each do |name|
       assert deferred.any? { |label| label.include?(name) }, name
     end
     assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_SURFACE,

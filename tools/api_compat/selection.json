@@ -1093,6 +1093,43 @@
           "parameters": [
 
           ]
+        },
+        {
+          "kind": "method",
+          "name": "DrawPrimitives",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+            "System.Int32",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "DrawIndexedPrimitives",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+            "System.Int32",
+            "System.Int32",
+            "System.Int32",
+            "System.Int32",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "DrawInstancedPrimitives",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+            "System.Int32",
+            "System.Int32",
+            "System.Int32",
+            "System.Int32",
+            "System.Int32",
+            "System.Int32"
+          ]
         }
       ]
     },

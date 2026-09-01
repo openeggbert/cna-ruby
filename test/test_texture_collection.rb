@@ -232,7 +232,9 @@ class TextureCollectionTest < Minitest::Test
       refute G.const_defined?(absent, false), absent.to_s
     end
     # `BlendState` and `DepthStencilState` left this list when the device's state slice landed.
-    %i[DrawPrimitives DrawIndexedPrimitives DrawUserPrimitives].each do |absent|
+    # The three device-buffer draw calls left this list when the draw slice landed; what is
+    # still absent is the user-primitive families, which take the vertices as an argument.
+    %i[DrawUserPrimitives DrawUserIndexedPrimitives].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
   end

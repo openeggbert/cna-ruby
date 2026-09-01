@@ -139,6 +139,9 @@ CHECK_FN(cna_graphics_device_set_vertex_buffer_offset, CNA_Result, (CNA_Handle, 
 CHECK_FN(cna_graphics_device_set_vertex_buffers, CNA_Result, (CNA_Handle, const CNA_VertexBufferBinding*, uint64_t));
 CHECK_FN(cna_graphics_device_set_index_buffer, CNA_Result, (CNA_Handle, CNA_IndexBufferHandle));
 CHECK_FN(cna_graphics_device_set_render_targets, CNA_Result, (CNA_Handle, const CNA_RenderTargetBinding*, uint64_t));
+CHECK_FN(cna_graphics_device_draw_primitives, CNA_Result, (CNA_Handle, CNA_PrimitiveType, int32_t, int32_t));
+CHECK_FN(cna_graphics_device_draw_indexed_primitives, CNA_Result, (CNA_Handle, CNA_PrimitiveType, int32_t, int32_t, int32_t, int32_t, int32_t));
+CHECK_FN(cna_graphics_device_draw_instanced_primitives, CNA_Result, (CNA_Handle, CNA_PrimitiveType, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t));
 CHECK_FN(cna_effect_create_compiled, CNA_Result, (CNA_Handle, const uint8_t*, uint64_t, CNA_EffectHandle*));
 CHECK_FN(cna_effect_clone, CNA_Result, (CNA_EffectHandle, CNA_EffectHandle*));
 CHECK_FN(cna_effect_dispose, CNA_Result, (CNA_EffectHandle));
@@ -535,6 +538,9 @@ int main(void) {
     SIGNATURE(cna_graphics_device_set_vertex_buffers, "CNA_Result|CNA_Handle,const CNA_VertexBufferBinding*,uint64_t");
     SIGNATURE(cna_graphics_device_set_index_buffer, "CNA_Result|CNA_Handle,CNA_IndexBufferHandle");
     SIGNATURE(cna_graphics_device_set_render_targets, "CNA_Result|CNA_Handle,const CNA_RenderTargetBinding*,uint64_t");
+    SIGNATURE(cna_graphics_device_draw_primitives, "CNA_Result|CNA_Handle,CNA_PrimitiveType,int32_t,int32_t");
+    SIGNATURE(cna_graphics_device_draw_indexed_primitives, "CNA_Result|CNA_Handle,CNA_PrimitiveType,int32_t,int32_t,int32_t,int32_t,int32_t");
+    SIGNATURE(cna_graphics_device_draw_instanced_primitives, "CNA_Result|CNA_Handle,CNA_PrimitiveType,int32_t,int32_t,int32_t,int32_t,int32_t,int32_t");
     SIGNATURE(cna_effect_create_compiled, "CNA_Result|CNA_Handle,const uint8_t*,uint64_t,CNA_EffectHandle*");
     SIGNATURE(cna_effect_clone, "CNA_Result|CNA_EffectHandle,CNA_EffectHandle*");
     SIGNATURE(cna_effect_dispose, "CNA_Result|CNA_EffectHandle");
