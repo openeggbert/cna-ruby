@@ -274,7 +274,7 @@ class SpriteFontTest < Minitest::Test
     assert G::SpriteBatch.public_method_defined?(:DrawString)
     remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Graphics.SpriteBatch")
                                   .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_equal %w[Begin Draw], remainder.sort
+    assert_equal %w[Begin], remainder.sort
     %i[Effect EffectParameter EffectAnnotation GraphicsAdapter].each do |absent|
       refute G.const_defined?(absent, false), absent.to_s
     end

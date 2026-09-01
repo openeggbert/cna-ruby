@@ -168,7 +168,7 @@ class GraphicsResourceDisposalTest < Minitest::Test
     # members still outstanding on `SpriteBatch` measure.
     remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Graphics.SpriteBatch")
                                   .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_equal %w[Begin Draw], remainder.sort
+    assert_equal %w[Begin], remainder.sort
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
   end
 end

@@ -43,9 +43,10 @@ class SpriteBatchDrawStringTest < Minitest::Test
     remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME)
                                   .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
     refute_includes remainder, "DrawString"
-    # `Begin` and `Draw` are what the type still owes, and this milestone adds neither.
-    assert_equal %w[Begin Draw], remainder.sort
-    assert_equal 29, STRICT.fetch("OVERLOAD_MAPPING_MISMATCH"), "one category entry left with it"
+    # `Begin` and `Draw` were what the type still owed; later milestones closed `Draw` and all but
+    # the two `Effect`-taking `Begin` overloads.
+    assert_equal %w[Begin], remainder.sort
+    assert_equal 28, STRICT.fetch("OVERLOAD_MAPPING_MISMATCH")
   end
 
   def test_the_route_and_its_layout
@@ -209,7 +210,7 @@ class SpriteBatchDrawStringTest < Minitest::Test
     # `SpriteBatch` owes.
     remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME)
                                   .map { |entry| entry.split("::", 2).last }
-    assert_equal ["Begin (2 overloads)", "Draw (3 overloads)"], remainder.sort
+    assert_equal ["Begin (2 overloads)"], remainder.sort
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     refute_includes symbols, "cna_sprite_batch_begin_with_states"
     refute G.const_defined?(:Effect, false)

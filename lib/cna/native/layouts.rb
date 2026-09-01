@@ -535,6 +535,35 @@ module CNA
         end
       end
 
+      # `CNA_SpriteCommand` is the destination-rectangle half of XNA's `Draw`: the three overloads
+      # that stretch a sprite into a rectangle rather than scaling it from a position, which is why
+      # it carries no scale at all.
+      class SpriteCommand < Structure
+        layout size: 72, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("texture", "CNA_Handle", 8, 8), Layouts.field("destination", "CNA_Rectangle", 16, 16),
+          Layouts.field("source", "CNA_Rectangle", 32, 16), Layouts.field("color", "CNA_Color", 48, 4),
+          Layouts.field("rotation", "float", 52, 4), Layouts.field("origin", "CNA_Vector2", 56, 8),
+          Layouts.field("effects", "CNA_SpriteEffects", 64, 4), Layouts.field("layer_depth", "float", 68, 4)
+        ]
+
+        def initialize(texture:, destination:, source:, color:, rotation:, origin:, effects:, layer_depth:)
+          super()
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+          write_u64(8, texture)
+          write_i32(16, destination.X); write_i32(20, destination.Y)
+          write_i32(24, destination.Width); write_i32(28, destination.Height)
+          write_i32(32, source&.X || 0); write_i32(36, source&.Y || 0)
+          write_i32(40, source&.Width || 0); write_i32(44, source&.Height || 0)
+          write_u8(48, color.R); write_u8(49, color.G); write_u8(50, color.B); write_u8(51, color.A)
+          write_f32(52, rotation)
+          write_f32(56, origin.X); write_f32(60, origin.Y)
+          write_u32(64, effects)
+          write_f32(68, layer_depth)
+        end
+      end
+
       class SpriteScaledCommand < Structure
         layout size: 72, alignment: 8, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

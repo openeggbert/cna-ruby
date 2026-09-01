@@ -57,22 +57,23 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 75 | `Media.VideoPlayer`, and the eleventh `NATIVE_RUNTIME` that was not one | **1** | 15 |
 | 76 | `SpriteBatch.DrawString`, six overloads over two arities | **0** | 6 |
 | 77 | `SpriteBatch.Begin`'s two state-bearing overloads, and the null-descriptor defect | **0** | 2 |
+| 78 | `SpriteBatch.Draw`'s three destination-rectangle overloads, completing the member | **0** | 3 |
 
 ## Measured state
 
-Strict target **177 types / 2149 member identities**: **174 complete**, three partial graphics
-runtime types, 80 missing, **183 deferred diagnostics**. `MISSING_MEMBER` **70**, `PARTIAL_TYPES` 3,
+Strict target **177 types / 2152 member identities**: **174 complete**, three partial graphics
+runtime types, 80 missing, **179 deferred diagnostics**. `MISSING_MEMBER` **67**, `PARTIAL_TYPES` 3,
 `PROPERTY_MAPPING_MISMATCH` 1 (`GraphicsDevice::Viewport`, unrelated and pre-existing),
-`OVERLOAD_MAPPING_MISMATCH` **29**, every other structural category 0, allowlist 0, unmeasured 0.
+`OVERLOAD_MAPPING_MISMATCH` **28**, every other structural category 0, allowlist 0, unmeasured 0.
 **27** event identities across **14** owner types. **22** projected BCL identities.
 
-CNA ABI **259 functions / 5 callbacks / 101 constants / 36 layouts**, on **two admitted encoded
+CNA ABI **260 functions / 5 callbacks / 101 constants / 37 layouts**, on **two admitted encoded
 versions** cross-verified across both header roots. Zero missing header symbols, zero missing library
 symbols, zero cross-version mismatches, zero ABI mismatches. **No CNA source was changed and no new
 native binary was built.**
 
-Behaviour corpus **526** observations, zero failures. Suite **1440 runs / 48683 assertions**, zero
-failures, zero skips. Capability registry **129** rows, zero contradictions.
+Behaviour corpus **526** observations, zero failures. Suite **1448 runs / 48719 assertions**, zero
+failures, zero skips. Capability registry **130** rows, zero contradictions.
 
 The dependency frontier carries **three** candidates, none is consumable, and **every one has been
 audited**. It went 3 → 9 → 6 → 5 → 8 → 4 → 3 in six milestones — see `plan.md`. The eight-candidate
@@ -208,12 +209,13 @@ names. The same question is the first one to ask of the two that remain.
 strongest sense this project has had: not "nothing looks buildable" but "each of the three left has
 been measured and the measurement stands".
 
-**The recommended next work is therefore outside the frontier: the 70 members the three partial
-graphics types still owe.** `SpriteBatch` is the shortest path and is down to five overloads across
-two names: `Begin`'s two `Effect`-taking forms and `Draw`'s three. Both halves now wait on the same
-thing -- `Graphics.Effect`, which nothing projects and which `EffectAnnotation`'s own audit already
-found is what stands behind it. `Draw`'s three are the ones to look at first: they may not need an
-`Effect` at all.
+**The recommended next work is therefore outside the frontier: the 67 members the three partial
+graphics types still owe.** `SpriteBatch` is finished except for `Begin`'s two `Effect`-taking
+overloads, and those wait on `Graphics.Effect` -- which nothing projects, and which
+`EffectAnnotation`'s own audit already found is what stands behind that candidate too. So `Effect`
+is now the single type that would unblock the most: two `SpriteBatch` overloads and a frontier
+candidate. `GraphicsDeviceManager`'s fifteen are the producer audit's and unchanged;
+`GraphicsDevice`'s thirty-seven are the renderer's.
 
 The three, all audited:
 

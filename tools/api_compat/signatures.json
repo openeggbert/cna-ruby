@@ -34529,6 +34529,156 @@
               "optional": false
             }
           ]
+        },
+        {
+          "kind": "method",
+          "name": "Draw",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "texture",
+              "type": "Microsoft.Xna.Framework.Graphics.Texture2D",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "destinationRectangle",
+              "type": "Microsoft.Xna.Framework.Rectangle",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "color",
+              "type": "Microsoft.Xna.Framework.Color",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Draw",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "texture",
+              "type": "Microsoft.Xna.Framework.Graphics.Texture2D",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "destinationRectangle",
+              "type": "Microsoft.Xna.Framework.Rectangle",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "sourceRectangle",
+              "type": "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "color",
+              "type": "Microsoft.Xna.Framework.Color",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Draw",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "texture",
+              "type": "Microsoft.Xna.Framework.Graphics.Texture2D",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "destinationRectangle",
+              "type": "Microsoft.Xna.Framework.Rectangle",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "sourceRectangle",
+              "type": "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "color",
+              "type": "Microsoft.Xna.Framework.Color",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "rotation",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "origin",
+              "type": "Microsoft.Xna.Framework.Vector2",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "effects",
+              "type": "Microsoft.Xna.Framework.Graphics.SpriteEffects",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "layerDepth",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::SpriteBatch"

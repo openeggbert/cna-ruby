@@ -472,3 +472,13 @@ for AlphaBlend" (and LinearClamp, None, CullCounterClockwise) and both **refuse 
 one parameter at a time in declaration order. The projection resolves those four defaults itself,
 which is what XNA's `SetRenderState` does anyway. See
 `docs/sprite-batch-begin-upstream-defect.md`.
+
+## The stretched sprite
+
+One route brings the count to **260** and one layout the structures to **37**:
+`cna_sprite_batch_submit_many` with `CNA_SpriteCommand` (72/8), the destination-rectangle half of
+`SpriteBatch.Draw`. XNA's seven overloads split on the second parameter -- a `Vector2` is a position
+scaled from, a `Rectangle` is a destination stretched into -- and CNA carries that same split in two
+structures and two submit routes. `CNA_SpriteCommand` therefore has a `destination` where
+`CNA_SpriteScaledCommand` has a `scale`, and neither has both, which is exactly why XNA's longest
+stretched overload takes eight parameters and its longest positioned one takes nine.

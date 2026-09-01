@@ -385,6 +385,7 @@ module CNA
         signature("cna_sampler_state_init", T[:result], [enum("CNA_SamplerStatePreset"), pointer("CNA_SamplerState")], ownership: "caller output"),
         signature("cna_sprite_batch_create", T[:result], [T[:handle], pointer("CNA_Handle")], ownership: "returns OWNED SpriteBatch"),
         signature("cna_sprite_batch_begin", T[:result], [T[:handle], pointer("CNA_SpriteBatchBeginInfo", const: true)], ownership: "borrows SpriteBatch"),
+        signature("cna_sprite_batch_submit_many", T[:result], [T[:handle], pointer("CNA_SpriteCommand", const: true), T[:u64]], ownership: "copies commands; retains Texture until End"),
         signature("cna_sprite_batch_submit_scaled_many", T[:result], [T[:handle], pointer("CNA_SpriteScaledCommand", const: true), T[:u64]], ownership: "copies commands; retains Texture until End"),
         # The state-bearing `Begin` overloads. This is the route XNA's own seven-argument `Begin`
         # maps to exactly: a **null** state means "use the default", which CNA documents as

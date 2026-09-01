@@ -2034,11 +2034,21 @@ module Microsoft
             nil
           end
 
+          # Seven overloads, split by what the second argument is. A `Vector2` is a **position** and
+          # the sprite is scaled from it; a `Rectangle` is a **destination** and the sprite is
+          # stretched to fill it, which is why those three carry no scale at all and why the longest
+          # of them has eight parameters where the position form has nine. CNA carries the same
+          # split in two structures and two submit routes, so the projection dispatches the way the
+          # C ABI already does rather than inventing a shape.
           def Draw(*arguments)
             raise CNA::InvalidBindingStateError, "SpriteBatch.Draw requires Begin" unless @begun
-            raise ArgumentError, "no implemented Foundation SpriteBatch.Draw overload matches" unless [3, 4, 9].include?(arguments.length)
-            texture, position = arguments[0], arguments[1]
+
+            texture = arguments[0]
             raise TypeError, "texture must be Texture2D" unless texture.instance_of?(Texture2D)
+            return draw_stretched(*arguments) if arguments[1].instance_of?(Rectangle)
+
+            raise ArgumentError, "no implemented Foundation SpriteBatch.Draw overload matches" unless [3, 4, 9].include?(arguments.length)
+            position = arguments[1]
             raise TypeError, "position must be Vector2" unless position.instance_of?(Vector2)
 
             if arguments.length == 3
@@ -2132,6 +2142,51 @@ module Microsoft
           end
 
           private
+
+          # The three destination-rectangle overloads:
+          #
+          #     Draw(texture, destinationRectangle, color)
+          #     Draw(texture, destinationRectangle, sourceRectangle, color)
+          #     Draw(texture, destinationRectangle, sourceRectangle, color,
+          #          rotation, origin, effects, layerDepth)
+          #
+          # Eight parameters at most, because the destination sets the size and there is nothing for
+          # a scale to mean.
+          def draw_stretched(texture, destination, *rest)
+            raise ArgumentError, "no implemented Foundation SpriteBatch.Draw overload matches" unless [1, 2, 6].include?(rest.length)
+
+            if rest.length == 1
+              source = nil
+              color = rest[0]
+              rotation = 0.0
+              origin = Vector2.Zero
+              effects = SpriteEffects::None
+              depth = 0.0
+            elsif rest.length == 2
+              source, color = rest
+              rotation = 0.0
+              origin = Vector2.Zero
+              effects = SpriteEffects::None
+              depth = 0.0
+            else
+              source, color, rotation, origin, effects, depth = rest
+            end
+            raise TypeError, "sourceRectangle must be Rectangle or nil" unless source.nil? || source.instance_of?(Rectangle)
+            raise TypeError, "color must be Color" unless color.instance_of?(Color)
+            raise TypeError, "origin must be Vector2" unless origin.instance_of?(Vector2)
+
+            numeric = [rotation, origin.X, origin.Y, depth]
+            raise RangeError, "SpriteBatch transforms must be finite" unless numeric.all? { |value| Float(value).finite? }
+
+            command = CNA::Native::Layouts::SpriteCommand.new(
+              texture: texture.__send__(:native_handle), destination: destination, source: source,
+              color: color, rotation: CNA::Runtime::Numeric.f32(rotation), origin: origin,
+              effects: SpriteEffects.coerce(effects).to_i,
+              layer_depth: CNA::Runtime::Numeric.f32(depth)
+            )
+            CNA::Native.library.call("cna_sprite_batch_submit_many", native_handle, command.pointer, 1)
+            nil
+          end
 
           # `SetRenderState`'s own substitution: a null argument is the documented default state,
           # resolved here because the route that documents the same defaults refuses a null

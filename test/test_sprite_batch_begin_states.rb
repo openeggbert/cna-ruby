@@ -31,8 +31,9 @@ class SpriteBatchBeginStatesTest < Minitest::Test
     assert_equal 2, with_effect.length
     assert_equal [0, 2, 5], (overloads - with_effect).map(&:length).sort
 
-    remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME)
-    assert_equal ["#{NAME}::Begin (2 overloads)", "#{NAME}::Draw (3 overloads)"], remainder.sort
+    # `Draw`'s three destination-rectangle overloads were built in the milestone straight after,
+    # so `Begin`'s two Effect-taking forms are the whole of what this type still owes.
+    assert_equal ["#{NAME}::Begin (2 overloads)"], ReviewedScoreboard.partial_remainder(STRICT, NAME)
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
     refute G.const_defined?(:Effect, false), "which is why the other two stay outstanding"
   end
