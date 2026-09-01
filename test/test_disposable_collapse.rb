@@ -279,7 +279,10 @@ class DisposableCollapseTest < Minitest::Test
     # native-reachable only through the `assembly`-visible `Apply` the contract never selects, and
     # all four were built. SamplerStateCollection arrived behind SamplerState, so the fall is 4
     # rather than 5.
-    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 4,
+    # 4 to 3 in the milestone after that, when SamplerStateCollection was built: there the word
+    # was right -- its setter really does reach the device -- and being right is what made the type
+    # buildable, because CNA exports exactly the route it needs.
+    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 3,
                   "NATIVE_RUNTIME+INTERFACE_PRODUCER_MISSING" => 1},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR

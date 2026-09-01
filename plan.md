@@ -25,8 +25,8 @@ fails when it should.
 
 ## Surface
 
-The strict surface is **169 types / 2079 Ruby member identities**: 166 complete, 3 partial, 88 of the
-257 reference types still missing, with 201 deferred diagnostics of which 80 are missing members and
+The strict surface is **170 types / 2082 Ruby member identities**: 167 complete, 3 partial, 87 of the
+257 reference types still missing, with 199 deferred diagnostics of which 78 are missing members and
 30 are the overload category. Every structural category except `MISSING_TYPE`, `MISSING_MEMBER`,
 `OVERLOAD_MAPPING_MISMATCH` and one long-standing `PROPERTY_MAPPING_MISMATCH`
 (`GraphicsDevice::Viewport`) is zero, the allowlist is empty and `UNMEASURED_STRUCTURAL_CATEGORY` is
@@ -34,7 +34,7 @@ zero. **27** event identities are projected across **14** owner types with `EVEN
 zero, and **22** BCL identities go through the measured `CNA::Runtime::BclProjection` register.
 
 The three partial types are the graphics runtime: `GraphicsDeviceManager` (15 members outstanding),
-`GraphicsDevice` (39) and `SpriteBatch` (3) — 57 of the 80
+`GraphicsDevice` (37) and `SpriteBatch` (3) — 55 of the 78
 outstanding members between them, which is why a qualification artifact with a real renderer is the
 single largest lever this project has left. `GraphicsDeviceManager`'s own remainder is no longer
 about the renderer: eleven of its members were closed by projecting the preferred settings, and the
@@ -62,7 +62,8 @@ Complete clusters, by area:
 - **Graphics** — `Texture2D` end to end (decode, construct, pixel round-trip, PNG and JPEG encode),
   `GraphicsResource` and its disposal contract, the four state objects `BlendState`,
   `DepthStencilState`, `RasterizerState` and `SamplerState` with every preset cross-checked against
-  CNA's own, `SpriteFont` over a real MonoGame font, `Viewport`, `TextureCollection`, `Texture`,
+  CNA's own, `SamplerStateCollection` over real sampler slots on both shader stages,
+  `SpriteFont` over a real MonoGame font, `Viewport`, `TextureCollection`, `Texture`,
   `DisplayMode`, `DisplayModeCollection`, `PresentationParameters` and the enum closure, beside the
   three partial runtime types.
 
@@ -103,10 +104,12 @@ with the pre-correction SHA-256.
 
 ## Dependency frontier
 
-`tools/api_compat/analyze_dependencies.rb` classifies every dependency-complete missing type. **Six
-remain**, and none is consumable. The count went 3 → 9 → 6 in two milestones: completing
-`GraphicsResource` and `Texture2D` made six types behind them visible at once, and auditing four of
-those six found the blocker was not one and built them.
+`tools/api_compat/analyze_dependencies.rb` classifies every dependency-complete missing type.
+**Five remain**, and none is consumable. The count went 3 → 9 → 6 → 5 in three milestones:
+completing `GraphicsResource` and `Texture2D` made six types behind them visible at once, auditing
+four of those six found the blocker was not one, and the fifth — `SamplerStateCollection` — turned
+out to have an accurate `NATIVE_RUNTIME` that named a route CNA exports, which made it buildable
+rather than blocked.
 
 | type | reported blocker | status |
 | --- | --- | --- |
@@ -114,7 +117,6 @@ those six found the blocker was not one and built them.
 | `Graphics.EffectAnnotation` | NATIVE_RUNTIME | **audited, deferred.** Not the renderer: its eight `GetValue*` members forward to a temporary `EffectParameter`, which is not projected, and nothing in the projected surface produces an annotation |
 | `Graphics.GraphicsAdapter` | NATIVE_RUNTIME | **audited, deferred.** Not the ABI: the qualified artifact compiles only the HEADLESS renderer, and with it every adapter route answers invented data |
 | `Graphics.VertexDeclaration` | NATIVE_RUNTIME + INTERFACE_PRODUCER_MISSING | **not yet audited** — the only dependency-complete candidate carrying the producer blocker: its IL calls `IVertexType` members and nothing here conforms |
-| `Graphics.SamplerStateCollection` | NATIVE_RUNTIME | **not yet audited** — arrived behind `SamplerState`, which is what completing a base always does |
 | `Media.VideoPlayer` | NATIVE_RUNTIME | **not yet audited** — arrived behind `Texture2D`; unlike the state objects its IL is native in fifteen members including the constructor |
 
 The first three have been **measured** rather than accepted, and each is deferred for a reason its

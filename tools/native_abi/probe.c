@@ -101,6 +101,8 @@ CHECK_FN(cna_texture2d_get_info, CNA_Result, (CNA_Handle, CNA_Texture2DInfo*));
 CHECK_FN(cna_texture2d_destroy, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_texture2d_get_encoded_byte_count, CNA_Result, (CNA_Handle, CNA_TextureImageFormat, uint32_t, uint32_t, uint64_t*));
 CHECK_FN(cna_texture2d_copy_encoded, CNA_Result, (CNA_Handle, CNA_TextureImageFormat, uint32_t, uint32_t, uint8_t*, uint64_t, uint64_t*));
+CHECK_FN(cna_graphics_device_get_sampler_state, CNA_Result, (CNA_Handle, CNA_ShaderStage, uint32_t, CNA_SamplerState*));
+CHECK_FN(cna_graphics_device_set_sampler_state, CNA_Result, (CNA_Handle, CNA_ShaderStage, uint32_t, const CNA_SamplerState*));
 CHECK_FN(cna_blend_state_init, CNA_Result, (CNA_BlendStatePreset, CNA_BlendState*));
 CHECK_FN(cna_depth_stencil_state_init, CNA_Result, (CNA_DepthStencilStatePreset, CNA_DepthStencilState*));
 CHECK_FN(cna_rasterizer_state_init, CNA_Result, (CNA_RasterizerStatePreset, CNA_RasterizerState*));
@@ -350,6 +352,8 @@ int main(void) {
     SIGNATURE(cna_texture2d_destroy, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_texture2d_get_encoded_byte_count, "CNA_Result|CNA_Handle,CNA_TextureImageFormat,uint32_t,uint32_t,uint64_t*");
     SIGNATURE(cna_texture2d_copy_encoded, "CNA_Result|CNA_Handle,CNA_TextureImageFormat,uint32_t,uint32_t,uint8_t*,uint64_t,uint64_t*");
+    SIGNATURE(cna_graphics_device_get_sampler_state, "CNA_Result|CNA_Handle,CNA_ShaderStage,uint32_t,CNA_SamplerState*");
+    SIGNATURE(cna_graphics_device_set_sampler_state, "CNA_Result|CNA_Handle,CNA_ShaderStage,uint32_t,const CNA_SamplerState*");
     SIGNATURE(cna_blend_state_init, "CNA_Result|CNA_BlendStatePreset,CNA_BlendState*");
     SIGNATURE(cna_depth_stencil_state_init, "CNA_Result|CNA_DepthStencilStatePreset,CNA_DepthStencilState*");
     SIGNATURE(cna_rasterizer_state_init, "CNA_Result|CNA_RasterizerStatePreset,CNA_RasterizerState*");
@@ -533,6 +537,7 @@ int main(void) {
     CONSTANT(CNA_SPRITE_SORT_MODE_DEFERRED); CONSTANT(CNA_SPRITE_EFFECT_NONE); CONSTANT(CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY); CONSTANT(CNA_SPRITE_EFFECT_FLIP_VERTICALLY);
     CONSTANT(CNA_TEXTURE_DATA_COLOR); CONSTANT(CNA_TEXTURE_DATA_BGR565); CONSTANT(CNA_TEXTURE_DATA_BGRA5551); CONSTANT(CNA_TEXTURE_DATA_BGRA4444); CONSTANT(CNA_TEXTURE_DATA_BYTE); CONSTANT(CNA_TEXTURE_DATA_NORMALIZED_BYTE2); CONSTANT(CNA_TEXTURE_DATA_NORMALIZED_BYTE4); CONSTANT(CNA_TEXTURE_DATA_RGBA1010102); CONSTANT(CNA_TEXTURE_DATA_RG32); CONSTANT(CNA_TEXTURE_DATA_RGBA64); CONSTANT(CNA_TEXTURE_DATA_ALPHA8);
     CONSTANT(CNA_TEXTURE_IMAGE_FORMAT_PNG); CONSTANT(CNA_TEXTURE_IMAGE_FORMAT_JPEG);
+    CONSTANT(CNA_MAX_SAMPLERS);
     CONSTANT(CNA_BLEND_STATE_PRESET_ADDITIVE); CONSTANT(CNA_BLEND_STATE_PRESET_ALPHA_BLEND); CONSTANT(CNA_BLEND_STATE_PRESET_NON_PREMULTIPLIED); CONSTANT(CNA_BLEND_STATE_PRESET_OPAQUE);
     CONSTANT(CNA_DEPTH_STENCIL_STATE_PRESET_DEFAULT); CONSTANT(CNA_DEPTH_STENCIL_STATE_PRESET_DEPTH_READ); CONSTANT(CNA_DEPTH_STENCIL_STATE_PRESET_NONE);
     CONSTANT(CNA_RASTERIZER_STATE_PRESET_CULL_CLOCKWISE); CONSTANT(CNA_RASTERIZER_STATE_PRESET_CULL_COUNTER_CLOCKWISE); CONSTANT(CNA_RASTERIZER_STATE_PRESET_CULL_NONE);

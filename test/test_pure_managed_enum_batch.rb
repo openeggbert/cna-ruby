@@ -337,12 +337,12 @@ class PureManagedEnumBatchTest < Minitest::Test
     # built none of them -- it selected the eight enums they are made of and nothing that holds one.
     %i[RenderTarget2D RenderTargetCube TextureCube Texture3D VertexBuffer IndexBuffer
        DynamicVertexBuffer DynamicIndexBuffer VertexDeclaration
-       SamplerStateCollection Effect BasicEffect
+       Effect BasicEffect
        EffectParameter EffectTechnique GraphicsAdapter
        OcclusionQuery].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
-    %i[BlendState DepthStencilState RasterizerState SamplerState].each do |name|
+    %i[BlendState DepthStencilState RasterizerState SamplerState SamplerStateCollection].each do |name|
       assert G.const_defined?(name, false), "Graphics::#{name}"
     end
     # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still
@@ -369,7 +369,7 @@ class PureManagedEnumBatchTest < Minitest::Test
       .each { |name| refute I.const_defined?(name, false), "Input::#{name}" }
     # Foundation 32 added TouchPanel, whose IL reads no device on this profile.
     refute I.const_defined?(:TouchPanel, false), "Input::TouchPanel"
-    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures].sort,
+    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures SamplerStates VertexSamplerStates].sort,
                  G::GraphicsDevice.public_instance_methods(false).sort
   end
 

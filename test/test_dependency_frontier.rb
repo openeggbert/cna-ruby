@@ -378,6 +378,7 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.FrameworkDispatcher
       Microsoft.Xna.Framework.Game
       Microsoft.Xna.Framework.GamerServices.GamerServicesComponent
+      Microsoft.Xna.Framework.Graphics.SamplerStateCollection
       Microsoft.Xna.Framework.Graphics.SpriteFont
       Microsoft.Xna.Framework.Graphics.Texture
       Microsoft.Xna.Framework.Graphics.Texture2D
@@ -466,8 +467,8 @@ class DependencyFrontierTest < Minitest::Test
     # GraphicsResource made the four graphics state objects and VertexDeclaration
     # dependency-complete, and completing Texture2D did the same for Media.VideoPlayer. Then 6,
     # when the four state objects were audited and built and SamplerStateCollection appeared behind
-    # SamplerState.
-    assert_equal 6, REPORT.fetch("dependencyCompleteCandidates").length
+    # SamplerState -- and 5 when that collection was built too, uncovering nothing behind it.
+    assert_equal 5, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -672,7 +673,11 @@ class DependencyFrontierTest < Minitest::Test
       # BlendState was the example here for exactly one milestone. Its NATIVE_RUNTIME was the
       # `assembly`-visible `Apply`, so it was built along with its three siblings, and the type
       # that arrived behind it takes its place -- the ninth deferral this register has retired.
-      "Microsoft.Xna.Framework.Graphics.SamplerStateCollection" => "NATIVE_RUNTIME"
+      # SamplerStateCollection was the example here for one milestone. Its NATIVE_RUNTIME was
+      # right -- the setter really does reach the device -- and being right made the type buildable
+      # rather than blocked, because CNA exports precisely the route it needs. VideoPlayer takes
+      # its place: fifteen native-reachable members including the constructor.
+      "Microsoft.Xna.Framework.Media.VideoPlayer" => "NATIVE_RUNTIME"
     }.each do |name, expected|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
       refute_nil candidate, name

@@ -227,7 +227,7 @@ class ManagedDescriptorsTest < Minitest::Test
     # unchanged and is now stated by the device's own surface rather than by that type's absence.
     %i[GraphicsAdapter RenderTarget2D
        RenderTargetCube].each { |absent| refute G.const_defined?(absent, false), "Graphics::#{absent}" }
-    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures].sort, G::GraphicsDevice.public_instance_methods(false).sort
+    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures SamplerStates VertexSamplerStates].sort, G::GraphicsDevice.public_instance_methods(false).sort
   end
 
   # -------------------------------------------------------- GameComponentCollectionEventArgs
@@ -373,7 +373,7 @@ class ManagedDescriptorsTest < Minitest::Test
     %i[ResourceCreated ResourceDestroyed].each do |absent|
       refute G::GraphicsDevice.method_defined?(absent), absent.to_s
     end
-    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures].sort, G::GraphicsDevice.public_instance_methods(false).sort
+    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures SamplerStates VertexSamplerStates].sort, G::GraphicsDevice.public_instance_methods(false).sort
   end
 
   # The event args type still implies neither component class. GameComponentCollection exists as of

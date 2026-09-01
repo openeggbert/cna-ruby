@@ -793,6 +793,22 @@ module Microsoft
             @vertex_textures ||= TextureCollection.__send__(:new, self, CNA::Native::Manifest::CONSTANTS.fetch("CNA_SHADER_STAGE_VERTEX"))
           end
 
+          # `SamplerStates` is `new SamplerStateCollection(this, 0, MaxSamplers)` and
+          # `VertexSamplerStates` is `new SamplerStateCollection(this, D3DVERTEXTEXTURESAMPLER0, …)`.
+          # Both getters are one `ldfld`, so each answers the same object every time, and the two
+          # differ by CNA shader stage for the same reason the texture collections do.
+          def SamplerStates
+            @sampler_states ||= SamplerStateCollection.__send__(
+              :new, self, CNA::Native::Manifest::CONSTANTS.fetch("CNA_SHADER_STAGE_PIXEL")
+            )
+          end
+
+          def VertexSamplerStates
+            @vertex_sampler_states ||= SamplerStateCollection.__send__(
+              :new, self, CNA::Native::Manifest::CONSTANTS.fetch("CNA_SHADER_STAGE_VERTEX")
+            )
+          end
+
           def Clear(color)
             raise TypeError, "GraphicsDevice.Clear foundation overload expects Color" unless color.instance_of?(Color)
             divisor = 255.0
@@ -862,6 +878,99 @@ module Microsoft
         # a Reach device has **no** vertex samplers at all -- and this binding has `GraphicsProfile`
         # as a managed enum with no capability table behind it, so there is nothing measured to take
         # the number from.
+        # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…).
+        #
+        #     SamplerState get_Item(int index) {
+        #         if (index < 0 || index >= pSamplerList.Length)
+        #             throw new ArgumentOutOfRangeException("index");
+        #         return pSamplerList[index];
+        #     }
+        #
+        #     void set_Item(int index, SamplerState value) {
+        #         if (index < 0 || index >= pSamplerList.Length)
+        #             throw new ArgumentOutOfRangeException("index");
+        #         if (value == null)
+        #             throw new ArgumentNullException("value", FrameworkResources.NullNotAllowed);
+        #         if (value == pSamplerList[index]) return;          // reference equality
+        #         value.Apply(pDevice, samplerOffset + index);
+        #         pSamplerList[index] = value;
+        #     }
+        #
+        # Three details a paraphrase loses, and each is measured rather than described. The getter
+        # answers the **cache**, not the device, so it is one array read and asks CNA nothing. The
+        # setter refuses `null` where `TextureCollection`'s accepts it — the two collections really
+        # do differ there. And the short-circuit is **reference** equality, so assigning a
+        # value-identical but distinct state does reach the device while re-assigning the same
+        # object does not.
+        class SamplerStateCollection
+          MAX_SAMPLERS = CNA::Native::Manifest::CONSTANTS.fetch("CNA_MAX_SAMPLERS")
+
+          private_class_method :new
+
+          # DEVIATION, recorded: XNA's `InitializeDeviceState` — `assembly`, called when the device
+          # is created or reset — nulls every slot and then applies `SamplerState.LinearWrap` to
+          # each, leaving the cache holding that object. This binding does not own device creation
+          # (`docs/graphics-device-service-producer-audit.md` is why), so there is no hook at which
+          # to apply it, and applying sixteen states from a property getter would be a write XNA
+          # performs somewhere else. Instead the cache is seeded with the same object, and that the
+          # device really is in that state is **measured** through
+          # `cna_graphics_device_get_sampler_state` rather than assumed.
+          def initialize(device, stage)
+            @device = device
+            @stage = stage
+            @slots = Array.new(MAX_SAMPLERS) { SamplerState::LinearWrap }
+          end
+
+          def [](index) = @slots[validated(index)]
+
+          def []=(index, value)
+            slot = validated(index)
+            raise ArgumentError, "value" if value.nil?
+            raise TypeError, "value must be a SamplerState" unless value.instance_of?(SamplerState)
+            return value if value.equal?(@slots[slot])
+
+            apply(value, slot)
+            @slots[slot] = value
+            value
+          end
+
+          private
+
+          # `SamplerState.Apply(device, index)` is `assembly` in XNA and is not a projected identity;
+          # what it does is push the whole descriptor into one sampler slot, which is exactly
+          # `cna_graphics_device_set_sampler_state`.
+          def apply(state, slot)
+            descriptor = CNA::Native::Layouts::SamplerState.new
+            descriptor.write_u32(8, state.AddressU.value)
+            descriptor.write_u32(12, state.AddressV.value)
+            descriptor.write_u32(16, state.AddressW.value)
+            descriptor.write_u32(20, state.Filter.value)
+            descriptor.write_i32(24, state.MaxAnisotropy)
+            descriptor.write_i32(28, state.MaxMipLevel)
+            descriptor.write_f32(32, state.MipMapLevelOfDetailBias)
+            CNA::Native.library.call("cna_graphics_device_set_sampler_state",
+                                     @device.__send__(:native_handle), @stage, slot, descriptor.pointer)
+          end
+
+          # What the device itself reports for one slot. XNA has no such member — its getter answers
+          # the cache — so this is reachable for the tests that measure the cache against the device
+          # and for nothing else.
+          def device_state(index)
+            slot = validated(index)
+            descriptor = CNA::Native::Layouts::SamplerState.new
+            CNA::Native.library.call("cna_graphics_device_get_sampler_state",
+                                     @device.__send__(:native_handle), @stage, slot, descriptor.pointer)
+            descriptor
+          end
+
+          def validated(index)
+            slot = CNA::Runtime::Numeric.int32(index, "index")
+            raise ::RangeError, "index" if slot.negative? || slot >= MAX_SAMPLERS
+
+            slot
+          end
+        end
+
         class TextureCollection
           MAX_TEXTURES = CNA::Native::Manifest::CONSTANTS.fetch("CNA_TEXTURE_COLLECTION_MAX_TEXTURES")
 

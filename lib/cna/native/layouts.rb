@@ -312,6 +312,14 @@ module CNA
           Layouts.field("blend_factor", "CNA_Color", 48, 4),
           Layouts.field("multi_sample_mask", "int32_t", 52, 4)
         ]
+
+        # CNA validates `struct_size` and `struct_version` on the way **in** as well as filling
+        # them on the way out, so a descriptor handed to a `get` route must already carry them.
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
       end
 
       class DepthStencilState < Structure
@@ -335,6 +343,14 @@ module CNA
           Layouts.field("counter_clockwise_stencil_pass", "CNA_StencilOperation", 56, 4),
           Layouts.field("reserved", "uint32_t", 60, 4)
         ]
+
+        # CNA validates `struct_size` and `struct_version` on the way **in** as well as filling
+        # them on the way out, so a descriptor handed to a `get` route must already carry them.
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
       end
 
       class RasterizerState < Structure
@@ -348,6 +364,14 @@ module CNA
           Layouts.field("scissor_test_enable", "CNA_Bool", 25, 1),
           Layouts.field("reserved", "uint8_t", 26, 2)
         ]
+
+        # CNA validates `struct_size` and `struct_version` on the way **in** as well as filling
+        # them on the way out, so a descriptor handed to a `get` route must already carry them.
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
       end
 
       class SamplerState < Structure
@@ -362,6 +386,14 @@ module CNA
           Layouts.field("mip_map_level_of_detail_bias", "float", 32, 4),
           Layouts.field("reserved", "uint32_t", 36, 4)
         ]
+
+        # CNA validates `struct_size` and `struct_version` on the way **in** as well as filling
+        # them on the way out, so a descriptor handed to a `get` route must already carry them.
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
       end
 
       class Texture2DTransfer < Structure

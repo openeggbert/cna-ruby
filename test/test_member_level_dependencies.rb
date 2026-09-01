@@ -257,8 +257,9 @@ class MemberLevelDependenciesTest < Minitest::Test
     # and ResourceContentManager to 3. Then it *rose* to 9, which is what a frontier advancing
     # looks like: GraphicsResource completing made the four graphics state objects and
     # VertexDeclaration dependency-complete, and Texture2D completing did the same for VideoPlayer.
-    # and back to 6 when the four state objects were audited and built.
-    assert_equal 6, REPORT.fetch("dependencyCompleteCandidates").length
+    # and back to 6 when the four state objects were audited and built, then 5 when
+    # SamplerStateCollection followed them.
+    assert_equal 5, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")

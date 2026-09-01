@@ -214,15 +214,17 @@ class TextureCollectionTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_adds_no_sampler_state_effect_or_draw_surface
-    # `SamplerState` left this list when the four state objects were built; the collection that
-    # holds them, and everything else here, is still absent.
-    assert G.const_defined?(:SamplerState, false)
-    %i[SamplerStateCollection Effect BasicEffect EffectParameter
+    # `SamplerState` left this list when the four state objects were built, and
+    # `SamplerStateCollection` in the milestone straight after. What this test claims is unchanged:
+    # **this** milestone added neither, and the device members it added were the two texture
+    # collections, which the assertion below still pins exactly.
+    %i[SamplerState SamplerStateCollection].each { |present| assert G.const_defined?(present, false) }
+    %i[Effect BasicEffect EffectParameter
        RenderTarget2D TextureCube Texture3D VertexBuffer IndexBuffer].each do |absent|
       refute G.const_defined?(absent, false), absent.to_s
     end
     %i[DrawPrimitives DrawIndexedPrimitives DrawUserPrimitives SetRenderTarget
-       SamplerStates BlendState DepthStencilState].each do |absent|
+       BlendState DepthStencilState].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
   end

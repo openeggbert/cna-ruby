@@ -573,6 +573,18 @@
           "override": {
             "set": false
           }
+        },
+        {
+          "name": "Textures"
+        },
+        {
+          "name": "VertexTextures"
+        },
+        {
+          "name": "SamplerStates"
+        },
+        {
+          "name": "VertexSamplerStates"
         }
       ]
     },
@@ -813,6 +825,10 @@
     },
     {
       "name": "Microsoft.Xna.Framework.Graphics.SamplerState",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.SamplerStateCollection",
       "complete": true
     }
   ]

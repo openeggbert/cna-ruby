@@ -271,6 +271,13 @@ module Microsoft
           attr_reader IsDisposed: bool
           attr_reader Viewport: Viewport
           def Clear: (Color color) -> nil
+          def SamplerStates: () -> SamplerStateCollection
+          def VertexSamplerStates: () -> SamplerStateCollection
+        end
+
+        class SamplerStateCollection
+          def []: (Integer index) -> SamplerState
+          def []=: (Integer index, SamplerState value) -> SamplerState
         end
 
         class GraphicsResource

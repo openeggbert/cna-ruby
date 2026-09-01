@@ -341,6 +341,8 @@ module CNA
         # rather than only to itself. `cna_graphics_device_get/set_*_state` stay unbound because
         # applying a state to a device is `GraphicsDevice`'s surface and XNA's own `Apply` is
         # `assembly`-visible, so neither is a projected identity yet.
+        signature("cna_graphics_device_get_sampler_state", T[:result], [T[:handle], enum("CNA_ShaderStage"), T[:u32], pointer("CNA_SamplerState")], ownership: "borrows device; caller output"),
+        signature("cna_graphics_device_set_sampler_state", T[:result], [T[:handle], enum("CNA_ShaderStage"), T[:u32], pointer("CNA_SamplerState", const: true)], ownership: "borrows device; copies the descriptor"),
         signature("cna_blend_state_init", T[:result], [enum("CNA_BlendStatePreset"), pointer("CNA_BlendState")], ownership: "caller output"),
         signature("cna_depth_stencil_state_init", T[:result], [enum("CNA_DepthStencilStatePreset"), pointer("CNA_DepthStencilState")], ownership: "caller output"),
         signature("cna_rasterizer_state_init", T[:result], [enum("CNA_RasterizerStatePreset"), pointer("CNA_RasterizerState")], ownership: "caller output"),
@@ -591,6 +593,7 @@ module CNA
         "CNA_MICROPHONE_STATE_STARTED" => 0,
         "CNA_MICROPHONE_STATE_STOPPED" => 1,
         "CNA_MICROPHONE_STATE_MAXIMUM" => 1,
+        "CNA_MAX_SAMPLERS" => 16,
         "CNA_SHADER_STAGE_PIXEL" => 0,
         "CNA_SHADER_STAGE_VERTEX" => 1,
         "CNA_TEXTURE_COLLECTION_MAX_TEXTURES" => 16,

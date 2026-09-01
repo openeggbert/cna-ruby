@@ -390,9 +390,23 @@ is then asserted equal to CNA's own field by field. The two authorities agree on
 values; the two they do not are recorded in `docs/graphics-state-objects-evidence.md` as an
 UPSTREAM_CNA_DIVERGENCE.
 
-The device-facing half of `graphics_state.h` stays unbound. `cna_graphics_device_get_blend_state`
-and its seven relatives apply a state to a device, which is `GraphicsDevice`'s surface and its own
-milestone; XNA's own `Apply` is `assembly`-visible and is not a projected identity either.
-`cna_sprite_batch_begin_with_states` and `cna_sprite_batch_begin_with_effect` are unbound for the
-same reason — `SpriteBatch.Begin` is one of that type's three outstanding members and belongs to
-whichever milestone closes it.
+Most of the device-facing half of `graphics_state.h` stays unbound. `cna_graphics_device_get_blend_state`
+and its five blend/depth/rasterizer relatives apply a whole pipeline state to a device, which is
+`GraphicsDevice`'s surface and its own milestone; XNA's own `Apply` is `assembly`-visible and is not
+a projected identity either. `cna_sprite_batch_begin_with_states` and
+`cna_sprite_batch_begin_with_effect` are unbound for the same reason — `SpriteBatch.Begin` is one of
+that type's three outstanding members and belongs to whichever milestone closes it.
+
+## The sampler-state collection
+
+The exception is the sampler pair, bound in the milestone after: `cna_graphics_device_get_sampler_state`
+and `cna_graphics_device_set_sampler_state` bring the count to **235** and `CNA_MAX_SAMPLERS` the
+constants to **101**. `SamplerStateCollection::set_Item` calls `SamplerState::Apply(device, index)`,
+which is exactly what the set route does, and the get route is what measures the seeded cache
+against the device it claims to describe.
+
+Measured while binding them: **CNA validates `struct_size` and `struct_version` on the way in** to a
+`get` route, not only on the way out. A zeroed `CNA_SamplerState` handed to
+`cna_graphics_device_get_sampler_state` is refused `INVALID_ARGUMENT` with "The sampler-state query
+is invalid", which reads like a bad stage or slot and is not. All four graphics state layouts now
+fill their own header on construction, as every other versioned structure in this manifest does.

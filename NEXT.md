@@ -51,26 +51,28 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 69 | `Texture2D.SetData` and `GetData`, six overloads | **0** | 6 |
 | 70 | `Texture2D.FromStream`'s five-argument overload, completing the type; the upstream zoom defect; the frontier and corpus staleness guards | **0** | 1 |
 | 71 | the four graphics state objects, and the ninth `NATIVE_RUNTIME` deferral that was not one | **4** | 65 |
+| 72 | `Graphics.SamplerStateCollection` + `GraphicsDevice.SamplerStates`/`VertexSamplerStates` | **1** | 4 |
 
 ## Measured state
 
-Strict target **169 types / 2079 member identities**: **166 complete**, three partial graphics
-runtime types, 88 missing, **201 deferred diagnostics**. `MISSING_MEMBER` **80**, `PARTIAL_TYPES` 3,
+Strict target **170 types / 2082 member identities**: **167 complete**, three partial graphics
+runtime types, 87 missing, **199 deferred diagnostics**. `MISSING_MEMBER` **78**, `PARTIAL_TYPES` 3,
 `PROPERTY_MAPPING_MISMATCH` 1 (`GraphicsDevice::Viewport`, unrelated and pre-existing),
 `OVERLOAD_MAPPING_MISMATCH` **30**, every other structural category 0, allowlist 0, unmeasured 0.
 **27** event identities across **14** owner types. **22** projected BCL identities.
 
-CNA ABI **233 functions / 5 callbacks / 100 constants / 34 layouts**, on **two admitted encoded
+CNA ABI **235 functions / 5 callbacks / 101 constants / 34 layouts**, on **two admitted encoded
 versions** cross-verified across both header roots. Zero missing header symbols, zero missing library
 symbols, zero cross-version mismatches, zero ABI mismatches. **No CNA source was changed and no new
 native binary was built.**
 
-Behaviour corpus **526** observations, zero failures. Suite **1379 runs / 47944 assertions**, zero
-failures, zero skips. Capability registry **123** rows, zero contradictions.
+Behaviour corpus **526** observations, zero failures. Suite **1389 runs / 48104 assertions**, zero
+failures, zero skips. Capability registry **124** rows, zero contradictions.
 
-The dependency frontier carries **six** candidates. It went 3 → 9 → 6 in two milestones: completing
-`GraphicsResource` and `Texture2D` made six types behind them visible, and auditing four of those
-six found the blocker was not one. Three of the six left are audited and deferred; three are not yet
+The dependency frontier carries **five** candidates. It went 3 → 9 → 6 → 5 in three milestones:
+completing `GraphicsResource` and `Texture2D` made six types behind them visible, auditing four of
+those six found the blocker was not one, and the fifth turned out to have an accurate blocker that
+named a route CNA exports. Three of the five left are audited and deferred; two are not yet
 audited, so the frontier is *not* at rest — see `plan.md`.
 
 ## Game is complete, and so is the whole Audio namespace
@@ -182,27 +184,28 @@ rule the `GraphicsDeviceManager` producer audit established:
 
 ## Recommended next frontier
 
-**Six** dependency-complete candidates remain. The count went 3 → 9 → 6 across two milestones:
-completing `GraphicsResource` and `Texture2D` made six types behind them visible at once, and the
-audit the frontier's own rule demands then found four of those six were not blocked at all. Three of
-the six left have been *measured* rather than accepted; three have not, and they are the recommended
-next work.
+**Five** dependency-complete candidates remain. The count went 3 → 9 → 6 → 5 across three
+milestones: completing `GraphicsResource` and `Texture2D` made six types behind them visible at
+once, the audit the frontier's own rule demands then found four of those six were not blocked at
+all, and the fifth turned out to be blocked by something CNA already exports. Three of the five left
+have been *measured* rather than accepted; two have not, and they are the recommended next work.
 
 **What the audit found, because it is the reusable part.** All four graphics state objects reported
 `NATIVE_RUNTIME`, and in all four the reachability was `Apply` — one `assembly`-visible member that
 is not in the pinned contract, so no consumer could call it and nothing was lost by not projecting
 it. That is the ninth deferral this register has retired for naming something outside the type's
-public surface. The same question is the first one to ask of the three that remain.
+public surface. `SamplerStateCollection`, audited straight after, is the counter-case worth keeping
+beside it: there the word was **accurate** — `set_Item` really does call `SamplerState::Apply` — and
+being accurate is exactly what made it buildable, because the route that apply needs is one CNA
+exports. So the audit is not a search for wrong blockers; it is a search for *what* the blocker
+names. The same question is the first one to ask of the two that remain.
 
-The three still unaudited, with what to check first rather than what is assumed:
+The two still unaudited, with what to check first rather than what is assumed:
 
 - **`Graphics.VertexDeclaration`** — the only dependency-complete candidate carrying
   `INTERFACE_PRODUCER_MISSING`: its own IL calls `IVertexType` members and nothing in this
   projection conforms to that interface. That is a real second blocker, not a restatement of the
   first, and `VertexElement` — which it is built from — has been complete since Foundation 22.
-- **`Graphics.SamplerStateCollection`** — arrived behind `SamplerState`, the uncovering a completed
-  base always causes. `TextureCollection`, its nearest analogue, is complete and native, so the
-  question is whether CNA's sixteen-slot sampler collection is reachable the same way.
 - **`Media.VideoPlayer`** — arrived behind `Texture2D`, whose completion was its last unmet
   signature dependency. Unlike the state objects its IL is native in **fifteen** members including
   the constructor, `GetTexture` and every transport control, so the blocker word may well be right
@@ -236,13 +239,13 @@ The three already audited:
   whose reachable surface is *one member*, not a base class one inherits from. Projecting it means
   projecting .NET's type-descriptor system for ten design-time converters nothing here consumes.
 
-So the type frontier is **not** at rest. Three candidates are deferred for a measured reason; three
+So the type frontier is **not** at rest. Three candidates are deferred for a measured reason; two
 are unaudited and the standing rule says a blocker word is not a finding until the routes and the IL
 have been read.
 
 **The single largest lever is still a qualification artifact with a real renderer.** It would
 unblock `GraphicsAdapter` directly and the three partial graphics types behind it —
-`GraphicsDevice`, `GraphicsDeviceManager` and `SpriteBatch` — which between them owe 57 of the 80
+`GraphicsDevice`, `GraphicsDeviceManager` and `SpriteBatch` — which between them owe 55 of the 78
 outstanding members. `GraphicsResource` left that list when its disposal contract was projected and
 `Texture2D` when its five-argument `FromStream` landed. `GraphicsDeviceManager`'s own share fell
 from 26 to 15 when its preferred settings were projected, and what is left there is the producer

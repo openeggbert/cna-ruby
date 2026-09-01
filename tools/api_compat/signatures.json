@@ -29018,6 +29018,28 @@
           "getAccess": "public",
           "setAccess": null,
           "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "SamplerStates",
+          "type": "Microsoft.Xna.Framework.Graphics.SamplerStateCollection",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "VertexSamplerStates",
+          "type": "Microsoft.Xna.Framework.Graphics.SamplerStateCollection",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::GraphicsDevice"
@@ -37294,6 +37316,40 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::SamplerState"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.SamplerStateCollection",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [],
+      "directInterfaces": [],
+      "genericParameters": [],
+      "members": [
+        {
+          "kind": "property",
+          "name": "Item",
+          "type": "Microsoft.Xna.Framework.Graphics.SamplerState",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+            {
+              "name": "index",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::SamplerStateCollection"
     }
   ]
 }

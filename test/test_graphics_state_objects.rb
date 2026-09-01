@@ -61,8 +61,11 @@ class GraphicsStateObjectsTest < Minitest::Test
       assert_equal "Microsoft.Xna.Framework.Graphics.GraphicsResource", REFERENCE.fetch(name).fetch("baseType")
     end
     # Completing SamplerState uncovered the collection built out of it, which is what completing a
-    # base always does on this frontier.
-    assert_includes candidates, "Microsoft.Xna.Framework.Graphics.SamplerStateCollection"
+    # base always does on this frontier -- and the milestone straight after built that too, so what
+    # is asserted now is the uncovering having been *resolved* rather than the candidate standing.
+    refute_includes candidates, "Microsoft.Xna.Framework.Graphics.SamplerStateCollection"
+    assert_includes STRICT.fetch("completeTypeNames"),
+                    "Microsoft.Xna.Framework.Graphics.SamplerStateCollection"
   end
 
   # ------------------------------------------------------------------------ the defaults, from IL
@@ -405,8 +408,12 @@ class GraphicsStateObjectsTest < Minitest::Test
     # And the device-facing halves of that header stay unbound: applying a state is
     # GraphicsDevice's surface, and XNA's own Apply is not a projected identity.
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
+    # The sampler pair left this list when SamplerStateCollection was built -- that collection's
+    # setter is the identity that applies a state, and it is XNA's, not this type's. The other
+    # three families stay unbound, because GraphicsDevice's own state properties are outstanding.
     %w[cna_graphics_device_set_blend_state cna_graphics_device_get_blend_state
-       cna_graphics_device_set_sampler_state cna_sprite_batch_begin_with_states].each do |symbol|
+       cna_graphics_device_set_depth_stencil_state cna_graphics_device_set_rasterizer_state
+       cna_sprite_batch_begin_with_states].each do |symbol|
       refute_includes symbols, symbol
     end
   end

@@ -148,7 +148,7 @@ class PrimitiveTypeTest < Minitest::Test
       refute G::GraphicsDevice.private_method_defined?(name), name.to_s
       refute G::GraphicsDevice.protected_method_defined?(name), name.to_s
     end
-    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures].sort,
+    assert_equal %i[IsDisposed Viewport Clear Textures VertexTextures SamplerStates VertexSamplerStates].sort,
                  G::GraphicsDevice.public_instance_methods(false).sort
   end
 
