@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundation 41 — the four canonical Game events.
@@ -58,7 +59,7 @@ class GameEventsTest < Minitest::Test
     selected = SIGNATURES.fetch("Microsoft.Xna.Framework.Game").fetch("members")
                          .map { |member| member.fetch("name").to_sym }
     (IDENTITIES + RAISERS).each { |name| assert_includes selected, name }
-    remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
+    remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Game")
     (IDENTITIES + RAISERS).each do |name|
       refute(remainder.any? { |entry| entry.include?("::#{name} ") }, name)
     end

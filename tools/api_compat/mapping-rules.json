@@ -63,7 +63,9 @@
     "packedVector": {
       "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector": "Microsoft::Xna::Framework::Graphics::PackedVector::IPackedVector",
       "Microsoft.Xna.Framework.Graphics.PackedVector.IPackedVector`1": "Microsoft::Xna::Framework::Graphics::PackedVector::IPackedVectorOfT"
-    }
+    },
+    "methodProjection": "a CLR generic method projects to a Ruby method taking its type arguments as leading positional parameters, in declaration order, ahead of the CLR value parameters, so the Ruby arity is genericParameters.length + parameters.length. Ruby has no static generics and cannot infer a type argument from a call site, so the type argument must be a value; System.Type already projects to Module, so it is a Ruby Module. This is a rule the verifier can check rather than a per-method choice, and it is the only reason a projected Ruby method may take more arguments than the CLR signature declares.",
+    "parameterPlaceholder": "!!N names a generic method parameter and !N a generic type parameter, either optionally as an array. Both are language constructs rather than type identities: they are resolved by methodProjection and by the projects_elements metadata respectively, and neither is ever an unmapped BCL type."
   },
   "expectedTypeFormula": "reference public types",
   "expectedMemberFormula": "reference public members minus enum value__ metadata storage",
@@ -73,6 +75,7 @@
     "scope": "only a CLR identity the selected XNA surface actually names, and whose Ruby projection can be decided without guessing, is admitted",
     "types": {
       "System.EventArgs": "CNA::Runtime::EventArgs",
+      "System.Byte[]": "String",
       "System.IO.Stream": "CNA::Runtime::Stream",
       "System.IO.SeekOrigin": "CNA::Runtime::Stream::SeekOrigin",
       "System.Collections.Generic.Dictionary`2": "CNA::Runtime::Dictionary",

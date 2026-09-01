@@ -380,7 +380,7 @@ class DictionaryTest < Minitest::Test
       assert_instance_of F::LaunchParameters, parameters
       assert_same parameters, game.LaunchParameters
       assert_nil game.instance_variable_get(:@host)
-      refute(STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
+      refute(ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Game")
                    .any? { |entry| entry.include?("::LaunchParameters") })
     ensure
       game.Dispose

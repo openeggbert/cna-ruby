@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../framework"
+require_relative "content"
 require_relative "graphics/packed_vector"
 require_relative "graphics/vertex_element"
 
@@ -1036,4 +1037,41 @@ end
 class Microsoft::Xna::Framework::Graphics::GraphicsDevice
   private
   attr_reader :game
+end
+
+# The one supported `ContentManager.Load<T>` materializer.
+#
+# It lives here rather than in `content.rb` because `Texture2D` is declared here and `content.rb`
+# is loaded first; registering from the owning type keeps the registry one entry per asset type
+# with no forward reference. `Graphics::Texture2D` is the only `T` this binding supports because it
+# is the only XNA asset type this binding projects at all.
+#
+# `cna_content_manager_load_texture2d` hands back a **new independently owned** Texture2D per call,
+# documented to survive `cna_content_manager_unload` and to be destroyed before the parent game. So
+# the wrapper takes ordinary OWNED ownership, and `ContentManager.Unload` disposing its cache is
+# what releases it -- which is exactly what XNA's `disposableAssets` list does.
+Microsoft::Xna::Framework::Content::ContentManager.__send__(
+  :register_materializer, Microsoft::Xna::Framework::Graphics::Texture2D
+) do |manager, asset_name|
+  handle = manager.__send__(:native_handle)
+  device = manager.__send__(:graphics_device)
+  view = CNA::Native::Layouts::StringView.new(asset_name.b)
+  output = CNA::Native.library.pointer_for("Q", 0)
+  begin
+    CNA::Native.library.call("cna_content_manager_load_texture2d", handle,
+                             view.read_u64(0), view.read_u64(8), output)
+  rescue CNA::NativeError => error
+    # CNA answers CNA_RESULT_IO for a missing or malformed asset and CNA_RESULT_NOT_SUPPORTED when
+    # the active renderer cannot represent the loaded format. XNA reports both as
+    # ContentLoadException, which is the identity a consumer catches.
+    raise Microsoft::Xna::Framework::Content::ContentLoadException,
+          "#{asset_name} could not be loaded as Texture2D: #{error.message}"
+  end
+  texture_handle = output[0, 8].unpack1("Q")
+  if texture_handle.zero?
+    raise Microsoft::Xna::Framework::Content::ContentLoadException,
+          "#{asset_name} reported a successful load with no texture"
+  end
+  Microsoft::Xna::Framework::Graphics::Texture2D.allocate
+                                                .__send__(:initialize_from_native, device, texture_handle)
 end

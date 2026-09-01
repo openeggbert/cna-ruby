@@ -104,6 +104,16 @@ module CNA
       # values are read out of the pinned mscorlib -- Begin=0, Current=1, End=2 -- not remembered.
       TYPES = {
         "System.EventArgs" => "CNA::Runtime::EventArgs",
+        # System.Byte[] projects to a Ruby String in Encoding::BINARY -- Ruby's own byte buffer,
+        # mutable in place, whose `bytesize` is the CLR `Length`, and already what every native
+        # boundary in this binding produces and consumes. An Array of Integers would need a
+        # conversion at each of those boundaries and its `length` would equal the byte count only by
+        # coincidence of the element type. The two properties a CLR array has and a Ruby String does
+        # not -- it cannot be resized and is never frozen -- are guarded at each boundary rather than
+        # ignored; `CNA::Runtime::Stream#Read` refuses both. Reach was measured before the decision:
+        # eight XNA signatures over five public members, plus `Stream.Read`/`Write` through a
+        # produced stream. Full derivation in docs/stream-projection-design.md.
+        "System.Byte[]" => "String",
         "System.IO.Stream" => "CNA::Runtime::Stream",
         "System.IO.SeekOrigin" => "CNA::Runtime::Stream::SeekOrigin",
         "System.Collections.Generic.Dictionary`2" => "CNA::Runtime::Dictionary",
@@ -146,8 +156,41 @@ module CNA
         # or a finalizer API, or an ownership wrapper -- would add identities the CLR contract does
         # not have and that nothing could measure. Mapping the identity says nothing whatever about
         # whether a given type's disposal is implemented: that stays each type's own measured work.
-        "System.IDisposable" => "declares one member, Dispose(), which every implementing XNA type either declares publicly or implements explicitly; the contract survives as those members and no Ruby constant, Close alias, finalizer API or ownership wrapper is invented"
+        "System.IDisposable" => "declares one member, Dispose(), which every implementing XNA type either declares publicly or implements explicitly; the contract survives as those members and no Ruby constant, Close alias, finalizer API or ownership wrapper is invented",
+        # `System.Action`1` declares one member, `Invoke(T)`, and Ruby's universal callable protocol
+        # is `#call`. A `Proc`, a lambda, a `Method` and any object defining `call` are all callable,
+        # so mapping the identity to `Proc` would reject three of the four for no measured reason,
+        # and inventing a `CNA::Runtime::Action` wrapper would add an identity the CLR contract does
+        # not have -- the same reasoning `IServiceProvider` and `IDisposable` already take.
+        #
+        # What makes the collapse safe here rather than merely convenient is that the *whole* XNA
+        # reach was measured before it was made. `Action`1` appears in exactly two public
+        # signatures, `ContentManager.ReadAsset<T>` and `ContentReader.ReadSharedResource<T>`, and
+        # the pinned IL shows every use is the same three operations: null-check, store, and
+        # `Invoke` once with one argument for a void return. `Delegate.Combine` and
+        # `Delegate.Remove` appear nowhere near it, no member exposes one as a property, and none is
+        # ever compared. So there is no delegate identity to preserve -- no multicast list, no
+        # removal semantics, no equality -- and a callable is the whole of it.
+        #
+        # `ContentReader.InvokeReader<T>` settles what the parameter *means*, which no signature
+        # says: `if (recordDisposableObject != null) recordDisposableObject.Invoke(d); else
+        # contentManager.RecordDisposableObject(d);`. It is an override for where a loaded
+        # disposable is registered, not an extra notification, so a supplied callable *replaces* the
+        # manager's own bookkeeping rather than adding to it.
+        "System.Action`1" => "declares one member, Invoke(T), which is Ruby's `#call`; every use across the whole measured XNA reach is null-check, store and one invocation, so there is no delegate identity -- no multicast, removal or equality -- to preserve, and no Ruby constant, Proc restriction or Action wrapper is invented"
       }.freeze
+
+      # A CLR **generic parameter** placeholder: `!!0` for a generic method's, `!0` for a generic
+      # type's, either optionally as an array. It is a language construct rather than a type
+      # identity, so it must never be counted as an unmapped BCL type -- what resolves it is the
+      # generic-method projection rule in `tools/api_compat/mapping-rules.json`, not a register
+      # entry. Ruby has no static generics and cannot infer a type argument from a call site, so a
+      # CLR generic method projects to a Ruby method taking its type arguments as leading
+      # positional parameters, in declaration order, ahead of the CLR value parameters; the type
+      # argument is a Ruby `Module`, which is what `System.Type` already projects to.
+      GENERIC_PARAMETER = /\A!!?\d+(\[\])*\z/.freeze
+
+      def self.generic_parameter?(signature) = GENERIC_PARAMETER.match?(signature.to_s)
 
       # CLR exception base identity => the Ruby exception class an XNA type deriving from it takes
       # as its Ruby superclass.

@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundation 39 — the member-level half of the dependency graph.
@@ -79,10 +80,10 @@ class MemberLevelDependenciesTest < Minitest::Test
     reached = edges("Microsoft.Xna.Framework.GameComponent").grep(/\AMicrosoft\.Xna\.Framework\.Game::/)
     assert_equal ["Microsoft.Xna.Framework.Game::get_Components"], reached
 
-    remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
+    remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Game")
                       .map { |label| label.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
     refute_includes remainder, "Components"
-    assert_includes STRICT.fetch("partialTypes").keys, "Microsoft.Xna.Framework.Game"
+    assert ReviewedScoreboard.complete?(STRICT, "Microsoft.Xna.Framework.Game")
     assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.GameComponent"
   end
 
@@ -180,7 +181,7 @@ class MemberLevelDependenciesTest < Minitest::Test
     # now reaches a member that exists. What the measurement owns is the edge itself -- that
     # GamerServicesComponent's IL reaches `get_Window` at all, which the signature graph cannot
     # see -- and that is unchanged.
-    remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
+    remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Game")
                       .map { |label| label.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
     refute_includes remainder, "Window"
     refute_includes entry.fetch("ilOnlyUnmetDependencies"), "Microsoft.Xna.Framework.GameWindow"
@@ -193,11 +194,13 @@ class MemberLevelDependenciesTest < Minitest::Test
   def test_the_measurement_exposes_candidates_the_signature_graph_called_complete
     signature_complete = REPORT.fetch("ilOnlyBlockedCandidates")
                                .select { |entry| entry.fetch("unmetDependencies").empty? }
-    assert_equal 6, signature_complete.length
+    # 6 until ContentManager completed: it left this list and so did Microphone, whose only
+    # remaining blocker was the `System.Byte[]` the Stream projection decided.
+    assert_equal 5, signature_complete.length
     names = signature_complete.map { |entry| entry.fetch("name") }
+    # ContentManager was here until the Stream and Action`1 projections consumed it.
     %w[Microsoft.Xna.Framework.Graphics.TextureCollection
        Microsoft.Xna.Framework.Graphics.SpriteFont
-       Microsoft.Xna.Framework.Content.ContentManager
        Microsoft.Xna.Framework.Graphics.EffectAnnotation
        Microsoft.Xna.Framework.Audio.SoundEffectInstance
        Microsoft.Xna.Framework.Audio.Cue].each { |name| assert_includes names, name }
@@ -222,7 +225,7 @@ class MemberLevelDependenciesTest < Minitest::Test
     assert_includes REPORT.fetch("candidatePolicy"), "deliberately do not relax"
     # 19 until Foundation 46 took LaunchParameters off the frontier by projecting Dictionary`2,
     # and 12 until the Stream projection consumed TitleContainer.
-    assert_equal 11, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 12, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")
@@ -236,7 +239,7 @@ class MemberLevelDependenciesTest < Minitest::Test
      REPORT.fetch("ilOnlyBlockedCandidates")).each do |entry|
       refute_includes consumable, entry.fetch("name")
     end
-    assert_equal 6, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
+    assert_equal 5, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
   end
 
   # The one candidate the refinement cleared, and what happened to it. Foundation 39 selected it and

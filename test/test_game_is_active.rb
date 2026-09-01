@@ -57,9 +57,9 @@ class GameIsActiveTest < Minitest::Test
     refute_nil selected
     assert_equal false, selected.fetch("set")
     refute F::Game.method_defined?(:IsActive=), "the contract declares no setter"
-    remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
+    remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Game")
     refute(remainder.any? { |entry| entry.include?("::IsActive ") }, remainder.inspect)
-    assert_equal 110, STRICT.fetch("MISSING_MEMBER")
+    assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
   end
 
   # Neither `Guide` nor `GamerServicesDispatcher` is in the selected profile — the whole

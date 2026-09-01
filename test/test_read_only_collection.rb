@@ -388,9 +388,11 @@ class ReadOnlyCollectionTest < Minitest::Test
     # Foundation 51, once that deferral was measured as being about the filler rather than the type.
     refute(by_name.key?("Microsoft.Xna.Framework.Media.VisualizationData"))
 
-    # These two keep a BCL blocker, and it is no longer this one.
+    # SpriteFont keeps a BCL blocker, and it is no longer this one. Microphone kept `System.Byte[]`
+    # until the Stream projection decided it, and now keeps only NATIVE_RUNTIME.
     microphone = by_name.fetch("Microsoft.Xna.Framework.Audio.Microphone")
-    assert_equal ["System.Byte[]"], microphone.fetch("unmappedBclTypes")
+    assert_empty microphone.fetch("unmappedBclTypes")
+    assert_equal ["NATIVE_RUNTIME"], microphone.fetch("blockers")
     font = by_name.fetch("Microsoft.Xna.Framework.Graphics.SpriteFont")
     assert_equal ["System.Char", "System.Nullable`1[System.Char]", "System.Text.StringBuilder"],
                  font.fetch("unmappedBclTypes")

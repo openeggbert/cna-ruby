@@ -480,8 +480,8 @@ class GameComponentTest < Minitest::Test
     assert_equal ReviewedScoreboard::TARGET_TYPES, STRICT.fetch("TARGET_TYPES")
     assert_equal ReviewedScoreboard::COMPLETE_TYPES, STRICT.fetch("COMPLETE_TYPES")
     assert_equal ReviewedScoreboard::MISSING_TYPES, STRICT.fetch("MISSING_TYPES")
-    assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
-    assert_equal 110, STRICT.fetch("MISSING_MEMBER"),
+    assert_equal ReviewedScoreboard::PARTIAL_TYPES, STRICT.fetch("PARTIAL_TYPES")
+    assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER"),
                  "Foundation 41 closed Game's four events and three raisers, 42 its four " \
                  "timing and presentation properties, 43 SuppressDraw and ResetElapsedTime, " \
                  "44 Tick, 45 IsActive, 46 LaunchParameters, 47 Dispose(Boolean), Finalize and " \
@@ -499,7 +499,7 @@ class GameComponentTest < Minitest::Test
     # inline rather than through an `On...` raiser. What this milestone owns is that the component
     # pass is exact, which the tests above assert; the remainder is nobody's to pin here beyond the
     # fact that the event never entered it.
-    remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
+    remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Game")
     refute(remainder.any? { |entry| entry.include?("::Disposed ") })
   end
 end

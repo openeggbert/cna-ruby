@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 require_relative "../tools/api_compat/verifier"
 
@@ -575,7 +576,7 @@ class GameComponentCollectionTest < Minitest::Test
     assert_equal 257, STRICT.fetch("COMPLETE_TYPES") + STRICT.fetch("PARTIAL_TYPES") +
                       STRICT.fetch("MISSING_TYPES")
     assert_includes STRICT.fetch("completeTypeNames"), NAME
-    assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
+    assert_equal ReviewedScoreboard::PARTIAL_TYPES, STRICT.fetch("PARTIAL_TYPES")
     assert_equal 0, STRICT.fetch("ALLOWLIST_ENTRIES")
     assert_equal 0, STRICT.fetch("UNMEASURED_STRUCTURAL_CATEGORY")
     assert_equal 0, STRICT.fetch("UNEXPECTED_MEMBER")

@@ -2,6 +2,7 @@
 
 require "minitest/autorun"
 require "json"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 require_relative "../tools/api_compat/verifier"
 require_relative "../tools/api_compat/name_mapper"
@@ -1825,11 +1826,11 @@ class ApiVerifierTest < Minitest::Test
     assert_empty strict.fetch("missingTypeNames").grep(/\AMicrosoft\.Xna\.Framework\.Input\.Touch\./)
   end
 
-  def test_batch_does_not_expand_the_six_deferred_partial_runtime_types
+  # Six until `Game.Content` completed Game, which is the first of them to leave.
+  def test_batch_does_not_expand_the_deferred_partial_runtime_types
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
     partial = strict.fetch("partialTypes")
     assert_equal %w[
-      Microsoft.Xna.Framework.Game
       Microsoft.Xna.Framework.GraphicsDeviceManager
       Microsoft.Xna.Framework.Graphics.GraphicsDevice
       Microsoft.Xna.Framework.Graphics.GraphicsResource
@@ -1842,7 +1843,7 @@ class ApiVerifierTest < Minitest::Test
     # Game::Tick, a method, which is why the overload count fell by one more. The set of partial
     # types is what this test guards, and it is unchanged. Foundation 45 then closed
     # Game::IsActive, a property, so MISSING_MEMBER fell once more without moving the overloads.
-    assert_equal 110, strict.fetch("MISSING_MEMBER")
+    assert_equal ReviewedScoreboard::MISSING_MEMBER, strict.fetch("MISSING_MEMBER")
     assert_equal 1, strict.fetch("PROPERTY_MAPPING_MISMATCH")
     assert_equal 42, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
 

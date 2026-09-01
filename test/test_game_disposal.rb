@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundation 47 — `Game`'s protected remainder: `Dispose(Boolean)`, `Finalize` and
@@ -47,11 +48,12 @@ class GameDisposalTest < Minitest::Test
     assert_equal 2, game_members.count { |member| member.fetch("name") == "Dispose" }
   end
 
-  def test_the_remainder_is_now_content_and_window
-    remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
+  def test_the_remainder_is_empty_now_that_content_landed
+    remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Game")
                       .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_equal %w[Content], remainder
-    assert_equal 110, STRICT.fetch("MISSING_MEMBER")
+    assert_empty remainder, "Content was the last one"
+    assert ReviewedScoreboard.complete?(STRICT, "Microsoft.Xna.Framework.Game")
+    assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
     assert_equal 42, STRICT.fetch("OVERLOAD_MAPPING_MISMATCH")
   end
 

@@ -237,13 +237,18 @@ class SerializationExceptionsTest < Minitest::Test
   # ------------------------------------------------------------------------------- no runtime
 
   def test_neither_type_implies_a_runtime_and_nothing_raises_them
-    refute F::Content.const_defined?(:ContentManager, false)
+    # ContentManager exists now and *does* raise ContentLoadException -- for an unsupported `T`, a
+    # cache hit of the wrong type and a load CNA refuses, which is what XNA raises it for. What this
+    # milestone claimed, and still claims, is that **it** built none of that: it projected two
+    # serialization carriers and completed two exception types, and neither is raised by anything it
+    # added. So the claim narrows to the one type no member of this binding raises, and the
+    # ContentManager case is asserted where it belongs, in `test_content_manager.rb`.
     refute F::Content.const_defined?(:ContentReader, false)
     sources = Dir[ROOT.join("lib", "**", "*.rb")].flat_map do |path|
       File.readlines(path).reject { |line| line.strip.start_with?("#") }
     end
-    %w[ContentLoadException StorageDeviceNotConnectedException].each do |name|
-      refute(sources.any? { |line| line.include?("raise") && line.include?(name) }, name)
-    end
+    refute(sources.any? { |line| line.include?("raise") && line.include?("StorageDeviceNotConnectedException") })
+    raisers = sources.select { |line| line.include?("raise") && line.include?("ContentLoadException") }
+    refute_empty raisers, "ContentManager raises it; if that stops being true this test is stale"
   end
 end

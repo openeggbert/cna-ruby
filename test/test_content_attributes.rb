@@ -45,13 +45,14 @@ class ContentAttributesTest < Minitest::Test
   end
 
   # Foundation 49 added ContentLoadException to the same namespace from its own IL and its own BCL
-  # cluster, which this milestone neither implies nor produces.
+  # cluster, and the ContentManager projection later added ContentManager; this milestone neither
+  # implies nor produces either, which is why both are named here rather than the list being loosened.
   def test_the_content_namespace_holds_exactly_the_five_attributes
     assert_equal %i[ContentSerializerAttribute ContentSerializerCollectionItemNameAttribute
                     ContentSerializerIgnoreAttribute ContentSerializerRuntimeTypeAttribute
                     ContentSerializerTypeVersionAttribute],
-                 (C.constants(false) - %i[ContentLoadException]).sort
-    %i[ContentManager ContentReader ContentTypeReader ContentTypeReaderManager
+                 (C.constants(false) - %i[ContentLoadException ContentManager]).sort
+    %i[ContentReader ContentTypeReader ContentTypeReaderManager
        ResourceContentManager].each do |absent|
       refute C.const_defined?(absent, false), "Content::#{absent}"
     end

@@ -168,8 +168,8 @@ class InterfaceContractsTest < Minitest::Test
     strict = JSON.parse(Pathname(__dir__).join("..", "docs", "generated", "api-compat-report.json").read)
     # Foundation 37 closed Game::Components and Game::Services, the first two members any deferred
     # partial has lost. Both are pure managed state and neither needed an interface contract.
-    assert_equal 110, strict.fetch("MISSING_MEMBER")
-    assert_equal 6, strict.fetch("PARTIAL_TYPES")
+    assert_equal ReviewedScoreboard::MISSING_MEMBER, strict.fetch("MISSING_MEMBER")
+    assert_equal ReviewedScoreboard::PARTIAL_TYPES, strict.fetch("PARTIAL_TYPES")
   end
 
   def test_event_bearing_interfaces_are_complete_with_their_events_projected

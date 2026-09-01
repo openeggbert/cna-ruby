@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundations 19 and 20 — the dependency frontier blocker register.
@@ -84,10 +85,18 @@ class DependencyFrontierTest < Minitest::Test
     # no longer opaque -- it requires the definition's projection plus its type arguments'. A
     # generic the register does not project stays opaque, because then the whole constructed form
     # really is what is missing.
-    if outer != stripped && CNA::Runtime::BclProjection::TYPES.key?(outer)
+    if outer != stripped && (CNA::Runtime::BclProjection::TYPES.key?(outer) ||
+                             CNA::Runtime::BclProjection.structural_collapse?(outer))
       return ([outer] + CNA::Runtime::BclProjection.element_types(stripped)
                                                    .flat_map { |argument| bcl_identities(argument) }).uniq
     end
+
+    # A CLR generic parameter placeholder is a language construct, not a type identity. `!!0` names
+    # a generic *method*'s parameter and `!0` a generic type's; what resolves the first is the
+    # generic-method projection rule and the second `projects_elements`, and neither is a BCL type
+    # anything could ever map. Restated here rather than delegated, so the tool and the test have to
+    # agree on the spelling as well as on the idea.
+    return [] if stripped.match?(/\A!!?\d+(\[\])*\z/)
 
     identities = []
     identities << stripped unless BY_NAME.keys.any? { |name| stripped.include?(name) }
@@ -283,8 +292,15 @@ class DependencyFrontierTest < Minitest::Test
     # joined them in Native frontier 3, which is the honest reading: its drain reaches XACT through
     # SoundEffect.RecycleStoppedFireAndForgetInstances, and this binding's projection forwards to
     # the canonical CNA pump.
+    # Game and ContentManager joined them when each was completed, and both belong: Game's IL
+    # reaches the host and this projection is a façade over CNA's native Game, and ContentManager's
+    # reaches the content pipeline, which is exactly the native route `Load<Texture2D>` calls. Every
+    # entry on this list is a type whose native boundary the binding really implements, which is the
+    # property the list exists to check -- not a count that must stay still.
     assert_equal %w[
+      Microsoft.Xna.Framework.Content.ContentManager
       Microsoft.Xna.Framework.FrameworkDispatcher
+      Microsoft.Xna.Framework.Game
       Microsoft.Xna.Framework.Graphics.Texture
       Microsoft.Xna.Framework.Input.GamePad
       Microsoft.Xna.Framework.Input.Mouse
@@ -329,7 +345,7 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 11, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 12, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -460,11 +476,11 @@ class DependencyFrontierTest < Minitest::Test
       unmet.each { |dependency| refute_includes STRICT.fetch("completeTypeNames"), dependency, dependency }
     end
 
-    # Game is still one of the six deferred partial runtime types, and that no longer keeps the
-    # component classes out: what a missing type needs is its *dependencies* complete, and a partial
-    # Game that declares Components and Services is enough. Both completed types are out of the
-    # candidate list entirely.
-    assert_includes STRICT.fetch("partialTypes").keys, "Microsoft.Xna.Framework.Game"
+    # Game *was* one of the deferred partial runtime types when this was written, and the point
+    # was that a partial Game declaring Components and Services was already enough: what a missing
+    # type needs is its *dependencies* complete. `Game.Content` has since completed Game outright,
+    # which only strengthens that, so the assertion states the stronger fact.
+    assert ReviewedScoreboard.complete?(STRICT, "Microsoft.Xna.Framework.Game")
     %w[Microsoft.Xna.Framework.GameComponentCollection
        Microsoft.Xna.Framework.GameComponent].each do |name|
       assert_includes STRICT.fetch("completeTypeNames"), name
@@ -510,7 +526,11 @@ class DependencyFrontierTest < Minitest::Test
       # TitleContainer used to be here under BCL_PROJECTION and is deliberately not replaced by
       # another example: the Stream projection consumed it, which is what a retired blocker looks
       # like. `test_the_stream_projection_consumed_title_container` asserts that directly.
-      "Microsoft.Xna.Framework.Content.ContentManager" => "BCL_PROJECTION"
+      # ContentManager left too, consumed by the Stream and Action`1 projections. What is left
+      # under BCL_PROJECTION is the converter family and the ResourceContentManager the completed
+      # ContentManager uncovered behind it.
+      "Microsoft.Xna.Framework.Design.MathTypeConverter" => "BCL_PROJECTION",
+      "Microsoft.Xna.Framework.Content.ResourceContentManager" => "BCL_PROJECTION"
     }.each do |name, expected|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
       refute_nil candidate, name

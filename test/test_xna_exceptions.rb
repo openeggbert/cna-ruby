@@ -167,7 +167,7 @@ class XnaExceptionsTest < Minitest::Test
     # added ContentLoadException beside Foundation 27's five ContentSerializer attributes. Neither
     # is raised by anything, here or there.
     assert_equal %i[StorageDeviceNotConnectedException], F::Storage.constants(false).sort
-    assert_equal %i[ContentLoadException ContentSerializerAttribute
+    assert_equal %i[ContentLoadException ContentManager ContentSerializerAttribute
                     ContentSerializerCollectionItemNameAttribute
                     ContentSerializerIgnoreAttribute ContentSerializerRuntimeTypeAttribute
                     ContentSerializerTypeVersionAttribute], F::Content.constants(false).sort

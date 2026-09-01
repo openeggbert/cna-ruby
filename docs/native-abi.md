@@ -115,3 +115,33 @@ The three `storage.h` stream handles — `cna_storage_container_open_file` and i
 `cna_storage_container_create_file` — are deliberately **not** bound. They are the producer for
 XNA's `StorageContainer`, which is a different type and a different lifetime; the audit is in
 `docs/stream-projection-design.md`.
+
+## The content surface
+
+The `ContentManager` projection binds eight already-existing canonical routes and no adjacent
+content API, chosen against the whole 32-route `content.h` because each is what one member of the
+selected contract needs: `cna_game_get_content_manager_ext`, `cna_content_manager_create`,
+`..._destroy`, the root-directory count/copy pair, `..._set_root_directory`, `..._unload` and
+`..._load_texture2d`. The delta is 72 -> 80 bound functions, 238 -> 266 signature measurements and
+18 -> 19 layouts; `CNA_ContentManagerCreateInfo` is the new one, measured 32 bytes at alignment 8
+with its embedded `CNA_StringView` at offset 8. No callback and no constant is added, every other
+measurement is byte-identical, and every route is exported by both admitted versions, so the
+admitted set does not shrink.
+
+Two ownerships, deliberately different. `cna_game_get_content_manager_ext` is **BORROWED**: a CNA
+game owns exactly one content manager as a value member, so the route answers the same handle every
+time, must never be destroyed, and dies with the game. `cna_content_manager_create` is **OWNED** and
+must be destroyed before its game — and it takes a **graphics device**, which is why a standalone
+`ContentManager` cannot create one lazily without a service this binding registers no producer for.
+
+Deliberately not bound, each for a stated reason recorded beside the manifest entries:
+`create_resource` (its own header records that every load through it fails today, the canonical
+embedded-resource stream being a declared placeholder); `load_sound_effect`, `load_texture_cube`,
+`load_sprite_font` and `load_foreign_ext` (no `SoundEffect`, `TextureCube`, `SpriteFont` or custom
+reader is projected, and a materializer for a type this binding does not have would be unreachable);
+`set_content_manager_ext` (the canonical setter copies where XNA's `Game.Content` setter replaces a
+reference); the asset-path and normalized-key pairs (CNA's key case-folds but does not collapse `./`
+or `../`, while XNA's cache key is `TitleContainer.GetCleanPath` under an ordinal-ignore-case
+comparer, so the projection must compute XNA's and cannot consult CNA's); the manifest and
+reader-usage families (diagnostics with no XNA identity); and `register_builtin_loaders` (creation
+already performs it).

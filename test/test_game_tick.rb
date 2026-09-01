@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundation 44 — `Game.Tick`.
@@ -96,9 +97,9 @@ class GameTickTest < Minitest::Test
   end
 
   def test_tick_is_no_longer_missing_and_the_remainder_shrank_by_one
-    remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
+    remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Game")
     refute(remainder.any? { |entry| entry.include?("::Tick ") }, remainder.inspect)
-    assert_equal 110, STRICT.fetch("MISSING_MEMBER")
+    assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
   end
 
   # ---------------------------------------------------------------- the two are never the same call

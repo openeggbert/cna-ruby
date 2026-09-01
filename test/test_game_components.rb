@@ -147,15 +147,17 @@ class GameComponentsTest < Minitest::Test
   # ------------------------------------------------------------------------------- the identities
 
   def test_both_properties_are_selected_and_complete
-    game = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
+    game = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Game")
     refute(game.any? { |entry| entry.include?("::Components") })
     refute(game.any? { |entry| entry.include?("::Services") })
     # 21 until Foundation 41 closed the four Game events and their three raisers, 14 until
     # Foundation 42 closed the four timing and presentation properties, 8 until Foundation 44
     # closed Tick, 7 until Foundation 45 closed IsActive, 6 until Foundation 46 closed
-    # LaunchParameters, 5 until Foundation 47 closed the protected remainder and 2 until
-    # Foundation 48 closed Window. What is left is Content, a missing type rather than a decision.
-    assert_equal 1, game.length
+    # LaunchParameters, 5 until Foundation 47 closed the protected remainder, 2 until
+    # Foundation 48 closed Window and 1 until the ContentManager projection closed Content. Game
+    # owes nothing now, so the remainder is empty and Game is out of the partial register.
+    assert_empty game
+    assert ReviewedScoreboard.complete?(STRICT, "Microsoft.Xna.Framework.Game")
 
     reference = REFERENCE.fetch("types").find { |type| type.fetch("name") == "Microsoft.Xna.Framework.Game" }
     %w[Components Services].each do |name|

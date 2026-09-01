@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 require_relative "../tools/api_compat/verifier"
 
@@ -56,16 +57,19 @@ class BclProjectionTest < Minitest::Test
                   "System.Type" => "Module",
                   # The Stream projection, and the one identity that reaches this register
                   # transitively: no XNA signature names SeekOrigin, System.IO.Stream::Seek does.
+                  "System.Byte[]" => "String",
                   "System.IO.Stream" => "CNA::Runtime::Stream",
                   "System.IO.SeekOrigin" => "CNA::Runtime::Stream::SeekOrigin"},
                  B::TYPES)
     # Foundation 33 also records a decision *not* to invent a constant, and Foundation 36 adds
     # the second such decision.
-    assert_equal %w[System.IDisposable System.IServiceProvider], B::STRUCTURAL_COLLAPSE.keys.sort
+    assert_equal ["System.Action`1", "System.IDisposable", "System.IServiceProvider"],
+                 B::STRUCTURAL_COLLAPSE.keys.sort
     assert_equal({"System.Exception" => "StandardError",
                   "System.Runtime.InteropServices.ExternalException" => "StandardError"},
                  B::EXCEPTION_BASES)
-    assert_equal ["System.Attribute", "System.Collections.Generic.Dictionary`2",
+    assert_equal ["System.Action`1", "System.Attribute", "System.Byte[]",
+                  "System.Collections.Generic.Dictionary`2",
                   "System.Collections.ObjectModel.Collection`1",
                   "System.Collections.ObjectModel.ReadOnlyCollection`1",
                   "System.EventArgs", "System.Exception", "System.IDisposable",
@@ -123,7 +127,7 @@ class BclProjectionTest < Minitest::Test
   end
 
   def test_the_strict_report_measures_the_register
-    assert_equal 15, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
+    assert_equal ReviewedScoreboard::BCL_PROJECTED_IDENTITIES, STRICT.fetch("BCL_PROJECTED_IDENTITIES")
     assert_equal 2, STRICT.fetch("BCL_EXCEPTION_BASES")
     assert_equal({"types" => B::TYPES, "exceptionBases" => B::EXCEPTION_BASES,
                   "thrownExceptions" => B::THROWN_EXCEPTIONS},

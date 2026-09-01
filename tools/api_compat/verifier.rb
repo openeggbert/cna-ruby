@@ -279,12 +279,22 @@ module CNAApiCompat
     # named after the CLR identity may exist.
     def verify_structural_collapse(result)
       CNA::Runtime::BclProjection::STRUCTURAL_COLLAPSE.each_key do |clr_identity|
-        short = clr_identity.split(".").last.to_sym
-        [Object, CNA::Runtime].each do |scope|
-          next unless scope.const_defined?(short, false)
+        # A generic identity's short name is `Action`1`, which is not a Ruby constant name at all,
+        # so `const_defined?` raises on it rather than answering false. The names that *could* be
+        # invented for it are the bare `Action` and the `NameOfT` spelling `mapping-rules.json`
+        # `generics.runtimeTypeName` reserves for a projected generic, and both are checked.
+        definition = clr_identity.split(".").last
+        arity = definition[/`(\d+)\z/, 1]
+        base = definition.sub(/`\d+\z/, "")
+        candidates = [base]
+        candidates << "#{base}Of#{arity.to_i == 1 ? "T" : (1..arity.to_i).map { |n| "T#{n}" }.join}" if arity
+        candidates.map(&:to_sym).each do |short|
+          [Object, CNA::Runtime].each do |scope|
+            next unless scope.const_defined?(short, false)
 
-          result.add("LANGUAGE_MAPPING_MISMATCH",
-                     "BCL structural collapse #{clr_identity}: #{scope}::#{short} was invented")
+            result.add("LANGUAGE_MAPPING_MISMATCH",
+                       "BCL structural collapse #{clr_identity}: #{scope}::#{short} was invented")
+          end
         end
         next unless clr_identity.include?(".") && Object.const_defined?(clr_identity.split(".").first.to_sym, false)
 

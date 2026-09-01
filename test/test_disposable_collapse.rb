@@ -44,7 +44,8 @@ class DisposableCollapseTest < Minitest::Test
 
   def test_the_register_records_the_collapse_and_invents_nothing
     assert B.structural_collapse?(CLR)
-    assert_equal %w[System.IDisposable System.IServiceProvider], B::STRUCTURAL_COLLAPSE.keys.sort
+    assert_equal ["System.Action`1", "System.IDisposable", "System.IServiceProvider"],
+                 B::STRUCTURAL_COLLAPSE.keys.sort
     reason = B::STRUCTURAL_COLLAPSE.fetch(CLR)
     assert_includes reason, "Dispose()"
     assert_includes reason, "no Ruby constant"
@@ -243,24 +244,28 @@ class DisposableCollapseTest < Minitest::Test
     # LaunchParameters, RUNTIME_DATA was 5 until Foundation 48 built GameWindow over the canonical
     # window routes, and BCL_PROJECTION fell to 2 when Foundation 49 projected the
     # SerializationInfo/StreamingContext pair and consumed both exception types that named it.
-    # BCL_PROJECTION fell again, to 1, when the Stream projection consumed TitleContainer.
-    assert_equal({"BCL_PROJECTION" => 1, "BCL_PROJECTION+NATIVE_RUNTIME" => 3,
-                  "NATIVE_RUNTIME" => 5, "NATIVE_RUNTIME+RUNTIME_DATA" => 1, "RUNTIME_DATA" => 1},
+    # BCL_PROJECTION fell again, to 1, when the Stream projection consumed TitleContainer, and the
+    # ContentManager milestone reshaped the rest: ContentManager left, ResourceContentManager and
+    # GamerServicesComponent appeared behind it, and the System.Byte[] decision took Microphone's
+    # BCL half away.
+    assert_equal({"BCL_PROJECTION" => 2, "BCL_PROJECTION+NATIVE_RUNTIME" => 1,
+                  "NATIVE_RUNTIME" => 7, "NATIVE_RUNTIME+RUNTIME_DATA" => 1, "RUNTIME_DATA" => 1},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end
 
-  # ContentManager keeps its BCL blocker: the identity it needed was not the only one it named.
-  def test_content_manager_keeps_its_other_bcl_blockers
-    entry = FRONTIER.fetch("dependencyCompleteCandidates")
-                    .find { |item| item.fetch("name") == "Microsoft.Xna.Framework.Content.ContentManager" }
-    assert_includes entry.fetch("blockers"), "BCL_PROJECTION"
-    refute_includes entry.fetch("unmappedBclTypes"), CLR
-    # System.IO.Stream left this list when the Stream projection landed; System.Action`1 and the
-    # generic method parameter !!0 are what still keep ContentManager on the frontier.
-    refute_includes entry.fetch("unmappedBclTypes"), "System.IO.Stream"
-    assert_includes entry.fetch("unmappedBclTypes"), "System.Action`1"
-    assert_includes entry.fetch("unmappedBclTypes"), "!!0"
+  # ContentManager kept a BCL blocker after this collapse, and the identity it needed was not the
+  # only one it named: System.IO.Stream and System.Action`1 both had to be decided before it could
+  # be built, and both since were. What survives of the original claim is that *this* collapse did
+  # not unblock it, which is now stated by where it ended up rather than by what it was waiting on.
+  def test_content_manager_needed_more_than_this_collapse
+    refute_includes FRONTIER.fetch("dependencyCompleteCandidates").map { |item| item.fetch("name") },
+                    "Microsoft.Xna.Framework.Content.ContentManager"
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Content.ContentManager"
+    assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
+    ["System.IO.Stream", "System.Action`1"].each do |later|
+      assert_includes FRONTIER.fetch("mappedBclTypes"), later
+    end
   end
 
   # ---------------------------------------------------------------- and exactly what it does not
@@ -288,12 +293,15 @@ class DisposableCollapseTest < Minitest::Test
   # Dispose(Boolean) the collapse did not supply -- and Foundation 47 later supplied it from its own
   # IL, which is exactly the separation this test exists to state.
   def test_it_completes_no_type_and_moves_no_missing_member
-    assert_equal 6, STRICT.fetch("PARTIAL_TYPES")
-    assert_equal 110, STRICT.fetch("MISSING_MEMBER")
+    assert_equal ReviewedScoreboard::PARTIAL_TYPES, STRICT.fetch("PARTIAL_TYPES")
+    assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
     assert_equal ReviewedScoreboard::COMPLETE_TYPES, STRICT.fetch("COMPLETE_TYPES"),
                  "Foundation 38 added GameComponent, 40 IGraphicsDeviceService, 46 " \
                  "LaunchParameters, 48 GameWindow"
-    assert_includes STRICT.fetch("partialTypes").keys, "Microsoft.Xna.Framework.Game"
-    assert_equal 2, CNA::Runtime::BclProjection::STRUCTURAL_COLLAPSE.length
+    # Game *was* the standing example of a partial type this collapse did not complete; the
+    # ContentManager projection has since completed it outright, which does not weaken the claim
+    # that this collapse moved nothing.
+    assert ReviewedScoreboard.complete?(STRICT, "Microsoft.Xna.Framework.Game")
+    assert_equal 3, CNA::Runtime::BclProjection::STRUCTURAL_COLLAPSE.length
   end
 end

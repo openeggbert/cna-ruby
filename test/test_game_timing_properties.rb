@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
 # Foundation 42 — Game's four timing and presentation properties.
@@ -62,12 +63,12 @@ class GameTimingPropertiesTest < Minitest::Test
   def test_every_property_is_selected_and_no_longer_missing
     selected = SIGNATURES.fetch("Microsoft.Xna.Framework.Game").fetch("members")
                          .map { |member| member.fetch("name") }
-    remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
+    remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Game")
     NAMES.each do |name|
       assert_includes selected, name
       refute(remainder.any? { |entry| entry.include?("::#{name} ") }, name)
     end
-    assert_equal 110, STRICT.fetch("MISSING_MEMBER")
+    assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
     assert_equal 0, STRICT.fetch("UNEXPECTED_MEMBER")
     # Unrelated and pre-existing: GraphicsDevice::Viewport, whose setter is deliberately excluded.
     assert_equal ["Microsoft.Xna.Framework.Graphics.GraphicsDevice::Viewport"],
@@ -203,10 +204,11 @@ class GameTimingPropertiesTest < Minitest::Test
   # Tick left this list in Foundation 44 and IsActive in Foundation 45, the latter by implementing
   # `isActive && !(GamerServicesDispatcher.IsInitialized && Guide.IsVisible)` over the three
   # canonical CNA routes that answer its three terms.
-  def test_the_remaining_game_members_are_untouched
-    remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
+  def test_no_game_member_remains
+    remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Game")
                       .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_equal %w[Content], remainder
+    # `Content` was the last one, and the ContentManager projection closed it.
+    assert_empty remainder
   end
 
   private
@@ -250,11 +252,11 @@ class GameLoopStateTest < Minitest::Test
       assert_equal false, member.fetch("static"), name
       assert_equal 0, F::Game.instance_method(name).arity, name
     end
-    remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
+    remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Game")
     %w[SuppressDraw ResetElapsedTime].each do |name|
       refute(remainder.any? { |entry| entry.include?("::#{name} ") }, name)
     end
-    assert_equal 110, STRICT.fetch("MISSING_MEMBER")
+    assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
   end
 
   # Neither creates a host: ResetElapsedTime on a Game with no loop has no accumulated time to

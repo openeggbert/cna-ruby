@@ -223,6 +223,44 @@ module CNA
         signature("cna_title_location_copy_path", T[:result], [T[:handle], pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows Game; caller output"),
         signature("cna_title_location_set_path_ext", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64])], ownership: "borrows Game; PROCESS_GLOBAL title location; copies the bytes"),
         signature("cna_title_container_read_ext", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("uint8_t"), T[:u64], pointer("uint64_t")], ownership: "borrows Game; caller output; no partial write on BUFFER_TOO_SMALL"),
+        # The content surface. Seven routes and no adjacent content API, chosen against the whole
+        # 32-route `content.h` because each is what one member of the selected `ContentManager`
+        # contract actually needs.
+        #
+        # `cna_game_get_content_manager_ext` is the producer for `Game.Content`, and its ownership
+        # is the reason it is here rather than `cna_content_manager_create`: a CNA game owns exactly
+        # one content manager **as a value member**, so the route answers the same handle every
+        # time, cannot be destroyed, and dies with the game. That is one XNA ContentManager to one
+        # CNA content manager, which is the ownership the GraphicsDeviceManager producer audit
+        # established -- creating a second manager for a game that already has one would give every
+        # game two native caches and use one of them.
+        #
+        # `cna_content_manager_create` is the OWNED counterpart, for a standalone
+        # `new ContentManager(services)`. It takes a **graphics device**, which XNA's constructor
+        # does not, which is why the projection creates the native manager lazily rather than in
+        # `initialize`.
+        #
+        # Deliberately not bound: `create_resource` (its own header records that every load through
+        # it fails today, because the canonical embedded-resource stream is a declared placeholder);
+        # `load_sound_effect`, `load_texture_cube`, `load_sprite_font` and `load_foreign_ext` (no
+        # `SoundEffect`, `TextureCube`, `SpriteFont` or custom reader is projected yet, and a
+        # materializer for a type this binding does not have would be unreachable);
+        # `set_content_manager_ext` (the canonical setter **copies**, where XNA's `Game.Content`
+        # setter replaces a reference -- a different operation, so the projection replaces the
+        # managed reference and this route stays unbound); `get_asset_path`/`get_normalized_key`
+        # (CNA's key case-folds but does not collapse `./` or `../`, while XNA's cache key is
+        # `TitleContainer.GetCleanPath` under `StringComparer.OrdinalIgnoreCase`, so the projection
+        # must compute XNA's key and cannot consult CNA's); the manifest and reader-usage families
+        # (diagnostics with no XNA identity); and `register_builtin_loaders` (creation already does
+        # it and the route exists only to undo an alteration nothing here makes).
+        signature("cna_game_get_content_manager_ext", T[:result], [T[:handle], pointer("CNA_Handle")], ownership: "borrows Game; returns BORROWED content manager owned by the Game as a value member"),
+        signature("cna_content_manager_create", T[:result], [T[:handle], pointer("CNA_ContentManagerCreateInfo", const: true), pointer("CNA_Handle")], ownership: "returns OWNED content manager; must be destroyed before its Game"),
+        signature("cna_content_manager_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED content manager"),
+        signature("cna_content_manager_get_root_directory_size", T[:result], [T[:handle], pointer("uint64_t")], ownership: "caller output"),
+        signature("cna_content_manager_copy_root_directory", T[:result], [T[:handle], pointer("char"), T[:u64], pointer("uint64_t")], ownership: "caller output"),
+        signature("cna_content_manager_set_root_directory", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64])], ownership: "borrows manager; copies the bytes"),
+        signature("cna_content_manager_unload", T[:result], [T[:handle]], ownership: "borrows manager; drops the native cache and leaves earlier owned handles valid"),
+        signature("cna_content_manager_load_texture2d", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("CNA_Handle")], ownership: "returns a NEW independently owned Texture2D per call; survives unload and must be destroyed before the Game"),
         signature("cna_graphics_device_manager_create", T[:result], [T[:handle], pointer("CNA_GraphicsDeviceManagerHandle")], ownership: "returns OWNED manager"),
         signature("cna_graphics_device_manager_get_graphics_device", T[:result], [handle("CNA_GraphicsDeviceManagerHandle"), pointer("CNA_Handle")], ownership: "returns callback BORROWED device"),
         signature("cna_graphics_device_manager_dispose", T[:result], [handle("CNA_GraphicsDeviceManagerHandle")], ownership: "borrows manager; canonical dispose"),

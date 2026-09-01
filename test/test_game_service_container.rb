@@ -214,7 +214,7 @@ class GameServiceContainerTest < Minitest::Test
   # and no member of this binding calls AddService.
   def test_nothing_in_this_binding_registers_a_service
     assert_nil container.GetService(F::IGraphicsDeviceManager)
-    assert_includes STRICT.fetch("partialTypes").keys, "Microsoft.Xna.Framework.Game"
+    assert ReviewedScoreboard.complete?(STRICT, "Microsoft.Xna.Framework.Game")
 
     game = F::Game.new
     assert_instance_of F::GameServiceContainer, game.Services

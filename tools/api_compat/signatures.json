@@ -1360,6 +1360,202 @@
       "rubyName": "Microsoft::Xna::Framework::TitleContainer"
     },
     {
+      "name": "Microsoft.Xna.Framework.Content.ContentManager",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+        "System.IDisposable"
+      ],
+      "directInterfaces": [
+        "System.IDisposable"
+      ],
+      "genericParameters": [],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "serviceProvider",
+              "type": "System.IServiceProvider",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "serviceProvider",
+              "type": "System.IServiceProvider",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "rootDirectory",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "disposing",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Unload",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Load",
+          "static": false,
+          "access": "public",
+          "returnType": "!!0",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [],
+              "typeConstraints": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "assetName",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadAsset",
+          "static": false,
+          "access": "protected",
+          "returnType": "!!0",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [],
+              "typeConstraints": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "assetName",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "recordDisposableObject",
+              "type": "System.Action`1[System.IDisposable]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "OpenStream",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.IO.Stream",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "assetName",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "ServiceProvider",
+          "type": "System.IServiceProvider",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "RootDirectory",
+          "type": "System.String",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": []
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Content::ContentManager"
+    },
+    {
       "name": "Microsoft.Xna.Framework.Content.ContentSerializerAttribute",
       "kind": "class",
       "flags": false,
@@ -27143,6 +27339,17 @@
           "set": false,
           "getAccess": "public",
           "setAccess": null,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "Content",
+          "type": "Microsoft.Xna.Framework.Content.ContentManager",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
           "parameters": []
         },
         {

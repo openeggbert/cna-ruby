@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "GEM_FILENAME": "cna-ruby-0.1.0.dev0.gem",
   "VERSION": "0.1.0.dev0",
-  "GEM_SHA256": "c15f8d59f0e82965e501aaa9a755801e93e81fe3e69403e190b81823886919f2",
-  "GEM_ENTRIES": 60,
+  "GEM_SHA256": "0e27829a4f5c5b6639fcaa995499304192e92ed789b0d6c24196ee834e8d413e",
+  "GEM_ENTRIES": 62,
   "FORBIDDEN_ENTRIES": [
 
   ],
@@ -38,6 +38,7 @@
     "lib/cna/runtime/packed_vector.rb",
     "lib/cna/runtime/read_only_collection.rb",
     "lib/cna/runtime/serialization.rb",
+    "lib/cna/runtime/stream.rb",
     "lib/cna/runtime/value_semantics.rb",
     "lib/cna/runtime/xact_spatial.rb",
     "lib/cna/version.rb",
@@ -58,6 +59,7 @@
     "lib/microsoft/xna/framework/interfaces.rb",
     "lib/microsoft/xna/framework/media.rb",
     "lib/microsoft/xna/framework/storage.rb",
+    "lib/microsoft/xna/framework/title_container.rb",
     "lib/microsoft/xna/framework/values.rb",
     "sig/cna/runtime_event.rbs",
     "sig/microsoft/xna/audio.rbs",

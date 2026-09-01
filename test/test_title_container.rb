@@ -57,11 +57,12 @@ class TitleContainerTest < Minitest::Test
     refute_includes names, "Microsoft.Xna.Framework.TitleContainer"
     assert_empty FRONTIER.fetch("consumableCandidates")
 
-    content = FRONTIER.fetch("dependencyCompleteCandidates")
-                      .find { |item| item.fetch("name") == "Microsoft.Xna.Framework.Content.ContentManager" }
-    refute_nil content
-    refute_includes content.fetch("unmappedBclTypes"), "System.IO.Stream"
-    assert_includes content.fetch("unmappedBclTypes"), "System.Action`1"
+    # ContentManager was the other half of what Stream unblocked, and the Action`1 decision that
+    # followed consumed it too, so it is complete rather than waiting.
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Content.ContentManager"
+    FRONTIER.fetch("dependencyCompleteCandidates").each do |candidate|
+      refute_includes candidate.fetch("unmappedBclTypes"), "System.IO.Stream", candidate.fetch("name")
+    end
   end
 
   # ------------------------------------------------------------------------- the path algorithm
@@ -331,7 +332,7 @@ class TitleContainerTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_adds_no_content_pipeline_and_no_storage_runtime
-    %i[ContentManager ContentReader ContentTypeReader].each do |absent|
+    %i[ContentReader ContentTypeReader].each do |absent|
       refute F::Content.const_defined?(absent, false), absent.to_s
     end
     %i[StorageDevice StorageContainer].each do |absent|

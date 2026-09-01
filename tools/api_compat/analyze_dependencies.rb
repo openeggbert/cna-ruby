@@ -251,11 +251,26 @@ bcl_identities = lambda do |signature|
   # generic hid its definition behind an XNA type argument, here it hides its already-mapped
   # definition behind a BCL one. A generic the register does *not* project stays opaque, because
   # then the whole constructed form really is what is missing.
-  if outer != stripped && CNA::Runtime::BclProjection::TYPES.key?(outer)
+  # A constructed generic whose *definition* the register handles -- projected or structurally
+  # collapsed -- is no longer opaque either way. `System.Action`1[System.IDisposable]` requires
+  # exactly what its definition requires plus what `System.IDisposable` requires, and both are
+  # decided; reporting the whole constructed string as one unmapped identity would say
+  # `ContentManager` is blocked on something the register has already ruled on.
+  if outer != stripped && (CNA::Runtime::BclProjection::TYPES.key?(outer) ||
+                           CNA::Runtime::BclProjection.structural_collapse?(outer))
     return ([outer] + CNA::Runtime::BclProjection.element_types(stripped).flat_map { |argument|
       bcl_identities.call(argument)
     }).uniq
   end
+
+  # A CLR generic parameter placeholder -- `!!0` for a generic method's, `!0` for a generic type's,
+  # either as an array -- is a **language construct, not a type identity**. Reporting `!!0` as an
+  # unmapped BCL type said that `ContentManager.Load<T>` was blocked on a missing projection of
+  # something called "!!0", which no register entry could ever have supplied. What resolves it is
+  # the generic-method projection rule (mapping-rules.json `generics.methodProjection`), and
+  # `test_dependency_frontier.rb` restates that independently so this cannot quietly excuse a real
+  # unmapped identity: the rule matches only the placeholder spelling and nothing else.
+  return [] if CNA::Runtime::BclProjection.generic_parameter?(stripped)
 
   identities = []
   identities << stripped unless reference_by_name.keys.any? { |name| stripped.include?(name) }

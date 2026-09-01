@@ -251,11 +251,13 @@ class GameWindowTest < Minitest::Test
 
   # ------------------------------------------------------------------------ Game.Window itself
 
-  def test_game_window_closed_the_member_and_left_only_content
-    remainder = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Game")
+  # It left only `Content` when it landed; the ContentManager projection has since closed that too.
+  def test_game_window_closed_the_member_and_content_later_closed_the_rest
+    remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Game")
                       .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_equal %w[Content], remainder
-    assert_equal 110, STRICT.fetch("MISSING_MEMBER")
+    assert_empty remainder
+    refute_includes remainder, "Window"
+    assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
     assert_equal ReviewedScoreboard::COMPLETE_TYPES, STRICT.fetch("COMPLETE_TYPES")
   end
 

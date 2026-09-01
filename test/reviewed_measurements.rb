@@ -21,7 +21,7 @@ module NativeSurfaceCensus
 
   # The census the repository last reviewed. `test_native_abi_gate.rb` compares the two, so this
   # file cannot drift from the manifest silently in either direction.
-  REVIEWED = { functions: 72, callbacks: 3, constants: 65, layouts: 18 }.freeze
+  REVIEWED = { functions: 80, callbacks: 3, constants: 65, layouts: 19 }.freeze
 end
 
 # The strict XNA scoreboard, for exactly the same reason and with exactly the same rule: a milestone
@@ -30,13 +30,25 @@ end
 # and left no single place a reader could call the authority. `docs/generated/api-compat-report.json`
 # is the measurement; this is the reviewed expectation of it.
 module ReviewedScoreboard
-  TARGET_TYPES = 150
-  TARGET_MEMBERS = 1838
-  COMPLETE_TYPES = 144
-  PARTIAL_TYPES = 6
-  MISSING_TYPES = 107
-  MISSING_MEMBER = 110
-  BCL_PROJECTED_IDENTITIES = 15
+  TARGET_TYPES = 151
+  TARGET_MEMBERS = 1849
+  COMPLETE_TYPES = 146
+  PARTIAL_TYPES = 5
+  MISSING_TYPES = 106
+  MISSING_MEMBER = 109
+  BCL_PROJECTED_IDENTITIES = 17
   BCL_EXCEPTION_BASES = 2
   BCL_THROWN_EXCEPTIONS = 8
+  # The members a type still owes, or `[]` once the strict report calls it complete.
+  #
+  # Eight tests assert "the member this milestone added is no longer in `Game`'s partial
+  # remainder", each by fetching `partialTypes["…Game"]`. `Game.Content` took `Game` out of the
+  # partial register entirely, which is the strongest possible form of that claim and also a
+  # `KeyError` for every one of them. Reading the remainder through here keeps each test asserting
+  # exactly what it meant, and `assert_complete` states the stronger fact once.
+  def self.partial_remainder(strict, name)
+    strict.fetch("partialTypes").fetch(name, [])
+  end
+
+  def self.complete?(strict, name) = strict.fetch("completeTypeNames").include?(name)
 end

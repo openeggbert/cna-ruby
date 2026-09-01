@@ -84,6 +84,15 @@ module Microsoft
           # CNA reports, and so the missing-file message can name it.
           private
 
+          # The absolute-path half of `ContentManager.OpenStream`. XNA opens a `FileStream` there
+          # rather than going through `OpenStream`, precisely because `IsCleanPathAbsolute` would
+          # reject the name; CNA's reader takes an absolute path, so the route is the same one and
+          # only the validation is skipped. It is private and has exactly one caller.
+          def open_unvalidated(path)
+            host = CNA::Runtime::Context.native_host("ContentManager.OpenStream")
+            CNA::Runtime::Stream.__send__(:over_bytes, read_title_file(host, String(path)), name: String(path))
+          end
+
           def read_title_file(host, clean)
             library = CNA::Native.library
             view = CNA::Native::Layouts::StringView.new(clean.b)

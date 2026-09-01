@@ -728,11 +728,17 @@ module Microsoft
           @currently_drawing_components = []
           @not_yet_initialized = []
           @gameServices = GameServiceContainer.new
+          # `.ctor` step 10: `content = new ContentManager(gameServices)`. XNA builds it eagerly and
+          # it is an ordinary settable field; its default RootDirectory is `String.Empty`, because
+          # the one-argument ContentManager constructor forwards `String.Empty`. Binding it to CNA's
+          # own content manager waits for the host, exactly as `Window` does.
+          @content = Content::ContentManager.new(@gameServices)
           @owner_thread = Thread.current
           @monitor = ::Monitor.new
           @generation = CNA::Runtime::Generation.new(@owner_thread)
           @host = nil
           @graphics_manager = nil
+          @content_bound = false
           @GraphicsDevice = nil
           @native_children = []
           @disposed = false
@@ -791,6 +797,38 @@ module Microsoft
           assert_owner_thread!
           ensure_host
           @gameWindow
+        end
+
+        # `get_Content` is one `ldfld` and `set_Content` is a null check followed by one `stfld`,
+        # with the refusal built by the **parameterless** `ArgumentNullException` constructor rather
+        # than the one naming a parameter. So the property is an ordinary managed reference, and the
+        # projection keeps it one.
+        #
+        # What the getter does beyond XNA is bind the manager to the content manager CNA's game
+        # already owns, the first time a host exists. A CNA game owns exactly one content manager as
+        # a value member, so `cna_game_get_content_manager_ext` borrows rather than owns: the same
+        # handle every time, never destroyed, released with the game. That is one XNA ContentManager
+        # to one CNA content manager. Creating a second native manager for a game that already has
+        # one is the duplication `docs/graphics-device-service-producer-audit.md` refused, and
+        # `cna_game_set_content_manager_ext` is deliberately unbound for the same reason plus one
+        # more: the canonical setter **copies**, where this property replaces a reference.
+        #
+        # The managed root directory is authoritative and is pushed down on binding. CNA's own
+        # default is `"Content"` and XNA's is `String.Empty`; the projection keeps XNA's.
+        def Content
+          raise CNA::DisposedObjectError, "Game is disposed" if disposed?
+          assert_owner_thread!
+          ensure_host
+          bind_content!
+          @content
+        end
+
+        def Content=(value)
+          raise CNA::DisposedObjectError, "Game is disposed" if disposed?
+          assert_owner_thread!
+          raise ArgumentError, "value" if value.nil?
+
+          @content = value
         end
 
         # `get_IsActive` is thirty bytes and is **not** a field read. In full:
@@ -1296,6 +1334,24 @@ module Microsoft
           raise ArgumentError, "a Game accepts exactly one GraphicsDeviceManager" if @graphics_manager
           @graphics_manager = manager
           @GraphicsDevice = manager.GraphicsDevice
+        end
+
+        # Binds `@content` to the game's borrowed native content manager, once, and only while
+        # `@content` is still the manager this Game made. A consumer that assigned its own through
+        # `Content=` keeps whatever native binding that one has: XNA's setter replaces a reference
+        # and nothing else, so adopting a foreign manager into this game's native slot would be an
+        # operation XNA does not perform.
+        def bind_content!
+          return if @content_bound || @host.nil? || @host.handle.zero?
+          return unless @content.is_a?(Content::ContentManager)
+
+          output = CNA::Native.library.pointer_for("Q", 0)
+          CNA::Native.library.call("cna_game_get_content_manager_ext", @host.handle, output)
+          handle = output[0, 8].unpack1("Q")
+          return if handle.zero?
+
+          @content.__send__(:bind_borrowed!, self, handle)
+          @content_bound = true
         end
 
         def ensure_host

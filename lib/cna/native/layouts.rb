@@ -193,6 +193,29 @@ module CNA
         end
       end
 
+      # `CNA_ContentManagerCreateInfo`: two versioning words, a by-value `CNA_StringView` for the
+      # root directory and one reserved word. The string view is embedded rather than passed, so
+      # this is an ordinary aggregate and needs none of the eightbyte expansion a by-value
+      # *parameter* does; the bytes the view points at must outlive the call, which is why the
+      # constructor keeps the buffer alive on the instance.
+      class ContentManagerCreateInfo < Structure
+        layout size: 32, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("root_directory", "CNA_StringView", 8, 16),
+          Layouts.field("reserved", "uint64_t", 24, 8)
+        ]
+
+        def initialize(root_directory)
+          super()
+          @bytes = String(root_directory).b
+          @buffer = Fiddle::Pointer[@bytes]
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+          write_pointer(8, @buffer)
+          write_u64(16, @bytes.bytesize)
+        end
+      end
+
       class SpriteBatchBeginInfo < Structure
         layout size: 16, alignment: 4, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

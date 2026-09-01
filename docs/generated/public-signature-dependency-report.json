@@ -1,17 +1,16 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 150,
-  "completeTypes": 144,
+  "targetTypes": 151,
+  "completeTypes": 146,
   "partialTypes": [
-    "Microsoft.Xna.Framework.Game",
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
     "Microsoft.Xna.Framework.Graphics.GraphicsResource",
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 107,
+  "missingTypes": 106,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -30,10 +29,11 @@
   },
   "selectionRoute": "none-consumable",
   "mappedBclTypes": [
-    "!0",
+    "System.Action`1",
     "System.Attribute",
     "System.Boolean",
     "System.Byte",
+    "System.Byte[]",
     "System.Collections.Generic.Dictionary`2",
     "System.Collections.Generic.ICollection`1",
     "System.Collections.Generic.IEnumerable`1",
@@ -73,6 +73,7 @@
   "bclProjectionRegister": {
     "types": {
       "System.EventArgs": "CNA::Runtime::EventArgs",
+      "System.Byte[]": "String",
       "System.IO.Stream": "CNA::Runtime::Stream",
       "System.IO.SeekOrigin": "CNA::Runtime::Stream::SeekOrigin",
       "System.Collections.Generic.Dictionary`2": "CNA::Runtime::Dictionary",
@@ -90,80 +91,13 @@
     }
   },
   "blockerSummary": {
-    "BCL_PROJECTION": 1,
-    "BCL_PROJECTION+NATIVE_RUNTIME": 3,
-    "NATIVE_RUNTIME": 5,
+    "BCL_PROJECTION": 2,
+    "BCL_PROJECTION+NATIVE_RUNTIME": 1,
+    "NATIVE_RUNTIME": 7,
     "NATIVE_RUNTIME+RUNTIME_DATA": 1,
     "RUNTIME_DATA": 1
   },
   "partialDependencySatisfiedCandidates": [
-    {
-      "name": "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent",
-      "kind": "class",
-      "expectedRubyIdentities": 3,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Game",
-        "Microsoft.Xna.Framework.GameComponent",
-        "Microsoft.Xna.Framework.GameTime"
-      ],
-      "unmetDependencies": [
-        "Microsoft.Xna.Framework.Game"
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-        "Microsoft.Xna.Framework.Game": {
-          "reachedMembers": [
-            "Exit",
-            "Services",
-            "Window"
-          ],
-          "reachedButMissing": [
-
-          ]
-        }
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.GameWindow"
-      ],
-      "ilOnlyUnmetDependencies": [
-
-      ],
-      "partialDependencySatisfied": true,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": false,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "Initialize",
-        "Update"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Game.dll",
-      "nativeReachableMethods": [
-        "Initialize",
-        "Update"
-      ],
-      "runtimeDataDetail": null
-    },
     {
       "name": "Microsoft.Xna.Framework.DrawableGameComponent",
       "kind": "class",
@@ -176,21 +110,12 @@
         "Microsoft.Xna.Framework.IDrawable"
       ],
       "unmetDependencies": [
-        "Microsoft.Xna.Framework.Game",
         "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
       ],
       "missingTypeDependencies": [
 
       ],
       "partialTypeDependencies": {
-        "Microsoft.Xna.Framework.Game": {
-          "reachedMembers": [
-            "Services"
-          ],
-          "reachedButMissing": [
-
-          ]
-        },
         "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
           "reachedMembers": [
 
@@ -572,8 +497,6 @@
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
-        "!!0",
-        "!!0[]",
         "Microsoft.Xna.Framework.Graphics.IGraphicsResource"
       ],
       "reachedInterfaces": [
@@ -605,68 +528,6 @@
         "ReleaseNativeObject",
         "SaveDataForRecreation",
         "T>"
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Content.ContentManager",
-      "kind": "class",
-      "expectedRubyIdentities": 10,
-      "dependencies": [
-
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Content.ContentLoadException",
-        "Microsoft.Xna.Framework.Content.ContentReader",
-        "Microsoft.Xna.Framework.TitleContainer"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Content.ContentReader"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Game::Content (1 overload)"
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "BCL_PROJECTION",
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-        "!!0",
-        "System.Action`1",
-        "System.Action`1[System.IDisposable]"
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "Dispose",
-        "Unload",
-        "Load",
-        "ReadAsset",
-        "OpenStream"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-        "ReadAsset<T>"
       ],
       "runtimeDataDetail": null
     },
@@ -716,8 +577,6 @@
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
-        "!!0",
-        "!!0[]",
         "Microsoft.Xna.Framework.Graphics.IGraphicsResource"
       ],
       "reachedInterfaces": [
@@ -1191,6 +1050,116 @@
       "runtimeDataDetail": null
     },
     {
+      "name": "Microsoft.Xna.Framework.Content.ResourceContentManager",
+      "kind": "class",
+      "expectedRubyIdentities": 2,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Content.ContentManager"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.Content.ContentLoadException"
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "BCL_PROJECTION"
+      ],
+      "unmappedBclTypes": [
+        "System.Resources.ResourceManager"
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "OpenStream"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.dll",
+      "nativeReachableMethods": [
+
+      ],
+      "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent",
+      "kind": "class",
+      "expectedRubyIdentities": 3,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Game",
+        "Microsoft.Xna.Framework.GameComponent",
+        "Microsoft.Xna.Framework.GameTime"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.GameWindow"
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "Initialize",
+        "Update"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Game.dll",
+      "nativeReachableMethods": [
+        "Initialize",
+        "Update"
+      ],
+      "runtimeDataDetail": null
+    },
+    {
       "name": "Microsoft.Xna.Framework.Media.MediaSource",
       "kind": "class",
       "expectedRubyIdentities": 4,
@@ -1359,68 +1328,6 @@
       "runtimeDataDetail": null
     },
     {
-      "name": "Microsoft.Xna.Framework.Content.ContentManager",
-      "kind": "class",
-      "expectedRubyIdentities": 10,
-      "dependencies": [
-
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Content.ContentLoadException",
-        "Microsoft.Xna.Framework.Content.ContentReader",
-        "Microsoft.Xna.Framework.TitleContainer"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Content.ContentReader"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-        "Microsoft.Xna.Framework.Game::Content (1 overload)"
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "BCL_PROJECTION",
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-        "!!0",
-        "System.Action`1",
-        "System.Action`1[System.IDisposable]"
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "Dispose",
-        "Unload",
-        "Load",
-        "ReadAsset",
-        "OpenStream"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-        "ReadAsset<T>"
-      ],
-      "runtimeDataDetail": null
-    },
-    {
       "name": "Microsoft.Xna.Framework.Audio.AudioCategory",
       "kind": "struct",
       "expectedRubyIdentities": 11,
@@ -1584,11 +1491,10 @@
       ],
       "dependencyComplete": true,
       "blockers": [
-        "BCL_PROJECTION",
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
-        "System.Byte[]"
+
       ],
       "reachedInterfaces": [
 

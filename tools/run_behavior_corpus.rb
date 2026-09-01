@@ -3184,12 +3184,19 @@ def execute(item)
     by_name = frontier.fetch("dependencyCompleteCandidates").to_h { |entry| [entry.fetch("name"), entry] }
     instance = by_name.fetch("Microsoft.Xna.Framework.Audio.SoundEffectInstance")
     cue = by_name.fetch("Microsoft.Xna.Framework.Audio.Cue")
-    content = by_name.fetch("Microsoft.Xna.Framework.Content.ContentManager")
-    # Both audio types lose the BCL blocker and keep NATIVE_RUNTIME, so neither is consumable;
-    # ContentManager named more than this one identity and keeps BCL_PROJECTION.
+    strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
+    # Both audio types lose the BCL blocker and keep NATIVE_RUNTIME, so neither is consumable.
+    #
+    # The fourth element used to read ContentManager's blockers out of the candidate list, to say
+    # that it named more than this one identity and so kept BCL_PROJECTION. That was true and is
+    # still the point, but the type is no longer *on* the list to read: the Stream and Action`1
+    # projections decided the identities it was waiting on and it is complete. The element now says
+    # the same thing about the same type from the other side -- this collapse did not unblock it,
+    # and what did is recorded where it happened.
     [instance.fetch("blockers"), cue.fetch("blockers"),
      instance.fetch("unmappedBclTypes").empty? && cue.fetch("unmappedBclTypes").empty?,
-     content.fetch("blockers").include?("BCL_PROJECTION"),
+     !by_name.key?("Microsoft.Xna.Framework.Content.ContentManager") &&
+       strict.fetch("completeTypeNames").include?("Microsoft.Xna.Framework.Content.ContentManager"),
      frontier.fetch("consumableCandidates").length,
      frontier.fetch("mappedBclTypes").include?("System.IDisposable")]
   when "GameComponentCollection.Contract"
