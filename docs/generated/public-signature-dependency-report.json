@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 154,
-  "completeTypes": 149,
+  "targetTypes": 155,
+  "completeTypes": 150,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
@@ -10,7 +10,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 103,
+  "missingTypes": 102,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -93,7 +93,7 @@
   "blockerSummary": {
     "BCL_PROJECTION": 2,
     "BCL_PROJECTION+NATIVE_RUNTIME": 1,
-    "NATIVE_RUNTIME": 6,
+    "NATIVE_RUNTIME": 5,
     "NATIVE_RUNTIME+RUNTIME_DATA": 1,
     "RUNTIME_DATA": 1
   },
@@ -895,63 +895,6 @@
       "ilAssembly": "Microsoft.Xna.Framework.dll",
       "nativeReachableMethods": [
 
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent",
-      "kind": "class",
-      "expectedRubyIdentities": 3,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Game",
-        "Microsoft.Xna.Framework.GameComponent",
-        "Microsoft.Xna.Framework.GameTime"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.GameWindow"
-      ],
-      "ilOnlyUnmetDependencies": [
-
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "Initialize",
-        "Update"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Game.dll",
-      "nativeReachableMethods": [
-        "Initialize",
-        "Update"
       ],
       "runtimeDataDetail": null
     },

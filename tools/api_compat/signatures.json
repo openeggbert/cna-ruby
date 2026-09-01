@@ -1305,6 +1305,69 @@
       "rubyName": "Microsoft::Xna::Framework::GameComponent"
     },
     {
+      "name": "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "Microsoft.Xna.Framework.GameComponent",
+      "interfaces": [
+        "Microsoft.Xna.Framework.IGameComponent",
+        "Microsoft.Xna.Framework.IUpdateable",
+        "System.IDisposable"
+      ],
+      "directInterfaces": [],
+      "genericParameters": [],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "game",
+              "type": "Microsoft.Xna.Framework.Game",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Initialize",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Update",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "gameTime",
+              "type": "Microsoft.Xna.Framework.GameTime",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::GamerServices::GamerServicesComponent"
+    },
+    {
       "name": "Microsoft.Xna.Framework.FrameworkDispatcher",
       "kind": "class",
       "flags": false,

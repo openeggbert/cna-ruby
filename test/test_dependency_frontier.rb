@@ -303,6 +303,7 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Content.ContentManager
       Microsoft.Xna.Framework.FrameworkDispatcher
       Microsoft.Xna.Framework.Game
+      Microsoft.Xna.Framework.GamerServices.GamerServicesComponent
       Microsoft.Xna.Framework.Graphics.Texture
       Microsoft.Xna.Framework.Graphics.TextureCollection
       Microsoft.Xna.Framework.Input.GamePad
@@ -348,7 +349,7 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 11, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 10, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and

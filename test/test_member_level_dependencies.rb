@@ -167,12 +167,13 @@ class MemberLevelDependenciesTest < Minitest::Test
     assert_raises(NotImplementedError) { Class.new { include module_ }.new.GraphicsDevice }
   end
 
-  # GamerServicesComponent is blocked on a *member* of the partial Game, not only on the
-  # GamerServices runtime.
-  def test_gamer_services_component_reaches_a_game_member_that_is_still_missing
+  # GamerServicesComponent was blocked on a *member* of the partial Game, not only on the
+  # GamerServices runtime. It has since been built, so it is off the candidate list; what the
+  # measurement owns is the **edge**, which is still there and is still what the signature graph
+  # cannot see.
+  def test_gamer_services_component_reaches_a_game_member_the_signature_graph_cannot_see
     name = "Microsoft.Xna.Framework.GamerServices.GamerServicesComponent"
-    entry = candidate(name)
-    refute_nil entry
+    assert_includes STRICT.fetch("completeTypeNames"), name
     reached = edges(name).grep(/\AMicrosoft\.Xna\.Framework\.Game::/)
                          .map { |edge| edge.split("::", 2).last }
     assert_includes reached, "get_Window"
@@ -184,7 +185,7 @@ class MemberLevelDependenciesTest < Minitest::Test
     remainder = ReviewedScoreboard.partial_remainder(STRICT, "Microsoft.Xna.Framework.Game")
                       .map { |label| label.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
     refute_includes remainder, "Window"
-    refute_includes entry.fetch("ilOnlyUnmetDependencies"), "Microsoft.Xna.Framework.GameWindow"
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.GameWindow"
   end
 
   # ------------------------------------------------------------------ the near-misses it exposes
@@ -225,7 +226,7 @@ class MemberLevelDependenciesTest < Minitest::Test
     assert_includes REPORT.fetch("candidatePolicy"), "deliberately do not relax"
     # 19 until Foundation 46 took LaunchParameters off the frontier by projecting Dictionary`2,
     # and 12 until the Stream projection consumed TitleContainer.
-    assert_equal 11, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 10, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")

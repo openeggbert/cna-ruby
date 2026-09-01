@@ -426,6 +426,26 @@ module CNAApiCompat
       result.add("EVENT_MAPPING_MISMATCH", "#{EVENT_SUPPORT_TYPE} exposes public #{leaked.join(", ")}")
     end
 
+    # The event identities a type inherits, gathered from the reference contract's own base chain
+    # rather than from Ruby's ancestors, so the answer is what the CLR says and not what this
+    # projection happens to have built.
+    def inherited_event_identities(name)
+      identities = []
+      current = reference_by_name[name]
+      while current && (base = current["baseType"])
+        current = reference_by_name[base]
+        break if current.nil?
+
+        identities.concat(current.fetch("members").select { |member| member.fetch("kind") == "event" }
+                                 .map { |member| member.fetch("name").to_sym })
+      end
+      identities.uniq
+    end
+
+    def reference_by_name
+      @reference_by_name ||= reference.fetch("types").to_h { |type| [type.fetch("name"), type] }
+    end
+
     # Selected event identities are measured rather than assumed: the declared set must match the
     # set the runtime projection registers through the generic primitive, no add_/remove_ or writer
     # identity may exist beside the reader, and the reader's value must be the primitive itself
@@ -439,7 +459,13 @@ module CNAApiCompat
       (declared - registered).each do |identity|
         result.add("EVENT_MAPPING_MISMATCH", "#{name}::#{identity} is not declared through #{EVENT_SUPPORT_TYPE}", type: name)
       end
-      (registered - declared).each do |identity|
+      # An event a type's **CLR base** declares is inherited, not invented. `xna_event_identities`
+      # walks the whole ancestor chain, because a subscriber does not care where the reader was
+      # declared, so the first XNA type here to inherit events rather than declare them --
+      # `GamerServices.GamerServicesComponent`, over `GameComponent`'s three -- would otherwise be
+      # reported as registering three identities its own contract does not select. What is being
+      # checked is that no identity is *invented*, and an inherited one is not.
+      (registered - declared - inherited_event_identities(name)).each do |identity|
         result.add("EVENT_MAPPING_MISMATCH", "#{name}::#{identity} runtime event identity is not selected", type: name)
       end
 

@@ -63,13 +63,16 @@ class GameIsActiveTest < Minitest::Test
   end
 
   # Neither `Guide` nor `GamerServicesDispatcher` is in the selected profile — the whole
-  # GamerServices namespace contributes exactly one type, `GamerServicesComponent`, and it is still
-  # missing. Reading their canonical routes projects no type and invents no constant.
+  # GamerServices namespace contributes exactly one type, `GamerServicesComponent`, which a later
+  # milestone built. What Foundation 45 claimed, and still claims, is that reading the two
+  # dispatcher routes its own getter needs projects **no** type and invents no constant, and the
+  # namespace it later opened holds exactly the one type the reference names and nothing else.
   def test_no_gamer_services_type_is_invented
     gamer_services = REFERENCE.keys.select { |name| name.include?("GamerServices") }
     assert_equal ["Microsoft.Xna.Framework.GamerServices.GamerServicesComponent"], gamer_services
-    assert_includes STRICT.fetch("missingTypeNames"), gamer_services.first
-    refute F.const_defined?(:GamerServices, false)
+    assert_equal %i[GamerServicesComponent], F::GamerServices.constants(false)
+    refute F::GamerServices.const_defined?(:Guide, false)
+    refute F::GamerServices.const_defined?(:GamerServicesDispatcher, false)
     refute F::Game.const_defined?(:Guide, false)
     refute Object.const_defined?(:System)
   end

@@ -171,6 +171,22 @@ module CNA
         signature("cna_game_get_is_active", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows Game; caller output"),
         signature("cna_guide_get_is_visible", T[:result], [pointer("CNA_Bool")], ownership: "PROCESS_GLOBAL guide; caller output"),
         signature("cna_gamer_services_dispatcher_get_is_initialized", T[:result], [pointer("CNA_Bool")], ownership: "PROCESS_GLOBAL dispatcher; caller output"),
+        # The rest of the canonical dispatcher, for `GamerServices.GamerServicesComponent`. All but
+        # the initialize are PROCESS_GLOBAL statics with no handle, which is what XNA's
+        # `GamerServicesDispatcher` is too -- the one asymmetry the other native families carry
+        # (a game handle where XNA has a CLR static) does not apply here.
+        #
+        # `cna_gamer_services_component_create` is deliberately **not** bound. It builds a
+        # *canonical* component whose initialize and update belong to CNA's runtime and which CNA's
+        # own component list drives; this binding's `Game.Components` is the managed engine
+        # Foundations 35 and 38 built, so adding one would run a second component pass -- the
+        # duplication `docs/graphics-device-service-producer-audit.md` refused. The Ruby type is a
+        # `GameComponent` subclass whose overrides call these routes instead.
+        signature("cna_gamer_services_dispatcher_set_window_handle", T[:result], [T[:u64]], ownership: "PROCESS_GLOBAL dispatcher; BORROWED_EXTERNAL_SCALAR window token"),
+        signature("cna_gamer_services_dispatcher_initialize", T[:result], [T[:handle]], ownership: "borrows Game; PROCESS_GLOBAL dispatcher takes the game's service container"),
+        signature("cna_gamer_services_dispatcher_update", T[:result], [], ownership: "PROCESS_GLOBAL dispatcher", result_lifetime: "no result value"),
+        signature("cna_gamer_services_dispatcher_subscribe_installing_title_update_ext", T[:result], [callback_pointer("CNA_GamerAsyncCallback"), T[:ptr], pointer("CNA_Handle")], ownership: "PROCESS_GLOBAL dispatcher; returns OWNED registration; retains callback and context until released"),
+        signature("cna_gamer_unsubscribe_ext", T[:result], [T[:handle]], ownership: "consumes OWNED registration"),
         signature("cna_game_get_is_mouse_visible", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows Game; caller output"),
         signature("cna_game_set_is_mouse_visible", T[:result], [T[:handle], T[:bool]], ownership: "borrows Game; shows or hides the window cursor"),
         signature("cna_game_get_is_fixed_time_step", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows Game; caller output"),
@@ -356,7 +372,11 @@ module CNA
         { name: "CNA_GameBeginDrawCallback", c_return: "CNA_Result", c_arguments: ["CNA_Handle", "const CNA_GameTime*", "void*", "CNA_Bool*", "CNA_CallbackError*"], calling_convention: "platform C", fiddle_return: U32, fiddle_arguments: [U64, PTR, PTR, PTR, PTR] },
         # A game event carries nothing but its sender, so the handler receives only its context --
         # and it returns void, so a failure has nowhere to go and must never escape into C.
-        { name: "CNA_GameEventCallback", c_return: "void", c_arguments: ["void*"], calling_convention: "platform C", fiddle_return: VOID, fiddle_arguments: [PTR] }
+        { name: "CNA_GameEventCallback", c_return: "void", c_arguments: ["void*"], calling_convention: "platform C", fiddle_return: VOID, fiddle_arguments: [PTR] },
+        # Shape-identical to CNA_GameEventCallback and still a separate identity: it is a different
+        # typedef in a different header, and the ABI probe type-checks each against its own
+        # declaration rather than against the other.
+        { name: "CNA_GamerAsyncCallback", c_return: "void", c_arguments: ["void*"], calling_convention: "platform C", fiddle_return: VOID, fiddle_arguments: [PTR] }
       ].freeze
 
       # `CNA_ABI_VERSION` is deliberately **not** here. It is not a constant this binding consumes;

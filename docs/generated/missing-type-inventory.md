@@ -26,7 +26,6 @@
 - `Microsoft.Xna.Framework.Design.Vector3Converter`
 - `Microsoft.Xna.Framework.Design.Vector4Converter`
 - `Microsoft.Xna.Framework.DrawableGameComponent`
-- `Microsoft.Xna.Framework.GamerServices.GamerServicesComponent`
 - `Microsoft.Xna.Framework.Graphics.AlphaTestEffect`
 - `Microsoft.Xna.Framework.Graphics.BasicEffect`
 - `Microsoft.Xna.Framework.Graphics.BlendState`

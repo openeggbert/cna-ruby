@@ -24,6 +24,11 @@ CHECK_FN(cna_game_unsubscribe, CNA_Result, (CNA_GameEventRegistrationHandle));
 CHECK_FN(cna_game_get_is_active, CNA_Result, (CNA_Handle, CNA_Bool*));
 CHECK_FN(cna_guide_get_is_visible, CNA_Result, (CNA_Bool*));
 CHECK_FN(cna_gamer_services_dispatcher_get_is_initialized, CNA_Result, (CNA_Bool*));
+CHECK_FN(cna_gamer_services_dispatcher_set_window_handle, CNA_Result, (uint64_t));
+CHECK_FN(cna_gamer_services_dispatcher_initialize, CNA_Result, (CNA_Handle));
+CHECK_FN(cna_gamer_services_dispatcher_update, CNA_Result, (void));
+CHECK_FN(cna_gamer_services_dispatcher_subscribe_installing_title_update_ext, CNA_Result, (CNA_GamerAsyncCallback, void*, CNA_Handle*));
+CHECK_FN(cna_gamer_unsubscribe_ext, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_game_get_is_mouse_visible, CNA_Result, (CNA_Handle, CNA_Bool*));
 CHECK_FN(cna_game_set_is_mouse_visible, CNA_Result, (CNA_Handle, CNA_Bool));
 CHECK_FN(cna_game_get_is_fixed_time_step, CNA_Result, (CNA_Handle, CNA_Bool*));
@@ -130,6 +135,8 @@ typedef CNA_Result (*expected_lifecycle)(CNA_Handle, const CNA_GameTime*, void*,
 typedef CNA_Result (*expected_begin_draw)(CNA_Handle, const CNA_GameTime*, void*, CNA_Bool*, CNA_CallbackError*);
 _Static_assert(__builtin_types_compatible_p(CNA_GameLifecycleCallback, expected_lifecycle), "lifecycle callback mismatch");
 _Static_assert(__builtin_types_compatible_p(CNA_GameBeginDrawCallback, expected_begin_draw), "begin-draw callback mismatch");
+typedef void (*expected_gamer_async)(void*);
+_Static_assert(__builtin_types_compatible_p(CNA_GamerAsyncCallback, expected_gamer_async), "gamer async callback mismatch");
 
 #define STRUCT(type) printf("STRUCT|" #type "|%zu|%zu\n", sizeof(type), _Alignof(type))
 #define FIELD(type, field) printf("FIELD|" #type "|" #field "|%zu|%zu\n", offsetof(type, field), sizeof(((type*)0)->field))
@@ -153,6 +160,11 @@ int main(void) {
     SIGNATURE(cna_game_get_is_active, "CNA_Result|CNA_Handle,CNA_Bool*");
     SIGNATURE(cna_guide_get_is_visible, "CNA_Result|CNA_Bool*");
     SIGNATURE(cna_gamer_services_dispatcher_get_is_initialized, "CNA_Result|CNA_Bool*");
+    SIGNATURE(cna_gamer_services_dispatcher_set_window_handle, "CNA_Result|uint64_t");
+    SIGNATURE(cna_gamer_services_dispatcher_initialize, "CNA_Result|CNA_Handle");
+    SIGNATURE(cna_gamer_services_dispatcher_update, "CNA_Result|");
+    SIGNATURE(cna_gamer_services_dispatcher_subscribe_installing_title_update_ext, "CNA_Result|CNA_GamerAsyncCallback,void*,CNA_Handle*");
+    SIGNATURE(cna_gamer_unsubscribe_ext, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_game_get_is_mouse_visible, "CNA_Result|CNA_Handle,CNA_Bool*");
     SIGNATURE(cna_game_set_is_mouse_visible, "CNA_Result|CNA_Handle,CNA_Bool");
     SIGNATURE(cna_game_get_is_fixed_time_step, "CNA_Result|CNA_Handle,CNA_Bool*");

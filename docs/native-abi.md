@@ -181,3 +181,19 @@ deferral was simply mistaken.
 
 `cna_graphics_device_unbind_texture` is deliberately not bound: XNA's collection has no member that
 unbinds one texture from every slot, so there is no identity for the route to carry.
+
+## The gamer-services dispatcher
+
+Five routes and a fourth callback bring the count to 122. All but
+`cna_gamer_services_dispatcher_initialize` are **process-global statics with no handle**, which is
+what XNA's `GamerServicesDispatcher` is too — so the game-scoped asymmetry the audio and window
+families record does not apply here. `initialize` takes a game because the dispatcher adopts that
+game's service container, which is exactly what XNA passes it.
+
+`CNA_GamerAsyncCallback` is shape-identical to `CNA_GameEventCallback` — `void (*)(void*)` — and is
+still a separate callback identity, because it is a different typedef in a different header and the
+probe type-checks each against its own declaration rather than against the other.
+
+`cna_gamer_services_component_create` is deliberately not bound: it builds a *canonical* component
+that CNA's own component list drives, and this binding's `Game.Components` is the managed engine, so
+one would be driven twice.
