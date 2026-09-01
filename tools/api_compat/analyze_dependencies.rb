@@ -23,9 +23,16 @@ il_types = il_inventory.fetch("types")
 # internal path the CLR gives it. What keeps a type here is that its values, or the arguments its
 # internal constructor needs, do not exist on this host.
 RUNTIME_DATA = {
-  "Microsoft.Xna.Framework.Audio.AudioCategory" => "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have",
   "Microsoft.Xna.Framework.Media.MediaSource" => "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried",
 }.freeze
+
+# AudioCategory was in this register until the XACT engine cluster, on the reasoning that it is "an
+# XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding
+# does not have". Both halves are about the producer, and the second stopped being true when it was
+# measured rather than assumed: CNA 0.21.0 loads the XNA Spacewar sample's SpaceWar.xgs for real --
+# six categories and eight variables -- answers a real SDL3_mixer renderer, and resolves every named
+# category. So the binding does have a live engine, and the type that needs one is projected beside
+# it. That is the sixth register entry retired for naming the producer rather than the type.
 
 # Video was in this register until Foundation 52, on the reasoning that "its internal constructor
 # takes a GraphicsDevice, one of the deferred partial runtime types, and builds a Duration from tick

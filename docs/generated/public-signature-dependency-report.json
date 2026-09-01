@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 157,
-  "completeTypes": 152,
+  "targetTypes": 159,
+  "completeTypes": 154,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
@@ -10,7 +10,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 100,
+  "missingTypes": 98,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -20,7 +20,6 @@
     "typesNativeReachable": 77
   },
   "runtimeDataRegister": {
-    "Microsoft.Xna.Framework.Audio.AudioCategory": "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have",
     "Microsoft.Xna.Framework.Media.MediaSource": "GetAvailableMediaSources enumerates the host media sources; no media stack has been queried"
   },
   "retiredBlockers": {
@@ -92,9 +91,8 @@
   },
   "blockerSummary": {
     "BCL_PROJECTION": 2,
-    "BCL_PROJECTION+NATIVE_RUNTIME": 1,
+    "BCL_PROJECTION+NATIVE_RUNTIME": 2,
     "NATIVE_RUNTIME": 3,
-    "NATIVE_RUNTIME+RUNTIME_DATA": 1,
     "RUNTIME_DATA": 1
   },
   "partialDependencySatisfiedCandidates": [
@@ -763,82 +761,6 @@
         "set_Volume"
       ],
       "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Audio.Cue",
-      "kind": "class",
-      "expectedRubyIdentities": 19,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Audio.AudioEmitter",
-        "Microsoft.Xna.Framework.Audio.AudioListener",
-        "Microsoft.Xna.Framework.Audio.AudioStopOptions"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Audio.AudioEngine"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Audio.AudioEngine"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-        "Disposing"
-      ],
-      "behaviourBearingMembers": [
-        "Play",
-        "Pause",
-        "Resume",
-        "Stop",
-        "GetVariable",
-        "SetVariable",
-        "Apply3D",
-        "Finalize",
-        "Dispose"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Xact.dll",
-      "nativeReachableMethods": [
-        "Dispose",
-        "Finalize",
-        "GetVariable",
-        "Pause",
-        "Play",
-        "Resume",
-        "SetVariable",
-        "Stop",
-        "get_IsCreated",
-        "get_IsPaused",
-        "get_IsPlaying",
-        "get_IsPrepared",
-        "get_IsPreparing",
-        "get_IsStopped",
-        "get_IsStopping"
-      ],
-      "runtimeDataDetail": null
     }
   ],
   "consumableCandidates": [
@@ -1067,11 +989,11 @@
       "runtimeDataDetail": null
     },
     {
-      "name": "Microsoft.Xna.Framework.Audio.AudioCategory",
-      "kind": "struct",
-      "expectedRubyIdentities": 11,
+      "name": "Microsoft.Xna.Framework.Audio.WaveBank",
+      "kind": "class",
+      "expectedRubyIdentities": 9,
       "dependencies": [
-        "Microsoft.Xna.Framework.Audio.AudioStopOptions"
+        "Microsoft.Xna.Framework.Audio.AudioEngine"
       ],
       "unmetDependencies": [
 
@@ -1093,11 +1015,11 @@
       ],
       "dependencyComplete": true,
       "blockers": [
-        "NATIVE_RUNTIME",
-        "RUNTIME_DATA"
+        "BCL_PROJECTION",
+        "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
-
+        "System.Int16"
       ],
       "reachedInterfaces": [
 
@@ -1106,30 +1028,24 @@
 
       ],
       "eventMembers": [
-
+        "Disposing"
       ],
       "behaviourBearingMembers": [
-        "SetVolume",
-        "Pause",
-        "Resume",
-        "Stop",
-        "ToString",
-        "Equals",
-        "GetHashCode",
-        "op_Equality",
-        "op_Inequality"
+        ".ctor",
+        "Finalize",
+        "Dispose"
       ],
       "ilDerivationRequired": true,
       "ilAvailable": true,
       "ilAssembly": "Microsoft.Xna.Framework.Xact.dll",
       "nativeReachableMethods": [
         ".ctor",
-        "Pause",
-        "Resume",
-        "SetVolume",
-        "Stop"
+        "Dispose",
+        "Finalize",
+        "get_IsInUse",
+        "get_IsPrepared"
       ],
-      "runtimeDataDetail": "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this binding does not have"
+      "runtimeDataDetail": null
     },
     {
       "name": "Microsoft.Xna.Framework.Graphics.EffectAnnotation",
@@ -1299,7 +1215,7 @@
         "Microsoft.Xna.Framework.Audio.AudioEngine"
       ],
       "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Audio.AudioEngine"
+
       ],
       "partialDependencySatisfied": false,
       "partialRemainderReverseEdges": [

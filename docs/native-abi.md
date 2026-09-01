@@ -245,3 +245,28 @@ Native frontier 4 recorded this family `NATIVE_RUNTIME`. Every one of the sixtee
 and declared identically by the **retired 0.7.0 headers**, which the gate's cross-version check
 proves, and the host really has three capture devices. That deferral was about neither the ABI nor
 the machine.
+
+## The XACT engine
+
+Twenty-two routes bring the count to 168, and no new callback: `cna_audio_engine_subscribe_disposing_ext`
+reuses `CNA_AudioEventCallback` and its registration is released with the `cna_audio_unsubscribe_ext`
+the streaming instance already bound.
+
+`cna_audio_engine_create_with_renderer` is **game-parented**, the asymmetry every game-scoped audio
+route in this binding records; XNA's constructor needs no Game. `cna_audio_engine_create` is
+deliberately not bound, because XNA's one-argument constructor delegates to the three-argument one
+with an explicit 250 ms look-ahead — so the projection always has a look-ahead to pass and never
+needs the shorter route.
+
+The interesting ownership is `cna_audio_engine_get_category`. It returns a **handle** where XNA's
+`AudioCategory` carries a `uint16`, and a fresh one per call: two `get_category("Music")` calls
+answer different handles that `cna_audio_category_equals` then calls equal. XNA's category is a
+value type with no `Dispose` and no finalizer, so nothing on it could ever release a handle. The
+category is therefore `PARENT_OWNED` — the engine caches one handle per name and destroys them all
+before destroying itself.
+
+Not bound: the `cna_wave_bank_*`, `cna_sound_bank_*` and `cna_cue_*` families, because no
+`WaveBank`, `SoundBank` or `Cue` is projected yet; `cna_audio_engine_copy_renderer_text` and
+`cna_audio_engine_renderers_equal`, which have no XNA identity — `RendererDetail` publishes
+`FriendlyName` and `RendererId` and compares by ordinal string equality it already implements; and
+the type-name count/copy pairs, for the reason every other family records.

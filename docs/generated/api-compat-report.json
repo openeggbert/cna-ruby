@@ -5,20 +5,20 @@
   "REFERENCE_MEMBERS": 2964,
   "EXPECTED_RUBY_TYPES": 257,
   "EXPECTED_RUBY_MEMBERS": 2915,
-  "TARGET_TYPES": 157,
-  "TARGET_MEMBERS": 1913,
-  "TOTAL_DIAGNOSTICS": 250,
-  "COMPLETE_TYPES": 152,
+  "TARGET_TYPES": 159,
+  "TARGET_MEMBERS": 1937,
+  "TOTAL_DIAGNOSTICS": 248,
+  "COMPLETE_TYPES": 154,
   "PARTIAL_TYPES": 5,
-  "MISSING_TYPES": 100,
+  "MISSING_TYPES": 98,
   "ALLOWLIST_ENTRIES": 0,
-  "EVENT_IDENTITIES": 22,
-  "EVENT_OWNER_TYPES": 9,
+  "EVENT_IDENTITIES": 23,
+  "EVENT_OWNER_TYPES": 10,
   "EVENT_SUPPORT_TYPE": "CNA::Runtime::Event",
   "BCL_PROJECTED_IDENTITIES": 17,
   "BCL_EXCEPTION_BASES": 2,
   "BCL_THROWN_EXCEPTIONS": 8,
-  "MISSING_TYPE": 100,
+  "MISSING_TYPE": 98,
   "MISSING_MEMBER": 107,
   "UNEXPECTED_TYPE": 0,
   "UNEXPECTED_MEMBER": 0,
@@ -63,7 +63,8 @@
     "Microsoft.Xna.Framework.GameWindow::ScreenDeviceNameChanged",
     "Microsoft.Xna.Framework.GameWindow::ClientSizeChanged",
     "Microsoft.Xna.Framework.GameWindow::OrientationChanged",
-    "Microsoft.Xna.Framework.Audio.Microphone::BufferReady"
+    "Microsoft.Xna.Framework.Audio.Microphone::BufferReady",
+    "Microsoft.Xna.Framework.Audio.AudioEngine::Disposing"
   ],
   "bclProjection": {
     "types": {
@@ -245,6 +246,8 @@
     "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException",
     "Microsoft.Xna.Framework.Audio.RendererDetail",
     "Microsoft.Xna.Framework.Audio.Microphone",
+    "Microsoft.Xna.Framework.Audio.AudioCategory",
+    "Microsoft.Xna.Framework.Audio.AudioEngine",
     "Microsoft.Xna.Framework.Media.VisualizationData",
     "Microsoft.Xna.Framework.Media.Video",
     "Microsoft.Xna.Framework.GameServiceContainer"
@@ -341,8 +344,6 @@
     ]
   },
   "missingTypeNames": [
-    "Microsoft.Xna.Framework.Audio.AudioCategory",
-    "Microsoft.Xna.Framework.Audio.AudioEngine",
     "Microsoft.Xna.Framework.Audio.Cue",
     "Microsoft.Xna.Framework.Audio.SoundBank",
     "Microsoft.Xna.Framework.Audio.WaveBank",
@@ -597,14 +598,14 @@
     "Microsoft.Xna.Framework.Storage.StorageDeviceNotConnectedException": 0,
     "Microsoft.Xna.Framework.Audio.RendererDetail": 0,
     "Microsoft.Xna.Framework.Audio.Microphone": 0,
+    "Microsoft.Xna.Framework.Audio.AudioCategory": 0,
+    "Microsoft.Xna.Framework.Audio.AudioEngine": 0,
     "Microsoft.Xna.Framework.Media.VisualizationData": 0,
     "Microsoft.Xna.Framework.Media.Video": 0,
     "Microsoft.Xna.Framework.GameServiceContainer": 0
   },
   "details": {
     "MISSING_TYPE": [
-      "Microsoft.Xna.Framework.Audio.AudioCategory",
-      "Microsoft.Xna.Framework.Audio.AudioEngine",
       "Microsoft.Xna.Framework.Audio.Cue",
       "Microsoft.Xna.Framework.Audio.SoundBank",
       "Microsoft.Xna.Framework.Audio.WaveBank",

@@ -298,6 +298,8 @@ class DependencyFrontierTest < Minitest::Test
     # entry on this list is a type whose native boundary the binding really implements, which is the
     # property the list exists to check -- not a count that must stay still.
     assert_equal %w[
+      Microsoft.Xna.Framework.Audio.AudioCategory
+      Microsoft.Xna.Framework.Audio.AudioEngine
       Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance
       Microsoft.Xna.Framework.Audio.Microphone
       Microsoft.Xna.Framework.Audio.SoundEffect
@@ -456,8 +458,10 @@ class DependencyFrontierTest < Minitest::Test
     # GameWindow was the third until Foundation 48 built it, which is what an event-declaring
     # candidate reaching the frontier is for; DynamicSoundEffectInstance was the fourth, arriving
     # the same way when the audio cluster completed its base and leaving again when it was built,
-    # and Microphone the fifth, whose BufferReady is now a projected event identity.
-    assert_equal ["Microsoft.Xna.Framework.Audio.Cue"],
+    # and Microphone the fifth, whose BufferReady is now a projected event identity. WaveBank is
+    # the sixth, and it arrived the way DynamicSoundEffectInstance did: the XACT engine cluster
+    # completed the AudioEngine its constructor names.
+    assert_equal ["Microsoft.Xna.Framework.Audio.Cue", "Microsoft.Xna.Framework.Audio.WaveBank"],
                  events.map { |item| item.fetch("name") }.sort
 
     # Completing IUpdateable/IDrawable is what projected the EventHandler`1 support type.

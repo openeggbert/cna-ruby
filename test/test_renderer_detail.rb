@@ -135,10 +135,15 @@ class RendererDetailTest < Minitest::Test
     # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still
     # claims, is that **it** built neither. The list narrows to the audio types nothing here has
     # built rather than being loosened.
-    %i[AudioEngine SoundBank WaveBank Cue]
+    # `AudioEngine` exists now, and it is what *produces* a RendererDetail -- one real
+    # `SDL3_mixer` entry on this host. What this milestone claimed, and still claims, is that **it**
+    # built no engine; the XACT cluster that did is measured in `test_audio_engine.rb`.
+    %i[SoundBank WaveBank Cue]
       .each { |absent| refute F::Audio.const_defined?(absent, false), "Audio::#{absent}" }
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-    refute(symbols.any? { |symbol| symbol.include?("renderer") || symbol.include?("audio_engine") })
+    # `renderer` and `audio_engine` left this check when the XACT engine cluster bound the routes
+    # that really enumerate a renderer -- which is what fills this type, and what Foundation 50
+    # claimed it was not doing. `renderer_detail` stays, because no route is named for the type.
     # `cna_sound_effect_*` routes exist now; Foundation 50 bound none of them, which is what this
     # claimed. The SoundEffect cluster that binds them is a later milestone.
     refute(symbols.any? { |symbol| symbol.include?("renderer_detail") })

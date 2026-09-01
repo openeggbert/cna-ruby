@@ -265,7 +265,7 @@ class DynamicSoundEffectInstanceTest < Minitest::Test
   def test_it_adds_no_engine_or_microphone
     # `Microphone` arrived in the milestone after this one; what this claims is that the streaming
     # instance built no capture surface of its own.
-    %i[AudioEngine SoundBank WaveBank Cue AudioCategory].each do |absent|
+    %i[SoundBank WaveBank Cue].each do |absent|
       refute A.const_defined?(absent, false), absent.to_s
     end
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length

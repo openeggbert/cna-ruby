@@ -256,9 +256,11 @@ class DisposableCollapseTest < Minitest::Test
     # GamerServicesComponent appeared behind it, and the System.Byte[] decision took Microphone's
     # BCL half away.
     # NATIVE_RUNTIME fell from 4 to 3 when Microphone was built, which is the sixth time that
-    # blocker turned out not to be one.
-    assert_equal({"BCL_PROJECTION" => 2, "BCL_PROJECTION+NATIVE_RUNTIME" => 1,
-                  "NATIVE_RUNTIME" => 3, "NATIVE_RUNTIME+RUNTIME_DATA" => 1, "RUNTIME_DATA" => 1},
+    # blocker turned out not to be one. The XACT engine cluster then emptied
+    # NATIVE_RUNTIME+RUNTIME_DATA entirely -- AudioCategory was its only entry -- and WaveBank
+    # arrived behind AudioEngine under BCL_PROJECTION+NATIVE_RUNTIME.
+    assert_equal({"BCL_PROJECTION" => 2, "BCL_PROJECTION+NATIVE_RUNTIME" => 2,
+                  "NATIVE_RUNTIME" => 3, "RUNTIME_DATA" => 1},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end
@@ -282,15 +284,18 @@ class DisposableCollapseTest < Minitest::Test
   # Native frontier 3 proved SoundEffectInstance and Cue reach XACT. Mapping a BCL interface does
   # not change that, and no audio runtime is started here.
   def test_it_claims_no_native_disposal_and_starts_no_audio_runtime
-    %w[Microsoft.Xna.Framework.Audio.Cue
-       Microsoft.Xna.Framework.Audio.AudioEngine].each do |name|
+    # AudioEngine was named here too until the XACT engine cluster built it, which is the point
+    # rather than a loss: mapping IDisposable did not build it, and a later milestone did.
+    %w[Microsoft.Xna.Framework.Audio.Cue].each do |name|
       assert_includes STRICT.fetch("missingTypeNames"), name
       assert IL.fetch("types").fetch(name).fetch("nativeReachable"), name
     end
+    assert IL.fetch("types").fetch("Microsoft.Xna.Framework.Audio.AudioEngine").fetch("nativeReachable")
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Audio.AudioEngine"
     # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still
     # claims, is that **it** built neither. The list narrows to the audio types nothing here has
     # built rather than being loosened.
-    %i[Cue AudioEngine SoundBank WaveBank].each do |absent|
+    %i[Cue SoundBank WaveBank].each do |absent|
       refute F::Audio.const_defined?(absent, false), "Audio::#{absent}"
     end
 

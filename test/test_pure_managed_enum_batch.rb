@@ -333,7 +333,7 @@ class PureManagedEnumBatchTest < Minitest::Test
     # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still
     # claims, is that **it** built neither. The list narrows to the audio types nothing here has
     # built rather than being loosened.
-    %i[AudioEngine WaveBank SoundBank Cue
+    %i[WaveBank SoundBank Cue
       ].each do |name|
       refute A.const_defined?(name, false), "Audio::#{name}"
     end
@@ -369,7 +369,8 @@ class PureManagedEnumBatchTest < Minitest::Test
       # types. None of those is an enum.
       value_types = %i[TouchPanelCapabilities TouchLocation GestureSample TouchCollection
                        TouchPanel AudioListener AudioEmitter RendererDetail VisualizationData Video
-                       SoundEffect SoundEffectInstance DynamicSoundEffectInstance Microphone]
+                       SoundEffect SoundEffectInstance DynamicSoundEffectInstance Microphone
+                       AudioEngine AudioCategory]
       extras = declared & value_types
       extras += declared.grep(/Exception\z/)
       assert_equal (selected + extras).uniq.sort, declared, namespace.name

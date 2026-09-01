@@ -196,27 +196,43 @@ class MemberLevelDependenciesTest < Minitest::Test
     signature_complete = REPORT.fetch("ilOnlyBlockedCandidates")
                                .select { |entry| entry.fetch("unmetDependencies").empty? }
     # 6 until ContentManager completed -- it left this list and so did Microphone, whose only
-    # remaining blocker was the `System.Byte[]` the Stream projection decided -- and 5 until the
-    # audio cluster took SoundEffectInstance.
-    assert_equal 3, signature_complete.length
+    # remaining blocker was the `System.Byte[]` the Stream projection decided -- 5 until the audio
+    # cluster took SoundEffectInstance, and 3 until the XACT engine cluster took Cue: its one
+    # il-only unmet dependency was AudioEngine, which is complete now.
+    assert_equal 2, signature_complete.length
     names = signature_complete.map { |entry| entry.fetch("name") }
     # ContentManager was here until the Stream and Action`1 projections consumed it.
     %w[Microsoft.Xna.Framework.Graphics.SpriteFont
-       Microsoft.Xna.Framework.Graphics.EffectAnnotation
-       Microsoft.Xna.Framework.Audio.Cue].each { |name| assert_includes names, name }
+       Microsoft.Xna.Framework.Graphics.EffectAnnotation].each { |name| assert_includes names, name }
+    refute_includes names, "Microsoft.Xna.Framework.Audio.Cue"
   end
 
-  # It strengthens Foundation 36's conclusion rather than contradicting it: both audio types were
-  # doubly blocked and only one reason was visible. SoundEffectInstance has since been built along
-  # with the SoundEffect that was its second blocker -- which is what resolving a doubly blocked
-  # candidate looks like -- so Cue is the one still demonstrating the shape.
-  def test_an_audio_type_can_be_blocked_twice_over
-    {"Microsoft.Xna.Framework.Audio.Cue" => "Microsoft.Xna.Framework.Audio.AudioEngine"}.each do |name, blocker|
+  # It strengthens Foundation 36's conclusion rather than contradicting it: a candidate can be
+  # blocked twice over with only one reason visible in the signature graph.
+  #
+  # Both audio instances of that shape have since been resolved the way a doubly blocked candidate
+  # is supposed to be -- by building the type that was the second blocker. SoundEffectInstance went
+  # first, with the SoundEffect behind it; Cue followed when the XACT engine cluster built the
+  # AudioEngine its IL reaches. So the shape is now demonstrated in Graphics, and the audio pair is
+  # asserted to be resolved rather than quietly dropped.
+  #
+  # `SpriteFont` is deliberately not the example even though it is doubly blocked in the report: its
+  # il-only dependency is `SpriteBatch`, which is **complete**, so what holds it is its own BCL
+  # blockers rather than a missing type. `EffectAnnotation`'s `EffectParameter` really is missing,
+  # which is the shape this test is about.
+  def test_a_candidate_can_be_blocked_twice_over
+    {"Microsoft.Xna.Framework.Graphics.EffectAnnotation" => "Microsoft.Xna.Framework.Graphics.EffectParameter"}
+      .each do |name, blocker|
       entry = candidate(name)
-      assert_equal ["NATIVE_RUNTIME"], entry.fetch("blockers"), "still native-blocked"
+      assert_includes entry.fetch("blockers"), "NATIVE_RUNTIME", "still native-blocked"
       assert_includes entry.fetch("ilOnlyUnmetDependencies"), blocker, "and blocked on a missing type too"
       assert_includes STRICT.fetch("missingTypeNames"), blocker
     end
+
+    cue = candidate("Microsoft.Xna.Framework.Audio.Cue")
+    assert_empty cue.fetch("ilOnlyUnmetDependencies"),
+                 "Cue's second blocker was AudioEngine, and building it is what cleared this half"
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Audio.AudioEngine"
   end
 
   # ------------------------------------------------------------------- the policy is not relaxed
@@ -225,7 +241,8 @@ class MemberLevelDependenciesTest < Minitest::Test
     assert_includes REPORT.fetch("candidatePolicy"), "all XNA public-signature dependencies complete"
     assert_includes REPORT.fetch("candidatePolicy"), "deliberately do not relax"
     # 19 until Foundation 46 took LaunchParameters off the frontier by projecting Dictionary`2,
-    # 12 until the Stream projection consumed TitleContainer, and 9 until Microphone was built.
+    # 12 until the Stream projection consumed TitleContainer, and 9 until Microphone was built. The
+    # XACT engine cluster held it at 8: AudioCategory left and WaveBank arrived behind AudioEngine.
     assert_equal 8, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
@@ -240,7 +257,7 @@ class MemberLevelDependenciesTest < Minitest::Test
      REPORT.fetch("ilOnlyBlockedCandidates")).each do |entry|
       refute_includes consumable, entry.fetch("name")
     end
-    assert_equal 3, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
+    assert_equal 2, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
   end
 
   # The one candidate the refinement cleared, and what happened to it. Foundation 39 selected it and

@@ -34475,6 +34475,410 @@
       ]
     },
     {
+      "name": "Microsoft.Xna.Framework.Audio.AudioCategory",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "System.IEquatable`1[Microsoft.Xna.Framework.Audio.AudioCategory]"
+      ],
+      "directInterfaces": [
+        "System.IEquatable`1[Microsoft.Xna.Framework.Audio.AudioCategory]"
+      ],
+      "genericParameters": [],
+      "rubyName": "Microsoft::Xna::Framework::Audio::AudioCategory",
+      "members": [
+        {
+          "kind": "method",
+          "name": "SetVolume",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "volume",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Pause",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Resume",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Stop",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "options",
+              "type": "Microsoft.Xna.Framework.Audio.AudioStopOptions",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "access": "public",
+          "returnType": "System.String",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "other",
+              "type": "Microsoft.Xna.Framework.Audio.AudioCategory",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "obj",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Int32",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "value1",
+              "type": "Microsoft.Xna.Framework.Audio.AudioCategory",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "value2",
+              "type": "Microsoft.Xna.Framework.Audio.AudioCategory",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "value1",
+              "type": "Microsoft.Xna.Framework.Audio.AudioCategory",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "value2",
+              "type": "Microsoft.Xna.Framework.Audio.AudioCategory",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Name",
+          "type": "System.String",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Audio.AudioEngine",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+        "System.IDisposable"
+      ],
+      "directInterfaces": [
+        "System.IDisposable"
+      ],
+      "genericParameters": [],
+      "rubyName": "Microsoft::Xna::Framework::Audio::AudioEngine",
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "settingsFile",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "settingsFile",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "lookAheadTime",
+              "type": "System.TimeSpan",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "rendererId",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetCategory",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Audio.AudioCategory",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "name",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetGlobalVariable",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Single",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "name",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetGlobalVariable",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "name",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "System.Single",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Update",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Finalize",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "disposing",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "RendererDetails",
+          "type": "System.Collections.ObjectModel.ReadOnlyCollection`1[Microsoft.Xna.Framework.Audio.RendererDetail]",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "IsDisposed",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": []
+        },
+        {
+          "kind": "event",
+          "name": "Disposing",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "field",
+          "name": "ContentVersion",
+          "type": "System.Int32",
+          "static": true,
+          "constant": true,
+          "value": "39"
+        }
+      ]
+    },
+    {
       "name": "Microsoft.Xna.Framework.Media.VisualizationData",
       "kind": "class",
       "flags": false,

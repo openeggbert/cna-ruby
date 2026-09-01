@@ -386,7 +386,7 @@ class SoundEffectTest < Minitest::Test
   def test_it_adds_no_engine_microphone_or_dynamic_instance
     # DynamicSoundEffectInstance was added by the milestone after this one, and Microphone by the
     # one after that; what this claims is that the SoundEffect cluster built none of them.
-    %i[AudioEngine SoundBank WaveBank Cue AudioCategory].each do |absent|
+    %i[SoundBank WaveBank Cue].each do |absent|
       refute A.const_defined?(absent, false), absent.to_s
     end
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length

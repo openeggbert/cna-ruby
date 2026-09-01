@@ -1751,12 +1751,13 @@ class ApiVerifierTest < Minitest::Test
       Microsoft.Xna.Framework.GameWindow::ClientSizeChanged
       Microsoft.Xna.Framework.GameWindow::OrientationChanged
       Microsoft.Xna.Framework.Audio.Microphone::BufferReady
+      Microsoft.Xna.Framework.Audio.AudioEngine::Disposing
     ], selected
 
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
     assert_equal selected, strict.fetch("eventIdentities")
     assert_equal selected.length, strict.fetch("EVENT_IDENTITIES")
-    assert_equal 9, strict.fetch("EVENT_OWNER_TYPES")
+    assert_equal 10, strict.fetch("EVENT_OWNER_TYPES")
     assert_equal "CNA::Runtime::Event", strict.fetch("EVENT_SUPPORT_TYPE")
     assert_equal 0, strict.fetch("EVENT_MAPPING_MISMATCH")
 

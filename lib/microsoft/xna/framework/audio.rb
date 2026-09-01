@@ -1277,6 +1277,352 @@ module Microsoft
             end
           end
         end
+
+        # Derived from the pinned Microsoft.Xna.Framework.Xact.dll IL (SHA-256 a14d5364…).
+        #
+        # `AudioCategory` is a **struct** over three fields -- the owning engine, a `uint16` category
+        # index and the name -- and its constructor is `assembly`, so a consumer reaches one only
+        # through `AudioEngine.GetCategory`. It declares no `Dispose` and no finalizer: the category
+        # belongs to the engine, not to the value that names it.
+        #
+        # CNA hands out a **handle** where XNA carries a `uint16`, and two `cna_audio_engine_get_category`
+        # calls for one name answer two different handles -- measured -- so `AudioEngine.GetCategory`
+        # caches by name. That makes handle equality exactly XNA's `_category ==`, gives the engine a
+        # bounded set of `PARENT_OWNED` handles to release, and is asserted against CNA's own
+        # `cna_audio_category_equals` rather than assumed.
+        class AudioCategory
+          include CNA::Runtime::ValueSemantics
+
+          CLR_IDENTITY = "Microsoft.Xna.Framework.Audio.AudioCategory"
+
+          private_class_method :new
+
+          # `if (engine == null) throw new ArgumentNullException("engine", NullNotAllowed)` and the
+          # same for a null or empty name, then `GetCategory` and
+          # `if (_category == 0xffff) throw new InvalidOperationException(CouldNotCreateResource)`.
+          def initialize(engine, name, handle)
+            @parent = engine
+            @Name = name
+            @handle = handle
+          end
+
+          # One `ldfld`. XNA never normalises it, so a category's name is the string the consumer
+          # passed rather than the one the engine reports; `ToString` is where the null case is
+          # handled instead.
+          attr_reader :Name
+
+          # `if (!(volume >= 0f)) throw new ArgumentException(InvalidXactVolume)`. The comparison is
+          # `bge.un` -- **unordered** -- so `NaN` takes the *accepting* branch, which is the exact
+          # opposite of `SoundEffectInstance.Volume`, whose `blt.un`/`bgt.un` make NaN throw. Both
+          # asymmetries are the IL's and both are reproduced.
+          #
+          # DEVIATION, recorded: `cna_audio_category_set_volume` accepts a negative volume without
+          # complaint, so the refusal is managed-side exactly as XNA's is and CNA never sees one.
+          def SetVolume(volume)
+            ensure_live!
+            number = CNA::Runtime::Numeric.f32(volume)
+            raise ::ArgumentError, "volume" if number.negative?
+
+            call("cna_audio_category_set_volume", number)
+            nil
+          end
+
+          # `Engine::Pause(engine, category, 1)` and `Engine::Pause(engine, category, 0)` -- one
+          # native entry point with a flag, which CNA splits into two routes.
+          def Pause
+            ensure_live!
+            call("cna_audio_category_pause")
+            nil
+          end
+
+          def Resume
+            ensure_live!
+            call("cna_audio_category_resume")
+            nil
+          end
+
+          def Stop(options)
+            ensure_live!
+            raise ::TypeError, "options must be AudioStopOptions" unless options.instance_of?(AudioStopOptions)
+
+            call("cna_audio_category_stop", options.to_i)
+            nil
+          end
+
+          # `return _name ?? String.Empty` -- the one member that handles a null name.
+          def ToString = @Name.nil? ? "" : @Name
+
+          # `_category.GetHashCode() ^ _parent.GetHashCode()`, and the parent term is added only when
+          # the parent is non-null. CNA's `get_hash_code` answers the same value for two handles
+          # naming one category, which is what makes it the analogue of XNA's `uint16` hash.
+          def GetHashCode
+            output = CNA::Native.library.pointer_for("l", 0)
+            call("cna_audio_category_get_hash_code", output)
+            value = output[0, 4].unpack1("l")
+            @parent.nil? ? value : (value ^ @parent.hash)
+          end
+
+          def to_s = ToString
+
+          private
+
+          def value_components = [@parent, @handle]
+
+          def call(symbol, *arguments) = CNA::Native.library.call(symbol, @handle, *arguments)
+
+          def ensure_live!
+            raise CNA::DisposedObjectError, "AudioEngine is disposed" if @parent.nil? || @parent.IsDisposed
+          end
+
+          # The mechanism behind the cache, kept reachable so a test can assert that handle equality
+          # and CNA's own notion of category equality agree rather than trusting the cache.
+          def native_equals?(other)
+            output = CNA::Native.library.pointer_for("C", 0)
+            CNA::Native.library.call("cna_audio_category_equals", @handle,
+                                     other.instance_variable_get(:@handle), output)
+            !output[0, 1].unpack1("C").zero?
+          end
+
+          def native_name
+            size = CNA::Native.library.pointer_for("Q", 0)
+            call("cna_audio_category_get_name_size", size)
+            bytes = size[0, 8].unpack1("Q")
+            return "" if bytes.zero?
+
+            buffer = Fiddle::Pointer.malloc(bytes, Fiddle::RUBY_FREE)
+            required = CNA::Native.library.pointer_for("Q", 0)
+            call("cna_audio_category_copy_name", buffer, bytes, required)
+            buffer[0, bytes].force_encoding(Encoding::UTF_8)
+          end
+        end
+
+        # Derived from the pinned Microsoft.Xna.Framework.Xact.dll IL (SHA-256 a14d5364…).
+        #
+        # `Audio.AudioCategory` sat in the frontier's `RUNTIME_DATA` register with the reasoning
+        # "an XACT AudioEngine category handle; SetVolume/Pause/Resume/Stop act on a live engine this
+        # binding does not have". Both halves were about the producer, and the second is no longer
+        # true: CNA 0.21.0 loads a real XGS -- six categories and eight variables out of the XNA
+        # Spacewar sample's `SpaceWar.xgs` -- and answers a real `SDL3_mixer` renderer.
+        #
+        # ## The constructor validates the file before the engine sees it
+        #
+        # `AudioEngine(settingsFile)` is `AudioEngine(settingsFile, TimeSpan.FromMilliseconds(250),
+        # null)`, and the three-argument form:
+        #
+        #   * `if (string.IsNullOrEmpty(settingsFile)) throw ArgumentNullException("settingsFile")`
+        #   * opens the file and reads four bytes; if it is four bytes or shorter, or those bytes are
+        #     not `X G S F`, `ArgumentException(InvalidContentVersion)` -- so a wrong file is refused
+        #     in managed code, by magic number, before XACT is asked
+        #   * `Engine::CreateHandle(fullPath, (int)lookAheadTime.TotalMilliseconds, rendererId)`, and
+        #     `-1` becomes `InvalidOperationException(CouldNotCreateResource)`
+        #
+        # DEVIATION, recorded: `cna_audio_engine_create` is **game-parented** where XNA's constructor
+        # needs no Game -- the asymmetry every game-scoped audio route in this binding records.
+        class AudioEngine
+          include CNA::Runtime::NativeResource
+          extend CNA::Runtime::EventOwner
+
+          CLR_IDENTITY = "Microsoft.Xna.Framework.Audio.AudioEngine"
+
+          # `.field public static literal int32 ContentVersion = int32(0x00000027)`.
+          ContentVersion = 39
+
+          # `TimeSpan.FromMilliseconds(250)` in the one-argument constructor, projected as seconds.
+          DEFAULT_LOOK_AHEAD_SECONDS = 0.25
+
+          # The four bytes the constructor reads before XACT is asked for anything.
+          SETTINGS_MAGIC = "XGSF"
+
+          xna_event :Disposing
+
+          def initialize(settingsFile, lookAheadTime = nil, rendererId = nil)
+            raise ::ArgumentError, "settingsFile" if settingsFile.nil?
+
+            path = String(settingsFile)
+            raise ::ArgumentError, "settingsFile" if path.empty?
+
+            verify_settings_magic!(path)
+            seconds = lookAheadTime.nil? ? DEFAULT_LOOK_AHEAD_SECONDS : CNA::Runtime::BclProjection.time_span(lookAheadTime)
+            raise ::RangeError, "lookAheadTime" if seconds.nan?
+
+            host = CNA::Runtime::Context.native_host("AudioEngine.new")
+            output = CNA::Native.library.pointer_for("Q", 0)
+            full = File.expand_path(path)
+            file = CNA::Native::Layouts::StringView.new(full.b)
+            renderer = CNA::Native::Layouts::StringView.new((rendererId.nil? ? "" : String(rendererId)).b)
+            CNA::Native.library.call("cna_audio_engine_create_with_renderer", host.handle,
+                                     file.read_u64(0), file.read_u64(8),
+                                     (seconds * 10_000_000).round,
+                                     renderer.read_u64(0), renderer.read_u64(8), output)
+            @categories = {}
+            @registration = 0
+            @callback = nil
+            initialize_native_resource(
+              CNA::Runtime::Context.__send__(:current_game, "AudioEngine"),
+              output[0, 8].unpack1("Q"),
+              lambda { |value| CNA::Native.library.call("cna_audio_engine_destroy", value) }
+            )
+          end
+
+          # `return new AudioCategory(this, name)`, and the constructor it calls is what validates.
+          # The cache is this binding's, for the reason `AudioCategory` records.
+          def GetCategory(name)
+            ensure_live!
+            raise ::ArgumentError, "name" if name.nil?
+
+            key = String(name)
+            raise ::ArgumentError, "name" if key.empty?
+
+            handle = @categories[key]
+            unless handle
+              output = CNA::Native.library.pointer_for("Q", 0)
+              view = CNA::Native::Layouts::StringView.new(key.b)
+              begin
+                CNA::Native.library.call("cna_audio_engine_get_category", native_handle,
+                                         view.read_u64(0), view.read_u64(8), output)
+              rescue CNA::NativeError
+                # `if (_category == 0xffff) throw new InvalidOperationException(CouldNotCreateResource)`.
+                raise ::RuntimeError, "could not create resource"
+              end
+              handle = output[0, 8].unpack1("Q")
+              @categories[key] = handle
+            end
+            AudioCategory.__send__(:new, self, key, handle)
+          end
+
+          # `if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("name")`, then the
+          # native call whose result becomes an exception.
+          #
+          # Measured on the Spacewar settings: `SpeedOfSound` answers 343.5 and round-trips, and the
+          # other seven names in the file are **cue-instance** variables rather than global ones, so
+          # XACT refuses them here. That refusal is the engine's, not this binding's.
+          def GetGlobalVariable(name)
+            ensure_live!
+            key = validated_name(name)
+            output = CNA::Native.library.pointer_for("f", 0.0)
+            view = CNA::Native::Layouts::StringView.new(key.b)
+            CNA::Native.library.call("cna_audio_engine_get_global_variable", native_handle,
+                                     view.read_u64(0), view.read_u64(8), output)
+            output[0, 4].unpack1("f")
+          end
+
+          def SetGlobalVariable(name, value)
+            ensure_live!
+            key = validated_name(name)
+            view = CNA::Native::Layouts::StringView.new(key.b)
+            CNA::Native.library.call("cna_audio_engine_set_global_variable", native_handle,
+                                     view.read_u64(0), view.read_u64(8),
+                                     CNA::Runtime::Numeric.f32(value))
+            nil
+          end
+
+          def Update
+            ensure_live!
+            CNA::Native.library.call("cna_audio_engine_update", native_handle)
+            nil
+          end
+
+          # `GetRendererCount`, then one `GetRenderDetails` per index into a `List<RendererDetail>`
+          # wrapped in a `ReadOnlyCollection`. The local holding the answer starts as `ldnull`, so a
+          # renderer count of zero or less answers **null** rather than an empty collection -- an
+          # observable this reproduces rather than smoothing over.
+          def RendererDetails
+            ensure_live!
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_audio_engine_get_renderer_count", native_handle, output)
+            count = output[0, 8].unpack1("Q")
+            return nil if count.zero?
+
+            details = (0...count).map do |index|
+              RendererDetail.__send__(:new,
+                                      renderer_string(index, "friendly_name"),
+                                      renderer_string(index, "id"))
+            end
+            CNA::Runtime::ReadOnlyCollection.new(details)
+          end
+
+          # `public void Dispose() => Dispose(true); GC.SuppressFinalize(this);` and
+          # `protected virtual void Dispose(bool disposing)`, which raises `Disposing` before the
+          # engine handle goes. Ruby cannot give one name two visibilities, so the two overloads
+          # project to one public method with a default argument -- the rule `Game`,
+          # `ContentManager` and `SoundEffectInstance` already follow.
+          #
+          # Every category handle this engine handed out is released here, before the engine itself:
+          # they are `PARENT_OWNED`, XNA declares nothing that would release them, and a category
+          # outliving its engine would be a handle into a destroyed XACT engine.
+          def Dispose(_disposing = true)
+            return if self.IsDisposed
+
+            self.Disposing.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+            release_registration
+            @categories.each_value do |handle|
+              begin
+                CNA::Native.library.call("cna_audio_category_destroy", handle)
+              rescue CNA::Error
+                nil
+              end
+            end
+            @categories.clear
+            @native_handle.dispose
+            @native_game.__send__(:unregister_native_child, self)
+            nil
+          end
+
+          private
+
+          # `try { Dispose(false); } finally { base.Finalize(); }`, and no Ruby finalizer is ever
+          # registered: nothing native in this binding is released by the garbage collector.
+          def Finalize
+            self.Dispose(false)
+            nil
+          end
+
+          def verify_settings_magic!(path)
+            magic = File.open(path, "rb") { |io| io.read(5) }
+            raise ::ArgumentError, "settingsFile" if magic.nil? || magic.bytesize <= 4
+            raise ::ArgumentError, "settingsFile" unless magic.byteslice(0, 4) == SETTINGS_MAGIC
+          end
+
+          def validated_name(name)
+            raise ::ArgumentError, "name" if name.nil?
+
+            key = String(name)
+            raise ::ArgumentError, "name" if key.empty?
+
+            key
+          end
+
+          def renderer_string(index, kind)
+            size = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_audio_engine_get_renderer_#{kind}_size", native_handle, index, size)
+            bytes = size[0, 8].unpack1("Q")
+            return "" if bytes.zero?
+
+            buffer = Fiddle::Pointer.malloc(bytes, Fiddle::RUBY_FREE)
+            required = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_audio_engine_copy_renderer_#{kind}", native_handle, index,
+                                     buffer, bytes, required)
+            buffer[0, bytes].force_encoding(Encoding::UTF_8)
+          end
+
+          def ensure_live!
+            raise CNA::DisposedObjectError, "AudioEngine is disposed" if self.IsDisposed
+
+            @native_handle.generation.assert_owner_thread!
+          end
+
+          def release_registration
+            return if @registration.zero?
+
+            begin
+              CNA::Native.library.call("cna_audio_unsubscribe_ext", @registration)
+            rescue CNA::Error
+              nil
+            end
+            @registration = 0
+            @callback = nil
+          end
+        end
       end
     end
   end
