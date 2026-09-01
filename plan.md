@@ -234,9 +234,8 @@ delimited and checked against `docs/generated/missing-type-inventory.md` by
 `EffectAnnotationCollection`, `EffectPass`, `EffectPassCollection`, `EffectTechnique`,
 `EffectTechniqueCollection`, `EffectMaterial`, `IEffectLights`, `BasicEffect`, `SkinnedEffect`,
 `AlphaTestEffect`, `DualTextureEffect`, `EnvironmentMapEffect`, `DirectionalLight`, `VertexBuffer`,
-`DynamicVertexBuffer`, `IndexBuffer`, `DynamicIndexBuffer`, `VertexBufferBinding`, `Texture3D`,
-`TextureCube`, `RenderTarget2D`, `RenderTargetCube`, `RenderTargetBinding`, `GraphicsAdapter`,
-`OcclusionQuery`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs`,
+`DynamicVertexBuffer`, `IndexBuffer`, `DynamicIndexBuffer`, `VertexBufferBinding`,
+`RenderTarget2D`, `RenderTargetCube`, `RenderTargetBinding`, `GraphicsAdapter`, `OcclusionQuery`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs`,
 `DrawableGameComponent`, `Model`, `ModelBone`, `ModelMesh`, `ModelMeshPart`, `ModelBoneCollection`,
 `ModelMeshCollection`, `ModelMeshPartCollection`, `ModelEffectCollection`, `MediaPlayer`,
 `MediaLibrary`, `MediaQueue`, `Song`, `SongCollection`, `Album`, `AlbumCollection`, `Artist`,
@@ -254,8 +253,8 @@ owes only `Begin`'s two `Effect`-taking overloads, and both of those wait on `Ef
 
 Types a reader might expect on that list and will not find, because they are **complete**:
 `VertexDeclaration` and the four vertex structs, the four graphics state objects,
-`SamplerStateCollection`, `TextureCollection`, `SpriteFont`, `Texture2D`, `GraphicsResource`,
-`ResourceContentManager`, and the whole `Audio` namespace including the XACT cluster. In `Media`,
+`SamplerStateCollection`, `TextureCollection`, `SpriteFont`, `Texture2D`, `Texture3D`,
+`TextureCube`, `GraphicsResource`, `ResourceContentManager`, and the whole `Audio` namespace including the XACT cluster. In `Media`,
 `Video`, `VideoPlayer`, `MediaSource` and `VisualizationData` are complete while the media *library*
 and *player* runtime above is not.
 

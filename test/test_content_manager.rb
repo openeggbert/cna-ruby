@@ -363,7 +363,10 @@ class ContentManagerTest < Minitest::Test
     # `SpriteFont` was here until its own milestone registered the second materializer, which is
     # what this list is for: it names the readers *this* milestone did not add.
     refute_includes CM.supported_types, F::Audio::SoundEffect
-    %i[TextureCube Texture3D Effect Model].each { |absent| refute G.const_defined?(absent, false), absent.to_s }
+    # `TextureCube` and `Texture3D` were here until their own milestone built them, and neither is
+    # loadable: no reader for either is registered, which is the claim this list is really making.
+    %i[Effect Model].each { |absent| refute G.const_defined?(absent, false), absent.to_s }
+    [G::TextureCube, G::Texture3D].each { |built| refute_includes CM.supported_types, built }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length
   end

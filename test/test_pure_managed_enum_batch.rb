@@ -327,7 +327,11 @@ class PureManagedEnumBatchTest < Minitest::Test
     # four graphics state objects were built: those sixteen preset identities and four
     # `cna_*_state_init` routes belong to that milestone, not to this batch's 24 enums. What this
     # test claims is unchanged, and every fragment left still proves it.
-    %w[cube_ render_target_ index_buffer_ vertex_buffer_].each do |fragment|
+    # `cube_` left this list when `Texture3D` and `TextureCube` were built and bound five routes
+    # each, for the same reason every fragment before it left: those routes belong to the milestone
+    # that bound them, not to this batch's 24 enums. `CubeMapFace` is one of the 24 and still binds
+    # nothing of its own.
+    %w[render_target_ index_buffer_ vertex_buffer_].each do |fragment|
       refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?(fragment) }, fragment
     end
   end
@@ -335,15 +339,17 @@ class PureManagedEnumBatchTest < Minitest::Test
   def test_batch_implies_no_renderer_device_audio_media_or_touch_surface
     # The four state objects exist now; what this batch claimed, and still claims, is that **it**
     # built none of them -- it selected the eight enums they are made of and nothing that holds one.
-    %i[RenderTarget2D RenderTargetCube TextureCube Texture3D VertexBuffer IndexBuffer
+    %i[RenderTarget2D RenderTargetCube VertexBuffer IndexBuffer
        DynamicVertexBuffer DynamicIndexBuffer
        Effect BasicEffect
        EffectParameter EffectTechnique GraphicsAdapter
        OcclusionQuery].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
+    # `Texture3D` and `TextureCube` exist now, and this batch built neither: it selected
+    # `CubeMapFace`, which `TextureCube.SetData` takes, and nothing that holds one.
     %i[BlendState DepthStencilState RasterizerState SamplerState SamplerStateCollection
-       VertexDeclaration].each do |name|
+       VertexDeclaration Texture3D TextureCube].each do |name|
       assert G.const_defined?(name, false), "Graphics::#{name}"
     end
     # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still

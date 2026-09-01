@@ -207,9 +207,14 @@ class RendererQualificationTest < Minitest::Test
     registry = JSON.parse(ROOT.join("docs", "runtime-capabilities.json").read).fetch("capabilities")
     adapter = registry.find { |row| row.fetch("id") == "display.adapter-enumeration" }
     assert_equal "UPSTREAM_CNA_BLOCKED", adapter.fetch("category")
+    # Every claim in this category needs a renderer that really rasterises. The three the milestone
+    # itself added are named; a later one that earns the category joins them, and the assertion is
+    # that the three are still there rather than that nothing else ever will be.
     renderer = registry.select { |row| row.fetch("category") == "VERIFIED_NATIVE_RENDERER" }
+                       .map { |row| row.fetch("id") }
     assert_equal %w[renderer.frame-stability renderer.native-window renderer.real-rasterization],
-                 renderer.map { |row| row.fetch("id") }.sort
+                 (renderer & %w[renderer.frame-stability renderer.native-window renderer.real-rasterization]).sort
+    refute_empty renderer
   end
 
   # ------------------------------------------------------------------------------ mutation control

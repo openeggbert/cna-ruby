@@ -383,7 +383,9 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.SpriteFont
       Microsoft.Xna.Framework.Graphics.Texture
       Microsoft.Xna.Framework.Graphics.Texture2D
+      Microsoft.Xna.Framework.Graphics.Texture3D
       Microsoft.Xna.Framework.Graphics.TextureCollection
+      Microsoft.Xna.Framework.Graphics.TextureCube
       Microsoft.Xna.Framework.Input.GamePad
       Microsoft.Xna.Framework.Input.Mouse
       Microsoft.Xna.Framework.Media.VideoPlayer

@@ -352,6 +352,22 @@ module Microsoft
           def self.FromStream: (GraphicsDevice graphics_device, untyped stream, *untyped arguments) -> Texture2D
         end
 
+        class Texture3D < Texture
+          def initialize: (GraphicsDevice graphicsDevice, Integer width, Integer height, Integer depth, bool mipMap, SurfaceFormat format) -> void
+          attr_reader Width: Integer
+          attr_reader Height: Integer
+          attr_reader Depth: Integer
+          def SetData: (Module type, *untyped arguments) -> nil
+          def GetData: (Module type, *untyped arguments) -> nil
+        end
+
+        class TextureCube < Texture
+          def initialize: (GraphicsDevice graphicsDevice, Integer size, bool mipMap, SurfaceFormat format) -> void
+          attr_reader Size: Integer
+          def SetData: (Module type, *untyped arguments) -> nil
+          def GetData: (Module type, *untyped arguments) -> nil
+        end
+
         class BlendState < GraphicsResource
           def initialize: () -> void
           attr_accessor ColorSourceBlend: Blend

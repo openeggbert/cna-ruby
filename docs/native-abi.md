@@ -482,3 +482,42 @@ scaled from, a `Rectangle` is a destination stretched into -- and CNA carries th
 structures and two submit routes. `CNA_SpriteCommand` therefore has a `destination` where
 `CNA_SpriteScaledCommand` has a `scale`, and neither has both, which is exactly why XNA's longest
 stretched overload takes eight parameters and its longest positioned one takes nine.
+
+## The volume and the cube
+
+Ten routes bring the count to **270** and six layouts the structures to **43**: five each for
+`Texture3D` and `TextureCube` — `create`, `set_data`, `get_data`, `get_info`, `destroy` — with
+`CNA_Texture3DCreateInfo` (32/4), `CNA_Texture3DInfo` (32/4), `CNA_Texture3DTransfer` (56/8),
+`CNA_TextureCubeCreateInfo` (24/4), `CNA_TextureCubeInfo` (24/4) and `CNA_TextureCubeTransfer`
+(56/8). The two transfer structures are the shape of the two types' longest XNA overloads: a box —
+left, top, right, bottom, front, back — for the volume, and a face plus an optional rectangle for
+the cube.
+
+Two routes each of the four available are deliberately **not** bound.
+`cna_texture3d_set_data_bytes` uploads a raw tightly packed pointer, which no XNA member does — the
+generic `SetData<T>` is what a consumer has — and `cna_texturecube_create_from_dds_memory` decodes a
+DDS cube map, which XNA reaches through the content pipeline rather than through `TextureCube`.
+
+**DEVIATION, recorded, and the first that is a shape rather than a behaviour.** Both transfer routes
+take `const CNA_Color*`, not the tagged `CNA_TextureDataType` the `Texture2D` routes take. XNA's
+`SetData<T>` accepts any `T : struct` whose size equals or divides the format's byte size, so a
+`Bgra4444[]` upload into a `Color` volume is legal in XNA and has **no C route here**. The managed
+validation still runs first and in XNA's order — an element count that does not fill the region is
+refused before the element type is looked at — and the refusal is `CNA::Runtime::NotSupportedError`,
+the projection of the exception XNA itself raises when a profile cannot carry a request.
+
+**And the first pair of types whose behaviour depends on which qualified artifact is loaded.**
+`HEADLESS` refuses `cna_texture3d_create` outright — "this renderer does not support real volume (3D)
+texture storage", which is `CNA_GRAPHICS_CAPABILITY_TEXTURE_3D` answering false — and refuses to
+store a cube face. `OPENGL33` round-trips both exactly: sixteen voxels and six distinct cube faces,
+each read back byte for byte, including a one-texel sub-rectangle of one face. The managed contract
+is asserted against both artifacts; the storage is asserted against what the renderer was measured
+to do, through `test/renderer_environment.rb`.
+
+**A defect this milestone fixed in `Texture2D` on the way past.** `CopyData` opens
+`if (data == null || data.Length == 0) throw ArgumentNullException("data", NullNotAllowed)`, so an
+**empty** array is the same refusal as a null one. The projection answered `RangeError("elementCount")`
+for the empty case, which is `Helpers.ValidateCopyParameters`'s answer to a different question. All
+three texture types now share the one rule, along with `ValidateCopyParameters`,
+`GetAndValidateSizes` and `ValidateTotalSize`, which live on `Texture` because XNA's own are
+`static` members of `Texture`.

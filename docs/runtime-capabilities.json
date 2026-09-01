@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Native frontier 6",
+  "milestone": "Foundation 79",
   "platform": "Linux x86-64 MRI Ruby 3.3.8",
   "cnaAbi": "0.21.0 (admitted set: 0.7.0, 0.21.0)",
   "capabilities": [
@@ -543,6 +543,12 @@
       "category": "VERIFIED_NATIVE_RENDERER",
       "status": "verified; 60 and 600 frames on both qualified artifacts",
       "evidence": "runs.*.frames. One game, a real GraphicsDevice.Clear in every Draw, run to 60 and to 600 frames against both the HEADLESS and the OPENGL33 artifact: 60/60 and 600/600 completed with no error on each, the OPENGL33 run presenting through a real GL context and X11 window each frame. Measured alongside it, and not a binding defect: creating and destroying tens of games in one process against a windowed renderer intermittently fails inside SDL with \"x11 not available\", because each game acquires and releases the video subsystem; one long-lived game is unaffected"
+    },
+    {
+      "id": "graphics.volume-and-cube-textures",
+      "category": "VERIFIED_NATIVE_RENDERER",
+      "status": "complete; both types round-trip real texels on a renderer that has the storage",
+      "evidence": "Graphics.Texture3D (11 identities) and Graphics.TextureCube (9), the two types EffectParameter's GetValueTexture3D and GetValueTextureCube return. Ten canonical routes and six layouts, ABI_MISMATCHES=0. Under OPENGL33 sixteen voxels and six distinct cube faces round-trip byte for byte, including a one-texel sub-rectangle of one face and a one-slice box of the volume; under HEADLESS cna_texture3d_create is refused outright (CNA_GRAPHICS_CAPABILITY_TEXTURE_3D answers false) and cna_texturecube_set_data refuses to store a face, so the storage claim is made only where it was measured. The managed contract -- XNA's own constructor refusals in the IL's order, GetAndValidateBox's unsigned comparisons, GetAndValidateRect, ValidateTotalSize and the empty-array-is-ArgumentNullException rule -- is asserted against both artifacts. DEVIATION, recorded: both CNA transfer routes take const CNA_Color*, so an element type XNA would accept is refused with NotSupportedError after the managed validation has run"
     },
     {
       "id": "graphics.viewport-setter",

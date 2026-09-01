@@ -43363,6 +43363,924 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Media::VideoPlayer"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.Texture3D",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "Microsoft.Xna.Framework.Graphics.Texture",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
+        "System.IDisposable"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.IGraphicsResource"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "graphicsDevice",
+              "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "width",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "height",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "depth",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "mipMap",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "format",
+              "type": "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "startIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementCount",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "level",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "left",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "top",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "bottom",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "front",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "back",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "startIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementCount",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "startIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementCount",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "level",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "left",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "top",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "right",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "bottom",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "front",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "back",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "startIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementCount",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Depth",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Height",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Width",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::Texture3D"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.TextureCube",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "Microsoft.Xna.Framework.Graphics.Texture",
+      "interfaces": [
+        "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
+        "System.IDisposable"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.IGraphicsResource"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "graphicsDevice",
+              "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "size",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "mipMap",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "format",
+              "type": "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "cubeMapFace",
+              "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "cubeMapFace",
+              "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "startIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementCount",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "cubeMapFace",
+              "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "level",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "rect",
+              "type": "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "startIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementCount",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "cubeMapFace",
+              "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "cubeMapFace",
+              "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "startIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementCount",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "cubeMapFace",
+              "type": "Microsoft.Xna.Framework.Graphics.CubeMapFace",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "level",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "rect",
+              "type": "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "startIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementCount",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Size",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::TextureCube"
     }
   ]
 }

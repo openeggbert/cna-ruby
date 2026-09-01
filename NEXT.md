@@ -59,6 +59,7 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 77 | `SpriteBatch.Begin`'s two state-bearing overloads, and the null-descriptor defect | **0** | 2 |
 | 78 | `SpriteBatch.Draw`'s three destination-rectangle overloads, completing the member | **0** | 3 |
 | NF6 | the real-renderer qualification artifact, and the adapter defect it found | **0** | **0** |
+| 79 | `Graphics.Texture3D` + `TextureCube`, the two types `EffectParameter` returns | **2** | 20 |
 
 ## Measured state
 

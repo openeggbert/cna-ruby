@@ -1655,6 +1655,14 @@
     {
       "name": "Microsoft.Xna.Framework.Media.VideoPlayer",
       "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.Texture3D",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.TextureCube",
+      "complete": true
     }
   ]
 }

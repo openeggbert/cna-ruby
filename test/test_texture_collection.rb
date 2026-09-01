@@ -219,8 +219,11 @@ class TextureCollectionTest < Minitest::Test
     # **this** milestone added neither, and the device members it added were the two texture
     # collections, which the assertion below still pins exactly.
     %i[SamplerState SamplerStateCollection].each { |present| assert G.const_defined?(present, false) }
+    # `TextureCube` and `Texture3D` left this list when they were built; what this milestone
+    # claimed, and still claims, is that **it** built neither -- it bound two device collections
+    # that hold a `Texture`, not a second texture type.
     %i[Effect BasicEffect EffectParameter
-       RenderTarget2D TextureCube Texture3D VertexBuffer IndexBuffer].each do |absent|
+       RenderTarget2D VertexBuffer IndexBuffer].each do |absent|
       refute G.const_defined?(absent, false), absent.to_s
     end
     %i[DrawPrimitives DrawIndexedPrimitives DrawUserPrimitives SetRenderTarget

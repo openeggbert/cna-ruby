@@ -55,8 +55,6 @@
 - `Microsoft.Xna.Framework.Graphics.RenderTargetBinding`
 - `Microsoft.Xna.Framework.Graphics.RenderTargetCube`
 - `Microsoft.Xna.Framework.Graphics.SkinnedEffect`
-- `Microsoft.Xna.Framework.Graphics.Texture3D`
-- `Microsoft.Xna.Framework.Graphics.TextureCube`
 - `Microsoft.Xna.Framework.Graphics.VertexBuffer`
 - `Microsoft.Xna.Framework.Graphics.VertexBufferBinding`
 - `Microsoft.Xna.Framework.GraphicsDeviceInformation`

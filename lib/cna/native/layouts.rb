@@ -423,6 +423,110 @@ module CNA
         end
       end
 
+      # `CNA_Texture3DCreateInfo`/`Info`/`Transfer` and the three cube-map counterparts. The volume
+      # transfer carries a box -- left/top/right/bottom/front/back -- rather than a rectangle, which
+      # is exactly the shape of XNA's own ten-argument `Texture3D.SetData` overload; the cube
+      # transfer carries a face and a rectangle, which is the shape of `TextureCube`'s six-argument
+      # one.
+      class Texture3DCreateInfo < Structure
+        layout size: 32, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("width", "uint32_t", 8, 4), Layouts.field("height", "uint32_t", 12, 4),
+          Layouts.field("depth", "uint32_t", 16, 4),
+          Layouts.field("mip_map", "CNA_Bool", 20, 1), Layouts.field("reserved0", "uint8_t", 21, 3),
+          Layouts.field("format", "CNA_SurfaceFormat", 24, 4),
+          Layouts.field("reserved1", "uint32_t", 28, 4)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class Texture3DInfo < Structure
+        layout size: 32, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("width", "uint32_t", 8, 4), Layouts.field("height", "uint32_t", 12, 4),
+          Layouts.field("depth", "uint32_t", 16, 4), Layouts.field("level_count", "uint32_t", 20, 4),
+          Layouts.field("format", "CNA_SurfaceFormat", 24, 4),
+          Layouts.field("reserved", "uint32_t", 28, 4)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class Texture3DTransfer < Structure
+        layout size: 56, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("level", "int32_t", 8, 4),
+          Layouts.field("left", "int32_t", 12, 4), Layouts.field("top", "int32_t", 16, 4),
+          Layouts.field("right", "int32_t", 20, 4), Layouts.field("bottom", "int32_t", 24, 4),
+          Layouts.field("front", "int32_t", 28, 4), Layouts.field("back", "int32_t", 32, 4),
+          Layouts.field("reserved", "uint32_t", 36, 4),
+          Layouts.field("start_index", "uint64_t", 40, 8), Layouts.field("element_count", "uint64_t", 48, 8)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class TextureCubeCreateInfo < Structure
+        layout size: 24, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("size", "uint32_t", 8, 4),
+          Layouts.field("mip_map", "CNA_Bool", 12, 1), Layouts.field("reserved0", "uint8_t", 13, 3),
+          Layouts.field("format", "CNA_SurfaceFormat", 16, 4),
+          Layouts.field("reserved1", "uint32_t", 20, 4)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class TextureCubeInfo < Structure
+        layout size: 24, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("size", "uint32_t", 8, 4), Layouts.field("level_count", "uint32_t", 12, 4),
+          Layouts.field("format", "CNA_SurfaceFormat", 16, 4),
+          Layouts.field("reserved", "uint32_t", 20, 4)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class TextureCubeTransfer < Structure
+        layout size: 56, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("face", "CNA_CubeMapFace", 8, 4), Layouts.field("level", "int32_t", 12, 4),
+          Layouts.field("has_rectangle", "CNA_Bool", 16, 1), Layouts.field("reserved0", "uint8_t", 17, 3),
+          Layouts.field("rectangle", "CNA_Rectangle", 20, 16),
+          Layouts.field("reserved1", "uint32_t", 36, 4),
+          Layouts.field("start_index", "uint64_t", 40, 8), Layouts.field("element_count", "uint64_t", 48, 8)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       class Texture2DCreateInfo < Structure
         layout size: 24, alignment: 4, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

@@ -329,6 +329,22 @@ module CNA
         signature("cna_texture2d_get_data", T[:result], [T[:handle], enum("CNA_TextureDataType"), pointer("CNA_Texture2DTransfer", const: true), T[:ptr], T[:u64], pointer("uint64_t")], ownership: "borrows texture; caller output"),
         signature("cna_texture2d_get_info", T[:result], [T[:handle], pointer("CNA_Texture2DInfo")], ownership: "caller output"),
         signature("cna_texture2d_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED Texture2D"),
+        # `Texture3D` and `TextureCube`. Both transfer routes take `const CNA_Color*` rather than the
+        # tagged `CNA_TextureDataType` the 2D one takes, so CNA carries **only** `Color` elements for
+        # a volume or a cube face; that is the recorded deviation on both types. `cna_texture3d_set_data_bytes`
+        # and `cna_texturecube_create_from_dds_memory` stay unbound: neither has an XNA identity here,
+        # the first being a raw pointer upload and the second a DDS decoder XNA reaches through the
+        # content pipeline.
+        signature("cna_texture3d_create", T[:result], [T[:handle], pointer("CNA_Texture3DCreateInfo", const: true), pointer("CNA_Handle")], ownership: "borrows device; returns OWNED texture"),
+        signature("cna_texture3d_set_data", T[:result], [T[:handle], pointer("CNA_Texture3DTransfer", const: true), pointer("CNA_Color", const: true), T[:u64]], ownership: "borrows texture; copies the voxels"),
+        signature("cna_texture3d_get_data", T[:result], [T[:handle], pointer("CNA_Texture3DTransfer", const: true), pointer("CNA_Color"), T[:u64], pointer("uint64_t")], ownership: "borrows texture; caller output"),
+        signature("cna_texture3d_get_info", T[:result], [T[:handle], pointer("CNA_Texture3DInfo")], ownership: "caller output"),
+        signature("cna_texture3d_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED Texture3D"),
+        signature("cna_texturecube_create", T[:result], [T[:handle], pointer("CNA_TextureCubeCreateInfo", const: true), pointer("CNA_Handle")], ownership: "borrows device; returns OWNED texture"),
+        signature("cna_texturecube_set_data", T[:result], [T[:handle], pointer("CNA_TextureCubeTransfer", const: true), pointer("CNA_Color", const: true), T[:u64]], ownership: "borrows texture; copies the texels"),
+        signature("cna_texturecube_get_data", T[:result], [T[:handle], pointer("CNA_TextureCubeTransfer", const: true), pointer("CNA_Color"), T[:u64], pointer("uint64_t")], ownership: "borrows texture; caller output"),
+        signature("cna_texturecube_get_info", T[:result], [T[:handle], pointer("CNA_TextureCubeInfo")], ownership: "caller output"),
+        signature("cna_texturecube_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED TextureCube"),
         # The two encode routes `SaveAsPng` and `SaveAsJpeg` need: ask for the size, then copy. CNA
         # also exports `cna_texture2d_save_file`, which writes a path rather than a stream and has
         # no XNA identity, so it stays unbound.

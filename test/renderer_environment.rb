@@ -58,6 +58,15 @@ module RendererEnvironment
 
   def renderer_name = measurement&.fetch(:renderer_name)
 
+  # Whether this artifact's renderer really has volume and cube-face storage, measured by using it
+  # rather than by reading a flag: a one-texel round trip through the same public members a consumer
+  # would call. HEADLESS refuses both -- `cna_texture3d_create` with "this renderer does not support
+  # real volume (3D) texture storage" and `cna_texturecube_set_data` with "did not store the
+  # complete requested cube face region" -- while `OPENGL33` round-trips both exactly.
+  def volume_storage? = measurement&.fetch(:volume_storage) || false
+
+  def cube_face_storage? = measurement&.fetch(:cube_face_storage) || false
+
   # True when this artifact's renderer really creates a native window, which is the single fact the
   # six environment-dependent expectations turn on.
   def windowed? = !measurement.nil? && measurement.fetch(:window_system) != UNKNOWN
@@ -96,7 +105,9 @@ module RendererEnvironment
         Microsoft::Xna::Framework::GraphicsDeviceManager.new(self)
       end
 
-      def LoadContent
+      # In `Draw`, not `LoadContent`: a renderer's frame is what `BeginDraw`/`EndDraw` open and
+      # close, and work issued outside one can report success and do nothing.
+      def Draw(_time)
         @captured = @body.call(self, self.GraphicsDevice)
       ensure
         self.Exit
@@ -118,8 +129,42 @@ module RendererEnvironment
     {
       renderer_name: renderer_name_of(device_handle),
       window_system: window_system_of(game_handle),
-      format_support: CLASSIFIED_FORMATS.keys.to_h { |format| [format, format_support_of(device_handle, format)] }
+      format_support: CLASSIFIED_FORMATS.keys.to_h { |format| [format, format_support_of(device_handle, format)] },
+      volume_storage: volume_storage_of(device),
+      cube_face_storage: cube_face_storage_of(device)
     }
+  end
+
+  G = Microsoft::Xna::Framework::Graphics
+  C = Microsoft::Xna::Framework::Color
+  private_constant :G, :C
+
+  def volume_storage_of(device)
+    texture = G::Texture3D.new(device, 1, 1, 1, false, G::SurfaceFormat::Color)
+    begin
+      texture.SetData(C, [C.new(1, 2, 3, 4)])
+      read = [C.new(0, 0, 0, 0)]
+      texture.GetData(C, read)
+      read.first == C.new(1, 2, 3, 4)
+    ensure
+      texture.Dispose
+    end
+  rescue CNA::CapabilityError
+    false
+  end
+
+  def cube_face_storage_of(device)
+    texture = G::TextureCube.new(device, 1, false, G::SurfaceFormat::Color)
+    begin
+      texture.SetData(C, G::CubeMapFace::PositiveX, [C.new(5, 6, 7, 8)])
+      read = [C.new(0, 0, 0, 0)]
+      texture.GetData(C, G::CubeMapFace::PositiveX, read)
+      read.first == C.new(5, 6, 7, 8)
+    ensure
+      texture.Dispose
+    end
+  rescue CNA::CapabilityError
+    false
   end
 
   def renderer_name_of(device_handle)
