@@ -247,8 +247,9 @@ class MemberLevelDependenciesTest < Minitest::Test
     # XACT engine cluster held it at 8 -- AudioCategory left and WaveBank arrived behind
     # AudioEngine -- building the banks and the cue took it to 6, which emptied the Audio namespace
     # off the frontier entirely, MediaSource took it to 5 and emptied the RUNTIME_DATA register with
-    # it, and SpriteFont took it to 4 -- the first candidate a BCL decision alone really unblocked.
-    assert_equal 4, REPORT.fetch("dependencyCompleteCandidates").length
+    # it, SpriteFont took it to 4 -- the first candidate a BCL decision alone really unblocked --
+    # and ResourceContentManager to 3, the first this frontier ever *selected* rather than listed.
+    assert_equal 3, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")

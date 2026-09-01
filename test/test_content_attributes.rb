@@ -51,9 +51,9 @@ class ContentAttributesTest < Minitest::Test
     assert_equal %i[ContentSerializerAttribute ContentSerializerCollectionItemNameAttribute
                     ContentSerializerIgnoreAttribute ContentSerializerRuntimeTypeAttribute
                     ContentSerializerTypeVersionAttribute],
-                 (C.constants(false) - %i[ContentLoadException ContentManager]).sort
-    %i[ContentReader ContentTypeReader ContentTypeReaderManager
-       ResourceContentManager].each do |absent|
+                 (C.constants(false) - %i[ContentLoadException ContentManager
+                                          ResourceContentManager]).sort
+    %i[ContentReader ContentTypeReader ContentTypeReaderManager].each do |absent|
       refute C.const_defined?(absent, false), "Content::#{absent}"
     end
   end

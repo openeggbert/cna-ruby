@@ -174,7 +174,8 @@ class XnaExceptionsTest < Minitest::Test
     assert_equal %i[ContentLoadException ContentManager ContentSerializerAttribute
                     ContentSerializerCollectionItemNameAttribute
                     ContentSerializerIgnoreAttribute ContentSerializerRuntimeTypeAttribute
-                    ContentSerializerTypeVersionAttribute], F::Content.constants(false).sort
+                    ContentSerializerTypeVersionAttribute
+                    ResourceContentManager], F::Content.constants(false).sort
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length
   end

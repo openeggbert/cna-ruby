@@ -4,7 +4,6 @@
 - `Microsoft.Xna.Framework.Content.ContentTypeReader`
 - `Microsoft.Xna.Framework.Content.ContentTypeReaderManager`
 - `Microsoft.Xna.Framework.Content.ContentTypeReader`1`
-- `Microsoft.Xna.Framework.Content.ResourceContentManager`
 - `Microsoft.Xna.Framework.Design.BoundingBoxConverter`
 - `Microsoft.Xna.Framework.Design.BoundingSphereConverter`
 - `Microsoft.Xna.Framework.Design.ColorConverter`

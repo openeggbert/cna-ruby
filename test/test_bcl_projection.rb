@@ -67,7 +67,8 @@ class BclProjectionTest < Minitest::Test
                  B::TYPES)
     # Foundation 33 also records a decision *not* to invent a constant, and Foundation 36 adds
     # the second such decision.
-    assert_equal ["System.Action`1", "System.IDisposable", "System.IServiceProvider"],
+    assert_equal ["System.Action`1", "System.IDisposable", "System.IServiceProvider",
+                  "System.Resources.ResourceManager"],
                  B::STRUCTURAL_COLLAPSE.keys.sort
     assert_equal({"System.Exception" => "StandardError",
                   "System.Runtime.InteropServices.ExternalException" => "StandardError"},
@@ -78,6 +79,7 @@ class BclProjectionTest < Minitest::Test
                   "System.Collections.ObjectModel.ReadOnlyCollection`1", "System.EventArgs",
                   "System.Exception", "System.IDisposable", "System.IO.SeekOrigin", "System.IO.Stream",
                   "System.IServiceProvider", "System.Nullable`1",
+                  "System.Resources.ResourceManager",
                   "System.Runtime.InteropServices.ExternalException",
                   "System.Runtime.Serialization.SerializationInfo",
                   "System.Runtime.Serialization.StreamingContext", "System.Text.StringBuilder",

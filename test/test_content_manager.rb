@@ -117,8 +117,11 @@ class ContentManagerTest < Minitest::Test
     names = FRONTIER.fetch("dependencyCompleteCandidates").map { |item| item.fetch("name") }
     refute_includes names, "Microsoft.Xna.Framework.Content.ContentManager"
     assert_empty FRONTIER.fetch("consumableCandidates")
-    # Completing it uncovered what it was hiding: ResourceContentManager derives from it.
-    assert_includes names, "Microsoft.Xna.Framework.Content.ResourceContentManager"
+    # Completing it uncovered what it was hiding: ResourceContentManager derives from it. That
+    # candidate has since been built too -- once System.Resources.ResourceManager was collapsed to
+    # the one member it reaches -- so what is asserted now is the end state that produced.
+    refute_includes names, "Microsoft.Xna.Framework.Content.ResourceContentManager"
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Content.ResourceContentManager"
   end
 
   # ------------------------------------------------------------------------- managed construction
@@ -346,7 +349,9 @@ class ContentManagerTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_adds_no_content_reader_pipeline_or_second_asset_type
-    %i[ContentReader ContentTypeReader ContentTypeReaderManager ResourceContentManager].each do |absent|
+    # `ResourceContentManager` was here until its own milestone built it, which is what this list
+    # is for: it names what *this* milestone did not add.
+    %i[ContentReader ContentTypeReader ContentTypeReaderManager].each do |absent|
       refute C.const_defined?(absent, false), absent.to_s
     end
     # The audio cluster exists, and this milestone did not build it: no `Load<SoundEffect>` reader

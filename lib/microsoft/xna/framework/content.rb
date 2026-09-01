@@ -421,6 +421,70 @@ module Microsoft
             device
           end
         end
+
+        # Derived from the pinned Microsoft.Xna.Framework.dll IL (SHA-256 38e7093f…).
+        #
+        # Two identities, and the first candidate this session's dependency frontier ever *selected*
+        # rather than merely listed: once `System.Resources.ResourceManager` was collapsed, it had no
+        # blocker left at all.
+        #
+        #     public ResourceContentManager(IServiceProvider serviceProvider, ResourceManager resourceManager)
+        #         : base(serviceProvider) {
+        #         if (resourceManager == null) throw new ArgumentNullException("resourceManager");
+        #         this.resourceManager = resourceManager;
+        #     }
+        #
+        #     protected override Stream OpenStream(string assetName) {
+        #         object value = resourceManager.GetObject(assetName);
+        #         if (value == null) throw new ContentLoadException(OpenResourceNotFound, assetName);
+        #         byte[] bytes = value as byte[];
+        #         if (bytes == null) throw new ContentLoadException(OpenResourceNotBinary, assetName);
+        #         return new MemoryStream(bytes);
+        #     }
+        #
+        # That is the whole type. It reaches nothing native — no CNA route is bound for it — and the
+        # `MemoryStream` is `CNA::Runtime::Stream.over_bytes`, which is what that projection is for.
+        #
+        # The base constructor takes no root directory, so a `ResourceContentManager` keeps
+        # `ContentManager`'s default `""` and never consults it: `OpenStream` is overridden and the
+        # root is only used by the base's own path building.
+        class ResourceContentManager < ContentManager
+          CLR_IDENTITY = "Microsoft.Xna.Framework.Content.ResourceContentManager"
+
+          # `System.Resources.ResourceManager` is **structurally collapsed**, not projected: the only
+          # member this type reaches is `GetObject(string)`. So the parameter is any object that
+          # answers it — the same rule `System.Action`1` follows for a callable — and a .NET
+          # resource set is neither required nor invented.
+          def initialize(serviceProvider, resourceManager)
+            super(serviceProvider)
+            raise ArgumentError, "resourceManager" if resourceManager.nil?
+            unless resourceManager.respond_to?(:GetObject)
+              raise TypeError, "resourceManager must answer GetObject(assetName)"
+            end
+
+            @resource_manager = resourceManager
+          end
+
+          protected
+
+          # The two `ContentLoadException` branches are the whole of the behaviour, and they are
+          # different failures: a name the resource set does not know, and a name whose value is not
+          # binary. `System.Byte[]` projects to a Ruby String, so "not binary" is "not a String".
+          def OpenStream(assetName)
+            ensure_not_disposed!
+            raise ArgumentError, "assetName" if assetName.nil? || String(assetName).empty?
+
+            value = @resource_manager.GetObject(String(assetName))
+            if value.nil?
+              raise ContentLoadException, "resource not found: #{assetName}"
+            end
+            unless value.is_a?(::String)
+              raise ContentLoadException, "resource is not binary: #{assetName}"
+            end
+
+            CNA::Runtime::Stream.over_bytes(value.b, writable: false, name: String(assetName))
+          end
+        end
       end
     end
   end

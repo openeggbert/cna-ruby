@@ -44,7 +44,8 @@ class DisposableCollapseTest < Minitest::Test
 
   def test_the_register_records_the_collapse_and_invents_nothing
     assert B.structural_collapse?(CLR)
-    assert_equal ["System.Action`1", "System.IDisposable", "System.IServiceProvider"],
+    assert_equal ["System.Action`1", "System.IDisposable", "System.IServiceProvider",
+                  "System.Resources.ResourceManager"],
                  B::STRUCTURAL_COLLAPSE.keys.sort
     reason = B::STRUCTURAL_COLLAPSE.fetch(CLR)
     assert_includes reason, "Dispose()"
@@ -266,7 +267,9 @@ class DisposableCollapseTest < Minitest::Test
     # Media.MediaSource then emptied RUNTIME_DATA out of the summary as well as out of the register.
     # And SpriteFont's milestone emptied BCL_PROJECTION+NATIVE_RUNTIME too: it was the only
     # doubly blocked candidate left, and it is the one a BCL decision alone really unblocked.
-    assert_equal({"BCL_PROJECTION" => 2, "NATIVE_RUNTIME" => 2},
+    # BCL_PROJECTION fell to 1 when ResourceContentManager was built, which needed no projection at
+    # all in the end: System.Resources.ResourceManager collapsed to the one member it reaches.
+    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 2},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end
@@ -321,6 +324,8 @@ class DisposableCollapseTest < Minitest::Test
     # ContentManager projection has since completed it outright, which does not weaken the claim
     # that this collapse moved nothing.
     assert ReviewedScoreboard.complete?(STRICT, "Microsoft.Xna.Framework.Game")
-    assert_equal 3, CNA::Runtime::BclProjection::STRUCTURAL_COLLAPSE.length
+    # Three when this milestone ran; System.Resources.ResourceManager is the fourth, added when
+    # ResourceContentManager was built, which again does not weaken what this one claimed.
+    assert_equal 4, CNA::Runtime::BclProjection::STRUCTURAL_COLLAPSE.length
   end
 end

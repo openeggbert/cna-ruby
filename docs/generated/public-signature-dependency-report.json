@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 164,
-  "completeTypes": 159,
+  "targetTypes": 165,
+  "completeTypes": 160,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
@@ -10,7 +10,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 93,
+  "missingTypes": 92,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -56,6 +56,7 @@
     "System.IntPtr",
     "System.Nullable`1",
     "System.Object",
+    "System.Resources.ResourceManager",
     "System.Runtime.InteropServices.ExternalException",
     "System.Runtime.Serialization.SerializationInfo",
     "System.Runtime.Serialization.StreamingContext",
@@ -95,7 +96,7 @@
     }
   },
   "blockerSummary": {
-    "BCL_PROJECTION": 2,
+    "BCL_PROJECTION": 1,
     "NATIVE_RUNTIME": 2
   },
   "partialDependencySatisfiedCandidates": [
@@ -714,59 +715,6 @@
 
   ],
   "dependencyCompleteCandidates": [
-    {
-      "name": "Microsoft.Xna.Framework.Content.ResourceContentManager",
-      "kind": "class",
-      "expectedRubyIdentities": 2,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Content.ContentManager"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Content.ContentLoadException"
-      ],
-      "ilOnlyUnmetDependencies": [
-
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "BCL_PROJECTION"
-      ],
-      "unmappedBclTypes": [
-        "System.Resources.ResourceManager"
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "OpenStream"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    },
     {
       "name": "Microsoft.Xna.Framework.Design.MathTypeConverter",
       "kind": "class",

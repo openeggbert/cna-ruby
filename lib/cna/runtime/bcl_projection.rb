@@ -172,6 +172,7 @@ module CNA
       # frontier can count the identity as decided, and so the API verifier can assert that no
       # constant was invented after all.
       STRUCTURAL_COLLAPSE = {
+        "System.Resources.ResourceManager" => "the one type that names it, Content.ResourceContentManager, reaches exactly one of its members: `GetObject(string)`, whose answer it immediately tests for null and then for `byte[]`. A .NET resource set is a satellite assembly's embedded `.resources` blob, which a Ruby program does not have and this binding will not invent; what the XNA surface can reach is a lookup from a name to bytes, so the contract survives as any object answering `GetObject`, the same collapse `System.Action`1` records for a callable, and no Ruby constant is invented",
         "System.IServiceProvider" => "declares one member, GetService(Type), which GameServiceContainer declares publicly; the contract survives as that member and no Ruby constant is invented",
         # The admitted mscorlib says `System.IDisposable` declares exactly one member --
         # `void Dispose()` -- and nothing else. No Close, no IsDisposed, no finalizer contract, no

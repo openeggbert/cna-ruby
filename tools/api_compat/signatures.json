@@ -1619,6 +1619,66 @@
       "rubyName": "Microsoft::Xna::Framework::Content::ContentManager"
     },
     {
+      "name": "Microsoft.Xna.Framework.Content.ResourceContentManager",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "Microsoft.Xna.Framework.Content.ContentManager",
+      "interfaces": [
+        "System.IDisposable"
+      ],
+      "directInterfaces": [],
+      "genericParameters": [],
+      "rubyName": "Microsoft::Xna::Framework::Content::ResourceContentManager",
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "serviceProvider",
+              "type": "System.IServiceProvider",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "resourceManager",
+              "type": "System.Resources.ResourceManager",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "OpenStream",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.IO.Stream",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "assetName",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "Microsoft.Xna.Framework.Content.ContentSerializerAttribute",
       "kind": "class",
       "flags": false,
