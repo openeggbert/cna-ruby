@@ -61,3 +61,54 @@ module CNA
     end
   end
 end
+
+module CNA
+  module Runtime
+    # Marshals the two XACT spatial value types into the C structures `Apply3D` takes.
+    #
+    # Both are **snapshots**: `cna_sound_effect_instance_apply_3d` copies what it is given and keeps
+    # no reference, so a later mutation of the Ruby listener is not seen by an already-applied
+    # instance. That is what the CLR does too -- the parameters are by-value structs -- and it is why
+    # nothing here retains the Fiddle buffers beyond the call.
+    module Audio
+      module_function
+
+      def listener(value)
+        raise TypeError, "listener must be an AudioListener" unless value.class.name&.end_with?("AudioListener")
+
+        block = CNA::Native::Layouts::AudioListener.new
+        write_vector(block, 8, value.Forward)
+        write_vector(block, 20, value.Position)
+        write_vector(block, 32, value.Up)
+        write_vector(block, 44, value.Velocity)
+        block
+      end
+
+      def emitter(value)
+        block = CNA::Native::Layouts::AudioEmitter.new
+        block.write_f32(8, value.DopplerScale)
+        write_vector(block, 12, value.Forward)
+        write_vector(block, 24, value.Position)
+        write_vector(block, 36, value.Up)
+        write_vector(block, 48, value.Velocity)
+        block
+      end
+
+      # `apply_3d_multi_ext` takes a contiguous array of listeners, so the blocks are packed into one
+      # buffer rather than passed as an array of pointers.
+      def listener_block(values)
+        blocks = values.map { |value| listener(value) }
+        size = CNA::Native::Layouts::AudioListener.size
+        buffer = Fiddle::Pointer.malloc(size * blocks.length, Fiddle::RUBY_FREE)
+        blocks.each_with_index { |block, index| buffer[index * size, size] = block.pointer[0, size] }
+        buffer
+      end
+
+      def write_vector(block, offset, vector)
+        block.write_f32(offset, vector.X)
+        block.write_f32(offset + 4, vector.Y)
+        block.write_f32(offset + 8, vector.Z)
+      end
+    end
+  end
+end

@@ -145,3 +145,24 @@ or `../`, while XNA's cache key is `TitleContainer.GetCleanPath` under an ordina
 comparer, so the projection must compute XNA's and cannot consult CNA's); the manifest and
 reader-usage families (diagnostics with no XNA identity); and `register_builtin_loaders` (creation
 already performs it).
+
+## The audio surface
+
+The `SoundEffect` cluster binds 35 canonical routes -- the whole `audio.h` surface those two types
+reach and nothing beyond it. The delta is 80 -> 115 bound functions, 266 -> 391 signature
+measurements and 19 -> 23 layouts: `CNA_SoundEffectCreateInfo` (24/8), `CNA_SoundEffectInstanceInfo`
+(32/4), `CNA_AudioListener` (56/4) and `CNA_AudioEmitter` (60/4), the last two differing by the
+emitter's own `doppler_scale` ahead of the four shared `CNA_Vector3` fields. No callback and no
+constant is added, and every route is exported by both admitted versions.
+
+Two routes take **no handle at all**: `cna_sound_effect_get_sample_duration_ticks` and
+`cna_sound_effect_get_sample_size_in_bytes` are pure computations, which is why the two static
+members that use them are the only ones in the type that work with no Game. Four take the **game**
+handle where XNA's counterparts are CLR statics -- the master volume, distance scale, doppler scale
+and speed of sound -- and that asymmetry is recorded on the type rather than hidden.
+
+Deliberately not bound: `cna_sound_effect_create_from_asset_ext` (that is `Load<SoundEffect>`, and no
+content reader for it is registered), the whole `cna_dynamic_sound_effect_instance_*` family and
+`cna_audio_unsubscribe_ext` (no `DynamicSoundEffectInstance` is projected), every
+`cna_microphone_*` route, and the type-name count/copy pairs, which answer a .NET type name that
+Ruby's own `class` already carries.

@@ -275,6 +275,54 @@ module CNA
         signature("cna_sprite_batch_submit_scaled_many", T[:result], [T[:handle], pointer("CNA_SpriteScaledCommand", const: true), T[:u64]], ownership: "copies commands; retains Texture until End"),
         signature("cna_sprite_batch_end", T[:result], [T[:handle]], ownership: "borrows SpriteBatch"),
         signature("cna_sprite_batch_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED SpriteBatch"),
+        # The audio surface. Native frontier 4 recorded this cluster UPSTREAM_CNA_BLOCKED against the
+        # retired 0.7.0 artifact; the ABI migration re-measured it and found the artifact had been
+        # built `CNA_AUDIO_PLATFORM=NULL`, which is a build-time CMake choice and not the runtime
+        # variable that audit thought it was controlling. On the current artifact the whole path is
+        # behaviourally real, so the cluster is reopened and these are the routes its two types need.
+        #
+        # A SoundEffect is OWNED and parented to the Game; an instance is OWNED and parented to its
+        # effect, and CNA enforces the order -- destroying an effect that still has a live instance
+        # answers `CNA_RESULT_INVALID_STATE`, measured.
+        #
+        # The four global settings are addressed through the **game** handle where XNA's are CLR
+        # statics. That is the same asymmetry `FrameworkDispatcher` already records, and it is why
+        # those four Ruby properties need a live Game where XNA's do not.
+        signature("cna_sound_effect_create_pcm16", T[:result], [T[:handle], pointer("CNA_SoundEffectCreateInfo", const: true), pointer("uint8_t", const: true), T[:u64], pointer("CNA_Handle")], ownership: "returns OWNED SoundEffect; copies the PCM bytes"),
+        signature("cna_sound_effect_create_pcm16_range_ext", T[:result], [T[:handle], pointer("CNA_SoundEffectCreateInfo", const: true), pointer("uint8_t", const: true), T[:u64], T[:i32], T[:i32], T[:i32], T[:i32], pointer("CNA_Handle")], ownership: "returns OWNED SoundEffect; copies the PCM bytes"),
+        signature("cna_sound_effect_create_from_encoded_ext", T[:result], [T[:handle], pointer("uint8_t", const: true), T[:u64], pointer("CNA_Handle")], ownership: "returns OWNED SoundEffect; decodes a container"),
+        signature("cna_sound_effect_get_duration_ticks", T[:result], [T[:handle], pointer("int64_t")], ownership: "caller output"),
+        signature("cna_sound_effect_get_is_disposed", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "caller output"),
+        signature("cna_sound_effect_get_name_size", T[:result], [T[:handle], pointer("uint64_t")], ownership: "caller output"),
+        signature("cna_sound_effect_copy_name", T[:result], [T[:handle], pointer("char"), T[:u64], pointer("uint64_t")], ownership: "caller output"),
+        signature("cna_sound_effect_set_name", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64])], ownership: "borrows effect; copies the bytes"),
+        signature("cna_sound_effect_create_instance", T[:result], [T[:handle], pointer("CNA_Handle")], ownership: "returns OWNED instance; PARENT_OWNED by its SoundEffect and destroyed before it"),
+        signature("cna_sound_effect_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED SoundEffect; refuses while an instance is live"),
+        signature("cna_sound_effect_play", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "borrows effect; fire-and-forget; caller Boolean output"),
+        signature("cna_sound_effect_play_with_settings", T[:result], [T[:handle], T[:float], T[:float], T[:float], pointer("CNA_Bool")], ownership: "borrows effect; fire-and-forget; caller Boolean output"),
+        signature("cna_sound_effect_get_sample_duration_ticks", T[:result], [T[:i32], T[:i32], enum("CNA_AudioChannels"), pointer("int64_t")], ownership: "pure computation; no handle"),
+        signature("cna_sound_effect_get_sample_size_in_bytes", T[:result], [T[:i64], T[:i32], enum("CNA_AudioChannels"), pointer("int32_t")], ownership: "pure computation; no handle"),
+        signature("cna_sound_effect_get_master_volume", T[:result], [T[:handle], pointer("float")], ownership: "borrows Game; caller output"),
+        signature("cna_sound_effect_set_master_volume", T[:result], [T[:handle], T[:float]], ownership: "borrows Game; game-scoped where XNA is a CLR static"),
+        signature("cna_sound_effect_get_distance_scale", T[:result], [T[:handle], pointer("float")], ownership: "borrows Game; caller output"),
+        signature("cna_sound_effect_set_distance_scale", T[:result], [T[:handle], T[:float]], ownership: "borrows Game; game-scoped where XNA is a CLR static"),
+        signature("cna_sound_effect_get_doppler_scale", T[:result], [T[:handle], pointer("float")], ownership: "borrows Game; caller output"),
+        signature("cna_sound_effect_set_doppler_scale", T[:result], [T[:handle], T[:float]], ownership: "borrows Game; game-scoped where XNA is a CLR static"),
+        signature("cna_sound_effect_get_speed_of_sound", T[:result], [T[:handle], pointer("float")], ownership: "borrows Game; caller output"),
+        signature("cna_sound_effect_set_speed_of_sound", T[:result], [T[:handle], T[:float]], ownership: "borrows Game; game-scoped where XNA is a CLR static"),
+        signature("cna_sound_effect_instance_play", T[:result], [T[:handle]], ownership: "borrows instance"),
+        signature("cna_sound_effect_instance_pause", T[:result], [T[:handle]], ownership: "borrows instance"),
+        signature("cna_sound_effect_instance_resume", T[:result], [T[:handle]], ownership: "borrows instance"),
+        signature("cna_sound_effect_instance_stop", T[:result], [T[:handle], T[:bool]], ownership: "borrows instance; immediate or as authored"),
+        signature("cna_sound_effect_instance_get_info", T[:result], [T[:handle], pointer("CNA_SoundEffectInstanceInfo")], ownership: "caller MANAGED_VALUE snapshot output"),
+        signature("cna_sound_effect_instance_set_volume", T[:result], [T[:handle], T[:float]], ownership: "borrows instance"),
+        signature("cna_sound_effect_instance_set_pitch", T[:result], [T[:handle], T[:float]], ownership: "borrows instance"),
+        signature("cna_sound_effect_instance_set_pan", T[:result], [T[:handle], T[:float]], ownership: "borrows instance"),
+        signature("cna_sound_effect_instance_set_is_looped", T[:result], [T[:handle], T[:bool]], ownership: "borrows instance; refused once playback has begun"),
+        signature("cna_sound_effect_instance_get_is_disposed", T[:result], [T[:handle], pointer("CNA_Bool")], ownership: "caller output"),
+        signature("cna_sound_effect_instance_apply_3d", T[:result], [T[:handle], pointer("CNA_AudioListener", const: true), pointer("CNA_AudioEmitter", const: true)], ownership: "borrows instance; copies both value snapshots"),
+        signature("cna_sound_effect_instance_apply_3d_multi_ext", T[:result], [T[:handle], pointer("CNA_AudioListener", const: true), T[:u64], pointer("CNA_AudioEmitter", const: true)], ownership: "borrows instance; copies every value snapshot"),
+        signature("cna_sound_effect_instance_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED instance"),
         signature("cna_keyboard_get_state", T[:result], [T[:handle], pointer("CNA_KeyboardState")], ownership: "caller MANAGED_VALUE output"),
         signature("cna_keyboard_get_state_for_player", T[:result], [T[:handle], enum("CNA_PlayerIndex"), pointer("CNA_KeyboardState")], ownership: "caller MANAGED_VALUE output"),
         signature("cna_keyboard_state_is_key_down", T[:result], [pointer("CNA_KeyboardState", const: true), enum("CNA_Key"), pointer("CNA_Bool")], ownership: "caller output"),

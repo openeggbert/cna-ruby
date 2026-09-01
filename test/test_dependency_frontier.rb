@@ -298,6 +298,8 @@ class DependencyFrontierTest < Minitest::Test
     # entry on this list is a type whose native boundary the binding really implements, which is the
     # property the list exists to check -- not a count that must stay still.
     assert_equal %w[
+      Microsoft.Xna.Framework.Audio.SoundEffect
+      Microsoft.Xna.Framework.Audio.SoundEffectInstance
       Microsoft.Xna.Framework.Content.ContentManager
       Microsoft.Xna.Framework.FrameworkDispatcher
       Microsoft.Xna.Framework.Game
@@ -448,8 +450,11 @@ class DependencyFrontierTest < Minitest::Test
     events = REPORT.fetch("dependencyCompleteCandidates").reject { |item| item.fetch("eventMembers").empty? }
     # Audio.Cue joined the list when AudioEmitter and AudioListener completed its dependencies.
     # GameWindow was the third until Foundation 48 built it, which is what an event-declaring
-    # candidate reaching the frontier is for.
-    assert_equal ["Microsoft.Xna.Framework.Audio.Cue", "Microsoft.Xna.Framework.Audio.Microphone"],
+    # candidate reaching the frontier is for; DynamicSoundEffectInstance is the fourth, and it
+    # arrived the same way -- the audio cluster completed SoundEffectInstance, which is its base.
+    assert_equal ["Microsoft.Xna.Framework.Audio.Cue",
+                  "Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance",
+                  "Microsoft.Xna.Framework.Audio.Microphone"],
                  events.map { |item| item.fetch("name") }.sort
 
     # Completing IUpdateable/IDrawable is what projected the EventHandler`1 support type.

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 151,
-  "completeTypes": 146,
+  "targetTypes": 153,
+  "completeTypes": 148,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
@@ -10,7 +10,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 106,
+  "missingTypes": 104,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -833,79 +833,6 @@
       "runtimeDataDetail": null
     },
     {
-      "name": "Microsoft.Xna.Framework.Audio.SoundEffectInstance",
-      "kind": "class",
-      "expectedRubyIdentities": 16,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Audio.AudioEmitter",
-        "Microsoft.Xna.Framework.Audio.AudioListener",
-        "Microsoft.Xna.Framework.Audio.SoundState"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Audio.SoundEffect"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Audio.SoundEffect"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        "Finalize",
-        "Dispose",
-        "Play",
-        "Stop",
-        "Pause",
-        "Resume",
-        "Apply3D"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-        ".ctor",
-        "Apply3D",
-        "DeallocateVoice",
-        "Dispose",
-        "Finalize",
-        "Pause",
-        "Play",
-        "Resume",
-        "SafeApply3D",
-        "Stop",
-        "UnsafeApply3D",
-        "set_Pan",
-        "set_Pitch",
-        "set_Volume"
-      ],
-      "runtimeDataDetail": null
-    },
-    {
       "name": "Microsoft.Xna.Framework.Audio.Cue",
       "kind": "class",
       "expectedRubyIdentities": 19,
@@ -1328,6 +1255,71 @@
       "runtimeDataDetail": null
     },
     {
+      "name": "Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance",
+      "kind": "class",
+      "expectedRubyIdentities": 10,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Audio.AudioChannels",
+        "Microsoft.Xna.Framework.Audio.SoundEffectInstance"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+        "BufferNeeded"
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "Dispose",
+        "SubmitBuffer",
+        "GetSampleDuration",
+        "GetSampleSizeInBytes",
+        "Play"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.dll",
+      "nativeReachableMethods": [
+        ".cctor",
+        ".ctor",
+        "AllocateData",
+        "Dispose",
+        "GetPendingBufferCount",
+        "Play",
+        "SubmitBuffer",
+        "get_PendingBufferCount"
+      ],
+      "runtimeDataDetail": null
+    },
+    {
       "name": "Microsoft.Xna.Framework.Audio.AudioCategory",
       "kind": "struct",
       "expectedRubyIdentities": 11,
@@ -1521,79 +1513,6 @@
         "Finalize",
         "get_All",
         "get_Default"
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Audio.SoundEffectInstance",
-      "kind": "class",
-      "expectedRubyIdentities": 16,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Audio.AudioEmitter",
-        "Microsoft.Xna.Framework.Audio.AudioListener",
-        "Microsoft.Xna.Framework.Audio.SoundState"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Audio.SoundEffect"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Audio.SoundEffect"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        "Finalize",
-        "Dispose",
-        "Play",
-        "Stop",
-        "Pause",
-        "Resume",
-        "Apply3D"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-        ".ctor",
-        "Apply3D",
-        "DeallocateVoice",
-        "Dispose",
-        "Finalize",
-        "Pause",
-        "Play",
-        "Resume",
-        "SafeApply3D",
-        "Stop",
-        "UnsafeApply3D",
-        "set_Pan",
-        "set_Pitch",
-        "set_Volume"
       ],
       "runtimeDataDetail": null
     },

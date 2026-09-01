@@ -157,7 +157,10 @@ class XnaExceptionsTest < Minitest::Test
   end
 
   def test_the_cluster_adds_no_audio_graphics_or_storage_runtime
-    %i[SoundEffect Microphone AudioEngine WaveBank SoundBank Cue].each do |name|
+    # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still
+    # claims, is that **it** built neither. The list narrows to the audio types nothing here has
+    # built rather than being loosened.
+    %i[Microphone AudioEngine WaveBank SoundBank Cue].each do |name|
       refute F::Audio.const_defined?(name, false), "Audio::#{name}"
     end
     %i[GraphicsAdapter RenderTarget2D Effect].each do |name|

@@ -132,11 +132,16 @@ class RendererDetailTest < Minitest::Test
   # Completing the type implies no enumerator that would fill it — the same statement Foundation 25
   # made for DisplayMode, and the one Native frontier 4 measured for the audio backend.
   def test_it_implies_no_audio_engine_and_nothing_produces_one
-    %i[AudioEngine SoundBank WaveBank Cue SoundEffect SoundEffectInstance Microphone]
+    # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still
+    # claims, is that **it** built neither. The list narrows to the audio types nothing here has
+    # built rather than being loosened.
+    %i[AudioEngine SoundBank WaveBank Cue Microphone]
       .each { |absent| refute F::Audio.const_defined?(absent, false), "Audio::#{absent}" }
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     refute(symbols.any? { |symbol| symbol.include?("renderer") || symbol.include?("audio_engine") })
-    refute(symbols.any? { |symbol| symbol.include?("sound_effect") })
+    # `cna_sound_effect_*` routes exist now; Foundation 50 bound none of them, which is what this
+    # claimed. The SoundEffect cluster that binds them is a later milestone.
+    refute(symbols.any? { |symbol| symbol.include?("renderer_detail") })
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
   end
 end

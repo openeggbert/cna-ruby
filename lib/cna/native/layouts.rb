@@ -216,6 +216,70 @@ module CNA
         end
       end
 
+      # The audio value structures. `CNA_AudioListener` and `CNA_AudioEmitter` carry the same four
+      # `CNA_Vector3` fields; the emitter adds its own `doppler_scale` ahead of them, which is why
+      # the two layouts differ by twelve bytes and not four.
+      class SoundEffectCreateInfo < Structure
+        layout size: 24, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("sample_rate", "uint32_t", 8, 4), Layouts.field("channels", "CNA_AudioChannels", 12, 4),
+          Layouts.field("reserved", "uint64_t", 16, 8)
+        ]
+
+        def initialize(sample_rate, channels)
+          super()
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+          write_u32(8, sample_rate)
+          write_u32(12, channels)
+        end
+      end
+
+      class SoundEffectInstanceInfo < Structure
+        layout size: 32, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("state", "CNA_SoundState", 8, 4), Layouts.field("is_looped", "CNA_Bool", 12, 1),
+          Layouts.field("reserved0", "uint8_t", 13, 3),
+          Layouts.field("volume", "float", 16, 4), Layouts.field("pitch", "float", 20, 4),
+          Layouts.field("pan", "float", 24, 4), Layouts.field("reserved1", "uint32_t", 28, 4)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class AudioListener < Structure
+        layout size: 56, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("forward", "CNA_Vector3", 8, 12), Layouts.field("position", "CNA_Vector3", 20, 12),
+          Layouts.field("up", "CNA_Vector3", 32, 12), Layouts.field("velocity", "CNA_Vector3", 44, 12)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class AudioEmitter < Structure
+        layout size: 60, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("doppler_scale", "float", 8, 4),
+          Layouts.field("forward", "CNA_Vector3", 12, 12), Layouts.field("position", "CNA_Vector3", 24, 12),
+          Layouts.field("up", "CNA_Vector3", 36, 12), Layouts.field("velocity", "CNA_Vector3", 48, 12)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       class SpriteBatchBeginInfo < Structure
         layout size: 16, alignment: 4, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

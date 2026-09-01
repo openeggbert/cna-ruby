@@ -194,23 +194,24 @@ class MemberLevelDependenciesTest < Minitest::Test
   def test_the_measurement_exposes_candidates_the_signature_graph_called_complete
     signature_complete = REPORT.fetch("ilOnlyBlockedCandidates")
                                .select { |entry| entry.fetch("unmetDependencies").empty? }
-    # 6 until ContentManager completed: it left this list and so did Microphone, whose only
-    # remaining blocker was the `System.Byte[]` the Stream projection decided.
-    assert_equal 5, signature_complete.length
+    # 6 until ContentManager completed -- it left this list and so did Microphone, whose only
+    # remaining blocker was the `System.Byte[]` the Stream projection decided -- and 5 until the
+    # audio cluster took SoundEffectInstance.
+    assert_equal 4, signature_complete.length
     names = signature_complete.map { |entry| entry.fetch("name") }
     # ContentManager was here until the Stream and Action`1 projections consumed it.
     %w[Microsoft.Xna.Framework.Graphics.TextureCollection
        Microsoft.Xna.Framework.Graphics.SpriteFont
        Microsoft.Xna.Framework.Graphics.EffectAnnotation
-       Microsoft.Xna.Framework.Audio.SoundEffectInstance
        Microsoft.Xna.Framework.Audio.Cue].each { |name| assert_includes names, name }
   end
 
   # It strengthens Foundation 36's conclusion rather than contradicting it: both audio types were
-  # doubly blocked and only one reason was visible.
-  def test_the_two_audio_types_were_blocked_twice_over
-    {"Microsoft.Xna.Framework.Audio.SoundEffectInstance" => "Microsoft.Xna.Framework.Audio.SoundEffect",
-     "Microsoft.Xna.Framework.Audio.Cue" => "Microsoft.Xna.Framework.Audio.AudioEngine"}.each do |name, blocker|
+  # doubly blocked and only one reason was visible. SoundEffectInstance has since been built along
+  # with the SoundEffect that was its second blocker -- which is what resolving a doubly blocked
+  # candidate looks like -- so Cue is the one still demonstrating the shape.
+  def test_an_audio_type_can_be_blocked_twice_over
+    {"Microsoft.Xna.Framework.Audio.Cue" => "Microsoft.Xna.Framework.Audio.AudioEngine"}.each do |name, blocker|
       entry = candidate(name)
       assert_equal ["NATIVE_RUNTIME"], entry.fetch("blockers"), "still native-blocked"
       assert_includes entry.fetch("ilOnlyUnmetDependencies"), blocker, "and blocked on a missing type too"
@@ -239,7 +240,7 @@ class MemberLevelDependenciesTest < Minitest::Test
      REPORT.fetch("ilOnlyBlockedCandidates")).each do |entry|
       refute_includes consumable, entry.fetch("name")
     end
-    assert_equal 5, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
+    assert_equal 4, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
   end
 
   # The one candidate the refinement cleared, and what happened to it. Foundation 39 selected it and

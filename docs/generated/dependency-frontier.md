@@ -35,8 +35,8 @@ rather than missing input. Native reachability is measured from that IL:
 | Type | Kind | Ruby identities | Detail |
 | --- | --- | --- | --- |
 | `Microsoft.Xna.Framework.Audio.Cue` | class | 19 | events: Disposing; native: Dispose, Finalize, GetVariable, Pause; IL to derive: Play, Pause, Resume, Stop, GetVariable, SetVariable |
+| `Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance` | class | 10 | events: BufferNeeded; native: .cctor, .ctor, AllocateData, Dispose; IL to derive: .ctor, Dispose, SubmitBuffer, GetSampleDuration, GetSampleSizeInBytes, Play |
 | `Microsoft.Xna.Framework.Audio.Microphone` | class | 15 | events: BufferReady; native: .cctor, Finalize, get_All, get_Default; IL to derive: Finalize, GetSampleSizeInBytes, GetSampleDuration, Start, Stop, GetData |
-| `Microsoft.Xna.Framework.Audio.SoundEffectInstance` | class | 16 | native: .ctor, Apply3D, DeallocateVoice, Dispose; IL to derive: Finalize, Dispose, Play, Stop, Pause, Resume |
 | `Microsoft.Xna.Framework.GamerServices.GamerServicesComponent` | class | 3 | native: Initialize, Update; IL to derive: .ctor, Initialize, Update |
 | `Microsoft.Xna.Framework.Graphics.EffectAnnotation` | class | 14 | native: .ctor, GetValueBoolean, GetValueInt32, GetValueMatrix; IL to derive: GetValueBoolean, GetValueInt32, GetValueSingle, GetValueVector2, GetValueVector3, GetValueVector4 |
 | `Microsoft.Xna.Framework.Graphics.GraphicsAdapter` | class | 18 | native: .cctor, .ctor, InitializeAdapterList, IsProfileSupported; IL to derive: QueryBackBufferFormat, QueryRenderTargetFormat, IsProfileSupported |

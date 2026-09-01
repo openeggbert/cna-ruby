@@ -3182,7 +3182,6 @@ def execute(item)
   when "DisposableCollapse.FrontierEffect"
     frontier = JSON.parse(File.read(File.expand_path("../docs/generated/public-signature-dependency-report.json", __dir__)))
     by_name = frontier.fetch("dependencyCompleteCandidates").to_h { |entry| [entry.fetch("name"), entry] }
-    instance = by_name.fetch("Microsoft.Xna.Framework.Audio.SoundEffectInstance")
     cue = by_name.fetch("Microsoft.Xna.Framework.Audio.Cue")
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
     # Both audio types lose the BCL blocker and keep NATIVE_RUNTIME, so neither is consumable.
@@ -3193,8 +3192,13 @@ def execute(item)
     # projections decided the identities it was waiting on and it is complete. The element now says
     # the same thing about the same type from the other side -- this collapse did not unblock it,
     # and what did is recorded where it happened.
-    [instance.fetch("blockers"), cue.fetch("blockers"),
-     instance.fetch("unmappedBclTypes").empty? && cue.fetch("unmappedBclTypes").empty?,
+    # The first two elements were SoundEffectInstance's and Cue's blockers. The collapse left both
+    # on NATIVE_RUNTIME alone, and the audio cluster has since built SoundEffectInstance, so it is
+    # no longer on the list to read. The first element says the same thing from the other side --
+    # complete rather than waiting -- and the second is unchanged.
+    [strict.fetch("completeTypeNames").include?("Microsoft.Xna.Framework.Audio.SoundEffectInstance"),
+     cue.fetch("blockers"),
+     cue.fetch("unmappedBclTypes").empty?,
      !by_name.key?("Microsoft.Xna.Framework.Content.ContentManager") &&
        strict.fetch("completeTypeNames").include?("Microsoft.Xna.Framework.Content.ContentManager"),
      frontier.fetch("consumableCandidates").length,

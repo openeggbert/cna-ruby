@@ -231,13 +231,14 @@ class DisposableCollapseTest < Minitest::Test
   def test_it_unblocked_two_types_and_made_neither_consumable
     by_name = FRONTIER.fetch("dependencyCompleteCandidates").to_h { |entry| [entry.fetch("name"), entry] }
 
-    %w[Microsoft.Xna.Framework.Audio.SoundEffectInstance
-       Microsoft.Xna.Framework.Audio.Cue].each do |name|
-      entry = by_name.fetch(name)
-      assert_equal ["NATIVE_RUNTIME"], entry.fetch("blockers"), name
-      assert_empty entry.fetch("unmappedBclTypes"), name
-      refute_empty entry.fetch("nativeReachableMethods"), name
-    end
+    # SoundEffectInstance was the other of the two and has since been built, so only Cue is still
+    # on the list to read. That the collapse left both blocked on NATIVE_RUNTIME alone is the claim,
+    # and it is now asserted for the one that is still waiting plus the completion of the other.
+    entry = by_name.fetch("Microsoft.Xna.Framework.Audio.Cue")
+    assert_equal ["NATIVE_RUNTIME"], entry.fetch("blockers")
+    assert_empty entry.fetch("unmappedBclTypes")
+    refute_empty entry.fetch("nativeReachableMethods")
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Audio.SoundEffectInstance"
 
     assert_empty FRONTIER.fetch("consumableCandidates")
     # BCL_PROJECTION was 5 until Foundation 46 projected Dictionary`2 and consumed
@@ -273,13 +274,15 @@ class DisposableCollapseTest < Minitest::Test
   # Native frontier 3 proved SoundEffectInstance and Cue reach XACT. Mapping a BCL interface does
   # not change that, and no audio runtime is started here.
   def test_it_claims_no_native_disposal_and_starts_no_audio_runtime
-    %w[Microsoft.Xna.Framework.Audio.SoundEffectInstance
-       Microsoft.Xna.Framework.Audio.Cue
+    %w[Microsoft.Xna.Framework.Audio.Cue
        Microsoft.Xna.Framework.Audio.AudioEngine].each do |name|
       assert_includes STRICT.fetch("missingTypeNames"), name
       assert IL.fetch("types").fetch(name).fetch("nativeReachable"), name
     end
-    %i[SoundEffectInstance Cue AudioEngine SoundBank WaveBank].each do |absent|
+    # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still
+    # claims, is that **it** built neither. The list narrows to the audio types nothing here has
+    # built rather than being loosened.
+    %i[Cue AudioEngine SoundBank WaveBank].each do |absent|
       refute F::Audio.const_defined?(absent, false), "Audio::#{absent}"
     end
 

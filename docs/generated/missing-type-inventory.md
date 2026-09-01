@@ -6,8 +6,6 @@
 - `Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance`
 - `Microsoft.Xna.Framework.Audio.Microphone`
 - `Microsoft.Xna.Framework.Audio.SoundBank`
-- `Microsoft.Xna.Framework.Audio.SoundEffect`
-- `Microsoft.Xna.Framework.Audio.SoundEffectInstance`
 - `Microsoft.Xna.Framework.Audio.WaveBank`
 - `Microsoft.Xna.Framework.Content.ContentReader`
 - `Microsoft.Xna.Framework.Content.ContentTypeReader`

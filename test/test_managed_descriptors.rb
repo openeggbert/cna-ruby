@@ -126,7 +126,10 @@ class ManagedDescriptorsTest < Minitest::Test
   end
 
   def test_neither_audio_type_implies_an_audio_engine
-    %i[SoundEffect SoundEffectInstance Microphone AudioEngine WaveBank SoundBank Cue AudioCategory]
+    # `SoundEffect` and `SoundEffectInstance` exist now; what this milestone claimed, and still
+    # claims, is that **it** built neither. The list narrows to the audio types nothing here has
+    # built rather than being loosened.
+    %i[Microphone AudioEngine WaveBank SoundBank Cue AudioCategory]
       .each { |absent| refute A.const_defined?(absent, false), "Audio::#{absent}" }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
   end

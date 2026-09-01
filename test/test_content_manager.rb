@@ -347,7 +347,9 @@ class ContentManagerTest < Minitest::Test
     %i[ContentReader ContentTypeReader ContentTypeReaderManager ResourceContentManager].each do |absent|
       refute C.const_defined?(absent, false), absent.to_s
     end
-    %i[SoundEffect SoundEffectInstance].each { |absent| refute F::Audio.const_defined?(absent, false), absent.to_s }
+    # The audio cluster exists, and this milestone did not build it: no `Load<SoundEffect>` reader
+    # is registered, which is what the supported-type registry states.
+    refute_includes CM.supported_types, F::Audio::SoundEffect
     %i[SpriteFont TextureCube Texture3D Effect Model].each { |absent| refute G.const_defined?(absent, false), absent.to_s }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length
