@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "GEM_FILENAME": "audit.gem",
+  "GEM_FILENAME": "cna-ruby-0.1.0.dev0.gem",
   "VERSION": "0.1.0.dev0",
-  "GEM_SHA256": "7a27233085e0782a9f40fb711fa819d7018fba670358b13be9edced06b25ab6a",
+  "GEM_SHA256": "fbfba20bb7783189a8520170eabf0a7ab4a5945aee171d496a9e1c82742c2e63",
   "GEM_ENTRIES": 63,
   "FORBIDDEN_ENTRIES": [
 

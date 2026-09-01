@@ -27,7 +27,7 @@ class GraphicsResourceDisposalTest < Minitest::Test
   def test_it_is_complete_and_the_partial_count_fell
     assert_includes STRICT.fetch("completeTypeNames"), NAME
     assert_equal ReviewedScoreboard::PARTIAL_TYPES, STRICT.fetch("PARTIAL_TYPES")
-    assert_equal 4, STRICT.fetch("PARTIAL_TYPES"), "GraphicsResource was the fifth"
+    assert_equal 3, STRICT.fetch("PARTIAL_TYPES"), "GraphicsResource was the fifth; Texture2D the fourth"
     assert_equal ReviewedScoreboard::COMPLETE_TYPES, STRICT.fetch("COMPLETE_TYPES")
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
     refute_includes STRICT.fetch("partialTypes").keys, NAME

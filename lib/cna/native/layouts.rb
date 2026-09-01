@@ -277,6 +277,22 @@ module CNA
       # `CreateTexture`'s fixed arguments are applied.
       # `CNA_Texture2DTransfer` carries what XNA's three `SetData`/`GetData` overloads differ by:
       # the mip level, an optional sub-rectangle, and the caller array's start and count.
+      # `CNA_Texture2DDecodeInfo` is what XNA's five-argument `FromStream` carries: a requested
+      # output size and whether to cover-and-crop rather than fit.
+      class Texture2DDecodeInfo < Structure
+        layout size: 24, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("width", "uint32_t", 8, 4), Layouts.field("height", "uint32_t", 12, 4),
+          Layouts.field("zoom", "CNA_Bool", 16, 1), Layouts.field("reserved", "uint8_t", 17, 7)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       class Texture2DTransfer < Structure
         layout size: 48, alignment: 8, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

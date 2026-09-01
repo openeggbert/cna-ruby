@@ -1021,10 +1021,41 @@ module Microsoft
                                 "Rgba1010102" => 4, "Rg32" => 4, "Rgba64" => 8 }.freeze
 
           class << self
+            # Both XNA overloads forward to the same internal constructor: the two-argument form
+            # preserves the source dimensions, and the five-argument form passes a requested size
+            # and a `zoom` flag -- cover-and-crop when true, fit while preserving aspect ratio when
+            # false. Ruby collapses them into one method dispatching on arity, and CNA carries the
+            # difference in `CNA_Texture2DDecodeInfo`, whose null pointer *is* the two-argument case.
+            #
+            # The constructor's validation, in the IL's order: a null device is
+            # `ArgumentNullException("graphicsDevice", DeviceCannotBeNullOnResourceCreate)`, a null
+            # stream `ArgumentNullException("stream", NullNotAllowed)`, an unreadable one
+            # `ArgumentException(..., "stream")`, and then `ValidateCreationParameters` refuses a
+            # non-positive size exactly as the two public constructors' does.
             def FromStream(graphics_device, stream, *arguments)
+              raise ArgumentError, "graphicsDevice" if graphics_device.nil?
               raise TypeError, "graphics_device must be GraphicsDevice" unless graphics_device.instance_of?(GraphicsDevice)
+              raise ArgumentError, "stream" if stream.nil?
               raise TypeError, "stream must respond to read" unless stream.respond_to?(:read)
-              raise ArgumentError, "Foundation FromStream supports the XNA two-argument overload" unless arguments.empty?
+              unless arguments.empty? || arguments.length == 3
+                raise ArgumentError, "FromStream takes (device, stream) or (device, stream, width, height, zoom)"
+              end
+
+              decode = nil
+              unless arguments.empty?
+                width = CNA::Runtime::Numeric.int32(arguments[0], "width")
+                height = CNA::Runtime::Numeric.int32(arguments[1], "height")
+                zoom = arguments[2]
+                raise ::RangeError, "width" unless width.positive?
+                raise ::RangeError, "height" unless height.positive?
+                raise TypeError, "zoom" unless zoom == true || zoom == false
+
+                decode = CNA::Native::Layouts::Texture2DDecodeInfo.new
+                decode.write_u32(8, width)
+                decode.write_u32(12, height)
+                decode.write_u8(16, zoom ? 1 : 0)
+              end
+
               bytes = stream.read
               raise TypeError, "stream.read must return String" unless bytes.instance_of?(String)
               raise ArgumentError, "encoded image stream is empty" if bytes.empty?
@@ -1033,7 +1064,8 @@ module Microsoft
               output = CNA::Native.library.pointer_for("Q", 0)
               CNA::Native.library.call(
                 "cna_texture2d_create_from_encoded_memory",
-                graphics_device.__send__(:native_handle), encoded, bytes.bytesize, 0, output
+                graphics_device.__send__(:native_handle), encoded, bytes.bytesize,
+                decode ? decode.pointer : 0, output
               )
               handle = output[0, 8].unpack1("Q")
               allocate.__send__(:initialize_from_native, graphics_device, handle)

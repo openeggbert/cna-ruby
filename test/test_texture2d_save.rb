@@ -35,7 +35,8 @@ class Texture2DSaveTest < Minitest::Test
                                   .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
     refute_includes remainder, "SaveAsPng"
     refute_includes remainder, "SaveAsJpeg"
-    assert_equal %w[FromStream], remainder
+    # Later milestones closed the rest, so the type is complete and the remainder is empty.
+    assert_empty remainder
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
   end
 
@@ -286,10 +287,10 @@ class Texture2DConstructionTest < Minitest::Test
     assert_equal Texture2DSaveTest::PNG_SIGNATURE.first(4), values[1]
   end
 
-  def test_the_remainder_is_now_only_from_stream
+  def test_the_type_is_complete_now
     remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME)
-                                  .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_equal %w[FromStream], remainder
+    assert_empty remainder
+    assert_includes STRICT.fetch("completeTypeNames"), NAME
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
   end
 end

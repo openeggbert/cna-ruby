@@ -25,16 +25,16 @@ fails when it should.
 
 ## Surface
 
-The strict surface is **165 types / 2013 Ruby member identities**: 161 complete, 4 partial, 92 of the
-257 reference types still missing, with 207 deferred diagnostics of which 81 are missing members and
-31 are the overload category. Every structural category except `MISSING_TYPE`, `MISSING_MEMBER`,
+The strict surface is **165 types / 2014 Ruby member identities**: 162 complete, 3 partial, 92 of the
+257 reference types still missing, with 205 deferred diagnostics of which 80 are missing members and
+30 are the overload category. Every structural category except `MISSING_TYPE`, `MISSING_MEMBER`,
 `OVERLOAD_MAPPING_MISMATCH` and one long-standing `PROPERTY_MAPPING_MISMATCH`
 (`GraphicsDevice::Viewport`) is zero, the allowlist is empty and `UNMEASURED_STRUCTURAL_CATEGORY` is
 zero. **27** event identities are projected across **14** owner types with `EVENT_MAPPING_MISMATCH`
 zero, and **22** BCL identities go through the measured `CNA::Runtime::BclProjection` register.
 
-The four partial types are the graphics runtime: `GraphicsDeviceManager` (15 members outstanding),
-`GraphicsDevice` (39), `Texture2D` (1) and `SpriteBatch` (3) — 58 of the 81
+The three partial types are the graphics runtime: `GraphicsDeviceManager` (15 members outstanding),
+`GraphicsDevice` (39) and `SpriteBatch` (3) — 57 of the 80
 outstanding members between them, which is why a qualification artifact with a real renderer is the
 single largest lever this project has left. `GraphicsDeviceManager`'s own remainder is no longer
 about the renderer: eleven of its members were closed by projecting the preferred settings, and the
@@ -59,9 +59,10 @@ Complete clusters, by area:
   four enums and the three exception types.
 - **Input** — Keyboard, Mouse, the ten-type GamePad family and the `Input.Touch` closure.
 - **Media** — `VisualizationData`, `Video` and `MediaSource`.
-- **Graphics** — `SpriteFont` over a real MonoGame font, `Viewport`, `TextureCollection`, `Texture`,
-  `DisplayMode`, `DisplayModeCollection`, `PresentationParameters` and the enum closure, beside the
-  five partial runtime types.
+- **Graphics** — `Texture2D` end to end (decode, construct, pixel round-trip, PNG and JPEG encode),
+  `GraphicsResource` and its disposal contract, `SpriteFont` over a real MonoGame font, `Viewport`,
+  `TextureCollection`, `Texture`, `DisplayMode`, `DisplayModeCollection`, `PresentationParameters`
+  and the enum closure, beside the three partial runtime types.
 
 ## Admission and safety
 
@@ -100,20 +101,39 @@ with the pre-correction SHA-256.
 
 ## Dependency frontier
 
-`tools/api_compat/analyze_dependencies.rb` classifies every dependency-complete missing type. Five
-remain, and **none is consumable**:
+`tools/api_compat/analyze_dependencies.rb` classifies every dependency-complete missing type. **Nine
+remain**, and none is consumable. The count *rose* — from three — when `GraphicsResource` and
+`Texture2D` completed, which is what an advancing frontier looks like when the types built are
+bases: six types that had been waiting behind them became visible at once.
 
-| type | reported blocker | what is actually missing |
+| type | reported blocker | status |
 | --- | --- | --- |
-| `Design.MathTypeConverter` | BCL_PROJECTION | scope, not authority: it **inherits** `ExpandableObjectConverter` and **returns** `PropertyDescriptorCollection`, so projecting it means projecting .NET's type-descriptor system |
-| `Graphics.EffectAnnotation` | NATIVE_RUNTIME | not the renderer: its eight `GetValue*` members forward to a temporary `EffectParameter`, which is not projected, and nothing in the projected surface produces an annotation |
-| `Graphics.GraphicsAdapter` | NATIVE_RUNTIME | not the ABI: the qualified artifact compiles only the HEADLESS renderer, and with it every adapter route answers invented data |
+| `Design.MathTypeConverter` | BCL_PROJECTION | **audited, deferred.** Scope, not authority: it inherits `ExpandableObjectConverter` and returns `PropertyDescriptorCollection`, so projecting it means projecting .NET's type-descriptor system |
+| `Graphics.EffectAnnotation` | NATIVE_RUNTIME | **audited, deferred.** Not the renderer: its eight `GetValue*` members forward to a temporary `EffectParameter`, which is not projected, and nothing in the projected surface produces an annotation |
+| `Graphics.GraphicsAdapter` | NATIVE_RUNTIME | **audited, deferred.** Not the ABI: the qualified artifact compiles only the HEADLESS renderer, and with it every adapter route answers invented data |
+| `Graphics.BlendState` | NATIVE_RUNTIME | **not yet audited** — arrived behind `GraphicsResource` |
+| `Graphics.DepthStencilState` | NATIVE_RUNTIME | **not yet audited** — arrived behind `GraphicsResource` |
+| `Graphics.RasterizerState` | NATIVE_RUNTIME | **not yet audited** — arrived behind `GraphicsResource` |
+| `Graphics.SamplerState` | NATIVE_RUNTIME | **not yet audited** — arrived behind `GraphicsResource`; its IL also reaches the unprojected `EffectPass` |
+| `Graphics.VertexDeclaration` | NATIVE_RUNTIME + INTERFACE_PRODUCER_MISSING | **not yet audited** — the only dependency-complete candidate carrying the producer blocker: its IL calls `IVertexType` members and nothing here conforms |
+| `Media.VideoPlayer` | NATIVE_RUNTIME | **not yet audited** — arrived behind `Texture2D` |
 
-Each of the three has now been **measured** rather than accepted, and each is deferred for a reason
-its reported blocker word does not name. Three earlier entries of this table were removed the same
-way, by being built: `Graphics.SpriteFont` once `System.Char`, `Nullable`1` and `StringBuilder` were
-decided, `Content.ResourceContentManager` once `System.Resources.ResourceManager` was collapsed to
-the one member it reaches, and `Media.MediaSource` once its IL was read at all.
+The first three have been **measured** rather than accepted, and each is deferred for a reason its
+reported blocker word does not name. The other six are new and the standing rule applies to them
+unchanged: a `NATIVE_RUNTIME` word is not a finding until the routes and the IL have been read.
+Three earlier entries of this table were removed by being built: `Graphics.SpriteFont` once
+`System.Char`, `Nullable`1` and `StringBuilder` were decided, `Content.ResourceContentManager` once
+`System.Resources.ResourceManager` was collapsed to the one member it reaches, and
+`Media.MediaSource` once its IL was read at all.
+
+The generated frontier report is produced by a tool the suite does not run, and it **had gone
+stale**: for one whole milestone it still described `SamplerState` as waiting on `GraphicsResource`
+after `GraphicsResource` completed, and nothing failed, because every assertion was pinned to the
+stale file. `test/test_dependency_frontier.rb` now carries a staleness guard — the report's
+type-level header must agree with the strict scoreboard, and no candidate may name a complete type
+as an unmet dependency — and `test/test_behavior_corpus_integrity.rb` measures the corresponding
+gap in the corpus: the per-milestone value files are authoring records, only the aggregate is
+replayed, and the seven rows where they disagree are named supersessions rather than drift.
 
 The `RUNTIME_DATA` register is **empty**. Every entry it ever held — `FrameworkDispatcher`,
 `Audio.RendererDetail`, `Media.VisualizationData`, `Media.Video`, `Audio.AudioCategory`,

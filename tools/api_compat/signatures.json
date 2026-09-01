@@ -33659,6 +33659,56 @@
               "optional": false
             }
           ]
+        },
+        {
+          "kind": "method",
+          "name": "FromStream",
+          "static": true,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Graphics.Texture2D",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "graphicsDevice",
+              "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "stream",
+              "type": "System.IO.Stream",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "width",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "height",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "zoom",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::Texture2D"

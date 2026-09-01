@@ -1886,7 +1886,6 @@ class ApiVerifierTest < Minitest::Test
       Microsoft.Xna.Framework.GraphicsDeviceManager
       Microsoft.Xna.Framework.Graphics.GraphicsDevice
       Microsoft.Xna.Framework.Graphics.SpriteBatch
-      Microsoft.Xna.Framework.Graphics.Texture2D
     ].sort, partial.keys.sort
     # 132 until Foundation 37 closed Game::Components and Game::Services, 130 until Foundation
     # 41 closed Game's four events and their three protected raisers -- the three methods among
@@ -1896,7 +1895,7 @@ class ApiVerifierTest < Minitest::Test
     # Game::IsActive, a property, so MISSING_MEMBER fell once more without moving the overloads.
     assert_equal ReviewedScoreboard::MISSING_MEMBER, strict.fetch("MISSING_MEMBER")
     assert_equal 1, strict.fetch("PROPERTY_MAPPING_MISMATCH")
-    assert_equal 31, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
+    assert_equal 30, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
 
     # Every batch enum that a deferred member mentions left that member deferred *by this batch*.
     # `PreferredDepthStencilFormat` was closed by a much later milestone, which is the point rather

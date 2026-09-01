@@ -364,3 +364,14 @@ and the layouts to 29.
 level, an optional sub-rectangle, and the caller array's start and count. The rgba8 convenience
 variants stay unbound: the general `set_data`/`get_data` pair already covers every element type XNA
 declares, and binding a second route for one of them would be two ways to say one thing.
+
+`CNA_Texture2DDecodeInfo` (24/4) takes the layouts to **30** and needs no new route: it is the
+fourth argument of `cna_texture2d_create_from_encoded_memory`, which the two-argument `FromStream`
+already called with a null pointer. That null *is* the two-argument overload, so XNA's two
+overloads and CNA's one route agree without either side inventing a shape — the requested width,
+height and `zoom` flag live in the struct, and passing none of them means "keep the source size".
+
+Measured on the 128x128 test PNG, `zoom` is asymmetric and the defect is upstream: a target taller
+than wide crops and scales, a target wider than tall fails `INVALID_ARGUMENT` with "ImageLoader:
+crop rectangle lies outside the source image". Reproduced at the C ABI with no Ruby in the path and
+recorded in `docs/texture-decode-upstream-defect.md`; nothing here works around it.

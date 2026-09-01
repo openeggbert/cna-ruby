@@ -2,12 +2,10 @@
   "schemaVersion": 3,
   "referenceTypes": 257,
   "targetTypes": 165,
-  "completeTypes": 160,
+  "completeTypes": 162,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
-    "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-    "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
   "missingTypes": 92,
@@ -27,6 +25,7 @@
   },
   "selectionRoute": "none-consumable",
   "mappedBclTypes": [
+    "Microsoft.Xna.Framework.Graphics.IGraphicsResource",
     "System.Action`1",
     "System.Attribute",
     "System.Boolean",
@@ -97,9 +96,158 @@
   },
   "blockerSummary": {
     "BCL_PROJECTION": 1,
-    "NATIVE_RUNTIME": 2
+    "NATIVE_RUNTIME": 7,
+    "NATIVE_RUNTIME+INTERFACE_PRODUCER_MISSING": 1
   },
   "partialDependencySatisfiedCandidates": [
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.OcclusionQuery",
+      "kind": "class",
+      "expectedRubyIdentities": 6,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
+      ],
+      "unmetDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
+          "reachedMembers": [
+            "Resources"
+          ],
+          "reachedButMissing": [
+
+          ]
+        }
+      },
+      "ilOnlyDependencies": [
+
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": true,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": false,
+      "blockers": [
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "Begin",
+        "End",
+        "Dispose"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+        ".ctor",
+        "Begin",
+        "End",
+        "GetManagedObject",
+        "RecreateAndPopulateObject",
+        "ReleaseNativeObject",
+        "get_IsComplete",
+        "get_PixelCount"
+      ],
+      "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.Texture3D",
+      "kind": "class",
+      "expectedRubyIdentities": 11,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+        "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
+        "Microsoft.Xna.Framework.Graphics.Texture"
+      ],
+      "unmetDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
+          "reachedMembers": [
+            "Resources",
+            "Textures",
+            "VertexTextures"
+          ],
+          "reachedButMissing": [
+
+          ]
+        }
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+        "Microsoft.Xna.Framework.Graphics.TextureCollection"
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": true,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": false,
+      "blockers": [
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "SetData",
+        "GetData",
+        "Dispose"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+        ".ctor",
+        "CopyOrRestoreData",
+        "CreateTexture",
+        "GetManagedObject",
+        "InitializeDescription",
+        "OnObjectCreation",
+        "RecreateAndPopulateObject",
+        "ReleaseNativeObject",
+        "SaveDataForRecreation",
+        "T>"
+      ],
+      "runtimeDataDetail": null
+    },
     {
       "name": "Microsoft.Xna.Framework.DrawableGameComponent",
       "kind": "class",
@@ -184,20 +332,12 @@
         "Microsoft.Xna.Framework.Graphics.VertexElement"
       ],
       "unmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
+
       ],
       "missingTypeDependencies": [
 
       ],
       "partialTypeDependencies": {
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource": {
-          "reachedMembers": [
-            "Dispose"
-          ],
-          "reachedButMissing": [
-            "Dispose"
-          ]
-        }
       },
       "ilOnlyDependencies": [
         "Microsoft.Xna.Framework.Graphics.IVertexType"
@@ -210,7 +350,7 @@
         "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawUserIndexedPrimitives (4 overloads)",
         "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawUserPrimitives (2 overloads)"
       ],
-      "dependencyComplete": false,
+      "dependencyComplete": true,
       "blockers": [
         "NATIVE_RUNTIME",
         "INTERFACE_PRODUCER_MISSING"
@@ -253,26 +393,12 @@
         "Microsoft.Xna.Framework.Graphics.Texture2D"
       ],
       "unmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
-        "Microsoft.Xna.Framework.Graphics.Texture2D"
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
       ],
       "missingTypeDependencies": [
 
       ],
       "partialTypeDependencies": {
-        "Microsoft.Xna.Framework.Graphics.Texture2D": {
-          "reachedMembers": [
-            ".ctor",
-            "CreateTexture",
-            "Dispose",
-            "ReleaseNativeObject",
-            "ValidateCreationParameters"
-          ],
-          "reachedButMissing": [
-            ".ctor",
-            "Dispose"
-          ]
-        },
         "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
           "reachedMembers": [
             "Adapter",
@@ -364,8 +490,7 @@
         "Microsoft.Xna.Framework.Graphics.TextureCollection"
       ],
       "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
+        "Microsoft.Xna.Framework.Graphics.GraphicsAdapter"
       ],
       "partialDependencySatisfied": false,
       "partialRemainderReverseEdges": [
@@ -373,89 +498,10 @@
       ],
       "dependencyComplete": false,
       "blockers": [
-        "BCL_PROJECTION",
         "NATIVE_RUNTIME"
       ],
       "unmappedBclTypes": [
-        "Microsoft.Xna.Framework.Graphics.IGraphicsResource"
-      ],
-      "reachedInterfaces": [
 
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "SetData",
-        "GetData",
-        "Dispose"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-        ".ctor",
-        "CopyOrRestoreData",
-        "CreateTexture",
-        "GetManagedObject",
-        "InitializeDescription",
-        "OnObjectCreation",
-        "RecreateAndPopulateObject",
-        "ReleaseNativeObject",
-        "SaveDataForRecreation",
-        "T>"
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.Texture3D",
-      "kind": "class",
-      "expectedRubyIdentities": 11,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
-        "Microsoft.Xna.Framework.Graphics.SurfaceFormat",
-        "Microsoft.Xna.Framework.Graphics.Texture"
-      ],
-      "unmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
-          "reachedMembers": [
-            "Resources",
-            "Textures",
-            "VertexTextures"
-          ],
-          "reachedButMissing": [
-
-          ]
-        }
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-        "Microsoft.Xna.Framework.Graphics.TextureCollection"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": false,
-      "blockers": [
-        "BCL_PROJECTION",
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-        "Microsoft.Xna.Framework.Graphics.IGraphicsResource"
       ],
       "reachedInterfaces": [
 
@@ -571,21 +617,12 @@
         "Microsoft.Xna.Framework.Graphics.TextureFilter"
       ],
       "unmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
+
       ],
       "missingTypeDependencies": [
 
       ],
       "partialTypeDependencies": {
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource": {
-          "reachedMembers": [
-            "Dispose",
-            "Name"
-          ],
-          "reachedButMissing": [
-            "Dispose"
-          ]
-        }
       },
       "ilOnlyDependencies": [
         "Microsoft.Xna.Framework.Graphics.EffectPass"
@@ -597,7 +634,7 @@
       "partialRemainderReverseEdges": [
         "Microsoft.Xna.Framework.Graphics.SpriteBatch::Begin (4 overloads)"
       ],
-      "dependencyComplete": false,
+      "dependencyComplete": true,
       "blockers": [
         "NATIVE_RUNTIME"
       ],
@@ -624,97 +661,70 @@
         "Apply"
       ],
       "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Media.VideoPlayer",
-      "kind": "class",
-      "expectedRubyIdentities": 15,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.Texture2D",
-        "Microsoft.Xna.Framework.Media.MediaState",
-        "Microsoft.Xna.Framework.Media.Video"
-      ],
-      "unmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.Texture2D"
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-        "Microsoft.Xna.Framework.Graphics.Texture2D": {
-          "reachedMembers": [
-            ".ctor",
-            "Height",
-            "Width"
-          ],
-          "reachedButMissing": [
-            ".ctor"
-          ]
-        }
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": false,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "Dispose",
-        "Finalize",
-        "Play",
-        "Pause",
-        "Resume",
-        "Stop",
-        "GetTexture"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Video.dll",
-      "nativeReachableMethods": [
-        ".ctor",
-        "AllocateTextures",
-        "DestroyDecoder",
-        "Dispose",
-        "Finalize",
-        "GetTexture",
-        "Pause",
-        "Play",
-        "Resume",
-        "Stop",
-        "get_PlayPosition",
-        "get_State",
-        "set_IsLooped",
-        "set_IsMuted",
-        "set_Volume"
-      ],
-      "runtimeDataDetail": null
     }
   ],
   "consumableCandidates": [
 
   ],
   "dependencyCompleteCandidates": [
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.VertexDeclaration",
+      "kind": "class",
+      "expectedRubyIdentities": 5,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+        "Microsoft.Xna.Framework.Graphics.VertexElement"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType"
+      ],
+      "ilOnlyUnmetDependencies": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType"
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawUserIndexedPrimitives (4 overloads)",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawUserPrimitives (2 overloads)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "NATIVE_RUNTIME",
+        "INTERFACE_PRODUCER_MISSING"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType"
+      ],
+      "producerlessInterfaces": [
+        "Microsoft.Xna.Framework.Graphics.IVertexType"
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "GetVertexElements",
+        "Dispose"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+        "Bind",
+        "Unbind"
+      ],
+      "runtimeDataDetail": null
+    },
     {
       "name": "Microsoft.Xna.Framework.Design.MathTypeConverter",
       "kind": "class",
@@ -771,6 +781,62 @@
       "ilAssembly": "Microsoft.Xna.Framework.dll",
       "nativeReachableMethods": [
 
+      ],
+      "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.RasterizerState",
+      "kind": "class",
+      "expectedRubyIdentities": 11,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.CullMode",
+        "Microsoft.Xna.Framework.Graphics.FillMode",
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::RasterizerState (1 overload)",
+        "Microsoft.Xna.Framework.Graphics.SpriteBatch::Begin (4 overloads)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "Dispose"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+        "Apply"
       ],
       "runtimeDataDetail": null
     },
@@ -847,6 +913,194 @@
       "runtimeDataDetail": null
     },
     {
+      "name": "Microsoft.Xna.Framework.Graphics.SamplerState",
+      "kind": "class",
+      "expectedRubyIdentities": 15,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+        "Microsoft.Xna.Framework.Graphics.TextureAddressMode",
+        "Microsoft.Xna.Framework.Graphics.TextureFilter"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.Graphics.EffectPass"
+      ],
+      "ilOnlyUnmetDependencies": [
+        "Microsoft.Xna.Framework.Graphics.EffectPass"
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Graphics.SpriteBatch::Begin (4 overloads)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "Dispose"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+        "Apply"
+      ],
+      "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.VideoPlayer",
+      "kind": "class",
+      "expectedRubyIdentities": 15,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.Texture2D",
+        "Microsoft.Xna.Framework.Media.MediaState",
+        "Microsoft.Xna.Framework.Media.Video"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "Dispose",
+        "Finalize",
+        "Play",
+        "Pause",
+        "Resume",
+        "Stop",
+        "GetTexture"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Video.dll",
+      "nativeReachableMethods": [
+        ".ctor",
+        "AllocateTextures",
+        "DestroyDecoder",
+        "Dispose",
+        "Finalize",
+        "GetTexture",
+        "Pause",
+        "Play",
+        "Resume",
+        "Stop",
+        "get_PlayPosition",
+        "get_State",
+        "set_IsLooped",
+        "set_IsMuted",
+        "set_Volume"
+      ],
+      "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.BlendState",
+      "kind": "class",
+      "expectedRubyIdentities": 18,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Color",
+        "Microsoft.Xna.Framework.Graphics.Blend",
+        "Microsoft.Xna.Framework.Graphics.BlendFunction",
+        "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::BlendState (1 overload)",
+        "Microsoft.Xna.Framework.Graphics.SpriteBatch::Begin (4 overloads)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "Dispose"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+        "Apply"
+      ],
+      "runtimeDataDetail": null
+    },
+    {
       "name": "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
       "kind": "class",
       "expectedRubyIdentities": 18,
@@ -918,6 +1172,62 @@
         "get_IsWideScreen",
         "get_MonitorHandle",
         "get_SupportedDisplayModes"
+      ],
+      "runtimeDataDetail": null
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DepthStencilState",
+      "kind": "class",
+      "expectedRubyIdentities": 21,
+      "dependencies": [
+        "Microsoft.Xna.Framework.Graphics.CompareFunction",
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
+        "Microsoft.Xna.Framework.Graphics.StencilOperation"
+      ],
+      "unmetDependencies": [
+
+      ],
+      "missingTypeDependencies": [
+
+      ],
+      "partialTypeDependencies": {
+      },
+      "ilOnlyDependencies": [
+
+      ],
+      "ilOnlyUnmetDependencies": [
+
+      ],
+      "partialDependencySatisfied": false,
+      "partialRemainderReverseEdges": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DepthStencilState (1 overload)",
+        "Microsoft.Xna.Framework.Graphics.SpriteBatch::Begin (4 overloads)"
+      ],
+      "dependencyComplete": true,
+      "blockers": [
+        "NATIVE_RUNTIME"
+      ],
+      "unmappedBclTypes": [
+
+      ],
+      "reachedInterfaces": [
+
+      ],
+      "producerlessInterfaces": [
+
+      ],
+      "eventMembers": [
+
+      ],
+      "behaviourBearingMembers": [
+        ".ctor",
+        "Dispose"
+      ],
+      "ilDerivationRequired": true,
+      "ilAvailable": true,
+      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
+      "nativeReachableMethods": [
+        "Apply"
       ],
       "runtimeDataDetail": null
     }

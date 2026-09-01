@@ -5,6 +5,7 @@ require "json"
 require "pathname"
 require_relative "reviewed_measurements"
 require_relative "../lib/cna"
+require_relative "../tools/api_compat/verifier"
 
 # Foundations 19 and 20 — the dependency frontier blocker register.
 #
@@ -124,7 +125,53 @@ class DependencyFrontierTest < Minitest::Test
     blockers << "IL_UNAVAILABLE" if il.nil? && !behaviour.empty?
     blockers << "NATIVE_RUNTIME" if il && il.fetch("nativeReachable")
     blockers << "RUNTIME_DATA" if REPORT.fetch("runtimeDataRegister").key?(name)
+    blockers << "INTERFACE_PRODUCER_MISSING" unless producerless_interfaces(name).empty?
     blockers
+  end
+
+  # Foundation 40's producer blocker, restated here too. It went unrestated while no
+  # dependency-complete candidate carried it; VertexDeclaration became one the moment
+  # GraphicsResource completed, and the omission then showed up as a disagreement rather than as a
+  # silence, which is the whole point of keeping this rule written twice.
+  #
+  # An interface has a producer when some type declares it in the pinned contract, is complete in
+  # this projection, and whose live Ruby class really includes the projected module -- metadata,
+  # scoreboard and `is_a?`, all three.
+  def interface_producers
+    @interface_producers ||= begin
+      interfaces = REFERENCE.fetch("types").select { |type| type.fetch("kind") == "interface" }
+                            .map { |type| type.fetch("name") }
+      interfaces.to_h do |interface|
+        projected = resolve_constant(interface)
+        conformers = REFERENCE.fetch("types").select do |type|
+          type.fetch("interfaces", []).include?(interface) &&
+            STRICT.fetch("completeTypeNames").include?(type.fetch("name")) &&
+            !projected.nil? &&
+            (concrete = resolve_constant(type.fetch("name"))) &&
+            concrete.ancestors.include?(projected)
+        end
+        [interface, conformers.map { |type| type.fetch("name") }]
+      end
+    end
+  end
+
+  # Naming an interface in a signature needs no instance; calling a member of one does. So the test
+  # is the candidate's own IL member edges, not its signature graph.
+  def producerless_interfaces(name)
+    entry = IL.fetch("types")[name]
+    return [] if entry.nil?
+
+    entry.fetch("externalMemberReferences", [])
+         .map { |edge| edge.split("::", 2).first }.uniq.sort
+         .select { |owner| interface_producers.key?(owner) }
+         .reject { |interface| interface_producers.fetch(interface).any? }
+  end
+
+  def resolve_constant(clr_name)
+    CNAApiCompat::NameMapper.runtime_constant_path(clr_name)
+                            .split("::").reduce(Object) { |scope, segment| scope.const_get(segment, false) }
+  rescue NameError
+    nil
   end
 
   # The same two halves the tool uses, restated independently: types that are already complete, plus
@@ -313,6 +360,7 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.GamerServices.GamerServicesComponent
       Microsoft.Xna.Framework.Graphics.SpriteFont
       Microsoft.Xna.Framework.Graphics.Texture
+      Microsoft.Xna.Framework.Graphics.Texture2D
       Microsoft.Xna.Framework.Graphics.TextureCollection
       Microsoft.Xna.Framework.Input.GamePad
       Microsoft.Xna.Framework.Input.Mouse
@@ -361,8 +409,43 @@ class DependencyFrontierTest < Minitest::Test
     end
   end
 
+  # ------------------------------------------------------------------------ the staleness guard
+  #
+  # Measured defect, found the hard way. `analyze_dependencies.rb` is not run by the suite, so the
+  # generated frontier report can lag the scoreboard it is derived from -- and it did: it was still
+  # describing SamplerState as waiting on GraphicsResource one whole milestone after
+  # GraphicsResource completed. Nothing failed, because every assertion here was pinned to the
+  # stale file, and a file agreeing with itself is not a measurement.
+  #
+  # The report's own type-level header is exactly the input that went stale, so pinning it against
+  # the strict scoreboard is the cheapest possible test that cannot itself go stale: the two files
+  # are produced by different tools from different passes.
+  def test_the_report_is_not_stale_with_respect_to_the_scoreboard
+    assert_equal STRICT.fetch("COMPLETE_TYPES"), REPORT.fetch("completeTypes")
+    assert_equal STRICT.fetch("PARTIAL_TYPES"), REPORT.fetch("partialTypes").length
+    assert_equal STRICT.fetch("partialTypes").keys.sort, REPORT.fetch("partialTypes").sort
+    assert_equal STRICT.fetch("MISSING_TYPES"), REPORT.fetch("missingTypes")
+    assert_equal STRICT.fetch("TARGET_TYPES"), REPORT.fetch("targetTypes")
+
+    # And no candidate may name a complete type as an unmet dependency, which is the shape the
+    # staleness actually took.
+    (REPORT.fetch("dependencyCompleteCandidates") + REPORT.fetch("ilOnlyBlockedCandidates") +
+     REPORT.fetch("partialDependencySatisfiedCandidates")).each do |candidate|
+      (candidate.fetch("unmetDependencies") + candidate.fetch("ilOnlyUnmetDependencies", []))
+        .each do |dependency|
+        refute_includes STRICT.fetch("completeTypeNames"), dependency,
+                        "#{candidate.fetch("name")} waits on #{dependency}, which is complete"
+      end
+      refute_includes STRICT.fetch("completeTypeNames"), candidate.fetch("name"),
+                      "#{candidate.fetch("name")} is complete and cannot still be a candidate"
+    end
+  end
+
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 3, REPORT.fetch("dependencyCompleteCandidates").length
+    # 3 until the GraphicsResource and Texture2D milestones landed together: completing
+    # GraphicsResource made the four graphics state objects and VertexDeclaration
+    # dependency-complete, and completing Texture2D did the same for Media.VideoPlayer.
+    assert_equal 9, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -559,7 +642,12 @@ class DependencyFrontierTest < Minitest::Test
       # was collapsed to the one member it reaches -- and it is the first candidate this frontier
       # ever *selected* rather than merely listed.
       "Microsoft.Xna.Framework.Design.MathTypeConverter" => "BCL_PROJECTION",
-      "Microsoft.Xna.Framework.Design.MathTypeConverter" => "BCL_PROJECTION"
+      # Arrived when GraphicsResource completed. It is the only dependency-complete candidate that
+      # carries the producer blocker: its own IL calls IVertexType members and nothing in this
+      # projection conforms to that interface. The four state objects that arrived with it carry
+      # NATIVE_RUNTIME alone and are audited, not assumed -- the frontier's standing rule.
+      "Microsoft.Xna.Framework.Graphics.VertexDeclaration" => "INTERFACE_PRODUCER_MISSING",
+      "Microsoft.Xna.Framework.Graphics.BlendState" => "NATIVE_RUNTIME"
     }.each do |name, expected|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
       refute_nil candidate, name

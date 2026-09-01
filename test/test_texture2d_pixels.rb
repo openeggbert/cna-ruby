@@ -3,6 +3,7 @@
 require "minitest/autorun"
 require "json"
 require "pathname"
+require "stringio"
 require_relative "reviewed_measurements"
 require_relative "../lib/cna"
 
@@ -33,9 +34,9 @@ class Texture2DPixelsTest < Minitest::Test
       assert_equal(-2, G::Texture2D.instance_method(name).arity, "#{name}(type, *arguments)")
     end
     assert_equal 0, STRICT.fetch("GENERIC_MAPPING_MISMATCH")
-    remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME)
-                                  .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_equal %w[FromStream], remainder, "only the five-argument FromStream is left"
+    # The five-argument FromStream was the last member left after this one, and the milestone that
+    # followed closed it -- so the type is complete and its remainder is empty.
+    assert_empty ReviewedScoreboard.partial_remainder(STRICT, NAME)
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
   end
 
@@ -205,5 +206,126 @@ class Texture2DPixelsTest < Minitest::Test
        err.call { texture.GetData(F::Color, colours) }]
     end
     assert_equal [CNA::DisposedObjectError, CNA::DisposedObjectError], values
+  end
+end
+
+# `Texture2D.FromStream`'s five-argument overload — the member that completed the type, and the one
+# that found an upstream defect.
+class Texture2DFromStreamTest < Minitest::Test
+  F = Microsoft::Xna::Framework
+  G = Microsoft::Xna::Framework::Graphics
+  ROOT = Pathname(__dir__).join("..").expand_path
+  STRICT = JSON.parse(ROOT.join("docs", "generated", "api-compat-report.json").read).freeze
+  NAME = "Microsoft.Xna.Framework.Graphics.Texture2D"
+
+  def test_texture2d_is_complete_and_the_partial_count_fell_again
+    assert_includes STRICT.fetch("completeTypeNames"), NAME
+    refute_includes STRICT.fetch("partialTypes").keys, NAME
+    assert_equal ReviewedScoreboard::PARTIAL_TYPES, STRICT.fetch("PARTIAL_TYPES")
+    assert_equal 3, STRICT.fetch("PARTIAL_TYPES"), "Texture2D was the fourth"
+    assert_equal ReviewedScoreboard::COMPLETE_TYPES, STRICT.fetch("COMPLETE_TYPES")
+  end
+
+  class Host < F::Game
+    attr_reader :result
+
+    def initialize(&body)
+      @body = body
+      @result = nil
+      super()
+      F::GraphicsDeviceManager.new(self)
+    end
+
+    def LoadContent
+      @result = @body.call(self.GraphicsDevice, File.binread(ENV.fetch("CNA_TEST_PNG")))
+    ensure
+      self.Exit
+    end
+  end
+
+  def with_device
+    skip "CNA_NATIVE_LIBRARY not supplied" unless ENV["CNA_NATIVE_LIBRARY"]
+    skip "CNA_TEST_PNG not supplied" unless ENV["CNA_TEST_PNG"] && File.file?(ENV["CNA_TEST_PNG"])
+
+    game = Host.new { |device, png| yield device, png }
+    begin
+      game.Run
+      game.result
+    ensure
+      game.Dispose
+    end
+  end
+
+  # Both overloads forward to one internal constructor; the two-argument form preserves the source
+  # dimensions and the five-argument form passes a requested size and a `zoom` flag. CNA carries the
+  # difference in `CNA_Texture2DDecodeInfo`, whose **null pointer is** the two-argument case.
+  def test_the_two_argument_form_preserves_the_source_and_the_five_argument_form_resizes
+    values = with_device do |device, png|
+      decode = lambda do |*arguments|
+        texture = G::Texture2D.FromStream(device, StringIO.new(png), *arguments)
+        size = [texture.Width, texture.Height]
+        texture.Dispose
+        size
+      end
+      [decode.call, decode.call(64, 64, false), decode.call(64, 64, true), decode.call(256, 256, false)]
+    end
+    assert_equal [128, 128], values[0], "no decode info, so the source size survives"
+    assert_equal [64, 64], values[1]
+    assert_equal [64, 64], values[2]
+    assert_equal [256, 256], values[3], "and it scales up as readily as down"
+  end
+
+  # `zoom=false` fits while preserving the aspect ratio, so a square source asked for 64x32 comes
+  # back 32x32 rather than distorted.
+  def test_fit_preserves_the_aspect_ratio_rather_than_distorting
+    values = with_device do |device, png|
+      texture = G::Texture2D.FromStream(device, StringIO.new(png), 64, 32, false)
+      size = [texture.Width, texture.Height]
+      texture.Dispose
+      size
+    end
+    assert_equal [32, 32], values, "128x128 fitted into 64x32 is 32x32"
+  end
+
+  # UPSTREAM_CNA_DEFECT, reproduced rather than worked around: the cover-and-crop path is
+  # **asymmetric**. From a square source a taller-than-wide target crops correctly and a
+  # wider-than-tall one fails, which cover-and-crop cannot be by definition. Measured at the C ABI
+  # too, with no Ruby in the path; `docs/texture-decode-upstream-defect.md` records the whole of it.
+  #
+  # If the upstream path is fixed, this test fails and says so.
+  def test_the_zoom_path_is_asymmetric_and_the_binding_does_not_paper_over_it
+    values = with_device do |device, png|
+      attempt = lambda do |width, height|
+        texture = G::Texture2D.FromStream(device, StringIO.new(png), width, height, true)
+        size = [texture.Width, texture.Height]
+        texture.Dispose
+        size
+      rescue StandardError => error
+        error.class
+      end
+      [attempt.call(32, 64), attempt.call(64, 32), attempt.call(200, 100), attempt.call(64, 64)]
+    end
+    assert_equal [32, 64], values[0], "taller than wide crops and scales correctly"
+    assert_equal CNA::NativeError, values[1], "wider than tall does not, which is the defect"
+    assert_equal CNA::NativeError, values[2]
+    assert_equal [64, 64], values[3], "and a matching aspect ratio is unaffected"
+  end
+
+  def test_the_five_argument_form_validates_what_the_constructor_validates
+    values = with_device do |device, png|
+      err = ->(&block) { begin; block.call.Dispose; :ok; rescue => e; e.class; end }
+      [err.call { G::Texture2D.FromStream(nil, StringIO.new(png)) },
+       err.call { G::Texture2D.FromStream(device, nil) },
+       err.call { G::Texture2D.FromStream(device, StringIO.new(png), 0, 1, false) },
+       err.call { G::Texture2D.FromStream(device, StringIO.new(png), 1, -1, false) },
+       err.call { G::Texture2D.FromStream(device, StringIO.new(png), 1, 1, 1) },
+       err.call { G::Texture2D.FromStream(device, StringIO.new(png), 1, 1) },
+       err.call { G::Texture2D.FromStream(device, StringIO.new(+"")) }]
+    end
+    assert_equal [ArgumentError, ArgumentError], values[0..1]
+    assert_equal [RangeError, RangeError], values[2..3], "ValidateCreationParameters, as the constructors use"
+    assert_equal TypeError, values[4]
+    assert_equal ArgumentError, values[5], "only two arities exist"
+    assert_equal ArgumentError, values[6], "an empty stream carries no image"
   end
 end

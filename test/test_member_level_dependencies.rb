@@ -200,10 +200,15 @@ class MemberLevelDependenciesTest < Minitest::Test
     # cluster took SoundEffectInstance, 3 until the XACT engine cluster took Cue -- its one il-only
     # unmet dependency was AudioEngine -- and 2 until SpriteFont was built, whose own il-only
     # dependency, SpriteBatch, had been complete all along.
-    assert_equal 1, signature_complete.length
-    names = signature_complete.map { |entry| entry.fetch("name") }
+    # 1 until GraphicsResource completed and put VertexDeclaration and SamplerState here: both are
+    # dependency-complete by the signature graph and both reach a type only their IL names --
+    # IVertexType for the first, EffectPass for the second.
+    assert_equal 3, signature_complete.length
+    names = signature_complete.map { |entry| entry.fetch("name") }.sort
     # ContentManager was here until the Stream and Action`1 projections consumed it.
-    assert_equal ["Microsoft.Xna.Framework.Graphics.EffectAnnotation"], names
+    assert_equal ["Microsoft.Xna.Framework.Graphics.EffectAnnotation",
+                  "Microsoft.Xna.Framework.Graphics.SamplerState",
+                  "Microsoft.Xna.Framework.Graphics.VertexDeclaration"], names
     refute_includes names, "Microsoft.Xna.Framework.Audio.Cue"
   end
 
@@ -249,7 +254,10 @@ class MemberLevelDependenciesTest < Minitest::Test
     # off the frontier entirely, MediaSource took it to 5 and emptied the RUNTIME_DATA register with
     # it, SpriteFont took it to 4 -- the first candidate a BCL decision alone really unblocked --
     # and ResourceContentManager to 3, the first this frontier ever *selected* rather than listed.
-    assert_equal 3, REPORT.fetch("dependencyCompleteCandidates").length
+    # and ResourceContentManager to 3. Then it *rose* to 9, which is what a frontier advancing
+    # looks like: GraphicsResource completing made the four graphics state objects and
+    # VertexDeclaration dependency-complete, and Texture2D completing did the same for VideoPlayer.
+    assert_equal 9, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")
@@ -263,7 +271,7 @@ class MemberLevelDependenciesTest < Minitest::Test
      REPORT.fetch("ilOnlyBlockedCandidates")).each do |entry|
       refute_includes consumable, entry.fetch("name")
     end
-    assert_equal 1, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
+    assert_equal 3, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
   end
 
   # The one candidate the refinement cleared, and what happened to it. Foundation 39 selected it and

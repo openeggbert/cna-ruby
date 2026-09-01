@@ -269,7 +269,13 @@ class DisposableCollapseTest < Minitest::Test
     # doubly blocked candidate left, and it is the one a BCL decision alone really unblocked.
     # BCL_PROJECTION fell to 1 when ResourceContentManager was built, which needed no projection at
     # all in the end: System.Resources.ResourceManager collapsed to the one member it reaches.
-    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 2},
+    # NATIVE_RUNTIME then rose from 2 to 7: completing GraphicsResource made the four graphics
+    # state objects and VertexDeclaration dependency-complete, and completing Texture2D did the
+    # same for Media.VideoPlayer. A blocker count rising is what a frontier advancing looks like --
+    # the types behind the ones already built become visible -- and each of the new entries is
+    # audited rather than trusted.
+    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 7,
+                  "NATIVE_RUNTIME+INTERFACE_PRODUCER_MISSING" => 1},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end
