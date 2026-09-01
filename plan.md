@@ -25,16 +25,18 @@ fails when it should.
 
 ## Surface
 
-The strict surface is **163 types / 1979 Ruby member identities**: 158 complete, 5 partial, 94 of the
-257 reference types still missing, with 244 deferred diagnostics of which 107 are missing members and
+The strict surface is **165 types / 1987 Ruby member identities**: 160 complete, 5 partial, 92 of the
+257 reference types still missing, with 242 deferred diagnostics of which 107 are missing members and
 42 are the overload category. Every structural category except `MISSING_TYPE`, `MISSING_MEMBER`,
 `OVERLOAD_MAPPING_MISMATCH` and one long-standing `PROPERTY_MAPPING_MISMATCH`
 (`GraphicsDevice::Viewport`) is zero, the allowlist is empty and `UNMEASURED_STRUCTURAL_CATEGORY` is
 zero. **26** event identities are projected across **13** owner types with `EVENT_MAPPING_MISMATCH`
-zero, and **18** BCL identities go through the measured `CNA::Runtime::BclProjection` register.
+zero, and **22** BCL identities go through the measured `CNA::Runtime::BclProjection` register.
 
 The five partial types are the graphics runtime: `GraphicsDeviceManager` (26 members outstanding),
-`GraphicsDevice` (39), `GraphicsResource` (3), `Texture2D` (7) and `SpriteBatch` (4).
+`GraphicsDevice` (39), `GraphicsResource` (3), `Texture2D` (7) and `SpriteBatch` (4) — 79 of the 107
+outstanding members between them, which is why a qualification artifact with a real renderer is the
+single largest lever this project has left.
 
 Complete clusters, by area:
 
@@ -45,23 +47,25 @@ Complete clusters, by area:
   `GameWindow`, `LaunchParameters`, `FrameworkDispatcher`, `TitleContainer` and
   `GamerServices.GamerServicesComponent`, with a real component engine and real lifecycle events.
 - **Content** — `ContentManager` over CNA's own content pipeline, `Game.Content` bound to the
-  content manager CNA's game already owns, and the five `ContentSerializer*` attributes.
+  content manager CNA's game already owns, `ResourceContentManager`, and the five
+  `ContentSerializer*` attributes.
 - **Audio — complete.** Every XNA 4.0 `Audio` type is projected: `SoundEffect`,
   `SoundEffectInstance`, `DynamicSoundEffectInstance`, `Microphone`, `AudioEngine`, `AudioCategory`,
   `WaveBank`, `SoundBank`, `Cue`, the managed `AudioListener`/`AudioEmitter`/`RendererDetail`, the
   four enums and the three exception types.
 - **Input** — Keyboard, Mouse, the ten-type GamePad family and the `Input.Touch` closure.
 - **Media** — `VisualizationData`, `Video` and `MediaSource`.
-- **Graphics** — `Viewport`, `TextureCollection`, `Texture`, `DisplayMode`, `DisplayModeCollection`,
-  `PresentationParameters` and the enum closure, beside the five partial runtime types.
+- **Graphics** — `SpriteFont` over a real MonoGame font, `Viewport`, `TextureCollection`, `Texture`,
+  `DisplayMode`, `DisplayModeCollection`, `PresentationParameters` and the enum closure, beside the
+  five partial runtime types.
 
 ## Admission and safety
 
 - The admitted encoded ABI versions are `0x00000700` and `0x00001500`, cross-verified across both
   header roots; `CROSS_VERSION_MISMATCHES` is zero over the whole bound surface.
 - `CNA_NATIVE_LIBRARY` must be an absolute file path when used.
-- All Fiddle functions come from one manifest: **196** functions, **5** callbacks, **71** constants
-  and **25** struct layouts, each type-checked against the headers by a compiler-backed probe with
+- All Fiddle functions come from one manifest: **204** functions, **5** callbacks, **71** constants
+  and **27** struct layouts, each type-checked against the headers by a compiler-backed probe with
   `_Static_assert(__builtin_types_compatible_p(...))`, and each Ruby layout compared field by field
   with the C one. `ABI_MISMATCHES` is zero.
 - Native errors cross one translation boundary.
@@ -95,13 +99,17 @@ with the pre-correction SHA-256.
 `tools/api_compat/analyze_dependencies.rb` classifies every dependency-complete missing type. Five
 remain, and **none is consumable**:
 
-| type | blocker | what is actually missing |
+| type | reported blocker | what is actually missing |
 | --- | --- | --- |
-| `Content.ResourceContentManager` | BCL_PROJECTION | `System.Resources.ResourceManager` |
-| `Design.MathTypeConverter` | BCL_PROJECTION | the `System.ComponentModel` converter family |
-| `Graphics.SpriteFont` | BCL_PROJECTION + NATIVE_RUNTIME | `System.Char`, `Nullable`1[Char]`, `StringBuilder` |
-| `Graphics.EffectAnnotation` | NATIVE_RUNTIME | its eight `GetValue*` members delegate to `EffectParameter`, which is not projected |
-| `Graphics.GraphicsAdapter` | NATIVE_RUNTIME | measured: the qualified artifact compiles only the HEADLESS renderer, and every adapter route answers invented data |
+| `Design.MathTypeConverter` | BCL_PROJECTION | scope, not authority: it **inherits** `ExpandableObjectConverter` and **returns** `PropertyDescriptorCollection`, so projecting it means projecting .NET's type-descriptor system |
+| `Graphics.EffectAnnotation` | NATIVE_RUNTIME | not the renderer: its eight `GetValue*` members forward to a temporary `EffectParameter`, which is not projected, and nothing in the projected surface produces an annotation |
+| `Graphics.GraphicsAdapter` | NATIVE_RUNTIME | not the ABI: the qualified artifact compiles only the HEADLESS renderer, and with it every adapter route answers invented data |
+
+Each of the three has now been **measured** rather than accepted, and each is deferred for a reason
+its reported blocker word does not name. Three earlier entries of this table were removed the same
+way, by being built: `Graphics.SpriteFont` once `System.Char`, `Nullable`1` and `StringBuilder` were
+decided, `Content.ResourceContentManager` once `System.Resources.ResourceManager` was collapsed to
+the one member it reaches, and `Media.MediaSource` once its IL was read at all.
 
 The `RUNTIME_DATA` register is **empty**. Every entry it ever held — `FrameworkDispatcher`,
 `Audio.RendererDetail`, `Media.VisualizationData`, `Media.Video`, `Audio.AudioCategory`,
@@ -121,7 +129,19 @@ Two deferrals are now measured rather than assumed, and both stand:
 - **`EffectAnnotation`.** Its six properties are one `ldfld` each and CNA can build one standalone —
   `cna_effect_annotation_create` takes no game, device or effect — so the *renderer* does not block
   it. What blocks it is that all eight `GetValue*` members construct a temporary `EffectParameter`
-  and forward to it, so their behaviour is `EffectParameter`'s, and that type is not projected.
+  and forward to it, so their behaviour — including what a type mismatch does — is
+  `EffectParameter`'s, and that type is not projected. Nothing in the projected surface produces an
+  annotation either: no `Effect`, no `EffectParameterCollection`, no `EffectAnnotationCollection`.
+- **`MathTypeConverter`.** The authority is not missing: the authentic Microsoft .NET Framework 4.0
+  `System.dll` (SHA-256 `c3182e40…`) is in the same Wine prefix as the pinned `mscorlib` and could be
+  admitted the same way. What blocks it is **shape and scope**. Its `CanConvertFrom` and
+  `CanConvertTo` each end in `call instance … TypeConverter::CanConvertFrom`, so part of its
+  behaviour really is the base's; it returns a `PropertyDescriptorCollection` it would have to
+  produce; and it compares against `InstanceDescriptor`, a fourth `ComponentModel` type. The
+  structural collapse that unblocked `ResourceContentManager` cannot apply, because that rule is for
+  a type whose *reachable surface is one member* — not for a base class one inherits from and a
+  collection one returns. Projecting it means projecting .NET's type-descriptor system for ten
+  design-time converters that nothing in this binding consumes.
 
 ## Qualification policy
 

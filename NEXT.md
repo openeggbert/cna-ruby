@@ -5,7 +5,7 @@
 **Session start HEAD = `920b0db8`**, which was also `origin/develop`. That baseline carries
 Foundations 16 to 43 and Native frontiers 1 to 3.
 
-The sequence this session added on top of it is **Foundations 44 to 62, Native frontiers 4 and 5,
+The sequence this session added on top of it is **Foundations 44 to 64, Native frontiers 4 and 5,
 and the CNA C ABI 0.7.0 -> 0.21.0 migration**. Resolve where it currently sits with
 
 ```sh
@@ -42,22 +42,24 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 60 | `Audio.AudioEngine` + `Audio.AudioCategory` | 2 | 24 |
 | 61 | `Audio.WaveBank` + `SoundBank` + `Cue`, completing the namespace | 3 | 38 |
 | 62 | `Media.MediaSource`, emptying the `RUNTIME_DATA` register | 1 | 4 |
+| 63 | `Graphics.SpriteFont` + the `Char`/`Nullable`/`StringBuilder` decisions | 1 | 6 |
+| 64 | `Content.ResourceContentManager` + the `ResourceManager` collapse | 1 | 2 |
 
 ## Measured state
 
-Strict target **163 types / 1979 member identities**: **158 complete**, five partial graphics runtime
-types, 94 missing, **244 deferred diagnostics**. `MISSING_MEMBER` **107**, `PARTIAL_TYPES` 5,
+Strict target **165 types / 1987 member identities**: **160 complete**, five partial graphics runtime
+types, 92 missing, **242 deferred diagnostics**. `MISSING_MEMBER` **107**, `PARTIAL_TYPES` 5,
 `PROPERTY_MAPPING_MISMATCH` 1 (`GraphicsDevice::Viewport`, unrelated and pre-existing),
 `OVERLOAD_MAPPING_MISMATCH` **42**, every other structural category 0, allowlist 0, unmeasured 0.
-**26** event identities across **13** owner types. **18** projected BCL identities.
+**26** event identities across **13** owner types. **22** projected BCL identities.
 
-CNA ABI **196 functions / 5 callbacks / 71 constants / 25 layouts**, on **two admitted encoded
+CNA ABI **204 functions / 5 callbacks / 71 constants / 27 layouts**, on **two admitted encoded
 versions** cross-verified across both header roots. Zero missing header symbols, zero missing library
 symbols, zero cross-version mismatches, zero ABI mismatches. **No CNA source was changed and no new
 native binary was built.**
 
-Behaviour corpus **526** observations, zero failures. Suite **1293 runs / 45738 assertions**, zero
-failures, zero skips. Capability registry **114** rows, zero contradictions.
+Behaviour corpus **526** observations, zero failures. Suite **1311 runs / 45832 assertions**, zero
+failures, zero skips. Capability registry **116** rows, zero contradictions.
 
 ## Game is complete, and so is the whole Audio namespace
 
@@ -168,44 +170,47 @@ rule the `GraphicsDeviceManager` producer audit established:
 
 ## Recommended next frontier
 
-**Five** dependency-complete candidates remain and none is consumable. Two are now measured dead
-ends rather than assumed ones, and three are real BCL decisions.
+**Three** dependency-complete candidates remain, and every one of them has now been *measured*
+rather than accepted. None is blocked by the word its blocker column reports.
 
-The two measured dead ends:
+- **`Graphics.GraphicsAdapter`** — blocked by the **renderer selection**. The 0.21.0 artifact
+  contains `Sdl3Platform` and links SDL3 and X11 (the retired 0.7.0 one had only Headless and
+  Terminal, which is what the old note recorded), but the only renderer compiled in is `HEADLESS`:
+  `CNA_GRAPHICS_RENDERER=BGFX` and `=VULKAN` both abort with "not compiled into this build.
+  Available: HEADLESS". With it every `cna_graphics_adapter_*` route answers `SUCCESS` with invented
+  values — one adapter, `"Default Display"`, `\\.\DISPLAY1`, a single 800x480 mode,
+  `adapters_refresh` answering `NOT_SUPPORTED`. All eighteen of its identities *are* display values,
+  so nothing survives removing them.
+- **`Graphics.EffectAnnotation`** — not blocked by the renderer at all. `cna_effect_annotation_create`
+  takes no game, device or effect, and its six properties are one `ldfld` each. What blocks it is
+  that all eight `GetValue*` members forward to a temporary `EffectParameter`, so their behaviour is
+  that type's, and nothing in the projected surface produces an annotation. The cheapest of the
+  three to unblock: derive `EffectParameter`'s eight getters from the pinned Graphics IL. Its
+  numeric guard is `if (ParameterClass != Scalar && StructureMembers.Count == 0) throw
+  InvalidCastException`, and `GetValueString`'s is `if (ParameterType != String) throw`.
+- **`Design.MathTypeConverter`** — blocked by **scope, not authority**. The authentic .NET Framework
+  4.0 `System.dll` (SHA-256 `c3182e40…`) is in the same Wine prefix as the pinned `mscorlib` and
+  could be admitted the same way, so `TypeConverter`'s IL is available. But `CanConvertFrom` and
+  `CanConvertTo` each end in `call instance … TypeConverter::…`, so part of the behaviour really is
+  the base's; `GetProperties` returns a `PropertyDescriptorCollection` this binding would have to
+  produce; and `CanConvertTo` compares against `InstanceDescriptor`, a fourth `ComponentModel` type.
+  The collapse that unblocked `ResourceContentManager` does not apply — that rule is for a type
+  whose reachable surface is *one member*, not a base class one inherits from. Projecting it means
+  projecting .NET's type-descriptor system for ten design-time converters nothing here consumes.
 
-- **`Graphics.GraphicsAdapter`.** The 0.21.0 artifact contains `Sdl3Platform` and links SDL3 and
-  X11 — the retired 0.7.0 one had only Headless and Terminal, which is what the old note recorded —
-  but the only **renderer** compiled in is `HEADLESS`: `CNA_GRAPHICS_RENDERER=BGFX` and `=VULKAN`
-  both abort with "not compiled into this build. Available: HEADLESS". With it every
-  `cna_graphics_adapter_*` route answers `SUCCESS` with invented values — one adapter,
-  `"Default Display"`, `\\.\DISPLAY1`, a single 800x480 mode, `adapters_refresh` answering
-  `NOT_SUPPORTED`. All eighteen of its identities *are* display values, so there is nothing left
-  after removing them. Blocked by the **renderer selection**, not by `NATIVE_RUNTIME`.
-- **`Graphics.EffectAnnotation`.** The renderer does not block it: its six properties are one
-  `ldfld` each and `cna_effect_annotation_create` builds one standalone, taking no game, device or
-  effect. What blocks it is that all eight `GetValue*` members construct a temporary
-  `EffectParameter` and forward to it, so their behaviour — including whatever a type mismatch does
-  — is `EffectParameter`'s, and that type is not projected. It is the cheapest of the five to
-  unblock: derive `EffectParameter`'s eight getters from the pinned Graphics IL.
+So the type frontier is at rest: every remaining candidate is deferred for a reason that was
+measured, and the two largest levers are outside it.
 
-The three BCL decisions, in rising order of cost:
-
-1. **`System.Resources.ResourceManager`**, which blocks `Content.ResourceContentManager` and its two
-   identities. The smallest of the three.
-2. **`System.Char`, `Nullable`1[Char]` and `System.Text.StringBuilder`**, which are `SpriteFont`'s
-   BCL half. `SpriteFont` also carries `NATIVE_RUNTIME`, but its il-only dependency is `SpriteBatch`,
-   which is **complete** — so unlike before, a BCL decision really would move it.
-3. **`System.ComponentModel`** (`ExpandableObjectConverter`, `ITypeDescriptorContext`,
-   `PropertyDescriptorCollection`), which blocks the whole `Design` converter family.
+**The single largest lever is a qualification artifact with a real renderer.** It would unblock
+`GraphicsAdapter` directly and the five partial graphics types behind it — `GraphicsDevice`,
+`GraphicsDeviceManager`, `GraphicsResource`, `Texture2D` and `SpriteBatch` — which between them owe
+79 of the 107 outstanding members. The second is the `Media` runtime, which is missing whole rather
+than blocked.
 
 The `RUNTIME_DATA` register is **empty**. Every entry it ever held described a producer rather than
-the type, and eight `NATIVE_RUNTIME` deferrals have gone the same way. The audit is the rule that
+the type, and eight `NATIVE_RUNTIME` deferrals went the same way. The audit is the rule that
 survived: re-measure a deferral before trusting it, especially one that names the thing which would
 *fill* a type.
-
-A qualification artifact carrying a real renderer is what the graphics half needs, and it is the
-single largest lever left: it would unblock `GraphicsAdapter` directly and the five partial graphics
-types behind it.
 
 `SELECTED_ONLY=true`
 
