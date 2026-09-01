@@ -226,7 +226,7 @@ class MemberLevelDependenciesTest < Minitest::Test
     assert_includes REPORT.fetch("candidatePolicy"), "deliberately do not relax"
     # 19 until Foundation 46 took LaunchParameters off the frontier by projecting Dictionary`2,
     # and 12 until the Stream projection consumed TitleContainer.
-    assert_equal 10, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 9, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")

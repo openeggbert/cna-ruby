@@ -1,8 +1,8 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 155,
-  "completeTypes": 150,
+  "targetTypes": 156,
+  "completeTypes": 151,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
@@ -10,7 +10,7 @@
     "Microsoft.Xna.Framework.Graphics.Texture2D",
     "Microsoft.Xna.Framework.Graphics.SpriteBatch"
   ],
-  "missingTypes": 102,
+  "missingTypes": 101,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -93,7 +93,7 @@
   "blockerSummary": {
     "BCL_PROJECTION": 2,
     "BCL_PROJECTION+NATIVE_RUNTIME": 1,
-    "NATIVE_RUNTIME": 5,
+    "NATIVE_RUNTIME": 4,
     "NATIVE_RUNTIME+RUNTIME_DATA": 1,
     "RUNTIME_DATA": 1
   },
@@ -1063,71 +1063,6 @@
       "ilAssembly": "Microsoft.Xna.Framework.dll",
       "nativeReachableMethods": [
 
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance",
-      "kind": "class",
-      "expectedRubyIdentities": 10,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Audio.AudioChannels",
-        "Microsoft.Xna.Framework.Audio.SoundEffectInstance"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-
-      ],
-      "ilOnlyUnmetDependencies": [
-
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-        "BufferNeeded"
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "Dispose",
-        "SubmitBuffer",
-        "GetSampleDuration",
-        "GetSampleSizeInBytes",
-        "Play"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.dll",
-      "nativeReachableMethods": [
-        ".cctor",
-        ".ctor",
-        "AllocateData",
-        "Dispose",
-        "GetPendingBufferCount",
-        "Play",
-        "SubmitBuffer",
-        "get_PendingBufferCount"
       ],
       "runtimeDataDetail": null
     },

@@ -197,3 +197,20 @@ probe type-checks each against its own declaration rather than against the other
 `cna_gamer_services_component_create` is deliberately not bound: it builds a *canonical* component
 that CNA's own component list drives, and this binding's `Game.Components` is the managed engine, so
 one would be driven twice.
+
+## The streaming audio instance
+
+Eight routes and a fifth callback bring the count to 130.
+`cna_dynamic_sound_effect_instance_create` is **game-parented** where an ordinary instance is
+effect-parented, which is the ABI's own shape: a streaming instance has no `SoundEffect` behind it.
+
+`CNA_AudioEventCallback` is the third `void (*)(void*)` typedef bound here, after
+`CNA_GameEventCallback` and `CNA_GamerAsyncCallback`. Each stays a separate callback identity
+because each is a different typedef in a different header, and the probe type-checks every one
+against its own declaration rather than against the others.
+
+`cna_dynamic_sound_effect_instance_update_ext` is deliberately not bound, and the reason is stronger
+than "no XNA identity": it is the per-instance half of a pump `cna_framework_dispatcher_update`
+already drives, and `FrameworkDispatcher.Update` is the projected member that drives it. Binding it
+would give this binding two pumps for one queue. `submit_float_buffer_ext` and `clear_buffers_ext`
+have no XNA identity at all.

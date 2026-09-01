@@ -1699,6 +1699,7 @@ class ApiVerifierTest < Minitest::Test
       Microsoft.Xna.Framework.IUpdateable::UpdateOrderChanged
       Microsoft.Xna.Framework.IDrawable::VisibleChanged
       Microsoft.Xna.Framework.IDrawable::DrawOrderChanged
+      Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance::BufferNeeded
       Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService::DeviceDisposing
       Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService::DeviceReset
       Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService::DeviceResetting
@@ -1715,7 +1716,7 @@ class ApiVerifierTest < Minitest::Test
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
     assert_equal selected, strict.fetch("eventIdentities")
     assert_equal selected.length, strict.fetch("EVENT_IDENTITIES")
-    assert_equal 7, strict.fetch("EVENT_OWNER_TYPES")
+    assert_equal 8, strict.fetch("EVENT_OWNER_TYPES")
     assert_equal "CNA::Runtime::Event", strict.fetch("EVENT_SUPPORT_TYPE")
     assert_equal 0, strict.fetch("EVENT_MAPPING_MISMATCH")
 

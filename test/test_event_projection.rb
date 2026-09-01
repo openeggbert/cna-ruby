@@ -451,8 +451,8 @@ class EventProjectionTest < Minitest::Test
   # for; Foundation 40 added a third abstract owner carrying four more. The rule is unchanged and
   # the census grew.
   def test_the_strict_report_measures_the_selected_event_identities
-    assert_equal 20, STRICT.fetch("EVENT_IDENTITIES")
-    assert_equal 7, STRICT.fetch("EVENT_OWNER_TYPES")
+    assert_equal ReviewedScoreboard::EVENT_IDENTITIES, STRICT.fetch("EVENT_IDENTITIES")
+    assert_equal ReviewedScoreboard::EVENT_OWNER_TYPES, STRICT.fetch("EVENT_OWNER_TYPES")
     assert_equal "CNA::Runtime::Event", STRICT.fetch("EVENT_SUPPORT_TYPE")
     assert_equal 0, STRICT.fetch("EVENT_MAPPING_MISMATCH")
     assert_equal 0, STRICT.fetch("UNMEASURED_STRUCTURAL_CATEGORY")
@@ -466,6 +466,7 @@ class EventProjectionTest < Minitest::Test
       Microsoft.Xna.Framework.IUpdateable::UpdateOrderChanged
       Microsoft.Xna.Framework.IDrawable::VisibleChanged
       Microsoft.Xna.Framework.IDrawable::DrawOrderChanged
+      Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance::BufferNeeded
       Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService::DeviceDisposing
       Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService::DeviceReset
       Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService::DeviceResetting

@@ -351,6 +351,23 @@ module CNA
         signature("cna_sound_effect_instance_apply_3d", T[:result], [T[:handle], pointer("CNA_AudioListener", const: true), pointer("CNA_AudioEmitter", const: true)], ownership: "borrows instance; copies both value snapshots"),
         signature("cna_sound_effect_instance_apply_3d_multi_ext", T[:result], [T[:handle], pointer("CNA_AudioListener", const: true), T[:u64], pointer("CNA_AudioEmitter", const: true)], ownership: "borrows instance; copies every value snapshot"),
         signature("cna_sound_effect_instance_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED instance"),
+        # `DynamicSoundEffectInstance`. It is game-parented where an ordinary instance is
+        # effect-parented, which is the ABI's own shape: it has no `SoundEffect` behind it.
+        #
+        # `submit_float_buffer_ext` and `clear_buffers_ext` are deliberately unbound -- XNA declares
+        # neither, and a route with no identity to carry is surface this projection does not have.
+        # `update_ext` is unbound for a stronger reason: it is the per-instance half of the pump that
+        # `cna_framework_dispatcher_update` already drives, and `FrameworkDispatcher.Update` is the
+        # projected member that drives it. Binding it would give this binding two pumps for one
+        # queue, which is the duplication the producer audit refused.
+        signature("cna_dynamic_sound_effect_instance_create", T[:result], [T[:handle], T[:i32], enum("CNA_AudioChannels"), pointer("CNA_Handle")], ownership: "returns OWNED instance parented to the Game"),
+        signature("cna_dynamic_sound_effect_instance_get_pending_buffer_count", T[:result], [T[:handle], pointer("int32_t")], ownership: "caller output"),
+        signature("cna_dynamic_sound_effect_instance_submit_buffer", T[:result], [T[:handle], pointer("uint8_t", const: true), T[:u64], T[:i32], T[:i32]], ownership: "borrows instance; copies the bytes"),
+        signature("cna_dynamic_sound_effect_instance_queue_initial_buffers_ext", T[:result], [T[:handle]], ownership: "borrows instance", result_lifetime: "no result value"),
+        signature("cna_dynamic_sound_effect_instance_get_sample_duration_ticks", T[:result], [T[:handle], T[:i32], pointer("int64_t")], ownership: "caller output"),
+        signature("cna_dynamic_sound_effect_instance_get_sample_size_in_bytes", T[:result], [T[:handle], T[:i64], pointer("int32_t")], ownership: "caller output"),
+        signature("cna_dynamic_sound_effect_instance_subscribe_buffer_needed", T[:result], [T[:handle], callback_pointer("CNA_AudioEventCallback"), T[:ptr], pointer("CNA_AudioEventRegistrationHandle")], ownership: "borrows instance; returns OWNED registration; retains the callback until released"),
+        signature("cna_audio_unsubscribe_ext", T[:result], [handle("CNA_AudioEventRegistrationHandle")], ownership: "consumes OWNED registration"),
         signature("cna_keyboard_get_state", T[:result], [T[:handle], pointer("CNA_KeyboardState")], ownership: "caller MANAGED_VALUE output"),
         signature("cna_keyboard_get_state_for_player", T[:result], [T[:handle], enum("CNA_PlayerIndex"), pointer("CNA_KeyboardState")], ownership: "caller MANAGED_VALUE output"),
         signature("cna_keyboard_state_is_key_down", T[:result], [pointer("CNA_KeyboardState", const: true), enum("CNA_Key"), pointer("CNA_Bool")], ownership: "caller output"),
@@ -376,7 +393,8 @@ module CNA
         # Shape-identical to CNA_GameEventCallback and still a separate identity: it is a different
         # typedef in a different header, and the ABI probe type-checks each against its own
         # declaration rather than against the other.
-        { name: "CNA_GamerAsyncCallback", c_return: "void", c_arguments: ["void*"], calling_convention: "platform C", fiddle_return: VOID, fiddle_arguments: [PTR] }
+        { name: "CNA_GamerAsyncCallback", c_return: "void", c_arguments: ["void*"], calling_convention: "platform C", fiddle_return: VOID, fiddle_arguments: [PTR] },
+        { name: "CNA_AudioEventCallback", c_return: "void", c_arguments: ["void*"], calling_convention: "platform C", fiddle_return: VOID, fiddle_arguments: [PTR] }
       ].freeze
 
       # `CNA_ABI_VERSION` is deliberately **not** here. It is not a constant this binding consumes;

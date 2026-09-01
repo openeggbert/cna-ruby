@@ -63,8 +63,8 @@ class GameEventsTest < Minitest::Test
     (IDENTITIES + RAISERS).each do |name|
       refute(remainder.any? { |entry| entry.include?("::#{name} ") }, name)
     end
-    assert_equal 20, STRICT.fetch("EVENT_IDENTITIES")
-    assert_equal 7, STRICT.fetch("EVENT_OWNER_TYPES")
+    assert_equal ReviewedScoreboard::EVENT_IDENTITIES, STRICT.fetch("EVENT_IDENTITIES")
+    assert_equal ReviewedScoreboard::EVENT_OWNER_TYPES, STRICT.fetch("EVENT_OWNER_TYPES")
     assert_equal 0, STRICT.fetch("EVENT_MAPPING_MISMATCH")
     assert_equal 0, STRICT.fetch("UNEXPECTED_MEMBER")
   end

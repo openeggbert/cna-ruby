@@ -90,7 +90,13 @@ class DisposableCollapseTest < Minitest::Test
       klass = type.fetch("rubyName").split("::").reduce(Object) { |scope, part| scope.const_get(part, false) }
       declared = REFERENCE.fetch("types").find { |entry| entry.fetch("name") == type.fetch("name") }
                           .fetch("members").map { |member| member.fetch("name").to_sym }
-      (candidates - declared).each do |invented|
+      # An inherited member is not an invention: `DynamicSoundEffectInstance` declares
+      # `Dispose(Boolean)` and inherits `IsDisposed` from `SoundEffectInstance`, which really does
+      # declare it. What this test forbids is a member no type in the chain declares.
+      inherited = REFERENCE.fetch("types")
+                           .select { |entry| klass.ancestors.map(&:to_s).include?(entry.fetch("name").gsub(".", "::")) }
+                           .flat_map { |entry| entry.fetch("members").map { |member| member.fetch("name").to_sym } }
+      (candidates - declared - inherited).each do |invented|
         refute klass.public_method_defined?(invented), "#{type.fetch("rubyName")}##{invented}"
         refute klass.protected_method_defined?(invented), "#{type.fetch("rubyName")}##{invented}"
       end
@@ -250,7 +256,7 @@ class DisposableCollapseTest < Minitest::Test
     # GamerServicesComponent appeared behind it, and the System.Byte[] decision took Microphone's
     # BCL half away.
     assert_equal({"BCL_PROJECTION" => 2, "BCL_PROJECTION+NATIVE_RUNTIME" => 1,
-                  "NATIVE_RUNTIME" => 5, "NATIVE_RUNTIME+RUNTIME_DATA" => 1, "RUNTIME_DATA" => 1},
+                  "NATIVE_RUNTIME" => 4, "NATIVE_RUNTIME+RUNTIME_DATA" => 1, "RUNTIME_DATA" => 1},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end

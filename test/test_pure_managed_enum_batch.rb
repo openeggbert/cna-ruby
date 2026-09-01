@@ -309,7 +309,9 @@ class PureManagedEnumBatchTest < Minitest::Test
     # `sound_` and `audio_` left this list when the audio cluster was built, which is a statement
     # about that milestone rather than about this one: what this one claims is that *its* 24 enums
     # bound nothing, and every other fragment still proves it.
-    %w[cube_ buffer_ microphone_ media_ blend_ stencil_ sampler_
+    # `buffer_` left this list when the streaming audio instance was built; the fragments that
+    # remain still prove the 24 enums of *this* batch bound nothing.
+    %w[cube_ microphone_ media_ blend_ stencil_ sampler_
        render_target_ index_buffer_ vertex_buffer_].each do |fragment|
       refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?(fragment) }, fragment
     end
@@ -327,7 +329,7 @@ class PureManagedEnumBatchTest < Minitest::Test
     # claims, is that **it** built neither. The list narrows to the audio types nothing here has
     # built rather than being loosened.
     %i[Microphone AudioEngine WaveBank SoundBank Cue
-       DynamicSoundEffectInstance].each do |name|
+      ].each do |name|
       refute A.const_defined?(name, false), "Audio::#{name}"
     end
     # VisualizationData arrived in Foundation 51 from its own IL: a constructible holder whose
@@ -362,7 +364,7 @@ class PureManagedEnumBatchTest < Minitest::Test
       # types. None of those is an enum.
       value_types = %i[TouchPanelCapabilities TouchLocation GestureSample TouchCollection
                        TouchPanel AudioListener AudioEmitter RendererDetail VisualizationData Video
-                       SoundEffect SoundEffectInstance]
+                       SoundEffect SoundEffectInstance DynamicSoundEffectInstance]
       extras = declared & value_types
       extras += declared.grep(/Exception\z/)
       assert_equal (selected + extras).uniq.sort, declared, namespace.name

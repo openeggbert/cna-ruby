@@ -385,6 +385,193 @@ module Microsoft
 
         # Derived from the pinned Microsoft.Xna.Framework.dll IL (SHA-256 38e7093f…).
         #
+        # `.class public auto ansi sealed`, extending `SoundEffectInstance`. It is the streaming
+        # instance: a consumer submits PCM16 buffers and the runtime raises `BufferNeeded` when the
+        # queue runs low, which is why it is the one `SoundEffectInstance` with a public constructor
+        # and no `SoundEffect` behind it. CNA's `cna_dynamic_sound_effect_instance_create` is
+        # game-parented for exactly that reason.
+        #
+        # The constructor's bounds are the same literals `SoundEffect`'s are -- `sampleRate` in
+        # `[8000, 48000]`, `channels` in `[1, 2]`, from `ldc.i4 0x1f40`/`0xbb80` -- and every other
+        # member opens with the same disposed check.
+        #
+        # `SubmitBuffer` validates against the instance's own `AudioFormat`, and **block alignment**
+        # is the part a summary would lose: the buffer length, the offset and the count must each be
+        # a whole number of frames, which for PCM16 is `2 * channels` bytes. A misaligned length is
+        # `InvalidAudioBuffer`, a misaligned offset is `InvalidAudioBufferOffset`, and a misaligned
+        # or non-positive count is `InvalidOffsetCountLength` -- three different messages for what
+        # looks like one rule.
+        #
+        # `IsLooped` is the inherited property with a **narrower** setter: `set_IsLooped` throws
+        # `InvalidOperationException(InvalidDynamicIsLoopedCall)` when the value is `true`, and
+        # accepts `false`. A streaming instance cannot loop, because there is nothing fixed to loop
+        # over. The getter is inherited unchanged.
+        class DynamicSoundEffectInstance < SoundEffectInstance
+          extend CNA::Runtime::EventOwner
+
+          # The canonical event carries nothing but its sender, so the handler receives only its
+          # context. CNA raises it "from whichever thread advances the queue, which is the game
+          # thread when the loop runs" -- and what advances that queue here is
+          # `FrameworkDispatcher.Update`, the member this binding already projects, rather than a
+          # second per-instance pump.
+          xna_event :BufferNeeded
+
+          public_class_method :new
+
+          def initialize(sampleRate, channels)
+            rate = SoundEffect.__send__(:validated_sample_rate, sampleRate)
+            channel_count = SoundEffect.__send__(:validated_channels, channels)
+            host = CNA::Runtime::Context.native_host("DynamicSoundEffectInstance.new")
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_dynamic_sound_effect_instance_create", host.handle,
+                                     rate, channel_count, output)
+            @block_align = 2 * channel_count
+            @buffer_registration = 0
+            @buffer_callback = nil
+            initialize_dynamic(output[0, 8].unpack1("Q"))
+            subscribe_buffer_needed
+          end
+
+          # `Dispose(Boolean)` is the one member this type declares that its base also has, and the
+          # reference confirms it: `protected Dispose(System.Boolean)`. It releases the buffer-needed
+          # registration before the base releases the instance, so the callback can never be raised
+          # against a handle that is already gone.
+          def Dispose(disposing = true)
+            release_buffer_registration
+            super
+          end
+
+          def PendingBufferCount
+            ensure_live!
+            output = CNA::Native.library.pointer_for("l", 0)
+            CNA::Native.library.call("cna_dynamic_sound_effect_instance_get_pending_buffer_count",
+                                     native_handle, output)
+            output[0, 4].unpack1("l")
+          end
+
+          # `SubmitBuffer(byte[])` is `SubmitBuffer(buffer, 0, buffer.Length)`; Ruby collapses the
+          # two overloads into one method with defaults, the rule every other overload set follows.
+          def SubmitBuffer(buffer, offset = nil, count = nil)
+            ensure_live!
+            raise ArgumentError, "buffer" if buffer.nil?
+            raise TypeError, "buffer must be a String of bytes" unless buffer.is_a?(::String)
+
+            bytes = buffer.b
+            length = bytes.bytesize
+            raise ArgumentError, "buffer" if length.zero? || (length % @block_align) != 0
+
+            start = offset.nil? ? 0 : CNA::Runtime::Numeric.int32(offset, "offset")
+            taken = count.nil? ? length : CNA::Runtime::Numeric.int32(count, "count")
+            raise ArgumentError, "offset" if start.negative? || start >= length || (start % @block_align) != 0
+            raise ArgumentError, "count" if start + taken > length
+            raise ArgumentError, "count" if taken <= 0 || (taken % @block_align) != 0
+
+            CNA::Native.library.call("cna_dynamic_sound_effect_instance_submit_buffer", native_handle,
+                                     Fiddle::Pointer[bytes], length, start, taken)
+            nil
+          end
+
+          # `if (sizeInBytes < 0) throw new ArgumentException(InvalidBufferSize)`, and the answer is
+          # a TimeSpan, which this binding projects as seconds.
+          def GetSampleDuration(sizeInBytes)
+            ensure_live!
+            size = CNA::Runtime::Numeric.int32(sizeInBytes, "sizeInBytes")
+            raise ArgumentError, "sizeInBytes" if size.negative?
+
+            output = CNA::Native.library.pointer_for("q", 0)
+            CNA::Native.library.call("cna_dynamic_sound_effect_instance_get_sample_duration_ticks",
+                                     native_handle, size, output)
+            output[0, 8].unpack1("q") / 10_000_000.0
+          end
+
+          def GetSampleSizeInBytes(duration)
+            ensure_live!
+            seconds = CNA::Runtime::BclProjection.time_span(duration)
+            raise ::RangeError, "duration" if seconds.nan? || seconds.negative?
+
+            output = CNA::Native.library.pointer_for("l", 0)
+            CNA::Native.library.call("cna_dynamic_sound_effect_instance_get_sample_size_in_bytes",
+                                     native_handle, (seconds * 10_000_000).round, output)
+            output[0, 4].unpack1("l")
+          end
+
+          # `Play` asks for the initial buffers before starting, which is what makes a streaming
+          # instance different from an ordinary one: the queue has to be primed or the first frame
+          # plays silence.
+          def Play
+            ensure_live!
+            CNA::Native.library.call("cna_dynamic_sound_effect_instance_queue_initial_buffers_ext",
+                                     native_handle)
+            super
+          end
+
+          # `set_IsLooped` is the one member this type narrows rather than adds: a streaming
+          # instance has nothing fixed to loop over, so `true` is refused and `false` is accepted.
+          def IsLooped=(value)
+            ensure_live!
+            raise ::RuntimeError, "a DynamicSoundEffectInstance cannot loop" if value
+
+            super
+          end
+
+          private
+
+          def initialize_dynamic(handle)
+            @effect = nil
+            @looped = false
+            @volume = CNA::Runtime::Numeric.f32(1.0)
+            @pitch = CNA::Runtime::Numeric.f32(0.0)
+            @pan = CNA::Runtime::Numeric.f32(0.0)
+            @is_3d = false
+            @packet_submitted = false
+            game = CNA::Runtime::Context.__send__(:current_game, "DynamicSoundEffectInstance")
+            initialize_native_resource(game, handle,
+                                       lambda { |value| CNA::Native.library.call("cna_sound_effect_instance_destroy", value) })
+            self
+          end
+
+          # The parent's guard also checks the owning `SoundEffect`; this type has none.
+          def ensure_live!
+            raise CNA::DisposedObjectError, "#{type_name} is disposed" if self.IsDisposed
+
+            @native_handle.generation.assert_owner_thread!
+          end
+
+          def subscribe_buffer_needed
+            @buffer_callback = Fiddle::Closure::BlockCaller.new(Fiddle::TYPE_VOID, [Fiddle::TYPE_VOIDP]) do |_context|
+              begin
+                self.BufferNeeded.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+              rescue ::Exception # rubocop:disable Lint/RescueException
+                nil
+              end
+              nil
+            end
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_dynamic_sound_effect_instance_subscribe_buffer_needed",
+                                     native_handle, @buffer_callback, nil, output)
+            @buffer_registration = output[0, 8].unpack1("Q")
+          rescue CNA::NativeError
+            # `CNA_RESULT_INVALID_STATE` for an instance that does not stream. Nothing is lost: the
+            # event simply never fires, which is the honest state rather than a fabricated one.
+            @buffer_registration = 0
+            @buffer_callback = nil
+          end
+
+          def release_buffer_registration
+            return if @buffer_registration.zero?
+
+            begin
+              CNA::Native.library.call("cna_audio_unsubscribe_ext", @buffer_registration)
+            rescue CNA::Error
+              nil
+            end
+            @buffer_registration = 0
+            @buffer_callback = nil
+          end
+        end
+
+        # Derived from the pinned Microsoft.Xna.Framework.dll IL (SHA-256 38e7093f…).
+        #
         # `.class public auto ansi sealed`, implementing `IDisposable`. Every constructor validates
         # in managed code before it reaches XACT, and the bounds are literals in the IL rather than
         # documentation: `sampleRate` outside `[8000, 48000]` -- `0x1f40` to `0xbb80` -- and

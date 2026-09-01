@@ -68,8 +68,8 @@ class GameWindowTest < Minitest::Test
     end
     constants = CNA::Native::Manifest::CONSTANTS.keys.grep(/\ACNA_GAME_WINDOW_EVENT_/)
     assert_equal 3, constants.length
-    assert_equal 20, STRICT.fetch("EVENT_IDENTITIES")
-    assert_equal 7, STRICT.fetch("EVENT_OWNER_TYPES")
+    assert_equal ReviewedScoreboard::EVENT_IDENTITIES, STRICT.fetch("EVENT_IDENTITIES")
+    assert_equal ReviewedScoreboard::EVENT_OWNER_TYPES, STRICT.fetch("EVENT_OWNER_TYPES")
   end
 
   # `.ctor()` is `assembly`, so construction is private under the Foundation 25 rule.

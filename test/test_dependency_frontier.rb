@@ -298,6 +298,7 @@ class DependencyFrontierTest < Minitest::Test
     # entry on this list is a type whose native boundary the binding really implements, which is the
     # property the list exists to check -- not a count that must stay still.
     assert_equal %w[
+      Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance
       Microsoft.Xna.Framework.Audio.SoundEffect
       Microsoft.Xna.Framework.Audio.SoundEffectInstance
       Microsoft.Xna.Framework.Content.ContentManager
@@ -349,7 +350,7 @@ class DependencyFrontierTest < Minitest::Test
   end
 
   def test_the_frontier_has_a_measured_work_queue_and_every_blocker_is_attributed
-    assert_equal 10, REPORT.fetch("dependencyCompleteCandidates").length
+    assert_equal 9, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -452,11 +453,9 @@ class DependencyFrontierTest < Minitest::Test
     events = REPORT.fetch("dependencyCompleteCandidates").reject { |item| item.fetch("eventMembers").empty? }
     # Audio.Cue joined the list when AudioEmitter and AudioListener completed its dependencies.
     # GameWindow was the third until Foundation 48 built it, which is what an event-declaring
-    # candidate reaching the frontier is for; DynamicSoundEffectInstance is the fourth, and it
-    # arrived the same way -- the audio cluster completed SoundEffectInstance, which is its base.
-    assert_equal ["Microsoft.Xna.Framework.Audio.Cue",
-                  "Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance",
-                  "Microsoft.Xna.Framework.Audio.Microphone"],
+    # candidate reaching the frontier is for; DynamicSoundEffectInstance was the fourth, arriving
+    # the same way when the audio cluster completed its base and leaving again when it was built.
+    assert_equal ["Microsoft.Xna.Framework.Audio.Cue", "Microsoft.Xna.Framework.Audio.Microphone"],
                  events.map { |item| item.fetch("name") }.sort
 
     # Completing IUpdateable/IDrawable is what projected the EventHandler`1 support type.

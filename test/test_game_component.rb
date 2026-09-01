@@ -486,8 +486,8 @@ class GameComponentTest < Minitest::Test
                  "timing and presentation properties, 43 SuppressDraw and ResetElapsedTime, " \
                  "44 Tick, 45 IsActive, 46 LaunchParameters, 47 Dispose(Boolean), Finalize and " \
                  "ShowMissingRequirementMessage"
-    assert_equal 20, STRICT.fetch("EVENT_IDENTITIES")
-    assert_equal 7, STRICT.fetch("EVENT_OWNER_TYPES")
+    assert_equal 21, STRICT.fetch("EVENT_IDENTITIES")
+    assert_equal ReviewedScoreboard::EVENT_OWNER_TYPES, STRICT.fetch("EVENT_OWNER_TYPES")
     assert_equal 0, STRICT.fetch("UNEXPECTED_MEMBER")
     assert_equal 0, STRICT.fetch("INTERNAL_TYPE_LEAK")
     assert_equal 0, STRICT.fetch("UNMEASURED_STRUCTURAL_CATEGORY")

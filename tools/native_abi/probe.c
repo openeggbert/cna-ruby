@@ -116,6 +116,14 @@ CHECK_FN(cna_sound_effect_instance_get_is_disposed, CNA_Result, (CNA_Handle, CNA
 CHECK_FN(cna_sound_effect_instance_apply_3d, CNA_Result, (CNA_Handle, const CNA_AudioListener*, const CNA_AudioEmitter*));
 CHECK_FN(cna_sound_effect_instance_apply_3d_multi_ext, CNA_Result, (CNA_Handle, const CNA_AudioListener*, uint64_t, const CNA_AudioEmitter*));
 CHECK_FN(cna_sound_effect_instance_destroy, CNA_Result, (CNA_Handle));
+CHECK_FN(cna_dynamic_sound_effect_instance_create, CNA_Result, (CNA_Handle, int32_t, CNA_AudioChannels, CNA_Handle*));
+CHECK_FN(cna_dynamic_sound_effect_instance_get_pending_buffer_count, CNA_Result, (CNA_Handle, int32_t*));
+CHECK_FN(cna_dynamic_sound_effect_instance_submit_buffer, CNA_Result, (CNA_Handle, const uint8_t*, uint64_t, int32_t, int32_t));
+CHECK_FN(cna_dynamic_sound_effect_instance_queue_initial_buffers_ext, CNA_Result, (CNA_Handle));
+CHECK_FN(cna_dynamic_sound_effect_instance_get_sample_duration_ticks, CNA_Result, (CNA_Handle, int32_t, int64_t*));
+CHECK_FN(cna_dynamic_sound_effect_instance_get_sample_size_in_bytes, CNA_Result, (CNA_Handle, int64_t, int32_t*));
+CHECK_FN(cna_dynamic_sound_effect_instance_subscribe_buffer_needed, CNA_Result, (CNA_Handle, CNA_AudioEventCallback, void*, CNA_AudioEventRegistrationHandle*));
+CHECK_FN(cna_audio_unsubscribe_ext, CNA_Result, (CNA_AudioEventRegistrationHandle));
 CHECK_FN(cna_keyboard_get_state, CNA_Result, (CNA_Handle, CNA_KeyboardState*));
 CHECK_FN(cna_keyboard_get_state_for_player, CNA_Result, (CNA_Handle, CNA_PlayerIndex, CNA_KeyboardState*));
 CHECK_FN(cna_keyboard_state_is_key_down, CNA_Result, (const CNA_KeyboardState*, CNA_Key, CNA_Bool*));
@@ -137,6 +145,8 @@ _Static_assert(__builtin_types_compatible_p(CNA_GameLifecycleCallback, expected_
 _Static_assert(__builtin_types_compatible_p(CNA_GameBeginDrawCallback, expected_begin_draw), "begin-draw callback mismatch");
 typedef void (*expected_gamer_async)(void*);
 _Static_assert(__builtin_types_compatible_p(CNA_GamerAsyncCallback, expected_gamer_async), "gamer async callback mismatch");
+typedef void (*expected_audio_event)(void*);
+_Static_assert(__builtin_types_compatible_p(CNA_AudioEventCallback, expected_audio_event), "audio event callback mismatch");
 
 #define STRUCT(type) printf("STRUCT|" #type "|%zu|%zu\n", sizeof(type), _Alignof(type))
 #define FIELD(type, field) printf("FIELD|" #type "|" #field "|%zu|%zu\n", offsetof(type, field), sizeof(((type*)0)->field))
@@ -252,6 +262,14 @@ int main(void) {
     SIGNATURE(cna_sound_effect_instance_apply_3d, "CNA_Result|CNA_Handle,const CNA_AudioListener*,const CNA_AudioEmitter*");
     SIGNATURE(cna_sound_effect_instance_apply_3d_multi_ext, "CNA_Result|CNA_Handle,const CNA_AudioListener*,uint64_t,const CNA_AudioEmitter*");
     SIGNATURE(cna_sound_effect_instance_destroy, "CNA_Result|CNA_Handle");
+    SIGNATURE(cna_dynamic_sound_effect_instance_create, "CNA_Result|CNA_Handle,int32_t,CNA_AudioChannels,CNA_Handle*");
+    SIGNATURE(cna_dynamic_sound_effect_instance_get_pending_buffer_count, "CNA_Result|CNA_Handle,int32_t*");
+    SIGNATURE(cna_dynamic_sound_effect_instance_submit_buffer, "CNA_Result|CNA_Handle,const uint8_t*,uint64_t,int32_t,int32_t");
+    SIGNATURE(cna_dynamic_sound_effect_instance_queue_initial_buffers_ext, "CNA_Result|CNA_Handle");
+    SIGNATURE(cna_dynamic_sound_effect_instance_get_sample_duration_ticks, "CNA_Result|CNA_Handle,int32_t,int64_t*");
+    SIGNATURE(cna_dynamic_sound_effect_instance_get_sample_size_in_bytes, "CNA_Result|CNA_Handle,int64_t,int32_t*");
+    SIGNATURE(cna_dynamic_sound_effect_instance_subscribe_buffer_needed, "CNA_Result|CNA_Handle,CNA_AudioEventCallback,void*,CNA_AudioEventRegistrationHandle*");
+    SIGNATURE(cna_audio_unsubscribe_ext, "CNA_Result|CNA_AudioEventRegistrationHandle");
     SIGNATURE(cna_keyboard_get_state, "CNA_Result|CNA_Handle,CNA_KeyboardState*");
     SIGNATURE(cna_keyboard_get_state_for_player, "CNA_Result|CNA_Handle,CNA_PlayerIndex,CNA_KeyboardState*");
     SIGNATURE(cna_keyboard_state_is_key_down, "CNA_Result|const CNA_KeyboardState*,CNA_Key,CNA_Bool*");

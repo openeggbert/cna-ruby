@@ -3172,7 +3172,15 @@ def execute(item)
       klass = type.fetch("rubyName").split("::").reduce(Object) { |scope, part| scope.const_get(part, false) }
       declared = BATCH_REFERENCE.fetch(type.fetch("name")).fetch("members")
                                 .map { |member| member.fetch("name").to_sym }
-      (candidates - declared).count do |name|
+      # An **inherited** member is not an invention either, and the first case of it arrived with
+      # DynamicSoundEffectInstance: it declares Dispose(Boolean) and inherits IsDisposed from
+      # SoundEffectInstance, which really declares it. The exemption is by rule -- what the type's
+      # own CLR ancestors declare -- so this stays a measurement of the collapse rather than a list
+      # of names.
+      inherited = BATCH_REFERENCE.values
+                                 .select { |entry| klass.ancestors.map(&:to_s).include?(entry.fetch("name").gsub(".", "::")) }
+                                 .flat_map { |entry| entry.fetch("members").map { |member| member.fetch("name").to_sym } }
+      (candidates - declared - inherited).count do |name|
         klass.public_method_defined?(name) || klass.protected_method_defined?(name)
       end
     end

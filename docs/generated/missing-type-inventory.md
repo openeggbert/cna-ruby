@@ -3,7 +3,6 @@
 - `Microsoft.Xna.Framework.Audio.AudioCategory`
 - `Microsoft.Xna.Framework.Audio.AudioEngine`
 - `Microsoft.Xna.Framework.Audio.Cue`
-- `Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance`
 - `Microsoft.Xna.Framework.Audio.Microphone`
 - `Microsoft.Xna.Framework.Audio.SoundBank`
 - `Microsoft.Xna.Framework.Audio.WaveBank`
