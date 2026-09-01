@@ -56,22 +56,23 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 74 | the four vertex structs, the frontier's first consumed work queue | **4** | 38 |
 | 75 | `Media.VideoPlayer`, and the eleventh `NATIVE_RUNTIME` that was not one | **1** | 15 |
 | 76 | `SpriteBatch.DrawString`, six overloads over two arities | **0** | 6 |
+| 77 | `SpriteBatch.Begin`'s two state-bearing overloads, and the null-descriptor defect | **0** | 2 |
 
 ## Measured state
 
-Strict target **177 types / 2147 member identities**: **174 complete**, three partial graphics
-runtime types, 80 missing, **185 deferred diagnostics**. `MISSING_MEMBER` **72**, `PARTIAL_TYPES` 3,
+Strict target **177 types / 2149 member identities**: **174 complete**, three partial graphics
+runtime types, 80 missing, **183 deferred diagnostics**. `MISSING_MEMBER` **70**, `PARTIAL_TYPES` 3,
 `PROPERTY_MAPPING_MISMATCH` 1 (`GraphicsDevice::Viewport`, unrelated and pre-existing),
 `OVERLOAD_MAPPING_MISMATCH` **29**, every other structural category 0, allowlist 0, unmeasured 0.
 **27** event identities across **14** owner types. **22** projected BCL identities.
 
-CNA ABI **258 functions / 5 callbacks / 101 constants / 36 layouts**, on **two admitted encoded
+CNA ABI **259 functions / 5 callbacks / 101 constants / 36 layouts**, on **two admitted encoded
 versions** cross-verified across both header roots. Zero missing header symbols, zero missing library
 symbols, zero cross-version mismatches, zero ABI mismatches. **No CNA source was changed and no new
 native binary was built.**
 
-Behaviour corpus **526** observations, zero failures. Suite **1433 runs / 48653 assertions**, zero
-failures, zero skips. Capability registry **128** rows, zero contradictions.
+Behaviour corpus **526** observations, zero failures. Suite **1440 runs / 48683 assertions**, zero
+failures, zero skips. Capability registry **129** rows, zero contradictions.
 
 The dependency frontier carries **three** candidates, none is consumable, and **every one has been
 audited**. It went 3 → 9 → 6 → 5 → 8 → 4 → 3 in six milestones — see `plan.md`. The eight-candidate
@@ -207,11 +208,12 @@ names. The same question is the first one to ask of the two that remain.
 strongest sense this project has had: not "nothing looks buildable" but "each of the three left has
 been measured and the measurement stands".
 
-**The recommended next work is therefore outside the frontier: the 72 members the three partial
-graphics types still owe.** `SpriteBatch` is the shortest path -- it is down to two member names.
-`Begin`'s four state-bearing overloads are the nearer of them: `cna_sprite_batch_begin_with_states`
-is exported, all four graphics state objects are now complete, and the fifth overload additionally
-needs an `Effect`, which is not projected. `Draw`'s three remaining overloads are the other.
+**The recommended next work is therefore outside the frontier: the 70 members the three partial
+graphics types still owe.** `SpriteBatch` is the shortest path and is down to five overloads across
+two names: `Begin`'s two `Effect`-taking forms and `Draw`'s three. Both halves now wait on the same
+thing -- `Graphics.Effect`, which nothing projects and which `EffectAnnotation`'s own audit already
+found is what stands behind it. `Draw`'s three are the ones to look at first: they may not need an
+`Effect` at all.
 
 The three, all audited:
 

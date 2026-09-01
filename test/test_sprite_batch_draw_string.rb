@@ -204,20 +204,14 @@ class SpriteBatchDrawStringTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_adds_no_begin_overload_effect_or_visible_claim
-    assert_equal 1, G::SpriteBatch.instance_method(:Begin).arity.abs - 0, "Begin is still varargs"
-    values = with_batch do |batch, _font|
-      begin
-        batch.Begin(G::SpriteSortMode::Deferred, G::BlendState::Opaque)
-        :accepted
-      rescue => error
-        error.class
-      end
-    end
-    assert_equal ArgumentError, values, "the state-bearing Begin overloads are still outstanding"
+    # The state-bearing Begin overloads arrived in the milestone after this one; what **this** one
+    # claimed is that it added none of them, and the two that need an `Effect` are still what
+    # `SpriteBatch` owes.
+    remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME)
+                                  .map { |entry| entry.split("::", 2).last }
+    assert_equal ["Begin (2 overloads)", "Draw (3 overloads)"], remainder.sort
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-    %w[cna_sprite_batch_begin_with_states cna_sprite_batch_begin_with_effect].each do |absent|
-      refute_includes symbols, absent
-    end
+    refute_includes symbols, "cna_sprite_batch_begin_with_states"
     refute G.const_defined?(:Effect, false)
   end
 end

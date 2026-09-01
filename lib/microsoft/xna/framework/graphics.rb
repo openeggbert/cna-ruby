@@ -951,14 +951,7 @@ module Microsoft
           # what it does is push the whole descriptor into one sampler slot, which is exactly
           # `cna_graphics_device_set_sampler_state`.
           def apply(state, slot)
-            descriptor = CNA::Native::Layouts::SamplerState.new
-            descriptor.write_u32(8, state.AddressU.value)
-            descriptor.write_u32(12, state.AddressV.value)
-            descriptor.write_u32(16, state.AddressW.value)
-            descriptor.write_u32(20, state.Filter.value)
-            descriptor.write_i32(24, state.MaxAnisotropy)
-            descriptor.write_i32(28, state.MaxMipLevel)
-            descriptor.write_f32(32, state.MipMapLevelOfDetailBias)
+            descriptor = state.__send__(:to_native_descriptor)
             CNA::Native.library.call("cna_graphics_device_set_sampler_state",
                                      @device.__send__(:native_handle), @stage, slot, descriptor.pointer)
           end
@@ -1186,6 +1179,25 @@ module Microsoft
             self.MultiSampleMask = -1
           end
 
+          # The `CNA_BlendState` POD, filled from this object's own values.
+          def to_native_descriptor
+            descriptor = CNA::Native::Layouts::BlendState.new
+            descriptor.write_u32(8, @AlphaBlendFunction.to_i)
+            descriptor.write_u32(12, @AlphaDestinationBlend.to_i)
+            descriptor.write_u32(16, @AlphaSourceBlend.to_i)
+            descriptor.write_u32(20, @ColorBlendFunction.to_i)
+            descriptor.write_u32(24, @ColorDestinationBlend.to_i)
+            descriptor.write_u32(28, @ColorSourceBlend.to_i)
+            descriptor.write_u32(32, @ColorWriteChannels.to_i)
+            descriptor.write_u32(36, @ColorWriteChannels1.to_i)
+            descriptor.write_u32(40, @ColorWriteChannels2.to_i)
+            descriptor.write_u32(44, @ColorWriteChannels3.to_i)
+            descriptor.write_u8(48, @BlendFactor.R); descriptor.write_u8(49, @BlendFactor.G)
+            descriptor.write_u8(50, @BlendFactor.B); descriptor.write_u8(51, @BlendFactor.A)
+            descriptor.write_i32(52, @MultiSampleMask)
+            descriptor
+          end
+
           def self.preset(source, destination, name)
             state = new
             state.ColorSourceBlend = source
@@ -1269,6 +1281,27 @@ module Microsoft
             self.ReferenceStencil = 0
           end
 
+          def to_native_descriptor
+            descriptor = CNA::Native::Layouts::DepthStencilState.new
+            descriptor.write_u8(8, @DepthBufferEnable ? 1 : 0)
+            descriptor.write_u8(9, @DepthBufferWriteEnable ? 1 : 0)
+            descriptor.write_u8(10, @StencilEnable ? 1 : 0)
+            descriptor.write_u8(11, @TwoSidedStencilMode ? 1 : 0)
+            descriptor.write_u32(12, @DepthBufferFunction.to_i)
+            descriptor.write_u32(16, @StencilFunction.to_i)
+            descriptor.write_i32(20, @StencilMask)
+            descriptor.write_i32(24, @StencilWriteMask)
+            descriptor.write_i32(28, @ReferenceStencil)
+            descriptor.write_u32(32, @StencilFail.to_i)
+            descriptor.write_u32(36, @StencilDepthBufferFail.to_i)
+            descriptor.write_u32(40, @StencilPass.to_i)
+            descriptor.write_u32(44, @CounterClockwiseStencilFunction.to_i)
+            descriptor.write_u32(48, @CounterClockwiseStencilFail.to_i)
+            descriptor.write_u32(52, @CounterClockwiseStencilDepthBufferFail.to_i)
+            descriptor.write_u32(56, @CounterClockwiseStencilPass.to_i)
+            descriptor
+          end
+
           def self.preset(depth_enable, depth_write_enable, name)
             state = new
             state.DepthBufferEnable = depth_enable
@@ -1320,6 +1353,17 @@ module Microsoft
             self.MultiSampleAntiAlias = true
             self.DepthBias = 0.0
             self.SlopeScaleDepthBias = 0.0
+          end
+
+          def to_native_descriptor
+            descriptor = CNA::Native::Layouts::RasterizerState.new
+            descriptor.write_u32(8, @CullMode.to_i)
+            descriptor.write_u32(12, @FillMode.to_i)
+            descriptor.write_f32(16, @DepthBias)
+            descriptor.write_f32(20, @SlopeScaleDepthBias)
+            descriptor.write_u8(24, @MultiSampleAntiAlias ? 1 : 0)
+            descriptor.write_u8(25, @ScissorTestEnable ? 1 : 0)
+            descriptor
           end
 
           def self.preset(cull_mode, name)
@@ -1375,6 +1419,18 @@ module Microsoft
             self.MaxAnisotropy = 4
             self.MaxMipLevel = 0
             self.MipMapLevelOfDetailBias = 0.0
+          end
+
+          def to_native_descriptor
+            descriptor = CNA::Native::Layouts::SamplerState.new
+            descriptor.write_u32(8, @AddressU.to_i)
+            descriptor.write_u32(12, @AddressV.to_i)
+            descriptor.write_u32(16, @AddressW.to_i)
+            descriptor.write_u32(20, @Filter.to_i)
+            descriptor.write_i32(24, @MaxAnisotropy)
+            descriptor.write_i32(28, @MaxMipLevel)
+            descriptor.write_f32(32, @MipMapLevelOfDetailBias)
+            descriptor
           end
 
           def self.preset(filter, address, name)
@@ -1930,12 +1986,50 @@ module Microsoft
             raise
           end
 
+          # Five overloads in XNA, all of which forward to the seven-argument one, which stores its
+          # arguments -- **nulls included** -- and lets `SetRenderState` substitute defaults at apply
+          # time: `BlendState.AlphaBlend`, `SamplerState.LinearClamp`, `DepthStencilState.None` and
+          # `RasterizerState.CullCounterClockwise`. CNA's `begin_with_effect` documents exactly those
+          # four for a null descriptor, which is two independent authorities agreeing on the values.
+          #
+          # UPSTREAM_CNA_DEFECT: the route does **not** honour that documented null. Passing a null
+          # descriptor is refused with `INVALID_ARGUMENT` and "The BlendState descriptor is invalid",
+          # reproduced at the C ABI with no Ruby in the path
+          # (`docs/sprite-batch-begin-upstream-defect.md`). So this projection substitutes the four
+          # defaults **itself**, and that is not a workaround dressed up: `SetRenderState` performs
+          # exactly that substitution in the IL, so passing the resolved state is reproducing XNA
+          # rather than compensating for CNA. What the defect costs is only that the substitution
+          # happens here instead of there, which nothing observable distinguishes.
+          #
+          # Three of the five are projected: the zero-argument one, `(sortMode, blendState)` and the
+          # five-argument one. The other two take an `Effect`, which is not projected, so
+          # `CNA_INVALID_HANDLE` -- the default sprite effect -- and a null transform are what the
+          # three projected shapes pass, and no overload is offered that could not supply them.
           def Begin(*arguments)
             raise CNA::InvalidBindingStateError, "SpriteBatch.Begin cannot be nested" if @begun
-            sort_mode = arguments.empty? ? SpriteSortMode::Deferred : nil
-            raise ArgumentError, "Foundation SpriteBatch.Begin exposes only the real zero-argument overload" unless sort_mode
-            info = CNA::Native::Layouts::SpriteBatchBeginInfo.new(sort_mode.to_i)
-            CNA::Native.library.call("cna_sprite_batch_begin", native_handle, info.pointer)
+            unless [0, 2, 5].include?(arguments.length)
+              raise ArgumentError, "Begin takes (), (sortMode, blendState) or " \
+                                   "(sortMode, blendState, samplerState, depthStencilState, rasterizerState)"
+            end
+
+            if arguments.empty?
+              info = CNA::Native::Layouts::SpriteBatchBeginInfo.new(SpriteSortMode::Deferred.to_i)
+              CNA::Native.library.call("cna_sprite_batch_begin", native_handle, info.pointer)
+              @begun = true
+              return nil
+            end
+
+            sort_mode, blend, sampler, depth, rasterizer = arguments
+            sort = SpriteSortMode.coerce(sort_mode)
+            descriptors = [
+              state_descriptor(blend, BlendState, BlendState::AlphaBlend, "blendState"),
+              state_descriptor(sampler, SamplerState, SamplerState::LinearClamp, "samplerState"),
+              state_descriptor(depth, DepthStencilState, DepthStencilState::None, "depthStencilState"),
+              state_descriptor(rasterizer, RasterizerState, RasterizerState::CullCounterClockwise,
+                               "rasterizerState")
+            ]
+            CNA::Native.library.call("cna_sprite_batch_begin_with_effect", native_handle, sort.to_i,
+                                     *descriptors.map(&:pointer), 0, 0)
             @begun = true
             nil
           end
@@ -2038,6 +2132,17 @@ module Microsoft
           end
 
           private
+
+          # `SetRenderState`'s own substitution: a null argument is the documented default state,
+          # resolved here because the route that documents the same defaults refuses a null
+          # descriptor. The default objects are the projected presets, so what is sent is the exact
+          # value XNA would have applied.
+          def state_descriptor(state, klass, default, name)
+            resolved = state.nil? ? default : state
+            raise TypeError, name unless resolved.instance_of?(klass)
+
+            resolved.__send__(:to_native_descriptor)
+          end
 
           def prepare_native_dispose
             @begun = false

@@ -455,6 +455,20 @@ widen their `Single` into both components of a `Vector2`, which is what the IL's
 overload does with a single `Vector2` local.
 
 `cna_sprite_batch_draw_mesh_ext` stays unbound: it has no XNA identity.
-`cna_sprite_batch_begin_with_states` and `begin_with_effect` stay unbound too, for now -- the
-state-bearing `Begin` overloads are what `SpriteBatch` still owes, and the last of them needs an
-`Effect` this binding does not project.
+`cna_sprite_batch_begin_with_states` stays unbound.
+
+## The state-bearing Begin
+
+One route brings the count to **259**: `cna_sprite_batch_begin_with_effect`, which is the shape
+XNA's seven-argument `Begin` maps to -- four state descriptors, an effect handle and a transform.
+`CNA_INVALID_HANDLE` is the default sprite effect and a null matrix the identity, which is what the
+three projected overloads pass.
+
+`cna_sprite_batch_begin_with_states` stays unbound: it is the same call without the last two
+parameters, and those two are exactly what the overloads still outstanding will need.
+
+Measured while binding it, and classified **UPSTREAM_CNA_DEFECT**: both routes document "or null
+for AlphaBlend" (and LinearClamp, None, CullCounterClockwise) and both **refuse a null descriptor**,
+one parameter at a time in declaration order. The projection resolves those four defaults itself,
+which is what XNA's `SetRenderState` does anyway. See
+`docs/sprite-batch-begin-upstream-defect.md`.

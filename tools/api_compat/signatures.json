@@ -34453,6 +34453,82 @@
               "optional": false
             }
           ]
+        },
+        {
+          "kind": "method",
+          "name": "Begin",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "sortMode",
+              "type": "Microsoft.Xna.Framework.Graphics.SpriteSortMode",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "blendState",
+              "type": "Microsoft.Xna.Framework.Graphics.BlendState",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Begin",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [],
+          "parameters": [
+            {
+              "name": "sortMode",
+              "type": "Microsoft.Xna.Framework.Graphics.SpriteSortMode",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "blendState",
+              "type": "Microsoft.Xna.Framework.Graphics.BlendState",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "samplerState",
+              "type": "Microsoft.Xna.Framework.Graphics.SamplerState",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "depthStencilState",
+              "type": "Microsoft.Xna.Framework.Graphics.DepthStencilState",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "rasterizerState",
+              "type": "Microsoft.Xna.Framework.Graphics.RasterizerState",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::SpriteBatch"

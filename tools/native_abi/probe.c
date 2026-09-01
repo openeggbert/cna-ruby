@@ -101,6 +101,7 @@ CHECK_FN(cna_texture2d_get_info, CNA_Result, (CNA_Handle, CNA_Texture2DInfo*));
 CHECK_FN(cna_texture2d_destroy, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_texture2d_get_encoded_byte_count, CNA_Result, (CNA_Handle, CNA_TextureImageFormat, uint32_t, uint32_t, uint64_t*));
 CHECK_FN(cna_texture2d_copy_encoded, CNA_Result, (CNA_Handle, CNA_TextureImageFormat, uint32_t, uint32_t, uint8_t*, uint64_t, uint64_t*));
+CHECK_FN(cna_sprite_batch_begin_with_effect, CNA_Result, (CNA_Handle, CNA_SpriteSortMode, const CNA_BlendState*, const CNA_SamplerState*, const CNA_DepthStencilState*, const CNA_RasterizerState*, CNA_Handle, const CNA_Matrix*));
 CHECK_FN(cna_sprite_batch_draw_string, CNA_Result, (CNA_Handle, const CNA_SpriteTextCommand*));
 CHECK_FN(cna_video_player_create, CNA_Result, (CNA_Handle, CNA_VideoPlayerHandle*));
 CHECK_FN(cna_video_player_get_is_disposed, CNA_Result, (CNA_VideoPlayerHandle, CNA_Bool*));
@@ -375,6 +376,7 @@ int main(void) {
     SIGNATURE(cna_texture2d_destroy, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_texture2d_get_encoded_byte_count, "CNA_Result|CNA_Handle,CNA_TextureImageFormat,uint32_t,uint32_t,uint64_t*");
     SIGNATURE(cna_texture2d_copy_encoded, "CNA_Result|CNA_Handle,CNA_TextureImageFormat,uint32_t,uint32_t,uint8_t*,uint64_t,uint64_t*");
+    SIGNATURE(cna_sprite_batch_begin_with_effect, "CNA_Result|CNA_Handle,CNA_SpriteSortMode,const CNA_BlendState*,const CNA_SamplerState*,const CNA_DepthStencilState*,const CNA_RasterizerState*,CNA_Handle,const CNA_Matrix*");
     SIGNATURE(cna_sprite_batch_draw_string, "CNA_Result|CNA_Handle,const CNA_SpriteTextCommand*");
     SIGNATURE(cna_video_player_create, "CNA_Result|CNA_Handle,CNA_Handle*");
     SIGNATURE(cna_video_player_get_is_disposed, "CNA_Result|CNA_Handle,CNA_Bool*");

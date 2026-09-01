@@ -386,6 +386,12 @@ module CNA
         signature("cna_sprite_batch_create", T[:result], [T[:handle], pointer("CNA_Handle")], ownership: "returns OWNED SpriteBatch"),
         signature("cna_sprite_batch_begin", T[:result], [T[:handle], pointer("CNA_SpriteBatchBeginInfo", const: true)], ownership: "borrows SpriteBatch"),
         signature("cna_sprite_batch_submit_scaled_many", T[:result], [T[:handle], pointer("CNA_SpriteScaledCommand", const: true), T[:u64]], ownership: "copies commands; retains Texture until End"),
+        # The state-bearing `Begin` overloads. This is the route XNA's own seven-argument `Begin`
+        # maps to exactly: a **null** state means "use the default", which CNA documents as
+        # AlphaBlend, LinearClamp, None and CullCounterClockwise -- the same four `SetRenderState`
+        # substitutes in the IL. `CNA_INVALID_HANDLE` is the default sprite effect and a null matrix
+        # is the identity, which is what the overloads without an `Effect` pass.
+        signature("cna_sprite_batch_begin_with_effect", T[:result], [T[:handle], enum("CNA_SpriteSortMode"), pointer("CNA_BlendState", const: true), pointer("CNA_SamplerState", const: true), pointer("CNA_DepthStencilState", const: true), pointer("CNA_RasterizerState", const: true), T[:handle], pointer("CNA_Matrix", const: true)], ownership: "borrows SpriteBatch; copies every descriptor"),
         signature("cna_sprite_batch_draw_string", T[:result], [T[:handle], pointer("CNA_SpriteTextCommand", const: true)], ownership: "borrows SpriteBatch; copies the command and its text"),
         signature("cna_sprite_batch_end", T[:result], [T[:handle]], ownership: "borrows SpriteBatch"),
         signature("cna_sprite_batch_destroy", T[:result], [T[:handle]], ownership: "consumes OWNED SpriteBatch"),
