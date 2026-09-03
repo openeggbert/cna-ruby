@@ -91,6 +91,9 @@ CHECK_FN(cna_graphics_device_manager_dispose, CNA_Result, (CNA_GraphicsDeviceMan
 CHECK_FN(cna_graphics_device_manager_destroy, CNA_Result, (CNA_GraphicsDeviceManagerHandle));
 CHECK_FN(cna_graphics_device_get_viewport, CNA_Result, (CNA_Handle, CNA_Viewport*));
 CHECK_FN(cna_graphics_device_set_viewport, CNA_Result, (CNA_Handle, CNA_Viewport));
+CHECK_FN(cna_graphics_device_get_status, CNA_Result, (CNA_Handle, CNA_GraphicsDeviceStatus*));
+CHECK_FN(cna_graphics_device_get_graphics_profile, CNA_Result, (CNA_Handle, CNA_GraphicsProfile*));
+CHECK_FN(cna_graphics_device_get_presentation_parameters, CNA_Result, (CNA_Handle, CNA_PresentationParameters*));
 CHECK_FN(cna_graphics_device_clear_rgba, CNA_Result, (CNA_Handle, float, float, float, float));
 CHECK_FN(cna_graphics_device_get_texture, CNA_Result, (CNA_Handle, CNA_ShaderStage, uint32_t, CNA_TextureSlotInfo*));
 CHECK_FN(cna_graphics_device_set_texture, CNA_Result, (CNA_Handle, CNA_ShaderStage, uint32_t, CNA_Handle));
@@ -491,6 +494,9 @@ int main(void) {
     SIGNATURE(cna_graphics_device_manager_destroy, "CNA_Result|CNA_GraphicsDeviceManagerHandle");
     SIGNATURE(cna_graphics_device_get_viewport, "CNA_Result|CNA_Handle,CNA_Viewport*");
     SIGNATURE(cna_graphics_device_set_viewport, "CNA_Result|CNA_Handle,CNA_Viewport");
+    SIGNATURE(cna_graphics_device_get_status, "CNA_Result|CNA_Handle,CNA_GraphicsDeviceStatus*");
+    SIGNATURE(cna_graphics_device_get_graphics_profile, "CNA_Result|CNA_Handle,CNA_GraphicsProfile*");
+    SIGNATURE(cna_graphics_device_get_presentation_parameters, "CNA_Result|CNA_Handle,CNA_PresentationParameters*");
     SIGNATURE(cna_graphics_device_clear_rgba, "CNA_Result|CNA_Handle,float,float,float,float");
     SIGNATURE(cna_graphics_device_get_texture, "CNA_Result|CNA_Handle,CNA_ShaderStage,uint32_t,CNA_TextureSlotInfo*");
     SIGNATURE(cna_graphics_device_set_texture, "CNA_Result|CNA_Handle,CNA_ShaderStage,uint32_t,CNA_Handle");
@@ -820,6 +826,7 @@ int main(void) {
     STRUCT(CNA_AudioListener); FIELD(CNA_AudioListener, struct_size); FIELD(CNA_AudioListener, struct_version); FIELD(CNA_AudioListener, forward); FIELD(CNA_AudioListener, position); FIELD(CNA_AudioListener, up); FIELD(CNA_AudioListener, velocity);
     STRUCT(CNA_AudioEmitter); FIELD(CNA_AudioEmitter, struct_size); FIELD(CNA_AudioEmitter, struct_version); FIELD(CNA_AudioEmitter, doppler_scale); FIELD(CNA_AudioEmitter, forward); FIELD(CNA_AudioEmitter, position); FIELD(CNA_AudioEmitter, up); FIELD(CNA_AudioEmitter, velocity);
     STRUCT(CNA_TextureSlotInfo); FIELD(CNA_TextureSlotInfo, struct_size); FIELD(CNA_TextureSlotInfo, struct_version); FIELD(CNA_TextureSlotInfo, bound); FIELD(CNA_TextureSlotInfo, reserved); FIELD(CNA_TextureSlotInfo, texture);
+    STRUCT(CNA_PresentationParameters); FIELD(CNA_PresentationParameters, struct_size); FIELD(CNA_PresentationParameters, struct_version); FIELD(CNA_PresentationParameters, back_buffer_format); FIELD(CNA_PresentationParameters, back_buffer_width); FIELD(CNA_PresentationParameters, back_buffer_height); FIELD(CNA_PresentationParameters, depth_stencil_format); FIELD(CNA_PresentationParameters, multi_sample_count); FIELD(CNA_PresentationParameters, presentation_interval); FIELD(CNA_PresentationParameters, display_orientation); FIELD(CNA_PresentationParameters, render_target_usage); FIELD(CNA_PresentationParameters, is_full_screen); FIELD(CNA_PresentationParameters, headless_ext);
     STRUCT(CNA_Viewport); FIELD(CNA_Viewport, x); FIELD(CNA_Viewport, y); FIELD(CNA_Viewport, width); FIELD(CNA_Viewport, height); FIELD(CNA_Viewport, min_depth); FIELD(CNA_Viewport, max_depth);
     STRUCT(CNA_Texture2DInfo); FIELD(CNA_Texture2DInfo, struct_size); FIELD(CNA_Texture2DInfo, struct_version); FIELD(CNA_Texture2DInfo, width); FIELD(CNA_Texture2DInfo, height); FIELD(CNA_Texture2DInfo, level_count); FIELD(CNA_Texture2DInfo, format);
     STRUCT(CNA_Texture3DCreateInfo); FIELD(CNA_Texture3DCreateInfo, struct_size); FIELD(CNA_Texture3DCreateInfo, struct_version); FIELD(CNA_Texture3DCreateInfo, width); FIELD(CNA_Texture3DCreateInfo, height); FIELD(CNA_Texture3DCreateInfo, depth); FIELD(CNA_Texture3DCreateInfo, mip_map); FIELD(CNA_Texture3DCreateInfo, reserved0); FIELD(CNA_Texture3DCreateInfo, format); FIELD(CNA_Texture3DCreateInfo, reserved1);

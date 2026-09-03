@@ -445,6 +445,34 @@ module CNA
         end
       end
 
+      # `CNA_PresentationParameters`, the versioned display structure `GraphicsDevice`'s cached
+      # parameters are read from. It is a *caller-initialized* output -- `display.h` says so -- so
+      # it fills its size and version in the constructor, exactly as `CNA_BackBufferInfo` does.
+      #
+      # `CNA_DisplayMode` is deliberately absent: no bound route reads one, because the route that
+      # would answers invented hardware. See `Manifest`'s note beside the display properties.
+      class PresentationParameters < Structure
+        layout size: 44, alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("back_buffer_format", "CNA_SurfaceFormat", 8, 4),
+          Layouts.field("back_buffer_width", "int32_t", 12, 4),
+          Layouts.field("back_buffer_height", "int32_t", 16, 4),
+          Layouts.field("depth_stencil_format", "CNA_DepthFormat", 20, 4),
+          Layouts.field("multi_sample_count", "int32_t", 24, 4),
+          Layouts.field("presentation_interval", "CNA_PresentInterval", 28, 4),
+          Layouts.field("display_orientation", "CNA_DisplayOrientation", 32, 4),
+          Layouts.field("render_target_usage", "CNA_RenderTargetUsage", 36, 4),
+          Layouts.field("is_full_screen", "CNA_Bool", 40, 1),
+          Layouts.field("headless_ext", "CNA_Bool", 41, 1)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       # The three render-target structures. `CNA_RenderTargetInfo` carries two more fields than the
       # retired 0.7.0 headers declare -- a two-byte `reserved` tail -- and neither is read here, so
       # the layout stops at `renderer_available` and both header roots agree on every field it does

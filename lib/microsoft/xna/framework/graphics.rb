@@ -862,6 +862,63 @@ module Microsoft
             value
           end
 
+          # ------------------------------------------------------------ the four simple properties
+          #
+          # `docs/graphics-runtime-member-audit.md` measured these five as a family. Four are here;
+          # the fifth, `Adapter`, is one `ldfld` whose *type* is `Graphics.GraphicsAdapter`, and
+          # that type is the single blocker the whole audit found —
+          # `docs/graphics-adapter-ordering-upstream-defect.md`.
+
+          # `ldfld _graphicsProfile`, a field the constructor fills and nothing else writes.
+          #
+          # DEVIATION, recorded: asked rather than cached. The device is CNA's, so CNA is what knows
+          # which profile it was created with; the value cannot change over a device's life, so the
+          # two are observationally identical.
+          def GraphicsProfile
+            output = CNA::Native.library.pointer_for("L", 0)
+            CNA::Native.library.call("cna_graphics_device_get_graphics_profile", native_handle, output)
+            Graphics::GraphicsProfile.coerce(output[0, 4].unpack1("L"))
+          end
+
+          # `TestCooperativeLevel`, mapped: `D3DERR_DEVICELOST` (0x88760868) is `Lost`,
+          # `D3DERR_DEVICENOTRESET` (0x88760869) is `NotReset`, any other failure is thrown, and
+          # success is `Normal`. A live query in XNA and a live query here; CNA's three
+          # `CNA_GRAPHICS_DEVICE_STATUS_*` identities are the same three values in the same order.
+          def GraphicsDeviceStatus
+            output = CNA::Native.library.pointer_for("L", 0)
+            CNA::Native.library.call("cna_graphics_device_get_status", native_handle, output)
+            Graphics::GraphicsDeviceStatus.coerce(output[0, 4].unpack1("L"))
+          end
+
+          # `DisplayMode` is **not** here, and the audit that put it in this family had it wrong.
+          # `docs/graphics-runtime-member-audit.md` first classified it buildable on the strength of
+          # `cna_graphics_device_get_display_mode` existing. Measuring it is what settled it: with a
+          # 320x200 back buffer on a real 1280x800 X display, that route answers **800x480** — which
+          # is neither — and it answers byte-for-byte what
+          # `cna_graphics_adapter_get_current_display_mode` answers, on the `HEADLESS` artifact and
+          # on the `OPENGL33` one alike. It is the same fabricated no-display fallback
+          # `docs/graphics-adapter-ordering-upstream-defect.md` records, so projecting this getter
+          # would report invented hardware — the exact reason `GraphicsAdapter` itself is not
+          # projected. `BLOCKED_UPSTREAM_CNA`, and the second member that blocker takes.
+
+          # `ldfld pPublicCachedParams`: one field read, so the **same object** every call, and a
+          # consumer that mutates what it gets back sees the mutation next time. Only device
+          # creation and `Reset` replace it, which is why this seeds once rather than re-reading.
+          #
+          # The earliest moment this projection can reach the device is the first touch inside a
+          # lifecycle callback — the same argument `ensure_initial_device_state` records — and no
+          # observer can tell that from creation time, because the first read is what would notice.
+          #
+          # DEVIATION, recorded: `DeviceWindowHandle` stays the constructor's zero.
+          # `CNA_PresentationParameters` carries no window handle, and
+          # `cna_graphics_device_get_native_window_handle` **deliberately refuses**: CNA's own header
+          # says "a device may outlive or precede the window it presents to and answering here would
+          # invent an ownership relationship the canonical layer does not have". Every other field is
+          # CNA's real applied value.
+          def PresentationParameters
+            @presentation_parameters ||= read_presentation_parameters
+          end
+
           # `Textures` is `new TextureCollection(this, 0, profileCapabilities.MaxSamplers)` and
           # `VertexTextures` is `new TextureCollection(this, 0x101, ...MaxVertexSamplers)`. The
           # offsets are D3D9 sampler register bases -- 0 and `D3DVERTEXTEXTURESAMPLER0` -- and the
@@ -1256,6 +1313,28 @@ module Microsoft
             nil
           end
 
+          # The ten settings CNA's applied `CNA_PresentationParameters` carries, in the order the
+          # struct declares them. Every enum identity is checked against XNA's: `SurfaceFormat`,
+          # `DepthFormat`, `PresentInterval`, `DisplayOrientation` and `RenderTargetUsage` all agree
+          # value for value over XNA's range, and CNA's `_EXT` formats above it have no XNA identity
+          # and so raise rather than being invented.
+          def read_presentation_parameters
+            output = CNA::Native::Layouts::PresentationParameters.new
+            CNA::Native.library.call("cna_graphics_device_get_presentation_parameters",
+                                     native_handle, output.pointer)
+            parameters = Graphics::PresentationParameters.new
+            parameters.BackBufferFormat = output.read_u32(8)
+            parameters.BackBufferWidth = output.read_i32(12)
+            parameters.BackBufferHeight = output.read_i32(16)
+            parameters.DepthStencilFormat = output.read_u32(20)
+            parameters.MultiSampleCount = output.read_i32(24)
+            parameters.PresentationInterval = output.read_u32(28)
+            parameters.DisplayOrientation = output.read_u32(32)
+            parameters.RenderTargetUsage = output.read_u32(36)
+            parameters.IsFullScreen = !output.read_u8(40).zero?
+            parameters
+          end
+
           # `set_Viewport`'s bounds: the first bound render target's, or the back buffer's when none
           # is bound. XNA reads `currentRenderTargets[0]`'s `width`/`height` and falls back to
           # `pInternalCachedParams`, and the cached bindings are that record here — the same cache
@@ -1372,6 +1451,13 @@ module Microsoft
             @invalidated = true
             @callback_handle = 0
             nil
+          end
+
+          # The two cached property objects, cleared when the device is reset. XNA replaces
+          # `pPublicCachedParams` on reset and `_displayMode` survives it, so only the first is
+          # dropped here; both are seeded lazily on the next read.
+          def invalidate_presentation_parameters
+            @presentation_parameters = nil
           end
 
           def enter_callback(handle) = @callback_handle = handle

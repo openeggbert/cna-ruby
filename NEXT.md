@@ -88,7 +88,7 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 | ---: | --- |
 | 257 | XNA 4.0 Windows reference types |
 | 200 | types this binding projects |
-| 2372 | Ruby member identities |
+| 2375 | Ruby member identities |
 | 198 | complete types |
 | 2 | partial types |
 | 57 | missing types |
@@ -100,9 +100,9 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 121 | strict diagnostics in total |
+| 118 | strict diagnostics in total |
 | 57 | `MISSING_TYPE` |
-| 46 | `MISSING_MEMBER` |
+| 43 | `MISSING_MEMBER` |
 | 18 | `OVERLOAD_MAPPING_MISMATCH` |
 | 0 | `PROPERTY_MAPPING_MISMATCH` |
 | 0 | every other structural category, summed |
@@ -113,17 +113,17 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 20 | members `GraphicsDevice` still owes |
+| 17 | members `GraphicsDevice` still owes |
 | 15 | members `GraphicsDeviceManager` still owes |
 
 **Native ABI**
 
 | count | what it measures |
 | ---: | --- |
-| 384 | bound C functions |
+| 387 | bound C functions |
 | 5 | callbacks |
 | 133 | constants |
-| 62 | struct layouts |
+| 63 | struct layouts |
 | 2 | admitted encoded ABI versions |
 | 2 | header roots cross-verified |
 | 0 | `ABI_MISMATCHES` |
@@ -149,7 +149,7 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 143 | runtime capability rows |
+| 145 | runtime capability rows |
 
 <!-- scoreboard:end -->
 

@@ -1005,6 +1005,24 @@
             "System.Int32",
             "System.Int32"
           ]
+        },
+        {
+          "kind": "property",
+          "name": "GraphicsProfile",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "GraphicsDeviceStatus",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "PresentationParameters",
+          "static": false,
+          "parameters": []
         }
       ]
     },

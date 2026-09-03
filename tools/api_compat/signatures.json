@@ -32514,6 +32514,45 @@
               "optional": false
             }
           ]
+        },
+        {
+          "kind": "property",
+          "name": "GraphicsProfile",
+          "type": "Microsoft.Xna.Framework.Graphics.GraphicsProfile",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "GraphicsDeviceStatus",
+          "type": "Microsoft.Xna.Framework.Graphics.GraphicsDeviceStatus",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PresentationParameters",
+          "type": "Microsoft.Xna.Framework.Graphics.PresentationParameters",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::GraphicsDevice"

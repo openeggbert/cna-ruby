@@ -627,10 +627,15 @@ class ApiVerifierTest < Minitest::Test
     end.fetch("members") << Marshal.load(Marshal.dump(property))
 
     assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0
+    # The synthetic surface above is a *subset* of the reference, which is what makes the added
+    # property unexpected there. The real selected surface carries it since Foundation 90 — bound
+    # to `cna_graphics_device_get_status`, whose three identities are numerically XNA's three — and
+    # carrying it is what stops the same addition being unexpected here.
     selected_device = JSON.parse(File.read(File.expand_path("../tools/api_compat/signatures.json", __dir__))).fetch("types").find do |type|
       type.fetch("name") == "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
     end
-    refute selected_device.fetch("members").any? { |member| member["name"] == "GraphicsDeviceStatus" }
+    assert selected_device.fetch("members").any? { |member| member["name"] == "GraphicsDeviceStatus" }
+    assert_equal 0, verify(reference_contract, signature_contract).counts["UNEXPECTED_MEMBER"]
   end
 
   def test_graphics_profile_missing_type_and_wrong_namespace_are_detected
@@ -716,10 +721,11 @@ class ApiVerifierTest < Minitest::Test
           .fetch("members") << Marshal.load(Marshal.dump(property))
     assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0
 
-    # `GraphicsDevice.GraphicsProfile` is still unselected; the *manager* property was selected by
-    # a later milestone, so the two are asserted separately rather than together.
+    # Both are selected now — the manager's in Foundation 65, the device's in Foundation 90 — and
+    # they are still asserted separately, because they were selected for different reasons by
+    # different milestones and a single assertion would hide one going missing.
     selected = signature_contract.fetch("types")
-    refute selected.find { |type| type.fetch("name") == device_name }.fetch("members")
+    assert selected.find { |type| type.fetch("name") == device_name }.fetch("members")
                    .any? { |member| member["name"] == "GraphicsProfile" }
     assert selected.find { |type| type.fetch("name") == manager_name }.fetch("members")
                    .any? { |member| member["name"] == "GraphicsProfile" }

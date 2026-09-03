@@ -73,7 +73,8 @@ class GraphicsDeviceStatusTest < Minitest::Test
     refute_respond_to STATUS::Normal, :HasFlag
     refute_respond_to STATUS::Normal, :Reset
 
-    refute_includes G::GraphicsDevice.public_instance_methods(false), :GraphicsDeviceStatus
+    # The device property was selected by Foundation 90; the enum itself still adds nothing.
+    assert_includes G::GraphicsDevice.public_instance_methods(false), :GraphicsDeviceStatus
     refute_includes G::GraphicsDevice.public_instance_methods(false), :Present
     refute_includes G::GraphicsDevice.public_instance_methods(false), :Reset
     refute F.const_defined?(:GraphicsProfile, false)

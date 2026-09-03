@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "milestone": "Foundation 88",
+  "milestone": "Foundation 90",
   "platform": "Linux x86-64 MRI Ruby 3.3.8",
   "cnaAbi": "0.21.0 (admitted set: 0.7.0, 0.21.0)",
   "capabilities": [
@@ -558,9 +558,9 @@
     },
     {
       "id": "graphics.viewport-setter",
-      "category": "UPSTREAM_CNA_BLOCKED",
-      "status": "unbound",
-      "evidence": "CNA prototype passes CNA_Viewport by value; Fiddle foundation declines unsafe declaration"
+      "category": "VERIFIED_NATIVE",
+      "status": "complete; the project s last PROPERTY_MAPPING_MISMATCH, and it was never a Ruby limitation",
+      "evidence": "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Viewport s setter, PROPERTY_MAPPING_MISMATCH 1 to 0 and TOTAL_DIAGNOSTICS 122 to 121. The blocker this row recorded -- \"CNA prototype passes CNA_Viewport by value; Fiddle foundation declines unsafe declaration\" -- was half right and was never tested. cna_graphics_device_set_viewport is exported by both admitted artifacts; CNA_Viewport is 24 bytes, which the System V x86-64 classification puts in MEMORY rather than in registers, so the by_value expansion CNA_StringView uses cannot express it. Manifest.by_value_memory expands it as the ABI really passes it: five integer-register fillers, then three eightbytes that overflow onto the stack. The disassembly is the derivation -- the callee reads its handle from rdi and its viewport from 0x10(rbp), the first stack slot -- and nothing is trusted: the compiler asserts the prototype against both header roots, NativeAbiGate.aggregate_mismatches re-derives the eightbyte count and the filler count from the aggregate s measured sizeof for every by-value route in the manifest, and three new mutation controls plant a wrong count of each kind. MEASURED end to end: three viewports round-trip exactly in all six fields including fractional depths, and the register-class expansion a naive reading would produce answers CNA_RESULT_INTERNAL and changes nothing. All eleven guards are the IL s, in the IL s order, including the twelfth comparison being bge.un.s -- a NaN depth passes every managed guard in XNA too and is refused by CNA, which documents that both depths must be finite. See docs/graphics-device-viewport-evidence.md."
     },
     {
       "id": "struct.assignment-copy",
@@ -861,6 +861,18 @@
       "category": "VERIFIED_NATIVE",
       "status": "the first draw call this binding has made; the two user-primitive families remain",
       "evidence": "Microsoft.Xna.Framework.Graphics.GraphicsDevice's DrawPrimitives, DrawIndexedPrimitives and DrawInstancedPrimitives -- MISSING_MEMBER 49 to 46, OVERLOAD_MAPPING_MISMATCH 21 to 18 and TOTAL_DIAGNOSTICS 128 to 122. The managed validation is the IL's: primitiveCount, numVertices and instanceCount must each be positive, and the two non-instanced calls refuse while any bound stream carries a non-zero InstanceFrequency -- XNA's instanceStreamMask, which this projection has because the binding slice cached the bindings. DrawInstancedPrimitives deliberately carries no such guard, and the test asserts that from both sides. The profile maximum stays CNA's to refuse, as the occlusion query's profile check does. MEASURED, and the three failures on the way are recorded because each is a real precondition: without an applied effect every draw is refused (\"no effect has been applied\"); with the conformance effect it is refused again because that shader wants a Tangent attribute no projected vertex struct declares; and with FNA's own BasicEffect.fxb and a VertexPositionColor buffer all three succeed. The full measured sequence is build a vertex buffer and an index buffer, bind both, compile an effect, apply a pass, draw -- every step a member this project built. A second pass over the same geometry is asserted too. Nothing is claimed about what the picture looks like: no readback is asserted, because the draw's contract is that it submits. Three routes to 383, every parameter a scalar; the topology is declared as CNA_PrimitiveType rather than uint32_t, which the ABI gate insisted on with three signature mismatches until the manifest spelled the C type the header declares. The two user-primitive routes stay unbound. Six of six planted defects are caught. See docs/graphics-device-draw-evidence.md."
+    },
+    {
+      "id": "documents.scoreboard-staleness-guard",
+      "category": "VERIFIED_MANAGED",
+      "status": "plan.md and NEXT.md can no longer state a count the reports disagree with",
+      "evidence": "plan.md described a 177-type / 2152-identity surface while the verifier had been measuring 200 / 2372 for eleven milestones, and named Effect, SpriteBatch and a real renderer as future work after all three had landed. tools/scoreboard.rb names all 34 counts once and reads them from the generated reports; tools/render_scoreboard.rb writes the delimited block both documents carry; test/test_document_scoreboard.rb enforces three rules -- the block is byte-exact against a fresh render, every prose claim regex must still match and state the measured number, and plan.md may not contain a numeral no fact accounts for. The third is the one the first four staleness guards in this project could not give. It caught its first regression during its own milestone: a block rendered while the corpus was briefly red baked in a stale failure count and the suite refused it. The code-span stripper the numeral sweep needs is bounded per line, because a document-wide backtick pair over plan.md -- which carries an odd number of backticks -- silently deletes whole paragraphs, and a sentinel numeral proves it did not."
+    },
+    {
+      "id": "graphics.device-display-properties",
+      "category": "VERIFIED_NATIVE",
+      "status": "three of GraphicsDevice s five simple properties; two report invented hardware and are not projected",
+      "evidence": "GraphicsProfile, GraphicsDeviceStatus and PresentationParameters -- MISSING_MEMBER 46 to 43 and TOTAL_DIAGNOSTICS 121 to 118. Bound to cna_graphics_device_get_graphics_profile, cna_graphics_device_get_status and cna_graphics_device_get_presentation_parameters; the three CNA_GRAPHICS_DEVICE_STATUS_* identities are numerically XNA s three, read out of the canonical headers by the test rather than restated. PresentationParameters reproduces XNA s ldfld pPublicCachedParams exactly: one lazily seeded object answered by identity every call, so a consumer that mutates what it gets back sees the mutation next time. MEASURED: with the preferred back buffer set to 320x200 it answers 320x200, which is the real applied configuration. DEVIATION, recorded: DeviceWindowHandle stays the constructor s zero, because CNA_PresentationParameters carries no window handle and cna_graphics_device_get_native_window_handle refuses by design -- CNA s header says a device may outlive or precede the window it presents to. DisplayMode was classified buildable by the first draft of docs/graphics-runtime-member-audit.md and measuring it is what moved it: cna_graphics_device_get_display_mode succeeds and answers 800x480 on a device whose back buffer is 320x200 under a real 1280x800 X display, byte-for-byte what cna_graphics_adapter_get_current_display_mode answers on the HEADLESS and the OPENGL33 artifact alike. It is the same no-display fallback display.adapter-enumeration records, so the route is unbound and the member is not projected -- UPSTREAM_CNA_BLOCKED, the second member that defect takes after Adapter. Four routes to 387 and one layout to 63. See docs/graphics-runtime-member-audit.md."
     }
   ]
 }

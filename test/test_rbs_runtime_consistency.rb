@@ -325,8 +325,12 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     refute_includes section, "def |:"
     refute_includes section, "def &:"
     refute_includes section, "def ToString"
-    refute_includes source, "attr_reader GraphicsDeviceStatus:"
-    refute_match(/def GraphicsDeviceStatus:/, source)
+    # Scoped to the enum's own section rather than to the whole file. `GraphicsDevice` declares
+    # `def GraphicsDeviceStatus:` since Foundation 90, and a file-wide match would read that as
+    # this enum growing an accessor -- the same one-sided anchoring four measurement defects in
+    # this project came from.
+    refute_includes section, "attr_reader GraphicsDeviceStatus:"
+    refute_match(/def GraphicsDeviceStatus:/, section)
   end
 
   def test_graphics_profile_rbs_retains_exact_two_identity_non_flags_projection
@@ -352,8 +356,12 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     refute_includes section, "def |:"
     refute_includes section, "def &:"
     refute_includes section, "def ToString"
-    refute_includes source, "attr_reader GraphicsProfile:"
-    refute_match(/def GraphicsProfile:/, source)
+    # Scoped to the enum's own section rather than to the whole file. `GraphicsDevice` declares
+    # `def GraphicsProfile:` since Foundation 90, and a file-wide match would read that as
+    # this enum growing an accessor -- the same one-sided anchoring four measurement defects in
+    # this project came from.
+    refute_includes section, "attr_reader GraphicsProfile:"
+    refute_match(/def GraphicsProfile:/, section)
   end
 
   def test_clear_options_rbs_retains_exact_three_identity_flags_projection_without_named_zero

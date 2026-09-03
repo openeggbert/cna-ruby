@@ -23,8 +23,9 @@ class GraphicsDeviceStateTest < Minitest::Test
   def test_the_slice_left_the_partial_remainder_and_the_rest_did_not
     remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME)
     SLICE.each { |member| refute_includes remainder.join(" "), "::#{member} ", member }
-    # The device is still partial, and these are some of what it still owes.
-    %w[DrawUserPrimitives Present Reset Adapter PresentationParameters]
+    # The device is still partial, and these are some of what it still owes. `PresentationParameters`
+    # left this list in Foundation 90 with the other two answerable simple properties.
+    %w[DrawUserPrimitives Present Reset Adapter DisplayMode]
       .each { |member| assert_includes remainder.join(" "), "::#{member} ", member }
     assert_equal ReviewedScoreboard::PARTIAL_TYPES, STRICT.fetch("PARTIAL_TYPES")
   end
@@ -201,8 +202,11 @@ class GraphicsDeviceStateTest < Minitest::Test
     # claims, is that **it** added none of it.
     # The three device-buffer draw calls left this list when the draw slice landed; what is
     # still absent is the user-primitive families, which take the vertices as an argument.
+    # `PresentationParameters`, `GraphicsProfile` and `GraphicsDeviceStatus` left this list in
+    # Foundation 90; `DisplayMode` and `Adapter` did not, and will not while CNA answers them with
+    # the no-display fallback.
     %i[DrawUserPrimitives DrawUserIndexedPrimitives Present Reset Adapter
-       PresentationParameters GraphicsProfile DisplayMode].each do |absent|
+       DisplayMode].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)

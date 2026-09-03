@@ -362,6 +362,19 @@ module CNA
         signature("cna_graphics_device_set_viewport", T[:result],
                   [T[:handle], *by_value_memory("CNA_Viewport", eightbytes: 3, preceding_integer_arguments: 1)],
                   ownership: "borrows device"),
+        # `GraphicsDevice`'s three answerable simple properties. `GraphicsProfile` and
+        # `PresentationParameters` are `ldfld` in XNA and asked here; `GraphicsDeviceStatus` is a
+        # live native query in both.
+        #
+        # `cna_graphics_device_get_display_mode` is deliberately **not** bound. It exists, it
+        # succeeds, and what it answers is the fabricated 800x480 no-display fallback -- measured
+        # byte-for-byte identical to `cna_graphics_adapter_get_current_display_mode` on a real
+        # 1280x800 display with a 320x200 back buffer, so it is neither. Binding it would give
+        # `GraphicsDevice.DisplayMode` invented hardware to report, which is the same reason
+        # `GraphicsAdapter` is not projected.
+        signature("cna_graphics_device_get_status", T[:result], [T[:handle], pointer("CNA_GraphicsDeviceStatus")], ownership: "borrows device; caller output"),
+        signature("cna_graphics_device_get_graphics_profile", T[:result], [T[:handle], pointer("CNA_GraphicsProfile")], ownership: "borrows device; caller output"),
+        signature("cna_graphics_device_get_presentation_parameters", T[:result], [T[:handle], pointer("CNA_PresentationParameters")], ownership: "borrows device; caller-initialized versioned output"),
         signature("cna_graphics_device_clear_rgba", T[:result], [T[:handle], T[:float], T[:float], T[:float], T[:float]], ownership: "borrows device"),
         # The device texture collections. Native frontier 4 recorded `Graphics.TextureCollection` as
         # "the one case where NATIVE_RUNTIME was the right word -- no CNA route at all". That was

@@ -19,11 +19,16 @@ before deferring, and say what the blocker names.**
 
 What the audit found, stated up front so nothing depends on reading to the end:
 
-> **Of the thirty-five members the two types owe, thirty-one have a CNA 0.21.0 route that supports
-> the exact XNA behaviour, and four are blocked by one thing — `Graphics.GraphicsAdapter`, whose
-> own blocker is the measured upstream ordering defect in
+> **Of the thirty-five members the two types owe, thirty have a CNA 0.21.0 route that supports the
+> exact XNA behaviour, and five are blocked by one thing — the invented display data behind
+> `Graphics.GraphicsAdapter`, whose own blocker is the measured upstream ordering defect in
 > `docs/graphics-adapter-ordering-upstream-defect.md`.** No member is blocked by "the renderer",
 > and none is blocked by the graphics runtime as such.
+
+**One of those five was in the buildable column when this document was first written, and measuring
+it is what moved it.** `GraphicsDevice.DisplayMode` has a route, the route succeeds, and the answer
+is invented — see the family below. That is the audit's own rule turned on the audit: a route
+existing is not a measurement, and the difference cost one member.
 
 Method, for each family: read the pinned `Microsoft.Xna.Framework.Graphics.dll` IL (SHA-256
 `560080fc…`) or `Microsoft.Xna.Framework.dll` IL (`38e7093f…`) for what the member *is*; then
@@ -56,14 +61,14 @@ re-derives the shape from the struct's measured `sizeof`, and
 
 **`PROPERTY_MAPPING_MISMATCH` is now zero.**
 
-### The five simple properties — **buildable, four of five**
+### The five simple properties — **three of five, done in Foundation 90**
 
 | member | XNA IL | CNA route | verdict |
 | --- | --- | --- | --- |
-| `GraphicsProfile` | `ldfld _graphicsProfile` | `cna_graphics_device_get_graphics_profile` | buildable |
-| `GraphicsDeviceStatus` | native `TestCooperativeLevel`, mapping `D3DERR_DEVICELOST` → `Lost` and `D3DERR_DEVICENOTRESET` → `NotReset` | `cna_graphics_device_get_status` | buildable |
-| `DisplayMode` | native `GetDisplayMode`, then **mutates the cached `DisplayMode`** rather than replacing it, so the object identity survives | `cna_graphics_device_get_display_mode` | buildable; `DisplayMode` is projected |
-| `PresentationParameters` | `ldfld pPublicCachedParams` | `cna_graphics_device_get_presentation_parameters` | buildable; `PresentationParameters` is projected |
+| `GraphicsProfile` | `ldfld _graphicsProfile` | `cna_graphics_device_get_graphics_profile` | **done** |
+| `GraphicsDeviceStatus` | native `TestCooperativeLevel`, mapping `D3DERR_DEVICELOST` → `Lost` and `D3DERR_DEVICENOTRESET` → `NotReset` | `cna_graphics_device_get_status` | **done** |
+| `PresentationParameters` | `ldfld pPublicCachedParams` | `cna_graphics_device_get_presentation_parameters` | **done**; `PresentationParameters` is projected |
+| `DisplayMode` | native `GetDisplayMode`, then **mutates the cached `DisplayMode`** rather than replacing it | `cna_graphics_device_get_display_mode` — exists, succeeds, and answers invented data | **`BLOCKED_UPSTREAM_CNA`** |
 | `Adapter` | `ldfld pCurrentAdapter` | — | **`BLOCKED_UPSTREAM_CNA`** |
 
 `Adapter` is one `ldfld`, so nothing about the member is hard. Its *type* is
@@ -73,8 +78,28 @@ re-derives the shape from the struct's measured `sizeof`, and
 real X11 window and a real GL 4.5 context answer *exactly the same invented values*, because the
 adapter list is cached before the video subsystem exists and `cna_graphics_adapters_refresh` refuses
 by design. That is an upstream ordering defect, recorded in
-`docs/graphics-adapter-ordering-upstream-defect.md`, and it is the **only** blocker in this whole
-audit.
+`docs/graphics-adapter-ordering-upstream-defect.md`.
+
+**`DisplayMode` is the same defect reached through a different door, and this document said the
+opposite until it was measured.** `cna_graphics_device_get_display_mode` is a separate symbol in a
+separate header with no mention of adapters, so "the route exists" read as "the member is
+buildable". What it actually answers, measured on a game whose back buffer is **320x200**, running
+under a real X server whose display is **1280x800**:
+
+| artifact | back buffer | X display | `cna_graphics_device_get_display_mode` | `cna_graphics_adapter_get_current_display_mode` |
+| --- | --- | --- | --- | --- |
+| `HEADLESS` | 320x200 | — | 800x480, `Color`, aspect 1.6666666 | 800x480, `Color`, aspect 1.6666666 |
+| `OPENGL33` under `Xvfb` | 320x200 | 1280x800 | 800x480, `Color`, aspect 1.6666666 | 800x480, `Color`, aspect 1.6666666 |
+
+It is neither the back buffer nor the display, it is byte-identical to the adapter route on both
+artifacts, and it does not move when the display does. It is the same no-display fallback, so
+projecting the getter would report invented hardware — the exact reason `GraphicsAdapter` is not
+projected. The route is not bound and the member is not projected.
+
+`PresentationParameters`, measured the same way in the same run, is the counter-case that makes the
+comparison worth anything: it answers **320x200** — the real applied configuration — so this family
+is not "CNA cannot answer display questions". One of its two answers is real and one is invented,
+and only measuring tells them apart.
 
 ### `Clear`'s two remaining overloads — **buildable**
 
@@ -244,12 +269,12 @@ implements the family, so that it is made against a measurement rather than in a
 
 | classification | members |
 | --- | --- |
-| **buildable against CNA 0.21.0** | 31 |
-| `BLOCKED_UPSTREAM_CNA` (all four are `GraphicsAdapter`) | 4 |
+| **buildable against CNA 0.21.0** | 30 |
+| `BLOCKED_UPSTREAM_CNA` (all five are the invented display data) | 5 |
 | blocked by "the renderer" | 0 |
 | blocked by "the graphics runtime" | 0 |
 
-The single blocker behind all four is one measured upstream defect with its own evidence file. Two
+The single blocker behind all five is one measured upstream defect with its own evidence file. Two
 of the three artifacts this project qualifies have a real renderer, a real window and a real GL
 context, and none of them changes that number — which is exactly what Native frontier 6 measured and
 what this audit confirms family by family.
