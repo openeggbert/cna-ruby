@@ -32,20 +32,24 @@ class GraphicsDeviceManagerPreferencesTest < Minitest::Test
   # ------------------------------------------------------------------- the contract, from metadata
 
   def test_eleven_members_closed_and_the_remainder_is_what_the_audit_defers
-    remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME)
-                                  .map { |entry| entry.split("::", 2).last.sub(/ \(\d+ overloads?\)\z/, "") }
-    assert_equal 15, remainder.length
+    remainder = ReviewedScoreboard.outstanding(STRICT, NAME)
     %w[PreferredBackBufferWidth PreferredBackBufferHeight PreferredBackBufferFormat
        PreferredDepthStencilFormat IsFullScreen SynchronizeWithVerticalRetrace PreferMultiSampling
        SupportedOrientations GraphicsProfile ApplyChanges ToggleFullScreen].each do |closed|
       refute_includes remainder, closed
       assert F::GraphicsDeviceManager.public_method_defined?(closed), closed
     end
-    # The four device events, their raisers, PreparingDeviceSettings and Dispose(Boolean) are the
-    # producer audit's; FindBestDevice, RankDevices and CanResetDevice need GraphicsDeviceInformation.
-    %w[DeviceCreated DeviceResetting DeviceReset DeviceDisposing PreparingDeviceSettings Disposed
-       OnDeviceCreated OnDeviceDisposing OnDeviceReset OnDeviceResetting OnPreparingDeviceSettings
-       Dispose FindBestDevice CanResetDevice RankDevices].each do |deferred|
+    # The four device events, their raisers and `Dispose(Boolean)` were closed by Foundation 96,
+    # which is what re-measuring the producer audit against current CNA found: four of the five
+    # events are **relays of the device's own**, so the manager needed no producer and no route.
+    %w[DeviceCreated DeviceResetting DeviceReset DeviceDisposing Disposed].each do |closed|
+      refute_includes remainder, closed
+      assert F::GraphicsDeviceManager.public_method_defined?(closed), closed
+    end
+    assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_MANAGER_OUTSTANDING, remainder
+    # What is left names `GraphicsDeviceInformation`, or the event args that carry one.
+    %w[FindBestDevice CanResetDevice RankDevices
+       OnPreparingDeviceSettings PreparingDeviceSettings].each do |deferred|
       assert_includes remainder, deferred
       refute F::GraphicsDeviceManager.public_method_defined?(deferred), deferred
     end

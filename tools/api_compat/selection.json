@@ -805,6 +805,80 @@
           "name": "SupportedOrientations",
           "static": false,
           "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "OnDeviceCreated",
+          "static": false,
+          "parameters": [
+            "System.Object",
+            "System.EventArgs"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "OnDeviceDisposing",
+          "static": false,
+          "parameters": [
+            "System.Object",
+            "System.EventArgs"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "OnDeviceReset",
+          "static": false,
+          "parameters": [
+            "System.Object",
+            "System.EventArgs"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "OnDeviceResetting",
+          "static": false,
+          "parameters": [
+            "System.Object",
+            "System.EventArgs"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "parameters": [
+            "System.Boolean"
+          ]
+        },
+        {
+          "kind": "event",
+          "name": "DeviceCreated",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "event",
+          "name": "DeviceDisposing",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "event",
+          "name": "DeviceReset",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "event",
+          "name": "DeviceResetting",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "event",
+          "name": "Disposed",
+          "static": false,
+          "parameters": []
         }
       ]
     },

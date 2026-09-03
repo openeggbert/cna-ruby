@@ -31,12 +31,12 @@ end
 # is the measurement; this is the reviewed expectation of it.
 module ReviewedScoreboard
   TARGET_TYPES = 200
-  TARGET_MEMBERS = 2400
+  TARGET_MEMBERS = 2410
   COMPLETE_TYPES = 198
   PARTIAL_TYPES = 2
   MISSING_TYPES = 57
-  MISSING_MEMBER = 18
-  OVERLOAD_MAPPING_MISMATCH = 10
+  MISSING_MEMBER = 8
+  OVERLOAD_MAPPING_MISMATCH = 5
   # Zero since Foundation 89 projected `GraphicsDevice::Viewport`'s setter. The one entry this
   # carried for its whole history was that property's `"override": { "set": false }`, and it was
   # never a Ruby limitation — see `test_api_verifier.rb`'s inverted guard.
@@ -44,8 +44,8 @@ module ReviewedScoreboard
   BCL_PROJECTED_IDENTITIES = 22
   BCL_EXCEPTION_BASES = 2
   BCL_THROWN_EXCEPTIONS = 8
-  EVENT_IDENTITIES = 37
-  EVENT_OWNER_TYPES = 19
+  EVENT_IDENTITIES = 42
+  EVENT_OWNER_TYPES = 20
   # `GraphicsDevice`'s projected surface, in one place and for the same reason the counts are in
   # one place: it is still a partial type, so every slice that lands on it moves this list, and five
   # unrelated tests should not each pin it as a literal.
@@ -74,10 +74,10 @@ module ReviewedScoreboard
   # whose every route answers invented display data.
   GRAPHICS_DEVICE_OUTSTANDING = %w[.ctor Adapter DisplayMode].sort.freeze
 
+  # Five left, and every one of them names `GraphicsDeviceInformation` or the event args that
+  # carry one — which is `GraphicsAdapter` a fifth time.
   GRAPHICS_DEVICE_MANAGER_OUTSTANDING = %w[
-    CanResetDevice DeviceCreated DeviceDisposing DeviceReset DeviceResetting Dispose Disposed
-    FindBestDevice OnDeviceCreated OnDeviceDisposing OnDeviceReset OnDeviceResetting
-    OnPreparingDeviceSettings PreparingDeviceSettings RankDevices
+    CanResetDevice FindBestDevice OnPreparingDeviceSettings PreparingDeviceSettings RankDevices
   ].sort.freeze
 
   # The remainder as bare member names, sorted, so a test can compare it with a reviewed list.

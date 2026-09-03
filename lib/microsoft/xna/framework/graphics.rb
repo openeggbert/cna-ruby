@@ -6244,9 +6244,30 @@ module Microsoft
       end
 
       class GraphicsDeviceManager
+        extend CNA::Runtime::EventOwner
         DefaultBackBufferWidth = 800
         DefaultBackBufferHeight = 480
         attr_reader :GraphicsDevice
+
+        # The manager's five events. **Four of them are relays**, and that is the IL rather than a
+        # convenience: `CreateDevice` hooks four private handlers onto the device it has just made,
+        # and each handler is one call to the matching `On…` raiser. `HandleDeviceLost`'s body is a
+        # single `ret`, so `GraphicsDevice.DeviceLost` reaches no manager event at all — which is
+        # why the manager declares no `DeviceLost`.
+        #
+        #     HandleDisposing      -> OnDeviceDisposing(this, EventArgs.Empty)
+        #     HandleDeviceReset    -> OnDeviceReset(this, EventArgs.Empty)
+        #     HandleDeviceResetting-> OnDeviceResetting(this, EventArgs.Empty)
+        #     HandleDeviceLost     -> nothing
+        #
+        # So the manager needs **no native subscription of its own**: the device already carries
+        # every signal, and relaying is what XNA does with them. `DeviceCreated` is raised by the
+        # manager itself at the end of `CreateDevice`, and `Disposed` by `Dispose(Boolean)`.
+        xna_event :DeviceCreated
+        xna_event :DeviceDisposing
+        xna_event :DeviceReset
+        xna_event :DeviceResetting
+        xna_event :Disposed
 
         def initialize(game)
           raise TypeError, "GraphicsDeviceManager.new expects Game" unless game.is_a?(Game)
@@ -6255,7 +6276,74 @@ module Microsoft
           @native_handle = nil
           @disposed = false
           initialize_preferences
+          hook_device_events
           game.__send__(:attach_graphics_manager, self)
+        end
+
+        # ------------------------------------------------------------------ the four raisers
+        #
+        # `family virtual` in XNA and one null-check plus one `Invoke` each, which is the shape this
+        # project has projected for every `On…` raiser it has. They are protected rather than
+        # private because XNA's are `family` and a subclass really can override them.
+
+        def OnDeviceCreated(sender, args)
+          self.DeviceCreated.__send__(:dispatch, sender, args)
+          nil
+        end
+
+        def OnDeviceDisposing(sender, args)
+          self.DeviceDisposing.__send__(:dispatch, sender, args)
+          nil
+        end
+
+        def OnDeviceReset(sender, args)
+          self.DeviceReset.__send__(:dispatch, sender, args)
+          nil
+        end
+
+        def OnDeviceResetting(sender, args)
+          self.DeviceResetting.__send__(:dispatch, sender, args)
+          nil
+        end
+
+        protected :OnDeviceCreated, :OnDeviceDisposing, :OnDeviceReset, :OnDeviceResetting
+
+        # `Dispose(bool disposing)`, in the IL's order:
+        #
+        #     if (!disposing) return;
+        #     if (game != null) {
+        #         if (game.Services.GetService(typeof(IGraphicsDeviceService)) == this)
+        #             game.Services.RemoveService(typeof(IGraphicsDeviceService));
+        #         game.Window.ClientSizeChanged      -= GameWindowClientSizeChanged;
+        #         game.Window.ScreenDeviceNameChanged-= GameWindowScreenDeviceNameChanged;
+        #         game.Window.OrientationChanged     -= GameWindowOrientationChanged;
+        #     }
+        #     if (device != null) { device.Dispose(); device = null; }
+        #     Disposed?.Invoke(this, EventArgs.Empty);
+        #
+        # Two of those steps are **already no-ops here, and for a measured reason rather than an
+        # omission**. `docs/graphics-device-service-producer-audit.md` established that this manager
+        # is not registered in the managed `GameServiceContainer` — CNA registers it as both
+        # services in its own container, and the C ABI closes the registration route on purpose —
+        # so there is nothing to remove. And the three `GameWindow` handlers are CNA's: this
+        # projection never hooks them, so it has none to unhook.
+        #
+        # DEVIATION, recorded: XNA's `Dispose(Boolean)` has **no disposed guard**, so calling it
+        # twice raises `Disposed` twice, and this does the same — the native release is idempotent
+        # on its own, so nothing needed a guard. That is the opposite of `Game.Dispose`, which does
+        # guard and therefore raises once; the difference is recorded in both places rather than
+        # smoothed into one rule.
+        def Dispose(disposing = true)
+          return nil unless disposing
+
+          if @GraphicsDevice
+            @GraphicsDevice.Dispose
+            @GraphicsDevice = nil
+          end
+          @native_handle&.dispose
+          @disposed = true
+          self.Disposed.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+          nil
         end
 
         # ------------------------------------------------------------------ the preferred settings
@@ -6469,6 +6557,11 @@ module Microsoft
           # Whatever the consumer set before `Run` is pushed now, which is the moment XNA's own
           # `ChangeDevice` would first have run.
           push_preferences
+          # `CreateDevice` ends with `OnDeviceCreated(this, EventArgs.Empty)`. This is that moment:
+          # CNA's manager — which owns the device — now exists, and it is still before `Run`, so a
+          # consumer that subscribed after `GraphicsDeviceManager.new` sees it, exactly as one who
+          # subscribes in an XNA `Game`'s constructor sees XNA's.
+          OnDeviceCreated(self, CNA::Runtime::EventArgs::Empty)
         rescue Exception
           if handle && (!defined?(@native_handle) || !@native_handle)
             CNA::Native.library.call("cna_graphics_device_manager_dispose", handle)
@@ -6494,7 +6587,7 @@ module Microsoft
         # callback **or when no device exists**" -- which is exactly the situation a disposed
         # manager is in.
         def begin_native_callback
-          return if @native_handle.nil? || @native_handle.disposed?
+          return if @native_handle.nil? || @native_handle.disposed? || @GraphicsDevice.nil?
           output = CNA::Native.library.pointer_for("Q", 0)
           result = CNA::Native.library.function("cna_graphics_device_manager_get_graphics_device").call(@native_handle.value, output)
           if result.zero?
@@ -6504,14 +6597,25 @@ module Microsoft
           end
         end
 
-        def end_native_callback = @GraphicsDevice.__send__(:leave_callback)
+        # `Dispose(Boolean)` nulls `device`, so a callback that arrives after it — the last
+        # `unload_content` `cna_game_destroy` delivers — has none to leave.
+        def end_native_callback = @GraphicsDevice&.__send__(:leave_callback)
 
-        def dispose_native
-          return if @disposed
-          @native_handle&.dispose
-          @GraphicsDevice.__send__(:invalidate)
-          @disposed = true
+        # `CreateDevice`'s four `add_…` calls. XNA makes them the moment it constructs the device;
+        # this makes them the moment the Ruby `GraphicsDevice` exists, which is the same moment for
+        # the same object. `HandleDeviceLost` is reproduced as the empty handler it is, so that the
+        # relay set is complete and visibly so rather than three quarters of one.
+        def hook_device_events
+          @GraphicsDevice.DeviceResetting.add(->(_s, _a) { OnDeviceResetting(self, CNA::Runtime::EventArgs::Empty) })
+          @GraphicsDevice.DeviceReset.add(->(_s, _a) { OnDeviceReset(self, CNA::Runtime::EventArgs::Empty) })
+          @GraphicsDevice.DeviceLost.add(->(_s, _a) { nil })
+          @GraphicsDevice.Disposing.add(->(_s, _a) { OnDeviceDisposing(self, CNA::Runtime::EventArgs::Empty) })
+          nil
         end
+
+        # `Game.Dispose` reaches disposal through here, and disposal is `Dispose(true)` — the whole
+        # sequence, including both events.
+        def dispose_native = self.Dispose(true)
 
       end
     end

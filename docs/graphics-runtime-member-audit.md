@@ -306,7 +306,7 @@ native `Game` is the XNA `Game`, `cna_graphics_device_manager_create` already re
 as both services, there are two service containers, and the C ABI closes the registration route on
 purpose. All of that still holds, and none of it is about these members.
 
-### The five events and their four raisers — **buildable**
+### The five events and their four raisers — **done, Foundation 96, and with no new route**
 
 `cna_graphics_device_manager_subscribe` carries five identities, and they are exactly XNA's five
 events:
@@ -319,14 +319,32 @@ events:
 | `DeviceReset` | `…_DEVICE_RESET` |
 | `DeviceResetting` | `…_DEVICE_RESETTING` |
 
-The header adds the sentence that settles the producer question for this family: *"The four device
-events are also the canonical graphics-device-service events, so subscribing here is what a consumer
-of that service would observe."* The four `On*` raisers — `OnDeviceCreated`, `OnDeviceDisposing`,
-`OnDeviceReset`, `OnDeviceResetting` — are `protected` methods whose IL is one null-check and one
-`Invoke` each, which this project has projected fourteen times already for `Game` and
-`GameComponent`.
+That table was the plan and **the IL made it unnecessary**, which is this audit's own rule turned on
+itself for the second time. `CreateDevice` hooks four private handlers onto the `GraphicsDevice` it
+has just made:
 
-### `PreparingDeviceSettings` and `OnPreparingDeviceSettings` — **buildable**
+    device.DeviceResetting += HandleDeviceResetting;   // -> OnDeviceResetting(this, EventArgs.Empty)
+    device.DeviceReset     += HandleDeviceReset;       // -> OnDeviceReset(this, EventArgs.Empty)
+    device.DeviceLost      += HandleDeviceLost;        // body is a single `ret`
+    device.Disposing       += HandleDisposing;         // -> OnDeviceDisposing(this, EventArgs.Empty)
+
+So four of the five events are **relays of the device's own**, `HandleDeviceLost` doing nothing is
+why the manager declares no `DeviceLost`, and Foundation 93 had already given the device every
+signal. `DeviceCreated` is raised by the manager at the end of `CreateDevice` and `Disposed` by
+`Dispose(Boolean)`. **`cna_graphics_device_manager_subscribe` is still unbound**: ten members and
+not one new native route.
+
+The four `On*` raisers are `family` and one null-check plus one `Invoke` each, which this project
+has projected fourteen times for `Game` and `GameComponent`.
+
+### `PreparingDeviceSettings` and `OnPreparingDeviceSettings` — **`BLOCKED_UPSTREAM_CNA`**
+
+Not by the route, which exists and is the canonical mutable form. By the **argument**: the event's
+args carry a `GraphicsDeviceInformation`, whose `Adapter` is a `Graphics.GraphicsAdapter`. That is
+the fifth member of this audit the invented display data takes.
+
+The original note follows, because the route half of it is still true and is what a later milestone
+would use if the adapter defect were ever fixed upstream.
 
 `cna_graphics_device_manager_subscribe_preparing_device_settings_ext` is the canonical mutable form:
 *"what the handler writes into the configuration is what the device is created from"*, covering
@@ -336,11 +354,16 @@ presentation interval. The read-only sibling exists only because it was publishe
 The event's argument type is `PreparingDeviceSettingsEventArgs`, which is one constructor and one
 property over a `GraphicsDeviceInformation` — see below.
 
-### `Dispose(Boolean)` — **buildable**
+### `Dispose(Boolean)` — **done, Foundation 96**
 
-`cna_graphics_device_manager_dispose` "unregisters both services and raises the disposed event once;
-a second disposal is a no-op, which is this canonical type's own idempotence" — XNA's own contract,
-already implemented natively.
+Two of its five steps are already no-ops here, and for measured reasons rather than omissions: the
+`RemoveService` branch has nothing to remove, because this manager was never in the managed
+container (the producer audit's own finding), and the three `GameWindow` handlers are CNA's, so
+there are none to unhook. What is left is XNA's: dispose the device, null it, raise `Disposed`.
+
+DEVIATION, recorded: XNA's `Dispose(Boolean)` has **no disposed guard**, so a second call raises
+`Disposed` again — the opposite of `Game.Dispose`, which guards and raises once. This reproduces
+XNA's, because the native release is idempotent on its own and nothing needed a guard.
 
 ### `FindBestDevice`, `CanResetDevice`, `RankDevices` — **`BLOCKED_UPSTREAM_CNA`**
 

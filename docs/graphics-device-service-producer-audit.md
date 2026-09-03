@@ -220,6 +220,40 @@ No intermediate producer was built. In particular the four device events were **
 faithfully: doing so would let the type claim conformance to a service that nothing registers, which
 is the intermediate state this audit was told to refuse.
 
+### That last paragraph was re-measured in Foundation 96, and it was wrong about the events
+
+Everything above about the *producer* still holds: the manager is still unregistered, its interface
+conformance is still unclaimed, and `Game.Initialize` still omits `HookDeviceEvents`. Nothing here
+changes.
+
+What the paragraph got wrong is the inference from that to the events, and the mistake is the one
+this project's frontier register keeps making: **it named a route rather than reading the IL.** The
+four device events are not the manager's to raise at all. `CreateDevice` hooks four private
+handlers onto the `GraphicsDevice` it has just constructed —
+
+```
+device.DeviceResetting += HandleDeviceResetting;   // -> OnDeviceResetting(this, EventArgs.Empty)
+device.DeviceReset     += HandleDeviceReset;       // -> OnDeviceReset(this, EventArgs.Empty)
+device.DeviceLost      += HandleDeviceLost;        // body is a single `ret`
+device.Disposing       += HandleDisposing;         // -> OnDeviceDisposing(this, EventArgs.Empty)
+```
+
+— so they are **relays of the device's own events**, and `HandleDeviceLost` doing nothing is why the
+manager declares no `DeviceLost` at all. Foundation 93 projected the device's six events; the
+manager's four then needed no producer, no subscription and **no route**, and
+`cna_graphics_device_manager_subscribe` is still unbound after Foundation 96 closed them.
+
+Raising them claims nothing about the service. A consumer that reaches `GraphicsDeviceManager`
+directly — which is how a Ruby program reaches it, because `Game.Services` never had it — sees the
+events XNA's own consumer sees. `DeviceCreated` is raised by the manager itself at the end of
+`CreateDevice`, and `Disposed` by `Dispose(Boolean)`; neither is a service signal either.
+
+Ten of the fifteen members this audit deferred were closed that way. The five that remain —
+`FindBestDevice`, `CanResetDevice`, `RankDevices`, `OnPreparingDeviceSettings` and
+`PreparingDeviceSettings` — are blocked by something this audit never claimed: each names
+`GraphicsDeviceInformation`, or the event args that carry one, and that type's `Adapter` is a
+`Graphics.GraphicsAdapter`. See `docs/graphics-adapter-ordering-upstream-defect.md`.
+
 **The blocker is not a missing CNA capability, and no CNA change is requested.** It is that the
 managed `Game`/`GameServiceContainer` in this binding and the native `Game`/service container in CNA
 are two different objects playing the same role, and only one of them is the one XNA's lifecycle

@@ -84,10 +84,12 @@ class NativeIntegrationTest < Minitest::Test
     assert_includes game.events, :unload, "the last unload_content must still be delivered"
     # RunOneFrame delivers no begin_run, matching XNA's RunGame(false).
     assert_equal %i[initialize load update draw unload], game.events
-    # The manager's own device wrapper survives disposal as an object and reports itself disposed
-    # rather than raising, and it never resurrects a borrowed handle.
-    assert game.manager.GraphicsDevice.IsDisposed
-    assert_equal 0, game.manager.GraphicsDevice.instance_variable_get(:@callback_handle)
+    # `Dispose(Boolean)` nulls the manager's device, which is XNA's own `device = null`, so the
+    # manager no longer answers one. `Game`'s reference survives as an object and reports itself
+    # disposed rather than raising, and it never resurrects a borrowed handle.
+    assert_nil game.manager.GraphicsDevice
+    assert game.GraphicsDevice.IsDisposed
+    assert_equal 0, game.GraphicsDevice.instance_variable_get(:@callback_handle)
   end
 
   # The same path under a full blocking Run, which delivers end_run before the destroy-time unload.

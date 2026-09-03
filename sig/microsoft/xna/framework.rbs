@@ -158,8 +158,14 @@ module Microsoft
       class GraphicsDeviceManager
         DefaultBackBufferWidth: Integer
         DefaultBackBufferHeight: Integer
-        attr_reader GraphicsDevice: Graphics::GraphicsDevice
+        attr_reader GraphicsDevice: Graphics::GraphicsDevice?
         def initialize: (Game game) -> void
+        def DeviceCreated: () -> CNA::Runtime::Event
+        def DeviceDisposing: () -> CNA::Runtime::Event
+        def DeviceReset: () -> CNA::Runtime::Event
+        def DeviceResetting: () -> CNA::Runtime::Event
+        def Disposed: () -> CNA::Runtime::Event
+        def Dispose: (?bool disposing) -> nil
       end
 
       # System.Type projects to a Ruby Module, which is what a service key is here.

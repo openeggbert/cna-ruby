@@ -31664,6 +31664,178 @@
           "parameters": [
 
           ]
+        },
+        {
+          "kind": "method",
+          "name": "OnDeviceCreated",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "sender",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "args",
+              "type": "System.EventArgs",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "OnDeviceDisposing",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "sender",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "args",
+              "type": "System.EventArgs",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "OnDeviceReset",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "sender",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "args",
+              "type": "System.EventArgs",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "OnDeviceResetting",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "sender",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "args",
+              "type": "System.EventArgs",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "disposing",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "event",
+          "name": "DeviceCreated",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "DeviceDisposing",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "DeviceReset",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "DeviceResetting",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "Disposed",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::GraphicsDeviceManager"

@@ -151,11 +151,13 @@ class DisposableCollapseTest < Minitest::Test
                  manager.fetch("members").select { |member| member.fetch("name") == "Dispose" }
                         .map { |member| [member["access"], member.fetch("parameters").map { |p| p.fetch("type") }] }
 
-    # It is one of the six deferred partial runtime types and Dispose is in its missing list, so
-    # nothing is being claimed for it here either way.
+    # `Dispose(Boolean)` is projected since Foundation 96 — protected, as the metadata says — and
+    # the public `Dispose()` is still an explicit `IDisposable` implementation, which projects to
+    # nothing. That is the whole point of this test and it is unchanged.
     assert_includes STRICT.fetch("partialTypes").keys, manager.fetch("name")
-    assert(STRICT.fetch("partialTypes").fetch(manager.fetch("name"))
+    refute(STRICT.fetch("partialTypes").fetch(manager.fetch("name"))
                  .any? { |entry| entry.include?("::Dispose") })
+    assert F::GraphicsDeviceManager.public_method_defined?(:Dispose)
   end
 
   # The rule is the one IServiceProvider established, applied to a much larger set.

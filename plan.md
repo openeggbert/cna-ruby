@@ -43,22 +43,22 @@ the prose would have fixed exactly that one milestone.
 | ---: | --- |
 | 257 | XNA 4.0 Windows reference types |
 | 200 | types this binding projects |
-| 2400 | Ruby member identities |
+| 2410 | Ruby member identities |
 | 198 | complete types |
 | 2 | partial types |
 | 57 | missing types |
-| 37 | event identities |
-| 19 | types owning an event |
+| 42 | event identities |
+| 20 | types owning an event |
 | 22 | projected BCL identities |
 
 **Strict diagnostics**
 
 | count | what it measures |
 | ---: | --- |
-| 85 | strict diagnostics in total |
+| 70 | strict diagnostics in total |
 | 57 | `MISSING_TYPE` |
-| 18 | `MISSING_MEMBER` |
-| 10 | `OVERLOAD_MAPPING_MISMATCH` |
+| 8 | `MISSING_MEMBER` |
+| 5 | `OVERLOAD_MAPPING_MISMATCH` |
 | 0 | `PROPERTY_MAPPING_MISMATCH` |
 | 0 | every other structural category, summed |
 | 0 | allowlist entries |
@@ -69,7 +69,7 @@ the prose would have fixed exactly that one milestone.
 | count | what it measures |
 | ---: | --- |
 | 3 | members `GraphicsDevice` still owes |
-| 15 | members `GraphicsDeviceManager` still owes |
+| 5 | members `GraphicsDeviceManager` still owes |
 
 **Native ABI**
 
@@ -104,7 +104,7 @@ the prose would have fixed exactly that one milestone.
 
 | count | what it measures |
 | ---: | --- |
-| 150 | runtime capability rows |
+| 151 | runtime capability rows |
 
 <!-- scoreboard:end -->
 
