@@ -96,6 +96,13 @@ module CNA
 
       private
 
+      # The one way anything outside this class contributes to the pending channel. `GraphicsDevice`
+      # uses it for an exception raised by a handler of a device event that arrived outside a
+      # Ruby-initiated call; `||=` keeps the *first* exception, as every other writer here does.
+      def record_exception(exception)
+        @pending_exception ||= exception
+      end
+
       def finish(result, operation)
         if pending_exception
           exception = @pending_exception

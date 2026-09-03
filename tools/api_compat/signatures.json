@@ -32751,6 +32751,54 @@
               "optional": false
             }
           ]
+        },
+        {
+          "kind": "event",
+          "name": "Disposing",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "DeviceLost",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "DeviceReset",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "DeviceResetting",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "ResourceCreated",
+          "type": "System.EventHandler`1[Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "ResourceDestroyed",
+          "type": "System.EventHandler`1[Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::GraphicsDevice"

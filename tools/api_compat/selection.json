@@ -1084,6 +1084,42 @@
             "Microsoft.Xna.Framework.Graphics.PresentationParameters",
             "Microsoft.Xna.Framework.Graphics.GraphicsAdapter"
           ]
+        },
+        {
+          "kind": "event",
+          "name": "Disposing",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "event",
+          "name": "DeviceLost",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "event",
+          "name": "DeviceReset",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "event",
+          "name": "DeviceResetting",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "event",
+          "name": "ResourceCreated",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "event",
+          "name": "ResourceDestroyed",
+          "static": false,
+          "parameters": []
         }
       ]
     },

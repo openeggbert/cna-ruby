@@ -202,20 +202,43 @@ what `Dispose` must project is the *managed* contract: the `Disposing` event, id
 GC finalizer destroys native state**, projects as a protected member that performs the managed half
 only. Both are recorded deviations with the header quotation behind them.
 
-### The six events — **buildable**
+### The six events — **done, Foundation 93**, and three of them are not CNA's to raise
 
-| XNA event | CNA route |
-| --- | --- |
-| `Disposing` | `cna_graphics_device_subscribe_event`, `CNA_GRAPHICS_DEVICE_EVENT_DISPOSING` |
-| `DeviceLost` | … `CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST` |
-| `DeviceReset` | … `CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET` |
-| `DeviceResetting` | … `CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESETTING` |
-| `ResourceCreated` | `cna_graphics_device_subscribe_resource_created` |
-| `ResourceDestroyed` | `cna_graphics_device_subscribe_resource_destroyed` |
+The route table this section first carried mapped all six onto CNA subscriptions. Measuring each
+moved three of them:
 
-Every one is released by `cna_graphics_device_unsubscribe`, which answers `CNA_RESULT_INVALID_HANDLE`
-on a second release. `ResourceCreatedEventArgs` and `ResourceDestroyedEventArgs` are both already
-projected complete types.
+| XNA event | how it is raised | why |
+| --- | --- | --- |
+| `DeviceLost` | `cna_graphics_device_subscribe_event`, `…_DEVICE_LOST` | only CNA knows |
+| `DeviceReset` | … `…_DEVICE_RESET` | only CNA knows; a reset raises it |
+| `DeviceResetting` | … `…_DEVICE_RESETTING` | the same, and first |
+| `Disposing` | **managed**, from the device's own invalidation | the native signal cannot arrive in time |
+| `ResourceCreated` | **managed**, from `GraphicsResource`'s registration | CNA's payload is presence only |
+| `ResourceDestroyed` | **managed**, from `GraphicsResource`'s release | the same |
+
+**`Disposing`.** CNA raises `CNA_GRAPHICS_DEVICE_EVENT_DISPOSING` inside `cna_game_destroy`, and by
+then the graphics-device-manager handle — which every registration made through the device belongs
+to — has already been released, because `cna_graphics_device_manager_create` documents "release it
+before the game". Measured both ways: a deliberately *leaked* subscription does receive it during
+`Game#Dispose`, and a correctly released one never can. So it is raised where XNA raises it, from
+`~GraphicsDevice()`, and the constant is not even in the manifest.
+
+**The two resource events.** CNA's routes fire — measured, for a `Texture2D` this binding creates —
+and what they carry is presence only. The header says why: *"the canonical event is raised from the
+graphics-resource base constructor, so the reported object is still under construction … no native
+object pointer crosses the ABI."* But `ResourceCreatedEventArgs.Resource` **is** that object, and
+`ResourceDestroyedEventArgs` carries `Name` and `Tag`, which are managed properties CNA never sees.
+This projection has all three, because the resource is a Ruby object it constructed. So both are
+raised from `GraphicsResource` — which is exactly where `DeviceResourceManager.AddTrackedObject`
+and `ReleaseAllReferences` raise them in XNA — and the two subscribe routes stay unbound.
+
+Two details of `FireCreatedEvent`/`FireDestroyedEvent` that a paraphrase loses are reproduced: each
+device keeps **one** args object and overwrites its fields on every raise, and the created one
+**nulls `_resource` once the handlers return** while the destroyed one does not.
+
+The three native registrations are released by `cna_graphics_device_unsubscribe`, which answers
+`CNA_RESULT_INVALID_HANDLE` on a second release — which is what the test uses to prove the first
+release happened.
 
 ### `.ctor(GraphicsAdapter, GraphicsProfile, PresentationParameters)` — **`BLOCKED_UPSTREAM_CNA`**
 

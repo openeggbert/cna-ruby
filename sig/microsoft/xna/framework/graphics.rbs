@@ -271,6 +271,12 @@ module Microsoft
           attr_reader IsDisposed: bool
           def Viewport: () -> Viewport
           def Viewport=: (Viewport value) -> Viewport
+          def Disposing: () -> CNA::Runtime::Event
+          def DeviceLost: () -> CNA::Runtime::Event
+          def DeviceReset: () -> CNA::Runtime::Event
+          def DeviceResetting: () -> CNA::Runtime::Event
+          def ResourceCreated: () -> CNA::Runtime::Event
+          def ResourceDestroyed: () -> CNA::Runtime::Event
           def Present: () -> nil
                      | (Rectangle? sourceRectangle, Rectangle? destinationRectangle, Integer? overrideWindowHandle) -> nil
           def Reset: () -> nil

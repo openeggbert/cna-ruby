@@ -92,6 +92,8 @@ CHECK_FN(cna_graphics_device_manager_destroy, CNA_Result, (CNA_GraphicsDeviceMan
 CHECK_FN(cna_graphics_device_get_viewport, CNA_Result, (CNA_Handle, CNA_Viewport*));
 CHECK_FN(cna_graphics_device_set_viewport, CNA_Result, (CNA_Handle, CNA_Viewport));
 CHECK_FN(cna_graphics_device_get_status, CNA_Result, (CNA_Handle, CNA_GraphicsDeviceStatus*));
+CHECK_FN(cna_graphics_device_subscribe_event, CNA_Result, (CNA_Handle, CNA_GraphicsDeviceEvent, CNA_GraphicsDeviceEventCallback, void*, CNA_GraphicsDeviceEventRegistrationHandle*));
+CHECK_FN(cna_graphics_device_unsubscribe, CNA_Result, (CNA_GraphicsDeviceEventRegistrationHandle));
 CHECK_FN(cna_graphics_device_present, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_graphics_device_reset, CNA_Result, (CNA_Handle));
 CHECK_FN(cna_graphics_device_reset_with_parameters, CNA_Result, (CNA_Handle, const CNA_PresentationParameters*, const uint32_t*));
@@ -407,6 +409,8 @@ typedef void (*expected_gamer_async)(void*);
 _Static_assert(__builtin_types_compatible_p(CNA_GamerAsyncCallback, expected_gamer_async), "gamer async callback mismatch");
 typedef void (*expected_audio_event)(void*);
 _Static_assert(__builtin_types_compatible_p(CNA_AudioEventCallback, expected_audio_event), "audio event callback mismatch");
+typedef void (*expected_graphics_device_event)(CNA_Handle, void*);
+_Static_assert(__builtin_types_compatible_p(CNA_GraphicsDeviceEventCallback, expected_graphics_device_event), "graphics device event callback mismatch");
 
 #define STRUCT(type) printf("STRUCT|" #type "|%zu|%zu\n", sizeof(type), _Alignof(type))
 #define FIELD(type, field) printf("FIELD|" #type "|" #field "|%zu|%zu\n", offsetof(type, field), sizeof(((type*)0)->field))
@@ -498,6 +502,8 @@ int main(void) {
     SIGNATURE(cna_graphics_device_get_viewport, "CNA_Result|CNA_Handle,CNA_Viewport*");
     SIGNATURE(cna_graphics_device_set_viewport, "CNA_Result|CNA_Handle,CNA_Viewport");
     SIGNATURE(cna_graphics_device_get_status, "CNA_Result|CNA_Handle,CNA_GraphicsDeviceStatus*");
+    SIGNATURE(cna_graphics_device_subscribe_event, "CNA_Result|CNA_Handle,CNA_GraphicsDeviceEvent,CNA_GraphicsDeviceEventCallback,void*,CNA_GraphicsDeviceEventRegistrationHandle*");
+    SIGNATURE(cna_graphics_device_unsubscribe, "CNA_Result|CNA_GraphicsDeviceEventRegistrationHandle");
     SIGNATURE(cna_graphics_device_present, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_graphics_device_reset, "CNA_Result|CNA_Handle");
     SIGNATURE(cna_graphics_device_reset_with_parameters, "CNA_Result|CNA_Handle,const CNA_PresentationParameters*,const uint32_t*");
@@ -871,6 +877,7 @@ int main(void) {
 
     CONSTANT(CNA_ABI_VERSION); CONSTANT(CNA_FALSE); CONSTANT(CNA_TRUE);
     CONSTANT(CNA_RESULT_SUCCESS); CONSTANT(CNA_RESULT_NOT_SUPPORTED); CONSTANT(CNA_RESULT_THREAD); CONSTANT(CNA_RESULT_CALLBACK);
+    CONSTANT(CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST); CONSTANT(CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET); CONSTANT(CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESETTING);
     CONSTANT(CNA_GAME_EVENT_ACTIVATED); CONSTANT(CNA_GAME_EVENT_DEACTIVATED); CONSTANT(CNA_GAME_EVENT_DISPOSED); CONSTANT(CNA_GAME_EVENT_EXITING);
     CONSTANT(CNA_GAME_WINDOW_EVENT_CLIENT_SIZE_CHANGED); CONSTANT(CNA_GAME_WINDOW_EVENT_ORIENTATION_CHANGED); CONSTANT(CNA_GAME_WINDOW_EVENT_SCREEN_DEVICE_NAME_CHANGED);
     CONSTANT(CNA_SPRITE_SORT_MODE_DEFERRED); CONSTANT(CNA_SPRITE_EFFECT_NONE); CONSTANT(CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY); CONSTANT(CNA_SPRITE_EFFECT_FLIP_VERTICALLY);

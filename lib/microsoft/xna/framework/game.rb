@@ -1391,6 +1391,15 @@ module Microsoft
           @inside_native_callback = false
         end
 
+        # The device's event callbacks return `void`, so a handler's exception has nowhere to travel
+        # back through and must never escape into C. One raised outside a Ruby-initiated call is
+        # handed here, and the host's pending channel surfaces it at the next lifecycle boundary —
+        # exactly what happens to an exception raised by a handler of this `Game`'s own events.
+        def record_callback_exception(exception)
+          @host&.__send__(:record_exception, exception)
+          nil
+        end
+
         def register_native_child(child)
           @native_children << child unless @native_children.any? { |value| value.equal?(child) }
         end

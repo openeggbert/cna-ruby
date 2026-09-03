@@ -104,6 +104,15 @@ module Microsoft
             @Resource = resource
           end
           private_class_method :new
+
+          private
+
+          # `GraphicsDevice.FireCreatedEvent` keeps **one** args object per device and writes the
+          # new resource into `_resource` on it, then nulls that field once the handlers return. So
+          # the field really is written from outside the constructor, and this is the only writer.
+          def resource=(value)
+            @Resource = value
+          end
         end
 
         # `assembly .ctor(string name, object tag)`: base(), then tag, then name.
@@ -116,6 +125,16 @@ module Microsoft
             @Name = name
           end
           private_class_method :new
+
+          private
+
+          # `FireDestroyedEvent`'s reuse path, in its order: `_name` first, then `_tag`. Unlike the
+          # created event it does **not** clear either afterwards.
+          def assign(name, tag)
+            @Name = name
+            @Tag = tag
+            self
+          end
         end
 
         # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…). The
@@ -795,7 +814,39 @@ module Microsoft
         end
 
         class GraphicsDevice
+          extend CNA::Runtime::EventOwner
           private_class_method :new
+
+          # The device's six events. Four are CNA's to raise and two are this projection's, and
+          # which is which was measured rather than chosen -- see `subscribe_device_events` and
+          # `fire_created_event` below.
+          xna_event :Disposing
+          xna_event :DeviceLost
+          xna_event :DeviceReset
+          xna_event :DeviceResetting
+          xna_event :ResourceCreated
+          xna_event :ResourceDestroyed
+
+          # The three data-free identities CNA can actually deliver, paired with the private raiser
+          # each one reaches. XNA's raisers are `raise_*` and `private`, so these are private too:
+          # an event's whole public surface is add/remove.
+          #
+          # `CNA_GRAPHICS_DEVICE_EVENT_DISPOSING` is the fourth and is **not** subscribed, for a
+          # measured reason. CNA raises it inside `cna_game_destroy`, and by then the graphics
+          # device manager handle — and with it every registration made through this device — has
+          # already been released, because `cna_graphics_device_manager_create` documents "release
+          # it before the game". Measured both ways: a *leaked* native subscription does receive it
+          # during `Game#Dispose`, and a correctly released one never can. So `Disposing` is raised
+          # managed from the device's own invalidation, which is where XNA raises it — from
+          # `~GraphicsDevice()`. It is the same shape as `Game.Disposed`, which is raised managed
+          # for the same kind of measured reason rather than relayed from
+          # `CNA_GAME_EVENT_DISPOSED`.
+          NATIVE_EVENTS = {
+            "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST" => :raise_DeviceLost,
+            "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET" => :raise_DeviceReset,
+            "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESETTING" => :raise_DeviceResetting
+          }.freeze
+          private_constant :NATIVE_EVENTS
 
           # `CNA_RESULT_NOT_SUPPORTED`, which is what the two members below raise for an argument
           # this ABI has no route to honour.
@@ -809,6 +860,9 @@ module Microsoft
             @index_buffer = nil
             @vertex_buffer_bindings = []
             @render_target_bindings = []
+            @event_registrations = nil
+            @event_callbacks = []
+            @pending_event_exception = nil
           end
 
           def IsDisposed = @invalidated || @game.__send__(:disposed?)
@@ -964,6 +1018,9 @@ module Microsoft
             end
             @internal_presentation_parameters = parameters.Clone
             @presentation_parameters = parameters.Clone
+            # CNA raises the device's resetting and reset events inside the call above, in that
+            # order, so a handler's exception belongs to this frame.
+            drain_event_exception
             nil
           end
 
@@ -1655,9 +1712,131 @@ module Microsoft
             raise ::RuntimeError, "InvalidDevice"
           end
 
+          # ------------------------------------------------------------ raising the six events
+          #
+          # XNA's raisers are `raise_*` and private; an event's whole public surface is add/remove,
+          # which is why none of these is reachable from a consumer.
+
+          def raise_Disposing = self.Disposing.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+          def raise_DeviceLost = self.DeviceLost.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+          def raise_DeviceReset = self.DeviceReset.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+          def raise_DeviceResetting = self.DeviceResetting.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty)
+
+          # `FireCreatedEvent(object resource)`, and the two details a paraphrase loses. XNA keeps
+          # **one** `ResourceCreatedEventArgs` per device, constructs it on the first raise and
+          # afterwards writes the new resource into `_resource` on the same object -- so every
+          # handler of every raise sees the same args instance. And it **nulls `_resource` after
+          # the handlers return**, so a handler that stashes the args and reads `Resource` later
+          # gets null. Both are reproduced.
+          def fire_created_event(resource)
+            args = (@created_event_args ||= ResourceCreatedEventArgs.__send__(:new, resource))
+            args.__send__(:resource=, resource)
+            begin
+              self.ResourceCreated.__send__(:dispatch, self, args)
+            ensure
+              args.__send__(:resource=, nil)
+            end
+            nil
+          end
+
+          # `FireDestroyedEvent(string name, object tag)`, the same cached-args shape -- and
+          # deliberately **without** the trailing null: the IL ends at `ret` immediately after
+          # `Invoke`, so a destroyed resource's name and tag stay readable on the args afterwards
+          # where a created resource does not.
+          def fire_destroyed_event(name, tag)
+            args = (@destroyed_event_args ||= ResourceDestroyedEventArgs.__send__(:new, name, tag))
+            args.__send__(:assign, name, tag)
+            self.ResourceDestroyed.__send__(:dispatch, self, args)
+            nil
+          end
+
+          # ------------------------------------------------------------ the native subscriptions
+          #
+          # One subscription per data-free identity, made at the **first moment a device handle
+          # exists** -- the same "earliest reachable moment" argument `ensure_initial_device_state`
+          # records -- and released when the device is invalidated. The header states that a
+          # registration "keeps the game alive in the same way an owned graphics resource does",
+          # so leaving one behind would hold the game open.
+          #
+          # The two resource events are **not** subscribed. They fire -- measured, for a `Texture2D`
+          # this binding creates -- and CNA carries presence only, deliberately: "no native object
+          # pointer crosses the ABI", because the canonical event is raised while the resource is
+          # still under construction. XNA's args carry the resource, its name and its tag, and this
+          # projection has all three, because the resource is a Ruby object it constructed and
+          # `Name`/`Tag` are managed properties CNA never sees. Raising them from
+          # `GraphicsResource` -- which is where `DeviceResourceManager.AddTrackedObject` and
+          # `ReleaseAllReferences` raise them in XNA -- is both more faithful and the only way to
+          # fill the args at all.
+          def subscribe_device_events(handle)
+            return unless @event_registrations.nil?
+
+            @event_registrations = []
+            library = CNA::Native.library
+            NATIVE_EVENTS.each do |constant, raiser|
+              callback = device_event_callback(raiser)
+              @event_callbacks << callback
+              output = library.pointer_for("Q", 0)
+              library.call("cna_graphics_device_subscribe_event", handle,
+                           CNA::Native::Manifest::CONSTANTS.fetch(constant), callback, 0, output)
+              @event_registrations << output[0, 8].unpack1("Q")
+            end
+            nil
+          end
+
+          def unsubscribe_device_events
+            registrations = @event_registrations
+            @event_registrations = []
+            @event_callbacks = []
+            return if registrations.nil?
+
+            registrations.each do |registration|
+              CNA::Native.library.function("cna_graphics_device_unsubscribe").call(registration)
+            end
+            nil
+          end
+
+          # The callback returns `void`, so a failure has nowhere to travel back through and
+          # **nothing may escape into C**. A handler's exception is captured and re-raised by the
+          # Ruby frame that caused the event -- `Reset` drains it directly, and anything raised
+          # outside a Ruby-initiated call is handed to the Game host's pending channel when the
+          # callback ends, which is exactly the discipline `Game`'s own events follow.
+          def device_event_callback(raiser)
+            Fiddle::Closure::BlockCaller.new(Fiddle::TYPE_VOID,
+                                             [Fiddle::TYPE_UINT64_T, Fiddle::TYPE_VOIDP]) do |_device, _context|
+              begin
+                __send__(raiser) if @pending_event_exception.nil?
+              rescue Exception => exception # rubocop:disable Lint/RescueException
+                @pending_event_exception ||= exception
+              end
+              nil
+            end
+          end
+
+          # Drains whatever a handler raised, so the caller that provoked it sees it.
+          def drain_event_exception
+            exception = @pending_event_exception
+            @pending_event_exception = nil
+            raise exception if exception
+
+            nil
+          end
+
+          # The device's own disposal, and where `Disposing` is raised — `~GraphicsResource()`'s
+          # analogue for the device itself. It is raised **before** the flag is set, so a handler
+          # still sees a live device, and exactly once, because this method returns early on a
+          # second call. Handler exceptions are not swallowed and are not captured either: this is
+          # a Ruby frame, so an exception propagates to `Game#Dispose`, which already collects the
+          # first error from each teardown step.
           def invalidate
-            @invalidated = true
-            @callback_handle = 0
+            return nil if @invalidated
+
+            unsubscribe_device_events
+            begin
+              raise_Disposing
+            ensure
+              @invalidated = true
+              @callback_handle = 0
+            end
             nil
           end
 
@@ -1669,8 +1848,21 @@ module Microsoft
             @internal_presentation_parameters = nil
           end
 
-          def enter_callback(handle) = @callback_handle = handle
-          def leave_callback = @callback_handle = 0
+          def enter_callback(handle)
+            @callback_handle = handle
+            subscribe_device_events(handle) unless handle.zero?
+            handle
+          end
+
+          # An event raised outside a Ruby-initiated call has no frame to surface in, so it is
+          # handed to the Game host's pending channel as the callback ends -- the next lifecycle
+          # boundary refuses and `finish` raises it, which is what `Game`'s own event exceptions do.
+          def leave_callback
+            exception = @pending_event_exception
+            @pending_event_exception = nil
+            @game.__send__(:record_callback_exception, exception) if exception
+            @callback_handle = 0
+          end
 
           def native_handle
             raise CNA::DisposedObjectError, "GraphicsDevice is disposed" if self.IsDisposed
@@ -1884,11 +2076,18 @@ module Microsoft
           # path, and not twice.
           xna_event :Disposing
 
+          # `DeviceResourceManager.AddTrackedObject(this, …)` is what every concrete XNA resource
+          # calls once its native object exists, and `AddTrackedObject` is what calls
+          # `GraphicsDevice.FireCreatedEvent(resource)`. This is the same moment: the handle is
+          # live, `GraphicsDevice` is set, and the Ruby object is still inside its own constructor —
+          # which is exactly the "still under construction" caveat CNA's own header records as its
+          # reason for reporting presence only.
           def initialize_resource(device, handle, release)
             @GraphicsDevice = device
             @Name = nil
             @Tag = nil
             initialize_native_resource(device.__send__(:game), handle, release)
+            device.__send__(:fire_created_event, self)
           end
           private :initialize_resource
 
@@ -1933,12 +2132,22 @@ module Microsoft
           def Dispose(disposing = true)
             return if self.IsDisposed
 
+            device = @GraphicsDevice
             if @native_handle.nil?
               @managed_disposed = true
             else
               @native_handle.dispose
               @native_game.__send__(:unregister_native_child, self)
             end
+            # `DeviceResourceManager.ReleaseAllReferences` is what raises the device's
+            # `ResourceDestroyed`, and each concrete type calls it from `ReleaseNativeObject` —
+            # the native release, which runs before `~GraphicsResource()` raises `Disposing`. So the
+            # order is release, then the device's event, then this resource's own. A state object
+            # has no device and XNA's never reach `AddTrackedObject`, so neither raises anything.
+            # `GraphicsDevice` is what XNA's field is typed as, and `DeviceResourceManager` is that
+            # device's. A state object has none, and a test double that stands in for one is not a
+            # device either — neither has a resource manager to raise from.
+            device.__send__(:fire_destroyed_event, @Name, @Tag) if device.instance_of?(GraphicsDevice)
             self.Disposing.__send__(:dispatch, self, CNA::Runtime::EventArgs::Empty) if disposing
             nil
           end

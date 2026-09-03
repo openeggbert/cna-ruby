@@ -1776,6 +1776,12 @@ class ApiVerifierTest < Minitest::Test
       Microsoft.Xna.Framework.Game::Deactivated
       Microsoft.Xna.Framework.Game::Exiting
       Microsoft.Xna.Framework.Game::Disposed
+      Microsoft.Xna.Framework.Graphics.GraphicsDevice::Disposing
+      Microsoft.Xna.Framework.Graphics.GraphicsDevice::DeviceLost
+      Microsoft.Xna.Framework.Graphics.GraphicsDevice::DeviceReset
+      Microsoft.Xna.Framework.Graphics.GraphicsDevice::DeviceResetting
+      Microsoft.Xna.Framework.Graphics.GraphicsDevice::ResourceCreated
+      Microsoft.Xna.Framework.Graphics.GraphicsDevice::ResourceDestroyed
       Microsoft.Xna.Framework.Graphics.GraphicsResource::Disposing
       Microsoft.Xna.Framework.GameWindow::ScreenDeviceNameChanged
       Microsoft.Xna.Framework.GameWindow::ClientSizeChanged
@@ -1811,7 +1817,11 @@ class ApiVerifierTest < Minitest::Test
         assert_equal false, member.fetch("static")
       end
     end
+    # Two handler types until Foundation 93: the device's two resource events are the first
+    # selected identities whose args are neither `EventArgs` nor the component-collection's.
     assert_equal ["System.EventHandler`1[Microsoft.Xna.Framework.GameComponentCollectionEventArgs]",
+                  "System.EventHandler`1[Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs]",
+                  "System.EventHandler`1[Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs]",
                   "System.EventHandler`1[System.EventArgs]"],
                  signature_contract.fetch("types").flat_map { |type|
                    type.fetch("members").select { |member| member.fetch("kind") == "event" }

@@ -377,6 +377,25 @@ module CNA
         # nor an override window handle, which is why `Present`'s three-argument overload refuses
         # both rather than ignoring them; `reset_with_parameters` takes a nullable adapter index,
         # which is exactly "keep the current adapter".
+        # The device's four data-free events. One subscription per identity, created at the first
+        # moment a device handle exists and released when the device is invalidated; the header
+        # states that a registration "keeps the game alive in the same way an owned graphics
+        # resource does", so it is an owned handle with an explicit release.
+        #
+        # `cna_graphics_device_subscribe_resource_created` and `_resource_destroyed` are
+        # deliberately **not** bound. They fire -- measured, for a `Texture2D` this binding creates
+        # -- and what they carry is presence only: "no native object pointer crosses the ABI",
+        # because the canonical event is raised from the graphics-resource base constructor while
+        # the object is still under construction. XNA's `ResourceCreatedEventArgs.Resource` **is**
+        # that object, and this projection has it, because the resource is a Ruby object this
+        # binding constructed. So those two are raised managed, from where XNA raises them.
+        signature("cna_graphics_device_subscribe_event", T[:result],
+                  [T[:handle], enum("CNA_GraphicsDeviceEvent"), callback_pointer("CNA_GraphicsDeviceEventCallback"),
+                   T[:ptr], pointer("CNA_GraphicsDeviceEventRegistrationHandle")],
+                  ownership: "borrows device; returns an OWNED registration; the callback and context stay caller-owned"),
+        signature("cna_graphics_device_unsubscribe", T[:result],
+                  [handle("CNA_GraphicsDeviceEventRegistrationHandle")],
+                  ownership: "consumes OWNED registration; a second release is INVALID_HANDLE"),
         signature("cna_graphics_device_present", T[:result], [T[:handle]], ownership: "borrows device"),
         signature("cna_graphics_device_reset", T[:result], [T[:handle]], ownership: "borrows device; raises the device's resetting and reset events"),
         signature("cna_graphics_device_reset_with_parameters", T[:result],
@@ -875,7 +894,11 @@ module CNA
         # typedef in a different header, and the ABI probe type-checks each against its own
         # declaration rather than against the other.
         { name: "CNA_GamerAsyncCallback", c_return: "void", c_arguments: ["void*"], calling_convention: "platform C", fiddle_return: VOID, fiddle_arguments: [PTR] },
-        { name: "CNA_AudioEventCallback", c_return: "void", c_arguments: ["void*"], calling_convention: "platform C", fiddle_return: VOID, fiddle_arguments: [PTR] }
+        { name: "CNA_AudioEventCallback", c_return: "void", c_arguments: ["void*"], calling_convention: "platform C", fiddle_return: VOID, fiddle_arguments: [PTR] },
+        # The device's data-free event handler takes the device handle as well as the context,
+        # which is what makes it a different identity from CNA_GameEventCallback rather than
+        # another shape-identical one.
+        { name: "CNA_GraphicsDeviceEventCallback", c_return: "void", c_arguments: ["CNA_Handle", "void*"], calling_convention: "platform C", fiddle_return: VOID, fiddle_arguments: [U64, PTR] }
       ].freeze
 
       # `CNA_ABI_VERSION` is deliberately **not** here. It is not a constant this binding consumes;
@@ -891,6 +914,9 @@ module CNA
         "CNA_GAME_EVENT_DEACTIVATED" => 1,
         "CNA_GAME_EVENT_DISPOSED" => 2,
         "CNA_GAME_EVENT_EXITING" => 3,
+        "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST" => 1,
+        "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET" => 2,
+        "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESETTING" => 3,
         "CNA_GAME_WINDOW_EVENT_CLIENT_SIZE_CHANGED" => 0,
         "CNA_GAME_WINDOW_EVENT_ORIENTATION_CHANGED" => 1,
         "CNA_GAME_WINDOW_EVENT_SCREEN_DEVICE_NAME_CHANGED" => 2,

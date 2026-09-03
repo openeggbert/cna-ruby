@@ -368,12 +368,19 @@ class ManagedDescriptorsTest < Minitest::Test
     assert_raises(TypeError) { G::DisplayModeCollection.__send__(:new, :not_an_array) }
   end
 
-  def test_no_producer_for_any_constructor_free_class_is_fabricated
-    # GraphicsAdapter would enumerate DisplayMode; GraphicsDevice.ResourceCreated/ResourceDestroyed
-    # would raise the two EventArgs types. All three producers stay absent.
+  # This test used to say that **no** producer for a constructor-free class was fabricated, and
+  # two of the three it named have since been built from their own IL rather than fabricated.
+  # `GraphicsDevice.ResourceCreated` and `ResourceDestroyed` really do produce the two `EventArgs`
+  # types now, and each is still non-constructible from outside: the device reaches its private
+  # `new` and nothing else can. `GraphicsAdapter`, which would enumerate `DisplayMode`, stays
+  # absent — the one blocker this whole graphics sweep found.
+  def test_the_event_args_producers_are_the_device_and_nothing_else
     refute G.const_defined?(:GraphicsAdapter, false)
-    %i[ResourceCreated ResourceDestroyed].each do |absent|
-      refute G::GraphicsDevice.method_defined?(absent), absent.to_s
+    %i[ResourceCreated ResourceDestroyed].each do |present|
+      assert G::GraphicsDevice.method_defined?(present), present.to_s
+    end
+    [G::ResourceCreatedEventArgs, G::ResourceDestroyedEventArgs].each do |type|
+      refute type.respond_to?(:new), "#{type} must stay constructor-free from outside"
     end
     assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_SURFACE, G::GraphicsDevice.public_instance_methods(false).sort
   end
