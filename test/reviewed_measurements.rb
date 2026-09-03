@@ -21,7 +21,7 @@ module NativeSurfaceCensus
 
   # The census the repository last reviewed. `test_native_abi_gate.rb` compares the two, so this
   # file cannot drift from the manifest silently in either direction.
-  REVIEWED = { functions: 392, callbacks: 6, constants: 136, layouts: 63 }.freeze
+  REVIEWED = { functions: 394, callbacks: 6, constants: 137, layouts: 65 }.freeze
 end
 
 # The strict XNA scoreboard, for exactly the same reason and with exactly the same rule: a milestone
@@ -31,12 +31,12 @@ end
 # is the measurement; this is the reviewed expectation of it.
 module ReviewedScoreboard
   TARGET_TYPES = 200
-  TARGET_MEMBERS = 2388
+  TARGET_MEMBERS = 2394
   COMPLETE_TYPES = 198
   PARTIAL_TYPES = 2
   MISSING_TYPES = 57
-  MISSING_MEMBER = 30
-  OVERLOAD_MAPPING_MISMATCH = 15
+  MISSING_MEMBER = 24
+  OVERLOAD_MAPPING_MISMATCH = 13
   # Zero since Foundation 89 projected `GraphicsDevice::Viewport`'s setter. The one entry this
   # carried for its whole history was that property's `"override": { "set": false }`, and it was
   # never a Ruby limitation — see `test_api_verifier.rb`'s inverted guard.
@@ -53,6 +53,7 @@ module ReviewedScoreboard
     IsDisposed Viewport Viewport= Clear Textures VertexTextures SamplerStates VertexSamplerStates
     GraphicsProfile GraphicsDeviceStatus PresentationParameters Present Reset
     Disposing DeviceLost DeviceReset DeviceResetting ResourceCreated ResourceDestroyed
+    DrawUserPrimitives DrawUserIndexedPrimitives
     BlendState BlendState= DepthStencilState DepthStencilState= RasterizerState RasterizerState=
     BlendFactor BlendFactor= MultiSampleMask MultiSampleMask= ReferenceStencil ReferenceStencil=
     ScissorRectangle ScissorRectangle=
@@ -70,8 +71,7 @@ module ReviewedScoreboard
   #
   # Update these together with the milestone that moves them, never to make a red test green.
   GRAPHICS_DEVICE_OUTSTANDING = %w[
-    .ctor Adapter DisplayMode Dispose DrawUserIndexedPrimitives DrawUserPrimitives
-    Finalize GetBackBufferData
+    .ctor Adapter DisplayMode Dispose Finalize GetBackBufferData
   ].sort.freeze
 
   GRAPHICS_DEVICE_MANAGER_OUTSTANDING = %w[

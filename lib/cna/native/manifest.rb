@@ -533,6 +533,15 @@ module CNA
         signature("cna_graphics_device_draw_primitives", T[:result], [T[:handle], enum("CNA_PrimitiveType"), T[:i32], T[:i32]], ownership: "borrows device; draws from the bound buffers"),
         signature("cna_graphics_device_draw_indexed_primitives", T[:result], [T[:handle], enum("CNA_PrimitiveType"), T[:i32], T[:i32], T[:i32], T[:i32], T[:i32]], ownership: "borrows device; draws from the bound buffers"),
         signature("cna_graphics_device_draw_instanced_primitives", T[:result], [T[:handle], enum("CNA_PrimitiveType"), T[:i32], T[:i32], T[:i32], T[:i32], T[:i32], T[:i32]], ownership: "borrows device; draws from the bound buffers"),
+        # The two user-primitive draws, which take their whole description by pointer -- so nothing
+        # here is passed by value and the vertex and index arrays stay caller-owned: "no vertex
+        # array is retained after the call returns".
+        signature("cna_graphics_device_draw_user_primitives", T[:result],
+                  [T[:handle], pointer("CNA_UserPrimitives", const: true)],
+                  ownership: "borrows device; reads the caller's arrays for the duration of the call"),
+        signature("cna_graphics_device_draw_user_indexed_primitives", T[:result],
+                  [T[:handle], pointer("CNA_UserPrimitives", const: true), pointer("CNA_UserIndices", const: true)],
+                  ownership: "borrows device; reads the caller's arrays for the duration of the call"),
         # The Effect cluster. Every getter in it returns an **owned view**: `cna_effect_get_parameters`
         # hands back a fresh collection handle on every call, and so does
         # `cna_effect_parameter_collection_get_at` for every element -- measured, two calls answer two
@@ -914,6 +923,7 @@ module CNA
         "CNA_GAME_EVENT_DEACTIVATED" => 1,
         "CNA_GAME_EVENT_DISPOSED" => 2,
         "CNA_GAME_EVENT_EXITING" => 3,
+        "CNA_USER_VERTEX_SOURCE_RAW_STREAM" => 0,
         "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST" => 1,
         "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET" => 2,
         "CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESETTING" => 3,

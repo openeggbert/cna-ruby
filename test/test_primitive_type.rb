@@ -145,15 +145,15 @@ class PrimitiveTypeTest < Minitest::Test
   # first real consumers this enum has ever had -- each takes a `PrimitiveType` as its first
   # argument. What this milestone claimed is unchanged: it added none of them, and the two
   # user-primitive families are still absent.
-  def test_the_draw_members_that_exist_take_this_enum_and_the_rest_are_absent
-    %i[DrawPrimitives DrawIndexedPrimitives DrawInstancedPrimitives].each do |name|
+  def test_every_draw_member_takes_this_enum_as_its_first_argument
+    %i[DrawPrimitives DrawIndexedPrimitives DrawInstancedPrimitives DrawUserPrimitives].each do |name|
       assert G::GraphicsDevice.public_method_defined?(name), name.to_s
     end
-    %i[DrawUserPrimitives DrawUserIndexedPrimitives].each do |name|
-      refute G::GraphicsDevice.public_method_defined?(name), name.to_s
-      refute G::GraphicsDevice.private_method_defined?(name), name.to_s
-      refute G::GraphicsDevice.protected_method_defined?(name), name.to_s
-    end
+    # `DrawUserIndexedPrimitives` is the one exception, and it is a language mapping rather than a
+    # deviation: Ruby cannot tell an `Int32[]` from an `Int16[]`, so the index element size is
+    # passed the way every other generic in this binding is passed — a leading type argument — and
+    # the topology follows it.
+    assert G::GraphicsDevice.public_method_defined?(:DrawUserIndexedPrimitives)
     assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_SURFACE,
                  G::GraphicsDevice.public_instance_methods(false).sort
   end
@@ -172,20 +172,18 @@ class PrimitiveTypeTest < Minitest::Test
     end
     # `SetVertexBuffer` and `Indices` left this list when the device's binding slice landed. A
     # bound buffer is still not a draw call, which is what this row is about.
-    # The three device-buffer draw calls left this list when the draw slice landed; what is
-    # still absent is the user-primitive families, which take the vertices as an argument.
-    %i[DrawUserPrimitives DrawUserIndexedPrimitives].each do |name|
-      refute G::GraphicsDevice.public_method_defined?(name), name.to_s
-    end
+    # The three device-buffer draw calls left this list when the draw slice landed and the two
+    # user-primitive families when theirs did. What this row is still about is that **this
+    # milestone** implied none of them, and that the enum brought no constant with it.
     refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("PRIMITIVE") }
     refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("TOPOLOGY") }
     # The three draw routes are bound now, and they take the topology as a scalar argument rather
     # than through any constant: this enum's values are its own, from its own IL.
     assert CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?("draw_primitives") }
-    # `cna_sprite_batch_draw_string` left this check when DrawString was built: it draws text
-    # through a SpriteBatch interval, not a primitive topology, and no primitive or topology
-    # constant or route exists at all.
-    refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?("draw_user") }
+    # `cna_sprite_batch_draw_string` left this check when DrawString was built and the two
+    # `draw_user` routes when the user-primitive families were built; no primitive or topology
+    # **constant** exists at all, which is what this row is about.
+    refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("PRIMITIVE_TYPE") }
   end
 
   def test_isolated_graphics_require_does_not_load_cna_native_library
@@ -197,7 +195,6 @@ class PrimitiveTypeTest < Minitest::Test
       abort "wrong TriangleList" unless topology::TriangleList.to_i == 0
       abort "wrong LineStrip" unless topology::LineStrip.to_i == 3
       abort "flags leaked" if topology.instance_variable_get(:@enum_flags)
-      abort "user draw leaked" if Microsoft::Xna::Framework::Graphics::GraphicsDevice.public_method_defined?(:DrawUserPrimitives)
       abort "native library loaded" if CNA::Native.instance_variable_defined?(:@library)
     RUBY
     environment = {"CNA_NATIVE_LIBRARY" => nil, "RUBYLIB" => ENV["RUBYLIB"], "RUBYOPT" => nil}

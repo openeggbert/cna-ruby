@@ -1120,6 +1120,87 @@
           "name": "ResourceDestroyed",
           "static": false,
           "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "DrawUserPrimitives",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+            "!!0[]",
+            "System.Int32",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "DrawUserPrimitives",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+            "!!0[]",
+            "System.Int32",
+            "System.Int32",
+            "Microsoft.Xna.Framework.Graphics.VertexDeclaration"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "DrawUserIndexedPrimitives",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+            "!!0[]",
+            "System.Int32",
+            "System.Int32",
+            "System.Int32[]",
+            "System.Int32",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "DrawUserIndexedPrimitives",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+            "!!0[]",
+            "System.Int32",
+            "System.Int32",
+            "System.Int16[]",
+            "System.Int32",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "DrawUserIndexedPrimitives",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+            "!!0[]",
+            "System.Int32",
+            "System.Int32",
+            "System.Int32[]",
+            "System.Int32",
+            "System.Int32",
+            "Microsoft.Xna.Framework.Graphics.VertexDeclaration"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "DrawUserIndexedPrimitives",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.PrimitiveType",
+            "!!0[]",
+            "System.Int32",
+            "System.Int32",
+            "System.Int16[]",
+            "System.Int32",
+            "System.Int32",
+            "Microsoft.Xna.Framework.Graphics.VertexDeclaration"
+          ]
         }
       ]
     },

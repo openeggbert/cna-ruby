@@ -473,6 +473,44 @@ module CNA
         end
       end
 
+      # The two caller-provided descriptions a user-primitive draw takes. Both are versioned inputs
+      # rather than outputs, so both fill their size and version in the constructor and the caller
+      # writes the rest.
+      class UserPrimitives < Structure
+        layout size: 48, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("primitive_type", "CNA_PrimitiveType", 8, 4),
+          Layouts.field("vertex_source", "CNA_UserVertexSource", 12, 4),
+          Layouts.field("vertex_data", "void", 16, 8, pointer_depth: 1, const: true),
+          Layouts.field("vertex_declaration", "CNA_VertexDeclarationHandle", 24, 8),
+          Layouts.field("vertex_offset", "int32_t", 32, 4),
+          Layouts.field("num_vertices", "int32_t", 36, 4),
+          Layouts.field("primitive_count", "int32_t", 40, 4),
+          Layouts.field("reserved", "uint32_t", 44, 4)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
+      class UserIndices < Structure
+        layout size: 24, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("index_element_size", "CNA_IndexElementSize", 8, 4),
+          Layouts.field("index_offset", "int32_t", 12, 4),
+          Layouts.field("index_data", "void", 16, 8, pointer_depth: 1, const: true)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       # The three render-target structures. `CNA_RenderTargetInfo` carries two more fields than the
       # retired 0.7.0 headers declare -- a two-byte `reserved` tail -- and neither is read here, so
       # the layout stops at `renderer_available` and both header roots agree on every field it does

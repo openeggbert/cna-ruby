@@ -223,13 +223,13 @@ class GraphicsDeviceBindingTest < Minitest::Test
     # claimed, and still claims, is that **it** bound no render target and drew nothing.
     # The three device-buffer draw calls left this list when the draw slice landed; what is
     # still absent is the user-primitive families, which take the vertices as an argument.
-    %i[DrawUserPrimitives DrawUserIndexedPrimitives GetBackBufferData Dispose].each do |absent|
+    %i[GetBackBufferData Dispose Finalize].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     # The two draw routes left this list when the draw slice landed, and the single-target route
     # is unbound because XNA's own overloads forward to the array form.
-    %w[cna_graphics_device_draw_user_primitives cna_graphics_device_draw_user_indexed_primitives
+    %w[cna_graphics_device_draw_primitives_indirect_ext cna_graphics_device_draw_indexed_primitives_indirect_ext
        cna_graphics_device_set_render_target2d].each { |absent| refute_includes symbols, absent }
     # And the three read-back routes this file measures through raw Fiddle stay out of the manifest,
     # because nothing in `lib/` would call them: XNA's own getters are field reads.

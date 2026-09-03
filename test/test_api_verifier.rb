@@ -1120,10 +1120,10 @@ class ApiVerifierTest < Minitest::Test
     topology&.instance_variable_set(:@enum_flags, original_flags) unless original_flags.nil?
   end
 
-  # The three device-buffer draw calls are selected and projected now; the two user-primitive
-  # families are not, and this check is about the ones that are still absent. What it measures is
-  # unchanged: a member the selection does not carry is `UNEXPECTED_MEMBER` when it appears anyway,
-  # and one it does not project is `MISSING_MEMBER`.
+  # Every draw member is selected and projected now, so this check is no longer about members that
+  # are absent — it is about the synthetic *subset* surface the fixture builds, where adding one is
+  # still `UNEXPECTED_MEMBER` and not projecting it is still `MISSING_MEMBER`. That is what the
+  # check has always measured; only the fixture's relationship to the real surface changed.
   def test_primitive_type_selected_surface_rejects_accidental_graphics_device_draw_members
     device_name = "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
     draw_names = %w[DrawUserIndexedPrimitives DrawUserPrimitives]
@@ -1143,14 +1143,16 @@ class ApiVerifierTest < Minitest::Test
       assert_operator verify(reference, target).counts["UNEXPECTED_MEMBER"], :>, 0, name
     end
 
+    # And from the other side, against the *real* surface rather than the fixture's subset: both
+    # families are selected, both are projected, and neither is deferred any more.
     selected_device = signature_contract.fetch("types").find { |type| type.fetch("name") == device_name }
-    refute selected_device.fetch("members").any? { |member| draw_names.include?(member.fetch("name")) }
     draw_names.each do |name|
-      refute Microsoft::Xna::Framework::Graphics::GraphicsDevice.public_method_defined?(name), name
+      assert selected_device.fetch("members").any? { |member| member.fetch("name") == name }, name
+      assert Microsoft::Xna::Framework::Graphics::GraphicsDevice.public_method_defined?(name), name
     end
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
     draw_names.each do |name|
-      assert strict.fetch("details").fetch("MISSING_MEMBER").any? { |label| label.include?("#{device_name}::#{name} ") }, name
+      refute strict.fetch("details").fetch("MISSING_MEMBER").any? { |label| label.include?("#{device_name}::#{name} ") }, name
     end
   end
 
@@ -1942,7 +1944,7 @@ class ApiVerifierTest < Minitest::Test
     # `PreferredDepthStencilFormat` was closed by a much later milestone, which is the point rather
     # than a loss: the enum did not close it, a milestone that bound the manager's routes did.
     deferred = strict.fetch("details").fetch("MISSING_MEMBER")
-    %w[GetBackBufferData DrawUserPrimitives].each do |name|
+    %w[GetBackBufferData Finalize].each do |name|
       assert deferred.any? { |label| label.include?(name) }, name
     end
     assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_SURFACE,

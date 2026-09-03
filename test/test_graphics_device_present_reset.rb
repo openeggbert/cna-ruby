@@ -35,7 +35,7 @@ class GraphicsDevicePresentResetTest < Minitest::Test
     %w[Present Reset].each { |member| refute_includes remainder, "::#{member} ", member }
     overloads = STRICT.fetch("details").fetch("OVERLOAD_MAPPING_MISMATCH").join(" ")
     %w[Present Reset].each { |member| refute_includes overloads, "GraphicsDevice::#{member} ", member }
-    %w[DrawUserPrimitives GetBackBufferData Dispose].each do |member|
+    %w[GetBackBufferData Dispose Finalize].each do |member|
       assert_includes remainder, "::#{member} ", member
     end
   end

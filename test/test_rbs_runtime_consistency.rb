@@ -461,16 +461,13 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     refute_includes section, "def &:"
     refute_includes section, "def ToString"
     # `VertexDeclaration` left this list when it was built, `VertexBuffer` and `IndexBuffer` when
-    # the buffers were, and the three device-buffer draw members when the draw slice landed -- they
-    # are this enum's first real consumers, each taking a `PrimitiveType` as its first argument.
-    # What this test claims about `PrimitiveType` is unchanged: its four values come from its own
-    # IL, and the two user-primitive families are still declared nowhere in this file.
-    %w[DrawUserPrimitives DrawUserIndexedPrimitives].each do |name|
-      refute_includes source, name
-    end
-    %w[DrawPrimitives DrawIndexedPrimitives DrawInstancedPrimitives].each do |name|
+    # the buffers were, and every draw member as its own slice landed -- they are this enum's real
+    # consumers. What this test claims about `PrimitiveType` is unchanged: its four values come
+    # from its own IL, and every consumer declares the topology as this enum or an Integer.
+    %w[DrawPrimitives DrawIndexedPrimitives DrawInstancedPrimitives DrawUserPrimitives].each do |name|
       assert_includes source, "def #{name}: (PrimitiveType | Integer primitiveType"
     end
+    assert_includes source, "def DrawUserIndexedPrimitives: (untyped indexType, PrimitiveType | Integer primitiveType"
   end
 
   def test_viewport_rbs_retains_exact_complete_fourteen_identity_projection
@@ -872,11 +869,10 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     # `SetRenderTarget` and its two siblings arrived with the device's render-target slice, so a
     # target that exists is a target that can be bound now. What this batch claimed, and still
     # claims, is that **it** declared none of it -- and nothing draws yet.
-    # The three device-buffer draw calls arrived with the draw slice; the user-primitive families
-    # have not, and this batch declared none of any of it.
-    %w[DrawUserPrimitives DrawUserIndexedPrimitives]
-      .each { |absent| refute_includes source, absent }
-    %w[SetRenderTarget SetRenderTargets GetRenderTargets]
+    # The three device-buffer draw calls arrived with the draw slice and the user-primitive
+    # families with theirs; what this batch claimed, and still claims, is that **it** declared none
+    # of any of it.
+    %w[SetRenderTarget SetRenderTargets GetRenderTargets DrawUserPrimitives]
       .each { |present| assert_includes source, present }
   end
 

@@ -250,3 +250,21 @@ tests. No production `EnumType` or `EnumValue` change was required.
 Native integration passes 14 / 528. Stress retains 20 Game, Texture2D, SpriteBatch, and Game
 recreation cycles; 50 Mouse and GamePad state cycles; and 20 GamePad capability cycles. Crashes,
 observed UAF, and observed double-free are zero. Sanitizers were not run and remain `NOT_RUN`.
+
+## The corpus correction Foundation 94 required
+
+`primitive_type.ruby_enum_mapping` recorded which of `GraphicsDevice`'s five draw members this
+binding projects. Three were true when Foundation 88 built the device-buffer draws; Foundation 94
+built the two user-primitive families, so all five are. Corrected as a **surgical byte edit** — two
+`false` tokens inside one nested element — in the aggregate and in this milestone's authoring
+record alike, so the closed supersession register in `test_behavior_corpus_integrity.rb` still holds
+seven.
+
+| file | element | pre-correction SHA-256 | post-correction SHA-256 |
+| --- | ---: | --- | --- |
+| `behavior/xna40-foundation-values.json` | 19 | `680a009dbaa6cf1fba6e1722a0caa5ba1b08fbe7d34913b2d3959e7b149f08d1` | `663dafa2f214af35d5fd047354bc55d386f126d4caf5bccded41e6921f4be655` |
+| `behavior/xna40-primitive-type-values.json` | 19 | `54044473a26608f7cbaade6784bdbd8026832c92d439d64b2ace75266bd86bc4` | `75244bb7f3c5f7d6783231647e9fa33d17538af3b3df46299bf225c67d908a87` |
+
+Four lines moved. The observation is `RUBY_MAPPING_QUALIFICATION` — it records what this projection
+exposes, not an XNA fact and not a CNA measurement — and the corpus replays 526 observations with
+zero failures afterwards.

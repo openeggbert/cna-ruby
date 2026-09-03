@@ -277,6 +277,8 @@ module Microsoft
           def DeviceResetting: () -> CNA::Runtime::Event
           def ResourceCreated: () -> CNA::Runtime::Event
           def ResourceDestroyed: () -> CNA::Runtime::Event
+          def DrawUserPrimitives: (PrimitiveType | Integer primitiveType, Array[untyped] vertexData, Integer vertexOffset, Integer primitiveCount, ?VertexDeclaration? vertexDeclaration) -> nil
+          def DrawUserIndexedPrimitives: (untyped indexType, PrimitiveType | Integer primitiveType, Array[untyped] vertexData, Integer vertexOffset, Integer numVertices, Array[Integer]? indexData, Integer indexOffset, Integer primitiveCount, ?VertexDeclaration? vertexDeclaration) -> nil
           def Present: () -> nil
                      | (Rectangle? sourceRectangle, Rectangle? destinationRectangle, Integer? overrideWindowHandle) -> nil
           def Reset: () -> nil

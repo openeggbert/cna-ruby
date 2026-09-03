@@ -159,17 +159,36 @@ What stays managed is the part CNA cannot know: the two guards, the render-targe
 `SavedDeviceState` deliberately does not restore, and the two cached parameter objects, which become
 two distinct clones of the argument.
 
-### `DrawUserPrimitives` and `DrawUserIndexedPrimitives` — **buildable, six overloads**
+### `DrawUserPrimitives` and `DrawUserIndexedPrimitives` — **done, Foundation 94**
 
 `cna_graphics_device_draw_user_primitives(handle, CNA_UserPrimitives*)` and
 `cna_graphics_device_draw_user_indexed_primitives(handle, CNA_UserPrimitives*, CNA_UserIndices*)`
-take versioned descriptions by pointer, so no by-value aggregate is involved. The header states
-that "the vertex source and the optional declaration together select the canonical overload", which
-is exactly the `IVertexType`-versus-explicit-`VertexDeclaration` split XNA's six overloads are.
-Sixteen-bit and thirty-two-bit index arrays are `CNA_UserIndices`' own element size.
+take versioned descriptions by pointer, so no by-value aggregate is involved and the arrays stay
+caller-owned — "no vertex array is retained after the call returns".
 
-The managed validation is the same shape as the three device-buffer draw calls that landed in
-Foundation 88, plus the array-bounds guards a user array needs.
+All six overloads use `CNA_USER_VERTEX_SOURCE_RAW_STREAM` with an explicit vertex declaration. The
+typed sources would cover only CNA's four built-in layouts; the raw one covers those **and** an
+explicitly declared layout, which is what the five- and eight-argument overloads exist for.
+
+Two language mappings, recorded rather than smoothed over. `T` is read off the array's own
+elements, because Ruby has no type argument at a call site and `pack_elements` already requires
+every element to be one type. And a Ruby `Array` of integers is neither an `Int32[]` nor an
+`Int16[]`, so `DrawUserIndexedPrimitives` takes the index element size as a **leading type
+argument** — the same stand-in `IndexBuffer`'s constructor and `SetData` already use, resolved by
+the same rule where `IndexElementSize` is itself and `::Integer` means `ThirtyTwoBits`.
+
+Two side effects that are easy to miss and are reproduced. `BeginUserPrimitives` unbinds every
+vertex stream **before** the draw, so the streams go whether the draw succeeds or not; and the
+indexed draw clears `_currentIB` in its `finally`, so the index buffer goes too — but only for the
+indexed one. Both are observable through `GetVertexBuffers` and `Indices`.
+
+`DeclarationManager` is reproduced as well: one native declaration cached per managed one, released
+in full by `Reset` (`ReleaseAllDeclarations`) and by the device's invalidation, so a per-frame draw
+does not build and destroy a declaration every frame.
+
+The managed validation is the IL's, in the IL's order, including `ldlen; brfalse` — a zero-length
+array raises the same `ArgumentNullException` a null one does — and `GetVertexCount`'s unknown
+topology answering `-1` compared **unsigned**, so it never fits any window.
 
 ### `GetBackBufferData`'s three overloads — **buildable, renderer-dependent**
 

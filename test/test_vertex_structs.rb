@@ -242,7 +242,7 @@ class VertexStructsTest < Minitest::Test
     # this milestone claimed, and still claims, is that **it** added neither, and nothing draws yet.
     # The three device-buffer draw calls left this list when the draw slice landed; what is
     # still absent is the user-primitive families, which take the vertices as an argument.
-    %i[DrawUserPrimitives DrawUserIndexedPrimitives].each do |absent|
+    %i[GetBackBufferData Dispose].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
     # The helper module is in CNA::Runtime, not the XNA namespace, which the verifier measures as

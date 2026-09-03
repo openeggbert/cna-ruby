@@ -212,10 +212,11 @@ class GraphicsDeviceStateTest < Minitest::Test
       refute G::GraphicsDevice.public_method_defined?(absent.to_sym), absent
     end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-    # The buffer, present and reset routes left this list when their own slices landed, which is the
-    # same statement from the other side; nothing *here* draws.
-    %w[cna_graphics_device_draw_user_primitives
-       cna_graphics_device_draw_user_indexed_primitives].each { |absent| refute_includes symbols, absent }
+    # Every draw route left this list as its own slice landed, which is the same statement from the
+    # other side; nothing *here* draws, and the indirect extensions XNA declares no member for are
+    # still unbound.
+    %w[cna_graphics_device_draw_primitives_indirect_ext
+       cna_graphics_device_draw_indexed_primitives_indirect_ext].each { |absent| refute_includes symbols, absent }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:layouts), CNA::Native::Layouts::STRUCTURES.length
   end

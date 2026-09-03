@@ -1010,6 +1010,9 @@ module Microsoft
             end
 
             set_render_target_bindings([])
+            # `vertexDeclarationManager.ReleaseAllDeclarations()`, which XNA performs between
+            # releasing the default-pool resources and re-creating the device.
+            release_declarations
             if arguments.empty?
               CNA::Native.library.call("cna_graphics_device_reset", native_handle)
             else
@@ -1444,6 +1447,112 @@ module Microsoft
           # current target actually has, and answers `InvalidOperationException(CannotClearNullDepth)`
           # when they are not. CNA reports exactly that case as `CNA_RESULT_NOT_SUPPORTED`, "when the
           # backend cannot clear a selected buffer".
+          # ------------------------------------------------------------ the user-primitive draws
+          #
+          #     DrawUserPrimitives<T>(type, data, offset, count)                     T : IVertexType
+          #     DrawUserPrimitives<T>(type, data, offset, count, declaration)
+          #
+          # The four-argument overload is the five-argument one with
+          # `VertexDeclarationFactory.GetVertexDeclaration<T>()` filled in, and this projection reads
+          # the same declaration off the element type. The guards are the IL's, in the IL's order,
+          # and each carries the resource string XNA raises with:
+          #
+          #     vertexData null or empty          -> ArgumentNullException("vertexData", NullNotAllowed)
+          #     vertexDeclaration null            -> ArgumentNullException("vertexDeclaration", NullNotAllowed)
+          #     primitiveCount <= 0               -> ArgumentOutOfRangeException("primitiveCount", MustDrawSomething)
+          #     primitiveCount > profile maximum  -> ProfileMaxPrimitiveCount, which is CNA's to refuse
+          #     vertexOffset outside the array    -> ArgumentOutOfRangeException("vertexOffset", OffsetNotValid)
+          #     the topology needs more vertices than the window holds
+          #                                       -> ArgumentOutOfRangeException("primitiveCount", MustBeValidIndex)
+          #
+          # LANGUAGE MAPPING, recorded: Ruby has no type argument at a call site, so `T` is read from
+          # the array's own elements — which is unambiguous, because `pack_elements` already requires
+          # every element to be the same type. `DrawUserIndexedPrimitives` below needs one anyway,
+          # for a reason that is not `T`.
+          def DrawUserPrimitives(primitiveType, vertexData, vertexOffset, primitiveCount,
+                                 vertexDeclaration = nil)
+            topology = PrimitiveType.coerce(primitiveType)
+            element_type = require_user_vertices(vertexData)
+            declaration = user_vertex_declaration(vertexDeclaration, element_type)
+            offset = CNA::Runtime::Numeric.int32(vertexOffset, "vertexOffset")
+            count = CNA::Runtime::Numeric.int32(primitiveCount, "primitiveCount")
+            raise ::RangeError, "primitiveCount" unless count.positive?
+            raise ::RangeError, "vertexOffset" if offset.negative? || offset >= vertexData.length
+            unless vertex_count_for(topology, count) <= vertexData.length - offset
+              raise ::RangeError, "primitiveCount"
+            end
+
+            bytes = pack_user_vertices(element_type, vertexData)
+            description = user_primitives(topology, bytes, declaration, offset, 0, count)
+            begin_user_primitives
+            CNA::Native.library.call("cna_graphics_device_draw_user_primitives", native_handle,
+                                     description.pointer)
+            nil
+          end
+
+          #     DrawUserIndexedPrimitives<T>(indexType, type, data, offset, numVertices,
+          #                                  indexData, indexOffset, count[, declaration])
+          #
+          # Four XNA overloads: `Int32[]` and `Int16[]` indices, each with and without an explicit
+          # declaration. LANGUAGE MAPPING, recorded: a Ruby `Array` of integers is neither, so the
+          # index element size is passed the way every other generic in this binding is passed —
+          # a leading type argument, resolved by the same rule `IndexBuffer`'s constructor and
+          # `SetData` use, where `IndexElementSize` is itself and `::Integer` means `ThirtyTwoBits`.
+          # `T` still comes from the array, because nothing about it is ambiguous.
+          #
+          # Two guards this one adds, both in the IL's order:
+          #
+          #     indexData null or empty       -> ArgumentNullException("indexData", NullNotAllowed)
+          #     numVertices <= 0              -> ArgumentOutOfRangeException("numVertices", NumberVerticesMustBeGreaterZero)
+          #     indexOffset outside the array -> ArgumentOutOfRangeException("indexOffset", OffsetNotValid)
+          #     the topology needs more indices than the window holds
+          #                                   -> ArgumentOutOfRangeException("primitiveCount", MustBeValidIndex)
+          #     vertexOffset + numVertices past the array
+          #                                   -> ArgumentOutOfRangeException("vertexData", MustBeValidIndex)
+          def DrawUserIndexedPrimitives(indexType, primitiveType, vertexData, vertexOffset, numVertices,
+                                        indexData, indexOffset, primitiveCount, vertexDeclaration = nil)
+            element_size = IndexBuffer.__send__(:resolve_element_size, indexType)
+            topology = PrimitiveType.coerce(primitiveType)
+            element_type = require_user_vertices(vertexData)
+            raise ::ArgumentError, "indexData" if indexData.nil?
+            raise ::TypeError, "indexData must be an Array" unless indexData.is_a?(::Array)
+            raise ::ArgumentError, "indexData" if indexData.empty?
+
+            declaration = user_vertex_declaration(vertexDeclaration, element_type)
+            vertices = CNA::Runtime::Numeric.int32(numVertices, "numVertices")
+            raise ::RangeError, "numVertices" unless vertices.positive?
+
+            offset = CNA::Runtime::Numeric.int32(vertexOffset, "vertexOffset")
+            index_offset = CNA::Runtime::Numeric.int32(indexOffset, "indexOffset")
+            count = CNA::Runtime::Numeric.int32(primitiveCount, "primitiveCount")
+            raise ::RangeError, "primitiveCount" unless count.positive?
+            raise ::RangeError, "vertexOffset" if offset.negative? || offset >= vertexData.length
+            raise ::RangeError, "indexOffset" if index_offset.negative? || index_offset >= indexData.length
+            unless element_count_for(topology, count) + index_offset <= indexData.length
+              raise ::RangeError, "primitiveCount"
+            end
+            raise ::RangeError, "vertexData" if offset + vertices > vertexData.length
+
+            width = element_size.to_i.zero? ? 2 : 4
+            bytes = pack_user_vertices(element_type, vertexData)
+            indices = IndexBuffer.__send__(:pack_indices, indexData, 0, indexData.length, width)
+            description = user_primitives(topology, bytes, declaration, offset, vertices, count)
+            window = CNA::Native::Layouts::UserIndices.new
+            window.write_u32(8, element_size.to_i)
+            window.write_i32(12, index_offset)
+            window.write_pointer(16, Fiddle::Pointer[indices])
+            begin_user_primitives
+            begin
+              CNA::Native.library.call("cna_graphics_device_draw_user_indexed_primitives", native_handle,
+                                       description.pointer, window.pointer)
+            ensure
+              # `_currentIB = null` lives in the indexed draw's `finally`, so it happens whether the
+              # draw succeeded or not.
+              @index_buffer = nil
+            end
+            nil
+          end
+
           def Clear(*arguments)
             case arguments.length
             when 1
@@ -1689,6 +1798,104 @@ module Microsoft
             end
           end
 
+          # ------------------------------------------------------------ the user-primitive helpers
+
+          # `T`, read off the array. A zero-length array is `null` to XNA — the guard is
+          # `ldlen; brfalse` — so it raises the same `ArgumentNullException`, and every element must
+          # be one type, which is `pack_elements`'s rule already.
+          #
+          # DEVIATION, recorded: XNA's five-argument overloads constrain `T` to `.ctor` alone, so any
+          # struct is legal there. This accepts the four projected vertex structs, because they are
+          # the only element types this binding can serialise — the same limit
+          # `DynamicVertexBuffer.SetData` records.
+          def require_user_vertices(data)
+            raise ::ArgumentError, "vertexData" if data.nil?
+            raise ::TypeError, "vertexData must be an Array" unless data.is_a?(::Array)
+            raise ::ArgumentError, "vertexData" if data.empty?
+
+            type = data.first.class
+            unless type.include?(CNA::Runtime::VertexStruct)
+              raise ::TypeError, "vertexData must be an Array of a projected vertex struct"
+            end
+            data.each do |value|
+              raise ::TypeError, "vertexData must be an Array of #{type}" unless value.instance_of?(type)
+            end
+            type
+          end
+
+          def pack_user_vertices(type, data)
+            VertexBuffer.__send__(:pack_elements, type, data, 0, data.length,
+                                  type.const_get(:VertexDeclaration).VertexStride)
+          end
+
+          # The declaration the draw uses: the explicit one when given, the element type's own
+          # otherwise — `VertexDeclarationFactory.GetVertexDeclaration<T>()`'s analogue.
+          def user_vertex_declaration(explicit, element_type)
+            return element_type.const_get(:VertexDeclaration) if explicit.nil?
+            raise ::TypeError, "vertexDeclaration must be a VertexDeclaration" unless explicit.instance_of?(VertexDeclaration)
+
+            explicit
+          end
+
+          # `DeclarationManager` in one line. XNA caches a native declaration per managed one and
+          # `Reset` releases the whole cache (`ReleaseAllDeclarations`); this does the same, keyed by
+          # object identity, so a draw does not build and destroy one per frame.
+          def native_declaration_for(declaration)
+            @declaration_cache ||= {}.compare_by_identity
+            @declaration_cache[declaration] ||=
+              VertexBuffer.__send__(:create_native_declaration, declaration)
+          end
+
+          def release_declarations
+            cache = @declaration_cache
+            @declaration_cache = nil
+            return if cache.nil?
+
+            cache.each_value do |handle|
+              CNA::Native.library.call("cna_vertex_declaration_destroy", handle)
+            rescue CNA::NativeError
+              nil
+            end
+            nil
+          end
+
+          def user_primitives(topology, bytes, declaration, offset, vertices, count)
+            description = CNA::Native::Layouts::UserPrimitives.new
+            description.write_u32(8, topology.to_i)
+            description.write_u32(12, CNA::Native::Manifest::CONSTANTS.fetch("CNA_USER_VERTEX_SOURCE_RAW_STREAM"))
+            description.write_pointer(16, Fiddle::Pointer[bytes])
+            description.write_u64(24, native_declaration_for(declaration))
+            description.write_i32(32, offset)
+            description.write_i32(36, vertices)
+            description.write_i32(40, count)
+            description
+          end
+
+          # `BeginUserPrimitives` unbinds every vertex stream and clears the instance-stream mask,
+          # and it runs **before** the draw — so the streams go whether the draw succeeds or not.
+          # Neither is restored, so it is observable through `GetVertexBuffers`, and it is this
+          # projection's cache to clear because that cache is what the getter answers.
+          def begin_user_primitives
+            @vertex_buffer_bindings = []
+            nil
+          end
+
+          # `GetVertexCount`: the vertices one topology needs for a primitive count.
+          def vertex_count_for(topology, count)
+            case topology.to_i
+            when 0 then count * 3      # TriangleList
+            when 1 then count + 2      # TriangleStrip
+            when 2 then count * 2      # LineList
+            when 3 then count + 1      # LineStrip
+            else 0xFFFFFFFF            # ldc.i4.m1, compared unsigned, so an unknown topology never fits
+            end
+          end
+
+          # `GetElementCountFromPrimitiveType`, which is the same four cases — XNA has two helpers
+          # with identical bodies, one for vertices and one for indices, and both are reproduced
+          # under their own names because the two draws call different ones.
+          def element_count_for(topology, count) = vertex_count_for(topology, count)
+
           def require_primitive_count(value)
             count = CNA::Runtime::Numeric.int32(value, "primitiveCount")
             raise ::RangeError, "primitiveCount" unless count.positive?
@@ -1831,6 +2038,7 @@ module Microsoft
             return nil if @invalidated
 
             unsubscribe_device_events
+            release_declarations
             begin
               raise_Disposing
             ensure

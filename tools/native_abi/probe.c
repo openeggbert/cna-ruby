@@ -92,6 +92,8 @@ CHECK_FN(cna_graphics_device_manager_destroy, CNA_Result, (CNA_GraphicsDeviceMan
 CHECK_FN(cna_graphics_device_get_viewport, CNA_Result, (CNA_Handle, CNA_Viewport*));
 CHECK_FN(cna_graphics_device_set_viewport, CNA_Result, (CNA_Handle, CNA_Viewport));
 CHECK_FN(cna_graphics_device_get_status, CNA_Result, (CNA_Handle, CNA_GraphicsDeviceStatus*));
+CHECK_FN(cna_graphics_device_draw_user_primitives, CNA_Result, (CNA_Handle, const CNA_UserPrimitives*));
+CHECK_FN(cna_graphics_device_draw_user_indexed_primitives, CNA_Result, (CNA_Handle, const CNA_UserPrimitives*, const CNA_UserIndices*));
 CHECK_FN(cna_graphics_device_subscribe_event, CNA_Result, (CNA_Handle, CNA_GraphicsDeviceEvent, CNA_GraphicsDeviceEventCallback, void*, CNA_GraphicsDeviceEventRegistrationHandle*));
 CHECK_FN(cna_graphics_device_unsubscribe, CNA_Result, (CNA_GraphicsDeviceEventRegistrationHandle));
 CHECK_FN(cna_graphics_device_present, CNA_Result, (CNA_Handle));
@@ -502,6 +504,8 @@ int main(void) {
     SIGNATURE(cna_graphics_device_get_viewport, "CNA_Result|CNA_Handle,CNA_Viewport*");
     SIGNATURE(cna_graphics_device_set_viewport, "CNA_Result|CNA_Handle,CNA_Viewport");
     SIGNATURE(cna_graphics_device_get_status, "CNA_Result|CNA_Handle,CNA_GraphicsDeviceStatus*");
+    SIGNATURE(cna_graphics_device_draw_user_primitives, "CNA_Result|CNA_Handle,const CNA_UserPrimitives*");
+    SIGNATURE(cna_graphics_device_draw_user_indexed_primitives, "CNA_Result|CNA_Handle,const CNA_UserPrimitives*,const CNA_UserIndices*");
     SIGNATURE(cna_graphics_device_subscribe_event, "CNA_Result|CNA_Handle,CNA_GraphicsDeviceEvent,CNA_GraphicsDeviceEventCallback,void*,CNA_GraphicsDeviceEventRegistrationHandle*");
     SIGNATURE(cna_graphics_device_unsubscribe, "CNA_Result|CNA_GraphicsDeviceEventRegistrationHandle");
     SIGNATURE(cna_graphics_device_present, "CNA_Result|CNA_Handle");
@@ -839,6 +843,8 @@ int main(void) {
     STRUCT(CNA_AudioEmitter); FIELD(CNA_AudioEmitter, struct_size); FIELD(CNA_AudioEmitter, struct_version); FIELD(CNA_AudioEmitter, doppler_scale); FIELD(CNA_AudioEmitter, forward); FIELD(CNA_AudioEmitter, position); FIELD(CNA_AudioEmitter, up); FIELD(CNA_AudioEmitter, velocity);
     STRUCT(CNA_TextureSlotInfo); FIELD(CNA_TextureSlotInfo, struct_size); FIELD(CNA_TextureSlotInfo, struct_version); FIELD(CNA_TextureSlotInfo, bound); FIELD(CNA_TextureSlotInfo, reserved); FIELD(CNA_TextureSlotInfo, texture);
     STRUCT(CNA_PresentationParameters); FIELD(CNA_PresentationParameters, struct_size); FIELD(CNA_PresentationParameters, struct_version); FIELD(CNA_PresentationParameters, back_buffer_format); FIELD(CNA_PresentationParameters, back_buffer_width); FIELD(CNA_PresentationParameters, back_buffer_height); FIELD(CNA_PresentationParameters, depth_stencil_format); FIELD(CNA_PresentationParameters, multi_sample_count); FIELD(CNA_PresentationParameters, presentation_interval); FIELD(CNA_PresentationParameters, display_orientation); FIELD(CNA_PresentationParameters, render_target_usage); FIELD(CNA_PresentationParameters, is_full_screen); FIELD(CNA_PresentationParameters, headless_ext);
+    STRUCT(CNA_UserPrimitives); FIELD(CNA_UserPrimitives, struct_size); FIELD(CNA_UserPrimitives, struct_version); FIELD(CNA_UserPrimitives, primitive_type); FIELD(CNA_UserPrimitives, vertex_source); FIELD(CNA_UserPrimitives, vertex_data); FIELD(CNA_UserPrimitives, vertex_declaration); FIELD(CNA_UserPrimitives, vertex_offset); FIELD(CNA_UserPrimitives, num_vertices); FIELD(CNA_UserPrimitives, primitive_count); FIELD(CNA_UserPrimitives, reserved);
+    STRUCT(CNA_UserIndices); FIELD(CNA_UserIndices, struct_size); FIELD(CNA_UserIndices, struct_version); FIELD(CNA_UserIndices, index_element_size); FIELD(CNA_UserIndices, index_offset); FIELD(CNA_UserIndices, index_data);
     STRUCT(CNA_Viewport); FIELD(CNA_Viewport, x); FIELD(CNA_Viewport, y); FIELD(CNA_Viewport, width); FIELD(CNA_Viewport, height); FIELD(CNA_Viewport, min_depth); FIELD(CNA_Viewport, max_depth);
     STRUCT(CNA_Texture2DInfo); FIELD(CNA_Texture2DInfo, struct_size); FIELD(CNA_Texture2DInfo, struct_version); FIELD(CNA_Texture2DInfo, width); FIELD(CNA_Texture2DInfo, height); FIELD(CNA_Texture2DInfo, level_count); FIELD(CNA_Texture2DInfo, format);
     STRUCT(CNA_Texture3DCreateInfo); FIELD(CNA_Texture3DCreateInfo, struct_size); FIELD(CNA_Texture3DCreateInfo, struct_version); FIELD(CNA_Texture3DCreateInfo, width); FIELD(CNA_Texture3DCreateInfo, height); FIELD(CNA_Texture3DCreateInfo, depth); FIELD(CNA_Texture3DCreateInfo, mip_map); FIELD(CNA_Texture3DCreateInfo, reserved0); FIELD(CNA_Texture3DCreateInfo, format); FIELD(CNA_Texture3DCreateInfo, reserved1);
@@ -877,7 +883,7 @@ int main(void) {
 
     CONSTANT(CNA_ABI_VERSION); CONSTANT(CNA_FALSE); CONSTANT(CNA_TRUE);
     CONSTANT(CNA_RESULT_SUCCESS); CONSTANT(CNA_RESULT_NOT_SUPPORTED); CONSTANT(CNA_RESULT_THREAD); CONSTANT(CNA_RESULT_CALLBACK);
-    CONSTANT(CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST); CONSTANT(CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET); CONSTANT(CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESETTING);
+    CONSTANT(CNA_USER_VERTEX_SOURCE_RAW_STREAM); CONSTANT(CNA_GRAPHICS_DEVICE_EVENT_DEVICE_LOST); CONSTANT(CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESET); CONSTANT(CNA_GRAPHICS_DEVICE_EVENT_DEVICE_RESETTING);
     CONSTANT(CNA_GAME_EVENT_ACTIVATED); CONSTANT(CNA_GAME_EVENT_DEACTIVATED); CONSTANT(CNA_GAME_EVENT_DISPOSED); CONSTANT(CNA_GAME_EVENT_EXITING);
     CONSTANT(CNA_GAME_WINDOW_EVENT_CLIENT_SIZE_CHANGED); CONSTANT(CNA_GAME_WINDOW_EVENT_ORIENTATION_CHANGED); CONSTANT(CNA_GAME_WINDOW_EVENT_SCREEN_DEVICE_NAME_CHANGED);
     CONSTANT(CNA_SPRITE_SORT_MODE_DEFERRED); CONSTANT(CNA_SPRITE_EFFECT_NONE); CONSTANT(CNA_SPRITE_EFFECT_FLIP_HORIZONTALLY); CONSTANT(CNA_SPRITE_EFFECT_FLIP_VERTICALLY);
