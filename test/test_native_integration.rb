@@ -237,6 +237,15 @@ class NativeIntegrationTest < Minitest::Test
     def initialize(png_path, frame_limit)
       super()
       @manager = F::GraphicsDeviceManager.new(self)
+      # **Variable timestep, deliberately.** Under the default fixed step a tick that overruns its
+      # 1/60s budget catches up by running `Update` more than once -- XNA's rule, and CNA's loop
+      # runs it -- so on a loaded host the update and draw counts below are a function of the
+      # machine rather than of the binding. Measured on a host at load average 20: five updates
+      # where three were asked for, and one draw where two were. `IsFixedTimeStep = false` makes
+      # the loop deliver exactly one `Update` per tick, which is what lets this row keep an exact
+      # count. What the row is about is a real PNG, a real clear, a real sprite batch and a real
+      # keyboard read in one game; the catch-up rule itself is pinned by `test_game_tick.rb`.
+      self.IsFixedTimeStep = false
       @png_path = png_path
       @frame_limit = frame_limit
       @updates = 0
@@ -285,6 +294,8 @@ class NativeIntegrationTest < Minitest::Test
     end
     assert_equal [128, 128], game.dimensions
     assert_instance_of Array, game.pressed
+    # Exact, because the game asked for a variable timestep: one `Update` per tick, three ticks,
+    # and the third one's `Exit` takes its draw away.
     assert_equal 3, game.updates
     assert_equal 2, game.draws
   end

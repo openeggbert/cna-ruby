@@ -202,7 +202,10 @@ class GameTickTest < Minitest::Test
       step = game.TargetElapsedTime
       5.times { game.Tick }
       updates = game.log.select { |entry| entry.is_a?(Array) }
-      assert_equal 5, updates.length
+      # At least one Update per tick. A tick that overran its budget catches up with more, which is
+      # the same rule `test_suppress_draw_skips_exactly_the_next_tick_s_draw` is written around, and
+      # every invariant below holds however many there are.
+      assert_operator updates.length, :>=, 5
 
       elapsed_spans = updates.map { |(_, _, elapsed)| elapsed }
       assert_in_delta 0.0, elapsed_spans.first, 1e-9, "the first Update is the priming one"
@@ -212,22 +215,33 @@ class GameTickTest < Minitest::Test
         assert_in_delta elapsed_spans.take(index).sum, total, 1e-9,
                         "Update #{index} must see the total accumulated before its own step"
       end
-      assert_in_delta step * 4, updates.map { |(_, _, elapsed)| elapsed }.sum, 1e-9
+      assert_in_delta step * (updates.length - 1), elapsed_spans.sum, 1e-9
     end
   end
 
   # `V_0` starts true and is ANDed with `suppressDraw` after each Update; the field is cleared in
   # the same breath, so exactly one frame's draw is skipped.
+  #
+  # The claim is about the **draw**, not the update count, and it is written that way because a
+  # fixed-step tick that overruns its budget catches up by running `Update` more than once. This
+  # assertion used to be `assert_equal [:update]`, and on a host at load average 20 it measured
+  # `[:update, :update]` -- the loop doing exactly what XNA's does. What is invariant is that the
+  # suppressed tick draws **not at all** and the next one draws **once**, whatever either owes in
+  # updates.
   def test_suppress_draw_skips_exactly_the_next_tick_s_draw
     with_game do |game|
       game.Tick
       game.log.clear
       game.SuppressDraw
       game.Tick
-      assert_equal [:update], names(game.log)
+      suppressed = names(game.log)
+      assert_includes suppressed, :update
+      assert_equal %i[update], suppressed.uniq, "the suppressed tick performs no draw step at all"
       game.log.clear
       game.Tick
-      assert_equal %i[update begin_draw draw end_draw], names(game.log)
+      drawn = names(game.log)
+      assert_equal %i[begin_draw draw end_draw], drawn.reject { |name| name == :update }
+      assert_includes drawn, :update
     end
   end
 

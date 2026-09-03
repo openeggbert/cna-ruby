@@ -173,26 +173,38 @@ expands it the way the System V classification says it travels.
 CNA ABI counts above are measured on **two admitted encoded versions** cross-verified across both
 header roots. **No CNA source was changed and no new native binary was built.**
 
-Suite **1735 runs / 52228 assertions**, zero failures, and 27 skips under the default HEADLESS
-artifact at Foundation 98 — every one a renderer capability or fixture that artifact does not have:
-compiled effects, volume storage and cube-face storage. The same 1735 runs are green under both real
-renderer artifacts on the same day, 52252 assertions and 20 skips on `OPENGL33` and 52334 assertions
-and **three** skips on the compiled-effects build, with `SDL_VIDEODRIVER=x11` — which Foundation 81
-measured to be load-bearing rather than decorative. Suite totals are the one measurement here that
-no report writes, so they are quoted as a dated observation rather than as current state.
+The suite's own totals are **not** in that block and are no longer quoted here either. They used to
+be a hand-written paragraph — the one measurement in this document that no report wrote — and they
+had gone eleven milestones stale. `tools/run_qualification.rb` runs `rake test` once on each of the
+three qualified artifacts and writes the totals to `docs/generated/qualification-report.json`, and
+`test/test_qualification_report.rb` compares every field of that report against the report it was
+derived from. Read the numbers there. They are deliberately not mirrored into the scoreboard block:
+that block is checked by a test the qualification tool's own suite runs execute, and a fact taken
+from the report those runs are producing would be circular. Skip counts differ by artifact because
+each has different capabilities — compiled effects, volume storage and cube-face storage.
 
-Run the artifact suites against **one long-lived `Xvfb`**, not `xvfb-run -a` per invocation:
+To run an artifact suite by hand, give it a **private, fresh `Xvfb`** and `SDL_VIDEODRIVER=x11`:
 
 ```sh
 Xvfb :77 -screen 0 1280x800x24 &
 DISPLAY=:77 SDL_VIDEODRIVER=x11 CNA_NATIVE_LIBRARY=~/deps/cna-c-abi-0.21.0-opengl33/libcna_c_api.so rake test
 ```
 
-`xvfb-run -a` over a full suite intermittently loses its server mid-run and a handful of games fail
-to create with `AcquireSubsystem(Video) failed: x11 not available` — a different handful each time,
-which is what identifies it as the harness rather than the binding. Leave `CNA_HEADERS` pointing at
-the canonical `cna-c-abi-0.21.0` include tree: the renderer artifacts ship a library, not headers,
-and repointing it fails the ABI gate with `canonical header not found`.
+Never point it at an inherited `DISPLAY`: two of the three artifacts really do create windows.
+Leave `CNA_HEADERS` pointing at the canonical `cna-c-abi-0.21.0` include tree — the renderer
+artifacts ship a library, not headers, and repointing it fails the ABI gate with `canonical header
+not found`.
+
+Expect an intermittent `AcquireSubsystem(Video) failed: x11 not available` on the windowed
+artifacts: a small, varying number of the games fail to create, a different handful each run, and
+every affected test passes on its own immediately afterwards. It reproduces against a fresh `Xvfb`,
+against one shared by two consecutive suites and with `-maxclients 2048`, so it is the display
+refusing an open under churn rather than a client limit or a server lifetime. It also produces
+collateral that looks nothing like itself — a game that never came up can fail an ordinary assertion
+with no error of its own. `tools/run_qualification.rb` classifies every problem block against that
+signature, retries an artifact up to three times on a brand-new display, keeps **every** attempt in
+the report and qualifies on a clean one; anything it cannot attribute to the flake is `unexplained`
+and fails the guard.
 
 ## Game is complete, and so is the whole Audio namespace
 

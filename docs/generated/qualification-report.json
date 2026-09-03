@@ -1,1156 +1,190 @@
 {
-  "schemaVersion": 1,
-  "milestone": "Foundations 34-39",
-  "complete": true,
-  "date": "2026-08-25",
-  "ruby": "ruby 3.3.8 (2025-04-09 revision b200bad6cd) [x86_64-linux-gnu]",
-  "rubyEngine": "ruby",
-  "fiddle": "1.1.2",
-  "rbs": "3.4.0 validated",
-  "bundler": "2.6.7 bundle check passed",
-  "rake": "13.2.1",
-  "environment": {
-    "systemRubyPresent": false,
-    "interpreterSource": "relocated pinned Debian ruby3.3 3.3.8-2 packages under ~/deps/ruby-3.3-debian",
-    "interpreterMatchesPreviousMilestone": true,
-    "nativeLibraryPreservedFrom": "/tmp/cna-python-m8-build2/modules/c-api/libcna_c_api.so",
-    "nativeLibraryPath": "/home/robertvokac/deps/cna-c-abi-0.7.0/libcna_c_api.so",
-    "nativeLibraryContentUnchanged": true,
-    "headersVerifiedAgainstCnaRevision": "a09196a6477f69a7a57c8364f990658d31531a5b",
-    "headerFilesCompared": 59,
-    "headerMismatches": 0,
-    "projectSourceOnRubylib": false,
-    "reusedFoundation14Toolchain": true,
-    "nativeLibrarySha256": "c62949d23d3745964f5e557a06665875621ed4cb6e2930e3f282afd5911f2dcb",
-    "cnaTestPng": "/rv/data/development/github.com/openeggbert/_bindings/cna-ruby-template/Content/logo.png",
-    "cnaTestPngConfigured": true,
-    "environmentDriftAfterRun": "none; interpreter 3.3.8, fiddle 1.1.2, rbs 3.4.0, library SHA-256 c62949d2..., CNA_TEST_PNG SHA-256 66643910... and the template source tree hash effe1986... all re-verified identical at the end of the run",
-    "pathOnlyProvenanceDelta": "nativeLibraryPreservedFrom records the original disposable /tmp build path; the artifact now lives at nativeLibraryPath with unchanged content hash. No /tmp path was recreated.",
-    "reusedFoundation15Environment": true,
-    "cnaTestPngSha256": "66643910d4ca53075ebd096a41671118df7f1ff15016d8bbbc9f8f38d055f989",
-    "reusedFoundation19Environment": true,
-    "reusedFoundation33Environment": true
-  },
-  "gem": {
-    "GEM_FILENAME": "cna-ruby-0.1.0.dev0.gem",
-    "GEM_SHA256": "a4e033ce27dace255e1a73aff98b21c6e5ac2e203f9c5536e6b549f90e89d632",
-    "GEM_ENTRIES": 56,
-    "FORBIDDEN_ENTRIES": 0,
-    "NATIVE_LIBRARIES_BUNDLED": 0,
-    "DEVELOPER_PATH_LEAKS": 0,
-    "deterministic": "built twice, identical SHA-256"
-  },
-  "native": {
-    "abi": "0.7.0",
-    "sourceRevision": "a09196a6477f69a7a57c8364f990658d31531a5b",
-    "librarySha256": "c62949d23d3745964f5e557a06665875621ed4cb6e2930e3f282afd5911f2dcb",
-    "platform": "Linux x86-64",
-    "renderer": "HEADLESS",
-    "audio": "NULL"
-  },
-  "tests": {
-    "runs": 953,
-    "assertions": 43359,
-    "failures": 0,
-    "errors": 0,
-    "skips": 0
-  },
-  "strict": {
-    "TARGET_TYPES": 141,
-    "TARGET_MEMBERS": 1768,
-    "TOTAL_DIAGNOSTICS": 298,
-    "COMPLETE_TYPES": 135,
-    "PARTIAL_TYPES": 6,
-    "MISSING_TYPES": 116,
-    "MISSING_MEMBER": 130,
-    "ALLOWLIST_ENTRIES": 0,
-    "UNMEASURED_STRUCTURAL_CATEGORY": 0,
-    "PROPERTY_MAPPING_MISMATCH": 1,
-    "OVERLOAD_MAPPING_MISMATCH": 51,
-    "everyOtherStructuralCategory": 0
-  },
-  "gamepadClosure": {
-    "sourceTypes": 10,
-    "clrIdentities": 129,
-    "expectedRubyIdentities": 126,
-    "allLocalDiagnostics": 0,
-    "typeMatrix": {
-      "Buttons": [
-        26,
-        25,
-        25,
-        "flags enum"
-      ],
-      "GamePad": [
-        4,
-        4,
-        4,
-        "static sealed class"
-      ],
-      "GamePadButtons": [
-        17,
-        17,
-        17,
-        "struct"
-      ],
-      "GamePadCapabilities": [
-        26,
-        26,
-        26,
-        "struct"
-      ],
-      "GamePadDPad": [
-        10,
-        10,
-        10,
-        "struct"
-      ],
-      "GamePadDeadZone": [
-        4,
-        3,
-        3,
-        "enum"
-      ],
-      "GamePadState": [
-        15,
-        15,
-        15,
-        "struct"
-      ],
-      "GamePadThumbSticks": [
-        8,
-        8,
-        8,
-        "struct"
-      ],
-      "GamePadTriggers": [
-        8,
-        8,
-        8,
-        "struct"
-      ],
-      "GamePadType": [
-        11,
-        10,
-        10,
-        "enum"
-      ]
-    }
-  },
-  "vertexClosure": {
-    "sourceTypes": 3,
-    "clrIdentities": 37,
-    "expectedRubyIdentities": 35,
-    "allLocalDiagnostics": 0,
-    "typeMatrix": {
-      "VertexElement": [
-        10,
-        10,
-        10,
-        "struct/value object"
-      ],
-      "VertexElementFormat": [
-        13,
-        12,
-        12,
-        "non-flags Int32 enum"
-      ],
-      "VertexElementUsage": [
-        14,
-        13,
-        13,
-        "non-flags Int32 enum"
-      ]
-    }
-  },
-  "displayOrientationClosure": {
-    "sourceTypes": 1,
-    "clrIdentities": 5,
-    "expectedRubyIdentities": 4,
-    "targetRubyIdentities": 4,
-    "localDiagnostics": 0,
-    "kind": "flags enum",
-    "underlyingType": "System.Int32",
-    "validMask": "0x7"
-  },
-  "graphicsDeviceStatusClosure": {
-    "sourceTypes": 1,
-    "clrIdentities": 4,
-    "expectedRubyIdentities": 3,
-    "targetRubyIdentities": 3,
-    "localDiagnostics": 0,
-    "kind": "enum",
-    "underlyingType": "System.Int32",
-    "flags": false,
-    "values": {
-      "Normal": 0,
-      "Lost": 1,
-      "NotReset": 2
-    },
-    "valueStorageExposed": false,
-    "graphicsDevicePropertyImplemented": false,
-    "graphicsDeviceMissingMemberIdentities": 54
-  },
-  "graphicsProfileClosure": {
-    "sourceTypes": 1,
-    "clrIdentities": 3,
-    "expectedRubyIdentities": 2,
-    "targetRubyIdentities": 2,
-    "localDiagnostics": 0,
-    "kind": "enum",
-    "underlyingType": "System.Int32",
-    "flags": false,
-    "values": {
-      "Reach": 0,
-      "HiDef": 1
-    },
-    "valueStorageExposed": false,
-    "graphicsDevicePropertyImplemented": false,
-    "graphicsDeviceManagerPropertyImplemented": false,
-    "graphicsDeviceConstructorChanged": false,
-    "hardwareProfileDetectionImplemented": false
-  },
-  "viewportClosure": {
-    "sourceTypes": 1,
-    "referenceIdentities": 14,
-    "expectedRubyIdentities": 14,
-    "targetBefore": 11,
-    "targetAfter": 14,
-    "localDiagnosticsBefore": 5,
-    "localDiagnosticsAfter": 0,
-    "statusBefore": "PARTIAL",
-    "statusAfter": "COMPLETE",
-    "newIdentities": [
-      "Project",
-      "Unproject",
-      "TitleSafeArea"
-    ],
-    "managedOnly": true,
-    "graphicsDeviceViewportSetterImplemented": false,
-    "nativeProjectionImplemented": false
-  },
-  "clearOptionsClosure": {
-    "sourceTypes": 1,
-    "referenceIdentities": 4,
-    "expectedRubyIdentities": 3,
-    "targetRubyIdentities": 3,
-    "localDiagnostics": 0,
-    "kind": "enum",
-    "underlyingType": "System.Int32",
-    "flags": true,
-    "values": {
-      "Target": 1,
-      "DepthBuffer": 2,
-      "Stencil": 4
-    },
-    "validMask": "0x7",
-    "xnaNamedZeroPresent": false,
-    "namedNonePresent": false,
-    "namedDefaultPresent": false,
-    "namedAllPresent": false,
-    "valueStorageExposed": false,
-    "graphicsDeviceClearOverloadsImplemented": false,
-    "nativeMappingImplemented": false
-  },
-  "depthFormatClosure": {
-    "sourceTypes": 1,
-    "referenceIdentities": 5,
-    "expectedRubyIdentities": 4,
-    "targetRubyIdentities": 4,
-    "localDiagnostics": 0,
-    "kind": "enum",
-    "underlyingType": "System.Int32",
-    "flags": false,
-    "values": {
-      "None": 0,
-      "Depth16": 1,
-      "Depth24": 2,
-      "Depth24Stencil8": 3
-    },
-    "valueStorageExposed": false,
-    "depth24Stencil8IsFlagsComposition": false,
-    "runtimeEnumFlags": false,
-    "runtimeEnumMask": 0,
-    "graphicsDeviceManagerPropertyImplemented": false,
-    "graphicsAdapterImplemented": false,
-    "presentationParametersImplemented": false,
-    "renderTargetImplemented": false,
-    "depthStencilStateImplemented": false,
-    "nativeMappingImplemented": false,
-    "gpuDepthFormatSupportClaimed": false,
-    "stencilSupportClaimed": false
-  },
-  "primitiveTypeClosure": {
-    "sourceTypes": 1,
-    "referenceIdentities": 5,
-    "expectedRubyIdentities": 4,
-    "targetRubyIdentities": 4,
-    "localDiagnostics": 0,
-    "kind": "enum",
-    "underlyingType": "System.Int32",
-    "flags": false,
-    "values": {
-      "TriangleList": 0,
-      "TriangleStrip": 1,
-      "LineList": 2,
-      "LineStrip": 3
-    },
-    "valueStorageExposed": false,
-    "xna31Direct3d9OrderingUsed": false,
-    "xna31DroppedLiteralsPresent": {
-      "PointList": false,
-      "TriangleFan": false
-    },
-    "graphicsDeviceDrawMembersImplemented": false,
-    "graphicsDeviceDrawOverloadsDeferred": 9,
-    "graphicsDeviceDrawMemberNamesDeferred": [
-      "DrawPrimitives",
-      "DrawIndexedPrimitives",
-      "DrawInstancedPrimitives",
-      "DrawUserPrimitives",
-      "DrawUserIndexedPrimitives"
-    ],
-    "graphicsDevicePublicInstanceMethods": [
-      "IsDisposed",
-      "Viewport",
-      "Clear"
-    ],
-    "rendererTopologyMappingImplemented": false,
-    "nativeMappingImplemented": false,
-    "managedOnly": true,
-    "reverseEdgesFromSelectedPartialRemainder": [
-      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawPrimitives (1 overload)",
-      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawIndexedPrimitives (1 overload)",
-      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawInstancedPrimitives (1 overload)",
-      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawUserIndexedPrimitives (4 overloads)",
-      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DrawUserPrimitives (2 overloads)"
-    ],
-    "onlyReferenceUserIsGraphicsDevice": true
-  },
-  "focusedManaged": {
-    "type": "Microsoft.Xna.Framework.Graphics.PrimitiveType",
-    "file": "test/test_primitive_type.rb",
-    "nativeLibraryUnset": true,
-    "runs": 11,
-    "assertions": 205,
-    "failures": 0,
-    "errors": 0,
-    "skips": 0
-  },
-  "verifier": {
-    "runs": 113,
-    "assertions": 2212,
-    "failures": 0
-  },
-  "rbsRuntimeConsistency": "PASS; rbs 3.4.0 validate clean, 21 runs / 3601 assertions",
-  "behavior": {
-    "OBSERVATIONS": 473,
-    "ASSERTIONS": 473,
-    "FAILURES": 0,
-    "PURE_XNA_DERIVED": 374,
-    "RUBY_MAPPING_QUALIFICATION": 99,
-    "mergeMethod": "documented deterministic replay; the upstream source 398d0201... is still absent, so import_behavior_corpus.rb was extended but not executed. Every merge proved byte-preserving re-serialisation of the pre-merge corpus first."
-  },
-  "nativeAbi": {
-    "BOUND_FUNCTIONS": 39,
-    "SIGNATURE_MEASUREMENTS": 124,
-    "C_LAYOUT_MEASUREMENTS": 290,
-    "RUBY_LAYOUT_MEASUREMENTS": 290,
-    "CALLBACKS": 2,
-    "CONSTANTS": 59,
-    "MISSING_HEADER_SYMBOLS": 0,
-    "MISSING_LIBRARY_SYMBOLS": 0,
-    "ABI_MISMATCHES": 0,
-    "cnaSourceChanged": false,
-    "newNativeBindingsAdded": 0
-  },
-  "gamepadNative": {
-    "getState": "VERIFIED_NATIVE_ROUTE; disconnected HEADLESS path verified; positive state HARDWARE_PENDING",
-    "getStateDeadZones": "VERIFIED_NATIVE_ROUTE for None, IndependentAxes and Circular; positive analog paths HARDWARE_PENDING",
-    "getCapabilities": "VERIFIED_NATIVE_ROUTE; disconnected all-false snapshot verified; positive flags HARDWARE_PENDING",
-    "setVibration": "VERIFIED_NATIVE_ROUTE; safe all-off returned false; physical actuation HARDWARE_PENDING",
-    "controllerConnected": false,
-    "playersQualified": 4,
-    "stateCycles": 50,
-    "capabilityCycles": 20,
-    "wrongThread": "PASS",
-    "generationReselection": "PASS"
-  },
-  "regression": {
-    "nativeIntegration": {
-      "runs": 14,
-      "assertions": 528,
-      "failures": 0,
-      "errors": 0,
-      "skips": 0
-    },
-    "nativeStress": {
-      "crashes": 0,
-      "observedUseAfterFree": 0,
-      "observedDoubleFree": 0,
-      "mouseGetStateCycles": 50,
-      "gamePadGetStateCycles": 50,
-      "gamePadCapabilityCycles": 20,
-      "ownerThreadRetry": "PASS",
-      "mouseWrongThread": "PASS",
-      "gamePadWrongThread": "PASS",
-      "failedNativeCreation": "PASS",
-      "callbackException": "PASS",
-      "gamePadVibrationStress": "NOT_RUN_UNKNOWN_HARDWARE",
-      "sanitizerStatus": "NOT_RUN"
-    },
-    "gamePadNative": {
-      "players": 4,
-      "controllerConnected": false,
-      "vibrationRouteApplied": false,
-      "physicalVibration": "HARDWARE_PENDING"
-    },
-    "leakOnly": "PASS"
-  },
-  "maintainedTemplate": {
-    "head": "42ae209b8b4fd175b7b1e5de43d895083b81877b",
-    "sourceChanged": "NO",
-    "sourceTreeSha256": "effe1986e3e2e4dbd4ed3a8b1bbbb31da832a9ee13b2b792d37e062a697c1663",
-    "sourceTreeSha256RecipeVerified": true,
-    "sourceTreeSha256Recipe": "for every git-tracked file in `git ls-files | sort` order emit one LF-terminated `<sha256> <path>` line with a single ASCII space, then SHA-256 the whole byte stream including the final newline",
-    "maintained60": "PASS",
-    "maintained600": "PASS",
-    "exactGem60": "PASS",
-    "exactGem600": "PASS",
-    "worktreeClean": true,
-    "note": "bundle exec created an untracked Gemfile.lock during the maintained runs; it was removed and the template worktree ends clean"
-  },
-  "isolatedExactGemConsumer": {
-    "gemHome": "/home/robertvokac/deps/cna-ruby-iso-f16",
-    "reusedStandingGemHome": true,
-    "installedVersion": "0.1.0.dev0",
-    "templateFrames60": "PASS",
-    "templateFrames600": "PASS",
-    "consumerCanary": "PASS"
+  "schemaVersion": 2,
+  "generatedBy": "tools/run_qualification.rb",
+  "historicalRecord": "docs/qualification-foundations-34-39.json",
+  "milestone": "Foundation 98",
+  "date": "2026-09-03",
+  "toolchain": {
+    "ruby": "ruby 3.3.8 (2025-04-09 revision b200bad6cd) [x86_64-linux-gnu]",
+    "rubyEngine": "ruby",
+    "fiddle": "1.1.2",
+    "rbs": "3.4.0",
+    "bundler": "2.6.7",
+    "rake": "13.2.1",
+    "systemRubyPresent": false
   },
   "git": {
     "branch": "develop",
-    "originDevelop": "80c51c295baa70aab353af1e31d78541e4fbee7f",
-    "startingHead": "80c51c295baa70aab353af1e31d78541e4fbee7f",
-    "startingWorktree": "clean",
-    "localCommitsAhead": 7,
-    "diffCheck": "PASS",
-    "committed": true,
-    "pushed": false,
-    "cnaRepositoryChanged": false,
-    "siblingWorktreesTouched": false,
-    "commits": [
-      "7950c3d feat: project Collection<T> as the mutable BCL base",
-      "bbe2b65 feat: complete GameComponentCollection and correct the signature graph",
-      "e435afc feat: collapse System.IDisposable to no Ruby constant",
-      "c9aea52 feat: own Components, Services and the managed component engine",
-      "379ce7f feat: complete GameComponent and close the component lifecycle",
-      "1661d8f feat: measure the member-level half of the dependency graph",
-      "docs: record the Foundations 34-39 qualified state (this commit)"
-    ]
+    "head": "ee2dae78303065302e873f2a9bcc7d094e2a3d08",
+    "worktreeClean": false
+  },
+  "artifacts": [
+    {
+      "id": "HEADLESS",
+      "library": "/home/robertvokac/deps/cna-c-abi-0.21.0/libcna_c_api.so",
+      "librarySha256": "c32bfbd307d695664f906ccf2834ec3f9ebc240fa388d544ac21ee3ebaeb731b",
+      "opensADisplay": false,
+      "suite": {
+        "runs": 1749,
+        "assertions": 52233,
+        "failures": 0,
+        "errors": 0,
+        "skips": 41,
+        "xDisplayAcquisitionFlakes": 0,
+        "unexplained": [
+
+        ]
+      }
+    },
+    {
+      "id": "OPENGL33",
+      "library": "/home/robertvokac/deps/cna-c-abi-0.21.0-opengl33/libcna_c_api.so",
+      "librarySha256": "f7da256097338aacd77cd72eb778e8ab5d80525dd16fddac7cdd9a1885343d5c",
+      "opensADisplay": true,
+      "suite": {
+        "runs": 1749,
+        "assertions": 52243,
+        "failures": 0,
+        "errors": 4,
+        "skips": 34,
+        "xDisplayAcquisitionFlakes": 4,
+        "unexplained": [
+
+        ]
+      }
+    },
+    {
+      "id": "OPENGLES3_FX",
+      "library": "/home/robertvokac/deps/cna-c-abi-0.21.0-opengles3-fx/libcna_c_api.so",
+      "librarySha256": "ab055b5e9c10b57d9755445951b118406bc065ca9eaa3fe4c0851a2352bb3e6e",
+      "opensADisplay": true,
+      "suite": {
+        "runs": 1749,
+        "assertions": 52329,
+        "failures": 0,
+        "errors": 3,
+        "skips": 17,
+        "xDisplayAcquisitionFlakes": 3,
+        "unexplained": [
+
+        ]
+      }
+    }
+  ],
+  "strict": {
+    "ALLOWLIST_ENTRIES": 0,
+    "BASE_MAPPING_MISMATCH": 0,
+    "BCL_EXCEPTION_BASES": 2,
+    "BCL_PROJECTED_IDENTITIES": 22,
+    "BCL_THROWN_EXCEPTIONS": 8,
+    "COMPLETE_TYPES": 203,
+    "ENUM_VALUE_MISMATCH": 0,
+    "EVENT_IDENTITIES": 42,
+    "EVENT_MAPPING_MISMATCH": 0,
+    "EVENT_OWNER_TYPES": 20,
+    "EXPECTED_RUBY_MEMBERS": 2915,
+    "EXPECTED_RUBY_TYPES": 257,
+    "FIELD_MAPPING_MISMATCH": 0,
+    "FLAGS_MAPPING_MISMATCH": 0,
+    "GENERIC_MAPPING_MISMATCH": 0,
+    "INTERFACE_MAPPING_MISMATCH": 0,
+    "INTERNAL_TYPE_LEAK": 0,
+    "LANGUAGE_MAPPING_MISMATCH": 0,
+    "METHOD_SIGNATURE_MAPPING_MISMATCH": 0,
+    "MISSING_MEMBER": 8,
+    "MISSING_TYPE": 52,
+    "MISSING_TYPES": 52,
+    "OPERATOR_MAPPING_MISMATCH": 0,
+    "OVERLOAD_MAPPING_MISMATCH": 5,
+    "PARAMETER_MAPPING_MISMATCH": 0,
+    "PARTIAL_TYPES": 2,
+    "PROPERTY_MAPPING_MISMATCH": 0,
+    "PUBLIC_NATIVE_FFI_LEAK": 0,
+    "RAW_HANDLE_LEAK": 0,
+    "REFERENCE_MEMBERS": 2964,
+    "REFERENCE_TYPES": 257,
+    "RETURN_MAPPING_MISMATCH": 0,
+    "TARGET_MEMBERS": 2520,
+    "TARGET_TYPES": 205,
+    "TOTAL_DIAGNOSTICS": 65,
+    "TYPE_KIND_MISMATCH": 0,
+    "UNEXPECTED_MEMBER": 0,
+    "UNEXPECTED_TYPE": 0,
+    "UNMEASURED_STRUCTURAL_CATEGORY": 0,
+    "schemaVersion": 1
   },
   "remainingPartialTypes": {
-    "count": 6,
-    "names": [
-      "Microsoft.Xna.Framework.Game",
-      "Microsoft.Xna.Framework.GraphicsDeviceManager",
-      "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
-      "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-      "Microsoft.Xna.Framework.Graphics.SpriteBatch",
-      "Microsoft.Xna.Framework.Graphics.Texture2D"
-    ],
-    "gameMissingMembersBefore": 23,
-    "gameMissingMembersAfter": 21,
-    "gameMembersClosed": [
-      "Components",
-      "Services"
-    ],
-    "gameRemainder": "Tick, SuppressDraw, ResetElapsedTime, OnActivated, OnDeactivated, OnExiting, Dispose(Boolean), Finalize, ShowMissingRequirementMessage, LaunchParameters, InactiveSleepTime, IsMouseVisible, TargetElapsedTime, IsFixedTimeStep, Window, IsActive, Content, Activated, Deactivated, Exiting, Disposed - every one timing, activation, window, content or native disposal, none of it chipped at"
+    "count": 2,
+    "outstanding": {
+      "Microsoft.Xna.Framework.GraphicsDeviceManager": [
+        "Microsoft.Xna.Framework.GraphicsDeviceManager::FindBestDevice (1 overload)",
+        "Microsoft.Xna.Framework.GraphicsDeviceManager::CanResetDevice (1 overload)",
+        "Microsoft.Xna.Framework.GraphicsDeviceManager::RankDevices (1 overload)",
+        "Microsoft.Xna.Framework.GraphicsDeviceManager::OnPreparingDeviceSettings (1 overload)",
+        "Microsoft.Xna.Framework.GraphicsDeviceManager::PreparingDeviceSettings (1 overload)"
+      ],
+      "Microsoft.Xna.Framework.Graphics.GraphicsDevice": [
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::.ctor (1 overload)",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DisplayMode (1 overload)",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Adapter (1 overload)"
+      ]
+    }
   },
-  "nextMilestone": "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService as an abstract contract - the frontier's only partialDependencySatisfied candidate - and then the producer decision it forces, which is a new architecture question",
-  "batchName": "the managed XNA component lifecycle",
-  "pureManagedEnumBatchClosure": {
-    "batchName": "PURE_MANAGED_BATCH_A",
-    "completedTypes": 24,
-    "completedPublicIdentities": 109,
-    "clrIdentities": 133,
-    "syntheticValueStorageExcluded": 24,
-    "allLocalDiagnostics": 0,
-    "flagsEnums": [
-      "Microsoft.Xna.Framework.Graphics.BufferUsage",
-      "Microsoft.Xna.Framework.Graphics.ColorWriteChannels",
-      "Microsoft.Xna.Framework.Graphics.SetDataOptions"
+  "nativeAbi": {
+    "schemaVersion": 2,
+    "abiVersion": "0x00001500",
+    "abiVersionName": "0.21.0",
+    "admittedAbiVersions": [
+      "0.7.0",
+      "0.21.0"
     ],
-    "newNamespaces": {
-      "Microsoft::Xna::Framework::Audio": 4,
-      "Microsoft::Xna::Framework::Media": 3
-    },
-    "runtimeEnumPolicyChanged": false,
-    "cnaAbiChanged": false,
-    "partialTypeMembersAdded": 0,
-    "typeMatrix": {
-      "Microsoft.Xna.Framework.Audio.AudioChannels": {
-        "clrIdentities": 3,
-        "expectedRubyIdentities": 2,
-        "targetRubyIdentities": 2,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "Mono": 1,
-          "Stereo": 2
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Audio.AudioStopOptions": {
-        "clrIdentities": 3,
-        "expectedRubyIdentities": 2,
-        "targetRubyIdentities": 2,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "AsAuthored": 0,
-          "Immediate": 1
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Audio.MicrophoneState": {
-        "clrIdentities": 3,
-        "expectedRubyIdentities": 2,
-        "targetRubyIdentities": 2,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "Started": 0,
-          "Stopped": 1
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Audio.SoundState": {
-        "clrIdentities": 4,
-        "expectedRubyIdentities": 3,
-        "targetRubyIdentities": 3,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "Playing": 0,
-          "Paused": 1,
-          "Stopped": 2
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.Blend": {
-        "clrIdentities": 14,
-        "expectedRubyIdentities": 13,
-        "targetRubyIdentities": 13,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "One": 0,
-          "Zero": 1,
-          "SourceColor": 2,
-          "InverseSourceColor": 3,
-          "SourceAlpha": 4,
-          "InverseSourceAlpha": 5,
-          "DestinationColor": 6,
-          "InverseDestinationColor": 7,
-          "DestinationAlpha": 8,
-          "InverseDestinationAlpha": 9,
-          "BlendFactor": 10,
-          "InverseBlendFactor": 11,
-          "SourceAlphaSaturation": 12
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.BlendFunction": {
-        "clrIdentities": 6,
-        "expectedRubyIdentities": 5,
-        "targetRubyIdentities": 5,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "Add": 0,
-          "Subtract": 1,
-          "ReverseSubtract": 2,
-          "Min": 3,
-          "Max": 4
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.BufferUsage": {
-        "clrIdentities": 3,
-        "expectedRubyIdentities": 2,
-        "targetRubyIdentities": 2,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": true,
-        "values": {
-          "None": 0,
-          "WriteOnly": 1
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.ColorWriteChannels": {
-        "clrIdentities": 7,
-        "expectedRubyIdentities": 6,
-        "targetRubyIdentities": 6,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": true,
-        "values": {
-          "None": 0,
-          "Red": 1,
-          "Green": 2,
-          "Blue": 4,
-          "Alpha": 8,
-          "All": 15
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.CompareFunction": {
-        "clrIdentities": 9,
-        "expectedRubyIdentities": 8,
-        "targetRubyIdentities": 8,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "Always": 0,
-          "Never": 1,
-          "Less": 2,
-          "LessEqual": 3,
-          "Equal": 4,
-          "GreaterEqual": 5,
-          "Greater": 6,
-          "NotEqual": 7
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.CubeMapFace": {
-        "clrIdentities": 7,
-        "expectedRubyIdentities": 6,
-        "targetRubyIdentities": 6,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "PositiveX": 0,
-          "NegativeX": 1,
-          "PositiveY": 2,
-          "NegativeY": 3,
-          "PositiveZ": 4,
-          "NegativeZ": 5
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.CullMode": {
-        "clrIdentities": 4,
-        "expectedRubyIdentities": 3,
-        "targetRubyIdentities": 3,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "None": 0,
-          "CullClockwiseFace": 1,
-          "CullCounterClockwiseFace": 2
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.EffectParameterClass": {
-        "clrIdentities": 6,
-        "expectedRubyIdentities": 5,
-        "targetRubyIdentities": 5,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "Scalar": 0,
-          "Vector": 1,
-          "Matrix": 2,
-          "Object": 3,
-          "Struct": 4
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.EffectParameterType": {
-        "clrIdentities": 11,
-        "expectedRubyIdentities": 10,
-        "targetRubyIdentities": 10,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "Void": 0,
-          "Bool": 1,
-          "Int32": 2,
-          "Single": 3,
-          "String": 4,
-          "Texture": 5,
-          "Texture1D": 6,
-          "Texture2D": 7,
-          "Texture3D": 8,
-          "TextureCube": 9
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.FillMode": {
-        "clrIdentities": 3,
-        "expectedRubyIdentities": 2,
-        "targetRubyIdentities": 2,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "Solid": 0,
-          "WireFrame": 1
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.IndexElementSize": {
-        "clrIdentities": 3,
-        "expectedRubyIdentities": 2,
-        "targetRubyIdentities": 2,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "SixteenBits": 0,
-          "ThirtyTwoBits": 1
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.PresentInterval": {
-        "clrIdentities": 5,
-        "expectedRubyIdentities": 4,
-        "targetRubyIdentities": 4,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "Default": 0,
-          "One": 1,
-          "Two": 2,
-          "Immediate": 3
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.RenderTargetUsage": {
-        "clrIdentities": 4,
-        "expectedRubyIdentities": 3,
-        "targetRubyIdentities": 3,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "DiscardContents": 0,
-          "PreserveContents": 1,
-          "PlatformContents": 2
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.SetDataOptions": {
-        "clrIdentities": 4,
-        "expectedRubyIdentities": 3,
-        "targetRubyIdentities": 3,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": true,
-        "values": {
-          "None": 0,
-          "Discard": 1,
-          "NoOverwrite": 2
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.StencilOperation": {
-        "clrIdentities": 9,
-        "expectedRubyIdentities": 8,
-        "targetRubyIdentities": 8,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "Keep": 0,
-          "Zero": 1,
-          "Replace": 2,
-          "Increment": 3,
-          "Decrement": 4,
-          "IncrementSaturation": 5,
-          "DecrementSaturation": 6,
-          "Invert": 7
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.TextureAddressMode": {
-        "clrIdentities": 4,
-        "expectedRubyIdentities": 3,
-        "targetRubyIdentities": 3,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "Wrap": 0,
-          "Clamp": 1,
-          "Mirror": 2
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Graphics.TextureFilter": {
-        "clrIdentities": 10,
-        "expectedRubyIdentities": 9,
-        "targetRubyIdentities": 9,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "Linear": 0,
-          "Point": 1,
-          "Anisotropic": 2,
-          "LinearMipPoint": 3,
-          "PointMipLinear": 4,
-          "MinLinearMagPointMipLinear": 5,
-          "MinLinearMagPointMipPoint": 6,
-          "MinPointMagLinearMipLinear": 7,
-          "MinPointMagLinearMipPoint": 8
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Media.MediaSourceType": {
-        "clrIdentities": 3,
-        "expectedRubyIdentities": 2,
-        "targetRubyIdentities": 2,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "LocalDevice": 0,
-          "WindowsMediaConnect": 4
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Media.MediaState": {
-        "clrIdentities": 4,
-        "expectedRubyIdentities": 3,
-        "targetRubyIdentities": 3,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "Paused": 2,
-          "Playing": 1,
-          "Stopped": 0
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      },
-      "Microsoft.Xna.Framework.Media.VideoSoundtrackType": {
-        "clrIdentities": 4,
-        "expectedRubyIdentities": 3,
-        "targetRubyIdentities": 3,
-        "kind": "enum",
-        "underlyingType": "System.Int32",
-        "flags": false,
-        "values": {
-          "Music": 0,
-          "Dialog": 1,
-          "MusicAndDialog": 2
-        },
-        "localDiagnostics": 0,
-        "valueStorageExposed": false,
-        "behaviorClassification": "PINNED_METADATA_COMPLETE"
-      }
-    },
-    "skippedCandidates": [
-      {
-        "name": "Microsoft.Xna.Framework.Input.Touch.TouchLocationState",
-        "rank": "25 of 26",
-        "expectedRubyIdentities": 4,
-        "reason": "hard batch ceiling is 25 newly completed types while 26 dependency-complete pure managed enum candidates existed; the Input.Touch closure is the only non-arbitrary deferral unit and splitting it would leave a half-open namespace",
-        "boundaryCategory": "BLOCKED_FOR_THIS_BATCH: batch upper bound / namespace closure integrity"
-      },
-      {
-        "name": "Microsoft.Xna.Framework.Input.Touch.GestureType",
-        "rank": "26 of 26",
-        "expectedRubyIdentities": 11,
-        "reason": "same Input.Touch closure; also the only remaining flags enum, and its dependency-complete sibling struct TouchPanelCapabilities should close with it",
-        "boundaryCategory": "BLOCKED_FOR_THIS_BATCH: batch upper bound / namespace closure integrity"
-      }
+    "headerRoots": [
+      "/home/robertvokac/deps/cna-c-abi-0.21.0/include",
+      "/home/robertvokac/deps/cna-c-abi-0.7.0/include"
+    ],
+    "library": "/home/robertvokac/deps/cna-c-abi-0.21.0/libcna_c_api.so",
+    "BOUND_FUNCTIONS": 503,
+    "SIGNATURE_MEASUREMENTS": 1796,
+    "C_LAYOUT_MEASUREMENTS": 1140,
+    "RUBY_LAYOUT_MEASUREMENTS": 1140,
+    "STRUCT_LAYOUTS": 66,
+    "CALLBACKS": 6,
+    "CONSTANTS": 137,
+    "ADMITTED_ABI_VERSIONS": 2,
+    "HEADER_ROOTS_VERIFIED": 2,
+    "CROSS_VERSION_MISMATCHES": 0,
+    "MISSING_HEADER_SYMBOLS": 0,
+    "MISSING_LIBRARY_SYMBOLS": 0,
+    "ABI_MISMATCHES": 0,
+    "missingHeaderSymbols": [
+
+    ],
+    "missingLibrarySymbols": [
+
     ]
   },
-  "milestonesInThisRun": [
-    "Foundation 34 - System.Collections.ObjectModel.Collection`1 projected as CNA::Runtime::Collection, the mutable BCL base",
-    "Foundation 35 - GameComponentCollection complete; the signature graph's unbounded-prefix defect corrected in both directions",
-    "Foundation 36 - System.IDisposable recorded as a structural collapse with no Ruby constant",
-    "Foundation 37 - Game.Components, Game.Services and the private managed component engine",
-    "Foundation 38 - GameComponent complete, with the component pass of Game.Dispose",
-    "Foundation 39 - member-level dependency edges in the IL inventory, and the two frontier reports that consume them"
-  ],
-  "touchClosure": {
-    "sourceTypes": 3,
-    "clrIdentities": 19,
-    "expectedRubyIdentities": 17,
-    "targetRubyIdentities": 17,
-    "allLocalDiagnostics": 0,
-    "touchLocationState": {
-      "Invalid": 0,
-      "Released": 1,
-      "Pressed": 2,
-      "Moved": 3
-    },
-    "gestureTypeFlags": true,
-    "gestureTypeMask": "0x3FF",
-    "gestureTypeNamedZero": "declared in metadata",
-    "touchPanelCapabilities": "CLR default struct value; XNA declares no public constructor",
-    "deviceQueried": false,
-    "deferred": [
-      "TouchPanel",
-      "TouchCollection",
-      "TouchLocation",
-      "GestureSample"
-    ]
-  },
-  "interfaceContracts": {
-    "sourceTypes": 6,
-    "expectedRubyIdentities": 21,
-    "targetRubyIdentities": 21,
-    "allLocalDiagnostics": 0,
-    "projection": "Ruby modules whose members raise NotImplementedError, as IPackedVector already does",
-    "includedIntoAnyConcreteType": false,
-    "includedIntoAnyPartialRuntimeType": false,
-    "eventBearing": [
-      "Microsoft.Xna.Framework.IUpdateable",
-      "Microsoft.Xna.Framework.IDrawable"
-    ],
-    "deferred": [],
-    "deferralReason": "resolved by Foundation 20: IUpdateable and IDrawable joined the cluster once one CLR event gained one Ruby event-reader identity"
+  "behavior": {
+    "OBSERVATIONS": 526,
+    "ASSERTIONS": 526,
+    "FAILURES": 0,
+    "provenanceCounts": {
+      "PURE_XNA_DERIVED": 390,
+      "RUBY_MAPPING_QUALIFICATION": 136
+    }
   },
   "dependencyFrontier": {
-    "dependencyCompleteCandidates": 19,
+    "dependencyCompleteCandidates": 3,
     "consumableCandidates": 0,
     "selectionRoute": "none-consumable",
-    "selectedNext": null,
-    "partialDependencySatisfiedCandidates": [
-      "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
-    ],
-    "ilOnlyBlockedCandidates": 13,
-    "ilOnlyBlockedButSignatureComplete": 6,
-    "candidatePolicyRelaxed": false,
-    "drawableGameComponent": "deferred: its Initialize throws InvalidOperationException(MissingGraphicsDeviceService) and no producer for IGraphicsDeviceService exists"
-  },
-  "eventProjection": {
-    "EVENT_IDENTITIES": 9,
-    "EVENT_OWNER_TYPES": 4,
-    "concreteOwners": [
-      "Microsoft.Xna.Framework.GameComponentCollection",
-      "Microsoft.Xna.Framework.GameComponent"
-    ],
-    "EVENT_SUPPORT_TYPE": "CNA::Runtime::Event",
-    "EVENT_MAPPING_MISMATCH": 0
-  },
-  "bclProjection": {
-    "BCL_PROJECTED_IDENTITIES": 10,
-    "BCL_EXCEPTION_BASES": 2,
-    "BCL_THROWN_EXCEPTIONS": 6,
-    "STRUCTURAL_COLLAPSES": 2,
-    "added": [
-      "System.Collections.ObjectModel.Collection`1 -> CNA::Runtime::Collection",
-      "System.IDisposable -> no Ruby constant"
-    ],
-    "inventoryReproducedByteForByte": true,
-    "assemblySha256": "5634668d4775b0113f08ea31093b281fea69bfc4e99227f5ca761b4ed98acc63"
+    "selectedNext": null
   },
   "ilProvenance": {
     "REFERENCE_TYPES": 257,
     "TYPES_WITH_IL": 257,
-    "TYPES_WITHOUT_IL": 0,
-    "TYPES_NATIVE_REACHABLE": 77,
-    "NATIVE_ENTRY_POINT_METHODS": 254,
-    "MEMBER_LEVEL_EDGES": 3271,
-    "memberLevelEdgesArePurelyAdditive": true,
-    "gameAssemblySha256": "b5dffdd8125abef2a4507ba4e1d2f11062143f0a63d48fe4f298b95ad746a1f0"
+    "TYPES_NATIVE_REACHABLE": 77
   },
-  "constructorFreeClasses": {
-    "rule": "a CLR class whose only constructor is internal projects with new made private; public non-constructibility is part of the contract and the internal path stays reachable through __send__",
-    "precedent": [
-      "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-      "Microsoft.Xna.Framework.Graphics.Texture"
-    ],
-    "completed": [
-      "Microsoft.Xna.Framework.Graphics.DisplayMode",
-      "Microsoft.Xna.Framework.Graphics.DisplayModeCollection",
-      "Microsoft.Xna.Framework.Graphics.ResourceCreatedEventArgs",
-      "Microsoft.Xna.Framework.Graphics.ResourceDestroyedEventArgs"
-    ],
-    "producersFabricated": 0
-  },
-  "committedMilestonesCarriedIn": [
-    {
-      "id": "Foundation 16",
-      "types": 24,
-      "identities": 109
-    },
-    {
-      "id": "Foundation 17",
-      "types": 3,
-      "identities": 17
-    },
-    {
-      "id": "Foundation 18",
-      "types": 4,
-      "identities": 11
-    },
-    {
-      "id": "Foundation 19",
-      "types": 0,
-      "identities": 0
-    },
-    {
-      "id": "Foundation 20",
-      "types": 2,
-      "identities": 10
-    },
-    {
-      "id": "Foundation 21",
-      "types": 0,
-      "identities": 0
-    }
-  ],
-  "nativeStress": {
-    "OBSERVED_UAF": 0,
-    "OBSERVED_DOUBLE_FREE": 0,
-    "OWNER_THREAD_RETRY": "PASS",
-    "FAILED_NATIVE_CREATION": "PASS",
-    "CALLBACK_EXCEPTION": "PASS",
-    "GAMEPAD_VIBRATION_STRESS": "NOT_RUN_UNKNOWN_HARDWARE",
-    "SANITIZER_STATUS": "NOT_RUN"
-  },
-  "gameHostCallbackOrderAudit": {
-    "method": "measured against the reviewed libcna_c_api.so, not read out of its header",
-    "cnaOrder": [
-      "initialize",
-      "load_content",
-      "begin_run",
-      "update",
-      "begin_draw",
-      "draw",
-      "end_draw",
-      "exiting",
-      "end_run",
-      "unload_content at destroy"
-    ],
-    "xnaOrder": [
-      "CreateDevice",
-      "Initialize",
-      "LoadContent when a device service exists",
-      "inRun = true",
-      "BeginRun",
-      "Update",
-      "loop",
-      "EndRun"
-    ],
-    "ordersAgree": true,
-    "doubleCall": "none: XNA's base Initialize calls LoadContent only when Services holds an IGraphicsDeviceService, a missing type with no Ruby key, so the guard is false and the host's callback is the only one",
-    "runOneFrameDeliversBeginRun": false,
-    "inRunFlagOwner": "CNA::Runtime::GameHost, as XNA keeps it in RunGame rather than in Initialize, so it survives a subclass that omits super",
-    "inRunFlagRaisedAfter": "LoadContent",
-    "recordedFutureBoundary": "a milestone that registers an IGraphicsDeviceService makes the LoadContent guard true and must resolve the resulting double call"
-  },
-  "rubySuperSemantics": {
-    "baseCallHelperInvented": false,
-    "hostInvokesVirtualMethodOnce": true,
-    "omittingSuperSuppressesTheBasePass": true,
-    "superRunsItOnce": true,
-    "superTwiceRunsTwoCompletePasses": true,
-    "provedIn": [
-      "test/test_game_components.rb via the protected hook",
-      "test/test_game_components.rb via the real native loop",
-      "tools/run_consumer_canary.rb against the installed gem"
-    ]
-  },
-  "externalConsumerCanary": {
-    "tool": "tools/run_consumer_canary.rb",
-    "gemHome": "/home/robertvokac/deps/cna-ruby-iso-f16",
-    "loadedFrom": "/home/robertvokac/deps/cna-ruby-iso-f16/gems/cna-ruby-0.1.0.dev0",
-    "workingTreeOnLoadPath": false,
-    "result": "CONSUMER_CANARY=pass",
-    "proves": [
-      "TestGame < Game and TestComponent < GameComponent defined outside CNA-Ruby",
-      "Components and Services stable identity, per Game, never shared",
-      "component add and remove with ComponentAdded/ComponentRemoved and the collection as sender",
-      "duplicate refusal and the read-only indexer",
-      "EnabledChanged and UpdateOrderChanged with same-value suppression",
-      "Initialize before the first Update; update ordering by UpdateOrder",
-      "subclass work before super, super, work after super",
-      "omitting super means the base component pass does not run and the host runs none behind it",
-      "add-after-running is initialised immediately",
-      "component disposal removes it from Components, raises Disposed, and repeats with no flag",
-      "Game.Dispose disposes every component it holds",
-      "no IDisposable constant, no base-call helper, no hook-bypassing mutation"
-    ]
-  },
-  "mappingLimitations": [
-    "GameComponent.Dispose: Ruby cannot give one method name two visibilities, so the public Dispose() and protected Dispose(bool) project to one public arity-dispatching method and the protected overload is publicly reachable. Both signature identities are retained in the static contract; the bodies differ only by GC.SuppressFinalize, which has no analogue.",
-    "GraphicsDeviceManager has no Dispose(): it is the one of twenty-nine IDisposable implementers that implements the member explicitly, and an explicit interface implementation projects to no member."
-  ],
-  "deliberatelyNotImplemented": [
-    "FrameworkDispatcher.Update() in Game.Update's base: the CNA host already drives that pump every frame, and calling it would impose the recorded dispatcher deviation on Game.Update, which XNA's does not have",
-    "doneFirstUpdate: a private field whose only readers are the native timing loop",
-    "HookDeviceEvents and the conditional LoadContent in Game.Initialize: both guarded by an IGraphicsDeviceService this binding cannot register",
-    "LaunchParameters, ContentManager, GameWindow and the clock in the Game constructor: each blocked on a missing type or on lifecycle CNA owns"
-  ],
   "capabilities": {
-    "CAPABILITIES": 93,
+    "CAPABILITIES": 153,
     "CAPABILITY_CONTRADICTIONS": 0
   }
 }

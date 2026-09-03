@@ -3359,7 +3359,7 @@ report = {
       "group" => "MOUSE_NATIVE", "provenance" => "CNA_NATIVE_INTEGRATION",
       "includedInPureTotals" => false,
       "evidence" => ["test/test_native_integration.rb", "docs/generated/native-stress-report.json",
-                     "docs/generated/qualification-report.json"]
+                     "docs/qualification-foundations-34-39.json"]
     },
     {
       "group" => "GAMEPAD_NATIVE", "provenance" => "CNA_NATIVE_INTEGRATION",
