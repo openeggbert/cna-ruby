@@ -21,7 +21,7 @@ module NativeSurfaceCensus
 
   # The census the repository last reviewed. `test_native_abi_gate.rb` compares the two, so this
   # file cannot drift from the manifest silently in either direction.
-  REVIEWED = { functions: 387, callbacks: 5, constants: 133, layouts: 63 }.freeze
+  REVIEWED = { functions: 390, callbacks: 5, constants: 133, layouts: 63 }.freeze
 end
 
 # The strict XNA scoreboard, for exactly the same reason and with exactly the same rule: a milestone
@@ -31,12 +31,12 @@ end
 # is the measurement; this is the reviewed expectation of it.
 module ReviewedScoreboard
   TARGET_TYPES = 200
-  TARGET_MEMBERS = 2377
+  TARGET_MEMBERS = 2382
   COMPLETE_TYPES = 198
   PARTIAL_TYPES = 2
   MISSING_TYPES = 57
-  MISSING_MEMBER = 41
-  OVERLOAD_MAPPING_MISMATCH = 17
+  MISSING_MEMBER = 36
+  OVERLOAD_MAPPING_MISMATCH = 15
   # Zero since Foundation 89 projected `GraphicsDevice::Viewport`'s setter. The one entry this
   # carried for its whole history was that property's `"override": { "set": false }`, and it was
   # never a Ruby limitation — see `test_api_verifier.rb`'s inverted guard.
@@ -51,7 +51,7 @@ module ReviewedScoreboard
   # unrelated tests should not each pin it as a literal.
   GRAPHICS_DEVICE_SURFACE = %i[
     IsDisposed Viewport Viewport= Clear Textures VertexTextures SamplerStates VertexSamplerStates
-    GraphicsProfile GraphicsDeviceStatus PresentationParameters
+    GraphicsProfile GraphicsDeviceStatus PresentationParameters Present Reset
     BlendState BlendState= DepthStencilState DepthStencilState= RasterizerState RasterizerState=
     BlendFactor BlendFactor= MultiSampleMask MultiSampleMask= ReferenceStencil ReferenceStencil=
     ScissorRectangle ScissorRectangle=
@@ -59,6 +59,31 @@ module ReviewedScoreboard
     SetRenderTarget SetRenderTargets GetRenderTargets
     DrawPrimitives DrawIndexedPrimitives DrawInstancedPrimitives
   ].sort.freeze
+
+  # **What the two partial types still owe, named once**, for the same reason the census counts are
+  # named once and with a stronger payoff. Ten test files each picked three members as "and these
+  # are still absent"; every milestone that closed one therefore edited ten unrelated files, and
+  # each of those files was checking a *sample* rather than the set. `outstanding` reads the real
+  # remainder out of the strict report, so a test that compares it with the list below asserts the
+  # whole thing: a member closed without review fails, and so does one that quietly reappears.
+  #
+  # Update these together with the milestone that moves them, never to make a red test green.
+  GRAPHICS_DEVICE_OUTSTANDING = %w[
+    .ctor Adapter DeviceLost DeviceReset DeviceResetting DisplayMode Dispose Disposing
+    DrawUserIndexedPrimitives DrawUserPrimitives Finalize GetBackBufferData
+    ResourceCreated ResourceDestroyed
+  ].sort.freeze
+
+  GRAPHICS_DEVICE_MANAGER_OUTSTANDING = %w[
+    CanResetDevice DeviceCreated DeviceDisposing DeviceReset DeviceResetting Dispose Disposed
+    FindBestDevice OnDeviceCreated OnDeviceDisposing OnDeviceReset OnDeviceResetting
+    OnPreparingDeviceSettings PreparingDeviceSettings RankDevices
+  ].sort.freeze
+
+  # The remainder as bare member names, sorted, so a test can compare it with a reviewed list.
+  def self.outstanding(strict, name)
+    partial_remainder(strict, name).map { |entry| entry[/::([^ ]+) /, 1] }.sort
+  end
 
   # The members a type still owes, or `[]` once the strict report calls it complete.
   #

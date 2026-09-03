@@ -92,6 +92,9 @@ CHECK_FN(cna_graphics_device_manager_destroy, CNA_Result, (CNA_GraphicsDeviceMan
 CHECK_FN(cna_graphics_device_get_viewport, CNA_Result, (CNA_Handle, CNA_Viewport*));
 CHECK_FN(cna_graphics_device_set_viewport, CNA_Result, (CNA_Handle, CNA_Viewport));
 CHECK_FN(cna_graphics_device_get_status, CNA_Result, (CNA_Handle, CNA_GraphicsDeviceStatus*));
+CHECK_FN(cna_graphics_device_present, CNA_Result, (CNA_Handle));
+CHECK_FN(cna_graphics_device_reset, CNA_Result, (CNA_Handle));
+CHECK_FN(cna_graphics_device_reset_with_parameters, CNA_Result, (CNA_Handle, const CNA_PresentationParameters*, const uint32_t*));
 CHECK_FN(cna_graphics_device_get_graphics_profile, CNA_Result, (CNA_Handle, CNA_GraphicsProfile*));
 CHECK_FN(cna_graphics_device_get_presentation_parameters, CNA_Result, (CNA_Handle, CNA_PresentationParameters*));
 CHECK_FN(cna_graphics_device_clear_options, CNA_Result, (CNA_Handle, CNA_ClearOptions, CNA_Color, float, int32_t));
@@ -495,6 +498,9 @@ int main(void) {
     SIGNATURE(cna_graphics_device_get_viewport, "CNA_Result|CNA_Handle,CNA_Viewport*");
     SIGNATURE(cna_graphics_device_set_viewport, "CNA_Result|CNA_Handle,CNA_Viewport");
     SIGNATURE(cna_graphics_device_get_status, "CNA_Result|CNA_Handle,CNA_GraphicsDeviceStatus*");
+    SIGNATURE(cna_graphics_device_present, "CNA_Result|CNA_Handle");
+    SIGNATURE(cna_graphics_device_reset, "CNA_Result|CNA_Handle");
+    SIGNATURE(cna_graphics_device_reset_with_parameters, "CNA_Result|CNA_Handle,const CNA_PresentationParameters*,const uint32_t*");
     SIGNATURE(cna_graphics_device_get_graphics_profile, "CNA_Result|CNA_Handle,CNA_GraphicsProfile*");
     SIGNATURE(cna_graphics_device_get_presentation_parameters, "CNA_Result|CNA_Handle,CNA_PresentationParameters*");
     SIGNATURE(cna_graphics_device_clear_options, "CNA_Result|CNA_Handle,CNA_ClearOptions,CNA_Color,float,int32_t");

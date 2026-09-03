@@ -54,7 +54,7 @@ class SamplerStateCollectionTest < Minitest::Test
     # ends an active EffectPass, and no Effect was projected then. Both halves have since landed,
     # and what this milestone claimed is unchanged: it added the two collections and nothing else.
     %w[BlendState DepthStencilState RasterizerState].each { |name| refute_includes remainder, name }
-    %w[DrawUserPrimitives Present Reset].each { |name| assert_includes remainder, name }
+    %w[DrawUserPrimitives GetBackBufferData Dispose].each { |name| assert_includes remainder, name }
     refute_includes FRONTIER.fetch("dependencyCompleteCandidates").map { |c| c.fetch("name") }, NAME
   end
 

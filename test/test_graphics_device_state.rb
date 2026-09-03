@@ -23,10 +23,10 @@ class GraphicsDeviceStateTest < Minitest::Test
   def test_the_slice_left_the_partial_remainder_and_the_rest_did_not
     remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME)
     SLICE.each { |member| refute_includes remainder.join(" "), "::#{member} ", member }
-    # The device is still partial, and these are some of what it still owes. `PresentationParameters`
-    # left this list in Foundation 90 with the other two answerable simple properties.
-    %w[DrawUserPrimitives Present Reset Adapter DisplayMode]
-      .each { |member| assert_includes remainder.join(" "), "::#{member} ", member }
+    # The device is still partial, and `ReviewedScoreboard` names the whole remainder once rather
+    # than each test naming a sample of it.
+    assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_OUTSTANDING,
+                 ReviewedScoreboard.outstanding(STRICT, NAME)
     assert_equal ReviewedScoreboard::PARTIAL_TYPES, STRICT.fetch("PARTIAL_TYPES")
   end
 
@@ -203,17 +203,19 @@ class GraphicsDeviceStateTest < Minitest::Test
     # The three device-buffer draw calls left this list when the draw slice landed; what is
     # still absent is the user-primitive families, which take the vertices as an argument.
     # `PresentationParameters`, `GraphicsProfile` and `GraphicsDeviceStatus` left this list in
-    # Foundation 90; `DisplayMode` and `Adapter` did not, and will not while CNA answers them with
-    # the no-display fallback.
-    %i[DrawUserPrimitives DrawUserIndexedPrimitives Present Reset Adapter
-       DisplayMode].each do |absent|
-      refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
+    # Foundation 90 and `Present`/`Reset` in Foundation 92; `DisplayMode` and `Adapter` did not, and
+    # will not while CNA answers them with the no-display fallback. Reading the list from
+    # `ReviewedScoreboard` is what stops it going stale a member at a time.
+    ReviewedScoreboard::GRAPHICS_DEVICE_OUTSTANDING.each do |absent|
+      next if absent == ".ctor"
+
+      refute G::GraphicsDevice.public_method_defined?(absent.to_sym), absent
     end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-    # The two buffer routes left this list when the binding slice landed, which is the same
-    # statement from the other side; nothing here presents or draws.
-    %w[cna_graphics_device_present cna_graphics_device_reset
-       cna_graphics_device_draw_user_primitives].each { |absent| refute_includes symbols, absent }
+    # The buffer, present and reset routes left this list when their own slices landed, which is the
+    # same statement from the other side; nothing *here* draws.
+    %w[cna_graphics_device_draw_user_primitives
+       cna_graphics_device_draw_user_indexed_primitives].each { |absent| refute_includes symbols, absent }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:layouts), CNA::Native::Layouts::STRUCTURES.length
   end

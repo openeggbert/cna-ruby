@@ -73,10 +73,9 @@ class GraphicsDeviceStatusTest < Minitest::Test
     refute_respond_to STATUS::Normal, :HasFlag
     refute_respond_to STATUS::Normal, :Reset
 
-    # The device property was selected by Foundation 90; the enum itself still adds nothing.
+    # The device property was selected by Foundation 90 and `Present`/`Reset` in Foundation 92;
+    # the enum itself still adds nothing.
     assert_includes G::GraphicsDevice.public_instance_methods(false), :GraphicsDeviceStatus
-    refute_includes G::GraphicsDevice.public_instance_methods(false), :Present
-    refute_includes G::GraphicsDevice.public_instance_methods(false), :Reset
     refute F.const_defined?(:GraphicsProfile, false)
     # Foundation 24 added PresentationParameters as a managed descriptor; it creates no device.
     assert G.const_defined?(:PresentationParameters, false)

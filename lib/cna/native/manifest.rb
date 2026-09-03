@@ -373,6 +373,15 @@ module CNA
         # `GraphicsDevice.DisplayMode` invented hardware to report, which is the same reason
         # `GraphicsAdapter` is not projected.
         signature("cna_graphics_device_get_status", T[:result], [T[:handle], pointer("CNA_GraphicsDeviceStatus")], ownership: "borrows device; caller output"),
+        # Presenting and resetting. `cna_graphics_device_present` takes neither a present rectangle
+        # nor an override window handle, which is why `Present`'s three-argument overload refuses
+        # both rather than ignoring them; `reset_with_parameters` takes a nullable adapter index,
+        # which is exactly "keep the current adapter".
+        signature("cna_graphics_device_present", T[:result], [T[:handle]], ownership: "borrows device"),
+        signature("cna_graphics_device_reset", T[:result], [T[:handle]], ownership: "borrows device; raises the device's resetting and reset events"),
+        signature("cna_graphics_device_reset_with_parameters", T[:result],
+                  [T[:handle], pointer("CNA_PresentationParameters", const: true), pointer("uint32_t", const: true)],
+                  ownership: "borrows device; copies the parameters; raises the device's resetting and reset events"),
         signature("cna_graphics_device_get_graphics_profile", T[:result], [T[:handle], pointer("CNA_GraphicsProfile")], ownership: "borrows device; caller output"),
         signature("cna_graphics_device_get_presentation_parameters", T[:result], [T[:handle], pointer("CNA_PresentationParameters")], ownership: "borrows device; caller-initialized versioned output"),
         # `Clear`'s three overloads all reach this one route. `cna_graphics_device_clear_rgba` was

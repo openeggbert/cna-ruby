@@ -21,7 +21,8 @@ class GraphicsDeviceRenderTargetsTest < Minitest::Test
     remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME).join(" ")
     %w[SetRenderTarget SetRenderTargets GetRenderTargets]
       .each { |member| refute_includes remainder, "::#{member} ", member }
-    %w[DrawUserPrimitives Present Reset Adapter].each { |member| assert_includes remainder, "::#{member} ", member }
+    assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_OUTSTANDING,
+                 ReviewedScoreboard.outstanding(STRICT, NAME)
   end
 
   class TargetGame < F::Game
@@ -261,7 +262,7 @@ class GraphicsDeviceRenderTargetsTest < Minitest::Test
     assert_includes symbols, "cna_graphics_device_set_render_targets"
     # The three device-buffer draw calls left this list when the draw slice landed; what is
     # still absent is the user-primitive families, which take the vertices as an argument.
-    %i[DrawUserPrimitives DrawUserIndexedPrimitives Present Reset]
+    %i[DrawUserPrimitives DrawUserIndexedPrimitives GetBackBufferData Dispose]
       .each { |absent| refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:layouts), CNA::Native::Layouts::STRUCTURES.length

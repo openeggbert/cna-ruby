@@ -28,7 +28,8 @@ class GraphicsDeviceClearTest < Minitest::Test
     refute_includes remainder, "::Clear "
     refute(STRICT.fetch("details").fetch("OVERLOAD_MAPPING_MISMATCH")
                  .any? { |entry| entry.include?("GraphicsDevice::Clear") })
-    %w[Present Reset DrawUserPrimitives].each { |member| assert_includes remainder, "::#{member} ", member }
+    assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_OUTSTANDING,
+                 ReviewedScoreboard.outstanding(STRICT, NAME)
   end
 
   def test_all_three_overloads_are_selected

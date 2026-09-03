@@ -33,8 +33,9 @@ class GraphicsDeviceDisplayPropertiesTest < Minitest::Test
     remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME).join(" ")
     %w[GraphicsProfile GraphicsDeviceStatus PresentationParameters]
       .each { |member| refute_includes remainder, "::#{member} ", member }
-    # The two the invented display data still blocks, and the families still to come.
-    %w[DisplayMode Adapter Present Reset].each { |member| assert_includes remainder, "::#{member} ", member }
+    # And the whole remainder, from `ReviewedScoreboard`, rather than a sample of it.
+    assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_OUTSTANDING,
+                 ReviewedScoreboard.outstanding(STRICT, NAME)
   end
 
   class PropertyGame < F::Game

@@ -20,9 +20,10 @@ class GraphicsDeviceDrawTest < Minitest::Test
     remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME).join(" ")
     %w[DrawPrimitives DrawIndexedPrimitives DrawInstancedPrimitives]
       .each { |member| refute_includes remainder, "::#{member} ", member }
-    # The user-primitive families are the draw calls that remain.
-    %w[DrawUserPrimitives DrawUserIndexedPrimitives Present Reset]
-      .each { |member| assert_includes remainder, "::#{member} ", member }
+    # And the whole remainder, from `ReviewedScoreboard`, rather than a sample of it: the
+    # user-primitive families are the draw calls that remain.
+    assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_OUTSTANDING,
+                 ReviewedScoreboard.outstanding(STRICT, NAME)
   end
 
   class DrawGame < F::Game
@@ -172,12 +173,13 @@ class GraphicsDeviceDrawTest < Minitest::Test
 
   def test_it_adds_no_user_primitive_route
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
+    # `cna_graphics_device_present` and `cna_graphics_device_reset` left this list when Foundation 92
+    # bound them; the user-primitive pair and the indirect extension have not.
     %w[cna_graphics_device_draw_user_primitives cna_graphics_device_draw_user_indexed_primitives
-       cna_graphics_device_draw_primitives_indirect_ext cna_graphics_device_present
-       cna_graphics_device_reset].each { |absent| refute_includes symbols, absent }
+       cna_graphics_device_draw_primitives_indirect_ext].each { |absent| refute_includes symbols, absent }
     %w[cna_graphics_device_draw_primitives cna_graphics_device_draw_indexed_primitives
        cna_graphics_device_draw_instanced_primitives].each { |present| assert_includes symbols, present }
-    %i[DrawUserPrimitives DrawUserIndexedPrimitives Present Reset]
+    %i[DrawUserPrimitives DrawUserIndexedPrimitives]
       .each { |absent| refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
   end

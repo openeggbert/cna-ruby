@@ -1045,6 +1045,45 @@
           "name": "PresentationParameters",
           "static": false,
           "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Present",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Present",
+          "static": false,
+          "parameters": [
+            "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+            "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+            "System.IntPtr"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Reset",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Reset",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.PresentationParameters"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Reset",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.PresentationParameters",
+            "Microsoft.Xna.Framework.Graphics.GraphicsAdapter"
+          ]
         }
       ]
     },

@@ -804,8 +804,7 @@
       "partialDependencySatisfied": false,
       "partialRemainderReverseEdges": [
         "Microsoft.Xna.Framework.Graphics.GraphicsDevice::.ctor (1 overload)",
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Adapter (1 overload)",
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Reset (3 overloads)"
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Adapter (1 overload)"
       ],
       "dependencyComplete": true,
       "blockers": [

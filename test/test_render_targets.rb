@@ -270,7 +270,7 @@ class RenderTargetsTest < Minitest::Test
     end
     # The three device-buffer draw calls left this list when the draw slice landed; what is
     # still absent is the user-primitive families, which take the vertices as an argument.
-    %i[DrawUserPrimitives DrawUserIndexedPrimitives Present]
+    %i[DrawUserPrimitives DrawUserIndexedPrimitives GetBackBufferData]
       .each { |absent| refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:layouts), CNA::Native::Layouts::STRUCTURES.length

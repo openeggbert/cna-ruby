@@ -1932,7 +1932,7 @@ class ApiVerifierTest < Minitest::Test
     # `PreferredDepthStencilFormat` was closed by a much later milestone, which is the point rather
     # than a loss: the enum did not close it, a milestone that bound the manager's routes did.
     deferred = strict.fetch("details").fetch("MISSING_MEMBER")
-    %w[Present DrawUserPrimitives].each do |name|
+    %w[GetBackBufferData DrawUserPrimitives].each do |name|
       assert deferred.any? { |label| label.include?(name) }, name
     end
     assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_SURFACE,

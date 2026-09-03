@@ -271,6 +271,11 @@ module Microsoft
           attr_reader IsDisposed: bool
           def Viewport: () -> Viewport
           def Viewport=: (Viewport value) -> Viewport
+          def Present: () -> nil
+                     | (Rectangle? sourceRectangle, Rectangle? destinationRectangle, Integer? overrideWindowHandle) -> nil
+          def Reset: () -> nil
+                   | (PresentationParameters presentationParameters) -> nil
+                   | (PresentationParameters presentationParameters, untyped graphicsAdapter) -> nil
           def GraphicsProfile: () -> GraphicsProfile
           def GraphicsDeviceStatus: () -> GraphicsDeviceStatus
           def PresentationParameters: () -> PresentationParameters

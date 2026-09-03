@@ -32641,6 +32641,116 @@
           "parameters": [
 
           ]
+        },
+        {
+          "kind": "method",
+          "name": "Present",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Present",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "sourceRectangle",
+              "type": "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "destinationRectangle",
+              "type": "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "overrideWindowHandle",
+              "type": "System.IntPtr",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Reset",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Reset",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "presentationParameters",
+              "type": "Microsoft.Xna.Framework.Graphics.PresentationParameters",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Reset",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "presentationParameters",
+              "type": "Microsoft.Xna.Framework.Graphics.PresentationParameters",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "graphicsAdapter",
+              "type": "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::GraphicsDevice"

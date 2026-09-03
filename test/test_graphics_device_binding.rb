@@ -21,7 +21,10 @@ class GraphicsDeviceBindingTest < Minitest::Test
     remainder = ReviewedScoreboard.partial_remainder(STRICT, NAME).join(" ")
     %w[SetVertexBuffer SetVertexBuffers GetVertexBuffers Indices]
       .each { |member| refute_includes remainder, "::#{member} ", member }
-    %w[DrawUserPrimitives Present Reset].each { |member| assert_includes remainder, "::#{member} ", member }
+    # And the whole remainder, rather than a sample of it: `ReviewedScoreboard` names it once, so
+    # a milestone that closes one member is one reviewed edit rather than ten unrelated ones.
+    assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_OUTSTANDING,
+                 ReviewedScoreboard.outstanding(STRICT, NAME)
   end
 
   class BindGame < F::Game
@@ -220,7 +223,7 @@ class GraphicsDeviceBindingTest < Minitest::Test
     # claimed, and still claims, is that **it** bound no render target and drew nothing.
     # The three device-buffer draw calls left this list when the draw slice landed; what is
     # still absent is the user-primitive families, which take the vertices as an argument.
-    %i[DrawUserPrimitives DrawUserIndexedPrimitives Present Reset].each do |absent|
+    %i[DrawUserPrimitives DrawUserIndexedPrimitives GetBackBufferData Dispose].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)

@@ -797,6 +797,11 @@ module Microsoft
         class GraphicsDevice
           private_class_method :new
 
+          # `CNA_RESULT_NOT_SUPPORTED`, which is what the two members below raise for an argument
+          # this ABI has no route to honour.
+          NOT_SUPPORTED = CNA::Native::Library::RESULT_NOT_SUPPORTED
+          private_constant :NOT_SUPPORTED
+
           def initialize(game)
             @game = game
             @callback_handle = 0
@@ -860,6 +865,106 @@ module Microsoft
             CNA::Native.library.call("cna_graphics_device_set_viewport", native_handle,
                                      0, 0, 0, 0, 0, *eightbytes)
             value
+          end
+
+          # ------------------------------------------------------------ presenting and resetting
+
+          #     Present()
+          #     Present(Nullable<Rectangle> source, Nullable<Rectangle> destination, IntPtr window)
+          #
+          # `Present()` is `Present(null, null, null)` on the private three-pointer native form, so
+          # the no-argument overload is exact. The three-argument one converts each present
+          # rectangle into a `tagRECT` **in a local copy** -- `right = width + x`,
+          # `bottom = height + y`, so the caller's rectangle is not mutated -- and passes the
+          # override window handle through `IntPtr::ToPointer`.
+          #
+          # `cna_graphics_device_present` takes neither. So the all-null call is exact and anything
+          # else is refused, naming what CNA does not accept rather than ignoring it: the
+          # `VideoPlayer.Play(Video)` precedent, where a member whose argument cannot be honoured
+          # refuses explicitly instead of being deferred or quietly reinterpreted.
+          def Present(*arguments)
+            unless arguments.empty? || arguments.length == 3
+              raise ::ArgumentError, "Present takes no arguments or (sourceRectangle, destinationRectangle, overrideWindowHandle)"
+            end
+
+            unless arguments.empty?
+              source, destination, window = arguments
+              [["sourceRectangle", source], ["destinationRectangle", destination]].each do |name, value|
+                next if value.nil?
+                raise ::TypeError, "#{name} must be a Rectangle or nil" unless value.instance_of?(Rectangle)
+
+                raise CNA::CapabilityError.new("cna_graphics_device_present", NOT_SUPPORTED),
+                      "#{name} is not supported: cna_graphics_device_present presents the whole frame " \
+                      "and this ABI has no route that takes a present rectangle"
+              end
+              unless window.nil? || (window.is_a?(::Integer) && window.zero?)
+                CNA::Runtime::Numeric.intptr(window, "overrideWindowHandle")
+                raise CNA::CapabilityError.new("cna_graphics_device_present", NOT_SUPPORTED),
+                      "overrideWindowHandle is not supported: cna_graphics_device_present presents to " \
+                      "the device's own window and this ABI has no route that takes another"
+              end
+            end
+
+            CNA::Native.library.call("cna_graphics_device_present", native_handle)
+            nil
+          end
+
+          #     Reset()
+          #     Reset(PresentationParameters presentationParameters)
+          #     Reset(PresentationParameters presentationParameters, GraphicsAdapter graphicsAdapter)
+          #
+          # The first two forward to the third with `pInternalCachedParams` and `pCurrentAdapter`
+          # filled in, and the third is where the whole sequence lives: two null guards, the
+          # `DeviceResetting` event, a `SavedDeviceState`, the device re-creation, two fresh
+          # `Clone()`s of the argument into the internal and public caches, `InitializeDeviceState`,
+          # `SavedDeviceState.Restore()` and the `DeviceReset` event.
+          #
+          # **Most of that is CNA's, and it was measured rather than assumed.** Across
+          # `cna_graphics_device_reset` and `cna_graphics_device_reset_with_parameters`, on the
+          # `HEADLESS` and the `OPENGL33` artifact alike: the blend state, the blend factor, the
+          # multi-sample mask, the reference stencil and a bound texture slot all survive, and the
+          # viewport and the scissor rectangle survive a same-size reset and are reset to the new
+          # full target by a resizing one -- which is exactly the rule XNA's `SavedDeviceState`
+          # implements by taking its viewport and scissor as `Nullable`. Re-applying any of it here
+          # would perform a step CNA already performs.
+          #
+          # What is left managed is the part CNA cannot know about: the two guards, the render-target
+          # unbind that `SavedDeviceState` deliberately does *not* restore, and the two cached
+          # parameter objects.
+          #
+          # The third overload's second argument is a `GraphicsAdapter`, which this binding does not
+          # project, so it refuses -- the blocker's fourth appearance, and named as such.
+          def Reset(*arguments)
+            case arguments.length
+            when 0 then parameters = internal_presentation_parameters
+            when 1, 2 then parameters = arguments[0]
+            else raise ::ArgumentError, "Reset takes at most (presentationParameters, graphicsAdapter)"
+            end
+            raise ::ArgumentError, "presentationParameters" if parameters.nil?
+            unless parameters.instance_of?(PresentationParameters)
+              raise ::TypeError, "presentationParameters must be a PresentationParameters"
+            end
+
+            if arguments.length == 2
+              raise ::ArgumentError, "graphicsAdapter" if arguments[1].nil?
+
+              raise CNA::CapabilityError.new("cna_graphics_device_reset_with_parameters", NOT_SUPPORTED),
+                    "Reset(presentationParameters, graphicsAdapter) is not supported: " \
+                    "Graphics.GraphicsAdapter is not projected, because every cna_graphics_adapter_* " \
+                    "route answers invented display data -- see " \
+                    "docs/graphics-adapter-ordering-upstream-defect.md"
+            end
+
+            set_render_target_bindings([])
+            if arguments.empty?
+              CNA::Native.library.call("cna_graphics_device_reset", native_handle)
+            else
+              CNA::Native.library.call("cna_graphics_device_reset_with_parameters", native_handle,
+                                       to_native_presentation_parameters(parameters).pointer, 0)
+            end
+            @internal_presentation_parameters = parameters.Clone
+            @presentation_parameters = parameters.Clone
+            nil
           end
 
           # ------------------------------------------------------------ the four simple properties
@@ -1389,6 +1494,31 @@ module Microsoft
           # rather than collapsed.
           def internal_presentation_parameters
             @internal_presentation_parameters ||= read_presentation_parameters
+          end
+
+          # The reverse of `read_presentation_parameters`, and it starts from CNA's **current**
+          # structure rather than from a zeroed one. `CNA_PresentationParameters` carries one field
+          # XNA has no analogue for -- `headless_ext`, the extension that asks for off-screen
+          # operation -- and overwriting it with a zero would ask a headless device for a window.
+          # Preserving what CNA already has there is the only correct choice, and the ten fields XNA
+          # does declare are written over it.
+          #
+          # `DeviceWindowHandle` has no field to write: the structure carries none, which is the
+          # other half of the deviation `PresentationParameters` records.
+          def to_native_presentation_parameters(parameters)
+            output = CNA::Native::Layouts::PresentationParameters.new
+            CNA::Native.library.call("cna_graphics_device_get_presentation_parameters",
+                                     native_handle, output.pointer)
+            output.write_u32(8, parameters.BackBufferFormat.to_i)
+            output.write_i32(12, parameters.BackBufferWidth)
+            output.write_i32(16, parameters.BackBufferHeight)
+            output.write_u32(20, parameters.DepthStencilFormat.to_i)
+            output.write_i32(24, parameters.MultiSampleCount)
+            output.write_u32(28, parameters.PresentationInterval.to_i)
+            output.write_u32(32, parameters.DisplayOrientation.to_i)
+            output.write_u32(36, parameters.RenderTargetUsage.to_i)
+            output.write_u8(40, parameters.IsFullScreen ? 1 : 0)
+            output
           end
 
           # The ten settings CNA's applied `CNA_PresentationParameters` carries, in the order the

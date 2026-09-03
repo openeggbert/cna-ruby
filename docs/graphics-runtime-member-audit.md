@@ -121,7 +121,7 @@ MEASURED, and one measurement is a limit: **CNA's clear never fails** — not fo
 proved by a truth table over every declared depth format plus one stub, the way `Game.IsActive`'s
 guide term is. See `docs/clear-options-evidence.md`.
 
-### `Present`'s two overloads — **buildable, with one recorded refusal**
+### `Present`'s two overloads — **done, Foundation 92**
 
 `Present()` is `Present(null, null, null)` on the private native three-pointer form.
 `Present(Nullable<Rectangle>, Nullable<Rectangle>, IntPtr)` converts each present rectangle into a
@@ -134,7 +134,7 @@ anything else, naming what CNA does not accept. That is the `VideoPlayer.Play(Vi
 project the member and make it refuse explicitly, rather than defer the member or invent a
 behaviour.
 
-### `Reset`'s three overloads — **buildable, with one recorded refusal**
+### `Reset`'s three overloads — **done, Foundation 92**
 
 `Reset()` re-applies the cached parameters; `Reset(PresentationParameters)` applies new ones;
 `Reset(PresentationParameters, GraphicsAdapter)` also switches adapter.
@@ -145,6 +145,19 @@ so it inherits `Adapter`'s blocker and refuses for that reason, naming it.
 
 A successful reset raises the device's resetting and reset events in that order, which the header
 states and the event family below consumes.
+
+**What `Reset` does *not* do here was measured, not assumed.** XNA's third overload is two null
+guards, the `DeviceResetting` event, a `SavedDeviceState`, the device re-creation, two `Clone()`s
+into the internal and public caches, `InitializeDeviceState`, `SavedDeviceState.Restore()` and the
+`DeviceReset` event. Across both reset routes and both artifacts, CNA already preserves the blend
+state, the blend factor, the multi-sample mask, the reference stencil and a bound texture slot, and
+it preserves the viewport and scissor across a same-size reset while resetting them to the new full
+target on a resizing one — which is *exactly* the rule `SavedDeviceState` implements by taking those
+two as `Nullable`. Re-applying any of it here would perform a step CNA already performs.
+
+What stays managed is the part CNA cannot know: the two guards, the render-target unbind that
+`SavedDeviceState` deliberately does not restore, and the two cached parameter objects, which become
+two distinct clones of the argument.
 
 ### `DrawUserPrimitives` and `DrawUserIndexedPrimitives` — **buildable, six overloads**
 
