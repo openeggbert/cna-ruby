@@ -275,6 +275,7 @@ module Microsoft
           def GraphicsDeviceStatus: () -> GraphicsDeviceStatus
           def PresentationParameters: () -> PresentationParameters
           def Clear: (Color color) -> nil
+                   | (ClearOptions | Integer options, Color | Vector4 color, Float depth, Integer stencil) -> nil
           def SamplerStates: () -> SamplerStateCollection
           def VertexSamplerStates: () -> SamplerStateCollection
           def BlendState: () -> BlendState

@@ -119,22 +119,29 @@ The cumulative corpus is 273 observations / 273 assertions with zero failures: 2
 `PURE_XNA_DERIVED` and five `RUBY_MAPPING_QUALIFICATION`. Ruby mask enforcement is deliberately
 classified as mapping qualification, not XNA runtime behavior or CNA evidence.
 
-## Explicitly deferred scope
+## Explicitly deferred scope — **closed by Foundation 91**
 
-The selected `GraphicsDevice` surface remains exactly one `Clear(Color)` overload. Its implementation
-and native `cna_graphics_device_clear_rgba` route are unchanged. These XNA overloads remain absent:
+This milestone selected exactly one `Clear(Color)` overload, over the native
+`cna_graphics_device_clear_rgba` route, and deferred the two four-argument ones:
 
 ```text
 Clear(ClearOptions, Color, Single, Int32)
 Clear(ClearOptions, Vector4, Single, Int32)
 ```
 
-The strict report therefore retains `GraphicsDevice.Clear expected 3, got 1`; global
-`MISSING_MEMBER=132` and `OVERLOAD_MAPPING_MISMATCH=51` do not move. `GraphicsDevice.Viewport=`
-also remains absent, preserving the sole `PROPERTY_MAPPING_MISMATCH`.
+Both landed in Foundation 91, together with a route swap. `clear_rgba` takes four normalised
+floats, which was honest while `ClearOptions` was not projected and the device had no render
+targets; XNA's `Clear(color)` is `Clear(DefaultClearOptions, color, 1f, 0)` — a packed D3DCOLOR, a
+depth and a stencil — and `cna_graphics_device_clear_options` is that shape exactly. All three
+overloads reach it, `clear_rgba` left the manifest for want of a production call site, and
+`GraphicsDevice.Clear expected 3, got 1` left the overload register.
+
+`GraphicsDevice.Viewport=`, the other deferral this section recorded, was projected in
+Foundation 89, and `PROPERTY_MAPPING_MISMATCH` has been zero since.
 
 No CNA enum, constant, function, Fiddle argument, manifest entry, native conversion, depth/stencil
-operation, or renderer clear-mask capability is added. ABI verification remains exactly 38 bound
+operation, or renderer clear-mask capability is added **by this milestone**; Foundation 91's swap
+is recorded above and is still one route rather than two. ABI verification remains exactly 38 bound
 functions, 122 signature measurements, 290 C and 290 Ruby layout measurements, two callbacks,
 and 59 constants, with zero missing symbol or mismatch.
 
@@ -157,3 +164,20 @@ entry, bundled native library, or developer path. A fresh exact-GEM_HOME install
 installed Ruby sources, qualifies ClearOptions with the native library unset, and passes the
 unchanged template at 60 and 600 frames. The maintained source-path template passes both frame
 counts and remains clean at `42ae209b8b4fd175b7b1e5de43d895083b81877b`.
+
+## The corpus correction Foundation 91 required
+
+`clear_options.ruby_flags_mapping` recorded, as one element of its tuple,
+`GraphicsDevice.instance_method(:Clear).arity == 1`. Ruby cannot overload by parameter type, so
+three XNA identities are one method with a variable arity, and that element is now `-1`. Corrected
+as a **surgical byte edit** in the aggregate and in this milestone's authoring record alike, so the
+closed supersession register in `test_behavior_corpus_integrity.rb` still holds seven.
+
+| file | element | pre-correction SHA-256 | post-correction SHA-256 |
+| --- | ---: | --- | --- |
+| `behavior/xna40-foundation-values.json` | 28 | `8a6b6cf7554c8358a589fbd178a0eb228cb51340e145a2eb8328556d0b1c1857` | `680a009dbaa6cf1fba6e1722a0caa5ba1b08fbe7d34913b2d3959e7b149f08d1` |
+| `behavior/xna40-clear-options-values.json` | 28 | `632398ee093aa199f01f44aa623377784821644692573b459484f17e62df6513` | `1a84934b75f2007037dfbc149de7d3ac10fbcc13aafe4143636f101296f60356` |
+
+Two lines moved. The observation is `RUBY_MAPPING_QUALIFICATION` — it records what this projection
+exposes, not an XNA fact and not a CNA measurement — and the corpus replays 526 observations with
+zero failures afterwards.

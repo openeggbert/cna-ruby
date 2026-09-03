@@ -31,12 +31,12 @@ end
 # is the measurement; this is the reviewed expectation of it.
 module ReviewedScoreboard
   TARGET_TYPES = 200
-  TARGET_MEMBERS = 2375
+  TARGET_MEMBERS = 2377
   COMPLETE_TYPES = 198
   PARTIAL_TYPES = 2
   MISSING_TYPES = 57
-  MISSING_MEMBER = 43
-  OVERLOAD_MAPPING_MISMATCH = 18
+  MISSING_MEMBER = 41
+  OVERLOAD_MAPPING_MISMATCH = 17
   # Zero since Foundation 89 projected `GraphicsDevice::Viewport`'s setter. The one entry this
   # carried for its whole history was that property's `"override": { "set": false }`, and it was
   # never a Ruby limitation — see `test_api_verifier.rb`'s inverted guard.

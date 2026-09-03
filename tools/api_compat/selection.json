@@ -824,6 +824,28 @@
           ]
         },
         {
+          "kind": "method",
+          "name": "Clear",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.ClearOptions",
+            "Microsoft.Xna.Framework.Color",
+            "System.Single",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Clear",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Graphics.ClearOptions",
+            "Microsoft.Xna.Framework.Vector4",
+            "System.Single",
+            "System.Int32"
+          ]
+        },
+        {
           "kind": "property",
           "name": "IsDisposed",
           "static": false,

@@ -1260,13 +1260,54 @@ module Microsoft
             nil
           end
 
-          def Clear(color)
-            raise TypeError, "GraphicsDevice.Clear foundation overload expects Color" unless color.instance_of?(Color)
-            divisor = 255.0
-            CNA::Native.library.call(
-              "cna_graphics_device_clear_rgba", native_handle,
-              color.R.fdiv(divisor), color.G.fdiv(divisor), color.B.fdiv(divisor), color.A.fdiv(divisor)
-            )
+          # All three `Clear` overloads, which Ruby reaches through one method because it cannot
+          # overload by parameter type:
+          #
+          #     Clear(color)                              -> Clear(DefaultClearOptions, color, 1f, 0)
+          #     Clear(options, Vector4 color, depth, stencil) -> Clear(options, new Color(color), …)
+          #     Clear(options, Color   color, depth, stencil) -> the real one
+          #
+          # The two forwarding overloads are three IL instructions each and are reproduced exactly,
+          # including `Clear(color)`'s `1f` depth and `0` stencil.
+          #
+          # Everything the real overload does around its native `Clear` is a D3D9 workaround with no
+          # managed observable: it zeroes `D3DRS_COLORWRITEENABLE` and restores it, and it installs a
+          # full-target viewport and restores that, because D3D9's `Clear` respects both and XNA's
+          # must not. CNA's `cna_graphics_device_clear_options` owns its backend's equivalent, so
+          # re-implementing either here would perform a step CNA already performs -- the rule the
+          # `GraphicsDeviceManager` producer audit established.
+          #
+          # What **is** managed is the failure rule, and it is reproduced: when the native clear
+          # fails, XNA asks whether the depth and stencil bits the caller requested are ones the
+          # current target actually has, and answers `InvalidOperationException(CannotClearNullDepth)`
+          # when they are not. CNA reports exactly that case as `CNA_RESULT_NOT_SUPPORTED`, "when the
+          # backend cannot clear a selected buffer".
+          def Clear(*arguments)
+            case arguments.length
+            when 1
+              options = default_clear_options
+              color = arguments[0]
+              depth = 1.0
+              stencil = 0
+            when 4
+              options = ClearOptions.coerce(arguments[0])
+              color = arguments[1]
+              color = Color.new(color) if color.instance_of?(Vector4)
+              depth = CNA::Runtime::Numeric.f32(arguments[2])
+              stencil = CNA::Runtime::Numeric.int32(arguments[3], "stencil")
+            else
+              raise ::ArgumentError, "Clear takes (color) or (options, color, depth, stencil)"
+            end
+            raise ::TypeError, "color must be a Color or a Vector4" unless color.instance_of?(Color)
+
+            begin
+              CNA::Native.library.call("cna_graphics_device_clear_options", native_handle,
+                                       options.to_i, color.PackedValue, depth, stencil)
+            rescue CNA::CapabilityError
+              raise ::RuntimeError, "CannotClearNullDepth" unless requested_buffers_exist?(options)
+
+              raise
+            end
             nil
           end
 
@@ -1311,6 +1352,43 @@ module Microsoft
                                      value.__send__(:to_native_descriptor).pointer)
             @rasterizer_state = value
             nil
+          end
+
+          # `get_DefaultClearOptions`, which is `private` in XNA and reachable only through the two
+          # forwarding `Clear` overloads and the failure rule:
+          #
+          #     Target
+          #     | DepthBuffer                   when the depth format is not None
+          #     | DepthBuffer | Stencil         when it is exactly Depth24Stencil8
+          #
+          # and the depth format is the **first bound render target's** when one is bound, the
+          # device's own otherwise -- the same `currentRenderTargets[0]`-or-back-buffer choice the
+          # viewport bounds and the scissor rule make.
+          def default_clear_options
+            binding = @render_target_bindings.first
+            format = binding.nil? ? internal_presentation_parameters.DepthStencilFormat
+                                  : binding.RenderTarget.DepthStencilFormat
+            return ClearOptions::Target if format.to_i.zero?
+
+            format.to_i == DepthFormat::Depth24Stencil8.to_i ? ClearOptions.coerce(7) : ClearOptions.coerce(3)
+          end
+
+          # `CannotClearNullDepth`: the depth and stencil bits the caller asked for must be bits the
+          # current target has. `options & 6` is XNA's own mask -- `DepthBuffer | Stencil` -- and the
+          # comparison is with `DefaultClearOptions`, which is what says which of them exist.
+          def requested_buffers_exist?(options)
+            requested = options.to_i & 6
+            (default_clear_options.to_i & requested) == requested
+          end
+
+          # XNA keeps **two** presentation-parameter objects: `pPublicCachedParams`, which the public
+          # getter hands out and a consumer may mutate, and `pInternalCachedParams`, which the device
+          # reads its own rules from. Both are seeded from the same device state and they are
+          # distinct objects, so a consumer that mutates what the getter returned cannot change what
+          # `DefaultClearOptions` or the viewport bounds decide. That distinction is reproduced here
+          # rather than collapsed.
+          def internal_presentation_parameters
+            @internal_presentation_parameters ||= read_presentation_parameters
           end
 
           # The ten settings CNA's applied `CNA_PresentationParameters` carries, in the order the
@@ -1458,6 +1536,7 @@ module Microsoft
           # dropped here; both are seeded lazily on the next read.
           def invalidate_presentation_parameters
             @presentation_parameters = nil
+            @internal_presentation_parameters = nil
           end
 
           def enter_callback(handle) = @callback_handle = handle

@@ -375,7 +375,12 @@ module CNA
         signature("cna_graphics_device_get_status", T[:result], [T[:handle], pointer("CNA_GraphicsDeviceStatus")], ownership: "borrows device; caller output"),
         signature("cna_graphics_device_get_graphics_profile", T[:result], [T[:handle], pointer("CNA_GraphicsProfile")], ownership: "borrows device; caller output"),
         signature("cna_graphics_device_get_presentation_parameters", T[:result], [T[:handle], pointer("CNA_PresentationParameters")], ownership: "borrows device; caller-initialized versioned output"),
-        signature("cna_graphics_device_clear_rgba", T[:result], [T[:handle], T[:float], T[:float], T[:float], T[:float]], ownership: "borrows device"),
+        # `Clear`'s three overloads all reach this one route. `cna_graphics_device_clear_rgba` was
+        # bound while the projection had only the `Color` overload and no `ClearOptions`; it has no
+        # production call site now, and a route without one does not stay in this manifest.
+        signature("cna_graphics_device_clear_options", T[:result],
+                  [T[:handle], enum("CNA_ClearOptions"), *by_value("CNA_Color", T[:u32]), T[:float], T[:i32]],
+                  ownership: "borrows device"),
         # The device texture collections. Native frontier 4 recorded `Graphics.TextureCollection` as
         # "the one case where NATIVE_RUNTIME was the right word -- no CNA route at all". That was
         # wrong, and not because the ABI moved: `cna_graphics_device_get_texture` and

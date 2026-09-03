@@ -843,13 +843,21 @@ class ApiVerifierTest < Minitest::Test
       assert_operator result.counts["OVERLOAD_MAPPING_MISMATCH"], :>, 0, color_type
     end
 
+    # The synthetic surface above is a *subset* carrying only the `Color` overload, which is what
+    # makes each addition unexpected there. The real selected surface carries all three since
+    # Foundation 91, so it is asserted from the other side: every reference overload is selected,
+    # exactly once, and nothing beyond them.
     selected_device = signature_contract.fetch("types").find do |type|
       type.fetch("name") == "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
     end
-    clear_members = selected_device.fetch("members").select { |member| member["name"] == "Clear" }
-    assert_equal 1, clear_members.length
-    assert_equal ["Microsoft.Xna.Framework.Color"],
-                 clear_members.first.fetch("parameters").map { |parameter| parameter.fetch("type") }
+    shapes = selected_device.fetch("members").select { |member| member["name"] == "Clear" }
+                            .map { |member| member.fetch("parameters").map { |parameter| parameter.fetch("type") } }
+    reference_shapes = reference_contract.fetch("types").find do |type|
+      type.fetch("name") == "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+    end.fetch("members").select { |member| member["name"] == "Clear" }
+       .map { |member| member.fetch("parameters").map { |parameter| parameter.fetch("type") } }
+    assert_equal reference_shapes.sort, shapes.sort
+    assert_equal shapes.length, shapes.uniq.length
   end
 
   def test_depth_format_missing_type_and_wrong_namespace_are_detected

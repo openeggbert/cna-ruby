@@ -88,7 +88,7 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 | ---: | --- |
 | 257 | XNA 4.0 Windows reference types |
 | 200 | types this binding projects |
-| 2375 | Ruby member identities |
+| 2377 | Ruby member identities |
 | 198 | complete types |
 | 2 | partial types |
 | 57 | missing types |
@@ -100,10 +100,10 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 118 | strict diagnostics in total |
+| 115 | strict diagnostics in total |
 | 57 | `MISSING_TYPE` |
-| 43 | `MISSING_MEMBER` |
-| 18 | `OVERLOAD_MAPPING_MISMATCH` |
+| 41 | `MISSING_MEMBER` |
+| 17 | `OVERLOAD_MAPPING_MISMATCH` |
 | 0 | `PROPERTY_MAPPING_MISMATCH` |
 | 0 | every other structural category, summed |
 | 0 | allowlist entries |
@@ -113,7 +113,7 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 17 | members `GraphicsDevice` still owes |
+| 16 | members `GraphicsDevice` still owes |
 | 15 | members `GraphicsDeviceManager` still owes |
 
 **Native ABI**
@@ -149,7 +149,7 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 145 | runtime capability rows |
+| 146 | runtime capability rows |
 
 <!-- scoreboard:end -->
 

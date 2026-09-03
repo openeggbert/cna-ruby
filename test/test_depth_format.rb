@@ -132,7 +132,10 @@ class DepthFormatTest < Minitest::Test
     assert G::RenderTarget2D.public_method_defined?(:DepthStencilFormat),
            "the render targets are this enum's first real consumer"
 
-    assert_equal 1, G::GraphicsDevice.instance_method(:Clear).arity
+    # `Clear` took its other two overloads when `ClearOptions` reached the device, and this enum is
+    # what decides their `DefaultClearOptions`; what this batch claimed, and still claims, is that
+    # **it** implied none of that.
+    assert_equal(-1, G::GraphicsDevice.instance_method(:Clear).arity)
     refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("DEPTH_FORMAT") }
     # `DepthStencilState` was in that list until the four state objects were built. It is a managed
     # value holder with no device in it, so the claim this test really makes -- that the enum

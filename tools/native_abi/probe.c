@@ -94,7 +94,7 @@ CHECK_FN(cna_graphics_device_set_viewport, CNA_Result, (CNA_Handle, CNA_Viewport
 CHECK_FN(cna_graphics_device_get_status, CNA_Result, (CNA_Handle, CNA_GraphicsDeviceStatus*));
 CHECK_FN(cna_graphics_device_get_graphics_profile, CNA_Result, (CNA_Handle, CNA_GraphicsProfile*));
 CHECK_FN(cna_graphics_device_get_presentation_parameters, CNA_Result, (CNA_Handle, CNA_PresentationParameters*));
-CHECK_FN(cna_graphics_device_clear_rgba, CNA_Result, (CNA_Handle, float, float, float, float));
+CHECK_FN(cna_graphics_device_clear_options, CNA_Result, (CNA_Handle, CNA_ClearOptions, CNA_Color, float, int32_t));
 CHECK_FN(cna_graphics_device_get_texture, CNA_Result, (CNA_Handle, CNA_ShaderStage, uint32_t, CNA_TextureSlotInfo*));
 CHECK_FN(cna_graphics_device_set_texture, CNA_Result, (CNA_Handle, CNA_ShaderStage, uint32_t, CNA_Handle));
 CHECK_FN(cna_texture2d_create_from_encoded_memory, CNA_Result, (CNA_Handle, const uint8_t*, uint64_t, const CNA_Texture2DDecodeInfo*, CNA_Handle*));
@@ -497,7 +497,7 @@ int main(void) {
     SIGNATURE(cna_graphics_device_get_status, "CNA_Result|CNA_Handle,CNA_GraphicsDeviceStatus*");
     SIGNATURE(cna_graphics_device_get_graphics_profile, "CNA_Result|CNA_Handle,CNA_GraphicsProfile*");
     SIGNATURE(cna_graphics_device_get_presentation_parameters, "CNA_Result|CNA_Handle,CNA_PresentationParameters*");
-    SIGNATURE(cna_graphics_device_clear_rgba, "CNA_Result|CNA_Handle,float,float,float,float");
+    SIGNATURE(cna_graphics_device_clear_options, "CNA_Result|CNA_Handle,CNA_ClearOptions,CNA_Color,float,int32_t");
     SIGNATURE(cna_graphics_device_get_texture, "CNA_Result|CNA_Handle,CNA_ShaderStage,uint32_t,CNA_TextureSlotInfo*");
     SIGNATURE(cna_graphics_device_set_texture, "CNA_Result|CNA_Handle,CNA_ShaderStage,uint32_t,CNA_Handle");
     SIGNATURE(cna_texture2d_create_from_encoded_memory, "CNA_Result|CNA_Handle,const uint8_t*,uint64_t,const CNA_Texture2DDecodeInfo*,CNA_Handle*");

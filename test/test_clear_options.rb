@@ -115,7 +115,11 @@ class ClearOptionsTest < Minitest::Test
     %i[ToString HasFlag Contains Includes Target? DepthBuffer? Stencil? None? All? Mask ValidBits].each do |name|
       refute_respond_to OPTIONS::Target, name
     end
-    assert_equal 1, G::GraphicsDevice.instance_method(:Clear).arity
+    # All three `Clear` overloads are projected now, and Ruby reaches them through one method with
+    # a variable arity because it cannot overload by parameter type. What is still true, and is
+    # what this test is about, is that the enum itself brought no constant into the manifest: the
+    # options travel as the declared `CNA_ClearOptions` argument of one route.
+    assert_equal(-1, G::GraphicsDevice.instance_method(:Clear).arity)
     refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("CLEAR_OPTIONS") }
   end
 

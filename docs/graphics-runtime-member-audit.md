@@ -101,13 +101,25 @@ comparison worth anything: it answers **320x200** — the real applied configura
 is not "CNA cannot answer display questions". One of its two answers is real and one is invented,
 and only measuring tells them apart.
 
-### `Clear`'s two remaining overloads — **buildable**
+### `Clear`'s two remaining overloads — **done, Foundation 91**
 
-Three overloads exist; the `Color`-only one is projected. `Clear(Color)` is
-`Clear(DefaultClearOptions, color, 1f, 0)`, and the `Vector4` overload converts through
-`new Color(color)`. `cna_graphics_device_clear_options(handle, options, color, depth, stencil)` is
-the exact shape, and `cna_graphics_device_clear_color_depth` is the two-argument convenience.
-`ClearOptions` is projected and its bits are cross-checked against `CNA_CLEAR_OPTION_*`.
+`Clear(Color)` is `Clear(DefaultClearOptions, color, 1f, 0)` and the `Vector4` overload converts
+through `new Color(color)`, so all three reach one route:
+`cna_graphics_device_clear_options(handle, options, color, depth, stencil)`, which is that shape
+exactly. `cna_graphics_device_clear_rgba` — four normalised floats, bound when the projection had
+only the `Color` overload and no `ClearOptions` — left the manifest with them, because a bound route
+without a production call site does not stay.
+
+`DefaultClearOptions` is reproduced from the IL, and XNA's **two** presentation-parameter objects
+with it: `pPublicCachedParams`, which the getter hands out and a consumer may mutate, and
+`pInternalCachedParams`, which the device reads its own rules from. Collapsing them would let a
+consumer change what `DefaultClearOptions` decides.
+
+MEASURED, and one measurement is a limit: **CNA's clear never fails** — not for `Stencil` on a
+`Depth24` device, not for `DepthBuffer` on a render target whose depth format is `None` — so XNA's
+`CannotClearNullDepth` rule cannot be exercised on these artifacts. It is projected anyway and
+proved by a truth table over every declared depth format plus one stub, the way `Game.IsActive`'s
+guide term is. See `docs/clear-options-evidence.md`.
 
 ### `Present`'s two overloads — **buildable, with one recorded refusal**
 
