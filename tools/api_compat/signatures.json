@@ -33243,6 +33243,182 @@
               "optional": false
             }
           ]
+        },
+        {
+          "kind": "method",
+          "name": "GetBackBufferData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetBackBufferData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "startIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementCount",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetBackBufferData",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+                "struct",
+                "new"
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "rect",
+              "type": "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "data",
+              "type": "!!0[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "startIndex",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "elementCount",
+              "type": "System.Int32",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Finalize",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::GraphicsDevice"

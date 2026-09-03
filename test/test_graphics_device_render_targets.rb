@@ -262,7 +262,7 @@ class GraphicsDeviceRenderTargetsTest < Minitest::Test
     assert_includes symbols, "cna_graphics_device_set_render_targets"
     # The three device-buffer draw calls left this list when the draw slice landed; what is
     # still absent is the user-primitive families, which take the vertices as an argument.
-    %i[GetBackBufferData Dispose Finalize]
+    %i[Adapter DisplayMode]
       .each { |absent| refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:layouts), CNA::Native::Layouts::STRUCTURES.length

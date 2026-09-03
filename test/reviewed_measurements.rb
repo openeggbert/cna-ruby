@@ -21,7 +21,7 @@ module NativeSurfaceCensus
 
   # The census the repository last reviewed. `test_native_abi_gate.rb` compares the two, so this
   # file cannot drift from the manifest silently in either direction.
-  REVIEWED = { functions: 394, callbacks: 6, constants: 137, layouts: 65 }.freeze
+  REVIEWED = { functions: 395, callbacks: 6, constants: 137, layouts: 66 }.freeze
 end
 
 # The strict XNA scoreboard, for exactly the same reason and with exactly the same rule: a milestone
@@ -31,12 +31,12 @@ end
 # is the measurement; this is the reviewed expectation of it.
 module ReviewedScoreboard
   TARGET_TYPES = 200
-  TARGET_MEMBERS = 2394
+  TARGET_MEMBERS = 2400
   COMPLETE_TYPES = 198
   PARTIAL_TYPES = 2
   MISSING_TYPES = 57
-  MISSING_MEMBER = 24
-  OVERLOAD_MAPPING_MISMATCH = 13
+  MISSING_MEMBER = 18
+  OVERLOAD_MAPPING_MISMATCH = 10
   # Zero since Foundation 89 projected `GraphicsDevice::Viewport`'s setter. The one entry this
   # carried for its whole history was that property's `"override": { "set": false }`, and it was
   # never a Ruby limitation — see `test_api_verifier.rb`'s inverted guard.
@@ -53,7 +53,7 @@ module ReviewedScoreboard
     IsDisposed Viewport Viewport= Clear Textures VertexTextures SamplerStates VertexSamplerStates
     GraphicsProfile GraphicsDeviceStatus PresentationParameters Present Reset
     Disposing DeviceLost DeviceReset DeviceResetting ResourceCreated ResourceDestroyed
-    DrawUserPrimitives DrawUserIndexedPrimitives
+    DrawUserPrimitives DrawUserIndexedPrimitives GetBackBufferData Dispose
     BlendState BlendState= DepthStencilState DepthStencilState= RasterizerState RasterizerState=
     BlendFactor BlendFactor= MultiSampleMask MultiSampleMask= ReferenceStencil ReferenceStencil=
     ScissorRectangle ScissorRectangle=
@@ -70,9 +70,9 @@ module ReviewedScoreboard
   # whole thing: a member closed without review fails, and so does one that quietly reappears.
   #
   # Update these together with the milestone that moves them, never to make a red test green.
-  GRAPHICS_DEVICE_OUTSTANDING = %w[
-    .ctor Adapter DisplayMode Dispose Finalize GetBackBufferData
-  ].sort.freeze
+  # Three left, and all three are the same upstream defect: each needs `Graphics.GraphicsAdapter`,
+  # whose every route answers invented display data.
+  GRAPHICS_DEVICE_OUTSTANDING = %w[.ctor Adapter DisplayMode].sort.freeze
 
   GRAPHICS_DEVICE_MANAGER_OUTSTANDING = %w[
     CanResetDevice DeviceCreated DeviceDisposing DeviceReset DeviceResetting Dispose Disposed

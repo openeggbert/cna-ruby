@@ -190,21 +190,31 @@ The managed validation is the IL's, in the IL's order, including `ldlen; brfalse
 array raises the same `ArgumentNullException` a null one does — and `GetVertexCount`'s unknown
 topology answering `-1` compared **unsigned**, so it never fits any window.
 
-### `GetBackBufferData`'s three overloads — **buildable, renderer-dependent**
+### `GetBackBufferData`'s three overloads — **done, Foundation 95**
 
-`cna_graphics_device_get_backbuffer_data_rgba8(handle, destination, capacity, out_pixels)` reads the
-whole logical back buffer; `cna_graphics_device_get_backbuffer_data_window(handle, readback,
-destination, capacity)` reads a window, which is the `Nullable<Rectangle>` overload. Both document
-`CNA_RESULT_BUFFER_TOO_SMALL` with **no partial write**, which is what XNA's own capacity guard
-means.
+One route carries all three: `cna_graphics_device_get_backbuffer_data_window`, because
+`has_source_rectangle` false is the whole buffer. `cna_graphics_device_get_backbuffer_data_rgba8`
+therefore has no call site and is not bound.
 
-Both answer `CNA_RESULT_NOT_SUPPORTED` "when the active renderer has no honest back-buffer
-readback" — the `HEADLESS` artifact. That is a **capability** of one artifact rather than a blocker
-on the member: the member is projected, the managed guards are exercised on every artifact, and the
-pixel assertions run on the artifacts that can produce pixels, exactly as the render-target
-readback tests already do through `test/renderer_environment.rb`.
+It answers `CNA_RESULT_NOT_SUPPORTED` "when the active renderer has no honest back-buffer readback"
+— the `HEADLESS` artifact. That is a **capability** of one artifact rather than a blocker: the
+managed guards are exercised on every artifact, and the pixel assertions run where pixels exist.
+Measured on `OPENGL33`: an 8x4 back buffer cleared to one colour reads back as thirty-two pixels of
+exactly that colour through all three overloads, `startIndex` writes into the middle of the
+destination and leaves what precedes it untouched, and a destination too small is
+`CNA_RESULT_BUFFER_TOO_SMALL` with **nothing partial written**.
 
-### `Dispose`, `Dispose(Boolean)` and `Finalize` — **buildable, with a documented upstream refusal**
+DEVIATION, recorded, and it is the interesting one. XNA refuses this member on a **Reach** device:
+it is a HiDef feature and `ProfileCapabilities.GetBackBufferDataSupported` is what says so. This
+binding's device reports `Reach`, so XNA would refuse where this succeeds on a real renderer.
+`ProfileCapabilities` is not projected — the same decision the draw calls' `ProfileMaxPrimitiveCount`
+and the occlusion query's profile check record — so the refusal is CNA's, and CNA refuses for a
+**renderer** reason instead. Same shape, different reason, both recorded rather than blurred.
+
+DEVIATION, recorded: `T` is `Color`, because the route takes `CNA_Color*`. XNA's is any struct whose
+size divides the format's — the same limit `Texture3D.GetData` records for the same reason.
+
+### `Dispose`, `Dispose(Boolean)` and `Finalize` — **done, Foundation 95**
 
 `cna_graphics_device_dispose` exists and **deliberately answers `CNA_RESULT_NOT_SUPPORTED` for a
 valid device handle**. The header says why, and it is not a gap:
@@ -214,12 +224,27 @@ valid device handle**. The header says why, and it is not a gap:
 > canonical disposal and `cna_graphics_device_get_is_disposed` observes the resulting state.
 
 That is the same two-owners fact `docs/graphics-device-service-producer-audit.md` recorded for the
-service container, and it settles the family rather than blocking it. This binding's device is
-already invalidated by the Game's disposal — `IsDisposed` is `@invalidated || game.disposed?` — so
-what `Dispose` must project is the *managed* contract: the `Disposing` event, idempotence, and
-`GC.SuppressFinalize`. `Finalize` is `protected` and, under this project's standing rule that **no
-GC finalizer destroys native state**, projects as a protected member that performs the managed half
-only. Both are recorded deviations with the header quotation behind them.
+service container, and it settles the family rather than blocking it: the route is not bound,
+because it has no call site that could succeed.
+
+The C++/CLI shape is the one `GraphicsResource` already records, on the device itself:
+
+    void !GraphicsDevice() { if (isDisposed) return; isDisposed = true;
+                             resourceManager.ReleaseAllDeviceResources();
+                             declarationManager.ReleaseAllDeclarations();
+                             release the native objects; }
+    void ~GraphicsDevice() { if (isDisposed) return; !GraphicsDevice();
+                             Disposing?.Invoke(this, EventArgs.Empty); }
+    protected virtual void Dispose(bool disposing) { if (disposing) ~GraphicsDevice(); !GraphicsDevice(); }
+    public void Dispose() { Dispose(true); GC.SuppressFinalize(this); }
+    protected void Finalize() { Dispose(false); }
+
+So `Dispose(false)` releases without raising `Disposing` and `Dispose(true)` raises it exactly
+once, because both destructors return early once the flag is set. All of that is projected. What
+the managed half really does here is the flag, the declaration cache and the native event
+registrations — `ReleaseAllDeclarations` and its analogue — and the device itself is released with
+the game. `GC.SuppressFinalize` has no analogue either: **no GC finalizer releases native state**
+in this binding, so there is nothing to suppress.
 
 ### The six events — **done, Foundation 93**, and three of them are not CNA's to raise
 
@@ -336,10 +361,14 @@ implements the family, so that it is made against a measurement rather than in a
 
 | classification | members |
 | --- | --- |
-| **buildable against CNA 0.21.0** | 30 |
+| **built** | 30 of `GraphicsDevice`'s, and its remainder is now only the five below |
 | `BLOCKED_UPSTREAM_CNA` (all five are the invented display data) | 5 |
 | blocked by "the renderer" | 0 |
 | blocked by "the graphics runtime" | 0 |
+
+`GraphicsDevice` owes three members — `.ctor`, `Adapter` and `DisplayMode` — and
+`GraphicsDeviceManager` owes the two of its fifteen that name `GraphicsDeviceInformation`'s adapter.
+Every one of the five is the same upstream defect.
 
 The single blocker behind all five is one measured upstream defect with its own evidence file. Two
 of the three artifacts this project qualifies have a real renderer, a real window and a real GL

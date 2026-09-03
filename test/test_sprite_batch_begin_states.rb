@@ -183,7 +183,7 @@ class SpriteBatchBeginStatesTest < Minitest::Test
     # four state descriptors to one SpriteBatch route and touched no device property.
     # The three device-buffer draw calls left this list when the draw slice landed; what is
     # still absent is the user-primitive families, which take the vertices as an argument.
-    %i[GetBackBufferData Dispose].each do |absent|
+    %i[Adapter DisplayMode].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)

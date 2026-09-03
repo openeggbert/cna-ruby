@@ -92,6 +92,7 @@ CHECK_FN(cna_graphics_device_manager_destroy, CNA_Result, (CNA_GraphicsDeviceMan
 CHECK_FN(cna_graphics_device_get_viewport, CNA_Result, (CNA_Handle, CNA_Viewport*));
 CHECK_FN(cna_graphics_device_set_viewport, CNA_Result, (CNA_Handle, CNA_Viewport));
 CHECK_FN(cna_graphics_device_get_status, CNA_Result, (CNA_Handle, CNA_GraphicsDeviceStatus*));
+CHECK_FN(cna_graphics_device_get_backbuffer_data_window, CNA_Result, (CNA_Handle, const CNA_BackBufferReadback*, CNA_Color*, uint64_t));
 CHECK_FN(cna_graphics_device_draw_user_primitives, CNA_Result, (CNA_Handle, const CNA_UserPrimitives*));
 CHECK_FN(cna_graphics_device_draw_user_indexed_primitives, CNA_Result, (CNA_Handle, const CNA_UserPrimitives*, const CNA_UserIndices*));
 CHECK_FN(cna_graphics_device_subscribe_event, CNA_Result, (CNA_Handle, CNA_GraphicsDeviceEvent, CNA_GraphicsDeviceEventCallback, void*, CNA_GraphicsDeviceEventRegistrationHandle*));
@@ -504,6 +505,7 @@ int main(void) {
     SIGNATURE(cna_graphics_device_get_viewport, "CNA_Result|CNA_Handle,CNA_Viewport*");
     SIGNATURE(cna_graphics_device_set_viewport, "CNA_Result|CNA_Handle,CNA_Viewport");
     SIGNATURE(cna_graphics_device_get_status, "CNA_Result|CNA_Handle,CNA_GraphicsDeviceStatus*");
+    SIGNATURE(cna_graphics_device_get_backbuffer_data_window, "CNA_Result|CNA_Handle,const CNA_BackBufferReadback*,CNA_Color*,uint64_t");
     SIGNATURE(cna_graphics_device_draw_user_primitives, "CNA_Result|CNA_Handle,const CNA_UserPrimitives*");
     SIGNATURE(cna_graphics_device_draw_user_indexed_primitives, "CNA_Result|CNA_Handle,const CNA_UserPrimitives*,const CNA_UserIndices*");
     SIGNATURE(cna_graphics_device_subscribe_event, "CNA_Result|CNA_Handle,CNA_GraphicsDeviceEvent,CNA_GraphicsDeviceEventCallback,void*,CNA_GraphicsDeviceEventRegistrationHandle*");
@@ -843,6 +845,7 @@ int main(void) {
     STRUCT(CNA_AudioEmitter); FIELD(CNA_AudioEmitter, struct_size); FIELD(CNA_AudioEmitter, struct_version); FIELD(CNA_AudioEmitter, doppler_scale); FIELD(CNA_AudioEmitter, forward); FIELD(CNA_AudioEmitter, position); FIELD(CNA_AudioEmitter, up); FIELD(CNA_AudioEmitter, velocity);
     STRUCT(CNA_TextureSlotInfo); FIELD(CNA_TextureSlotInfo, struct_size); FIELD(CNA_TextureSlotInfo, struct_version); FIELD(CNA_TextureSlotInfo, bound); FIELD(CNA_TextureSlotInfo, reserved); FIELD(CNA_TextureSlotInfo, texture);
     STRUCT(CNA_PresentationParameters); FIELD(CNA_PresentationParameters, struct_size); FIELD(CNA_PresentationParameters, struct_version); FIELD(CNA_PresentationParameters, back_buffer_format); FIELD(CNA_PresentationParameters, back_buffer_width); FIELD(CNA_PresentationParameters, back_buffer_height); FIELD(CNA_PresentationParameters, depth_stencil_format); FIELD(CNA_PresentationParameters, multi_sample_count); FIELD(CNA_PresentationParameters, presentation_interval); FIELD(CNA_PresentationParameters, display_orientation); FIELD(CNA_PresentationParameters, render_target_usage); FIELD(CNA_PresentationParameters, is_full_screen); FIELD(CNA_PresentationParameters, headless_ext);
+    STRUCT(CNA_BackBufferReadback); FIELD(CNA_BackBufferReadback, struct_size); FIELD(CNA_BackBufferReadback, struct_version); FIELD(CNA_BackBufferReadback, has_source_rectangle); FIELD(CNA_BackBufferReadback, source_rectangle); FIELD(CNA_BackBufferReadback, start_index); FIELD(CNA_BackBufferReadback, element_count);
     STRUCT(CNA_UserPrimitives); FIELD(CNA_UserPrimitives, struct_size); FIELD(CNA_UserPrimitives, struct_version); FIELD(CNA_UserPrimitives, primitive_type); FIELD(CNA_UserPrimitives, vertex_source); FIELD(CNA_UserPrimitives, vertex_data); FIELD(CNA_UserPrimitives, vertex_declaration); FIELD(CNA_UserPrimitives, vertex_offset); FIELD(CNA_UserPrimitives, num_vertices); FIELD(CNA_UserPrimitives, primitive_count); FIELD(CNA_UserPrimitives, reserved);
     STRUCT(CNA_UserIndices); FIELD(CNA_UserIndices, struct_size); FIELD(CNA_UserIndices, struct_version); FIELD(CNA_UserIndices, index_element_size); FIELD(CNA_UserIndices, index_offset); FIELD(CNA_UserIndices, index_data);
     STRUCT(CNA_Viewport); FIELD(CNA_Viewport, x); FIELD(CNA_Viewport, y); FIELD(CNA_Viewport, width); FIELD(CNA_Viewport, height); FIELD(CNA_Viewport, min_depth); FIELD(CNA_Viewport, max_depth);

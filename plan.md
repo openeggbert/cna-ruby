@@ -43,7 +43,7 @@ the prose would have fixed exactly that one milestone.
 | ---: | --- |
 | 257 | XNA 4.0 Windows reference types |
 | 200 | types this binding projects |
-| 2394 | Ruby member identities |
+| 2400 | Ruby member identities |
 | 198 | complete types |
 | 2 | partial types |
 | 57 | missing types |
@@ -55,10 +55,10 @@ the prose would have fixed exactly that one milestone.
 
 | count | what it measures |
 | ---: | --- |
-| 94 | strict diagnostics in total |
+| 85 | strict diagnostics in total |
 | 57 | `MISSING_TYPE` |
-| 24 | `MISSING_MEMBER` |
-| 13 | `OVERLOAD_MAPPING_MISMATCH` |
+| 18 | `MISSING_MEMBER` |
+| 10 | `OVERLOAD_MAPPING_MISMATCH` |
 | 0 | `PROPERTY_MAPPING_MISMATCH` |
 | 0 | every other structural category, summed |
 | 0 | allowlist entries |
@@ -68,17 +68,17 @@ the prose would have fixed exactly that one milestone.
 
 | count | what it measures |
 | ---: | --- |
-| 6 | members `GraphicsDevice` still owes |
+| 3 | members `GraphicsDevice` still owes |
 | 15 | members `GraphicsDeviceManager` still owes |
 
 **Native ABI**
 
 | count | what it measures |
 | ---: | --- |
-| 394 | bound C functions |
+| 395 | bound C functions |
 | 6 | callbacks |
 | 137 | constants |
-| 65 | struct layouts |
+| 66 | struct layouts |
 | 2 | admitted encoded ABI versions |
 | 2 | header roots cross-verified |
 | 0 | `ABI_MISMATCHES` |
@@ -104,7 +104,7 @@ the prose would have fixed exactly that one milestone.
 
 | count | what it measures |
 | ---: | --- |
-| 149 | runtime capability rows |
+| 150 | runtime capability rows |
 
 <!-- scoreboard:end -->
 

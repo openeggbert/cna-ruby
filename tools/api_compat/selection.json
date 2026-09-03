@@ -1201,6 +1201,55 @@
             "System.Int32",
             "Microsoft.Xna.Framework.Graphics.VertexDeclaration"
           ]
+        },
+        {
+          "kind": "method",
+          "name": "GetBackBufferData",
+          "static": false,
+          "parameters": [
+            "!!0[]"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetBackBufferData",
+          "static": false,
+          "parameters": [
+            "!!0[]",
+            "System.Int32",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetBackBufferData",
+          "static": false,
+          "parameters": [
+            "System.Nullable`1[Microsoft.Xna.Framework.Rectangle]",
+            "!!0[]",
+            "System.Int32",
+            "System.Int32"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "parameters": [
+            "System.Boolean"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Finalize",
+          "static": false,
+          "parameters": []
         }
       ]
     },

@@ -533,6 +533,14 @@ module CNA
         signature("cna_graphics_device_draw_primitives", T[:result], [T[:handle], enum("CNA_PrimitiveType"), T[:i32], T[:i32]], ownership: "borrows device; draws from the bound buffers"),
         signature("cna_graphics_device_draw_indexed_primitives", T[:result], [T[:handle], enum("CNA_PrimitiveType"), T[:i32], T[:i32], T[:i32], T[:i32], T[:i32]], ownership: "borrows device; draws from the bound buffers"),
         signature("cna_graphics_device_draw_instanced_primitives", T[:result], [T[:handle], enum("CNA_PrimitiveType"), T[:i32], T[:i32], T[:i32], T[:i32], T[:i32], T[:i32]], ownership: "borrows device; draws from the bound buffers"),
+        # `GetBackBufferData`'s three overloads all reach the **window** route, because
+        # `has_source_rectangle` false is the whole buffer -- so one route carries all three, and
+        # `cna_graphics_device_get_backbuffer_data_rgba8` stays unbound for want of a call site.
+        # No partial pixel array is written on `CNA_RESULT_BUFFER_TOO_SMALL`, which is what XNA's
+        # own capacity guard means.
+        signature("cna_graphics_device_get_backbuffer_data_window", T[:result],
+                  [T[:handle], pointer("CNA_BackBufferReadback", const: true), pointer("CNA_Color"), T[:u64]],
+                  ownership: "borrows device; caller output"),
         # The two user-primitive draws, which take their whole description by pointer -- so nothing
         # here is passed by value and the vertex and index arrays stay caller-owned: "no vertex
         # array is retained after the call returns".

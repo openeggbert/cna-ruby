@@ -473,6 +473,25 @@ module CNA
         end
       end
 
+      # The back-buffer readback window. One structure covers all three `GetBackBufferData`
+      # overloads: `has_source_rectangle` false is the whole buffer, which is what the two
+      # rectangle-free overloads pass.
+      class BackBufferReadback < Structure
+        layout size: 48, alignment: 8, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("has_source_rectangle", "CNA_Bool", 8, 1),
+          Layouts.field("source_rectangle", "CNA_Rectangle", 12, 16),
+          Layouts.field("start_index", "uint64_t", 32, 8),
+          Layouts.field("element_count", "uint64_t", 40, 8)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+      end
+
       # The two caller-provided descriptions a user-primitive draw takes. Both are versioned inputs
       # rather than outputs, so both fill their size and version in the constructor and the caller
       # writes the rest.

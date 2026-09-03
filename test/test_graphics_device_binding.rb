@@ -223,7 +223,7 @@ class GraphicsDeviceBindingTest < Minitest::Test
     # claimed, and still claims, is that **it** bound no render target and drew nothing.
     # The three device-buffer draw calls left this list when the draw slice landed; what is
     # still absent is the user-primitive families, which take the vertices as an argument.
-    %i[GetBackBufferData Dispose Finalize].each do |absent|
+    %i[Adapter DisplayMode].each do |absent|
       refute G::GraphicsDevice.public_method_defined?(absent), absent.to_s
     end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)

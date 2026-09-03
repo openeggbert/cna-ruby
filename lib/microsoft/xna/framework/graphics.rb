@@ -921,6 +921,116 @@ module Microsoft
             value
           end
 
+          # ------------------------------------------------------------ reading the back buffer
+          #
+          #     GetBackBufferData<T>(data)
+          #     GetBackBufferData<T>(data, startIndex, elementCount)
+          #     GetBackBufferData<T>(rect, data, startIndex, elementCount)
+          #
+          # The first two are the third with a null rectangle -- and the one-argument form passes
+          # `data?.Length ?? 0` as the element count, which is why a null `data` reaches the same
+          # `ArgumentNullException` rather than a `NoMethodError`. One CNA route carries all three,
+          # because `has_source_rectangle` false is the whole buffer.
+          #
+          # XNA's own guards, in the IL's order:
+          #
+          #     the profile does not support it   -> NotSupportedException(ProfileFeatureNotSupported)
+          #     data null or empty                -> ArgumentNullException("data", NullNotAllowed)
+          #     startIndex/elementCount outside the array -> Helpers.ValidateCopyParameters
+          #     a render target is bound          -> InvalidOperationException(CannotGetBackBufferActiveRenderTargets)
+          #
+          # DEVIATION, recorded, and it is two facts rather than one. The **profile** guard is
+          # XNA's: `GetBackBufferData` is a HiDef feature, and a Reach device refuses it outright.
+          # `ProfileCapabilities` is not projected -- the same decision the draw calls'
+          # `ProfileMaxPrimitiveCount` and the occlusion query record -- so the refusal is CNA's,
+          # and CNA refuses for a **renderer** reason instead: `CNA_RESULT_NOT_SUPPORTED` "when the
+          # active renderer has no honest back-buffer readback". Same shape, different reason, and
+          # both are refusals.
+          #
+          # DEVIATION, recorded: `T` is `Color`. XNA's is any struct whose size divides the
+          # format's, and `cna_graphics_device_get_backbuffer_data_window` takes `CNA_Color*` --
+          # the same limit `Texture3D.GetData` already records for the same reason.
+          def GetBackBufferData(*arguments)
+            case arguments.length
+            when 1 then rect, data, start_index, element_count = nil, arguments[0], 0, (arguments[0]&.length || 0)
+            when 3 then rect, data, start_index, element_count = nil, *arguments
+            when 4 then rect, data, start_index, element_count = arguments
+            else raise ::ArgumentError, "GetBackBufferData takes (data), (data, startIndex, elementCount) or (rect, data, startIndex, elementCount)"
+            end
+            raise ::ArgumentError, "data" if data.nil?
+            raise ::TypeError, "data must be an Array" unless data.is_a?(::Array)
+            raise ::ArgumentError, "data" if data.empty?
+            unless rect.nil? || rect.instance_of?(Rectangle)
+              raise ::TypeError, "rect must be a Rectangle or nil"
+            end
+
+            first = CNA::Runtime::Numeric.int32(start_index, "startIndex")
+            count = CNA::Runtime::Numeric.int32(element_count, "elementCount")
+            validate_copy_parameters(data.length, first, count)
+            unless @render_target_bindings.empty?
+              raise ::RuntimeError, "CannotGetBackBufferActiveRenderTargets"
+            end
+
+            Texture3D.__send__(:require_color_elements, Color, "cna_graphics_device_get_backbuffer_data_window")
+            readback = CNA::Native::Layouts::BackBufferReadback.new
+            unless rect.nil?
+              readback.write_u8(8, 1)
+              readback.pointer[12, 16] = [rect.X, rect.Y, rect.Width, rect.Height].pack("l4")
+            end
+            readback.write_u64(32, first)
+            readback.write_u64(40, count)
+            buffer = Fiddle::Pointer.malloc([4 * (first + count), 1].max, Fiddle::RUBY_FREE)
+            buffer[0, [4 * (first + count), 1].max] = "\0" * [4 * (first + count), 1].max
+            CNA::Native.library.call("cna_graphics_device_get_backbuffer_data_window", native_handle,
+                                     readback.pointer, buffer, first + count)
+            Texture.__send__(:unpack_elements, Color, buffer + (4 * first), data, first, count, 4)
+            nil
+          end
+
+          # ------------------------------------------------------------ disposal
+          #
+          # The C++/CLI shape `GraphicsResource` already records, on the device itself:
+          #
+          #     void !GraphicsDevice() { if (isDisposed) return;
+          #                              isDisposed = true;
+          #                              resourceManager.ReleaseAllDeviceResources();
+          #                              declarationManager.ReleaseAllDeclarations();
+          #                              release the native objects; }
+          #     void ~GraphicsDevice() { if (isDisposed) return; !GraphicsDevice();
+          #                              Disposing?.Invoke(this, EventArgs.Empty); }
+          #     protected virtual void Dispose(bool disposing)
+          #                            { if (disposing) ~GraphicsDevice(); !GraphicsDevice(); }
+          #     public void Dispose()  { Dispose(true); GC.SuppressFinalize(this); }
+          #     protected void Finalize() { Dispose(false); }
+          #
+          # So `Dispose(false)` releases without raising `Disposing` and `Dispose(true)` raises it,
+          # exactly once, because both destructors return early once the flag is set.
+          #
+          # DEVIATION, recorded: **the native release is not this binding's to perform.**
+          # `cna_graphics_device_dispose` exists and deliberately answers `CNA_RESULT_NOT_SUPPORTED`
+          # for a valid device handle; CNA's header says why -- "the canonical `GraphicsDevice`
+          # belongs to the running game, so disposing it through a borrowed handle would leave that
+          # game drawing into a destroyed device" -- and names `cna_game_destroy` as what performs
+          # it. So the route is not bound and this performs the managed half: the flag, the
+          # declaration cache, the event registrations and the event. The device is released with
+          # the game, which is the same two-owners fact
+          # `docs/graphics-device-service-producer-audit.md` records for the service container.
+          #
+          # `GC.SuppressFinalize` has no analogue either: **no GC finalizer releases native state**
+          # in this binding, so there is nothing to suppress.
+          def Dispose(disposing = true)
+            release_device(raise_event: disposing)
+            nil
+          end
+
+          # `Dispose(false)`: `family` in XNA, so it is protected here, and it releases without
+          # raising `Disposing`. No Ruby finalizer is registered for it, for the reason above.
+          def Finalize
+            self.Dispose(false)
+            nil
+          end
+          protected :Finalize
+
           # ------------------------------------------------------------ presenting and resetting
 
           #     Present()
@@ -2034,19 +2144,36 @@ module Microsoft
           # second call. Handler exceptions are not swallowed and are not captured either: this is
           # a Ruby frame, so an exception propagates to `Game#Dispose`, which already collects the
           # first error from each teardown step.
-          def invalidate
+          # `Helpers.ValidateCopyParameters(elementCount, startIndex, requested)`, which every
+          # `GetData`/`SetData` in this binding already goes through in its own type.
+          def validate_copy_parameters(length, start_index, count)
+            raise ::RangeError, "startIndex" if start_index.negative? || start_index >= length
+            raise ::RangeError, "elementCount" unless count.positive?
+            raise ::RangeError, "elementCount" if start_index + count > length
+
+            nil
+          end
+
+          # `!GraphicsDevice()` and `~GraphicsDevice()` in one place, because the only difference
+          # between them is the event. Both return early once the flag is set, so `Disposing` is
+          # raised at most once however many times either is reached.
+          def release_device(raise_event:)
             return nil if @invalidated
 
             unsubscribe_device_events
             release_declarations
             begin
-              raise_Disposing
+              raise_Disposing if raise_event
             ensure
               @invalidated = true
               @callback_handle = 0
             end
             nil
           end
+
+          # The manager's teardown, which is `Dispose()`'s path: the game is going, so this is a
+          # disposing release and `Disposing` is raised.
+          def invalidate = release_device(raise_event: true)
 
           # The two cached property objects, cleared when the device is reset. XNA replaces
           # `pPublicCachedParams` on reset and `_displayMode` survives it, so only the first is

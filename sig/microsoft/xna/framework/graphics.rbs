@@ -279,6 +279,10 @@ module Microsoft
           def ResourceDestroyed: () -> CNA::Runtime::Event
           def DrawUserPrimitives: (PrimitiveType | Integer primitiveType, Array[untyped] vertexData, Integer vertexOffset, Integer primitiveCount, ?VertexDeclaration? vertexDeclaration) -> nil
           def DrawUserIndexedPrimitives: (untyped indexType, PrimitiveType | Integer primitiveType, Array[untyped] vertexData, Integer vertexOffset, Integer numVertices, Array[Integer]? indexData, Integer indexOffset, Integer primitiveCount, ?VertexDeclaration? vertexDeclaration) -> nil
+          def GetBackBufferData: (Array[Color]? data) -> nil
+                               | (Array[Color]? data, Integer startIndex, Integer elementCount) -> nil
+                               | (Rectangle? rect, Array[Color]? data, Integer startIndex, Integer elementCount) -> nil
+          def Dispose: (?bool disposing) -> nil
           def Present: () -> nil
                      | (Rectangle? sourceRectangle, Rectangle? destinationRectangle, Integer? overrideWindowHandle) -> nil
           def Reset: () -> nil
