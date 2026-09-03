@@ -143,8 +143,10 @@ class BasicEffectTest < Minitest::Test
   # ------------------------------------------------------------------ the recorded deviations
 
   # `cna_basic_effect_create`'s effect declares no parameters, where XNA's shader declares one per
-  # property. Measured, and asserted so that a future CNA that does declare them fails here rather
-  # than silently changing what `Parameters` means.
+  # property — and where CNA's own four sibling stock effects each declare theirs. Measured, and
+  # asserted so that a future CNA that does declare them fails here rather than silently changing
+  # what `Parameters` means. `docs/stock-effect-parameter-upstream-defect.md` carries the whole
+  # family's measurement; `test/test_stock_effects.rb` asserts the other four.
   def test_a_stock_effect_has_no_parameters_and_one_technique
     counts = with_effect { |effect, _device| [effect.Parameters.Count, effect.Techniques.Count] }
     assert_equal [0, 1], counts
@@ -354,9 +356,9 @@ class BasicEffectTest < Minitest::Test
     refute_includes G::BasicEffect.public_instance_methods(false), :Dispose
     game = EffectGame.new do |device|
       effect = G::BasicEffect.new(device)
-      views = effect.__send__(:instance_variable_get, :@light_views).dup
+      views = effect.__send__(:instance_variable_get, :@stock_light_views).dup
       effect.Dispose
-      [views, effect.IsDisposed, effect.__send__(:instance_variable_get, :@light_views)]
+      [views, effect.IsDisposed, effect.__send__(:instance_variable_get, :@stock_light_views)]
     end
     begin
       game.Run

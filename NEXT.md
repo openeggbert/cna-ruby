@@ -69,6 +69,16 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 86 | `GraphicsDevice`'s binding slice: the vertex streams and the index buffer | **0** | 5 |
 | 87 | `GraphicsDevice`'s render-target slice, and the display isolation it exposed | **0** | 4 |
 | 88 | the first draw call this binding has ever made | **0** | 3 |
+| 89 | the generated scoreboard and its staleness guard, replacing hand-kept prose | **0** | **0** |
+| 90 | `GraphicsDevice`'s three simple properties, and the fourth measurement took away | **0** | 3 |
+| 91 | `GraphicsDevice.Clear`'s three overloads | **0** | 3 |
+| 92 | `Present` and `Reset`, five overloads over two members | **0** | 5 |
+| 93 | `GraphicsDevice`'s six events, and the three CNA is not the producer for | **0** | 6 |
+| 94 | the two user-primitive draw families, six overloads | **0** | 6 |
+| 95 | `GetBackBufferData` and the device's own disposal | **0** | 6 |
+| 96 | `GraphicsDeviceManager`'s ten, and the producer audit's one wrong inference | **0** | 10 |
+| 97 | `Graphics.BasicEffect`, and the SSE and MEMORY by-value shapes it needed | **1** | 47 |
+| 98 | the four remaining stock effects, closing the family | **4** | 66 |
 
 ## Measured state
 
@@ -87,11 +97,11 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 | count | what it measures |
 | ---: | --- |
 | 257 | XNA 4.0 Windows reference types |
-| 201 | types this binding projects |
-| 2436 | Ruby member identities |
-| 199 | complete types |
+| 205 | types this binding projects |
+| 2520 | Ruby member identities |
+| 203 | complete types |
 | 2 | partial types |
-| 56 | missing types |
+| 52 | missing types |
 | 42 | event identities |
 | 20 | types owning an event |
 | 22 | projected BCL identities |
@@ -100,8 +110,8 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 69 | strict diagnostics in total |
-| 56 | `MISSING_TYPE` |
+| 65 | strict diagnostics in total |
+| 52 | `MISSING_TYPE` |
 | 8 | `MISSING_MEMBER` |
 | 5 | `OVERLOAD_MAPPING_MISMATCH` |
 | 0 | `PROPERTY_MAPPING_MISMATCH` |
@@ -120,7 +130,7 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 443 | bound C functions |
+| 503 | bound C functions |
 | 6 | callbacks |
 | 137 | constants |
 | 66 | struct layouts |
@@ -149,24 +159,40 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 152 | runtime capability rows |
+| 153 | runtime capability rows |
 
 <!-- scoreboard:end -->
 
 `GraphicsDevice` and `GraphicsDeviceManager` are the two partial types, and
 `docs/graphics-runtime-member-audit.md` enumerates every member each still owes together with what
-that member actually needs. The single `PROPERTY_MAPPING_MISMATCH` is `GraphicsDevice::Viewport`.
+that member actually needs. `PROPERTY_MAPPING_MISMATCH` is **zero**: the one entry it used to carry
+was `GraphicsDevice::Viewport`, and `docs/graphics-device-viewport-evidence.md` records why that was
+never a Ruby limitation -- `CNA_Viewport` is MEMORY class, and the setter works once the manifest
+expands it the way the System V classification says it travels.
 
 CNA ABI counts above are measured on **two admitted encoded versions** cross-verified across both
 header roots. **No CNA source was changed and no new native binary was built.**
 
-Suite **1573 runs / 50620 assertions**, zero failures, and 22 skips under the default HEADLESS
-artifact at Foundation 88 — every one a renderer capability or fixture that artifact does not have:
-compiled effects, volume storage and cube-face storage. The same runs are green under both real
-renderer artifacts, 18 skips on `OPENGL33` and **one** on the compiled-effects build, with
-`SDL_VIDEODRIVER=x11` — which Foundation 81 measured to be load-bearing rather than decorative.
-Suite totals are the one measurement here that no report writes, so they are quoted as a dated
-observation rather than as current state.
+Suite **1735 runs / 52228 assertions**, zero failures, and 27 skips under the default HEADLESS
+artifact at Foundation 98 — every one a renderer capability or fixture that artifact does not have:
+compiled effects, volume storage and cube-face storage. The same 1735 runs are green under both real
+renderer artifacts on the same day, 52252 assertions and 20 skips on `OPENGL33` and 52334 assertions
+and **three** skips on the compiled-effects build, with `SDL_VIDEODRIVER=x11` — which Foundation 81
+measured to be load-bearing rather than decorative. Suite totals are the one measurement here that
+no report writes, so they are quoted as a dated observation rather than as current state.
+
+Run the artifact suites against **one long-lived `Xvfb`**, not `xvfb-run -a` per invocation:
+
+```sh
+Xvfb :77 -screen 0 1280x800x24 &
+DISPLAY=:77 SDL_VIDEODRIVER=x11 CNA_NATIVE_LIBRARY=~/deps/cna-c-abi-0.21.0-opengl33/libcna_c_api.so rake test
+```
+
+`xvfb-run -a` over a full suite intermittently loses its server mid-run and a handful of games fail
+to create with `AcquireSubsystem(Video) failed: x11 not available` — a different handful each time,
+which is what identifies it as the harness rather than the binding. Leave `CNA_HEADERS` pointing at
+the canonical `cna-c-abi-0.21.0` include tree: the renderer artifacts ship a library, not headers,
+and repointing it fails the ABI gate with `canonical header not found`.
 
 ## Game is complete, and so is the whole Audio namespace
 

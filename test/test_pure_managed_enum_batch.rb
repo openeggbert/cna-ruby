@@ -356,7 +356,9 @@ class PureManagedEnumBatchTest < Minitest::Test
     # metadata is made of and nothing that holds one.
     # The five buffer types left this list when they were built, and the two render targets when
     # they were; what this milestone claimed, and still claims, is that **it** built none of them.
-    %i[SkinnedEffect GraphicsAdapter].each do |name|
+    # The four remaining stock effects left this list when the family was completed; what this
+    # batch claimed, and still claims, is that **it** built none of them.
+    %i[GraphicsAdapter].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
     # `Texture3D` and `TextureCube` exist now, and this batch built neither: it selected

@@ -244,9 +244,11 @@ class DirectionalLightTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_builds_no_stock_effect_and_no_lighting_runtime
-    # `BasicEffect` left this list in Foundation 97; the other four are still absent.
-    %i[SkinnedEffect EnvironmentMapEffect AlphaTestEffect DualTextureEffect]
-      .each { |absent| refute G.const_defined?(absent, false), absent.to_s }
+    # `BasicEffect` left this list in Foundation 97 and the other four in Foundation 98; what this
+    # milestone claimed, and still claims, is that **it** built none of the five -- it built the
+    # light they hand out. `GraphicsAdapter` stands in their place as the graphics identity that
+    # stays absent, blocked upstream on invented hardware.
+    %i[GraphicsAdapter].each { |absent| refute G.const_defined?(absent, false), absent.to_s }
     # The light is a plain object: it has no handle, no disposal and no device.
     light = G::DirectionalLight.new(nil, nil, nil, nil)
     refute light.respond_to?(:Dispose)

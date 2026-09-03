@@ -5521,6 +5521,43 @@ module Microsoft
             build_graph
           end
 
+          # The five stock constructors are the same five statements with a different route, so
+          # they share them: resolve the device, create, adopt, and acquire the three light views
+          # when the effect declares `IEffectLights`.
+          def initialize_stock_effect(route, source, argument)
+            device = source ? source.GraphicsDevice : argument
+            raise ::ArgumentError, "graphicsDevice" if device.nil?
+            raise ::TypeError, "graphicsDevice must be GraphicsDevice" unless device.instance_of?(GraphicsDevice)
+
+            @stock_texture = nil
+            @stock_texture2 = nil
+            @stock_environment_map = nil
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call(route, device.__send__(:native_handle), output)
+            initialize_stock(device, output[0, 8].unpack1("Q"))
+            build_stock_lights if respond_to?(:DirectionalLight0)
+            nil
+          end
+
+          # The two shared halves of every stock effect's copy constructor.
+          def copy_stock_matrices(source)
+            self.World = source.World
+            self.View = source.View
+            self.Projection = source.Projection
+            nil
+          end
+
+          def copy_stock_fog(source)
+            self.FogEnabled = source.FogEnabled
+            self.FogStart = source.FogStart
+            self.FogEnd = source.FogEnd
+            self.FogColor = source.FogColor
+            nil
+          end
+
+          # `Effect#Dispose` releases its own views through this, so a stock effect's three light
+          # views go the same way — none of the five declares a `Dispose`, and adding one would be
+          # surface XNA does not have.
           def compile(device, effect_code)
             raise ::ArgumentError, "effectCode" if effect_code.nil?
             raise ::TypeError, "effectCode must be a String of bytes" unless effect_code.is_a?(::String)
@@ -5609,7 +5646,11 @@ module Microsoft
           # the cache is what answers, and a slot filled by native code reads back as `nil`.
           def texture_for(_native, _dimension) = nil
 
+          # Every owned view this effect holds, released in reverse order. A stock effect's three
+          # directional-light views are among them — none of the five declares a `Dispose`, and
+          # adding one would be surface XNA does not have, so they go out the same door.
           def release_views
+            release_stock_lights if respond_to?(:DirectionalLight0)
             return unless defined?(@views) && @views
 
             @views.reverse_each do |handle, destroy|
@@ -5814,46 +5855,55 @@ module Microsoft
           end
         end
 
-        # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…), the
-        # first of the five stock effects.
+        # Derived from the pinned Microsoft.Xna.Framework.Graphics.dll IL (SHA-256 560080fc…):
+        # the five stock effects.
         #
         # ## What CNA's stock effect is, and what that costs
         #
-        # XNA's `BasicEffect` is an `Effect` over a built-in compiled shader — `BasicEffectCode.Code`
-        # — whose twenty-odd properties are cached in managed fields and flushed into
-        # `EffectParameter`s by `OnApply` under a dirty-flag mask. CNA's is a **native object with
-        # typed accessors**: `cna_basic_effect_create` builds it, and every property has its own
-        # route.
+        # XNA's stock effects are `Effect` subclasses over built-in compiled shaders — each has its
+        # own `…EffectCode.Code` resource — whose properties are cached in managed fields and
+        # flushed into `EffectParameter`s by `OnApply` under a dirty-flag mask. CNA's are **native
+        # objects with typed accessors**: `cna_<name>_effect_create` builds one and every property
+        # has its own route.
         #
-        # MEASURED, and recorded as a deviation because a consumer can see it: an effect from
-        # `cna_basic_effect_create` answers a parameter collection of **zero** on the `HEADLESS` and
-        # the compiled-effects artifact alike, where XNA's declares one parameter per property. So
-        # `Parameters` is empty on a stock effect and `Techniques` holds one. Nothing is fabricated
-        # to fill either.
+        # MEASURED, and recorded as a deviation because a consumer can see it: `BasicEffect` alone
+        # answers a parameter collection of **zero** — on `HEADLESS`, `OPENGL33` and the
+        # compiled-effects artifact alike — while its four siblings answer 12, 6, 5 and 12 named
+        # parameters. That asymmetry is an upstream gap rather than a design, and it is now fixed
+        # upstream: `docs/stock-effect-parameter-upstream-defect.md` carries the measurement, the
+        # four sibling collections and the corroborating commit. Nothing is fabricated to fill the
+        # empty one, and `Techniques` holds exactly one on all five.
         #
-        # MEASURED, and the reason this type is a projection rather than a re-implementation:
-        # **CNA's defaults are XNA's, member for member.** World, View and Projection identity;
-        # `DiffuseColor` and `SpecularColor` one; `EmissiveColor`, `AmbientLightColor` and
-        # `FogColor` zero; `Alpha` and `FogEnd` one; `SpecularPower` sixteen; every flag false;
-        # `DirectionalLight0` enabled and the other two not, each with direction `Vector3.Down`,
-        # diffuse `Vector3.One` and specular `Vector3.Zero`. That is exactly what the constructor
-        # IL above writes, including the `set_Enabled(true)` on light zero that a reader would not
-        # guess.
+        # MEASURED, and the reason these are projections rather than re-implementations: **CNA's
+        # defaults are XNA's, member for member.** For `BasicEffect` that is World, View and
+        # Projection identity; `DiffuseColor` and `SpecularColor` one; `EmissiveColor`,
+        # `AmbientLightColor` and `FogColor` zero; `Alpha` and `FogEnd` one; `SpecularPower`
+        # sixteen; every flag false; `DirectionalLight0` enabled and the other two not. That is
+        # exactly what the constructor IL writes, including the `set_Enabled(true)` on light zero
+        # that a reader would not guess.
         #
-        # ## Where the managed state lives
+        # ## Where the state lives
         #
-        # Every property is asked of the effect rather than cached, because CNA holds the same value
+        # Every property is asked of the effect rather than cached, because CNA holds the value
         # XNA's field would and answering from it cannot go stale. The three `DirectionalLight`
-        # objects are the exception and for the reason the `Effect` graph already records: the view
-        # handle is fresh on every call, so the three are built once and held.
+        # objects and the textures are the exceptions, for the same reason in both cases: CNA hands
+        # back a fresh view or a bare handle, and this ABI has no route from a native object back to
+        # the Ruby object that made it.
+        #
+        # ## What the three shared contracts are
+        #
+        # `IEffectMatrices`, `IEffectFog` and `IEffectLights` are one route family each in CNA, so
+        # each is written once in `CNA::Runtime::StockEffectSupport` and mixed in beside the XNA
+        # interface it implements. The interface supplies the identity; the mixin supplies the
+        # behaviour.
         class BasicEffect < Effect
           include IEffectFog
           include IEffectLights
           include IEffectMatrices
+          include CNA::Runtime::StockEffectSupport::Matrices
+          include CNA::Runtime::StockEffectSupport::Fog
+          include CNA::Runtime::StockEffectSupport::Lights
           public_class_method :new
-
-          S = CNA::Runtime::StockEffectSupport
-          private_constant :S
 
           #     BasicEffect(GraphicsDevice device)
           #     BasicEffect(BasicEffect cloneSource)     -- `family`, and what `Clone` calls
@@ -5862,213 +5912,87 @@ module Microsoft
           # `Effect`'s two do.
           def initialize(deviceOrCloneSource)
             source = deviceOrCloneSource.instance_of?(BasicEffect) ? deviceOrCloneSource : nil
-            device = source ? source.GraphicsDevice : deviceOrCloneSource
-            raise ::ArgumentError, "graphicsDevice" if device.nil?
-            raise ::TypeError, "graphicsDevice must be GraphicsDevice" unless device.instance_of?(GraphicsDevice)
-
-            output = CNA::Native.library.pointer_for("Q", 0)
-            CNA::Native.library.call("cna_basic_effect_create", device.__send__(:native_handle), output)
-            initialize_stock(device, output[0, 8].unpack1("Q"))
-            build_lights
+            initialize_stock_effect("cna_basic_effect_create", source, deviceOrCloneSource)
+            # The constructor's last statements, in the IL's order. CNA has already applied every
+            # default including this one, and setting it again is a no-op the `beq` short-circuit
+            # absorbs -- it is here because the IL is what this projection follows.
+            self.DirectionalLight0.Enabled = true
             copy_from(source) if source
           end
 
-          # `newobj BasicEffect::.ctor(BasicEffect); ret`, and the copy constructor copies every
-          # cached field — which here means every property, because there are no cached fields.
           def Clone = BasicEffect.new(self)
 
-          # ------------------------------------------------------------------ IEffectMatrices
+          def DiffuseColor = stock_vector("cna_basic_effect_get_diffuse_color")
 
-          def World = matrix("cna_effect_matrices_get_world")
-          def World=(value)
-            set_matrix("cna_effect_matrices_set_world", value, "World")
-          end
-          def View = matrix("cna_effect_matrices_get_view")
-          def View=(value)
-            set_matrix("cna_effect_matrices_set_view", value, "View")
-          end
-          def Projection = matrix("cna_effect_matrices_get_projection")
-          def Projection=(value)
-            set_matrix("cna_effect_matrices_set_projection", value, "Projection")
-          end
-
-          # ------------------------------------------------------------------ IEffectFog
-
-          def FogEnabled = S.read_boolean("cna_effect_fog_get_enabled", native_handle)
-
-          def FogEnabled=(value)
-            CNA::Native.library.call("cna_effect_fog_set_enabled", native_handle, require_boolean(value, "FogEnabled") ? 1 : 0)
-            value
-          end
-
-          def FogStart = S.read_float("cna_effect_fog_get_start", native_handle)
-          def FogStart=(value)
-            set_float("cna_effect_fog_set_start", value, "FogStart")
-          end
-          def FogEnd = S.read_float("cna_effect_fog_get_end", native_handle)
-          def FogEnd=(value)
-            set_float("cna_effect_fog_set_end", value, "FogEnd")
-          end
-          def FogColor = vector("cna_effect_fog_get_color")
-          def FogColor=(value)
-            set_vector("cna_effect_fog_set_color", value, "FogColor")
-          end
-
-          # ------------------------------------------------------------------ IEffectLights
-
-          def LightingEnabled = S.read_boolean("cna_effect_lights_get_enabled", native_handle)
-
-          def LightingEnabled=(value)
-            CNA::Native.library.call("cna_effect_lights_set_enabled", native_handle,
-                                     require_boolean(value, "LightingEnabled") ? 1 : 0)
-            value
-          end
-
-          def AmbientLightColor = vector("cna_effect_lights_get_ambient_color")
-          def AmbientLightColor=(value)
-            set_vector("cna_effect_lights_set_ambient_color", value, "AmbientLightColor")
-          end
-
-          def DirectionalLight0 = @lights[0]
-          def DirectionalLight1 = @lights[1]
-          def DirectionalLight2 = @lights[2]
-
-          # `set_LightingEnabled(true)` then `EffectHelpers.EnableDefaultLighting(l0, l1, l2)`,
-          # whose return value becomes `AmbientLightColor`. `cna_effect_lights_enable_default`
-          # performs the whole preset, and — measured — the values it produces are XNA's own:
-          # the key light's (1, 0.9607843, 0.80784315) and its direction
-          # (-0.5265408, -0.5735765, -0.6275069). The three managed lights are re-read afterwards,
-          # because their cached values are what their getters answer.
-          def EnableDefaultLighting
-            CNA::Native.library.call("cna_effect_lights_enable_default", native_handle)
-            @lights.each { |light| light.__send__(:refresh_from_native) }
-            nil
-          end
-
-          # ------------------------------------------------------------------ the material
-
-          def DiffuseColor = vector("cna_basic_effect_get_diffuse_color")
           def DiffuseColor=(value)
-            set_vector("cna_basic_effect_set_diffuse_color", value, "DiffuseColor")
-          end
-          def EmissiveColor = vector("cna_basic_effect_get_emissive_color")
-          def EmissiveColor=(value)
-            set_vector("cna_basic_effect_set_emissive_color", value, "EmissiveColor")
-          end
-          def SpecularColor = vector("cna_basic_effect_get_specular_color")
-          def SpecularColor=(value)
-            set_vector("cna_basic_effect_set_specular_color", value, "SpecularColor")
-          end
-          def SpecularPower = S.read_float("cna_basic_effect_get_specular_power", native_handle)
-          def SpecularPower=(value)
-            set_float("cna_basic_effect_set_specular_power", value, "SpecularPower")
-          end
-          def Alpha = S.read_float("cna_basic_effect_get_alpha", native_handle)
-          def Alpha=(value)
-            set_float("cna_basic_effect_set_alpha", value, "Alpha")
+            stock_set_vector("cna_basic_effect_set_diffuse_color", value, "DiffuseColor")
           end
 
-          def PreferPerPixelLighting = S.read_boolean("cna_basic_effect_get_prefer_per_pixel_lighting", native_handle)
+          def EmissiveColor = stock_vector("cna_basic_effect_get_emissive_color")
+
+          def EmissiveColor=(value)
+            stock_set_vector("cna_basic_effect_set_emissive_color", value, "EmissiveColor")
+          end
+
+          def SpecularColor = stock_vector("cna_basic_effect_get_specular_color")
+
+          def SpecularColor=(value)
+            stock_set_vector("cna_basic_effect_set_specular_color", value, "SpecularColor")
+          end
+
+          def SpecularPower = stock_float("cna_basic_effect_get_specular_power")
+
+          def SpecularPower=(value)
+            stock_set_float("cna_basic_effect_set_specular_power", value, "SpecularPower")
+          end
+
+          def Alpha = stock_float("cna_basic_effect_get_alpha")
+
+          def Alpha=(value)
+            stock_set_float("cna_basic_effect_set_alpha", value, "Alpha")
+          end
+
+          def PreferPerPixelLighting = stock_boolean("cna_basic_effect_get_prefer_per_pixel_lighting")
 
           def PreferPerPixelLighting=(value)
-            CNA::Native.library.call("cna_basic_effect_set_prefer_per_pixel_lighting", native_handle,
-                                     require_boolean(value, "PreferPerPixelLighting") ? 1 : 0)
-            value
+            stock_set_boolean("cna_basic_effect_set_prefer_per_pixel_lighting", value, "PreferPerPixelLighting")
           end
 
-          def TextureEnabled = S.read_boolean("cna_basic_effect_get_texture_enabled", native_handle)
+          def TextureEnabled = stock_boolean("cna_basic_effect_get_texture_enabled")
 
           def TextureEnabled=(value)
-            CNA::Native.library.call("cna_basic_effect_set_texture_enabled", native_handle,
-                                     require_boolean(value, "TextureEnabled") ? 1 : 0)
-            value
+            stock_set_boolean("cna_basic_effect_set_texture_enabled", value, "TextureEnabled")
           end
 
-          def VertexColorEnabled = S.read_boolean("cna_basic_effect_get_vertex_color_enabled", native_handle)
+          def VertexColorEnabled = stock_boolean("cna_basic_effect_get_vertex_color_enabled")
 
           def VertexColorEnabled=(value)
-            CNA::Native.library.call("cna_basic_effect_set_vertex_color_enabled", native_handle,
-                                     require_boolean(value, "VertexColorEnabled") ? 1 : 0)
-            value
+            stock_set_boolean("cna_basic_effect_set_vertex_color_enabled", value, "VertexColorEnabled")
           end
 
-          # `ldfld texture`, and the setter is one parameter write. CNA retains the texture and
-          # hands back only a handle, and this ABI has no route from a native object back to one —
-          # the rule `TextureCollection` records — so the getter answers the `Texture2D` this effect
-          # was given, and consults the native slot only to tell "nothing assigned" apart from
-          # "assigned by someone else".
-          def Texture = @texture
+          def Texture = @stock_texture
 
           def Texture=(value)
-            unless value.nil? || value.instance_of?(Texture2D) || value.instance_of?(RenderTarget2D)
-              raise ::TypeError, "Texture must be a Texture2D or nil"
-            end
-
-            CNA::Native.library.call("cna_basic_effect_set_texture", native_handle,
-                                     value.nil? ? 0 : value.__send__(:native_handle))
-            @texture = value
+            @stock_texture = stock_set_texture("cna_basic_effect_set_texture", value, "Texture")
           end
 
-          # `famorassem virtual void OnApply()` — XNA's whole dirty-flag flush, which pushes the
-          # cached properties into the shader parameters just before a pass applies.
+          # `famorassem virtual void OnApply()` — XNA's whole dirty-flag flush.
           #
-          # DEVIATION, recorded: there is nothing to flush here. Every setter above writes through
-          # to CNA the moment it is called, so no state is ever pending, and CNA's own effect does
-          # the shader-side work when a pass applies. Performing it again would be the step the
-          # `GraphicsDeviceManager` producer audit's rule forbids. The member is projected because
-          # it is an identity a subclass overrides, and it does what XNA's base `Effect.OnApply`
-          # does: nothing.
-          #
-          # It is public here because `Effect.OnApply` is: both are `famorassem` in the metadata,
-          # and this projection settled that visibility once, for the base.
+          # DEVIATION, recorded: there is nothing to flush. Every setter above writes through to CNA
+          # the moment it is called, so no state is ever pending, and CNA's own effect does the
+          # shader-side work when a pass applies. Doing it again would be the step the
+          # `GraphicsDeviceManager` producer audit's rule forbids. It is public here because
+          # `Effect.OnApply` is: both are `famorassem` in the metadata, and this projection settled
+          # that visibility once, for the base.
           def OnApply = nil
 
           private
 
-          # `Effect#Dispose` releases its own views through this, so the three light views go the
-          # same way rather than through a `Dispose` override — `BasicEffect` declares none, and
-          # adding one would be surface XNA does not have.
-          def release_views
-            release_lights
-            super
-          end
-
-          def build_lights
-            @texture = nil
-            @light_views = []
-            @lights = ::Array.new(3) do |index|
-              output = CNA::Native.library.pointer_for("Q", 0)
-              CNA::Native.library.call("cna_effect_lights_get_directional_light", native_handle, index, output)
-              handle = output[0, 8].unpack1("Q")
-              @light_views << handle
-              DirectionalLight.__send__(:from_native, handle)
-            end.freeze
-            # `initialize_native` pushed XNA's own construction defaults, which leaves every light
-            # disabled; the constructor's `DirectionalLight0.Enabled = true` is the next statement
-            # in the IL and it is the next one here.
-            @lights[0].Enabled = true
-            nil
-          end
-
-          def release_lights
-            views = @light_views
-            @light_views = []
-            views&.each do |handle|
-              CNA::Native.library.call("cna_directional_light_destroy", handle)
-            rescue CNA::NativeError
-              nil
-            end
-            nil
-          end
-
-          # The copy constructor's field-by-field copy, and it is every property because this type
-          # holds no field XNA holds. The three lights are copied the way XNA's
-          # `CacheEffectParameters(cloneSource)` copies them: through their own setters, so each
-          # light's enabled-gated colour rule applies to the clone as well.
+          # `CacheEffectParameters(cloneSource)` plus the copy constructor's field-by-field copy,
+          # which here is every property because this type holds no field XNA holds.
           def copy_from(source)
-            self.World = source.World
-            self.View = source.View
-            self.Projection = source.Projection
+            copy_stock_matrices(source)
+            copy_stock_fog(source)
             self.DiffuseColor = source.DiffuseColor
             self.EmissiveColor = source.EmissiveColor
             self.SpecularColor = source.SpecularColor
@@ -6079,52 +6003,446 @@ module Microsoft
             self.PreferPerPixelLighting = source.PreferPerPixelLighting
             self.TextureEnabled = source.TextureEnabled
             self.VertexColorEnabled = source.VertexColorEnabled
-            self.FogEnabled = source.FogEnabled
-            self.FogStart = source.FogStart
-            self.FogEnd = source.FogEnd
-            self.FogColor = source.FogColor
             self.Texture = source.Texture
-            3.times do |index|
-              target = @lights[index]
-              other = source.__send__(:"DirectionalLight#{index}")
-              target.Direction = other.Direction
-              target.DiffuseColor = other.DiffuseColor
-              target.SpecularColor = other.SpecularColor
-              target.Enabled = other.Enabled
+            copy_stock_lights(source)
+            nil
+          end
+        end
+
+        # `SkinnedEffect` is `BasicEffect`'s lighting and material over a skinned vertex shader,
+        # with two members no other stock effect has: the bone-transform array and the weight count.
+        #
+        # `MaxBones` is a `public static literal int32` of 72 — a compile-time constant, so it is a
+        # Ruby constant rather than a method.
+        class SkinnedEffect < Effect
+          include IEffectFog
+          include IEffectLights
+          include IEffectMatrices
+          include CNA::Runtime::StockEffectSupport::Matrices
+          include CNA::Runtime::StockEffectSupport::Fog
+          include CNA::Runtime::StockEffectSupport::Lights
+          public_class_method :new
+
+          MaxBones = 72
+
+          # The constructor's tail, in the IL's order: `DirectionalLight0.Enabled = true`,
+          # `SpecularColor = Vector3.One`, `SpecularPower = 16`, and then **seventy-two identity
+          # bone transforms** — `SetBoneTransforms(new Matrix[MaxBones])` with every entry
+          # `Matrix.Identity`, which is the one stock constructor that fills an array.
+          def initialize(deviceOrCloneSource)
+            source = deviceOrCloneSource.instance_of?(SkinnedEffect) ? deviceOrCloneSource : nil
+            initialize_stock_effect("cna_skinned_effect_create", source, deviceOrCloneSource)
+            self.DirectionalLight0.Enabled = true
+            SetBoneTransforms(::Array.new(MaxBones) { Matrix.Identity })
+            copy_from(source) if source
+          end
+
+          def Clone = SkinnedEffect.new(self)
+
+          # `SkinnedEffect` declares no `LightingEnabled` of its own: it is an **explicit**
+          # `IEffectLights` implementation, and an explicit implementation projects to nothing
+          # public — the rule `Dictionary`2`'s twenty-two members established. It still exists, so
+          # the mixin's pair is replaced here by the IL rather than merely hidden. The getter is
+          # `ldc.i4.1; ret`, and the setter is
+          #
+          #     if (!value) throw new NotSupportedException(
+          #         String.Format(CurrentCulture, FrameworkResources.CantDisableLighting,
+          #                       typeof(SkinnedEffect).Name));
+          #
+          # A skinned effect is always lit, so `false` is refused and `true` writes nothing. The
+          # resource `CantDisableLighting` reads `{0} does not support setting LightingEnabled to
+          # false.` — read out of the pinned `Microsoft.Xna.Framework.dll` rather than invented.
+          private def LightingEnabled = true
+
+          private def LightingEnabled=(value)
+            raise ::TypeError, "LightingEnabled must be true or false" unless value == true || value == false
+            unless value
+              raise CNA::Runtime::NotSupportedError,
+                    "SkinnedEffect does not support setting LightingEnabled to false."
             end
+
+            value
+          end
+
+          # `SetBoneTransforms(Matrix[] boneTransforms)`:
+          #
+          #     boneTransforms == null || boneTransforms.Length == 0
+          #                                  -> ArgumentNullException("boneTransforms")
+          #     boneTransforms.Length > MaxBones
+          #                                  -> ArgumentException(TooManyBones, "boneTransforms")
+          #
+          # and `GetBoneTransforms(int count)`:
+          #
+          #     count <= 0 || count > MaxBones -> ArgumentOutOfRangeException("count")
+          #
+          # answers a **fresh array** of that many transforms, so a caller cannot reach the effect's
+          # own copy.
+          def SetBoneTransforms(boneTransforms)
+            raise ::ArgumentError, "boneTransforms" if boneTransforms.nil?
+            raise ::TypeError, "boneTransforms must be an Array of Matrix" unless boneTransforms.is_a?(::Array)
+            raise ::ArgumentError, "boneTransforms" if boneTransforms.empty?
+            unless boneTransforms.all? { |value| value.instance_of?(Matrix) }
+              raise ::TypeError, "boneTransforms must be an Array of Matrix"
+            end
+            raise ::ArgumentError, "boneTransforms" if boneTransforms.length > MaxBones
+
+            bytes = boneTransforms.flat_map { |value| CNA::Runtime::StockEffectSupport::MATRIX_FIELDS.map { |field| value.__send__(field) } }
+                                  .pack("e#{16 * boneTransforms.length}")
+            CNA::Native.library.call("cna_skinned_effect_set_bone_transforms", native_handle,
+                                     Fiddle::Pointer[bytes], boneTransforms.length)
             nil
           end
 
-          def matrix(symbol) = Matrix.new(*S.read_matrix(symbol, native_handle))
+          def GetBoneTransforms(count)
+            requested = CNA::Runtime::Numeric.int32(count, "count")
+            raise ::RangeError, "count" if requested <= 0 || requested > MaxBones
 
-          def set_matrix(symbol, value, name)
-            raise ::TypeError, "#{name} must be a Matrix" unless value.instance_of?(Matrix)
+            buffer = Fiddle::Pointer.malloc(64 * requested, Fiddle::RUBY_FREE)
+            buffer[0, 64 * requested] = "\0" * (64 * requested)
+            written = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_skinned_effect_copy_bone_transforms", native_handle,
+                                     requested, buffer, requested, written)
+            ::Array.new(written[0, 8].unpack1("Q")) do |index|
+              Matrix.new(*buffer[64 * index, 64].unpack("e16"))
+            end
+          end
 
-            CNA::Native.library.call(symbol, native_handle, 0, 0, 0, 0, 0, *S.matrix_eightbytes(value))
+          def DiffuseColor = stock_vector("cna_skinned_effect_get_diffuse_color")
+
+          def DiffuseColor=(value)
+            stock_set_vector("cna_skinned_effect_set_diffuse_color", value, "DiffuseColor")
+          end
+
+          def EmissiveColor = stock_vector("cna_skinned_effect_get_emissive_color")
+
+          def EmissiveColor=(value)
+            stock_set_vector("cna_skinned_effect_set_emissive_color", value, "EmissiveColor")
+          end
+
+          def SpecularColor = stock_vector("cna_skinned_effect_get_specular_color")
+
+          def SpecularColor=(value)
+            stock_set_vector("cna_skinned_effect_set_specular_color", value, "SpecularColor")
+          end
+
+          def SpecularPower = stock_float("cna_skinned_effect_get_specular_power")
+
+          def SpecularPower=(value)
+            stock_set_float("cna_skinned_effect_set_specular_power", value, "SpecularPower")
+          end
+
+          def Alpha = stock_float("cna_skinned_effect_get_alpha")
+
+          def Alpha=(value)
+            stock_set_float("cna_skinned_effect_set_alpha", value, "Alpha")
+          end
+
+          def PreferPerPixelLighting = stock_boolean("cna_skinned_effect_get_prefer_per_pixel_lighting")
+
+          def PreferPerPixelLighting=(value)
+            stock_set_boolean("cna_skinned_effect_set_prefer_per_pixel_lighting", value, "PreferPerPixelLighting")
+          end
+
+          # `set_WeightsPerVertex` accepts only one, two or four:
+          # `ArgumentOutOfRangeException("value")` otherwise.
+          def WeightsPerVertex
+            output = CNA::Native.library.pointer_for("l", 0)
+            CNA::Native.library.call("cna_skinned_effect_get_weights_per_vertex", native_handle, output)
+            output[0, 4].unpack1("l")
+          end
+
+          def WeightsPerVertex=(value)
+            weights = CNA::Runtime::Numeric.int32(value, "value")
+            raise ::RangeError, "value" unless [1, 2, 4].include?(weights)
+
+            CNA::Native.library.call("cna_skinned_effect_set_weights_per_vertex", native_handle, weights)
             value
           end
 
-          def vector(symbol) = Vector3.new(*S.read_vector3(symbol, native_handle))
+          def Texture = @stock_texture
 
-          def set_vector(symbol, value, name)
-            raise ::TypeError, "#{name} must be a Vector3" unless value.instance_of?(Vector3)
+          def Texture=(value)
+            @stock_texture = stock_set_texture("cna_skinned_effect_set_texture", value, "Texture")
+          end
 
-            CNA::Native.library.call(symbol, native_handle, *S.vector3_eightbytes(value))
+          def OnApply = nil
+
+          private
+
+          def copy_from(source)
+            copy_stock_matrices(source)
+            copy_stock_fog(source)
+            self.DiffuseColor = source.DiffuseColor
+            self.EmissiveColor = source.EmissiveColor
+            self.SpecularColor = source.SpecularColor
+            self.SpecularPower = source.SpecularPower
+            self.Alpha = source.Alpha
+            self.AmbientLightColor = source.AmbientLightColor
+            self.PreferPerPixelLighting = source.PreferPerPixelLighting
+            self.WeightsPerVertex = source.WeightsPerVertex
+            self.Texture = source.Texture
+            SetBoneTransforms(source.GetBoneTransforms(MaxBones))
+            copy_stock_lights(source)
+            nil
+          end
+        end
+
+        # `AlphaTestEffect` has no lighting at all — it declares `IEffectFog` and `IEffectMatrices`
+        # and nothing else — and two members of its own: the comparison the alpha test uses and the
+        # value it compares against.
+        class AlphaTestEffect < Effect
+          include IEffectFog
+          include IEffectMatrices
+          include CNA::Runtime::StockEffectSupport::Matrices
+          include CNA::Runtime::StockEffectSupport::Fog
+          public_class_method :new
+
+          def initialize(deviceOrCloneSource)
+            source = deviceOrCloneSource.instance_of?(AlphaTestEffect) ? deviceOrCloneSource : nil
+            initialize_stock_effect("cna_alpha_test_effect_create", source, deviceOrCloneSource)
+            copy_from(source) if source
+          end
+
+          def Clone = AlphaTestEffect.new(self)
+
+          def DiffuseColor = stock_vector("cna_alpha_test_effect_get_diffuse_color")
+
+          def DiffuseColor=(value)
+            stock_set_vector("cna_alpha_test_effect_set_diffuse_color", value, "DiffuseColor")
+          end
+
+          def Alpha = stock_float("cna_alpha_test_effect_get_alpha")
+
+          def Alpha=(value)
+            stock_set_float("cna_alpha_test_effect_set_alpha", value, "Alpha")
+          end
+
+          def VertexColorEnabled = stock_boolean("cna_alpha_test_effect_get_vertex_color_enabled")
+
+          def VertexColorEnabled=(value)
+            stock_set_boolean("cna_alpha_test_effect_set_vertex_color_enabled", value, "VertexColorEnabled")
+          end
+
+          def AlphaFunction
+            output = CNA::Native.library.pointer_for("L", 0)
+            CNA::Native.library.call("cna_alpha_test_effect_get_alpha_function", native_handle, output)
+            CompareFunction.coerce(output[0, 4].unpack1("L"))
+          end
+
+          def AlphaFunction=(value)
+            CNA::Native.library.call("cna_alpha_test_effect_set_alpha_function", native_handle,
+                                     CompareFunction.coerce(value).to_i)
             value
           end
 
-          def set_float(symbol, value, name)
-            number = CNA::Runtime::Numeric.f32(value)
-            raise ::TypeError, "#{name} must be a number" if number.nil?
+          def ReferenceAlpha
+            output = CNA::Native.library.pointer_for("l", 0)
+            CNA::Native.library.call("cna_alpha_test_effect_get_reference_alpha", native_handle, output)
+            output[0, 4].unpack1("l")
+          end
 
-            CNA::Native.library.call(symbol, native_handle, number)
+          def ReferenceAlpha=(value)
+            CNA::Native.library.call("cna_alpha_test_effect_set_reference_alpha", native_handle,
+                                     CNA::Runtime::Numeric.int32(value, "value"))
             value
           end
 
-          def require_boolean(value, name)
-            return value if value == true || value == false
+          def Texture = @stock_texture
 
-            raise ::TypeError, "#{name} must be true or false"
+          def Texture=(value)
+            @stock_texture = stock_set_texture("cna_alpha_test_effect_set_texture", value, "Texture")
+          end
+
+          def OnApply = nil
+
+          private
+
+          def copy_from(source)
+            copy_stock_matrices(source)
+            copy_stock_fog(source)
+            self.DiffuseColor = source.DiffuseColor
+            self.Alpha = source.Alpha
+            self.VertexColorEnabled = source.VertexColorEnabled
+            self.AlphaFunction = source.AlphaFunction
+            self.ReferenceAlpha = source.ReferenceAlpha
+            self.Texture = source.Texture
+            nil
+          end
+        end
+
+        # `DualTextureEffect` is the unlit two-texture effect. Both of its textures reach the same
+        # route through an index, which is the one place a stock effect's accessor takes one.
+        class DualTextureEffect < Effect
+          include IEffectFog
+          include IEffectMatrices
+          include CNA::Runtime::StockEffectSupport::Matrices
+          include CNA::Runtime::StockEffectSupport::Fog
+          public_class_method :new
+
+          def initialize(deviceOrCloneSource)
+            source = deviceOrCloneSource.instance_of?(DualTextureEffect) ? deviceOrCloneSource : nil
+            initialize_stock_effect("cna_dual_texture_effect_create", source, deviceOrCloneSource)
+            copy_from(source) if source
+          end
+
+          def Clone = DualTextureEffect.new(self)
+
+          def DiffuseColor = stock_vector("cna_dual_texture_effect_get_diffuse_color")
+
+          def DiffuseColor=(value)
+            stock_set_vector("cna_dual_texture_effect_set_diffuse_color", value, "DiffuseColor")
+          end
+
+          def Alpha = stock_float("cna_dual_texture_effect_get_alpha")
+
+          def Alpha=(value)
+            stock_set_float("cna_dual_texture_effect_set_alpha", value, "Alpha")
+          end
+
+          def VertexColorEnabled = stock_boolean("cna_dual_texture_effect_get_vertex_color_enabled")
+
+          def VertexColorEnabled=(value)
+            stock_set_boolean("cna_dual_texture_effect_set_vertex_color_enabled", value, "VertexColorEnabled")
+          end
+
+          def Texture = @stock_texture
+
+          def Texture=(value)
+            @stock_texture = stock_set_texture("cna_dual_texture_effect_set_texture", value, "Texture", 0)
+          end
+
+          def Texture2 = @stock_texture2
+
+          def Texture2=(value)
+            @stock_texture2 = stock_set_texture("cna_dual_texture_effect_set_texture", value, "Texture2", 1)
+          end
+
+          def OnApply = nil
+
+          private
+
+          def copy_from(source)
+            copy_stock_matrices(source)
+            copy_stock_fog(source)
+            self.DiffuseColor = source.DiffuseColor
+            self.Alpha = source.Alpha
+            self.VertexColorEnabled = source.VertexColorEnabled
+            self.Texture = source.Texture
+            self.Texture2 = source.Texture2
+            nil
+          end
+        end
+
+        # `EnvironmentMapEffect` is lit, fogged and reflective, with four members of its own — and
+        # its `EnvironmentMap` is a `TextureCube` where every other stock texture is a `Texture2D`.
+        # `EnvironmentMapSpecular` is a `Vector3` despite the name, which is why it is not a flag.
+        class EnvironmentMapEffect < Effect
+          include IEffectFog
+          include IEffectLights
+          include IEffectMatrices
+          include CNA::Runtime::StockEffectSupport::Matrices
+          include CNA::Runtime::StockEffectSupport::Fog
+          include CNA::Runtime::StockEffectSupport::Lights
+          public_class_method :new
+
+          # `DirectionalLight0.Enabled = true`, then `EnvironmentMapAmount = 1`,
+          # `EnvironmentMapSpecular = Vector3.Zero` and `FresnelFactor = 1` — CNA already answers
+          # the last three, and the light is the one the IL turns on.
+          def initialize(deviceOrCloneSource)
+            source = deviceOrCloneSource.instance_of?(EnvironmentMapEffect) ? deviceOrCloneSource : nil
+            initialize_stock_effect("cna_environment_map_effect_create", source, deviceOrCloneSource)
+            self.DirectionalLight0.Enabled = true
+            copy_from(source) if source
+          end
+
+          def Clone = EnvironmentMapEffect.new(self)
+
+          # The same explicit `IEffectLights.LightingEnabled` `SkinnedEffect` carries, with this
+          # type's name in the same resource: an environment-mapped effect is always lit too.
+          private def LightingEnabled = true
+
+          private def LightingEnabled=(value)
+            raise ::TypeError, "LightingEnabled must be true or false" unless value == true || value == false
+            unless value
+              raise CNA::Runtime::NotSupportedError,
+                    "EnvironmentMapEffect does not support setting LightingEnabled to false."
+            end
+
+            value
+          end
+
+          def DiffuseColor = stock_vector("cna_environment_map_effect_get_diffuse_color")
+
+          def DiffuseColor=(value)
+            stock_set_vector("cna_environment_map_effect_set_diffuse_color", value, "DiffuseColor")
+          end
+
+          def EmissiveColor = stock_vector("cna_environment_map_effect_get_emissive_color")
+
+          def EmissiveColor=(value)
+            stock_set_vector("cna_environment_map_effect_set_emissive_color", value, "EmissiveColor")
+          end
+
+          def Alpha = stock_float("cna_environment_map_effect_get_alpha")
+
+          def Alpha=(value)
+            stock_set_float("cna_environment_map_effect_set_alpha", value, "Alpha")
+          end
+
+          def EnvironmentMapAmount = stock_float("cna_environment_map_effect_get_amount")
+
+          def EnvironmentMapAmount=(value)
+            stock_set_float("cna_environment_map_effect_set_amount", value, "EnvironmentMapAmount")
+          end
+
+          def EnvironmentMapSpecular = stock_vector("cna_environment_map_effect_get_specular")
+
+          def EnvironmentMapSpecular=(value)
+            stock_set_vector("cna_environment_map_effect_set_specular", value, "EnvironmentMapSpecular")
+          end
+
+          def FresnelFactor = stock_float("cna_environment_map_effect_get_fresnel_factor")
+
+          def FresnelFactor=(value)
+            stock_set_float("cna_environment_map_effect_set_fresnel_factor", value, "FresnelFactor")
+          end
+
+          def Texture = @stock_texture
+
+          def Texture=(value)
+            @stock_texture = stock_set_texture("cna_environment_map_effect_set_texture", value, "Texture")
+          end
+
+          def EnvironmentMap = @stock_environment_map
+
+          def EnvironmentMap=(value)
+            unless value.nil? || value.instance_of?(TextureCube) || value.instance_of?(RenderTargetCube)
+              raise ::TypeError, "EnvironmentMap must be a TextureCube or nil"
+            end
+
+            CNA::Native.library.call("cna_environment_map_effect_set_environment_map", native_handle,
+                                     value.nil? ? 0 : value.__send__(:native_handle))
+            @stock_environment_map = value
+          end
+
+          def OnApply = nil
+
+          private
+
+          def copy_from(source)
+            copy_stock_matrices(source)
+            copy_stock_fog(source)
+            self.DiffuseColor = source.DiffuseColor
+            self.EmissiveColor = source.EmissiveColor
+            self.Alpha = source.Alpha
+            self.AmbientLightColor = source.AmbientLightColor
+            self.EnvironmentMapAmount = source.EnvironmentMapAmount
+            self.EnvironmentMapSpecular = source.EnvironmentMapSpecular
+            self.FresnelFactor = source.FresnelFactor
+            self.Texture = source.Texture
+            self.EnvironmentMap = source.EnvironmentMap
+            copy_stock_lights(source)
+            nil
           end
         end
 

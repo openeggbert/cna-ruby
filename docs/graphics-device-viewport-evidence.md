@@ -130,10 +130,26 @@ as a mismatch. Both mutations were planted and both were caught.
 `MinDepth = 0.25, MaxDepth = 0.75`, which no zero-filled buffer could produce.
 
 **By the negative control.** The same symbol, called with the three eightbytes in registers — which
-is what treating the aggregate as register-class would produce — answers `CNA_RESULT_INTERNAL` (12)
-and leaves the viewport unchanged: the callee read whatever the stack happened to hold, which was
-not a finite viewport, and CNA's exception barrier caught it. The wrong expansion fails loudly
-rather than writing garbage, which is what makes the right one evidence.
+is what treating the aggregate as register-class would produce — never delivers the values the
+caller sent. The callee reads whatever the stack happens to hold, so **the shape of the failure is
+artifact-specific and only the failure itself is a fact.** Measured three consecutive calls in one
+frame on each artifact, with the intended argument `(9, 9, 8, 8, 0.25, 0.75)`:
+
+| Artifact | Result | Viewport afterwards |
+| --- | --- | --- |
+| `HEADLESS` | `CNA_RESULT_INTERNAL` (12), all three times | unchanged at `(3, 4, 16, 16, 0.125, 0.875)` |
+| `OPENGL33` | `CNA_RESULT_SUCCESS` (0), all three times | `(3, 0, 163173224, 32766, 4.47e-33, 4.59e-41)` |
+
+On the headless artifact the stack did not hold a finite viewport and CNA's exception barrier caught
+it; on the real renderer it held something CNA accepted and installed. Neither is the argument, and
+that is the whole of the claim: a register-class expansion of this aggregate cannot deliver it.
+
+This paragraph originally recorded only the refusal, and the test beside it asserted only that.
+It passed for two milestones because `HEADLESS` is the default artifact, and it failed the first
+time the suite was run against `OPENGL33` — a control asserting undefined stack contents rather than
+the deterministic half beneath them.
+`GraphicsDeviceViewportTest#test_the_register_class_expansion_never_delivers_the_values` now asserts
+the deterministic half, and it is green on both.
 
 ## Recorded deviations
 

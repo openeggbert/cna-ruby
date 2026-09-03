@@ -367,7 +367,9 @@ class DependencyFrontierTest < Minitest::Test
     # property the list exists to check -- not a count that must stay still. The nine Effect types
     # joined it together, and `SpriteBatch` joined with them: it was native-reachable all along and
     # only appears here now because a **partial** type is not on this list, and the two Effect-taking
-    # Begin overloads completed it.
+    # Begin overloads completed it. The five stock effects joined as each was built -- `BasicEffect`
+    # alone in Foundation 97, the other four together in Foundation 98 -- and all five belong:
+    # every property of every one of them is a `cna_*_effect_*` route of its own.
     assert_equal %w[
       Microsoft.Xna.Framework.Audio.AudioCategory
       Microsoft.Xna.Framework.Audio.AudioEngine
@@ -382,8 +384,10 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.FrameworkDispatcher
       Microsoft.Xna.Framework.Game
       Microsoft.Xna.Framework.GamerServices.GamerServicesComponent
+      Microsoft.Xna.Framework.Graphics.AlphaTestEffect
       Microsoft.Xna.Framework.Graphics.BasicEffect
       Microsoft.Xna.Framework.Graphics.DirectionalLight
+      Microsoft.Xna.Framework.Graphics.DualTextureEffect
       Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer
       Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer
       Microsoft.Xna.Framework.Graphics.Effect
@@ -396,11 +400,13 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.EffectPassCollection
       Microsoft.Xna.Framework.Graphics.EffectTechnique
       Microsoft.Xna.Framework.Graphics.EffectTechniqueCollection
+      Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect
       Microsoft.Xna.Framework.Graphics.IndexBuffer
       Microsoft.Xna.Framework.Graphics.OcclusionQuery
       Microsoft.Xna.Framework.Graphics.RenderTarget2D
       Microsoft.Xna.Framework.Graphics.RenderTargetCube
       Microsoft.Xna.Framework.Graphics.SamplerStateCollection
+      Microsoft.Xna.Framework.Graphics.SkinnedEffect
       Microsoft.Xna.Framework.Graphics.SpriteBatch
       Microsoft.Xna.Framework.Graphics.SpriteFont
       Microsoft.Xna.Framework.Graphics.Texture

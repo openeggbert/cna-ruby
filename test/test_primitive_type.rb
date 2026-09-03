@@ -167,7 +167,11 @@ class PrimitiveTypeTest < Minitest::Test
     # claimed, and still claims, is that **it** built none of them.
     # The five buffer types left this list when they were built; what this milestone claimed,
     # and still claims, is that **it** built none of them.
-    %i[SkinnedEffect PrimitiveTypeConverter].each do |name|
+    # The four remaining stock effects left this list when the family was completed; what this
+    # milestone claimed, and still claims, is that **it** built none of them. `GraphicsAdapter`
+    # stands in their place: it reports invented hardware on every qualified artifact and is
+    # blocked upstream, so it is the graphics identity that stays absent.
+    %i[GraphicsAdapter PrimitiveTypeConverter].each do |name|
       refute G.const_defined?(name, false), name.to_s
     end
     # `SetVertexBuffer` and `Indices` left this list when the device's binding slice landed. A

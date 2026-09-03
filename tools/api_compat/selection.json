@@ -2099,6 +2099,22 @@
       "complete": true
     },
     {
+      "name": "Microsoft.Xna.Framework.Graphics.SkinnedEffect",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.AlphaTestEffect",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.DualTextureEffect",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect",
+      "complete": true
+    },
+    {
       "name": "Microsoft.Xna.Framework.Graphics.RenderTarget2D",
       "complete": true
     },

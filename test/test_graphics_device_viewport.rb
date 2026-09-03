@@ -266,8 +266,20 @@ class GraphicsDeviceViewportTest < Minitest::Test
   #
   # The expansion is only evidence if the wrong one fails. This calls the very same symbol with the
   # three eightbytes in *registers* — which is what treating a 24-byte aggregate as register-class
-  # would produce — and requires CNA to refuse it and the viewport to be unchanged.
-  def test_the_register_class_expansion_is_refused_and_changes_nothing
+  # would produce — and requires that the values the caller intended never arrive.
+  #
+  # What the callee reads instead is whatever the stack happens to hold, so **the shape of the
+  # failure is not the same on every artifact** and asserting one shape would be asserting undefined
+  # data. Measured, three consecutive calls each, in one frame:
+  #
+  #     HEADLESS   code 12 every time, viewport unchanged at (3, 4, 16, 16, 0.125, 0.875)
+  #     OPENGL33   code  0 every time, viewport (3, 0, 163173224, 32766, 4.47e-33, 4.59e-41)
+  #
+  # The first refuses; the second accepts and installs the stack. Neither delivers (9, 9, 8, 8,
+  # 0.25, 0.75), and that -- not the return code -- is the claim, so it is what this asserts. An
+  # earlier version of this test pinned the refusal and passed only because HEADLESS is the default
+  # artifact; the deterministic half was hiding behind the undefined one.
+  def test_the_register_class_expansion_never_delivers_the_values
     outcome = with_device do |device|
       device.Viewport = viewport(3, 4, 16, 16, 0.125, 0.875)
       before = components(device.Viewport)
@@ -278,12 +290,20 @@ class GraphicsDeviceViewportTest < Minitest::Test
       )
       eightbytes = ([9, 9, 8, 8].pack("l4") + [0.25, 0.75].pack("e2")).unpack("Q3")
       code = naive.call(device.__send__(:native_handle), *eightbytes)
-      [before, code, components(device.Viewport)]
+      after = components(device.Viewport)
+      # Leave the device with a viewport it can present through, whatever the call did to it.
+      device.Viewport = viewport(3, 4, 16, 16, 0.125, 0.875)
+      [before, code, after, components(device.Viewport)]
     end
-    before, code, after = outcome
-    refute_equal 0, code, "the register-class expansion is not how this aggregate is passed"
-    assert_equal before, after
+    before, code, after, restored = outcome
     assert_equal [3, 4, 16, 16, 0.125, 0.875], before
+    refute_equal [9, 9, 8, 8, 0.25, 0.75], after,
+                 "the register-class expansion is not how this aggregate is passed"
+    # And whichever way it went, the two outcomes are the only two: refused and unchanged, or
+    # accepted and holding something the caller never sent.
+    assert(code.zero? ? after != before : after == before,
+           "a refused call must change nothing, and an accepted one must not answer the argument")
+    assert_equal before, restored
   end
 
   # ------------------------------------------------------------------ scope and disposal

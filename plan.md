@@ -42,11 +42,11 @@ the prose would have fixed exactly that one milestone.
 | count | what it measures |
 | ---: | --- |
 | 257 | XNA 4.0 Windows reference types |
-| 201 | types this binding projects |
-| 2436 | Ruby member identities |
-| 199 | complete types |
+| 205 | types this binding projects |
+| 2520 | Ruby member identities |
+| 203 | complete types |
 | 2 | partial types |
-| 56 | missing types |
+| 52 | missing types |
 | 42 | event identities |
 | 20 | types owning an event |
 | 22 | projected BCL identities |
@@ -55,8 +55,8 @@ the prose would have fixed exactly that one milestone.
 
 | count | what it measures |
 | ---: | --- |
-| 69 | strict diagnostics in total |
-| 56 | `MISSING_TYPE` |
+| 65 | strict diagnostics in total |
+| 52 | `MISSING_TYPE` |
 | 8 | `MISSING_MEMBER` |
 | 5 | `OVERLOAD_MAPPING_MISMATCH` |
 | 0 | `PROPERTY_MAPPING_MISMATCH` |
@@ -75,7 +75,7 @@ the prose would have fixed exactly that one milestone.
 
 | count | what it measures |
 | ---: | --- |
-| 443 | bound C functions |
+| 503 | bound C functions |
 | 6 | callbacks |
 | 137 | constants |
 | 66 | struct layouts |
@@ -104,7 +104,7 @@ the prose would have fixed exactly that one milestone.
 
 | count | what it measures |
 | ---: | --- |
-| 152 | runtime capability rows |
+| 153 | runtime capability rows |
 
 <!-- scoreboard:end -->
 
@@ -305,7 +305,6 @@ delimited and checked against `docs/generated/missing-type-inventory.md` by
 `test/test_plan_boundaries.rb`, so every name in it is a type the strict report really calls missing.
 
 <!-- absent-types:begin -->
-`SkinnedEffect`, `AlphaTestEffect`, `DualTextureEffect`, `EnvironmentMapEffect`,
 `GraphicsAdapter`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs`,
 `DrawableGameComponent`, `Model`, `ModelBone`, `ModelMesh`, `ModelMeshPart`,
 `ModelBoneCollection`, `ModelMeshCollection`, `ModelMeshPartCollection`,

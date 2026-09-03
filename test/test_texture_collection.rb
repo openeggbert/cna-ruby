@@ -228,7 +228,11 @@ class TextureCollectionTest < Minitest::Test
     # and still claims, is that **it** built none of them.
     # `RenderTarget2D` left this list when the render targets were built; `SetRenderTarget` below
     # is still absent, which is the claim that matters here.
-    %i[SkinnedEffect].each do |absent|
+    # The four remaining stock effects left this list when the family was completed; what this
+    # milestone claimed, and still claims, is that **it** built none of them. `GraphicsAdapter`
+    # stands in their place: it reports invented hardware on every qualified artifact and is
+    # blocked upstream, so it is the graphics identity that stays absent.
+    %i[GraphicsAdapter].each do |absent|
       refute G.const_defined?(absent, false), absent.to_s
     end
     # `BlendState` and `DepthStencilState` left this list when the device's state slice landed.

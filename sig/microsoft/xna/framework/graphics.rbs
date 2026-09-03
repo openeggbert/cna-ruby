@@ -711,6 +711,167 @@ module Microsoft
           def OnApply: () -> nil
         end
 
+        # The four remaining stock effects. `SkinnedEffect` and `EnvironmentMapEffect` implement
+        # `IEffectLights.LightingEnabled` explicitly, so neither declares it here.
+        class SkinnedEffect < Effect
+          include IEffectFog
+          include IEffectLights
+          include IEffectMatrices
+          MaxBones: Integer
+          def initialize: (GraphicsDevice | SkinnedEffect deviceOrCloneSource) -> void
+          def Clone: () -> Effect
+          def SetBoneTransforms: (::Array[Matrix] boneTransforms) -> nil
+          def GetBoneTransforms: (Integer count) -> ::Array[Matrix]
+          def World: () -> Matrix
+          def World=: (Matrix value) -> Matrix
+          def View: () -> Matrix
+          def View=: (Matrix value) -> Matrix
+          def Projection: () -> Matrix
+          def Projection=: (Matrix value) -> Matrix
+          def FogEnabled: () -> bool
+          def FogEnabled=: (bool value) -> bool
+          def FogStart: () -> Float
+          def FogStart=: (Numeric value) -> Numeric
+          def FogEnd: () -> Float
+          def FogEnd=: (Numeric value) -> Numeric
+          def FogColor: () -> Vector3
+          def FogColor=: (Vector3 value) -> Vector3
+          def AmbientLightColor: () -> Vector3
+          def AmbientLightColor=: (Vector3 value) -> Vector3
+          def DirectionalLight0: () -> DirectionalLight
+          def DirectionalLight1: () -> DirectionalLight
+          def DirectionalLight2: () -> DirectionalLight
+          def EnableDefaultLighting: () -> nil
+          def DiffuseColor: () -> Vector3
+          def DiffuseColor=: (Vector3 value) -> Vector3
+          def EmissiveColor: () -> Vector3
+          def EmissiveColor=: (Vector3 value) -> Vector3
+          def SpecularColor: () -> Vector3
+          def SpecularColor=: (Vector3 value) -> Vector3
+          def SpecularPower: () -> Float
+          def SpecularPower=: (Numeric value) -> Numeric
+          def Alpha: () -> Float
+          def Alpha=: (Numeric value) -> Numeric
+          def PreferPerPixelLighting: () -> bool
+          def PreferPerPixelLighting=: (bool value) -> bool
+          def WeightsPerVertex: () -> Integer
+          def WeightsPerVertex=: (Integer value) -> Integer
+          def Texture: () -> Texture2D?
+          def Texture=: (Texture2D? value) -> Texture2D?
+          def OnApply: () -> nil
+        end
+
+        class AlphaTestEffect < Effect
+          include IEffectFog
+          include IEffectMatrices
+          def initialize: (GraphicsDevice | AlphaTestEffect deviceOrCloneSource) -> void
+          def Clone: () -> Effect
+          def World: () -> Matrix
+          def World=: (Matrix value) -> Matrix
+          def View: () -> Matrix
+          def View=: (Matrix value) -> Matrix
+          def Projection: () -> Matrix
+          def Projection=: (Matrix value) -> Matrix
+          def FogEnabled: () -> bool
+          def FogEnabled=: (bool value) -> bool
+          def FogStart: () -> Float
+          def FogStart=: (Numeric value) -> Numeric
+          def FogEnd: () -> Float
+          def FogEnd=: (Numeric value) -> Numeric
+          def FogColor: () -> Vector3
+          def FogColor=: (Vector3 value) -> Vector3
+          def DiffuseColor: () -> Vector3
+          def DiffuseColor=: (Vector3 value) -> Vector3
+          def Alpha: () -> Float
+          def Alpha=: (Numeric value) -> Numeric
+          def VertexColorEnabled: () -> bool
+          def VertexColorEnabled=: (bool value) -> bool
+          def AlphaFunction: () -> CompareFunction
+          def AlphaFunction=: (CompareFunction | Integer value) -> untyped
+          def ReferenceAlpha: () -> Integer
+          def ReferenceAlpha=: (Integer value) -> Integer
+          def Texture: () -> Texture2D?
+          def Texture=: (Texture2D? value) -> Texture2D?
+          def OnApply: () -> nil
+        end
+
+        class DualTextureEffect < Effect
+          include IEffectFog
+          include IEffectMatrices
+          def initialize: (GraphicsDevice | DualTextureEffect deviceOrCloneSource) -> void
+          def Clone: () -> Effect
+          def World: () -> Matrix
+          def World=: (Matrix value) -> Matrix
+          def View: () -> Matrix
+          def View=: (Matrix value) -> Matrix
+          def Projection: () -> Matrix
+          def Projection=: (Matrix value) -> Matrix
+          def FogEnabled: () -> bool
+          def FogEnabled=: (bool value) -> bool
+          def FogStart: () -> Float
+          def FogStart=: (Numeric value) -> Numeric
+          def FogEnd: () -> Float
+          def FogEnd=: (Numeric value) -> Numeric
+          def FogColor: () -> Vector3
+          def FogColor=: (Vector3 value) -> Vector3
+          def DiffuseColor: () -> Vector3
+          def DiffuseColor=: (Vector3 value) -> Vector3
+          def Alpha: () -> Float
+          def Alpha=: (Numeric value) -> Numeric
+          def VertexColorEnabled: () -> bool
+          def VertexColorEnabled=: (bool value) -> bool
+          def Texture: () -> Texture2D?
+          def Texture=: (Texture2D? value) -> Texture2D?
+          def Texture2: () -> Texture2D?
+          def Texture2=: (Texture2D? value) -> Texture2D?
+          def OnApply: () -> nil
+        end
+
+        class EnvironmentMapEffect < Effect
+          include IEffectFog
+          include IEffectLights
+          include IEffectMatrices
+          def initialize: (GraphicsDevice | EnvironmentMapEffect deviceOrCloneSource) -> void
+          def Clone: () -> Effect
+          def World: () -> Matrix
+          def World=: (Matrix value) -> Matrix
+          def View: () -> Matrix
+          def View=: (Matrix value) -> Matrix
+          def Projection: () -> Matrix
+          def Projection=: (Matrix value) -> Matrix
+          def FogEnabled: () -> bool
+          def FogEnabled=: (bool value) -> bool
+          def FogStart: () -> Float
+          def FogStart=: (Numeric value) -> Numeric
+          def FogEnd: () -> Float
+          def FogEnd=: (Numeric value) -> Numeric
+          def FogColor: () -> Vector3
+          def FogColor=: (Vector3 value) -> Vector3
+          def AmbientLightColor: () -> Vector3
+          def AmbientLightColor=: (Vector3 value) -> Vector3
+          def DirectionalLight0: () -> DirectionalLight
+          def DirectionalLight1: () -> DirectionalLight
+          def DirectionalLight2: () -> DirectionalLight
+          def EnableDefaultLighting: () -> nil
+          def DiffuseColor: () -> Vector3
+          def DiffuseColor=: (Vector3 value) -> Vector3
+          def EmissiveColor: () -> Vector3
+          def EmissiveColor=: (Vector3 value) -> Vector3
+          def Alpha: () -> Float
+          def Alpha=: (Numeric value) -> Numeric
+          def EnvironmentMapAmount: () -> Float
+          def EnvironmentMapAmount=: (Numeric value) -> Numeric
+          def EnvironmentMapSpecular: () -> Vector3
+          def EnvironmentMapSpecular=: (Vector3 value) -> Vector3
+          def FresnelFactor: () -> Float
+          def FresnelFactor=: (Numeric value) -> Numeric
+          def Texture: () -> Texture2D?
+          def Texture=: (Texture2D? value) -> Texture2D?
+          def EnvironmentMap: () -> TextureCube?
+          def EnvironmentMap=: (TextureCube? value) -> TextureCube?
+          def OnApply: () -> nil
+        end
+
         class SpriteBatch < GraphicsResource
           def initialize: (GraphicsDevice graphics_device) -> void
           def Begin: () -> nil

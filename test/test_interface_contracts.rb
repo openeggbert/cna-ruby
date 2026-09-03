@@ -226,7 +226,11 @@ class InterfaceContractsTest < Minitest::Test
     # The nine `Effect` types left this list when the cluster was built, and `DirectionalLight` and
     # `IEffectLights` when the light was; what this milestone claimed, and still claims, is that
     # **it** built none of them. `IEffectLights` is asserted below to be as abstract as the rest.
-    %i[SkinnedEffect IEffectSkinning].each do |name|
+    # The four remaining stock effects left this list when the family was completed; what this
+    # milestone claimed, and still claims, is that **it** built none of them. `GraphicsAdapter`
+    # stands in their place: it reports invented hardware on every qualified artifact and is
+    # blocked upstream, so it is the graphics identity that stays absent.
+    %i[GraphicsAdapter IEffectSkinning].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
     assert_kind_of Module, G::IEffectLights
