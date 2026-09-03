@@ -144,3 +144,19 @@ it is the precondition that type names, and it is now measured rather than guess
 No type was completed, no member was closed, no CNA source was changed. This milestone is
 measurement, and its whole value is that two conclusions it touched were wrong in opposite
 directions.
+
+## The eighteenth correction to `frontier_effect`
+
+That row censuses the *partial-dependency-satisfied* candidates, so it moves every time one of them
+is built — its own note says so. Foundation 97 built `Graphics.BasicEffect`, so the entry left the
+list. Corrected as a **surgical byte edit** — one array element, in the aggregate and in this
+milestone's authoring record alike — so the closed supersession register in
+`test_behavior_corpus_integrity.rb` still holds seven.
+
+| file | pre-correction SHA-256 | post-correction SHA-256 |
+| --- | --- | --- |
+| `behavior/xna40-foundation-values.json` | `663dafa2f214af35d5fd047354bc55d386f126d4caf5bccded41e6921f4be655` | `5b279aa7d97ad3a71c26b621ceb3015feb9a76ed3f3decc7f1112ad6cb224903` |
+| `behavior/xna40-member-level-dependency-values.json` | `92d7bbb013355d6dd29081f572a3a1e62062e9387928e1fbf56ac20c5374bfa2` | `accb733f9005fc8f5f6d6a8f37da473db559e4e00a02f6919b2777dbe1a17de7` |
+
+Four remain on that list — `DrawableGameComponent` and the other four stock effects — and the
+corpus replays 526 observations with zero failures afterwards.

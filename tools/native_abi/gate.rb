@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "fiddle"
 require "open3"
 require "tmpdir"
 
@@ -78,6 +79,7 @@ module NativeAbiGate
   # so a manifest that declares the wrong shape fails the gate instead of producing a call that
   # reads the callee's stack at the wrong offset.
   INTEGER_ARGUMENT_REGISTERS = 6
+  FIDDLE_DOUBLE = Fiddle::TYPE_DOUBLE
 
   def aggregate_mismatches(entry, c_structs)
     aggregates = entry.respond_to?(:value_aggregates) ? (entry.value_aggregates || {}) : {}
@@ -94,6 +96,17 @@ module NativeAbiGate
       declared_fillers = aggregate.fetch(:fillers, 0)
       unless aggregate.fetch(:members) == eightbytes
         mismatches << "aggregate #{entry.symbol}: #{name} is #{size} bytes so it expands into "                       "#{eightbytes} eightbytes, manifest declares #{aggregate.fetch(:members)}"
+      end
+      # The eightbyte *class* decides which register file carries it, and getting that wrong is
+      # silent: an SSE eightbyte declared as an integer lands in `rdi` where the callee reads
+      # `xmm0`. So the declaration and the Fiddle types must agree — a `double` argument is the
+      # only way Fiddle reaches an XMM register.
+      declared_class = aggregate.fetch(:register_class, "INTEGER")
+      members = (index...(index + aggregate.fetch(:members)))
+      sse = members.all? { |position| entry.fiddle_arguments[position] == FIDDLE_DOUBLE }
+      unless sse == (declared_class == "SSE")
+        mismatches << "aggregate #{entry.symbol}: #{name} is declared #{declared_class} class but " \
+                      "its eightbytes are #{sse ? "SSE" : "not SSE"} at the Fiddle boundary"
       end
       expected_fillers = if size <= 16
                            0

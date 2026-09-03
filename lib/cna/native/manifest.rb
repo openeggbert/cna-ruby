@@ -19,6 +19,7 @@ module CNA
       I64 = Fiddle::TYPE_INT64_T
       U64 = Fiddle::TYPE_UINT64_T
       F32 = Fiddle::TYPE_FLOAT
+      F64 = Fiddle::TYPE_DOUBLE
       PTR = Fiddle::TYPE_VOIDP
       VOID = Fiddle::TYPE_VOID
 
@@ -40,7 +41,8 @@ module CNA
           value_aggregates[index] = {
             c: value.fetch(:value_aggregate),
             members: value.fetch(:aggregate_members),
-            fillers: value.fetch(:aggregate_fillers, 0)
+            fillers: value.fetch(:aggregate_fillers, 0),
+            register_class: value.fetch(:aggregate_class, "INTEGER")
           }
         end
         Signature.new(
@@ -147,6 +149,29 @@ module CNA
                         aggregate_members: eightbytes, aggregate_fillers: fillers)
         end
         filler_entries + aggregate
+      end
+
+      # A struct passed by value whose eightbytes the classification puts in **SSE** registers
+      # rather than integer ones: `CNA_Vector3` is three floats, so its first eightbyte holds two
+      # of them and its second holds the third, and both travel in `xmm0`/`xmm1`.
+      #
+      # No filler is needed and none would help: the integer and SSE register files are assigned
+      # independently, so a handle in `rdi` and two SSE eightbytes in `xmm0`/`xmm1` is exactly what
+      # declaring `(uint64, double, double)` produces. A `double`-typed Fiddle argument is loaded
+      # into the next XMM register bit for bit, which is why the eightbytes are packed and
+      # reinterpreted rather than converted.
+      #
+      # **Measured, like the other two expansions.** `cna_basic_effect_set_diffuse_color`
+      # disassembles to `mov %rdi,…` for the handle, `movq %xmm0,%rax` for the first eightbyte and
+      # `movaps %xmm1,%xmm0; movss …` for the second; and a `Vector3` written through this
+      # expansion reads back exactly through the matching getter.
+      def by_value_sse(c, eightbytes:)
+        Array.new(eightbytes) do |index|
+          { c: "double", fiddle: F64 }.merge(
+            value_aggregate: c, aggregate_start: index.zero?,
+            aggregate_members: eightbytes, aggregate_class: "SSE"
+          )
+        end
       end
 
       def callback_pointer(c)
@@ -550,6 +575,69 @@ module CNA
         signature("cna_graphics_device_draw_user_indexed_primitives", T[:result],
                   [T[:handle], pointer("CNA_UserPrimitives", const: true), pointer("CNA_UserIndices", const: true)],
                   ownership: "borrows device; reads the caller's arrays for the duration of the call"),
+        # The five stock effects, and the three interface contracts they share. `BasicEffect`'s
+        # routes are here; the other four arrive with their own types.
+        #
+        # CNA's stock effect is a **native object with typed accessors**, not a parameter-driven
+        # one: `cna_effect_get_parameters` on a `cna_basic_effect_create` effect answers a
+        # collection of **zero**, measured on both artifacts. So every property goes through its own
+        # route, and `Effect.Parameters` is empty on a stock effect — recorded as a deviation rather
+        # than worked around.
+        #
+        # Two by-value shapes appear here for the first time. `CNA_Vector3` is three floats, so both
+        # its eightbytes are SSE-class and travel in `xmm0`/`xmm1`; `by_value_sse` expands it, and
+        # no filler is needed because the integer and SSE register files are assigned independently.
+        # `CNA_Matrix` is 64 bytes, which is MEMORY class like `CNA_Viewport`, so `by_value_memory`
+        # expands it into five fillers and eight stack eightbytes. Both were measured from the
+        # disassembly and both round-trip exactly through their own getters.
+        signature("cna_basic_effect_create", T[:result], [T[:handle], pointer("CNA_EffectHandle")], ownership: "borrows device; returns an OWNED effect"),
+        signature("cna_basic_effect_get_alpha", T[:result], [handle("CNA_EffectHandle"), pointer("float")], ownership: "borrows effect; caller output"),
+        signature("cna_basic_effect_set_alpha", T[:result], [handle("CNA_EffectHandle"), T[:float]], ownership: "borrows effect"),
+        signature("cna_basic_effect_get_specular_power", T[:result], [handle("CNA_EffectHandle"), pointer("float")], ownership: "borrows effect; caller output"),
+        signature("cna_basic_effect_set_specular_power", T[:result], [handle("CNA_EffectHandle"), T[:float]], ownership: "borrows effect"),
+        signature("cna_basic_effect_get_diffuse_color", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_Vector3")], ownership: "borrows effect; caller output"),
+        signature("cna_basic_effect_set_diffuse_color", T[:result], [handle("CNA_EffectHandle"), *by_value_sse("CNA_Vector3", eightbytes: 2)], ownership: "borrows effect"),
+        signature("cna_basic_effect_get_emissive_color", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_Vector3")], ownership: "borrows effect; caller output"),
+        signature("cna_basic_effect_set_emissive_color", T[:result], [handle("CNA_EffectHandle"), *by_value_sse("CNA_Vector3", eightbytes: 2)], ownership: "borrows effect"),
+        signature("cna_basic_effect_get_specular_color", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_Vector3")], ownership: "borrows effect; caller output"),
+        signature("cna_basic_effect_set_specular_color", T[:result], [handle("CNA_EffectHandle"), *by_value_sse("CNA_Vector3", eightbytes: 2)], ownership: "borrows effect"),
+        signature("cna_basic_effect_get_prefer_per_pixel_lighting", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_Bool")], ownership: "borrows effect; caller output"),
+        signature("cna_basic_effect_set_prefer_per_pixel_lighting", T[:result], [handle("CNA_EffectHandle"), T[:bool]], ownership: "borrows effect"),
+        signature("cna_basic_effect_get_texture_enabled", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_Bool")], ownership: "borrows effect; caller output"),
+        signature("cna_basic_effect_set_texture_enabled", T[:result], [handle("CNA_EffectHandle"), T[:bool]], ownership: "borrows effect"),
+        signature("cna_basic_effect_get_vertex_color_enabled", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_Bool")], ownership: "borrows effect; caller output"),
+        signature("cna_basic_effect_set_vertex_color_enabled", T[:result], [handle("CNA_EffectHandle"), T[:bool]], ownership: "borrows effect"),
+        signature("cna_basic_effect_get_texture", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_Bool"), pointer("CNA_Handle")], ownership: "borrows effect; caller output; the texture stays the caller's"),
+        signature("cna_basic_effect_set_texture", T[:result], [handle("CNA_EffectHandle"), T[:handle]], ownership: "borrows effect; retains the texture, or clears with the invalid handle"),
+        signature("cna_effect_matrices_get_world", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_Matrix")], ownership: "borrows effect; caller output"),
+        signature("cna_effect_matrices_set_world", T[:result], [handle("CNA_EffectHandle"), *by_value_memory("CNA_Matrix", eightbytes: 8, preceding_integer_arguments: 1)], ownership: "borrows effect"),
+        signature("cna_effect_matrices_get_view", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_Matrix")], ownership: "borrows effect; caller output"),
+        signature("cna_effect_matrices_set_view", T[:result], [handle("CNA_EffectHandle"), *by_value_memory("CNA_Matrix", eightbytes: 8, preceding_integer_arguments: 1)], ownership: "borrows effect"),
+        signature("cna_effect_matrices_get_projection", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_Matrix")], ownership: "borrows effect; caller output"),
+        signature("cna_effect_matrices_set_projection", T[:result], [handle("CNA_EffectHandle"), *by_value_memory("CNA_Matrix", eightbytes: 8, preceding_integer_arguments: 1)], ownership: "borrows effect"),
+        signature("cna_effect_lights_get_enabled", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_Bool")], ownership: "borrows effect; caller output"),
+        signature("cna_effect_lights_set_enabled", T[:result], [handle("CNA_EffectHandle"), T[:bool]], ownership: "borrows effect"),
+        signature("cna_effect_lights_get_ambient_color", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_Vector3")], ownership: "borrows effect; caller output"),
+        signature("cna_effect_lights_set_ambient_color", T[:result], [handle("CNA_EffectHandle"), *by_value_sse("CNA_Vector3", eightbytes: 2)], ownership: "borrows effect"),
+        signature("cna_effect_lights_enable_default", T[:result], [handle("CNA_EffectHandle")], ownership: "borrows effect"),
+        signature("cna_effect_lights_get_directional_light", T[:result], [handle("CNA_EffectHandle"), T[:u32], pointer("CNA_DirectionalLightHandle")], ownership: "borrows effect; returns an OWNED member view, released with cna_directional_light_destroy"),
+        signature("cna_effect_fog_get_enabled", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_Bool")], ownership: "borrows effect; caller output"),
+        signature("cna_effect_fog_set_enabled", T[:result], [handle("CNA_EffectHandle"), T[:bool]], ownership: "borrows effect"),
+        signature("cna_effect_fog_get_start", T[:result], [handle("CNA_EffectHandle"), pointer("float")], ownership: "borrows effect; caller output"),
+        signature("cna_effect_fog_set_start", T[:result], [handle("CNA_EffectHandle"), T[:float]], ownership: "borrows effect"),
+        signature("cna_effect_fog_get_end", T[:result], [handle("CNA_EffectHandle"), pointer("float")], ownership: "borrows effect; caller output"),
+        signature("cna_effect_fog_set_end", T[:result], [handle("CNA_EffectHandle"), T[:float]], ownership: "borrows effect"),
+        signature("cna_effect_fog_get_color", T[:result], [handle("CNA_EffectHandle"), pointer("CNA_Vector3")], ownership: "borrows effect; caller output"),
+        signature("cna_effect_fog_set_color", T[:result], [handle("CNA_EffectHandle"), *by_value_sse("CNA_Vector3", eightbytes: 2)], ownership: "borrows effect"),
+        signature("cna_directional_light_get_enabled", T[:result], [handle("CNA_DirectionalLightHandle"), pointer("CNA_Bool")], ownership: "borrows light; caller output"),
+        signature("cna_directional_light_set_enabled", T[:result], [handle("CNA_DirectionalLightHandle"), T[:bool]], ownership: "borrows light"),
+        signature("cna_directional_light_get_direction", T[:result], [handle("CNA_DirectionalLightHandle"), pointer("CNA_Vector3")], ownership: "borrows light; caller output"),
+        signature("cna_directional_light_set_direction", T[:result], [handle("CNA_DirectionalLightHandle"), *by_value_sse("CNA_Vector3", eightbytes: 2)], ownership: "borrows light"),
+        signature("cna_directional_light_get_diffuse_color", T[:result], [handle("CNA_DirectionalLightHandle"), pointer("CNA_Vector3")], ownership: "borrows light; caller output"),
+        signature("cna_directional_light_set_diffuse_color", T[:result], [handle("CNA_DirectionalLightHandle"), *by_value_sse("CNA_Vector3", eightbytes: 2)], ownership: "borrows light"),
+        signature("cna_directional_light_get_specular_color", T[:result], [handle("CNA_DirectionalLightHandle"), pointer("CNA_Vector3")], ownership: "borrows light; caller output"),
+        signature("cna_directional_light_set_specular_color", T[:result], [handle("CNA_DirectionalLightHandle"), *by_value_sse("CNA_Vector3", eightbytes: 2)], ownership: "borrows light"),
+        signature("cna_directional_light_destroy", T[:result], [handle("CNA_DirectionalLightHandle")], ownership: "consumes OWNED member view"),
         # The Effect cluster. Every getter in it returns an **owned view**: `cna_effect_get_parameters`
         # hands back a fresh collection handle on every call, and so does
         # `cna_effect_parameter_collection_get_at` for every element -- measured, two calls answer two

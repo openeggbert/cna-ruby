@@ -19,7 +19,6 @@
 - `Microsoft.Xna.Framework.Design.Vector4Converter`
 - `Microsoft.Xna.Framework.DrawableGameComponent`
 - `Microsoft.Xna.Framework.Graphics.AlphaTestEffect`
-- `Microsoft.Xna.Framework.Graphics.BasicEffect`
 - `Microsoft.Xna.Framework.Graphics.DualTextureEffect`
 - `Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect`
 - `Microsoft.Xna.Framework.Graphics.GraphicsAdapter`

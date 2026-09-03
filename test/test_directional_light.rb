@@ -244,15 +244,20 @@ class DirectionalLightTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_builds_no_stock_effect_and_no_lighting_runtime
-    %i[BasicEffect SkinnedEffect EnvironmentMapEffect AlphaTestEffect DualTextureEffect]
+    # `BasicEffect` left this list in Foundation 97; the other four are still absent.
+    %i[SkinnedEffect EnvironmentMapEffect AlphaTestEffect DualTextureEffect]
       .each { |absent| refute G.const_defined?(absent, false), absent.to_s }
     # The light is a plain object: it has no handle, no disposal and no device.
     light = G::DirectionalLight.new(nil, nil, nil, nil)
     refute light.respond_to?(:Dispose)
     refute light.respond_to?(:GraphicsDevice)
     refute_includes G::DirectionalLight.ancestors, G::GraphicsResource
-    # And this milestone binds no route: everything it needs was bound by the Effect cluster.
+    # This milestone bound no route: everything it needed was bound by the Effect cluster. The
+    # `cna_directional_light_*` family arrived with `BasicEffect`, which is where CNA's stock effect
+    # carries its three lights as native member views -- see `test_basic_effect.rb`.
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
-    refute CNA::Native::Manifest::FUNCTIONS.map(&:symbol).any? { |symbol| symbol.include?("light") }
+    parameter_backed = G::DirectionalLight.new(nil, nil, nil, nil)
+    assert_nil parameter_backed.__send__(:instance_variable_get, :@light_handle),
+               "a light over EffectParameters reaches no route at all"
   end
 end

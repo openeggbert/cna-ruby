@@ -2095,6 +2095,10 @@
       "complete": true
     },
     {
+      "name": "Microsoft.Xna.Framework.Graphics.BasicEffect",
+      "complete": true
+    },
+    {
       "name": "Microsoft.Xna.Framework.Graphics.RenderTarget2D",
       "complete": true
     },

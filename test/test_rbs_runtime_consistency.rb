@@ -841,7 +841,7 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     # The two render targets left this list when they were built; what this batch claimed, and
     # still claims, is that **it** declared neither -- it declared `DepthFormat` and
     # `RenderTargetUsage`, which are two of the enums a target's create-info is made of.
-    %w[BasicEffect GraphicsAdapter].each do |absent|
+    %w[SkinnedEffect GraphicsAdapter].each do |absent|
       refute_includes source, "class #{absent}\n"
       refute_includes source, "class #{absent} <"
     end

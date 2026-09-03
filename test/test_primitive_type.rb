@@ -167,7 +167,7 @@ class PrimitiveTypeTest < Minitest::Test
     # claimed, and still claims, is that **it** built none of them.
     # The five buffer types left this list when they were built; what this milestone claimed,
     # and still claims, is that **it** built none of them.
-    %i[BasicEffect PrimitiveTypeConverter].each do |name|
+    %i[SkinnedEffect PrimitiveTypeConverter].each do |name|
       refute G.const_defined?(name, false), name.to_s
     end
     # `SetVertexBuffer` and `Indices` left this list when the device's binding slice landed. A

@@ -341,9 +341,9 @@ class PureManagedEnumBatchTest < Minitest::Test
     # `IndexElementSize`, `SetDataOptions`, `DepthFormat` and `RenderTargetUsage` are five of this
     # batch's 24 enums and still bind nothing of their own: what binds a render-target route is the
     # render target, and this batch selected the enums its create-info is made of.
-    # `occlusion_query_` left this list when the query was built, for the same reason every
-    # fragment before it left.
-    %w[effect_matrices_ model_mesh_].each do |fragment|
+    # `occlusion_query_` left this list when the query was built and `effect_matrices_` when the
+    # first stock effect was, for the same reason every fragment before them left.
+    %w[model_mesh_ content_reader_].each do |fragment|
       refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?(fragment) }, fragment
     end
   end
@@ -356,7 +356,7 @@ class PureManagedEnumBatchTest < Minitest::Test
     # metadata is made of and nothing that holds one.
     # The five buffer types left this list when they were built, and the two render targets when
     # they were; what this milestone claimed, and still claims, is that **it** built none of them.
-    %i[BasicEffect GraphicsAdapter].each do |name|
+    %i[SkinnedEffect GraphicsAdapter].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
     # `Texture3D` and `TextureCube` exist now, and this batch built neither: it selected

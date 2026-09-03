@@ -382,6 +382,7 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.FrameworkDispatcher
       Microsoft.Xna.Framework.Game
       Microsoft.Xna.Framework.GamerServices.GamerServicesComponent
+      Microsoft.Xna.Framework.Graphics.BasicEffect
       Microsoft.Xna.Framework.Graphics.DirectionalLight
       Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer
       Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer

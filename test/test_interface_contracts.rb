@@ -226,7 +226,7 @@ class InterfaceContractsTest < Minitest::Test
     # The nine `Effect` types left this list when the cluster was built, and `DirectionalLight` and
     # `IEffectLights` when the light was; what this milestone claimed, and still claims, is that
     # **it** built none of them. `IEffectLights` is asserted below to be as abstract as the rest.
-    %i[BasicEffect IEffectSkinning].each do |name|
+    %i[SkinnedEffect IEffectSkinning].each do |name|
       refute G.const_defined?(name, false), "Graphics::#{name}"
     end
     assert_kind_of Module, G::IEffectLights

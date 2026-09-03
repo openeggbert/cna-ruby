@@ -87,11 +87,11 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 | count | what it measures |
 | ---: | --- |
 | 257 | XNA 4.0 Windows reference types |
-| 200 | types this binding projects |
-| 2410 | Ruby member identities |
-| 198 | complete types |
+| 201 | types this binding projects |
+| 2436 | Ruby member identities |
+| 199 | complete types |
 | 2 | partial types |
-| 57 | missing types |
+| 56 | missing types |
 | 42 | event identities |
 | 20 | types owning an event |
 | 22 | projected BCL identities |
@@ -100,8 +100,8 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 70 | strict diagnostics in total |
-| 57 | `MISSING_TYPE` |
+| 69 | strict diagnostics in total |
+| 56 | `MISSING_TYPE` |
 | 8 | `MISSING_MEMBER` |
 | 5 | `OVERLOAD_MAPPING_MISMATCH` |
 | 0 | `PROPERTY_MAPPING_MISMATCH` |
@@ -120,7 +120,7 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 395 | bound C functions |
+| 443 | bound C functions |
 | 6 | callbacks |
 | 137 | constants |
 | 66 | struct layouts |
@@ -149,7 +149,7 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 151 | runtime capability rows |
+| 152 | runtime capability rows |
 
 <!-- scoreboard:end -->
 

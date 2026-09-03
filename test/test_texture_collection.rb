@@ -228,7 +228,7 @@ class TextureCollectionTest < Minitest::Test
     # and still claims, is that **it** built none of them.
     # `RenderTarget2D` left this list when the render targets were built; `SetRenderTarget` below
     # is still absent, which is the claim that matters here.
-    %i[BasicEffect].each do |absent|
+    %i[SkinnedEffect].each do |absent|
       refute G.const_defined?(absent, false), absent.to_s
     end
     # `BlendState` and `DepthStencilState` left this list when the device's state slice landed.

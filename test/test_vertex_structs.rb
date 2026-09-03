@@ -235,7 +235,7 @@ class VertexStructsTest < Minitest::Test
     # claimed, and still claims, is that **it** built none of them.
     # The five buffer types left this list when they were built; what this milestone claimed,
     # and still claims, is that **it** built none of them.
-    %i[BasicEffect VertexPositionNormalColorTexture].each do |absent|
+    %i[SkinnedEffect VertexPositionNormalColorTexture].each do |absent|
       refute G.const_defined?(absent, false), absent.to_s
     end
     # `SetVertexBuffer` and `Indices` left this list when the device's binding slice landed; what

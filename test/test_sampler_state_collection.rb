@@ -221,7 +221,7 @@ class SamplerStateCollectionTest < Minitest::Test
     # the render targets were; what this milestone claimed, and still claims, is that **it** built
     # none of them, and `SetRenderTarget` above is still absent -- a target that exists is not a
     # target that can be bound.
-    %i[BasicEffect]
+    %i[SkinnedEffect]
       .each { |absent| refute G.const_defined?(absent, false), absent.to_s }
     # XNA's own `Apply` stays unprojected on the state it holds, which is what makes the setter's
     # native step this collection's rather than SamplerState's.

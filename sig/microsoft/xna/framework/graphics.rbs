@@ -662,6 +662,55 @@ module Microsoft
           def self.op_Implicit: (VertexBuffer vertexBuffer) -> VertexBufferBinding
         end
 
+        class BasicEffect < Effect
+          include IEffectFog
+          include IEffectLights
+          include IEffectMatrices
+          def initialize: (GraphicsDevice | BasicEffect deviceOrCloneSource) -> void
+          def Clone: () -> Effect
+          def World: () -> Matrix
+          def World=: (Matrix value) -> Matrix
+          def View: () -> Matrix
+          def View=: (Matrix value) -> Matrix
+          def Projection: () -> Matrix
+          def Projection=: (Matrix value) -> Matrix
+          def FogEnabled: () -> bool
+          def FogEnabled=: (bool value) -> bool
+          def FogStart: () -> Float
+          def FogStart=: (Numeric value) -> Numeric
+          def FogEnd: () -> Float
+          def FogEnd=: (Numeric value) -> Numeric
+          def FogColor: () -> Vector3
+          def FogColor=: (Vector3 value) -> Vector3
+          def LightingEnabled: () -> bool
+          def LightingEnabled=: (bool value) -> bool
+          def AmbientLightColor: () -> Vector3
+          def AmbientLightColor=: (Vector3 value) -> Vector3
+          def DirectionalLight0: () -> DirectionalLight
+          def DirectionalLight1: () -> DirectionalLight
+          def DirectionalLight2: () -> DirectionalLight
+          def EnableDefaultLighting: () -> nil
+          def DiffuseColor: () -> Vector3
+          def DiffuseColor=: (Vector3 value) -> Vector3
+          def EmissiveColor: () -> Vector3
+          def EmissiveColor=: (Vector3 value) -> Vector3
+          def SpecularColor: () -> Vector3
+          def SpecularColor=: (Vector3 value) -> Vector3
+          def SpecularPower: () -> Float
+          def SpecularPower=: (Numeric value) -> Numeric
+          def Alpha: () -> Float
+          def Alpha=: (Numeric value) -> Numeric
+          def PreferPerPixelLighting: () -> bool
+          def PreferPerPixelLighting=: (bool value) -> bool
+          def TextureEnabled: () -> bool
+          def TextureEnabled=: (bool value) -> bool
+          def VertexColorEnabled: () -> bool
+          def VertexColorEnabled=: (bool value) -> bool
+          def Texture: () -> Texture2D?
+          def Texture=: (Texture2D? value) -> Texture2D?
+          def OnApply: () -> nil
+        end
+
         class SpriteBatch < GraphicsResource
           def initialize: (GraphicsDevice graphics_device) -> void
           def Begin: () -> nil
