@@ -70,9 +70,9 @@ class GameTimingPropertiesTest < Minitest::Test
     end
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
     assert_equal 0, STRICT.fetch("UNEXPECTED_MEMBER")
-    # Unrelated and pre-existing: GraphicsDevice::Viewport, whose setter is deliberately excluded.
-    assert_equal ["Microsoft.Xna.Framework.Graphics.GraphicsDevice::Viewport"],
-                 STRICT.fetch("details").fetch("PROPERTY_MAPPING_MISMATCH")
+    # `GraphicsDevice::Viewport` stood here for this project's whole history, its setter
+    # deliberately excluded. Foundation 89 projected it, and the category is empty.
+    assert_empty STRICT.fetch("details").fetch("PROPERTY_MAPPING_MISMATCH")
   end
 
   # ------------------------------------------------------------------------------- the defaults

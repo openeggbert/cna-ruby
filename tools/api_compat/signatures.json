@@ -32026,7 +32026,7 @@
           "type": "Microsoft.Xna.Framework.Graphics.Viewport",
           "static": false,
           "get": true,
-          "set": false,
+          "set": true,
           "getAccess": "public",
           "setAccess": "public",
           "parameters": [

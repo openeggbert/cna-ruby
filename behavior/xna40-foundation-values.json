@@ -4757,7 +4757,7 @@
         false,
         false,
         false,
-        false,
+        true,
         [
           "TypeError",
           "TypeError",
@@ -4946,7 +4946,7 @@
         ],
         7,
         1,
-        false,
+        true,
         false
       ]
     },

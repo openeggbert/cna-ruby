@@ -55,18 +55,23 @@ class SignatureSelectionTest < Minitest::Test
   end
 
   # An `override` is how a deliberate deviation from the reference is *declared* rather than
-  # smuggled in, and the verifier reports it. There is exactly one, and the strict report counts it.
-  def test_the_only_declared_override_is_the_one_the_scoreboard_reports
+  # smuggled in, and the verifier reports one as a `PROPERTY_MAPPING_MISMATCH`. There were never
+  # more than one — `GraphicsDevice::Viewport`'s `{ "set" => false }` — and Foundation 89 retired
+  # it by projecting the setter, so the selection declares **no** deviation from the reference and
+  # the strict report counts none.
+  #
+  # The rule this guards is the pair: an override in the selection and a mismatch in the report are
+  # the same fact seen twice, so neither may exist without the other.
+  def test_a_declared_override_and_a_reported_mismatch_are_the_same_fact
     overrides = SELECTION.fetch("types").flat_map do |type|
       type.fetch("include", []).select { |selector| selector["override"] }
           .map { |selector| ["#{type.fetch("name")}::#{selector.fetch("name")}", selector.fetch("override")] }
     end
-    assert_equal [["Microsoft.Xna.Framework.Graphics.GraphicsDevice::Viewport", { "set" => false }]], overrides
+    assert_empty overrides
 
     strict = JSON.parse(ROOT.join("docs", "generated", "api-compat-report.json").read)
-    assert_equal 1, strict.fetch("PROPERTY_MAPPING_MISMATCH")
-    assert_equal ["Microsoft.Xna.Framework.Graphics.GraphicsDevice::Viewport"],
-                 strict.fetch("details").fetch("PROPERTY_MAPPING_MISMATCH")
+    assert_equal overrides.length, strict.fetch("PROPERTY_MAPPING_MISMATCH")
+    assert_empty strict.fetch("details").fetch("PROPERTY_MAPPING_MISMATCH")
   end
 
   # A guard nobody has seen fail is not evidence: dropping one selected type must be caught, and so

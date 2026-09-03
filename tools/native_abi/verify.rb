@@ -58,6 +58,7 @@ report = {
   "SIGNATURE_MEASUREMENTS" => signature_measurements,
   "C_LAYOUT_MEASUREMENTS" => c_layout_measurements,
   "RUBY_LAYOUT_MEASUREMENTS" => ruby_layout_measurements,
+  "STRUCT_LAYOUTS" => CNA::Native::Layouts::STRUCTURES.length,
   "CALLBACKS" => CNA::Native::Manifest::CALLBACKS.length,
   "CONSTANTS" => CNA::Native::Manifest::CONSTANTS.length,
   "ADMITTED_ABI_VERSIONS" => admitted.length,

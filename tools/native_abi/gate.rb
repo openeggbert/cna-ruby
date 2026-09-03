@@ -44,6 +44,7 @@ module NativeAbiGate
   # unnoticed.
   def ruby_signature(entry)
     aggregates = entry.respond_to?(:value_aggregates) ? (entry.value_aggregates || {}) : {}
+    fillers = entry.respond_to?(:abi_fillers) ? (entry.abi_fillers || []) : []
     arguments = []
     index = 0
     while index < entry.c_arguments.length
@@ -51,6 +52,10 @@ module NativeAbiGate
       if aggregate
         arguments << aggregate.fetch(:c)
         index += aggregate.fetch(:members)
+      elsif fillers.include?(index)
+        # A register filler is not an argument of the C function at all — it exists only to push a
+        # MEMORY-class aggregate onto the stack — so it contributes nothing to the reconstruction.
+        index += 1
       else
         prefix = entry.const_arguments[index] ? "const " : ""
         stars = "*" * entry.pointer_depths[index]
@@ -59,6 +64,54 @@ module NativeAbiGate
       end
     end
     "#{entry.c_return}|#{arguments.join(",")}"
+  end
+
+  # System V x86-64 argument classification, re-derived from the aggregate's **measured** size
+  # rather than taken from the manifest's word for it.
+  #
+  #   * an aggregate of at most two eightbytes travels in registers, one Fiddle argument each and
+  #     no fillers;
+  #   * anything larger is MEMORY class: it is pushed on the stack, so the expansion must declare
+  #     `ceil(size / 8)` eightbytes *and* enough integer-register fillers that they overflow there.
+  #
+  # Both numbers are computed here from `sizeof` and from the arguments that precede the aggregate,
+  # so a manifest that declares the wrong shape fails the gate instead of producing a call that
+  # reads the callee's stack at the wrong offset.
+  INTEGER_ARGUMENT_REGISTERS = 6
+
+  def aggregate_mismatches(entry, c_structs)
+    aggregates = entry.respond_to?(:value_aggregates) ? (entry.value_aggregates || {}) : {}
+    fillers = entry.respond_to?(:abi_fillers) ? (entry.abi_fillers || []) : []
+    mismatches = []
+    aggregates.each do |index, aggregate|
+      name = aggregate.fetch(:c)
+      size, = c_structs[name]
+      if size.nil?
+        mismatches << "aggregate #{entry.symbol}: #{name} has no measured layout"
+        next
+      end
+      eightbytes = (size + 7) / 8
+      declared_fillers = aggregate.fetch(:fillers, 0)
+      unless aggregate.fetch(:members) == eightbytes
+        mismatches << "aggregate #{entry.symbol}: #{name} is #{size} bytes so it expands into "                       "#{eightbytes} eightbytes, manifest declares #{aggregate.fetch(:members)}"
+      end
+      expected_fillers = if size <= 16
+                           0
+                         else
+                           preceding = (0...(index - declared_fillers)).count do |position|
+                             !fillers.include?(position) && !inside_aggregate?(aggregates, position)
+                           end
+                           INTEGER_ARGUMENT_REGISTERS - preceding
+                         end
+      next if declared_fillers == expected_fillers
+
+      mismatches << "aggregate #{entry.symbol}: #{name} is #{size} bytes and follows "                     "#{index - declared_fillers} argument(s), so it needs #{expected_fillers} "                     "register filler(s), manifest declares #{declared_fillers}"
+    end
+    mismatches
+  end
+
+  def inside_aggregate?(aggregates, position)
+    aggregates.any? { |start, aggregate| position > start && position < start + aggregate.fetch(:members) }
   end
 
   # Compares one header root's measurements with the supplied manifest surface.
@@ -84,6 +137,7 @@ module NativeAbiGate
 
     layout_by_c_name = layouts.to_h { |layout| ["CNA_#{layout.name.split("::").last}", layout] }
     c_structs = records["STRUCT"].to_h { |name, size, alignment| [name, [Integer(size), Integer(alignment)]] }
+    functions.each { |entry| mismatches.concat(aggregate_mismatches(entry, c_structs)) }
     c_fields = records["FIELD"].to_h { |struct_name, field_name, offset, size| ["#{struct_name}.#{field_name}", [Integer(offset), Integer(size)]] }
     layout_by_c_name.each do |name, layout|
       c_size, c_alignment = c_structs.fetch(name, [nil, nil])

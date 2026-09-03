@@ -269,7 +269,8 @@ module Microsoft
 
         class GraphicsDevice
           attr_reader IsDisposed: bool
-          attr_reader Viewport: Viewport
+          def Viewport: () -> Viewport
+          def Viewport=: (Viewport value) -> Viewport
           def Clear: (Color color) -> nil
           def SamplerStates: () -> SamplerStateCollection
           def VertexSamplerStates: () -> SamplerStateCollection

@@ -171,7 +171,10 @@ class ViewportTest < Minitest::Test
     %i[project unproject title_safe_area].each do |name|
       refute_includes G::Viewport.public_instance_methods(false), name
     end
-    refute_includes G::GraphicsDevice.public_instance_methods(false), :Viewport=
+    # The device's setter is projected since Foundation 89, and it is the device's rather than this
+    # value type's: nothing here reaches the native boundary, and `Viewport` itself still has no
+    # member that does.
+    assert_includes G::GraphicsDevice.public_instance_methods(false), :Viewport=
 
     previous_library = ENV.delete("CNA_NATIVE_LIBRARY")
     CNA::Native.stub(:library, -> { raise "Viewport crossed the native boundary" }) do

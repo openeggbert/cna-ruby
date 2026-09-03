@@ -1234,23 +1234,31 @@ class ApiVerifierTest < Minitest::Test
     assert_operator result.counts["OVERLOAD_MAPPING_MISMATCH"], :>=, 2
   end
 
-  def test_viewport_selected_surface_rejects_graphics_device_viewport_setter
+  # This test used to prove the opposite. `GraphicsDevice::Viewport` was selected getter-only, with
+  # `"override": { "set": false }` in `selection.json`, and the one standing
+  # `PROPERTY_MAPPING_MISMATCH` this project carried was that override — so the guard was that a
+  # target claiming the setter without projecting it is rejected.
+  #
+  # The setter is projected now, and it was never a Ruby limitation: `cna_graphics_device_set_viewport`
+  # exists, and the only thing standing in front of it was that `CNA_Viewport` is a 24-byte
+  # aggregate passed by value, which the System V x86-64 classification puts on the stack rather
+  # than in registers. `Manifest.by_value_memory` records the measured expansion. So the guard is
+  # inverted rather than deleted: a target that **drops** a setter the reference declares is what
+  # must now be rejected, and the real projected surface must carry it.
+  def test_viewport_selected_surface_rejects_a_dropped_graphics_device_viewport_setter
     reference, target = viewport_selected_surface_contracts
     device_name = "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
-    full_property = reference_contract.fetch("types").find { |type| type.fetch("name") == device_name }
-                                      .fetch("members").find do |member|
-      member["kind"] == "property" && member["name"] == "Viewport"
-    end
-    selected_property = target.fetch("types").find { |type| type.fetch("name") == device_name }
-                              .fetch("members").find { |member| member["name"] == "Viewport" }
-    selected_property["set"] = full_property.fetch("set")
-    selected_property["setAccess"] = full_property.fetch("setAccess")
+    assert_equal 0, verify(reference, target).counts["PROPERTY_MAPPING_MISMATCH"]
+
+    dropped = target.fetch("types").find { |type| type.fetch("name") == device_name }
+                    .fetch("members").find { |member| member["name"] == "Viewport" }
+    dropped["set"] = false
     assert_operator verify(reference, target).counts["PROPERTY_MAPPING_MISMATCH"], :>, 0
 
     actual_property = signature_contract.fetch("types").find { |type| type.fetch("name") == device_name }
                                         .fetch("members").find { |member| member["name"] == "Viewport" }
-    refute actual_property.fetch("set")
-    refute Microsoft::Xna::Framework::Graphics::GraphicsDevice.public_method_defined?(:Viewport=)
+    assert actual_property.fetch("set")
+    assert Microsoft::Xna::Framework::Graphics::GraphicsDevice.public_method_defined?(:Viewport=)
   end
 
 
@@ -1903,7 +1911,7 @@ class ApiVerifierTest < Minitest::Test
     # types is what this test guards, and it is unchanged. Foundation 45 then closed
     # Game::IsActive, a property, so MISSING_MEMBER fell once more without moving the overloads.
     assert_equal ReviewedScoreboard::MISSING_MEMBER, strict.fetch("MISSING_MEMBER")
-    assert_equal 1, strict.fetch("PROPERTY_MAPPING_MISMATCH")
+    assert_equal ReviewedScoreboard::PROPERTY_MAPPING_MISMATCH, strict.fetch("PROPERTY_MAPPING_MISMATCH")
     assert_equal ReviewedScoreboard::OVERLOAD_MAPPING_MISMATCH, strict.fetch("OVERLOAD_MAPPING_MISMATCH")
 
     # Every batch enum that a deferred member mentions left that member deferred *by this batch*.

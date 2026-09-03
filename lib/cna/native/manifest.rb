@@ -7,7 +7,7 @@ module CNA
     Signature = Data.define(
       :symbol, :c_return, :c_arguments, :fiddle_return, :fiddle_arguments,
       :pointer_depths, :const_arguments, :integer_widths, :signedness,
-      :ownership, :result_lifetime, :callback_abi, :value_aggregates
+      :ownership, :result_lifetime, :callback_abi, :value_aggregates, :abi_fillers
     )
 
     module Manifest
@@ -30,12 +30,18 @@ module CNA
         # records where each aggregate starts and how many entries it occupies, so the C spelling
         # can be reconstructed exactly and the decomposition can never become silent.
         value_aggregates = {}
+        abi_fillers = []
         arguments.each_with_index do |value, index|
+          abi_fillers << index if value[:abi_filler]
           next unless value[:value_aggregate]
 
           next unless value.fetch(:aggregate_start, false)
 
-          value_aggregates[index] = { c: value.fetch(:value_aggregate), members: value.fetch(:aggregate_members) }
+          value_aggregates[index] = {
+            c: value.fetch(:value_aggregate),
+            members: value.fetch(:aggregate_members),
+            fillers: value.fetch(:aggregate_fillers, 0)
+          }
         end
         Signature.new(
           symbol: symbol,
@@ -50,7 +56,8 @@ module CNA
           ownership: ownership,
           result_lifetime: result_lifetime,
           callback_abi: callback_abi,
-          value_aggregates: value_aggregates.freeze
+          value_aggregates: value_aggregates.freeze,
+          abi_fillers: abi_fillers.freeze
         )
       end
 
@@ -101,6 +108,45 @@ module CNA
         members.each_with_index.map do |member, index|
           member.merge(value_aggregate: c, aggregate_start: index.zero?, aggregate_members: members.length)
         end
+      end
+
+      # The System V x86-64 integer argument registers, in order: `rdi rsi rdx rcx r8 r9`.
+      INTEGER_ARGUMENT_REGISTERS = 6
+
+      # A struct passed by value that the classification puts in **MEMORY** rather than in
+      # registers, which on System V x86-64 means any aggregate larger than two eightbytes.
+      #
+      # `by_value` above covers the register case and cannot cover this one: a MEMORY-class
+      # argument is pushed onto the stack, and Fiddle only ever fills the argument registers. The
+      # expansion that does work is to declare enough integer arguments that the aggregate's
+      # eightbytes are the ones that *overflow* onto the stack, which is byte for byte where the
+      # callee reads them. The arguments in between are `fillers`: they occupy the integer
+      # registers a real argument would have used, the callee never reads them for this prototype,
+      # and they are recorded here so the reconstructed C signature can leave them out.
+      #
+      # **This is measured, not reasoned.** `cna_graphics_device_set_viewport(CNA_Handle,
+      # CNA_Viewport)` is the one route in this manifest that needs it, and its disassembly reads
+      # the handle from `rdi` and the viewport from `0x10(%rbp)` — the first stack slot — exactly as
+      # the classification says. `tools/native_abi/gate.rb` re-derives both numbers below from the
+      # aggregate's *measured* `sizeof` and the preceding arguments rather than trusting them, and
+      # `test/test_native_abi_gate.rb` plants a wrong filler count and a wrong eightbyte count and
+      # requires the gate to catch each. The round trip is qualified end to end as well: a viewport
+      # written through this expansion reads back exactly, and the register-class expansion the
+      # naive reading would produce is refused by CNA with `CNA_RESULT_INVALID_ARGUMENT` and
+      # changes nothing.
+      #
+      # Like every other ABI fact in this manifest it is qualified for the one platform this
+      # binding qualifies at all.
+      def by_value_memory(c, eightbytes:, preceding_integer_arguments:)
+        fillers = INTEGER_ARGUMENT_REGISTERS - preceding_integer_arguments
+        raise ArgumentError, "#{c}: no integer register is left to fill" if fillers.negative?
+
+        filler_entries = Array.new(fillers) { T[:u64].merge(abi_filler: c) }
+        aggregate = Array.new(eightbytes) do |index|
+          T[:u64].merge(value_aggregate: c, aggregate_start: index.zero?,
+                        aggregate_members: eightbytes, aggregate_fillers: fillers)
+        end
+        filler_entries + aggregate
       end
 
       def callback_pointer(c)
@@ -310,6 +356,12 @@ module CNA
         signature("cna_graphics_device_manager_dispose", T[:result], [handle("CNA_GraphicsDeviceManagerHandle")], ownership: "borrows manager; canonical dispose"),
         signature("cna_graphics_device_manager_destroy", T[:result], [handle("CNA_GraphicsDeviceManagerHandle")], ownership: "consumes OWNED manager"),
         signature("cna_graphics_device_get_viewport", T[:result], [T[:handle], pointer("CNA_Viewport")], ownership: "caller output"),
+        # `CNA_Viewport` is 24 bytes, which the System V x86-64 classification puts in MEMORY: the
+        # aggregate is pushed onto the stack rather than carried in registers, so `by_value` cannot
+        # express it and `by_value_memory` does. See that helper for the measurement.
+        signature("cna_graphics_device_set_viewport", T[:result],
+                  [T[:handle], *by_value_memory("CNA_Viewport", eightbytes: 3, preceding_integer_arguments: 1)],
+                  ownership: "borrows device"),
         signature("cna_graphics_device_clear_rgba", T[:result], [T[:handle], T[:float], T[:float], T[:float], T[:float]], ownership: "borrows device"),
         # The device texture collections. Native frontier 4 recorded `Graphics.TextureCollection` as
         # "the one case where NATIVE_RUNTIME was the right word -- no CNA route at all". That was

@@ -21,7 +21,7 @@ module NativeSurfaceCensus
 
   # The census the repository last reviewed. `test_native_abi_gate.rb` compares the two, so this
   # file cannot drift from the manifest silently in either direction.
-  REVIEWED = { functions: 383, callbacks: 5, constants: 133, layouts: 62 }.freeze
+  REVIEWED = { functions: 384, callbacks: 5, constants: 133, layouts: 62 }.freeze
 end
 
 # The strict XNA scoreboard, for exactly the same reason and with exactly the same rule: a milestone
@@ -37,6 +37,10 @@ module ReviewedScoreboard
   MISSING_TYPES = 57
   MISSING_MEMBER = 46
   OVERLOAD_MAPPING_MISMATCH = 18
+  # Zero since Foundation 89 projected `GraphicsDevice::Viewport`'s setter. The one entry this
+  # carried for its whole history was that property's `"override": { "set": false }`, and it was
+  # never a Ruby limitation — see `test_api_verifier.rb`'s inverted guard.
+  PROPERTY_MAPPING_MISMATCH = 0
   BCL_PROJECTED_IDENTITIES = 22
   BCL_EXCEPTION_BASES = 2
   BCL_THROWN_EXCEPTIONS = 8
@@ -46,7 +50,7 @@ module ReviewedScoreboard
   # one place: it is still a partial type, so every slice that lands on it moves this list, and five
   # unrelated tests should not each pin it as a literal.
   GRAPHICS_DEVICE_SURFACE = %i[
-    IsDisposed Viewport Clear Textures VertexTextures SamplerStates VertexSamplerStates
+    IsDisposed Viewport Viewport= Clear Textures VertexTextures SamplerStates VertexSamplerStates
     BlendState BlendState= DepthStencilState DepthStencilState= RasterizerState RasterizerState=
     BlendFactor BlendFactor= MultiSampleMask MultiSampleMask= ReferenceStencil ReferenceStencil=
     ScissorRectangle ScissorRectangle=

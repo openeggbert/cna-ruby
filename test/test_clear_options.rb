@@ -116,7 +116,6 @@ class ClearOptionsTest < Minitest::Test
       refute_respond_to OPTIONS::Target, name
     end
     assert_equal 1, G::GraphicsDevice.instance_method(:Clear).arity
-    refute G::GraphicsDevice.public_method_defined?(:Viewport=)
     refute CNA::Native::Manifest::CONSTANTS.keys.any? { |name| name.include?("CLEAR_OPTIONS") }
   end
 

@@ -77,17 +77,17 @@ class PlanBoundariesTest < Minitest::Test
     refute_empty planted & complete_leaves
   end
 
-  # The partial remainder is quoted in words, so it has to move when the scoreboard does.
-  def test_the_quoted_partial_remainders_match_the_scoreboard
-    partial = STRICT.fetch("partialTypes")
-    device = partial.fetch("Microsoft.Xna.Framework.Graphics.GraphicsDevice")
-    manager = partial.fetch("Microsoft.Xna.Framework.GraphicsDeviceManager")
-    assert_equal 20, device.length
-    assert_equal 15, manager.length
-    assert_equal 2, partial.length, "SpriteBatch left when the Effect cluster landed"
+  # The remainders themselves are the generated scoreboard's job now — `test_document_scoreboard.rb`
+  # compares them against the reports and refuses any numeral in `plan.md` that no fact accounts
+  # for, which is strictly stronger than quoting two counts in words here. What this section still
+  # owes is that it names the partial types it defers to, and only the partial types.
+  def test_the_section_names_exactly_the_partial_types
+    partial = STRICT.fetch("partialTypes").keys.map { |name| self.class.leaf(name) }
     flat = SECTION.gsub(/\s+/, " ")
-    assert_includes flat, "owes twenty members"
-    assert_includes flat, "`GraphicsDeviceManager` fifteen"
-    assert_includes flat, "they are the only two partial types left"
+    partial.each { |name| assert_includes flat, "`#{name}`" }
+    assert_includes flat, "are the only partial types left"
+    complete_types.map { |name| self.class.leaf(name) }.each do |name|
+      refute_match(/`#{Regexp.escape(name)}` (?:and `\w+` )?are the only partial types left/, flat)
+    end
   end
 end

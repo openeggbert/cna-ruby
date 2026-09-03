@@ -468,57 +468,43 @@
           "kind": "constructor",
           "name": ".ctor",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
           "name": "Run",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
           "name": "RunOneFrame",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
           "name": "Tick",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
           "name": "Exit",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
           "name": "BeginRun",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
           "name": "EndRun",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
@@ -532,9 +518,7 @@
           "kind": "method",
           "name": "BeginDraw",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
@@ -548,129 +532,97 @@
           "kind": "method",
           "name": "EndDraw",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
           "name": "Initialize",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
           "name": "LoadContent",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
           "name": "UnloadContent",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
           "name": "Dispose",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "GraphicsDevice",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "Components",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "Window",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "Content",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "LaunchParameters",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "IsActive",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "Services",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "event",
           "name": "Activated",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "event",
           "name": "Deactivated",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "event",
           "name": "Exiting",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "event",
           "name": "Disposed",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
@@ -703,33 +655,25 @@
           "kind": "property",
           "name": "IsFixedTimeStep",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "TargetElapsedTime",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "InactiveSleepTime",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "IsMouseVisible",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
@@ -743,9 +687,7 @@
           "kind": "method",
           "name": "Finalize",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
@@ -759,17 +701,13 @@
           "kind": "method",
           "name": "SuppressDraw",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
           "name": "ResetElapsedTime",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         }
       ]
     },
@@ -788,113 +726,85 @@
           "kind": "property",
           "name": "GraphicsDevice",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "field",
           "name": "DefaultBackBufferWidth",
           "static": true,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "field",
           "name": "DefaultBackBufferHeight",
           "static": true,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
           "name": "ApplyChanges",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
           "name": "ToggleFullScreen",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "GraphicsProfile",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "PreferredDepthStencilFormat",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "PreferredBackBufferFormat",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "PreferredBackBufferWidth",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "PreferredBackBufferHeight",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "IsFullScreen",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "SynchronizeWithVerticalRetrace",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "PreferMultiSampling",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "SupportedOrientations",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         }
       ]
     },
@@ -917,116 +827,85 @@
           "kind": "property",
           "name": "IsDisposed",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "Viewport",
           "static": false,
-          "parameters": [
-
-          ],
-          "override": {
-            "set": false
-          }
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "Textures",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "VertexTextures",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "SamplerStates",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "VertexSamplerStates",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "BlendState",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "DepthStencilState",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "RasterizerState",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "BlendFactor",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "MultiSampleMask",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "ReferenceStencil",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "ScissorRectangle",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "Indices",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
@@ -1057,9 +936,7 @@
           "kind": "method",
           "name": "GetVertexBuffers",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
@@ -1090,9 +967,7 @@
           "kind": "method",
           "name": "GetRenderTargets",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
@@ -1140,49 +1015,37 @@
           "kind": "method",
           "name": "ToString",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
           "name": "Dispose",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "IsDisposed",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "Tag",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "Name",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "GraphicsDevice",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
@@ -1196,17 +1059,13 @@
           "kind": "method",
           "name": "Finalize",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "event",
           "name": "Disposing",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         }
       ]
     },
@@ -1326,25 +1185,19 @@
           "kind": "property",
           "name": "Bounds",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "Height",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "property",
           "name": "Width",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
@@ -1485,17 +1338,13 @@
           "kind": "method",
           "name": "Begin",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",
           "name": "End",
           "static": false,
-          "parameters": [
-
-          ]
+          "parameters": []
         },
         {
           "kind": "method",

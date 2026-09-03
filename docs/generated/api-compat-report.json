@@ -7,7 +7,7 @@
   "EXPECTED_RUBY_MEMBERS": 2915,
   "TARGET_TYPES": 200,
   "TARGET_MEMBERS": 2372,
-  "TOTAL_DIAGNOSTICS": 122,
+  "TOTAL_DIAGNOSTICS": 121,
   "COMPLETE_TYPES": 198,
   "PARTIAL_TYPES": 2,
   "MISSING_TYPES": 57,
@@ -26,7 +26,7 @@
   "BASE_MAPPING_MISMATCH": 0,
   "INTERFACE_MAPPING_MISMATCH": 0,
   "FIELD_MAPPING_MISMATCH": 0,
-  "PROPERTY_MAPPING_MISMATCH": 1,
+  "PROPERTY_MAPPING_MISMATCH": 0,
   "METHOD_SIGNATURE_MAPPING_MISMATCH": 0,
   "PARAMETER_MAPPING_MISMATCH": 0,
   "RETURN_MAPPING_MISMATCH": 0,
@@ -527,7 +527,7 @@
     "Microsoft.Xna.Framework.Game": 0,
     "Microsoft.Xna.Framework.GraphicsDeviceManager": 24,
     "Microsoft.Xna.Framework.Graphics.Viewport": 0,
-    "Microsoft.Xna.Framework.Graphics.GraphicsDevice": 41,
+    "Microsoft.Xna.Framework.Graphics.GraphicsDevice": 40,
     "Microsoft.Xna.Framework.Graphics.GraphicsResource": 0,
     "Microsoft.Xna.Framework.Graphics.TextureCollection": 0,
     "Microsoft.Xna.Framework.Graphics.SpriteFont": 0,
@@ -726,7 +726,7 @@
 
     ],
     "PROPERTY_MAPPING_MISMATCH": [
-      "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Viewport"
+
     ],
     "METHOD_SIGNATURE_MAPPING_MISMATCH": [
 

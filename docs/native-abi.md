@@ -63,7 +63,13 @@ callbacks, and 17 -> 59 constants. `MISSING_HEADER_SYMBOLS`, `MISSING_LIBRARY_SY
 `ABI_MISMATCHES` are all zero. CNA extension buttons, sensors, GUID/name, battery, LED, touchpad,
 and trigger-rumble APIs are deliberately not bound.
 
-`cna_viewport_get_title_safe_area` is intentionally not bound: its canonical prototype passes `CNA_Viewport` by value, a contract this Fiddle-only foundation does not claim to marshal portably.
+`cna_viewport_get_title_safe_area` is intentionally not bound, but the reason recorded here was
+half of one and Foundation 89 corrected it. It said the route "passes `CNA_Viewport` by value, a
+contract this Fiddle-only foundation does not claim to marshal portably" — and the by-value part is
+now marshalled and measured (`Manifest.by_value_memory`, `docs/graphics-device-viewport-evidence.md`),
+so that is no longer why. What is still why is that `Viewport.TitleSafeArea` is **pure managed** in
+the pinned IL and this binding projects it as such; binding a native route for it would replace a
+derivation the reference settles with an answer CNA settles.
 
 ## Native frontier 1: the framework dispatcher
 

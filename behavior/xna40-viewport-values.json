@@ -126,7 +126,7 @@
         false,
         false,
         false,
-        false,
+        true,
         ["TypeError", "TypeError", "TypeError", "TypeError"],
         true,
         true,

@@ -808,10 +808,58 @@ module Microsoft
 
           def IsDisposed = @invalidated || @game.__send__(:disposed?)
 
+          # DEVIATION, recorded and measured: XNA's `get_Viewport` is `ldfld currentViewport`, a
+          # managed cache that `set_Viewport`, the internal `SetRenderTargets` and
+          # `InitializeDeviceState` are the only three writers of. This asks the device instead.
+          #
+          # The two are observationally equal for everything the managed contract can distinguish —
+          # a viewport written through the setter below reads back **exactly**, all six fields,
+          # fractional depths included — and asking is strictly better in the one case they differ:
+          # canonical CNA code that moves the viewport itself, which a managed cache would answer
+          # staleley and this answers correctly.
           def Viewport
             output = CNA::Native::Layouts::Viewport.new
             CNA::Native.library.call("cna_graphics_device_get_viewport", native_handle, output.pointer)
             Viewport.from_native(output)
+          end
+
+          # `set_Viewport`, whose eleven guards all raise the same
+          # `ArgumentException(ViewportInvalid, "value")` and are reproduced in the IL's order:
+          #
+          #     X < 0 | Y < 0 | Width <= 0 | Height <= 0
+          #     X + Width  > bounds width          -- the current render target's, or the back
+          #     Y + Height > bounds height            buffer's when none is bound
+          #     MinDepth < 0 | MinDepth > 1 | MaxDepth < 0 | MaxDepth > 1
+          #     !(MaxDepth >= MinDepth)
+          #
+          # The last is `bge.un.s`, so it is **unordered-true**: a NaN depth passes every one of
+          # these — the four range guards are ordered comparisons a NaN fails — and reaches the
+          # device, where CNA refuses it with `CNA_RESULT_INVALID_ARGUMENT` because
+          # `cna_graphics_device_set_viewport` documents that both depths must be finite. That is
+          # the one place this projection's answer comes from CNA rather than from XNA, and it is
+          # a refusal either way.
+          #
+          # `CNA_Viewport` is a 24-byte aggregate passed **by value**, which the System V x86-64
+          # classification puts in MEMORY rather than in registers. `Manifest.by_value_memory`
+          # records the measured expansion — five register fillers, then the three eightbytes that
+          # overflow onto the stack where the callee reads them — and the ABI gate re-derives both
+          # numbers from the struct's own `sizeof`.
+          def Viewport=(value)
+            raise ::TypeError, "value must be a Viewport" unless value.instance_of?(Viewport)
+
+            width, height = viewport_bounds
+            valid = value.X >= 0 && value.Y >= 0 && value.Width.positive? && value.Height.positive? &&
+                    value.X + value.Width <= width && value.Y + value.Height <= height &&
+                    !(value.MinDepth < 0.0) && !(value.MinDepth > 1.0) &&
+                    !(value.MaxDepth < 0.0) && !(value.MaxDepth > 1.0) &&
+                    !(value.MaxDepth < value.MinDepth)
+            raise ::ArgumentError, "ViewportInvalid" unless valid
+
+            eightbytes = [value.X, value.Y, value.Width, value.Height].pack("l4")
+                         .+([value.MinDepth, value.MaxDepth].pack("e2")).unpack("Q3")
+            CNA::Native.library.call("cna_graphics_device_set_viewport", native_handle,
+                                     0, 0, 0, 0, 0, *eightbytes)
+            value
           end
 
           # `Textures` is `new TextureCollection(this, 0, profileCapabilities.MaxSamplers)` and
@@ -1206,6 +1254,18 @@ module Microsoft
                                      value.__send__(:to_native_descriptor).pointer)
             @rasterizer_state = value
             nil
+          end
+
+          # `set_Viewport`'s bounds: the first bound render target's, or the back buffer's when none
+          # is bound. XNA reads `currentRenderTargets[0]`'s `width`/`height` and falls back to
+          # `pInternalCachedParams`, and the cached bindings are that record here — the same cache
+          # `require_no_instance_frequency` reads for the draw calls.
+          def viewport_bounds
+            binding = @render_target_bindings.first
+            return back_buffer_bounds if binding.nil?
+
+            shape = target_shape(binding.RenderTarget)
+            [shape[0], shape[1]]
           end
 
           # The logical back buffer, which is what the scissor rule measures against while no render

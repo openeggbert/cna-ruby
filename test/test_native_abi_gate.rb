@@ -140,6 +140,42 @@ class NativeAbiGateTest < Minitest::Test
     assert_gate_reports(/signature cna_game_window_end_screen_device_change:/, mismatches)
   end
 
+  # A MEMORY-class aggregate is the second by-value shape, and it needs two more controls of its
+  # own: the eightbyte count and the register-filler count are what decide whether the callee reads
+  # its argument from the right stack offset, and both are re-derived by the gate from the measured
+  # `sizeof` rather than believed.
+  def test_a_wrong_memory_class_eightbyte_count_fails_the_gate
+    victim = M::FUNCTIONS.find { |entry| entry.symbol == "cna_graphics_device_set_viewport" }
+    index, aggregate = victim.value_aggregates.first
+    assert_equal 3, aggregate.fetch(:members), "the fixture must really be a 24-byte aggregate"
+    mutated = victim.with(value_aggregates: { index => aggregate.merge(members: 2) })
+    mismatches, = compare(functions: [mutated])
+    assert_gate_reports(/aggregate cna_graphics_device_set_viewport: CNA_Viewport is 24 bytes so it expands into 3 eightbytes/, mismatches)
+  end
+
+  # Four fillers instead of five puts the aggregate one eightbyte earlier than the callee reads it,
+  # which is a silent wrong-memory read rather than a crash — exactly the class of defect a gate is
+  # for.
+  def test_a_wrong_memory_class_filler_count_fails_the_gate
+    victim = M::FUNCTIONS.find { |entry| entry.symbol == "cna_graphics_device_set_viewport" }
+    index, aggregate = victim.value_aggregates.first
+    assert_equal 5, aggregate.fetch(:fillers)
+    mutated = victim.with(value_aggregates: { index - 1 => aggregate.merge(fillers: 4) },
+                          abi_fillers: [1, 2, 3, 4].freeze)
+    mismatches, = compare(functions: [mutated])
+    assert_gate_reports(/aggregate cna_graphics_device_set_viewport: .*needs 5 register filler\(s\), manifest declares 4/, mismatches)
+  end
+
+  # And the register-class rule is checked in the other direction: a two-eightbyte aggregate must
+  # declare no fillers at all, because it never reaches the stack.
+  def test_a_register_class_aggregate_that_claims_fillers_fails_the_gate
+    victim = M::FUNCTIONS.find { |entry| entry.symbol == "cna_game_set_window_title" }
+    index, aggregate = victim.value_aggregates.first
+    mutated = victim.with(value_aggregates: { index => aggregate.merge(fillers: 2) })
+    mismatches, = compare(functions: [mutated])
+    assert_gate_reports(/aggregate cna_game_set_window_title: CNA_StringView is 16 bytes/, mismatches)
+  end
+
   # The callback table is compiler-checked inside `probe.c` by `_Static_assert`, so the control for
   # a wrong callback argument is that the probe itself refuses to compile. This mutates the probe's
   # *copy*, never the tracked file.
