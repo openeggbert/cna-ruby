@@ -1,36 +1,79 @@
 # frozen_string_literal: true
 
-# Derives the Microsoft-free BCL inventory from the pinned Microsoft .NET Framework 4.0 mscorlib.
+# Derives the Microsoft-free BCL inventory from the pinned Microsoft .NET Framework 4.0 assemblies.
 #
-# This is a **separate authority** from the XNA reference contract. mscorlib is not an XNA assembly
-# and none of its types is an XNA identity, so nothing it carries may enter REFERENCE_TYPES /
-# REFERENCE_MEMBERS or the XNA IL inventory. It exists for one reason: several XNA public members
-# name a BCL type, and this binding refuses to project a BCL type from memory.
+# These are a **separate authority** from the XNA reference contract. Neither mscorlib nor System is
+# an XNA assembly and none of their types is an XNA identity, so nothing they carry may enter
+# REFERENCE_TYPES / REFERENCE_MEMBERS or the XNA IL inventory. They exist for one reason: several
+# XNA public members name a BCL type, and this binding refuses to project a BCL type from memory.
 #
-# Point BCL_REFERENCE_ASSEMBLIES at a directory holding mscorlib.dll and XNA_REFERENCE_ASSEMBLIES
-# at the pinned XNA assemblies. Admission is by exact SHA-256, never by filename, and the pairing
-# between the two authorities is proved rather than assumed: every pinned XNA assembly records an
-# AssemblyRef to mscorlib, and that reference's name, version and public key token must equal the
-# identity the admitted binary carries. The public key token is *derived* from the assembly's own
-# .publickey blob (SHA-1, last eight bytes, reversed) rather than trusted from a constant.
+# Point BCL_REFERENCE_ASSEMBLIES at a directory holding them and XNA_REFERENCE_ASSEMBLIES at the
+# pinned XNA assemblies. Admission is by exact SHA-256, never by filename, and the pairing between
+# the authorities is proved rather than assumed: a pinned XNA assembly that records an AssemblyRef
+# to an admitted authority must name the exact version and public key token that binary carries.
+# The public key token is *derived* from the assembly's own .publickey blob (SHA-1, last eight
+# bytes, reversed) rather than trusted from a constant.
+#
+# **Each authority is admitted independently.** mscorlib came first, at Foundation 28, because
+# `ReadOnlyCollection`1` was the first BCL identity with real behaviour. System.dll follows at
+# Foundation 105 because the thirteen XNA `Design` converters reach `System.ComponentModel`, which
+# mscorlib does not declare. The two are held to the same standard, and the standard is a property
+# of the registry rather than of either assembly: nothing below is specific to one of them, and
+# adding a third would be a table entry plus its demand.
 #
 # The inventory is demand-driven. A family is admitted only when the XNA reference contract really
-# names it; a family with no XNA consumer is refused, which is what keeps this from becoming a
-# reimplementation of the .NET Framework. Nothing Microsoft-owned is written: the output records
-# identities, shapes and derived behavioural facts, never IL text and never a machine-local path.
+# names it, or an already-admitted family's measured surface does; a family with neither is refused,
+# which is what keeps this from becoming a reimplementation of the .NET Framework. Nothing
+# Microsoft-owned is written: the output records identities, shapes and derived behavioural facts,
+# never IL text and never a machine-local path.
 
 require "digest"
 require "json"
 
-MSCORLIB = {
-  "sha256" => "5634668d4775b0113f08ea31093b281fea69bfc4e99227f5ca761b4ed98acc63",
-  "bytes" => 5196112,
-  "assemblyName" => "mscorlib",
-  "assemblyVersion" => "4.0.0.0",
-  "fileVersion" => "4.0.30319.1",
-  "publicKeyToken" => "b77a5c561934e089",
-  "company" => "Microsoft Corporation",
-  "description" => "Microsoft Common Language Runtime Class Library"
+# The BCL authority registry. One entry per independently admitted Microsoft assembly, each
+# recording the exact binary identity it expects, the Microsoft origin claim its PE version
+# resource has to carry, the pinned XNA assemblies that must bind it, and why it is admitted at
+# all. `xnaReferrers` is measured rather than assumed to be "all of them": four of the ten pinned
+# XNA assemblies reference no System.dll, and demanding that they did would be a vacuous proof.
+AUTHORITIES = {
+  "mscorlib" => {
+    "file" => "mscorlib.dll",
+    "sha256" => "5634668d4775b0113f08ea31093b281fea69bfc4e99227f5ca761b4ed98acc63",
+    "bytes" => 5196112,
+    "assemblyName" => "mscorlib",
+    "assemblyVersion" => "4.0.0.0",
+    "fileVersion" => "4.0.30319.1",
+    "publicKeyToken" => "b77a5c561934e089",
+    "company" => "Microsoft Corporation",
+    "description" => "Microsoft Common Language Runtime Class Library",
+    "demand" => "the BCL every pinned XNA assembly binds, and the declaring assembly of every collection, stream, reflection, globalization and exception identity the selected XNA surface names",
+    "xnaReferrers" => %w[
+      Microsoft.Xna.Framework.dll Microsoft.Xna.Framework.Graphics.dll Microsoft.Xna.Framework.Game.dll
+      Microsoft.Xna.Framework.Input.Touch.dll Microsoft.Xna.Framework.Xact.dll
+      Microsoft.Xna.Framework.Storage.dll Microsoft.Xna.Framework.Video.dll
+      Microsoft.Xna.Framework.Net.dll Microsoft.Xna.Framework.GamerServices.dll
+      Microsoft.Xna.Framework.Avatar.dll
+    ]
+  },
+  "System" => {
+    "file" => "System.dll",
+    "sha256" => "c3182e40f09a8d3a0167a833dc1ce7c3cb2bfddbd32031d8d3f41481d0467462",
+    "bytes" => 3481928,
+    "assemblyName" => "System",
+    "assemblyVersion" => "4.0.0.0",
+    "fileVersion" => "4.0.30319.1",
+    "publicKeyToken" => "b77a5c561934e089",
+    "company" => "Microsoft Corporation",
+    "description" => ".NET Framework",
+    "demand" => "the declaring assembly of System.ComponentModel, which the thirteen XNA Design converters extend, return, take as a parameter and special-case; mscorlib declares none of those identities",
+    # Six of the ten. Input.Touch, Storage, Video and Avatar declare no AssemblyRef to System, and
+    # requiring one of them would prove nothing about this binary.
+    "xnaReferrers" => %w[
+      Microsoft.Xna.Framework.dll Microsoft.Xna.Framework.Graphics.dll Microsoft.Xna.Framework.Game.dll
+      Microsoft.Xna.Framework.Xact.dll Microsoft.Xna.Framework.Net.dll
+      Microsoft.Xna.Framework.GamerServices.dll
+    ]
+  }
 }.freeze
 
 XNA_PINNED = %w[
@@ -41,31 +84,68 @@ XNA_PINNED = %w[
   Microsoft.Xna.Framework.Avatar.dll
 ].freeze
 
-# The BCL families this binding is allowed to inventory, and why each is here. Every entry must be
-# named by the XNA reference contract; the tool proves that below and aborts otherwise.
+# The BCL families this binding is allowed to inventory, which authority declares each and why it
+# is here. Every entry must be named by the XNA reference contract or by an already-admitted
+# family's measured surface; the tool proves that below and aborts otherwise.
 FAMILIES = {
-  "System.Collections.ObjectModel.ReadOnlyCollection`1" =>
-    "the CLR base of four XNA collection types and the declared return type of six XNA members",
-  "System.Collections.ObjectModel.Collection`1" =>
-    "the CLR base of GameComponentCollection, and the mutable sibling ReadOnlyCollection`1 is measured against",
-  "System.Collections.Generic.Dictionary`2" =>
-    "the CLR base of LaunchParameters, the one dependency-complete XNA type blocked on it alone",
-  "System.IO.Stream" =>
-    "the declared return type of TitleContainer.OpenStream, ContentManager.OpenStream, StorageContainer.OpenFile/CreateFile and four Media getters, and the declared parameter of SoundEffect.FromStream, Texture2D.FromStream and Texture2D.SaveAsPng/SaveAsJpeg -- seventeen XNA members in all",
-  "System.IO.SeekOrigin" =>
-    "the second parameter of System.IO.Stream::Seek, and the only identity a consumer of a stream this binding produces can name in order to seek; demanded transitively through Stream rather than directly by an XNA signature",
-  "System.IO.FileMode" =>
-    "the second parameter of all three StorageContainer.OpenFile overloads",
-  "System.IO.FileAccess" =>
-    "the third parameter of two StorageContainer.OpenFile overloads",
-  "System.IO.FileShare" =>
-    "the fourth parameter of StorageContainer.OpenFile's widest overload",
-  "System.IAsyncResult" =>
-    "the return of StorageDevice.BeginShowSelector and BeginOpenContainer and the argument of EndShowSelector and EndOpenContainer -- four XNA members",
-  "System.Threading.WaitHandle" =>
-    "the declared type of IAsyncResult.AsyncWaitHandle, and the only identity a consumer holding a result this binding produces can name in order to wait; demanded transitively through IAsyncResult rather than directly by an XNA signature",
-  "System.IO.BinaryReader" =>
-    "the CLR base of Content.ContentReader, whose ReadSingle and ReadDouble override it and whose ReadVector2/3/4, ReadMatrix, ReadQuaternion and ReadColor are each a sequence of calls back into it"
+  "System.Collections.ObjectModel.ReadOnlyCollection`1" => {"authority" => "mscorlib", "reason" =>
+    "the CLR base of four XNA collection types and the declared return type of six XNA members"},
+  "System.Collections.ObjectModel.Collection`1" => {"authority" => "mscorlib", "reason" =>
+    "the CLR base of GameComponentCollection, and the mutable sibling ReadOnlyCollection`1 is measured against"},
+  "System.Collections.Generic.Dictionary`2" => {"authority" => "mscorlib", "reason" =>
+    "the CLR base of LaunchParameters, the one dependency-complete XNA type blocked on it alone"},
+  "System.IO.Stream" => {"authority" => "mscorlib", "reason" =>
+    "the declared return type of TitleContainer.OpenStream, ContentManager.OpenStream, StorageContainer.OpenFile/CreateFile and four Media getters, and the declared parameter of SoundEffect.FromStream, Texture2D.FromStream and Texture2D.SaveAsPng/SaveAsJpeg -- seventeen XNA members in all"},
+  "System.IO.SeekOrigin" => {"authority" => "mscorlib", "reason" =>
+    "the second parameter of System.IO.Stream::Seek, and the only identity a consumer of a stream this binding produces can name in order to seek; demanded transitively through Stream rather than directly by an XNA signature"},
+  "System.IO.FileMode" => {"authority" => "mscorlib", "reason" =>
+    "the second parameter of all three StorageContainer.OpenFile overloads"},
+  "System.IO.FileAccess" => {"authority" => "mscorlib", "reason" =>
+    "the third parameter of two StorageContainer.OpenFile overloads"},
+  "System.IO.FileShare" => {"authority" => "mscorlib", "reason" =>
+    "the fourth parameter of StorageContainer.OpenFile's widest overload"},
+  "System.IAsyncResult" => {"authority" => "mscorlib", "reason" =>
+    "the return of StorageDevice.BeginShowSelector and BeginOpenContainer and the argument of EndShowSelector and EndOpenContainer -- four XNA members"},
+  "System.Threading.WaitHandle" => {"authority" => "mscorlib", "reason" =>
+    "the declared type of IAsyncResult.AsyncWaitHandle, and the only identity a consumer holding a result this binding produces can name in order to wait; demanded transitively through IAsyncResult rather than directly by an XNA signature"},
+  "System.IO.BinaryReader" => {"authority" => "mscorlib", "reason" =>
+    "the CLR base of Content.ContentReader, whose ReadSingle and ReadDouble override it and whose ReadVector2/3/4, ReadMatrix, ReadQuaternion and ReadColor are each a sequence of calls back into it"},
+
+  # ------------------------------------------------------------ Foundation 105: the Design family
+  #
+  # Seven System.dll families and five mscorlib ones, every one of them reached by the thirteen XNA
+  # Design converters. `docs/generated/design-converter-inventory.json` derives that reach from the
+  # same IL these are measured against, so the demand is a generated fact rather than this list.
+  "System.ComponentModel.TypeConverter" => {"authority" => "System", "reason" =>
+    "the root of the Design family: MathTypeConverter's CanConvertFrom and CanConvertTo each answer this class's implementation on their fallback path, and every public member it declares is inherited by all thirteen converters"},
+  "System.ComponentModel.ExpandableObjectConverter" => {"authority" => "System", "reason" =>
+    "the declared base type of Microsoft.Xna.Framework.Design.MathTypeConverter in the XNA reference contract, and therefore of all twelve converters that derive from it"},
+  "System.ComponentModel.ITypeDescriptorContext" => {"authority" => "System", "reason" =>
+    "the first parameter of forty-five XNA Design members -- every CanConvertFrom, CanConvertTo, ConvertFrom, ConvertTo, CreateInstance, GetProperties, GetPropertiesSupported and GetCreateInstanceSupported the family declares"},
+  "System.ComponentModel.PropertyDescriptorCollection" => {"authority" => "System", "reason" =>
+    "the declared return type of MathTypeConverter.GetProperties and the declared type of its protected propertyDescriptions field"},
+  "System.ComponentModel.PropertyDescriptor" => {"authority" => "System", "reason" =>
+    "the element type of PropertyDescriptorCollection and the CLR base of the three private XNA descriptor classes the converters build their collections out of; demanded transitively through the collection a consumer receives"},
+  "System.ComponentModel.TypeDescriptor" => {"authority" => "System", "reason" =>
+    "MathTypeConverter.ConvertToValues and ConvertFromValues both call GetConverter to convert each scalar element, so the string form of every converted value is this class's answer rather than the converter's own"},
+  "System.ComponentModel.Design.Serialization.InstanceDescriptor" => {"authority" => "System", "reason" =>
+    "the destination type MathTypeConverter.CanConvertTo special-cases and the object eleven of the twelve derived ConvertTo implementations construct"},
+  "System.Globalization.CultureInfo" => {"authority" => "mscorlib", "reason" =>
+    "the second parameter of every XNA Design ConvertFrom and ConvertTo, and the source of the list separator the family formats and parses with"},
+  "System.Globalization.TextInfo" => {"authority" => "mscorlib", "reason" =>
+    "the declared type of CultureInfo.TextInfo, whose ListSeparator is what the converters split and join on; demanded transitively through CultureInfo rather than by an XNA signature"},
+  "System.Collections.IDictionary" => {"authority" => "mscorlib", "reason" =>
+    "the second parameter of all twelve XNA Design CreateInstance members, which read the property values back out of it by descriptor name"},
+  "System.Collections.ICollection" => {"authority" => "mscorlib", "reason" =>
+    "the second parameter of InstanceDescriptor's constructor, which carries the arguments a reconstruction passes; demanded transitively through InstanceDescriptor"},
+  "System.Reflection.MemberInfo" => {"authority" => "mscorlib", "reason" =>
+    "the first parameter of InstanceDescriptor's constructor and the declared type of its MemberInfo property, and the base of everything Type's three admitted lookups answer; demanded transitively through InstanceDescriptor"},
+  "System.Reflection.ConstructorInfo" => {"authority" => "mscorlib", "reason" =>
+    "what Type.GetConstructor answers and what eleven ConvertTo implementations hand an InstanceDescriptor, comparing it against null before they do; demanded transitively through InstanceDescriptor"},
+  "System.Reflection.FieldInfo" => {"authority" => "mscorlib", "reason" =>
+    "what Type.GetField answers and what FieldPropertyDescriptor is constructed from; it is what PropertyDescriptor.PropertyType, GetValue and SetValue answer for eleven of the twelve converters, so a consumer observes it through every descriptor they produce"},
+  "System.Reflection.PropertyInfo" => {"authority" => "mscorlib", "reason" =>
+    "what Type.GetProperty answers and what PropertyPropertyDescriptor is constructed from; ColorConverter is the one converter whose descriptors read properties rather than fields, so its four descriptors observe this one instead"}
 }.freeze
 
 # Support enums the collection families throw through. Their literal names are what make a derived
@@ -75,7 +155,7 @@ THROW_HELPER = "System.ThrowHelper"
 
 root = File.expand_path("../..", __dir__)
 bcl_directory = ENV.fetch("BCL_REFERENCE_ASSEMBLIES") do
-  abort "BCL_REFERENCE_ASSEMBLIES must name a directory holding the pinned Microsoft .NET Framework mscorlib.dll"
+  abort "BCL_REFERENCE_ASSEMBLIES must name a directory holding the pinned Microsoft .NET Framework assemblies"
 end
 xna_directory = ENV.fetch("XNA_REFERENCE_ASSEMBLIES") do
   abort "XNA_REFERENCE_ASSEMBLIES must name a directory holding the pinned XNA 4.0 Windows assemblies"
@@ -84,81 +164,121 @@ unless ENV.fetch("PATH", "").split(File::PATH_SEPARATOR).any? { |entry| File.exe
   abort "ikdasm is required and was not found on PATH (Debian package: ikdasm)"
 end
 
-mscorlib_path = File.join(bcl_directory, "mscorlib.dll")
-abort "missing pinned mscorlib.dll" unless File.file?(mscorlib_path)
-actual_sha = Digest::SHA256.file(mscorlib_path).hexdigest
-unless actual_sha == MSCORLIB.fetch("sha256")
-  abort "SHA-256 mismatch for mscorlib.dll: expected #{MSCORLIB.fetch("sha256")}, got #{actual_sha}"
-end
-unless File.size(mscorlib_path) == MSCORLIB.fetch("bytes")
-  abort "byte-length mismatch for mscorlib.dll"
-end
-
-# ---------------------------------------------------------------------------------------------
-# Identity, derived from the binary rather than asserted.
-# ---------------------------------------------------------------------------------------------
-
-il = IO.popen(["ikdasm", mscorlib_path], &:read)
-abort "ikdasm produced no IL for mscorlib.dll" if il.nil? || il.empty?
-
-manifest = il[/^\.assembly #{Regexp.escape(MSCORLIB.fetch("assemblyName"))}\b.*?^\}/m]
-abort "no .assembly mscorlib manifest in the disassembly" if manifest.nil?
-public_key = manifest[/^\s*\.publickey\s*=\s*\(([0-9A-Fa-f\s]*)\)/m, 1]
-abort "no .publickey in the mscorlib manifest" if public_key.nil?
-version = manifest[/^\s*\.ver\s+(\d+):(\d+):(\d+):(\d+)/, 0].to_s.sub(/\A\s*\.ver\s+/, "").tr(":", ".")
-# The CLR derives a public key token as the low eight bytes of the key's SHA-1, reversed. Deriving
-# it here is the point: the expected token is a conclusion drawn from the admitted bytes, never a
-# constant this tool trusts.
-derived_token = Digest::SHA1.digest([public_key.gsub(/\s+/, "")].pack("H*")).bytes.last(8).reverse
-                      .map { |byte| format("%02x", byte) }.join
-unless derived_token == MSCORLIB.fetch("publicKeyToken")
-  abort "public key token mismatch: derived #{derived_token}, expected #{MSCORLIB.fetch("publicKeyToken")}"
-end
-unless version == MSCORLIB.fetch("assemblyVersion")
-  abort "assembly version mismatch: found #{version}, expected #{MSCORLIB.fetch("assemblyVersion")}"
-end
-
 # The PE version resource carries the Microsoft origin claim. Read it straight out of the file.
-def version_resource(bytes, key)
+#
+# A key appears in a PE more than once: once in the VS_VERSION_INFO string table beside its value,
+# and again in the resource-name directory with nothing after it, and in a managed assembly a third
+# time inside the string heap. Reading only the first occurrence is a token anchored on one side
+# only -- the scanner defect this project keeps finding -- and for System.dll it answers the whole
+# name directory rather than "Microsoft Corporation". So every occurrence is read and only the ones
+# whose value is a plausible resource string are kept: the caller asserts against that set, which
+# still fails loudly on a binary whose real CompanyName differs.
+PLAUSIBLE = /\A[\x20-\x7E]+\z/.freeze
+
+def version_resources(bytes, key)
   needle = key.encode("UTF-16LE").b
-  index = bytes.index(needle)
-  return nil if index.nil?
-
-  cursor = index + needle.bytesize
-  cursor += 2 while bytes.byteslice(cursor, 2) == "\x00\x00".b
-  out = +""
-  while (unit = bytes.byteslice(cursor, 2)) && unit != "\x00\x00".b && unit.bytesize == 2
-    out << unit
-    cursor += 2
+  found = []
+  index = -1
+  while (index = bytes.index(needle, index + 1))
+    cursor = index + needle.bytesize
+    cursor += 2 while bytes.byteslice(cursor, 2) == "\x00\x00".b
+    out = +""
+    while (unit = bytes.byteslice(cursor, 2)) && unit != "\x00\x00".b && unit.bytesize == 2
+      out << unit
+      cursor += 2
+    end
+    value = out.force_encoding("UTF-16LE").encode("UTF-8", invalid: :replace, undef: :replace)
+    found << value if PLAUSIBLE.match?(value)
   end
-  out.force_encoding("UTF-16LE").encode("UTF-8", invalid: :replace, undef: :replace)
+  found.uniq
 end
 
-pe = File.binread(mscorlib_path)
-%w[CompanyName FileDescription].zip(%w[company description]).each do |resource, key|
-  found = version_resource(pe, resource)
-  abort "#{resource} mismatch: found #{found.inspect}" unless found == MSCORLIB.fetch(key)
-end
-file_version = version_resource(pe, "FileVersion").to_s
-unless file_version.start_with?(MSCORLIB.fetch("fileVersion"))
-  abort "FileVersion mismatch: found #{file_version.inspect}"
-end
+# ---------------------------------------------------------------------------------------------
+# Admission. Each authority is admitted independently and to the same standard: exact bytes, an
+# identity derived from the binary rather than asserted, a Microsoft origin claim read out of the
+# PE, and a pairing proof against the pinned XNA assemblies that bind it.
+# ---------------------------------------------------------------------------------------------
 
-# The pairing proof: this is the mscorlib identity the pinned XNA assemblies bind to.
-pairing = XNA_PINNED.map do |name|
-  path = File.join(xna_directory, name)
-  abort "missing pinned XNA assembly #{name}" unless File.file?(path)
-  table = IO.popen(["ikdasm", "--assemblyref", path], &:read).to_s
-  entry = table.split(/^\d+: /).find { |chunk| chunk.include?("Name=#{MSCORLIB.fetch("assemblyName")}\n") }
-  abort "#{name} declares no AssemblyRef to mscorlib" if entry.nil?
-  ref_version = entry[/Version=([0-9.]+)/, 1]
-  ref_token = entry[/Public Key:\n0x00000000:\s*((?:[0-9A-Fa-f]{2}\s+){8})/, 1].to_s.split.map(&:downcase).join
-  unless ref_version == version && ref_token == derived_token
-    abort "#{name} binds mscorlib #{ref_version}/#{ref_token}, not #{version}/#{derived_token}"
+def admit(name, expected, bcl_directory, xna_directory)
+  path = File.join(bcl_directory, expected.fetch("file"))
+  abort "missing pinned #{expected.fetch("file")}" unless File.file?(path)
+  actual_sha = Digest::SHA256.file(path).hexdigest
+  unless actual_sha == expected.fetch("sha256")
+    abort "SHA-256 mismatch for #{expected.fetch("file")}: expected #{expected.fetch("sha256")}, got #{actual_sha}"
+  end
+  abort "byte-length mismatch for #{expected.fetch("file")}" unless File.size(path) == expected.fetch("bytes")
+
+  il = IO.popen(["ikdasm", path], &:read)
+  abort "ikdasm produced no IL for #{expected.fetch("file")}" if il.nil? || il.empty?
+
+  manifest = il[/^\.assembly #{Regexp.escape(expected.fetch("assemblyName"))}\b.*?^\}/m]
+  abort "no .assembly #{name} manifest in the disassembly" if manifest.nil?
+  public_key = manifest[/^\s*\.publickey\s*=\s*\(([0-9A-Fa-f\s]*)\)/m, 1]
+  abort "no .publickey in the #{name} manifest" if public_key.nil?
+  version = manifest[/^\s*\.ver\s+(\d+):(\d+):(\d+):(\d+)/, 0].to_s.sub(/\A\s*\.ver\s+/, "").tr(":", ".")
+  # The CLR derives a public key token as the low eight bytes of the key's SHA-1, reversed. Deriving
+  # it here is the point: the expected token is a conclusion drawn from the admitted bytes, never a
+  # constant this tool trusts.
+  derived_token = Digest::SHA1.digest([public_key.gsub(/\s+/, "")].pack("H*")).bytes.last(8).reverse
+                        .map { |byte| format("%02x", byte) }.join
+  unless derived_token == expected.fetch("publicKeyToken")
+    abort "#{name} public key token mismatch: derived #{derived_token}, expected #{expected.fetch("publicKeyToken")}"
+  end
+  unless version == expected.fetch("assemblyVersion")
+    abort "#{name} assembly version mismatch: found #{version}, expected #{expected.fetch("assemblyVersion")}"
   end
 
-  {"assembly" => name, "referencedVersion" => ref_version, "referencedPublicKeyToken" => ref_token}
+  pe = File.binread(path)
+  %w[CompanyName FileDescription].zip(%w[company description]).each do |resource, key|
+    found = version_resources(pe, resource)
+    unless found.include?(expected.fetch(key))
+      abort "#{name} #{resource} mismatch: #{expected.fetch(key).inspect} not among #{found.inspect}"
+    end
+  end
+  file_version = version_resources(pe, "FileVersion").find { |value| value.start_with?(expected.fetch("fileVersion")) }
+  abort "#{name} FileVersion mismatch: no candidate starts with #{expected.fetch("fileVersion")}" if file_version.nil?
+
+  # The pairing proof: this is the identity the pinned XNA assemblies that reference this authority
+  # actually bind to. Which assemblies those are is itself asserted, so an XNA assembly that gained
+  # or lost the reference fails the gate rather than passing it silently.
+  referrers = []
+  pairing = XNA_PINNED.filter_map do |assembly|
+    assembly_path = File.join(xna_directory, assembly)
+    abort "missing pinned XNA assembly #{assembly}" unless File.file?(assembly_path)
+    table = IO.popen(["ikdasm", "--assemblyref", assembly_path], &:read).to_s
+    entry = table.split(/^\d+: /).find { |chunk| chunk.include?("Name=#{expected.fetch("assemblyName")}\n") }
+    next if entry.nil?
+
+    referrers << assembly
+    ref_version = entry[/Version=([0-9.]+)/, 1]
+    ref_token = entry[/Public Key:\n0x00000000:\s*((?:[0-9A-Fa-f]{2}\s+){8})/, 1].to_s.split.map(&:downcase).join
+    unless ref_version == version && ref_token == derived_token
+      abort "#{assembly} binds #{name} #{ref_version}/#{ref_token}, not #{version}/#{derived_token}"
+    end
+
+    {"assembly" => assembly, "referencedVersion" => ref_version, "referencedPublicKeyToken" => ref_token}
+  end
+  unless referrers.sort == expected.fetch("xnaReferrers").sort
+    abort "#{name} is referenced by #{referrers.sort.inspect}, not the expected #{expected.fetch("xnaReferrers").sort.inspect}"
+  end
+  abort "#{name} has no XNA referrer; the pairing proof would be vacuous" if pairing.empty?
+
+  {"il" => il,
+   "record" => expected.reject { |key, _| key == "xnaReferrers" }.merge(
+     "derivedPublicKeyToken" => derived_token,
+     "publicKeyTokenDerivation" => "SHA-1 of the assembly's own .publickey blob, low eight bytes, reversed",
+     "observedAssemblyVersion" => version,
+     "observedFileVersion" => file_version,
+     "pairing" => {
+       "rule" => "every pinned XNA assembly that declares an AssemblyRef to this authority must name the exact version and public key token the admitted binary derives, and the set of assemblies that declare one is itself asserted",
+       "xnaReferrers" => referrers.sort,
+       "xnaNonReferrers" => (XNA_PINNED - referrers).sort,
+       "assemblies" => pairing
+     }
+   )}
 end
+
+admitted = AUTHORITIES.to_h { |name, expected| [name, admit(name, expected, bcl_directory, xna_directory)] }
 
 # ---------------------------------------------------------------------------------------------
 # Demand: which XNA reference identities name each family.
@@ -403,7 +523,23 @@ def field_member(leading)
   member
 end
 
-bodies = type_bodies(il)
+# One body table per authority, never one merged table. Twelve identities are declared by **both**
+# admitted assemblies -- `System.ThrowHelper`, `System.ExceptionResource` and `System.ExceptionArgument`
+# among them -- and they are different types with different members. Merging would silently resolve
+# a System.dll member's throw against mscorlib's helper and derive a fact about the wrong class.
+bodies_by_authority = admitted.transform_values { |entry| type_bodies(entry.fetch("il")) }
+
+# Resolution order for an identity: the authority that is asking first, then the rest in registry
+# order. A System.dll family that throws `System.NotSupportedException` resolves it in mscorlib,
+# which declares it; a System.dll family that calls `System.ThrowHelper` resolves its own.
+def resolve(bodies_by_authority, identity, preferred)
+  ordered = ([preferred] + bodies_by_authority.keys).uniq.compact
+  ordered.each do |authority|
+    frame = bodies_by_authority.fetch(authority, {})[identity]
+    return [authority, frame] if frame
+  end
+  [nil, nil]
+end
 
 BRANCHES = /\A(?:br|brtrue|brfalse|beq|bge|bgt|ble|blt|bne|switch|leave)/.freeze
 
@@ -430,58 +566,79 @@ def call_target(operand)
   match && "#{match[1].tr("'", "").tr("/", "+")}::#{match[2].tr("'", "")}"
 end
 
-# Support tables, all derived. ExceptionResource / ExceptionArgument turn a bare `ldc.i4.s 28` into
-# the literal `NotSupported_ReadOnlyCollection`; ThrowHelper turns a `call ThrowNotSupportedException`
-# into the exception identity it actually constructs.
-support_literals = SUPPORT_ENUMS.to_h do |enum|
-  frame = bodies.fetch(enum) { abort "#{enum} not found in mscorlib IL" }
-  literals = {}
-  frame[:body].each_line do |line|
-    match = /\.field public static literal valuetype #{Regexp.escape(enum)} ('[^']+'|\S+) = int32\(0x([0-9A-Fa-f]+)\)/.match(line)
-    literals[Integer(match[2], 16)] = match[1].tr("'", "") if match
+# Support tables, all derived, and built **per authority** because both admitted assemblies declare
+# their own `System.ThrowHelper`, `System.ExceptionResource` and `System.ExceptionArgument`.
+# ExceptionResource / ExceptionArgument turn a bare `ldc.i4.s 28` into the literal
+# `NotSupported_ReadOnlyCollection`; ThrowHelper turns a `call ThrowNotSupportedException` into the
+# exception identity it actually constructs.
+def support_table(bodies, authority)
+  SUPPORT_ENUMS.to_h do |enum|
+    frame = bodies[enum]
+    next [enum, {}] if frame.nil?
+
+    literals = {}
+    frame[:body].each_line do |line|
+      match = /\.field public static literal valuetype #{Regexp.escape(enum)} ('[^']+'|\S+) = int32\(0x([0-9A-Fa-f]+)\)/.match(line)
+      literals[Integer(match[2], 16)] = match[1].tr("'", "") if match
+    end
+    abort "#{enum} in #{authority} has no literals" if literals.empty?
+    [enum, literals]
   end
-  [enum, literals]
 end
 
-throw_helper = {}
-helper_edges = {}
-helper_frame = bodies.fetch(THROW_HELPER) { abort "#{THROW_HELPER} not found in mscorlib IL" }
-members(helper_frame[:body]).each do |member|
-  next unless member[:kind] == "method"
+def throw_helper_table(bodies)
+  frame = bodies[THROW_HELPER]
+  return {} if frame.nil?
 
-  # A generic helper is declared `Name<T>` and called `Name<!!0>`; both reduce to `Name`.
-  helper_name = strip_generic_arguments(member[:name])
-  exception = member[:ops].filter_map do |op, operand|
-    operand[/\A\s*instance void ([A-Za-z_][A-Za-z0-9_.`]*Exception)::\.ctor/, 1] if op == "newobj"
-  end.first
-  if exception
-    throw_helper[helper_name] = exception
-    next
-  end
-  # A guard helper such as IfNullAndNullsAreIllegalThenThrow constructs nothing itself; it forwards
-  # to the helper that does. Resolving through that edge is what keeps a derived throw fact from
-  # falling back on the helper's name.
-  forwarded = member[:ops].filter_map do |op, operand|
-    next unless op == "call"
+  resolved = {}
+  edges = {}
+  members(frame[:body]).each do |member|
+    next unless member[:kind] == "method"
 
-    target = call_target(operand)
-    target.split("::").last if target&.start_with?("#{THROW_HELPER}::")
+    # A generic helper is declared `Name<T>` and called `Name<!!0>`; both reduce to `Name`.
+    helper_name = strip_generic_arguments(member[:name])
+    exception = member[:ops].filter_map do |op, operand|
+      operand[/\A\s*instance void ([A-Za-z_][A-Za-z0-9_.`]*Exception)::\.ctor/, 1] if op == "newobj"
+    end.first
+    if exception
+      resolved[helper_name] = exception
+      next
+    end
+    # A guard helper such as IfNullAndNullsAreIllegalThenThrow constructs nothing itself; it forwards
+    # to the helper that does. Resolving through that edge is what keeps a derived throw fact from
+    # falling back on the helper's name.
+    forwarded = member[:ops].filter_map do |op, operand|
+      next unless op == "call"
+
+      target = call_target(operand)
+      target.split("::").last if target&.start_with?("#{THROW_HELPER}::")
+    end
+    edges[helper_name] = forwarded.uniq unless forwarded.empty?
   end
-  helper_edges[helper_name] = forwarded.uniq unless forwarded.empty?
+  loop do
+    added = false
+    edges.each do |helper, targets|
+      next if resolved.key?(helper)
+
+      answers = targets.filter_map { |target| resolved[target] }.uniq
+      next unless answers.length == 1
+
+      resolved[helper] = answers.first
+      added = true
+    end
+    break unless added
+  end
+  resolved
 end
-loop do
-  added = false
-  helper_edges.each do |helper, targets|
-    next if throw_helper.key?(helper)
 
-    resolved = targets.filter_map { |target| throw_helper[target] }.uniq
-    next unless resolved.length == 1
-
-    throw_helper[helper] = resolved.first
-    added = true
-  end
-  break unless added
+support_by_authority = bodies_by_authority.to_h { |authority, bodies| [authority, support_table(bodies, authority)] }
+throw_helper_by_authority = bodies_by_authority.transform_values { |bodies| throw_helper_table(bodies) }
+# mscorlib is where the collection families' throws are derived, so its tables must be non-empty;
+# an authority that declares no ThrowHelper at all is fine and simply derives no helper facts.
+SUPPORT_ENUMS.each do |enum|
+  abort "#{enum} not found in mscorlib IL" if support_by_authority.fetch("mscorlib").fetch(enum).empty?
 end
+abort "#{THROW_HELPER} not found in mscorlib IL" if throw_helper_by_authority.fetch("mscorlib").empty?
 
 # ---------------------------------------------------------------------------------------------
 # Derived behavioural facts. Never IL text: what a member delegates to, what it throws, and
@@ -609,30 +766,37 @@ end
 selected = {}
 # A public nested type of an admitted family is part of that family's observable surface: the
 # enumerator a caller receives from GetEnumerator is reachable from the family's public members.
-nested = FAMILIES.keys.flat_map do |family|
+# The search runs in the family's own authority, because a nested type belongs to its declaring one.
+nested = FAMILIES.flat_map do |family, entry|
+  bodies = bodies_by_authority.fetch(entry.fetch("authority"))
   bodies.keys.select do |identity|
     identity.start_with?("#{family}+") &&
       (bodies.fetch(identity)[:header].include?(" nested public ") || bodies.fetch(identity)[:header].include?(" public "))
-  end
+  end.map { |identity| [identity, entry.fetch("authority")] }
 end
-queue = FAMILIES.keys + nested.sort
+# Each queue entry carries the authority that asked for it, so resolution prefers that one and only
+# falls back across the registry when the identity is not there -- a System.dll family's throws land
+# in mscorlib, and its own ThrowHelper does not.
+queue = FAMILIES.map { |family, entry| [family, entry.fetch("authority")] } + nested.sort
 # The exception closure stops at System.Exception, which is where this binding's projection register
 # already roots: System.Exception maps to StandardError, so walking into System.Object would record
 # a base the projection never consults.
 EXCEPTION_ROOT = "System.Exception"
 
 until queue.empty?
-  identity = queue.shift
+  identity, asked_by = queue.shift
   next if selected.key?(identity)
 
-  frame = bodies[identity]
+  authority, frame = resolve(bodies_by_authority, identity, asked_by)
   if frame.nil?
-    abort "#{identity} not found in mscorlib IL" if FAMILIES.key?(identity)
+    abort "#{identity} not found in any admitted BCL authority" if FAMILIES.key?(identity)
     next
   end
 
+  throw_helper = throw_helper_by_authority.fetch(authority)
+  support_literals = support_by_authority.fetch(authority)
   declaration = declaration_of(frame)
-  record = declaration.merge("members" => [])
+  record = {"authority" => authority}.merge(declaration).merge("members" => [])
   annotate_properties(members(frame[:body])).each do |member|
     next unless surface?(member)
 
@@ -650,15 +814,33 @@ until queue.empty?
 
     facts.fetch("throws", []).each do |thrown|
       exception = thrown.fetch("exception")
-      queue << exception unless exception.start_with?("unresolved:")
+      queue << [exception, authority] unless exception.start_with?("unresolved:")
     end
   end
   # An exception's own base chain is part of its identity, so walk it up to the projection root.
   base = declaration["baseType"]
-  queue << base if base && bodies.key?(base) && identity != EXCEPTION_ROOT &&
-                   (identity.end_with?("Exception") || identity == "System.SystemException")
+  if base && identity != EXCEPTION_ROOT && (identity.end_with?("Exception") || identity == "System.SystemException")
+    queue << [base, authority] unless resolve(bodies_by_authority, base, authority).last.nil?
+  end
   selected[identity] = record
 end
+
+# The third demand channel, and the only one that is neither a signature nor another BCL member's:
+# an identity the measured XNA **behaviour** reaches, whose result a Ruby consumer observes.
+# `System.ComponentModel.TypeDescriptor` is the case that needs it -- no XNA signature names it and
+# no admitted BCL member's does either, yet `MathTypeConverter.ConvertToValues` and
+# `ConvertFromValues` both call `GetConverter`, so the string form of every value the thirteen
+# converters produce or accept is that class's answer. Admitting it on a remembered claim would be
+# exactly the deferral this project refuses, so the evidence is the generated design inventory,
+# derived from the same IL by tools/api_compat/build_design_inventory.rb. A family claimed here
+# that the generated reach does not carry is refused like any other.
+design_inventory_path = File.join(root, "docs", "generated", "design-converter-inventory.json")
+behavioural_reach = if File.file?(design_inventory_path)
+                      JSON.parse(File.read(design_inventory_path)).fetch("reachedBclIdentities", {}).keys
+                          .to_h { |entry| [entry.split(":", 2).last, entry.split(":", 2).first] }
+                    else
+                      {}
+                    end
 
 # The transitive half of the demand rule, measured against what was actually extracted.
 bcl_consumers = FAMILIES.keys.to_h do |family|
@@ -675,49 +857,78 @@ bcl_consumers = FAMILIES.keys.to_h do |family|
 end
 transitively_demanded.each do |family|
   next unless bcl_consumers.fetch(family).empty?
+  next if behavioural_reach.key?(family)
 
-  abort "family #{family} has no XNA consumer and no admitted-BCL consumer; the inventory is demand-driven"
+  abort "family #{family} has no XNA consumer, no admitted-BCL consumer and no measured behavioural reach; the inventory is demand-driven"
 end
 
-families = FAMILIES.map do |family, reason|
-  {"family" => family, "reason" => reason, "xnaConsumers" => consumers.fetch(family),
-   "xnaConsumerCount" => consumers.fetch(family).length,
-   "bclConsumers" => bcl_consumers.fetch(family),
-   "demand" => consumers.fetch(family).empty? ? "transitive" : "direct",
-   "types" => selected.keys.select { |identity| identity == family || identity.start_with?("#{family}+") }.sort}
+families = FAMILIES.map do |family, entry|
+  demand = if !consumers.fetch(family).empty?
+             "direct"
+           elsif !bcl_consumers.fetch(family).empty?
+             "transitive"
+           else
+             "behavioural"
+           end
+  record = {"family" => family, "authority" => entry.fetch("authority"), "reason" => entry.fetch("reason"),
+            "xnaConsumers" => consumers.fetch(family),
+            "xnaConsumerCount" => consumers.fetch(family).length,
+            "bclConsumers" => bcl_consumers.fetch(family),
+            "demand" => demand,
+            "types" => selected.keys.select { |identity| identity == family || identity.start_with?("#{family}+") }.sort}
+  # Where the reach was measured, for every family the design inventory records -- not only the one
+  # that needs it to be admitted at all.
+  record["designReachAuthority"] = behavioural_reach.fetch(family) if behavioural_reach.key?(family)
+  record
+end
+
+# Every authority in the registry has to earn its place. An assembly nobody demands is not a
+# stronger inventory, it is a larger one, so admitting one whose families are all empty aborts.
+AUTHORITIES.each_key do |name|
+  next if families.any? { |family| family.fetch("authority") == name }
+
+  abort "authority #{name} is admitted but no family is declared by it; the registry is demand-driven"
 end
 
 inventory = {
-  "schemaVersion" => 1,
-  "authority" => "Microsoft .NET Framework 4.0 mscorlib, the BCL the pinned XNA 4.0 Windows assemblies bind to",
-  "separateFromXna" => "mscorlib is not an XNA assembly. Nothing here enters REFERENCE_TYPES, REFERENCE_MEMBERS or docs/generated/xna-il-inventory.json, and no BCL identity is an XNA identity.",
-  "provenance" => "derived with ikdasm from a Microsoft .NET Framework 4.0 mscorlib admitted by exact SHA-256. No Microsoft-owned bytes, IL text or machine-local path is reproduced here.",
+  "schemaVersion" => 2,
+  "authority" => "the Microsoft .NET Framework 4.0 assemblies the pinned XNA 4.0 Windows assemblies bind to, each admitted independently by exact SHA-256",
+  "separateFromXna" => "neither mscorlib nor System is an XNA assembly. Nothing here enters REFERENCE_TYPES, REFERENCE_MEMBERS or docs/generated/xna-il-inventory.json, and no BCL identity is an XNA identity.",
+  "provenance" => "derived with ikdasm from Microsoft .NET Framework 4.0 assemblies admitted by exact SHA-256. No Microsoft-owned bytes, IL text or machine-local path is reproduced here.",
   "scope" => "demand-driven: a family is admitted only when the XNA reference contract names it or an already-admitted family's measured surface does, and only the surface those consumers can reach is recorded, plus the exception closure that surface throws",
-  "assembly" => MSCORLIB.merge(
-    "derivedPublicKeyToken" => derived_token,
-    "publicKeyTokenDerivation" => "SHA-1 of the assembly's own .publickey blob, low eight bytes, reversed",
-    "observedAssemblyVersion" => version,
-    "observedFileVersion" => file_version
-  ),
-  "pairing" => {
-    "rule" => "every pinned XNA assembly's AssemblyRef to mscorlib must name the exact version and public key token the admitted binary derives",
-    "assemblies" => pairing
-  },
-  "throwHelperResolution" => throw_helper.sort.to_h,
+  # One record per independently admitted assembly. Deliberately a map rather than a merged
+  # `assembly` object: a consumer that assumed every BCL type lived in mscorlib would now be wrong,
+  # and the schema makes it say which authority it means.
+  "authorities" => admitted.transform_values { |entry| entry.fetch("record") },
+  "throwHelperResolution" => throw_helper_by_authority.transform_values { |table| table.sort.to_h },
+  "BCL_AUTHORITIES" => admitted.length,
   "BCL_FAMILIES" => families.length,
   "BCL_TYPES" => selected.length,
   "BCL_MEMBERS" => selected.values.sum { |record| record.fetch("members").length },
   "BCL_EXCEPTION_TYPES" => selected.keys.count { |identity| identity.end_with?("Exception") },
+  # Per authority, so no consumer has to assume every BCL type lives in mscorlib.
+  "BCL_TYPES_BY_AUTHORITY" => admitted.keys.to_h do |name|
+    [name, selected.count { |_, record| record.fetch("authority") == name }]
+  end,
+  "BCL_MEMBERS_BY_AUTHORITY" => admitted.keys.to_h do |name|
+    [name, selected.sum { |_, record| record.fetch("authority") == name ? record.fetch("members").length : 0 }]
+  end,
+  "BCL_FAMILIES_BY_AUTHORITY" => admitted.keys.to_h do |name|
+    [name, families.count { |family| family.fetch("authority") == name }]
+  end,
   "families" => families,
   "types" => selected.sort.to_h
 }
 
 File.write(File.join(root, "docs", "generated", "bcl-inventory.json"), JSON.pretty_generate(inventory) + "\n")
 
-puts "BCL_ASSEMBLY=#{MSCORLIB.fetch("assemblyName")} #{version} #{derived_token}"
-puts "BCL_ASSEMBLY_SHA256=#{actual_sha}"
+admitted.each do |name, entry|
+  record = entry.fetch("record")
+  puts "BCL_AUTHORITY=#{name} #{record.fetch("observedAssemblyVersion")} #{record.fetch("derivedPublicKeyToken")} #{record.fetch("sha256")}"
+  puts "BCL_AUTHORITY_PAIRING=#{name} #{record.fetch("pairing").fetch("assemblies").length}/#{XNA_PINNED.length}"
+end
+puts "BCL_AUTHORITIES=#{inventory.fetch("BCL_AUTHORITIES")}"
 puts "BCL_FAMILIES=#{inventory.fetch("BCL_FAMILIES")}"
 puts "BCL_TYPES=#{inventory.fetch("BCL_TYPES")}"
 puts "BCL_MEMBERS=#{inventory.fetch("BCL_MEMBERS")}"
 puts "BCL_EXCEPTION_TYPES=#{inventory.fetch("BCL_EXCEPTION_TYPES")}"
-puts "XNA_PAIRING_ASSEMBLIES=#{pairing.length}"

@@ -28,6 +28,7 @@ class BclInventoryTest < Minitest::Test
   IL = JSON.parse(ROOT.join("docs", "generated", "xna-il-inventory.json").read)
   STRICT = JSON.parse(ROOT.join("docs", "generated", "api-compat-report.json").read)
   PROVENANCE = ROOT.join("tools", "api_compat", "reference", "BCL_PROVENANCE.md").read
+  DESIGN = JSON.parse(ROOT.join("docs", "generated", "design-converter-inventory.json").read)
 
   READ_ONLY_COLLECTION = "System.Collections.ObjectModel.ReadOnlyCollection`1"
   COLLECTION = "System.Collections.ObjectModel.Collection`1"
@@ -43,57 +44,130 @@ class BclInventoryTest < Minitest::Test
 
   # ------------------------------------------------------------------------------ the identity
 
-  def test_the_admitted_assembly_is_microsofts_net_framework_4_mscorlib
-    assembly = INVENTORY.fetch("assembly")
-    assert_equal "mscorlib", assembly.fetch("assemblyName")
-    assert_equal "4.0.0.0", assembly.fetch("assemblyVersion")
-    assert_equal "4.0.0.0", assembly.fetch("observedAssemblyVersion")
-    assert_equal 5196112, assembly.fetch("bytes")
-    assert_equal "5634668d4775b0113f08ea31093b281fea69bfc4e99227f5ca761b4ed98acc63", assembly.fetch("sha256")
-    assert_equal 64, assembly.fetch("sha256").length
-    assert_equal "Microsoft Corporation", assembly.fetch("company")
-    assert_equal "Microsoft Common Language Runtime Class Library", assembly.fetch("description")
-    assert assembly.fetch("observedFileVersion").start_with?("4.0.30319.1"), assembly.fetch("observedFileVersion")
+  # Two authorities, each admitted independently and to the same standard. mscorlib came first, at
+  # Foundation 28; System.dll follows at Foundation 105 because the thirteen XNA Design converters
+  # reach System.ComponentModel, which mscorlib does not declare.
+  EXPECTED_AUTHORITIES = {
+    "mscorlib" => {
+      "assemblyName" => "mscorlib", "bytes" => 5196112,
+      "sha256" => "5634668d4775b0113f08ea31093b281fea69bfc4e99227f5ca761b4ed98acc63",
+      "company" => "Microsoft Corporation",
+      "description" => "Microsoft Common Language Runtime Class Library",
+      "referrers" => 10
+    },
+    "System" => {
+      "assemblyName" => "System", "bytes" => 3481928,
+      "sha256" => "c3182e40f09a8d3a0167a833dc1ce7c3cb2bfddbd32031d8d3f41481d0467462",
+      "company" => "Microsoft Corporation",
+      "description" => ".NET Framework",
+      "referrers" => 6
+    }
+  }.freeze
+
+  def authority(name) = INVENTORY.fetch("authorities").fetch(name)
+
+  def test_both_admitted_assemblies_are_microsofts_net_framework_4_binaries
+    assert_equal EXPECTED_AUTHORITIES.keys.sort, INVENTORY.fetch("authorities").keys.sort
+    assert_equal EXPECTED_AUTHORITIES.length, INVENTORY.fetch("BCL_AUTHORITIES")
+    EXPECTED_AUTHORITIES.each do |name, expected|
+      record = authority(name)
+      assert_equal expected.fetch("assemblyName"), record.fetch("assemblyName"), name
+      assert_equal "4.0.0.0", record.fetch("assemblyVersion"), name
+      assert_equal "4.0.0.0", record.fetch("observedAssemblyVersion"), name
+      assert_equal expected.fetch("bytes"), record.fetch("bytes"), name
+      assert_equal expected.fetch("sha256"), record.fetch("sha256"), name
+      assert_equal 64, record.fetch("sha256").length, name
+      assert_equal expected.fetch("company"), record.fetch("company"), name
+      assert_equal expected.fetch("description"), record.fetch("description"), name
+      assert record.fetch("observedFileVersion").start_with?("4.0.30319.1"), record.fetch("observedFileVersion")
+    end
+    # Two different binaries, not the same one admitted twice.
+    assert_equal 2, INVENTORY.fetch("authorities").values.map { |record| record.fetch("sha256") }.uniq.length
   end
 
-  # The token is a conclusion drawn from the assembly's own .publickey blob, not a constant the
-  # tool trusts. mscorlib carries the ECMA standard key, and that blob is what hashes to this token.
-  def test_the_public_key_token_is_derived_rather_than_asserted
-    assembly = INVENTORY.fetch("assembly")
-    assert_equal "b77a5c561934e089", assembly.fetch("derivedPublicKeyToken")
-    assert_equal assembly.fetch("publicKeyToken"), assembly.fetch("derivedPublicKeyToken")
-    assert_includes assembly.fetch("publicKeyTokenDerivation"), "SHA-1"
-
+  # The token is a conclusion drawn from each assembly's own .publickey blob, not a constant the
+  # tool trusts. Both carry the ECMA standard key, and that blob is what hashes to this token.
+  def test_every_public_key_token_is_derived_rather_than_asserted
     ecma = ["00000000000000000400000000000000"].pack("H*")
     derived = Digest::SHA1.digest(ecma).bytes.last(8).reverse.map { |byte| format("%02x", byte) }.join
-    assert_equal assembly.fetch("derivedPublicKeyToken"), derived
-  end
+    assert_equal "b77a5c561934e089", derived
 
-  # What makes this *the* mscorlib rather than *an* mscorlib: every pinned XNA assembly binds to
-  # exactly this identity.
-  def test_all_ten_pinned_xna_assemblies_bind_this_exact_mscorlib_identity
-    pairing = INVENTORY.fetch("pairing").fetch("assemblies")
-    assert_equal 10, pairing.length
-    assert_equal IL.fetch("assemblies").map { |entry| entry.fetch("name") }.sort,
-                 pairing.map { |entry| entry.fetch("assembly") }.sort
-    pairing.each do |entry|
-      assert_equal INVENTORY.fetch("assembly").fetch("observedAssemblyVersion"),
-                   entry.fetch("referencedVersion"), entry.fetch("assembly")
-      assert_equal INVENTORY.fetch("assembly").fetch("derivedPublicKeyToken"),
-                   entry.fetch("referencedPublicKeyToken"), entry.fetch("assembly")
+    EXPECTED_AUTHORITIES.each_key do |name|
+      record = authority(name)
+      assert_equal "b77a5c561934e089", record.fetch("derivedPublicKeyToken"), name
+      assert_equal record.fetch("publicKeyToken"), record.fetch("derivedPublicKeyToken"), name
+      assert_includes record.fetch("publicKeyTokenDerivation"), "SHA-1"
+      assert_equal record.fetch("derivedPublicKeyToken"), derived, name
     end
   end
 
-  def test_the_provenance_register_pins_the_same_identity_and_no_machine_local_path
-    assembly = INVENTORY.fetch("assembly")
-    assert_includes PROVENANCE, assembly.fetch("sha256")
-    assert_includes PROVENANCE, assembly.fetch("derivedPublicKeyToken")
-    assert_includes PROVENANCE, assembly.fetch("bytes").to_s
+  # What makes each of these *the* assembly rather than *an* assembly: the pinned XNA assemblies
+  # that reference it bind exactly this identity. Which assemblies those are is measured rather
+  # than assumed to be all ten -- four of them declare no reference to System.dll at all, and
+  # demanding that they did would be a vacuous proof.
+  def test_each_authority_is_paired_against_exactly_the_xna_assemblies_that_reference_it
+    xna = IL.fetch("assemblies").map { |entry| entry.fetch("name") }.sort
+    EXPECTED_AUTHORITIES.each do |name, expected|
+      record = authority(name)
+      pairing = record.fetch("pairing")
+      assert_equal expected.fetch("referrers"), pairing.fetch("assemblies").length, name
+      assert_equal pairing.fetch("xnaReferrers"), pairing.fetch("assemblies").map { |entry| entry.fetch("assembly") }.sort, name
+      # Referrers and non-referrers partition the ten pinned assemblies exactly.
+      assert_equal xna, (pairing.fetch("xnaReferrers") + pairing.fetch("xnaNonReferrers")).sort, name
+      assert_empty pairing.fetch("xnaReferrers") & pairing.fetch("xnaNonReferrers"), name
+      refute_empty pairing.fetch("assemblies"), name
+
+      pairing.fetch("assemblies").each do |entry|
+        assert_equal record.fetch("observedAssemblyVersion"), entry.fetch("referencedVersion"), entry.fetch("assembly")
+        assert_equal record.fetch("derivedPublicKeyToken"), entry.fetch("referencedPublicKeyToken"), entry.fetch("assembly")
+      end
+    end
+    # mscorlib is bound by all ten; System by six. A tool that silently treated one authority's
+    # pairing as the other's would make these equal.
+    assert_equal 10, authority("mscorlib").fetch("pairing").fetch("assemblies").length
+    assert_equal 6, authority("System").fetch("pairing").fetch("assemblies").length
+    assert_equal %w[
+      Microsoft.Xna.Framework.Avatar.dll Microsoft.Xna.Framework.Input.Touch.dll
+      Microsoft.Xna.Framework.Storage.dll Microsoft.Xna.Framework.Video.dll
+    ], authority("System").fetch("pairing").fetch("xnaNonReferrers")
+    assert_empty authority("mscorlib").fetch("pairing").fetch("xnaNonReferrers")
+  end
+
+  def test_the_provenance_register_pins_the_same_identities_and_no_machine_local_path
+    EXPECTED_AUTHORITIES.each_key do |name|
+      record = authority(name)
+      assert_includes PROVENANCE, record.fetch("sha256"), name
+      assert_includes PROVENANCE, record.fetch("derivedPublicKeyToken"), name
+      assert_includes PROVENANCE, record.fetch("bytes").to_s, name
+    end
     refute_match(%r{/home/|/rv/|/tmp/|drive_c}, PROVENANCE)
     refute_match(%r{/home/|/rv/|/tmp/|drive_c}i,
                  ROOT.join("docs", "generated", "bcl-inventory.json").read)
     refute_match(%r{/home/|/rv/|/tmp/|drive_c}i,
                  ROOT.join("tools", "api_compat", "build_bcl_inventory.rb").read)
+  end
+
+  # Twelve identities are declared by *both* admitted assemblies, `System.ThrowHelper` among them,
+  # and they are different types. Every extracted type therefore records which authority it came
+  # from, and the throw-helper resolution tables are per authority rather than merged.
+  def test_each_extracted_type_records_the_authority_that_declares_it
+    types.each do |identity, record|
+      assert_includes EXPECTED_AUTHORITIES.keys, record.fetch("authority"), identity
+    end
+    assert_equal EXPECTED_AUTHORITIES.keys.sort, INVENTORY.fetch("throwHelperResolution").keys.sort
+    refute_empty INVENTORY.fetch("throwHelperResolution").fetch("mscorlib")
+    assert_equal types.length, INVENTORY.fetch("BCL_TYPES_BY_AUTHORITY").values.sum
+    assert_equal INVENTORY.fetch("BCL_MEMBERS"), INVENTORY.fetch("BCL_MEMBERS_BY_AUTHORITY").values.sum
+    assert_equal INVENTORY.fetch("BCL_FAMILIES"), INVENTORY.fetch("BCL_FAMILIES_BY_AUTHORITY").values.sum
+    EXPECTED_AUTHORITIES.each_key do |name|
+      assert_operator INVENTORY.fetch("BCL_TYPES_BY_AUTHORITY").fetch(name), :>, 0, name
+      assert_operator INVENTORY.fetch("BCL_FAMILIES_BY_AUTHORITY").fetch(name), :>, 0, name
+    end
+    # Every family names an admitted authority, and that authority really declares its types.
+    INVENTORY.fetch("families").each do |family|
+      assert_includes EXPECTED_AUTHORITIES.keys, family.fetch("authority"), family.fetch("family")
+      assert_equal family.fetch("authority"), type(family.fetch("family")).fetch("authority"), family.fetch("family")
+    end
   end
 
   def test_no_microsoft_binary_is_committed
@@ -112,6 +186,7 @@ class BclInventoryTest < Minitest::Test
     assert_equal 0, IL.fetch("TYPES_WITHOUT_IL")
     assert_equal 10, IL.fetch("assemblies").length
     refute IL.fetch("assemblies").any? { |entry| entry.fetch("name").start_with?("mscorlib") }
+    refute IL.fetch("assemblies").any? { |entry| entry.fetch("name") == "System.dll" }
     assert_includes INVENTORY.fetch("separateFromXna"), "REFERENCE_TYPES"
   end
 
@@ -128,8 +203,11 @@ class BclInventoryTest < Minitest::Test
   def test_the_bcl_metrics_are_reported_separately_and_add_up
     # Five when the Stream projection landed; ten once the Storage family added the three IO
     # enums, `IAsyncResult` and the one `WaitHandle` member reachable through it; eleven with
-    # `System.IO.BinaryReader`, the CLR base of `Content.ContentReader`.
-    assert_equal 11, INVENTORY.fetch("BCL_FAMILIES")
+    # `System.IO.BinaryReader`, the CLR base of `Content.ContentReader`; twenty-six once the
+    # Design family admitted System.dll -- seven ComponentModel families from the new authority
+    # and eight more from mscorlib that the converters reach.
+    assert_equal 26, INVENTORY.fetch("BCL_FAMILIES")
+    assert_equal({"mscorlib" => 19, "System" => 7}, INVENTORY.fetch("BCL_FAMILIES_BY_AUTHORITY"))
     assert_equal INVENTORY.fetch("families").length, INVENTORY.fetch("BCL_FAMILIES")
     assert_equal types.length, INVENTORY.fetch("BCL_TYPES")
     assert_equal types.values.sum { |entry| entry.fetch("members").length }, INVENTORY.fetch("BCL_MEMBERS")
@@ -179,6 +257,16 @@ class BclInventoryTest < Minitest::Test
           assert_includes INVENTORY.fetch("types"), consumer.split("::").first, consumer
         end
         assert(bcl_signatures.any? { |signature| signature.include?(identity) }, identity)
+      when "behavioural"
+        # The third demand channel: no signature names it and no admitted BCL member's does, yet
+        # the measured XNA behaviour calls it and a consumer observes the result. The evidence is
+        # the generated design inventory rather than a claim, so it is checked against that file.
+        assert_empty family.fetch("xnaConsumers"), identity
+        assert_empty family.fetch("bclConsumers"), identity
+        refute(signatures.any? { |signature| signature.include?(identity) },
+               "#{identity} claims behavioural demand but an XNA signature names it")
+        assert_includes DESIGN.fetch("reachedBclIdentities").keys,
+                        "#{family.fetch("designReachAuthority")}:#{identity}", identity
       else
         flunk "#{identity} declares an unknown demand #{family.fetch("demand").inspect}"
       end
@@ -422,8 +510,10 @@ class BclInventoryTest < Minitest::Test
       System.ArgumentOutOfRangeException
       System.Collections.Generic.KeyNotFoundException
       System.Exception
+      System.Globalization.CultureNotFoundException
       System.IO.IOException
       System.InvalidOperationException
+      System.NotImplementedException
       System.NotSupportedException
       System.ObjectDisposedException
       System.Runtime.Serialization.SerializationException
@@ -455,8 +545,11 @@ class BclInventoryTest < Minitest::Test
 
   # The helper map is derived by reading which exception each ThrowHelper method constructs, so a
   # throw fact never guesses at an exception identity from a method name.
+  #
+  # It is keyed by authority: both admitted assemblies declare their own `System.ThrowHelper`, and
+  # merging them would resolve a System.dll member's throw against mscorlib's class.
   def test_the_throw_helper_resolution_is_derived
-    resolution = INVENTORY.fetch("throwHelperResolution")
+    resolution = INVENTORY.fetch("throwHelperResolution").fetch("mscorlib")
     assert_equal "System.NotSupportedException", resolution.fetch("ThrowNotSupportedException")
     assert_equal "System.ArgumentNullException", resolution.fetch("ThrowArgumentNullException")
     assert_equal "System.ArgumentOutOfRangeException", resolution.fetch("ThrowArgumentOutOfRangeException")

@@ -1,0 +1,1829 @@
+{
+  "schemaVersion": 1,
+  "authority": "the pinned original Microsoft.Xna.Framework.dll, admitted by exact SHA-256",
+  "provenance": "derived with ikdasm. No Microsoft-owned bytes, IL text or machine-local path is reproduced here.",
+  "scope": "the thirteen Microsoft.Xna.Framework.Design converters and the three private PropertyDescriptor implementations their collections are built from",
+  "assembly": {
+    "name": "Microsoft.Xna.Framework.dll",
+    "sha256": "38e7093f52d7474bbc6256906519781a1210d7da50a1c667b52716fcf49ca130",
+    "bytes": 679424
+  },
+  "DESIGN_TYPES": 13,
+  "DESIGN_DESCRIPTOR_TYPES": 3,
+  "DESIGN_IDENTITIES": 55,
+  "DESIGN_REACHED_BCL_IDENTITIES": 31,
+  "base": {
+    "type": "Microsoft.Xna.Framework.Design.MathTypeConverter",
+    "baseType": "System.ComponentModel.ExpandableObjectConverter",
+    "fields": [
+      {
+        "name": "propertyDescriptions",
+        "access": "family",
+        "type": "System.ComponentModel.PropertyDescriptorCollection"
+      },
+      {
+        "name": "supportStringConvert",
+        "access": "family",
+        "type": "System.Boolean"
+      }
+    ],
+    "members": [
+      {
+        "name": "CanConvertFrom",
+        "access": "public",
+        "virtual": true,
+        "static": false
+      },
+      {
+        "name": "CanConvertTo",
+        "access": "public",
+        "virtual": true,
+        "static": false
+      },
+      {
+        "name": "GetCreateInstanceSupported",
+        "access": "public",
+        "virtual": true,
+        "static": false
+      },
+      {
+        "name": "GetPropertiesSupported",
+        "access": "public",
+        "virtual": true,
+        "static": false
+      },
+      {
+        "name": "ConvertToValues",
+        "access": "assembly",
+        "virtual": false,
+        "static": true
+      },
+      {
+        "name": "ConvertFromValues",
+        "access": "assembly",
+        "virtual": false,
+        "static": true
+      },
+      {
+        "name": "GetProperties",
+        "access": "public",
+        "virtual": true,
+        "static": false
+      },
+      {
+        "name": ".ctor",
+        "access": "public",
+        "virtual": false,
+        "static": false
+      }
+    ],
+    "supportStringConvertDefault": true,
+    "canConvertFromFallback": "System.ComponentModel.TypeConverter::CanConvertFrom",
+    "canConvertToFallback": "System.ComponentModel.TypeConverter::CanConvertTo",
+    "canConvertToSpecialCase": "System.ComponentModel.Design.Serialization.InstanceDescriptor",
+    "canConvertFromSpecialCase": "System.String",
+    "getPropertiesReadsField": "propertyDescriptions",
+    "getCreateInstanceSupported": true,
+    "getPropertiesSupported": true
+  },
+  "descriptors": [
+    {
+      "type": "Microsoft.Xna.Framework.Design.MemberPropertyDescriptor",
+      "baseType": "System.ComponentModel.PropertyDescriptor",
+      "abstract": true,
+      "members": [
+        {
+          "name": ".ctor",
+          "access": "public",
+          "virtual": false,
+          "static": false
+        },
+        {
+          "name": "Equals",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "GetHashCode",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "get_IsReadOnly",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "ResetValue",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "CanResetValue",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "ShouldSerializeValue",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "get_ComponentType",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        }
+      ],
+      "behaviour": {
+        ".ctor": {
+          "empty": false,
+          "reads": [
+
+          ],
+          "calls": [
+            "System.Reflection.MemberInfo::get_Name",
+            "System.Type::GetTypeFromHandle",
+            "System.Reflection.MemberInfo::GetCustomAttributes",
+            ""
+          ]
+        },
+        "Equals": {
+          "empty": false,
+          "reads": [
+            "_member"
+          ],
+          "calls": [
+            "System.Object::Equals"
+          ]
+        },
+        "GetHashCode": {
+          "empty": false,
+          "reads": [
+            "_member"
+          ],
+          "calls": [
+            "System.Object::GetHashCode"
+          ]
+        },
+        "get_IsReadOnly": {
+          "constantAnswer": 0,
+          "empty": false,
+          "reads": [
+
+          ],
+          "calls": [
+
+          ]
+        },
+        "ResetValue": {
+          "empty": true,
+          "reads": [
+
+          ],
+          "calls": [
+
+          ]
+        },
+        "CanResetValue": {
+          "constantAnswer": 0,
+          "empty": false,
+          "reads": [
+
+          ],
+          "calls": [
+
+          ]
+        },
+        "ShouldSerializeValue": {
+          "constantAnswer": 1,
+          "empty": false,
+          "reads": [
+
+          ],
+          "calls": [
+
+          ]
+        },
+        "get_ComponentType": {
+          "empty": false,
+          "reads": [
+            "_member"
+          ],
+          "calls": [
+            "System.Reflection.MemberInfo::get_DeclaringType"
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Xna.Framework.Design.FieldPropertyDescriptor",
+      "baseType": "Microsoft.Xna.Framework.Design.MemberPropertyDescriptor",
+      "abstract": false,
+      "members": [
+        {
+          "name": ".ctor",
+          "access": "public",
+          "virtual": false,
+          "static": false
+        },
+        {
+          "name": "get_PropertyType",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "GetValue",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "SetValue",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        }
+      ],
+      "behaviour": {
+        ".ctor": {
+          "empty": false,
+          "reads": [
+
+          ],
+          "calls": [
+            ""
+          ]
+        },
+        "get_PropertyType": {
+          "empty": false,
+          "reads": [
+            "_field"
+          ],
+          "calls": [
+            "System.Reflection.FieldInfo::get_FieldType"
+          ]
+        },
+        "GetValue": {
+          "empty": false,
+          "reads": [
+            "_field"
+          ],
+          "calls": [
+            "System.Reflection.FieldInfo::GetValue"
+          ]
+        },
+        "SetValue": {
+          "empty": false,
+          "reads": [
+            "_field"
+          ],
+          "calls": [
+            "System.Reflection.FieldInfo::SetValue",
+            "System.ComponentModel.PropertyDescriptor::OnValueChanged"
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Xna.Framework.Design.PropertyPropertyDescriptor",
+      "baseType": "Microsoft.Xna.Framework.Design.MemberPropertyDescriptor",
+      "abstract": false,
+      "members": [
+        {
+          "name": ".ctor",
+          "access": "public",
+          "virtual": false,
+          "static": false
+        },
+        {
+          "name": "get_PropertyType",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "GetValue",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "SetValue",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        }
+      ],
+      "behaviour": {
+        ".ctor": {
+          "empty": false,
+          "reads": [
+
+          ],
+          "calls": [
+            ""
+          ]
+        },
+        "get_PropertyType": {
+          "empty": false,
+          "reads": [
+            "_property"
+          ],
+          "calls": [
+            "System.Reflection.PropertyInfo::get_PropertyType"
+          ]
+        },
+        "GetValue": {
+          "empty": false,
+          "reads": [
+            "_property"
+          ],
+          "calls": [
+            "System.Reflection.PropertyInfo::GetValue"
+          ]
+        },
+        "SetValue": {
+          "empty": false,
+          "reads": [
+            "_property"
+          ],
+          "calls": [
+            "System.Reflection.PropertyInfo::SetValue",
+            "System.ComponentModel.PropertyDescriptor::OnValueChanged"
+          ]
+        }
+      }
+    }
+  ],
+  "converters": [
+    {
+      "type": "Microsoft.Xna.Framework.Design.BoundingBoxConverter",
+      "baseType": "Microsoft.Xna.Framework.Design.MathTypeConverter",
+      "valueType": "Microsoft.Xna.Framework.BoundingBox",
+      "declaredMembers": [
+        {
+          "name": ".ctor",
+          "access": "public",
+          "virtual": false,
+          "static": false
+        },
+        {
+          "name": "ConvertFrom",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "ConvertTo",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "CreateInstance",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        }
+      ],
+      "supportStringConvert": false,
+      "descriptors": [
+        {
+          "member": "Min",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "Max",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        }
+      ],
+      "sortOrder": [
+        "Min",
+        "Max"
+      ],
+      "convertFrom": null,
+      "convertFromForwardsTo": "System.ComponentModel.TypeConverter::ConvertFrom",
+      "convertTo": {
+        "stringBranch": false,
+        "instanceDescriptorBranch": true,
+        "elementType": null,
+        "constructorParameters": [
+          "Microsoft.Xna.Framework.Vector3",
+          "Microsoft.Xna.Framework.Vector3"
+        ],
+        "arguments": [
+          "Min",
+          "Max"
+        ],
+        "constructorResolves": true,
+        "declaredConstructors": [
+          [
+            "Microsoft.Xna.Framework.Vector3",
+            "Microsoft.Xna.Framework.Vector3"
+          ]
+        ],
+        "instanceDescriptorAnswer": "InstanceDescriptor"
+      },
+      "createInstance": {
+        "keys": [
+          "Min",
+          "Max"
+        ],
+        "constructs": "Microsoft.Xna.Framework.BoundingBox",
+        "constructorParameters": [
+          "Microsoft.Xna.Framework.Vector3",
+          "Microsoft.Xna.Framework.Vector3"
+        ],
+        "nullCheck": true
+      },
+      "propertyOrder": [
+        "Min",
+        "Max"
+      ]
+    },
+    {
+      "type": "Microsoft.Xna.Framework.Design.BoundingSphereConverter",
+      "baseType": "Microsoft.Xna.Framework.Design.MathTypeConverter",
+      "valueType": "Microsoft.Xna.Framework.BoundingSphere",
+      "declaredMembers": [
+        {
+          "name": ".ctor",
+          "access": "public",
+          "virtual": false,
+          "static": false
+        },
+        {
+          "name": "ConvertFrom",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "ConvertTo",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "CreateInstance",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        }
+      ],
+      "supportStringConvert": false,
+      "descriptors": [
+        {
+          "member": "Center",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "Radius",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        }
+      ],
+      "sortOrder": [
+        "Center",
+        "Radius"
+      ],
+      "convertFrom": null,
+      "convertFromForwardsTo": "System.ComponentModel.TypeConverter::ConvertFrom",
+      "convertTo": {
+        "stringBranch": false,
+        "instanceDescriptorBranch": true,
+        "elementType": null,
+        "constructorParameters": [
+          "Microsoft.Xna.Framework.Vector3",
+          "System.Single"
+        ],
+        "arguments": [
+          "Center",
+          "Radius"
+        ],
+        "constructorResolves": true,
+        "declaredConstructors": [
+          [
+            "Microsoft.Xna.Framework.Vector3",
+            "System.Single"
+          ]
+        ],
+        "instanceDescriptorAnswer": "InstanceDescriptor"
+      },
+      "createInstance": {
+        "keys": [
+          "Center",
+          "Radius"
+        ],
+        "constructs": "Microsoft.Xna.Framework.BoundingSphere",
+        "constructorParameters": [
+          "Microsoft.Xna.Framework.Vector3",
+          "System.Single"
+        ],
+        "nullCheck": true
+      },
+      "propertyOrder": [
+        "Center",
+        "Radius"
+      ]
+    },
+    {
+      "type": "Microsoft.Xna.Framework.Design.ColorConverter",
+      "baseType": "Microsoft.Xna.Framework.Design.MathTypeConverter",
+      "valueType": "Microsoft.Xna.Framework.Color",
+      "declaredMembers": [
+        {
+          "name": ".ctor",
+          "access": "public",
+          "virtual": false,
+          "static": false
+        },
+        {
+          "name": "ConvertFrom",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "ConvertTo",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "CreateInstance",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        }
+      ],
+      "supportStringConvert": true,
+      "descriptors": [
+        {
+          "member": "R",
+          "reflection": "GetProperty",
+          "descriptor": "PropertyPropertyDescriptor"
+        },
+        {
+          "member": "G",
+          "reflection": "GetProperty",
+          "descriptor": "PropertyPropertyDescriptor"
+        },
+        {
+          "member": "B",
+          "reflection": "GetProperty",
+          "descriptor": "PropertyPropertyDescriptor"
+        },
+        {
+          "member": "A",
+          "reflection": "GetProperty",
+          "descriptor": "PropertyPropertyDescriptor"
+        }
+      ],
+      "sortOrder": [
+        "R",
+        "G",
+        "B",
+        "A"
+      ],
+      "convertFrom": {
+        "elementType": "uint8",
+        "arrayCount": 4,
+        "expectedParams": [
+          "R",
+          "G",
+          "B",
+          "A"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Color",
+        "constructorParameters": [
+          "System.Int32",
+          "System.Int32",
+          "System.Int32",
+          "System.Int32"
+        ]
+      },
+      "convertFromForwardsTo": null,
+      "convertTo": {
+        "stringBranch": true,
+        "instanceDescriptorBranch": true,
+        "elementType": "uint8",
+        "constructorParameters": [
+          "System.Byte",
+          "System.Byte",
+          "System.Byte",
+          "System.Byte"
+        ],
+        "arguments": [
+          "R",
+          "G",
+          "B",
+          "A"
+        ],
+        "constructorResolves": false,
+        "declaredConstructors": [
+          [
+            "System.Int32",
+            "System.Int32",
+            "System.Int32"
+          ],
+          [
+            "System.Int32",
+            "System.Int32",
+            "System.Int32",
+            "System.Int32"
+          ],
+          [
+            "System.Single",
+            "System.Single",
+            "System.Single"
+          ],
+          [
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single"
+          ],
+          [
+            "Microsoft.Xna.Framework.Vector3"
+          ],
+          [
+            "Microsoft.Xna.Framework.Vector4"
+          ]
+        ],
+        "instanceDescriptorAnswer": "falls through to TypeConverter.ConvertTo"
+      },
+      "createInstance": {
+        "keys": [
+          "R",
+          "G",
+          "B",
+          "A"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Color",
+        "constructorParameters": [
+          "System.Int32",
+          "System.Int32",
+          "System.Int32",
+          "System.Int32"
+        ],
+        "nullCheck": true
+      },
+      "propertyOrder": [
+        "R",
+        "G",
+        "B",
+        "A"
+      ]
+    },
+    {
+      "type": "Microsoft.Xna.Framework.Design.MatrixConverter",
+      "baseType": "Microsoft.Xna.Framework.Design.MathTypeConverter",
+      "valueType": "Microsoft.Xna.Framework.Matrix",
+      "declaredMembers": [
+        {
+          "name": ".ctor",
+          "access": "public",
+          "virtual": false,
+          "static": false
+        },
+        {
+          "name": "ConvertTo",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "CreateInstance",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        }
+      ],
+      "supportStringConvert": false,
+      "descriptors": [
+        {
+          "member": "M11",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "M12",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "M13",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "M14",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "M21",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "M22",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "M23",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "M24",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "M31",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "M32",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "M33",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "M34",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "M41",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "M42",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "M43",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "M44",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        }
+      ],
+      "sortOrder": null,
+      "convertFrom": null,
+      "convertFromForwardsTo": null,
+      "convertTo": {
+        "stringBranch": false,
+        "instanceDescriptorBranch": true,
+        "elementType": null,
+        "constructorParameters": [
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single"
+        ],
+        "arguments": [
+          "M11",
+          "M12",
+          "M13",
+          "M14",
+          "M21",
+          "M22",
+          "M23",
+          "M24",
+          "M31",
+          "M32",
+          "M33",
+          "M34",
+          "M41",
+          "M42",
+          "M43",
+          "M44"
+        ],
+        "constructorResolves": true,
+        "declaredConstructors": [
+          [
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single"
+          ]
+        ],
+        "instanceDescriptorAnswer": "InstanceDescriptor"
+      },
+      "createInstance": {
+        "keys": [
+          "M11",
+          "M12",
+          "M13",
+          "M14",
+          "M21",
+          "M22",
+          "M23",
+          "M24",
+          "M31",
+          "M32",
+          "M33",
+          "M34",
+          "M41",
+          "M42",
+          "M43",
+          "M44"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Matrix",
+        "constructorParameters": [
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single"
+        ],
+        "nullCheck": true
+      },
+      "propertyOrder": [
+        "M11",
+        "M12",
+        "M13",
+        "M14",
+        "M21",
+        "M22",
+        "M23",
+        "M24",
+        "M31",
+        "M32",
+        "M33",
+        "M34",
+        "M41",
+        "M42",
+        "M43",
+        "M44"
+      ]
+    },
+    {
+      "type": "Microsoft.Xna.Framework.Design.PlaneConverter",
+      "baseType": "Microsoft.Xna.Framework.Design.MathTypeConverter",
+      "valueType": "Microsoft.Xna.Framework.Plane",
+      "declaredMembers": [
+        {
+          "name": ".ctor",
+          "access": "public",
+          "virtual": false,
+          "static": false
+        },
+        {
+          "name": "ConvertTo",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "CreateInstance",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        }
+      ],
+      "supportStringConvert": false,
+      "descriptors": [
+        {
+          "member": "Normal",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "D",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        }
+      ],
+      "sortOrder": [
+        "Normal",
+        "D"
+      ],
+      "convertFrom": null,
+      "convertFromForwardsTo": null,
+      "convertTo": {
+        "stringBranch": false,
+        "instanceDescriptorBranch": true,
+        "elementType": null,
+        "constructorParameters": [
+          "Microsoft.Xna.Framework.Vector3",
+          "System.Single"
+        ],
+        "arguments": [
+          "Normal",
+          "D"
+        ],
+        "constructorResolves": true,
+        "declaredConstructors": [
+          [
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single"
+          ],
+          [
+            "Microsoft.Xna.Framework.Vector3",
+            "System.Single"
+          ],
+          [
+            "Microsoft.Xna.Framework.Vector4"
+          ],
+          [
+            "Microsoft.Xna.Framework.Vector3",
+            "Microsoft.Xna.Framework.Vector3",
+            "Microsoft.Xna.Framework.Vector3"
+          ]
+        ],
+        "instanceDescriptorAnswer": "InstanceDescriptor"
+      },
+      "createInstance": {
+        "keys": [
+          "Normal",
+          "D"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Plane",
+        "constructorParameters": [
+          "Microsoft.Xna.Framework.Vector3",
+          "System.Single"
+        ],
+        "nullCheck": true
+      },
+      "propertyOrder": [
+        "Normal",
+        "D"
+      ]
+    },
+    {
+      "type": "Microsoft.Xna.Framework.Design.PointConverter",
+      "baseType": "Microsoft.Xna.Framework.Design.MathTypeConverter",
+      "valueType": "Microsoft.Xna.Framework.Point",
+      "declaredMembers": [
+        {
+          "name": ".ctor",
+          "access": "public",
+          "virtual": false,
+          "static": false
+        },
+        {
+          "name": "ConvertFrom",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "ConvertTo",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "CreateInstance",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        }
+      ],
+      "supportStringConvert": true,
+      "descriptors": [
+        {
+          "member": "X",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "Y",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        }
+      ],
+      "sortOrder": [
+        "X",
+        "Y"
+      ],
+      "convertFrom": {
+        "elementType": "int32",
+        "arrayCount": 2,
+        "expectedParams": [
+          "X",
+          "Y"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Point",
+        "constructorParameters": [
+          "System.Int32",
+          "System.Int32"
+        ]
+      },
+      "convertFromForwardsTo": null,
+      "convertTo": {
+        "stringBranch": true,
+        "instanceDescriptorBranch": true,
+        "elementType": "int32",
+        "constructorParameters": [
+          "System.Int32",
+          "System.Int32"
+        ],
+        "arguments": [
+          "X",
+          "Y"
+        ],
+        "constructorResolves": true,
+        "declaredConstructors": [
+          [
+            "System.Int32",
+            "System.Int32"
+          ]
+        ],
+        "instanceDescriptorAnswer": "InstanceDescriptor"
+      },
+      "createInstance": {
+        "keys": [
+          "X",
+          "Y"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Point",
+        "constructorParameters": [
+          "System.Int32",
+          "System.Int32"
+        ],
+        "nullCheck": true
+      },
+      "propertyOrder": [
+        "X",
+        "Y"
+      ]
+    },
+    {
+      "type": "Microsoft.Xna.Framework.Design.QuaternionConverter",
+      "baseType": "Microsoft.Xna.Framework.Design.MathTypeConverter",
+      "valueType": "Microsoft.Xna.Framework.Quaternion",
+      "declaredMembers": [
+        {
+          "name": ".ctor",
+          "access": "public",
+          "virtual": false,
+          "static": false
+        },
+        {
+          "name": "ConvertFrom",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "ConvertTo",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "CreateInstance",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        }
+      ],
+      "supportStringConvert": true,
+      "descriptors": [
+        {
+          "member": "X",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "Y",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "Z",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "W",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        }
+      ],
+      "sortOrder": [
+        "X",
+        "Y",
+        "Z",
+        "W"
+      ],
+      "convertFrom": {
+        "elementType": "float32",
+        "arrayCount": 4,
+        "expectedParams": [
+          "X",
+          "Y",
+          "Z",
+          "W"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Quaternion",
+        "constructorParameters": [
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single"
+        ]
+      },
+      "convertFromForwardsTo": null,
+      "convertTo": {
+        "stringBranch": true,
+        "instanceDescriptorBranch": true,
+        "elementType": "float32",
+        "constructorParameters": [
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single"
+        ],
+        "arguments": [
+          "X",
+          "Y",
+          "Z",
+          "W"
+        ],
+        "constructorResolves": true,
+        "declaredConstructors": [
+          [
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single"
+          ],
+          [
+            "Microsoft.Xna.Framework.Vector3",
+            "System.Single"
+          ]
+        ],
+        "instanceDescriptorAnswer": "InstanceDescriptor"
+      },
+      "createInstance": {
+        "keys": [
+          "X",
+          "Y",
+          "Z",
+          "W"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Quaternion",
+        "constructorParameters": [
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single"
+        ],
+        "nullCheck": true
+      },
+      "propertyOrder": [
+        "X",
+        "Y",
+        "Z",
+        "W"
+      ]
+    },
+    {
+      "type": "Microsoft.Xna.Framework.Design.RayConverter",
+      "baseType": "Microsoft.Xna.Framework.Design.MathTypeConverter",
+      "valueType": "Microsoft.Xna.Framework.Ray",
+      "declaredMembers": [
+        {
+          "name": ".ctor",
+          "access": "public",
+          "virtual": false,
+          "static": false
+        },
+        {
+          "name": "ConvertFrom",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "ConvertTo",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "CreateInstance",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        }
+      ],
+      "supportStringConvert": false,
+      "descriptors": [
+        {
+          "member": "Position",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "Direction",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        }
+      ],
+      "sortOrder": [
+        "Position",
+        "Direction"
+      ],
+      "convertFrom": null,
+      "convertFromForwardsTo": "System.ComponentModel.TypeConverter::ConvertFrom",
+      "convertTo": {
+        "stringBranch": false,
+        "instanceDescriptorBranch": true,
+        "elementType": null,
+        "constructorParameters": [
+          "Microsoft.Xna.Framework.Vector3",
+          "Microsoft.Xna.Framework.Vector3"
+        ],
+        "arguments": [
+          "Position",
+          "Direction"
+        ],
+        "constructorResolves": true,
+        "declaredConstructors": [
+          [
+            "Microsoft.Xna.Framework.Vector3",
+            "Microsoft.Xna.Framework.Vector3"
+          ]
+        ],
+        "instanceDescriptorAnswer": "InstanceDescriptor"
+      },
+      "createInstance": {
+        "keys": [
+          "Position",
+          "Direction"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Ray",
+        "constructorParameters": [
+          "Microsoft.Xna.Framework.Vector3",
+          "Microsoft.Xna.Framework.Vector3"
+        ],
+        "nullCheck": true
+      },
+      "propertyOrder": [
+        "Position",
+        "Direction"
+      ]
+    },
+    {
+      "type": "Microsoft.Xna.Framework.Design.RectangleConverter",
+      "baseType": "Microsoft.Xna.Framework.Design.MathTypeConverter",
+      "valueType": "Microsoft.Xna.Framework.Rectangle",
+      "declaredMembers": [
+        {
+          "name": ".ctor",
+          "access": "public",
+          "virtual": false,
+          "static": false
+        },
+        {
+          "name": "ConvertTo",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "CreateInstance",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        }
+      ],
+      "supportStringConvert": false,
+      "descriptors": [
+        {
+          "member": "X",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "Y",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "Width",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "Height",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        }
+      ],
+      "sortOrder": null,
+      "convertFrom": null,
+      "convertFromForwardsTo": null,
+      "convertTo": {
+        "stringBranch": false,
+        "instanceDescriptorBranch": true,
+        "elementType": null,
+        "constructorParameters": [
+          "System.Int32",
+          "System.Int32",
+          "System.Int32",
+          "System.Int32"
+        ],
+        "arguments": [
+          "X",
+          "Y",
+          "Width",
+          "Height"
+        ],
+        "constructorResolves": true,
+        "declaredConstructors": [
+          [
+            "System.Int32",
+            "System.Int32",
+            "System.Int32",
+            "System.Int32"
+          ]
+        ],
+        "instanceDescriptorAnswer": "InstanceDescriptor"
+      },
+      "createInstance": {
+        "keys": [
+          "X",
+          "Y",
+          "Width",
+          "Height"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Rectangle",
+        "constructorParameters": [
+          "System.Int32",
+          "System.Int32",
+          "System.Int32",
+          "System.Int32"
+        ],
+        "nullCheck": true
+      },
+      "propertyOrder": [
+        "X",
+        "Y",
+        "Width",
+        "Height"
+      ]
+    },
+    {
+      "type": "Microsoft.Xna.Framework.Design.Vector2Converter",
+      "baseType": "Microsoft.Xna.Framework.Design.MathTypeConverter",
+      "valueType": "Microsoft.Xna.Framework.Vector2",
+      "declaredMembers": [
+        {
+          "name": ".ctor",
+          "access": "public",
+          "virtual": false,
+          "static": false
+        },
+        {
+          "name": "ConvertFrom",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "ConvertTo",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "CreateInstance",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        }
+      ],
+      "supportStringConvert": true,
+      "descriptors": [
+        {
+          "member": "X",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "Y",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        }
+      ],
+      "sortOrder": [
+        "X",
+        "Y"
+      ],
+      "convertFrom": {
+        "elementType": "float32",
+        "arrayCount": 2,
+        "expectedParams": [
+          "X",
+          "Y"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Vector2",
+        "constructorParameters": [
+          "System.Single",
+          "System.Single"
+        ]
+      },
+      "convertFromForwardsTo": null,
+      "convertTo": {
+        "stringBranch": true,
+        "instanceDescriptorBranch": true,
+        "elementType": "float32",
+        "constructorParameters": [
+          "System.Single",
+          "System.Single"
+        ],
+        "arguments": [
+          "X",
+          "Y"
+        ],
+        "constructorResolves": true,
+        "declaredConstructors": [
+          [
+            "System.Single",
+            "System.Single"
+          ],
+          [
+            "System.Single"
+          ]
+        ],
+        "instanceDescriptorAnswer": "InstanceDescriptor"
+      },
+      "createInstance": {
+        "keys": [
+          "X",
+          "Y"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Vector2",
+        "constructorParameters": [
+          "System.Single",
+          "System.Single"
+        ],
+        "nullCheck": true
+      },
+      "propertyOrder": [
+        "X",
+        "Y"
+      ]
+    },
+    {
+      "type": "Microsoft.Xna.Framework.Design.Vector3Converter",
+      "baseType": "Microsoft.Xna.Framework.Design.MathTypeConverter",
+      "valueType": "Microsoft.Xna.Framework.Vector3",
+      "declaredMembers": [
+        {
+          "name": ".ctor",
+          "access": "public",
+          "virtual": false,
+          "static": false
+        },
+        {
+          "name": "ConvertFrom",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "ConvertTo",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "CreateInstance",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        }
+      ],
+      "supportStringConvert": true,
+      "descriptors": [
+        {
+          "member": "X",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "Y",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "Z",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        }
+      ],
+      "sortOrder": [
+        "X",
+        "Y",
+        "Z"
+      ],
+      "convertFrom": {
+        "elementType": "float32",
+        "arrayCount": 3,
+        "expectedParams": [
+          "X",
+          "Y",
+          "Z"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Vector3",
+        "constructorParameters": [
+          "System.Single",
+          "System.Single",
+          "System.Single"
+        ]
+      },
+      "convertFromForwardsTo": null,
+      "convertTo": {
+        "stringBranch": true,
+        "instanceDescriptorBranch": true,
+        "elementType": "float32",
+        "constructorParameters": [
+          "System.Single",
+          "System.Single",
+          "System.Single"
+        ],
+        "arguments": [
+          "X",
+          "Y",
+          "Z"
+        ],
+        "constructorResolves": true,
+        "declaredConstructors": [
+          [
+            "System.Single",
+            "System.Single",
+            "System.Single"
+          ],
+          [
+            "System.Single"
+          ],
+          [
+            "Microsoft.Xna.Framework.Vector2",
+            "System.Single"
+          ]
+        ],
+        "instanceDescriptorAnswer": "InstanceDescriptor"
+      },
+      "createInstance": {
+        "keys": [
+          "X",
+          "Y",
+          "Z"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Vector3",
+        "constructorParameters": [
+          "System.Single",
+          "System.Single",
+          "System.Single"
+        ],
+        "nullCheck": true
+      },
+      "propertyOrder": [
+        "X",
+        "Y",
+        "Z"
+      ]
+    },
+    {
+      "type": "Microsoft.Xna.Framework.Design.Vector4Converter",
+      "baseType": "Microsoft.Xna.Framework.Design.MathTypeConverter",
+      "valueType": "Microsoft.Xna.Framework.Vector4",
+      "declaredMembers": [
+        {
+          "name": ".ctor",
+          "access": "public",
+          "virtual": false,
+          "static": false
+        },
+        {
+          "name": "ConvertFrom",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "ConvertTo",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        },
+        {
+          "name": "CreateInstance",
+          "access": "public",
+          "virtual": true,
+          "static": false
+        }
+      ],
+      "supportStringConvert": true,
+      "descriptors": [
+        {
+          "member": "X",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "Y",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "Z",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        },
+        {
+          "member": "W",
+          "reflection": "GetField",
+          "descriptor": "FieldPropertyDescriptor"
+        }
+      ],
+      "sortOrder": [
+        "X",
+        "Y",
+        "Z",
+        "W"
+      ],
+      "convertFrom": {
+        "elementType": "float32",
+        "arrayCount": 4,
+        "expectedParams": [
+          "X",
+          "Y",
+          "Z",
+          "W"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Vector4",
+        "constructorParameters": [
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single"
+        ]
+      },
+      "convertFromForwardsTo": null,
+      "convertTo": {
+        "stringBranch": true,
+        "instanceDescriptorBranch": true,
+        "elementType": "float32",
+        "constructorParameters": [
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single"
+        ],
+        "arguments": [
+          "X",
+          "Y",
+          "Z",
+          "W"
+        ],
+        "constructorResolves": true,
+        "declaredConstructors": [
+          [
+            "System.Single",
+            "System.Single",
+            "System.Single",
+            "System.Single"
+          ],
+          [
+            "Microsoft.Xna.Framework.Vector2",
+            "System.Single",
+            "System.Single"
+          ],
+          [
+            "Microsoft.Xna.Framework.Vector3",
+            "System.Single"
+          ],
+          [
+            "System.Single"
+          ]
+        ],
+        "instanceDescriptorAnswer": "InstanceDescriptor"
+      },
+      "createInstance": {
+        "keys": [
+          "X",
+          "Y",
+          "Z",
+          "W"
+        ],
+        "constructs": "Microsoft.Xna.Framework.Vector4",
+        "constructorParameters": [
+          "System.Single",
+          "System.Single",
+          "System.Single",
+          "System.Single"
+        ],
+        "nullCheck": true
+      },
+      "propertyOrder": [
+        "X",
+        "Y",
+        "Z",
+        "W"
+      ]
+    }
+  ],
+  "reachedBclIdentities": {
+    "mscorlib:System.Type": 435,
+    "mscorlib:System.Single": 97,
+    "mscorlib:System.Reflection.FieldInfo": 95,
+    "mscorlib:System.RuntimeTypeHandle": 94,
+    "System:System.ComponentModel.ITypeDescriptorContext": 77,
+    "mscorlib:System.Globalization.CultureInfo": 70,
+    "System:System.ComponentModel.PropertyDescriptorCollection": 62,
+    "mscorlib:System.Reflection.ConstructorInfo": 60,
+    "mscorlib:System.Collections.IDictionary": 59,
+    "System:System.ComponentModel.PropertyDescriptor": 41,
+    "mscorlib:System.String": 34,
+    "System:System.ComponentModel.TypeConverter": 29,
+    "System:System.ComponentModel.Design.Serialization.InstanceDescriptor": 25,
+    "mscorlib:System.ArgumentNullException": 24,
+    "mscorlib:System.Reflection.MemberInfo": 24,
+    "mscorlib:System.Int32": 19,
+    "mscorlib:System.Reflection.PropertyInfo": 17,
+    "mscorlib:System.Object": 16,
+    "mscorlib:System.Byte": 13,
+    "mscorlib:System.Collections.ICollection": 12,
+    "mscorlib:System.Globalization.TextInfo": 8,
+    "mscorlib:System.Diagnostics.CodeAnalysis.SuppressMessageAttribute": 7,
+    "mscorlib:System.EventArgs": 6,
+    "mscorlib:System.Attribute": 4,
+    "System:System.ComponentModel.TypeDescriptor": 3,
+    "mscorlib:System.Exception": 3,
+    "System:System.ComponentModel.ExpandableObjectConverter": 2,
+    "mscorlib:System.ArgumentException": 2,
+    "mscorlib:System.IFormatProvider": 2,
+    "mscorlib:System.ParamArrayAttribute": 1,
+    "mscorlib:System.StringSplitOptions": 1
+  }
+}
