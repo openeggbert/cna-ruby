@@ -1,13 +1,13 @@
 # The remaining surface, classified member by member
 
-**Measured 2026-09-04 at Foundation 102**, against the strict report
+**Measured 2026-09-04 at Foundation 103**, against the strict report
 (`docs/generated/api-compat-report.json`), the pinned XNA IL, the pinned mscorlib and the qualified
-CNA C ABI 0.21.0 artifacts. 220 target types, **218 complete**, 2 partial, 37 missing.
+CNA C ABI 0.21.0 artifacts. 237 target types, **234 complete**, 3 partial, 20 missing.
 
 Every entry below is one of the classifications the session's stop condition admits, and each names
 the evidence rather than a judgement. Nothing here is deferred for being large.
 
-## The two partial types — eight members, one upstream defect
+## The three partial types — eleven members, two upstream defects
 
 | Member | Classification | Why |
 | --- | --- | --- |
@@ -28,9 +28,22 @@ zero and `display.h` documents them as such. Projecting `GraphicsAdapter` would 
 every property is a fiction, and the seven members above would carry that fiction into the device
 and the manager.
 
-`MISSING_MEMBER` is therefore **8**, and there is no ninth.
+### The third partial type — `Media.Song`, three members, a different upstream defect
 
-## The 37 missing types
+| Member | Classification | Why |
+| --- | --- | --- |
+| `Media.Song::Album` | `BLOCKED_UPSTREAM_CNA` | no `cna_song_get_album` exists |
+| `Media.Song::Artist` | `BLOCKED_UPSTREAM_CNA` | no `cna_song_get_artist` exists |
+| `Media.Song::Genre` | `BLOCKED_UPSTREAM_CNA` | no `cna_song_get_genre` exists |
+
+This is a gap rather than a design: every **reverse** navigation is exported and works —
+`cna_album_get_songs`, `cna_artist_get_songs`, `cna_artist_get_albums`, `cna_genre_get_songs`,
+`cna_genre_get_albums` and `cna_playlist_get_songs` — so CNA models the graph, just not from the
+song outwards. Nineteen `cna_song_*` routes are bound and every other member of the type has one.
+
+`MISSING_MEMBER` is therefore **11**, and there is no twelfth.
+
+## The 20 missing types
 
 ### 3 blocked on the same adapter defect
 
@@ -68,33 +81,32 @@ validation helpers — twenty in all.
 extends it, `ReadSingle` and `ReadDouble` **override** it, and the register does not carry it. That
 is the same shape of decision `System.IO.Stream` was, and it is a decision rather than a blocker.
 
-### 17 locally actionable — the `Media` namespace
+### 17 built at Foundation 103 — the `Media` namespace
 
 `MediaLibrary`, `MediaPlayer`, `MediaQueue`, `Song`, `SongCollection`, `Album`, `AlbumCollection`,
 `Artist`, `ArtistCollection`, `Genre`, `GenreCollection`, `Playlist`, `PlaylistCollection`,
-`Picture`, `PictureAlbum`, `PictureCollection`, `PictureAlbumCollection` — 196 members.
+`Picture`, `PictureAlbum`, `PictureCollection`, `PictureAlbumCollection` — 182 identities, over 167
+CNA routes each with a production call site, `ABI_MISMATCHES` 0 against both admitted header roots.
+Sixteen are complete; `Song` is partial on the three members recorded above.
 
-**Measured, on the `HEADLESS` artifact, with no Ruby projection in the path:**
-`cna_media_library_create` succeeds against a plain `Game`; `get_songs`, `get_albums`, `get_artists`,
-`get_genres`, `get_playlists`, `get_pictures` and `get_saved_pictures` all succeed; the music
-collections are empty on this host and **`pictures` answers 35** — the picture family has real data
-to project against. `get_media_source_type` answers 0 and the library disposes and destroys cleanly.
+**Measured end to end on the `HEADLESS` artifact**, not merely projected: 35 real pictures with
+names, dimensions, albums, image bytes and thumbnails; a root picture album with three sub-albums,
+each naming the root back; the player's state, volume clamping, mute, queue and
+`GetVisualizationData` filling both 256-element collections in place; and library disposal, after
+which every member refuses. The music collections are empty on this host, which the header calls an
+ordinary result rather than a failure, so `test/test_media.rb` asserts their shape and skips the
+population assertions with a message naming what it gave up.
 
-166 of CNA's media routes have a production call site in that surface, one per XNA member, and a
-generated manifest of exactly those 166 passes the ABI gate with `ABI_MISMATCHES` 0 against both
-admitted header roots. That work was generated, verified and then **reverted** rather than left in
-the tree: a bound route with no call site does not stay, and the Ruby side is where the remaining
-effort is.
+`MediaPlayer` is a static XNA class — `abstract sealed` in the CLR — and CNA's routes take the
+**Game handle** rather than a player handle, which is the same shape: one player per process,
+reached through the game. It projects to a Ruby class whose `new` is private, because a module
+would be a `TYPE_KIND_MISMATCH` against the reference contract. Its two events are process-global
+`_ext` subscriptions because XNA's own raisers are private, and they are the second and third
+static events in the selected surface after `Storage.StorageDevice::DeviceChanged`.
 
-**One recorded blocker inside it.** `Song.Album`, `Song.Artist` and `Song.Genre` have **no CNA route
-at all** — the song surface is name, duration, rating, play count, track number, protection,
-disposal, equality and hash, and nothing that reaches the three navigation properties. Every other
-member of every one of the seventeen types has one. So the family completes with `Song` **partial**
-on exactly those three, `BLOCKED_UPSTREAM_CNA`, and sixteen types complete.
-
-`MediaPlayer` is a static XNA class and CNA's routes take the **Game handle** rather than a player
-handle, which is the same shape: one player per process, reached through the game. Its two events
-are process-global `_ext` subscriptions because XNA's own raisers are private.
+**One measured C deviation.** CNA answers a picture's `Date` in 100-nanosecond ticks from the Unix
+epoch rather than in seconds — a factor of 10^7 — which was found by comparing the answer against
+the file's own mtime rather than by reading the header.
 
 ## What this leaves
 
@@ -102,5 +114,5 @@ are process-global `_ext` subscriptions because XNA's own raisers are private.
 | --- | ---: | ---: |
 | `BLOCKED_UPSTREAM_CNA` (the adapter defect) | 3 | 8 partial members |
 | `BCL_PROJECTION_SCOPE` (`System.ComponentModel`) | 13 | — |
-| locally actionable — `Media` | 17 | 196, of which 3 are `BLOCKED_UPSTREAM_CNA` |
+| built at Foundation 103 — `Media` | 17 | 182, of which 3 are `BLOCKED_UPSTREAM_CNA` |
 | locally actionable — `ContentReader` | 4 | 30, behind one `System.IO.BinaryReader` decision |

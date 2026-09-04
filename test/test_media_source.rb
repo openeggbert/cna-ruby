@@ -141,12 +141,19 @@ class MediaSourceTest < Minitest::Test
 
   def test_it_produces_no_media_library_player_or_song
     # `VideoPlayer` left this list when its NATIVE_RUNTIME was audited and found not to be a
-    # blocker; what **this** milestone claimed is unchanged, and the MediaPlayer/MediaLibrary half
-    # of the namespace is still absent whole.
-    %i[MediaLibrary MediaPlayer Song Album Artist Playlist Picture MediaQueue]
-      .each { |absent| refute M.const_defined?(absent, false), "Media::#{absent}" }
+    # blocker, and the MediaPlayer/MediaLibrary half of the namespace left it at Foundation 103,
+    # which bound the routes CNA exports for it. What **this** milestone claimed is unchanged, and
+    # is narrower than the absence those names once stood for: MediaSource produces none of them.
+    # XNA's own `MediaSource` is a leaf -- it has no member returning a library, a player or a
+    # song -- and CNA's four source routes match, none of them handing back another handle.
+    returned = REFERENCE.fetch(NAME).fetch("members").filter_map { |m| m["returnType"] }
+    %i[MediaLibrary MediaPlayer Song Album Artist Playlist Picture MediaQueue].each do |produced|
+      assert M.const_defined?(produced, false), "Media::#{produced} exists now"
+      refute(returned.any? { |type| type.include?("Media.#{produced}") },
+             "MediaSource returns a #{produced}")
+    end
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-    refute(symbols.any? { |s| s.start_with?("cna_media_player_", "cna_media_library_", "cna_song_") })
     assert_equal 4, symbols.count { |s| s.start_with?("cna_media_source_") }
+    refute(symbols.any? { |s| s.start_with?("cna_media_source_") && s.match?(/library|player|song/) })
   end
 end

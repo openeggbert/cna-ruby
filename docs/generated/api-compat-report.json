@@ -5,21 +5,21 @@
   "REFERENCE_MEMBERS": 2964,
   "EXPECTED_RUBY_TYPES": 257,
   "EXPECTED_RUBY_MEMBERS": 2915,
-  "TARGET_TYPES": 220,
-  "TARGET_MEMBERS": 2612,
-  "TOTAL_DIAGNOSTICS": 50,
-  "COMPLETE_TYPES": 218,
-  "PARTIAL_TYPES": 2,
-  "MISSING_TYPES": 37,
+  "TARGET_TYPES": 237,
+  "TARGET_MEMBERS": 2794,
+  "TOTAL_DIAGNOSTICS": 36,
+  "COMPLETE_TYPES": 234,
+  "PARTIAL_TYPES": 3,
+  "MISSING_TYPES": 20,
   "ALLOWLIST_ENTRIES": 0,
-  "EVENT_IDENTITIES": 46,
-  "EVENT_OWNER_TYPES": 23,
+  "EVENT_IDENTITIES": 48,
+  "EVENT_OWNER_TYPES": 24,
   "EVENT_SUPPORT_TYPE": "CNA::Runtime::Event",
   "BCL_PROJECTED_IDENTITIES": 28,
   "BCL_EXCEPTION_BASES": 2,
   "BCL_THROWN_EXCEPTIONS": 8,
-  "MISSING_TYPE": 37,
-  "MISSING_MEMBER": 8,
+  "MISSING_TYPE": 20,
+  "MISSING_MEMBER": 11,
   "UNEXPECTED_TYPE": 0,
   "UNEXPECTED_MEMBER": 0,
   "TYPE_KIND_MISMATCH": 0,
@@ -87,7 +87,9 @@
     "Microsoft.Xna.Framework.DrawableGameComponent::VisibleChanged",
     "Microsoft.Xna.Framework.DrawableGameComponent::DrawOrderChanged",
     "Microsoft.Xna.Framework.Storage.StorageDevice::DeviceChanged",
-    "Microsoft.Xna.Framework.Storage.StorageContainer::Disposing"
+    "Microsoft.Xna.Framework.Storage.StorageContainer::Disposing",
+    "Microsoft.Xna.Framework.Media.MediaPlayer::ActiveSongChanged",
+    "Microsoft.Xna.Framework.Media.MediaPlayer::MediaStateChanged"
   ],
   "bclProjection": {
     "types": {
@@ -346,7 +348,23 @@
     "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator",
     "Microsoft.Xna.Framework.DrawableGameComponent",
     "Microsoft.Xna.Framework.Storage.StorageDevice",
-    "Microsoft.Xna.Framework.Storage.StorageContainer"
+    "Microsoft.Xna.Framework.Storage.StorageContainer",
+    "Microsoft.Xna.Framework.Media.SongCollection",
+    "Microsoft.Xna.Framework.Media.Album",
+    "Microsoft.Xna.Framework.Media.AlbumCollection",
+    "Microsoft.Xna.Framework.Media.Artist",
+    "Microsoft.Xna.Framework.Media.ArtistCollection",
+    "Microsoft.Xna.Framework.Media.Genre",
+    "Microsoft.Xna.Framework.Media.GenreCollection",
+    "Microsoft.Xna.Framework.Media.Playlist",
+    "Microsoft.Xna.Framework.Media.PlaylistCollection",
+    "Microsoft.Xna.Framework.Media.Picture",
+    "Microsoft.Xna.Framework.Media.PictureAlbum",
+    "Microsoft.Xna.Framework.Media.PictureCollection",
+    "Microsoft.Xna.Framework.Media.PictureAlbumCollection",
+    "Microsoft.Xna.Framework.Media.MediaQueue",
+    "Microsoft.Xna.Framework.Media.MediaPlayer",
+    "Microsoft.Xna.Framework.Media.MediaLibrary"
   ],
   "partialTypes": {
     "Microsoft.Xna.Framework.GraphicsDeviceManager": [
@@ -360,6 +378,11 @@
       "Microsoft.Xna.Framework.Graphics.GraphicsDevice::.ctor (1 overload)",
       "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DisplayMode (1 overload)",
       "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Adapter (1 overload)"
+    ],
+    "Microsoft.Xna.Framework.Media.Song": [
+      "Microsoft.Xna.Framework.Media.Song::Artist (1 overload)",
+      "Microsoft.Xna.Framework.Media.Song::Album (1 overload)",
+      "Microsoft.Xna.Framework.Media.Song::Genre (1 overload)"
     ]
   },
   "missingTypeNames": [
@@ -382,23 +405,6 @@
     "Microsoft.Xna.Framework.Design.Vector4Converter",
     "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
     "Microsoft.Xna.Framework.GraphicsDeviceInformation",
-    "Microsoft.Xna.Framework.Media.Album",
-    "Microsoft.Xna.Framework.Media.AlbumCollection",
-    "Microsoft.Xna.Framework.Media.Artist",
-    "Microsoft.Xna.Framework.Media.ArtistCollection",
-    "Microsoft.Xna.Framework.Media.Genre",
-    "Microsoft.Xna.Framework.Media.GenreCollection",
-    "Microsoft.Xna.Framework.Media.MediaLibrary",
-    "Microsoft.Xna.Framework.Media.MediaPlayer",
-    "Microsoft.Xna.Framework.Media.MediaQueue",
-    "Microsoft.Xna.Framework.Media.Picture",
-    "Microsoft.Xna.Framework.Media.PictureAlbum",
-    "Microsoft.Xna.Framework.Media.PictureAlbumCollection",
-    "Microsoft.Xna.Framework.Media.PictureCollection",
-    "Microsoft.Xna.Framework.Media.Playlist",
-    "Microsoft.Xna.Framework.Media.PlaylistCollection",
-    "Microsoft.Xna.Framework.Media.Song",
-    "Microsoft.Xna.Framework.Media.SongCollection",
     "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs"
   ],
   "localDiagnostics": {
@@ -621,7 +627,24 @@
     "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator": 0,
     "Microsoft.Xna.Framework.DrawableGameComponent": 0,
     "Microsoft.Xna.Framework.Storage.StorageDevice": 0,
-    "Microsoft.Xna.Framework.Storage.StorageContainer": 0
+    "Microsoft.Xna.Framework.Storage.StorageContainer": 0,
+    "Microsoft.Xna.Framework.Media.Song": 3,
+    "Microsoft.Xna.Framework.Media.SongCollection": 0,
+    "Microsoft.Xna.Framework.Media.Album": 0,
+    "Microsoft.Xna.Framework.Media.AlbumCollection": 0,
+    "Microsoft.Xna.Framework.Media.Artist": 0,
+    "Microsoft.Xna.Framework.Media.ArtistCollection": 0,
+    "Microsoft.Xna.Framework.Media.Genre": 0,
+    "Microsoft.Xna.Framework.Media.GenreCollection": 0,
+    "Microsoft.Xna.Framework.Media.Playlist": 0,
+    "Microsoft.Xna.Framework.Media.PlaylistCollection": 0,
+    "Microsoft.Xna.Framework.Media.Picture": 0,
+    "Microsoft.Xna.Framework.Media.PictureAlbum": 0,
+    "Microsoft.Xna.Framework.Media.PictureCollection": 0,
+    "Microsoft.Xna.Framework.Media.PictureAlbumCollection": 0,
+    "Microsoft.Xna.Framework.Media.MediaQueue": 0,
+    "Microsoft.Xna.Framework.Media.MediaPlayer": 0,
+    "Microsoft.Xna.Framework.Media.MediaLibrary": 0
   },
   "details": {
     "MISSING_TYPE": [
@@ -644,23 +667,6 @@
       "Microsoft.Xna.Framework.Design.Vector4Converter",
       "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
       "Microsoft.Xna.Framework.GraphicsDeviceInformation",
-      "Microsoft.Xna.Framework.Media.Album",
-      "Microsoft.Xna.Framework.Media.AlbumCollection",
-      "Microsoft.Xna.Framework.Media.Artist",
-      "Microsoft.Xna.Framework.Media.ArtistCollection",
-      "Microsoft.Xna.Framework.Media.Genre",
-      "Microsoft.Xna.Framework.Media.GenreCollection",
-      "Microsoft.Xna.Framework.Media.MediaLibrary",
-      "Microsoft.Xna.Framework.Media.MediaPlayer",
-      "Microsoft.Xna.Framework.Media.MediaQueue",
-      "Microsoft.Xna.Framework.Media.Picture",
-      "Microsoft.Xna.Framework.Media.PictureAlbum",
-      "Microsoft.Xna.Framework.Media.PictureAlbumCollection",
-      "Microsoft.Xna.Framework.Media.PictureCollection",
-      "Microsoft.Xna.Framework.Media.Playlist",
-      "Microsoft.Xna.Framework.Media.PlaylistCollection",
-      "Microsoft.Xna.Framework.Media.Song",
-      "Microsoft.Xna.Framework.Media.SongCollection",
       "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs"
     ],
     "MISSING_MEMBER": [
@@ -671,7 +677,10 @@
       "Microsoft.Xna.Framework.GraphicsDeviceManager::CanResetDevice (1 overload)",
       "Microsoft.Xna.Framework.GraphicsDeviceManager::RankDevices (1 overload)",
       "Microsoft.Xna.Framework.GraphicsDeviceManager::OnPreparingDeviceSettings (1 overload)",
-      "Microsoft.Xna.Framework.GraphicsDeviceManager::PreparingDeviceSettings (1 overload)"
+      "Microsoft.Xna.Framework.GraphicsDeviceManager::PreparingDeviceSettings (1 overload)",
+      "Microsoft.Xna.Framework.Media.Song::Artist (1 overload)",
+      "Microsoft.Xna.Framework.Media.Song::Album (1 overload)",
+      "Microsoft.Xna.Framework.Media.Song::Genre (1 overload)"
     ],
     "UNEXPECTED_TYPE": [
 

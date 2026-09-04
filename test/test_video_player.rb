@@ -62,16 +62,36 @@ class VideoPlayerTest < Minitest::Test
                     Microsoft.Xna.Framework.Graphics.GraphicsAdapter], candidates
     refute_includes candidates, NAME
     assert_empty FRONTIER.fetch("consumableCandidates")
-    # Every Media type this project ever selected is complete now; what is left in that namespace
-    # is the MediaPlayer/MediaLibrary half, which was never selected and is missing whole.
-    assert_equal %w[Microsoft.Xna.Framework.Media.MediaSource
+    # Every Media type this project ever selected is complete now. The MediaPlayer/MediaLibrary
+    # half, unselected and missing whole when this milestone ran, was selected and built at
+    # Foundation 103; the one type still short is `Song`, on the three members -- `Album`,
+    # `Artist`, `Genre` -- CNA exports no route for.
+    assert_equal %w[Microsoft.Xna.Framework.Media.Album
+                    Microsoft.Xna.Framework.Media.AlbumCollection
+                    Microsoft.Xna.Framework.Media.Artist
+                    Microsoft.Xna.Framework.Media.ArtistCollection
+                    Microsoft.Xna.Framework.Media.Genre
+                    Microsoft.Xna.Framework.Media.GenreCollection
+                    Microsoft.Xna.Framework.Media.MediaLibrary
+                    Microsoft.Xna.Framework.Media.MediaPlayer
+                    Microsoft.Xna.Framework.Media.MediaQueue
+                    Microsoft.Xna.Framework.Media.MediaSource
                     Microsoft.Xna.Framework.Media.MediaSourceType
                     Microsoft.Xna.Framework.Media.MediaState
+                    Microsoft.Xna.Framework.Media.Picture
+                    Microsoft.Xna.Framework.Media.PictureAlbum
+                    Microsoft.Xna.Framework.Media.PictureAlbumCollection
+                    Microsoft.Xna.Framework.Media.PictureCollection
+                    Microsoft.Xna.Framework.Media.Playlist
+                    Microsoft.Xna.Framework.Media.PlaylistCollection
+                    Microsoft.Xna.Framework.Media.SongCollection
                     Microsoft.Xna.Framework.Media.Video
                     Microsoft.Xna.Framework.Media.VideoPlayer
                     Microsoft.Xna.Framework.Media.VideoSoundtrackType
                     Microsoft.Xna.Framework.Media.VisualizationData],
                  STRICT.fetch("completeTypeNames").grep(/\AMicrosoft\.Xna\.Framework\.Media\./).sort
+    assert_equal ["Microsoft.Xna.Framework.Media.Song"],
+                 STRICT.fetch("partialTypes").keys.grep(/\AMicrosoft\.Xna\.Framework\.Media\./)
   end
 
   def test_the_contract_is_fifteen_members_over_idisposable
@@ -243,8 +263,14 @@ class VideoPlayerTest < Minitest::Test
 
   # ------------------------------------------------------------------- and exactly what it does not
   def test_it_adds_no_media_player_song_or_library_surface
+    # Foundation 103 built all nine of these. What **this** milestone claimed is that its own
+    # sixteen routes added none of them, which is still exactly true: every route it bound is a
+    # `cna_video_player_*` one, and not one of them names a song, a library or a picture.
     %i[MediaPlayer MediaLibrary Song SongCollection AlbumCollection Album Artist Genre Picture]
-      .each { |absent| refute M.const_defined?(absent, false), absent.to_s }
+      .each { |built| assert M.const_defined?(built, false), built.to_s }
+    video_routes = CNA::Native::Manifest::FUNCTIONS.map(&:symbol).grep(/\Acna_video_player_/)
+    refute_empty video_routes
+    refute(video_routes.any? { |route| route.match?(/song|librar|picture|album|artist|genre/) })
     # No claim is made about anything visible: HEADLESS qualifies execution, not rendered output.
     refute M::VideoPlayer.public_method_defined?(:Draw)
   end

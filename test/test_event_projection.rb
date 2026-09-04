@@ -503,6 +503,8 @@ class EventProjectionTest < Minitest::Test
       Microsoft.Xna.Framework.DrawableGameComponent::DrawOrderChanged
       Microsoft.Xna.Framework.Storage.StorageDevice::DeviceChanged
       Microsoft.Xna.Framework.Storage.StorageContainer::Disposing
+      Microsoft.Xna.Framework.Media.MediaPlayer::ActiveSongChanged
+      Microsoft.Xna.Framework.Media.MediaPlayer::MediaStateChanged
     ], STRICT.fetch("eventIdentities")
   end
 

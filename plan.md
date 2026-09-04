@@ -42,22 +42,22 @@ the prose would have fixed exactly that one milestone.
 | count | what it measures |
 | ---: | --- |
 | 257 | XNA 4.0 Windows reference types |
-| 220 | types this binding projects |
-| 2612 | Ruby member identities |
-| 218 | complete types |
-| 2 | partial types |
-| 37 | missing types |
-| 46 | event identities |
-| 23 | types owning an event |
+| 237 | types this binding projects |
+| 2794 | Ruby member identities |
+| 234 | complete types |
+| 3 | partial types |
+| 20 | missing types |
+| 48 | event identities |
+| 24 | types owning an event |
 | 28 | projected BCL identities |
 
 **Strict diagnostics**
 
 | count | what it measures |
 | ---: | --- |
-| 50 | strict diagnostics in total |
-| 37 | `MISSING_TYPE` |
-| 8 | `MISSING_MEMBER` |
+| 36 | strict diagnostics in total |
+| 20 | `MISSING_TYPE` |
+| 11 | `MISSING_MEMBER` |
 | 5 | `OVERLOAD_MAPPING_MISMATCH` |
 | 0 | `PROPERTY_MAPPING_MISMATCH` |
 | 0 | every other structural category, summed |
@@ -75,10 +75,10 @@ the prose would have fixed exactly that one milestone.
 
 | count | what it measures |
 | ---: | --- |
-| 590 | bound C functions |
+| 757 | bound C functions |
 | 7 | callbacks |
 | 152 | constants |
-| 67 | struct layouts |
+| 68 | struct layouts |
 | 2 | admitted encoded ABI versions |
 | 2 | header roots cross-verified |
 | 0 | `ABI_MISMATCHES` |
@@ -104,7 +104,7 @@ the prose would have fixed exactly that one milestone.
 
 | count | what it measures |
 | ---: | --- |
-| 156 | runtime capability rows |
+| 157 | runtime capability rows |
 
 <!-- scoreboard:end -->
 
@@ -114,11 +114,13 @@ empty and `UNMEASURED_STRUCTURAL_CATEGORY` is zero. `EVENT_MAPPING_MISMATCH` is 
 projected event, and the projected BCL identities all go through the measured
 `CNA::Runtime::BclProjection` register.
 
-The partial types are the graphics runtime: `GraphicsDevice` and `GraphicsDeviceManager`. Their
-outstanding members are enumerated, family by family, in
-`docs/graphics-runtime-member-audit.md` — the audit that replaced the blanket "graphics runtime"
-deferral this section used to carry, and which found that the overwhelming majority of them are not
-blocked by anything.
+The partial types are the graphics runtime — `GraphicsDevice` and `GraphicsDeviceManager` — and
+`Media.Song`. The first two are enumerated family by family in
+`docs/graphics-runtime-member-audit.md`, the audit that replaced the blanket "graphics runtime"
+deferral this section used to carry and which found that the overwhelming majority of them are not
+blocked by anything; `Song` owes `Album`, `Artist` and `Genre`, the three members of the whole
+`Media` namespace CNA exports no route for. `docs/remaining-surface-audit.md` classifies every one
+of them.
 
 Complete clusters, by area:
 
@@ -149,7 +151,7 @@ Complete clusters, by area:
   `SpriteFont` over a real MonoGame font, `Viewport`, `TextureCollection`, `Texture`,
   `DisplayMode`, `DisplayModeCollection`, `PresentationParameters` and the enum closure, the nine-type
   `Effect` graph, the four buffer types, both render targets, `OcclusionQuery` and the device's own
-  state, binding, render-target and draw slices, beside the two partial runtime types.
+  state, binding, render-target and draw slices, beside the three partial runtime types.
 
 ## Admission and safety
 
@@ -305,21 +307,19 @@ delimited and checked against `docs/generated/missing-type-inventory.md` by
 `test/test_plan_boundaries.rb`, so every name in it is a type the strict report really calls missing.
 
 <!-- absent-types:begin -->
-`GraphicsAdapter`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs`,
-`MediaPlayer`, `MediaLibrary`, `MediaQueue`, `Song`, `SongCollection`,
-`Album`, `AlbumCollection`, `Artist`, `ArtistCollection`, `Genre`, `GenreCollection`,
-`Playlist`, `PlaylistCollection`, `Picture`, `PictureAlbum`, `PictureAlbumCollection`,
-`PictureCollection`, `ContentReader`, `ContentTypeReader`, `ContentTypeReaderManager`,
-`MathTypeConverter`, `ColorConverter`, `MatrixConverter`,
-`PlaneConverter`, `PointConverter`, `QuaternionConverter`, `RayConverter`, `RectangleConverter`,
-`Vector2Converter`, `Vector3Converter`, `Vector4Converter`, `BoundingBoxConverter`,
-`BoundingSphereConverter`
+`ContentReader`, `ContentTypeReader`, `ContentTypeReaderManager`,
+`BoundingBoxConverter`, `BoundingSphereConverter`, `ColorConverter`, `MathTypeConverter`,
+`MatrixConverter`, `PlaneConverter`, `PointConverter`, `QuaternionConverter`, `RayConverter`,
+`RectangleConverter`, `Vector2Converter`, `Vector3Converter`, `Vector4Converter`,
+`GraphicsAdapter`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs`
 <!-- absent-types:end -->
 
-The graphics runtime is the large remaining area, and `GraphicsDevice` and
-`GraphicsDeviceManager` are the only partial types left — the scoreboard above carries what each
-still owes, and `docs/graphics-runtime-member-audit.md` says, family by family, what each of those
-members needs. `SpriteBatch` left this paragraph when the `Effect` cluster gave `Begin` its last two
+The graphics runtime is the large remaining area, and `GraphicsDevice`,
+`GraphicsDeviceManager` and `Song` are the only partial types left — the scoreboard above carries
+what each still owes, and `docs/graphics-runtime-member-audit.md` says, family by family, what each
+of the first two's members needs. `Song`'s three are `Album`, `Artist` and `Genre`, the only
+members of the whole `Media` namespace CNA exports no route for, while every reverse navigation is
+exported and works. `SpriteBatch` left this paragraph when the `Effect` cluster gave `Begin` its last two
 overloads; `SetRenderTarget` and the three device-driven draw calls are projected, so a render
 target can be made current and drawn into.
 
@@ -332,8 +332,10 @@ contract they unblocked, `RenderTarget2D`, `RenderTargetCube`, `RenderTargetBind
 the four graphics state objects,
 `SamplerStateCollection`, `TextureCollection`, `SpriteFont`, `Texture2D`, `Texture3D`,
 `TextureCube`, `GraphicsResource`, `ResourceContentManager`, and the whole `Audio` namespace including the XACT cluster. In `Media`,
-`Video`, `VideoPlayer`, `MediaSource` and `VisualizationData` are complete while the media *library*
-and *player* runtime above is not.
+every type is complete but `Song`, including the library and player runtime this paragraph used to
+defer: `MediaLibrary`, `MediaPlayer`, `MediaQueue`, `Album`, `Artist`, `Genre`, `Playlist`,
+`Picture`, `PictureAlbum` and their seven collections, beside `Video`, `VideoPlayer`, `MediaSource`
+and `VisualizationData`.
 
 The nine XNA exception types this binding projects are never raised by it. `AudioListener` and
 `AudioEmitter` are complete managed descriptors whose settings are never heard. Windows, macOS,

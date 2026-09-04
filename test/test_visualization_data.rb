@@ -110,14 +110,20 @@ class VisualizationDataTest < Minitest::Test
     # Video arrived in Foundation 52 from its own IL; it is not a filler either.
     # `VideoPlayer` left this list when its blocker was audited; it is not a filler for this type
     # either, and what this milestone claimed is unchanged.
-    %i[MediaPlayer MediaLibrary Song Album Playlist]
-      .each { |absent| refute F::Media.const_defined?(absent, false), "Media::#{absent}" }
+    #
+    # Foundation 103 built the filler this type was deferred over -- `MediaPlayer` and its
+    # `GetVisualizationData`, over the three `visualization` routes below -- so the claim that no
+    # filler existed is now history rather than state. What this milestone really established, and
+    # what still holds, is that the type is **constructible and complete without one**: its whole
+    # public surface is two float arrays it allocates itself, and the milestone bound no route at
+    # all to reach it.
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-    # `media` left this check when MediaSource bound the four routes that measure what CNA answers
-    # for the one source XNA builds from a resource string; `visualization` stays, because nothing
-    # is bound for the filler this type was deferred over.
-    refute(symbols.any? { |symbol| symbol.include?("visualization") })
-    refute(symbols.any? { |symbol| symbol.include?("media_player") || symbol.include?("media_library") })
+    assert_equal 3, symbols.count { |symbol| symbol.include?("visualization") }
+    assert(symbols.all? { |symbol| !symbol.include?("visualization") || symbol.start_with?("cna_media_player_") },
+           "the only visualization routes are the player's")
+    data = V.new
+    assert_equal 256, data.Frequencies.Count
+    assert_equal 256, data.Samples.Count
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
   end
 end

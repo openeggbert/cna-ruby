@@ -2189,6 +2189,190 @@
     {
       "name": "Microsoft.Xna.Framework.Storage.StorageContainer",
       "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.Song",
+      "include": [
+        {
+          "kind": "method",
+          "name": "FromUri",
+          "static": true,
+          "parameters": [
+            "System.String",
+            "System.Uri"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Finalize",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "op_Equality",
+          "static": true,
+          "parameters": [
+            "Microsoft.Xna.Framework.Media.Song",
+            "Microsoft.Xna.Framework.Media.Song"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "op_Inequality",
+          "static": true,
+          "parameters": [
+            "Microsoft.Xna.Framework.Media.Song",
+            "Microsoft.Xna.Framework.Media.Song"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "parameters": [
+            "System.Object"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Equals",
+          "static": false,
+          "parameters": [
+            "Microsoft.Xna.Framework.Media.Song"
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ToString",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "method",
+          "name": "GetHashCode",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "IsDisposed",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "Name",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "Duration",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "IsRated",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "Rating",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "PlayCount",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "TrackNumber",
+          "static": false,
+          "parameters": []
+        },
+        {
+          "kind": "property",
+          "name": "IsProtected",
+          "static": false,
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.SongCollection",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.Album",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.AlbumCollection",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.Artist",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.ArtistCollection",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.Genre",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.GenreCollection",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.Playlist",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.PlaylistCollection",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.Picture",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.PictureAlbum",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.PictureCollection",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.PictureAlbumCollection",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.MediaQueue",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.MediaPlayer",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Media.MediaLibrary",
+      "complete": true
     }
   ]
 }

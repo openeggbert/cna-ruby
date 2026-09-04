@@ -5,9 +5,16 @@ require_relative "../framework"
 module Microsoft
   module Xna
     module Framework
-      # The pure managed XNA Media enum contracts, and the one Media type that is fully
-      # constructible without a media stack. No MediaPlayer, MediaLibrary, Song, Video or playback
-      # route is implemented or implied.
+      # The whole XNA 4.0 `Media` namespace: the three enums, the managed holders `Video`,
+      # `VisualizationData` and `MediaSource`, `VideoPlayer` over CNA's own video player, and the
+      # library and player half -- `MediaLibrary`, `MediaPlayer`, `MediaQueue`, `Song`, `Album`,
+      # `Artist`, `Genre`, `Playlist`, `Picture`, `PictureAlbum` and their seven collections --
+      # over CNA's own media library.
+      #
+      # Two limits are real and are recorded rather than worked around. Nothing produces a `Video`,
+      # so `VideoPlayer.Play` has no legal argument; and `Song.Album`, `Song.Artist` and
+      # `Song.Genre` are the only three members of this namespace CNA exports no route for, which
+      # is why `Song` is the one type here that is not complete.
       module Media
         # Pinned CLR declaration order is Paused, Playing, Stopped; the raw values are not ascending.
         class MediaState < CNA::Runtime::EnumValue
@@ -64,6 +71,19 @@ module Microsoft
 
           # Two `ldfld` getters, each answering the same wrapper for the life of the object.
           attr_reader :Frequencies, :Samples
+
+          private
+
+          # `MediaPlayer.GetVisualizationData(this)` fills the caller's object, and the CLR fills
+          # the two arrays **in place** rather than replacing them — which is what makes each
+          # collection a live view rather than a snapshot, the property Foundation 51 measured.
+          def fill_from_native(data)
+            data.frequencies.each_with_index { |value, index| @frequencies[index] = value }
+            data.samples.each_with_index { |value, index| @samples[index] = value }
+            nil
+          end
+
+          public
 
           # `ReadOnlyCollection<float>` closed over `System.Single`. A Ruby class is not statically
           # generic, so the CLR type argument is carried as metadata the API verifier measures.
@@ -387,6 +407,1169 @@ module Microsoft
               end
               [MediaSourceType.coerce(type[0, 4].unpack1("L")), name]
             end
+          end
+        end
+        # ------------------------------------------------------------------ the Media namespace
+        #
+        # Seventeen types over one library, and one shape repeated. `CNA::Runtime::MediaSupport`
+        # carries the halves every one of them shares — the handle, the disposal, the collection —
+        # because they really are the same IL each time; what each type declares below is only what
+        # is its own.
+        #
+        # ## Where the objects come from
+        #
+        # `MediaLibrary` is the producer for all of them, and `Song.FromUri` is the one other way in.
+        # Every collection is a **live view** over a native list: `MediaLibrary.Songs` answers a new
+        # wrapper each call, as XNA's does, because the underlying list is the library's.
+        #
+        # ## The three members CNA cannot answer
+        #
+        # `Song.Album`, `Song.Artist` and `Song.Genre` have **no CNA route at all** — measured
+        # against the exported surface, where every other member of every one of the seventeen has
+        # one. `Song` is therefore the family's only partial type and those three are the only
+        # blocked members. `docs/remaining-surface-audit.md` records it.
+
+        # A song. `Duration` is a `TimeSpan`, which the BCL register projects as a Float of seconds.
+        class Song
+          include CNA::Runtime::MediaSupport::Disposable
+          private_class_method :new
+
+          # `FromUri(string name, Uri uri)`: XNA refuses a null name or uri with
+          # `ArgumentNullException`, then hands both to the media stack. `System.Uri` is not in the
+          # BCL register and nothing else in the selected surface names it, so the projection takes
+          # the string form a Ruby caller has — which is what CNA's route takes too.
+          def self.FromUri(name, uri)
+            raise ::ArgumentError, "name" if name.nil?
+            raise ::ArgumentError, "uri" if uri.nil?
+
+            game = CNA::Runtime::Context.__send__(:current_game, "Song.FromUri")
+            name_view = CNA::Native::Layouts::StringView.new(String(name).b)
+            uri_view = CNA::Native::Layouts::StringView.new(String(uri).b)
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_song_create_from_uri", game.__send__(:window_host_handle),
+                                     name_view.read_u64(0), name_view.read_u64(8),
+                                     uri_view.read_u64(0), uri_view.read_u64(8), output)
+            allocate.__send__(:initialize_native, output[0, 8].unpack1("Q"))
+          end
+
+          def Name
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.name_of("song", @handle)
+          end
+
+          def Duration
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.seconds(
+              CNA::Runtime::MediaSupport.int64("cna_song_get_duration", @handle)
+            )
+          end
+
+          def IsProtected = media_boolean("cna_song_get_is_protected")
+          def IsRated = media_boolean("cna_song_get_is_rated")
+          def PlayCount = media_int32("cna_song_get_play_count")
+          def Rating = media_int32("cna_song_get_rating")
+          def TrackNumber = media_int32("cna_song_get_track_number")
+
+          # `Equals(object)` is `Equals(obj as Song)`, and `Equals(Song)` compares the handles.
+          # `op_Equality` adds the null pair, which Ruby spells with `nil`.
+          def Equals(other)
+            return false unless other.is_a?(Song)
+            return true if equal?(other)
+            return false if @is_disposed || other.IsDisposed
+
+            output = CNA::Native.library.pointer_for("C", 0)
+            CNA::Native.library.call("cna_song_equals", @handle, other.__send__(:native_handle), output)
+            !output[0, 1].unpack1("C").zero?
+          end
+
+          def ==(other) = self.Equals(other)
+          def eql?(other) = self.Equals(other)
+
+          def GetHashCode
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.int32("cna_song_get_hash_code", @handle)
+          end
+
+          def hash = self.GetHashCode
+
+          def ToString = self.Name
+
+          def to_s = self.ToString
+
+          private
+
+          def initialize_native(handle)
+            @handle = handle
+            @is_disposed = false
+            self
+          end
+
+          def native_handle = @handle
+          def media_dispose_route = "cna_song_dispose"
+          def media_destroy_route = "cna_song_destroy"
+
+          def media_boolean(symbol)
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.boolean(symbol, @handle)
+          end
+
+          def media_int32(symbol)
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.int32(symbol, @handle)
+          end
+
+          class << self
+            private
+
+            def from_native(handle) = allocate.__send__(:initialize_native, handle)
+          end
+        end
+
+        # `Album`: a media item. Its `Name`, disposal, equality and hash are the family's shape;
+        # what is below is what this one adds.
+        class Album
+          include CNA::Runtime::MediaSupport::Disposable
+          private_class_method :new
+
+          def Name
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.name_of("album", @handle)
+          end
+
+          def Artist
+            verify_not_disposed!
+            optional("cna_album_get_artist") { |h| Artist.__send__(:from_native, h) }
+          end
+
+          def Genre
+            verify_not_disposed!
+            optional("cna_album_get_genre") { |h| Genre.__send__(:from_native, h) }
+          end
+
+          def Songs
+            verify_not_disposed!
+            SongCollection.__send__(:from_native, view("cna_album_get_songs"))
+          end
+
+          def Duration
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.seconds(media_int64("cna_album_get_duration"))
+          end
+
+          def HasArt
+            verify_not_disposed!
+            media_boolean("cna_album_get_has_art")
+          end
+
+          # `GetAlbumArt()` answers a `Stream` over the album's own art, or **null** when it has
+          # none — `HasArt` is the question a caller asks first. The bytes come back whole from
+          # CNA, which is what `Stream.over_bytes` is for.
+          def GetAlbumArt
+            verify_not_disposed!
+            return nil unless self.HasArt
+
+            bytes = CNA::Runtime::MediaSupport.bytes("cna_album_get_art_size", "cna_album_copy_art", @handle)
+            bytes.empty? ? nil : CNA::Runtime::Stream.over_bytes(bytes, name: "#{self.Name} art")
+          end
+
+          def GetThumbnail
+            verify_not_disposed!
+            return nil unless self.HasArt
+
+            bytes = CNA::Runtime::MediaSupport.bytes("cna_album_get_thumbnail_size",
+                                                     "cna_album_copy_thumbnail", @handle)
+            bytes.empty? ? nil : CNA::Runtime::Stream.over_bytes(bytes, name: "#{self.Name} thumbnail")
+          end
+
+          def Equals(other)
+            return false unless other.is_a?(Album)
+            return true if equal?(other)
+            return false if @is_disposed || other.IsDisposed
+
+            output = CNA::Native.library.pointer_for("C", 0)
+            CNA::Native.library.call("cna_album_equals", @handle, other.__send__(:native_handle), output)
+            !output[0, 1].unpack1("C").zero?
+          end
+
+          def ==(other) = self.Equals(other)
+          def eql?(other) = self.Equals(other)
+
+          def GetHashCode
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.int32("cna_album_get_hash_code", @handle)
+          end
+
+          def hash = self.GetHashCode
+
+          def ToString = self.Name
+
+          def to_s = self.ToString
+
+          private
+
+          def initialize_native(handle)
+            @handle = handle
+            @is_disposed = false
+            self
+          end
+
+          def native_handle = @handle
+          def media_dispose_route = "cna_album_dispose"
+          def media_destroy_route = "cna_album_destroy"
+
+          def media_boolean(symbol) = CNA::Runtime::MediaSupport.boolean(symbol, @handle)
+          def media_int32(symbol) = CNA::Runtime::MediaSupport.int32(symbol, @handle)
+          def media_int64(symbol) = CNA::Runtime::MediaSupport.int64(symbol, @handle)
+          def view(symbol) = CNA::Runtime::MediaSupport.handle_of(symbol, @handle)
+
+          def optional(symbol)
+            handle = CNA::Runtime::MediaSupport.optional_handle(symbol, @handle)
+            handle.nil? ? nil : yield(handle)
+          end
+
+          class << self
+            private
+
+            def from_native(handle) = allocate.__send__(:initialize_native, handle)
+          end
+        end
+
+        # `Artist`: a media item. Its `Name`, disposal, equality and hash are the family's shape;
+        # what is below is what this one adds.
+        class Artist
+          include CNA::Runtime::MediaSupport::Disposable
+          private_class_method :new
+
+          def Name
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.name_of("artist", @handle)
+          end
+
+          def Albums
+            verify_not_disposed!
+            AlbumCollection.__send__(:from_native, view("cna_artist_get_albums"))
+          end
+
+          def Songs
+            verify_not_disposed!
+            SongCollection.__send__(:from_native, view("cna_artist_get_songs"))
+          end
+
+          def Equals(other)
+            return false unless other.is_a?(Artist)
+            return true if equal?(other)
+            return false if @is_disposed || other.IsDisposed
+
+            output = CNA::Native.library.pointer_for("C", 0)
+            CNA::Native.library.call("cna_artist_equals", @handle, other.__send__(:native_handle), output)
+            !output[0, 1].unpack1("C").zero?
+          end
+
+          def ==(other) = self.Equals(other)
+          def eql?(other) = self.Equals(other)
+
+          def GetHashCode
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.int32("cna_artist_get_hash_code", @handle)
+          end
+
+          def hash = self.GetHashCode
+
+          def ToString = self.Name
+
+          def to_s = self.ToString
+
+          private
+
+          def initialize_native(handle)
+            @handle = handle
+            @is_disposed = false
+            self
+          end
+
+          def native_handle = @handle
+          def media_dispose_route = "cna_artist_dispose"
+          def media_destroy_route = "cna_artist_destroy"
+
+          def media_boolean(symbol) = CNA::Runtime::MediaSupport.boolean(symbol, @handle)
+          def media_int32(symbol) = CNA::Runtime::MediaSupport.int32(symbol, @handle)
+          def media_int64(symbol) = CNA::Runtime::MediaSupport.int64(symbol, @handle)
+          def view(symbol) = CNA::Runtime::MediaSupport.handle_of(symbol, @handle)
+
+          def optional(symbol)
+            handle = CNA::Runtime::MediaSupport.optional_handle(symbol, @handle)
+            handle.nil? ? nil : yield(handle)
+          end
+
+          class << self
+            private
+
+            def from_native(handle) = allocate.__send__(:initialize_native, handle)
+          end
+        end
+
+        # `Genre`: a media item. Its `Name`, disposal, equality and hash are the family's shape;
+        # what is below is what this one adds.
+        class Genre
+          include CNA::Runtime::MediaSupport::Disposable
+          private_class_method :new
+
+          def Name
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.name_of("genre", @handle)
+          end
+
+          def Albums
+            verify_not_disposed!
+            AlbumCollection.__send__(:from_native, view("cna_genre_get_albums"))
+          end
+
+          def Songs
+            verify_not_disposed!
+            SongCollection.__send__(:from_native, view("cna_genre_get_songs"))
+          end
+
+          def Equals(other)
+            return false unless other.is_a?(Genre)
+            return true if equal?(other)
+            return false if @is_disposed || other.IsDisposed
+
+            output = CNA::Native.library.pointer_for("C", 0)
+            CNA::Native.library.call("cna_genre_equals", @handle, other.__send__(:native_handle), output)
+            !output[0, 1].unpack1("C").zero?
+          end
+
+          def ==(other) = self.Equals(other)
+          def eql?(other) = self.Equals(other)
+
+          def GetHashCode
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.int32("cna_genre_get_hash_code", @handle)
+          end
+
+          def hash = self.GetHashCode
+
+          def ToString = self.Name
+
+          def to_s = self.ToString
+
+          private
+
+          def initialize_native(handle)
+            @handle = handle
+            @is_disposed = false
+            self
+          end
+
+          def native_handle = @handle
+          def media_dispose_route = "cna_genre_dispose"
+          def media_destroy_route = "cna_genre_destroy"
+
+          def media_boolean(symbol) = CNA::Runtime::MediaSupport.boolean(symbol, @handle)
+          def media_int32(symbol) = CNA::Runtime::MediaSupport.int32(symbol, @handle)
+          def media_int64(symbol) = CNA::Runtime::MediaSupport.int64(symbol, @handle)
+          def view(symbol) = CNA::Runtime::MediaSupport.handle_of(symbol, @handle)
+
+          def optional(symbol)
+            handle = CNA::Runtime::MediaSupport.optional_handle(symbol, @handle)
+            handle.nil? ? nil : yield(handle)
+          end
+
+          class << self
+            private
+
+            def from_native(handle) = allocate.__send__(:initialize_native, handle)
+          end
+        end
+
+        # `Playlist`: a media item. Its `Name`, disposal, equality and hash are the family's shape;
+        # what is below is what this one adds.
+        class Playlist
+          include CNA::Runtime::MediaSupport::Disposable
+          private_class_method :new
+
+          def Name
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.name_of("playlist", @handle)
+          end
+
+          def Duration
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.seconds(media_int64("cna_playlist_get_duration"))
+          end
+
+          def Songs
+            verify_not_disposed!
+            SongCollection.__send__(:from_native, view("cna_playlist_get_songs"))
+          end
+
+          def Equals(other)
+            return false unless other.is_a?(Playlist)
+            return true if equal?(other)
+            return false if @is_disposed || other.IsDisposed
+
+            output = CNA::Native.library.pointer_for("C", 0)
+            CNA::Native.library.call("cna_playlist_equals", @handle, other.__send__(:native_handle), output)
+            !output[0, 1].unpack1("C").zero?
+          end
+
+          def ==(other) = self.Equals(other)
+          def eql?(other) = self.Equals(other)
+
+          def GetHashCode
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.int32("cna_playlist_get_hash_code", @handle)
+          end
+
+          def hash = self.GetHashCode
+
+          def ToString = self.Name
+
+          def to_s = self.ToString
+
+          private
+
+          def initialize_native(handle)
+            @handle = handle
+            @is_disposed = false
+            self
+          end
+
+          def native_handle = @handle
+          def media_dispose_route = "cna_playlist_dispose"
+          def media_destroy_route = "cna_playlist_destroy"
+
+          def media_boolean(symbol) = CNA::Runtime::MediaSupport.boolean(symbol, @handle)
+          def media_int32(symbol) = CNA::Runtime::MediaSupport.int32(symbol, @handle)
+          def media_int64(symbol) = CNA::Runtime::MediaSupport.int64(symbol, @handle)
+          def view(symbol) = CNA::Runtime::MediaSupport.handle_of(symbol, @handle)
+
+          def optional(symbol)
+            handle = CNA::Runtime::MediaSupport.optional_handle(symbol, @handle)
+            handle.nil? ? nil : yield(handle)
+          end
+
+          class << self
+            private
+
+            def from_native(handle) = allocate.__send__(:initialize_native, handle)
+          end
+        end
+
+        # `Picture`: a media item. Its `Name`, disposal, equality and hash are the family's shape;
+        # what is below is what this one adds.
+        class Picture
+          include CNA::Runtime::MediaSupport::Disposable
+          private_class_method :new
+
+          def Name
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.name_of("picture", @handle)
+          end
+
+          def Album
+            verify_not_disposed!
+            optional("cna_picture_get_album") { |h| PictureAlbum.__send__(:from_native, h) }
+          end
+
+          def Width
+            verify_not_disposed!
+            media_int32("cna_picture_get_width")
+          end
+
+          def Height
+            verify_not_disposed!
+            media_int32("cna_picture_get_height")
+          end
+
+          # `get_Date` is a `System.DateTime`. CNA answers **100-nanosecond ticks from the Unix
+          # epoch** rather than from the CLR's year 1, which its header says in as many words, so
+          # the conversion is a division by ten million and nothing else. `System.DateTime` has no
+          # entry in the BCL register and nothing else in the selected surface names it, so it
+          # projects to Ruby's own `Time` — the same shape of decision `System.TimeSpan => Float`
+          # already records, and the one Ruby type that is a point in time.
+          def Date
+            verify_not_disposed!
+            Time.at(media_int64("cna_picture_get_date_unix_ticks") /
+                    CNA::Runtime::MediaSupport::TICKS_PER_SECOND).utc
+          end
+
+          # `GetImage()` and `GetThumbnail()` each answer a `Stream` over the picture's bytes.
+          def GetImage
+            verify_not_disposed!
+            CNA::Runtime::Stream.over_bytes(
+              CNA::Runtime::MediaSupport.bytes("cna_picture_get_image_size",
+                                               "cna_picture_copy_image", @handle),
+              name: self.Name
+            )
+          end
+
+          def GetThumbnail
+            verify_not_disposed!
+            CNA::Runtime::Stream.over_bytes(
+              CNA::Runtime::MediaSupport.bytes("cna_picture_get_thumbnail_size",
+                                               "cna_picture_copy_thumbnail", @handle),
+              name: "#{self.Name} thumbnail"
+            )
+          end
+
+          def Equals(other)
+            return false unless other.is_a?(Picture)
+            return true if equal?(other)
+            return false if @is_disposed || other.IsDisposed
+
+            output = CNA::Native.library.pointer_for("C", 0)
+            CNA::Native.library.call("cna_picture_equals", @handle, other.__send__(:native_handle), output)
+            !output[0, 1].unpack1("C").zero?
+          end
+
+          def ==(other) = self.Equals(other)
+          def eql?(other) = self.Equals(other)
+
+          def GetHashCode
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.int32("cna_picture_get_hash_code", @handle)
+          end
+
+          def hash = self.GetHashCode
+
+          def ToString = self.Name
+
+          def to_s = self.ToString
+
+          private
+
+          def initialize_native(handle)
+            @handle = handle
+            @is_disposed = false
+            self
+          end
+
+          def native_handle = @handle
+          def media_dispose_route = "cna_picture_dispose"
+          def media_destroy_route = "cna_picture_destroy"
+
+          def media_boolean(symbol) = CNA::Runtime::MediaSupport.boolean(symbol, @handle)
+          def media_int32(symbol) = CNA::Runtime::MediaSupport.int32(symbol, @handle)
+          def media_int64(symbol) = CNA::Runtime::MediaSupport.int64(symbol, @handle)
+          def view(symbol) = CNA::Runtime::MediaSupport.handle_of(symbol, @handle)
+
+          def optional(symbol)
+            handle = CNA::Runtime::MediaSupport.optional_handle(symbol, @handle)
+            handle.nil? ? nil : yield(handle)
+          end
+
+          class << self
+            private
+
+            def from_native(handle) = allocate.__send__(:initialize_native, handle)
+          end
+        end
+
+        # `PictureAlbum`: a media item. Its `Name`, disposal, equality and hash are the family's shape;
+        # what is below is what this one adds.
+        class PictureAlbum
+          include CNA::Runtime::MediaSupport::Disposable
+          private_class_method :new
+
+          def Name
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.name_of("picture_album", @handle)
+          end
+
+          def Albums
+            verify_not_disposed!
+            PictureAlbumCollection.__send__(:from_native, view("cna_picture_album_get_albums"))
+          end
+
+          def Pictures
+            verify_not_disposed!
+            PictureCollection.__send__(:from_native, view("cna_picture_album_get_pictures"))
+          end
+
+          def Parent
+            verify_not_disposed!
+            optional("cna_picture_album_get_parent") { |h| PictureAlbum.__send__(:from_native, h) }
+          end
+
+          def Equals(other)
+            return false unless other.is_a?(PictureAlbum)
+            return true if equal?(other)
+            return false if @is_disposed || other.IsDisposed
+
+            output = CNA::Native.library.pointer_for("C", 0)
+            CNA::Native.library.call("cna_picture_album_equals", @handle, other.__send__(:native_handle), output)
+            !output[0, 1].unpack1("C").zero?
+          end
+
+          def ==(other) = self.Equals(other)
+          def eql?(other) = self.Equals(other)
+
+          def GetHashCode
+            verify_not_disposed!
+            CNA::Runtime::MediaSupport.int32("cna_picture_album_get_hash_code", @handle)
+          end
+
+          def hash = self.GetHashCode
+
+          def ToString = self.Name
+
+          def to_s = self.ToString
+
+          private
+
+          def initialize_native(handle)
+            @handle = handle
+            @is_disposed = false
+            self
+          end
+
+          def native_handle = @handle
+          def media_dispose_route = "cna_picture_album_dispose"
+          def media_destroy_route = "cna_picture_album_destroy"
+
+          def media_boolean(symbol) = CNA::Runtime::MediaSupport.boolean(symbol, @handle)
+          def media_int32(symbol) = CNA::Runtime::MediaSupport.int32(symbol, @handle)
+          def media_int64(symbol) = CNA::Runtime::MediaSupport.int64(symbol, @handle)
+          def view(symbol) = CNA::Runtime::MediaSupport.handle_of(symbol, @handle)
+
+          def optional(symbol)
+            handle = CNA::Runtime::MediaSupport.optional_handle(symbol, @handle)
+            handle.nil? ? nil : yield(handle)
+          end
+
+          class << self
+            private
+
+            def from_native(handle) = allocate.__send__(:initialize_native, handle)
+          end
+        end
+
+        # `SongCollection`: a live view over a native list of `Song`. `Count`, `Item[int]` and
+        # `GetEnumerator` are the whole of its own surface; disposal and the disposed guard are the
+        # family's, in `CNA::Runtime::MediaSupport::Collection`.
+        class SongCollection
+          include CNA::Runtime::MediaSupport::Collection
+          private_class_method :new
+
+          private
+
+          def initialize_native(handle)
+            @handle = handle
+            @is_disposed = false
+            self
+          end
+
+          def native_handle = @handle
+          def media_dispose_route = "cna_song_collection_dispose"
+          def media_destroy_route = "cna_song_collection_destroy"
+          def media_count_route = "cna_song_collection_get_count"
+
+          def media_element(index)
+            Song.__send__(:from_native,
+                              CNA::Runtime::MediaSupport.element_at("cna_song_collection_get_at", @handle, index))
+          end
+
+          class << self
+            private
+
+            def from_native(handle) = allocate.__send__(:initialize_native, handle)
+          end
+        end
+
+        # `AlbumCollection`: a live view over a native list of `Album`. `Count`, `Item[int]` and
+        # `GetEnumerator` are the whole of its own surface; disposal and the disposed guard are the
+        # family's, in `CNA::Runtime::MediaSupport::Collection`.
+        class AlbumCollection
+          include CNA::Runtime::MediaSupport::Collection
+          private_class_method :new
+
+          private
+
+          def initialize_native(handle)
+            @handle = handle
+            @is_disposed = false
+            self
+          end
+
+          def native_handle = @handle
+          def media_dispose_route = "cna_album_collection_dispose"
+          def media_destroy_route = "cna_album_collection_destroy"
+          def media_count_route = "cna_album_collection_get_count"
+
+          def media_element(index)
+            Album.__send__(:from_native,
+                              CNA::Runtime::MediaSupport.element_at("cna_album_collection_get_at", @handle, index))
+          end
+
+          class << self
+            private
+
+            def from_native(handle) = allocate.__send__(:initialize_native, handle)
+          end
+        end
+
+        # `ArtistCollection`: a live view over a native list of `Artist`. `Count`, `Item[int]` and
+        # `GetEnumerator` are the whole of its own surface; disposal and the disposed guard are the
+        # family's, in `CNA::Runtime::MediaSupport::Collection`.
+        class ArtistCollection
+          include CNA::Runtime::MediaSupport::Collection
+          private_class_method :new
+
+          private
+
+          def initialize_native(handle)
+            @handle = handle
+            @is_disposed = false
+            self
+          end
+
+          def native_handle = @handle
+          def media_dispose_route = "cna_artist_collection_dispose"
+          def media_destroy_route = "cna_artist_collection_destroy"
+          def media_count_route = "cna_artist_collection_get_count"
+
+          def media_element(index)
+            Artist.__send__(:from_native,
+                              CNA::Runtime::MediaSupport.element_at("cna_artist_collection_get_at", @handle, index))
+          end
+
+          class << self
+            private
+
+            def from_native(handle) = allocate.__send__(:initialize_native, handle)
+          end
+        end
+
+        # `GenreCollection`: a live view over a native list of `Genre`. `Count`, `Item[int]` and
+        # `GetEnumerator` are the whole of its own surface; disposal and the disposed guard are the
+        # family's, in `CNA::Runtime::MediaSupport::Collection`.
+        class GenreCollection
+          include CNA::Runtime::MediaSupport::Collection
+          private_class_method :new
+
+          private
+
+          def initialize_native(handle)
+            @handle = handle
+            @is_disposed = false
+            self
+          end
+
+          def native_handle = @handle
+          def media_dispose_route = "cna_genre_collection_dispose"
+          def media_destroy_route = "cna_genre_collection_destroy"
+          def media_count_route = "cna_genre_collection_get_count"
+
+          def media_element(index)
+            Genre.__send__(:from_native,
+                              CNA::Runtime::MediaSupport.element_at("cna_genre_collection_get_at", @handle, index))
+          end
+
+          class << self
+            private
+
+            def from_native(handle) = allocate.__send__(:initialize_native, handle)
+          end
+        end
+
+        # `PlaylistCollection`: a live view over a native list of `Playlist`. `Count`, `Item[int]` and
+        # `GetEnumerator` are the whole of its own surface; disposal and the disposed guard are the
+        # family's, in `CNA::Runtime::MediaSupport::Collection`.
+        class PlaylistCollection
+          include CNA::Runtime::MediaSupport::Collection
+          private_class_method :new
+
+          private
+
+          def initialize_native(handle)
+            @handle = handle
+            @is_disposed = false
+            self
+          end
+
+          def native_handle = @handle
+          def media_dispose_route = "cna_playlist_collection_dispose"
+          def media_destroy_route = "cna_playlist_collection_destroy"
+          def media_count_route = "cna_playlist_collection_get_count"
+
+          def media_element(index)
+            Playlist.__send__(:from_native,
+                              CNA::Runtime::MediaSupport.element_at("cna_playlist_collection_get_at", @handle, index))
+          end
+
+          class << self
+            private
+
+            def from_native(handle) = allocate.__send__(:initialize_native, handle)
+          end
+        end
+
+        # `PictureCollection`: a live view over a native list of `Picture`. `Count`, `Item[int]` and
+        # `GetEnumerator` are the whole of its own surface; disposal and the disposed guard are the
+        # family's, in `CNA::Runtime::MediaSupport::Collection`.
+        class PictureCollection
+          include CNA::Runtime::MediaSupport::Collection
+          private_class_method :new
+
+          private
+
+          def initialize_native(handle)
+            @handle = handle
+            @is_disposed = false
+            self
+          end
+
+          def native_handle = @handle
+          def media_dispose_route = "cna_picture_collection_dispose"
+          def media_destroy_route = "cna_picture_collection_destroy"
+          def media_count_route = "cna_picture_collection_get_count"
+
+          def media_element(index)
+            Picture.__send__(:from_native,
+                              CNA::Runtime::MediaSupport.element_at("cna_picture_collection_get_at", @handle, index))
+          end
+
+          class << self
+            private
+
+            def from_native(handle) = allocate.__send__(:initialize_native, handle)
+          end
+        end
+
+        # `PictureAlbumCollection`: a live view over a native list of `PictureAlbum`. `Count`, `Item[int]` and
+        # `GetEnumerator` are the whole of its own surface; disposal and the disposed guard are the
+        # family's, in `CNA::Runtime::MediaSupport::Collection`.
+        class PictureAlbumCollection
+          include CNA::Runtime::MediaSupport::Collection
+          private_class_method :new
+
+          private
+
+          def initialize_native(handle)
+            @handle = handle
+            @is_disposed = false
+            self
+          end
+
+          def native_handle = @handle
+          def media_dispose_route = "cna_picture_album_collection_dispose"
+          def media_destroy_route = "cna_picture_album_collection_destroy"
+          def media_count_route = "cna_picture_album_collection_get_count"
+
+          def media_element(index)
+            PictureAlbum.__send__(:from_native,
+                              CNA::Runtime::MediaSupport.element_at("cna_picture_album_collection_get_at", @handle, index))
+          end
+
+          class << self
+            private
+
+            def from_native(handle) = allocate.__send__(:initialize_native, handle)
+          end
+        end
+
+        # `MediaQueue`: the player's own list of songs, and the index it is playing.
+        #
+        # It is **not** a `MediaSupport::Collection`: the contract declares only `Count`,
+        # `ActiveSongIndex`, `ActiveSong` and `Item[int]` — no `Dispose`, no `IsDisposed` and no
+        # `GetEnumerator` — so it carries those four and nothing else.
+        class MediaQueue
+          private_class_method :new
+
+          def Count = CNA::Runtime::MediaSupport.int32("cna_media_queue_get_count", @handle)
+
+          # `get_ActiveSongIndex` answers **-1** when nothing is queued. The setter is public in the
+          # pinned metadata — `set: true, setAccess: public` — so it is projected, and
+          # `cna_media_queue_set_active_song_index` is what it reaches.
+          def ActiveSongIndex = CNA::Runtime::MediaSupport.int32("cna_media_queue_get_active_song_index", @handle)
+
+          def ActiveSongIndex=(value)
+            CNA::Native.library.call("cna_media_queue_set_active_song_index", @handle,
+                                     CNA::Runtime::Numeric.int32(value, "value"))
+            value
+          end
+
+          def ActiveSong
+            handle = CNA::Runtime::MediaSupport.optional_handle("cna_media_queue_get_active_song", @handle)
+            handle.nil? ? nil : Song.__send__(:from_native, handle)
+          end
+
+          def [](index)
+            raise ::TypeError, "index must be an Integer" unless index.is_a?(::Integer)
+
+            Song.__send__(:from_native,
+                          CNA::Runtime::MediaSupport.element_at("cna_media_queue_get_at", @handle, index))
+          end
+
+          private
+
+          def initialize_native(handle)
+            @handle = handle
+            self
+          end
+
+          def native_handle = @handle
+
+          class << self
+            private
+
+            def from_native(handle) = allocate.__send__(:initialize_native, handle)
+          end
+        end
+
+        # `MediaPlayer` is an `abstract sealed` CLR class — a static one — and every member of it is
+        # static. CNA's routes take the **Game handle** rather than a player handle, which is the
+        # same shape: one player per process, reached through the game.
+        #
+        # `ActiveSongChanged` and `MediaStateChanged` are static events, projected as singleton
+        # readers the way `Storage.StorageDevice.DeviceChanged` is. Their CNA subscriptions are
+        # process-global and `_ext`, because XNA's own raisers are private.
+        class MediaPlayer
+          extend CNA::Runtime::EventOwner
+          # `abstract sealed` in the CLR is a static class: it cannot be constructed and cannot be
+          # derived from. Ruby has no such kind, so it is a class whose `new` is private — the same
+          # projection every constructor-free XNA class here takes.
+          private_class_method :new
+
+          class << self
+            def ActiveSongChanged = (@ActiveSongChanged ||= CNA::Runtime::Event.new)
+            def MediaStateChanged = (@MediaStateChanged ||= CNA::Runtime::Event.new)
+
+            # `Play(Song)`, `Play(SongCollection)` and `Play(SongCollection, int)`. Ruby cannot
+            # dispatch on parameter type, so the three collapse into one method dispatching on the
+            # argument's own type and arity — the rule every overload set here follows. A null
+            # argument is `ArgumentNullException`, which is the IL's first statement in each.
+            def Play(songOrCollection, index = nil)
+              raise ::ArgumentError, "song" if songOrCollection.nil?
+
+              case songOrCollection
+              when Song
+                raise ::ArgumentError, "index" unless index.nil?
+
+                call("cna_media_player_play_song", songOrCollection.__send__(:native_handle))
+              when SongCollection
+                if index.nil?
+                  call("cna_media_player_play_songs", songOrCollection.__send__(:native_handle))
+                else
+                  call("cna_media_player_play_songs_from", songOrCollection.__send__(:native_handle),
+                       CNA::Runtime::Numeric.int32(index, "index"))
+                end
+              else
+                raise ::TypeError, "Play takes a Song or a SongCollection"
+              end
+            end
+
+            def Pause = call("cna_media_player_pause")
+            def Resume = call("cna_media_player_resume")
+            def Stop = call("cna_media_player_stop")
+            def MoveNext = call("cna_media_player_move_next")
+            def MovePrevious = call("cna_media_player_move_previous")
+
+            # `GetVisualizationData(VisualizationData)` fills the caller's object and answers
+            # nothing. The two arrays it fills are live views over the object's own storage, which
+            # is what `VisualizationData` was projected for.
+            def GetVisualizationData(visualizationData)
+              raise ::ArgumentError, "visualizationData" if visualizationData.nil?
+              unless visualizationData.instance_of?(VisualizationData)
+                raise ::TypeError, "visualizationData must be a VisualizationData"
+              end
+
+              data = CNA::Native::Layouts::VisualizationData.new
+              CNA::Native.library.call("cna_media_player_get_visualization_data", game_handle, data.pointer)
+              visualizationData.__send__(:fill_from_native, data)
+              nil
+            end
+
+            def Queue
+              output = CNA::Native.library.pointer_for("Q", 0)
+              CNA::Native.library.call("cna_media_player_get_queue", game_handle, output)
+              MediaQueue.__send__(:from_native, output[0, 8].unpack1("Q"))
+            end
+
+            def State
+              output = CNA::Native.library.pointer_for("L", 0)
+              CNA::Native.library.call("cna_media_player_get_state", game_handle, output)
+              MediaState.coerce(output[0, 4].unpack1("L"))
+            end
+
+            def PlayPosition
+              CNA::Runtime::MediaSupport.seconds(
+                CNA::Runtime::MediaSupport.int64("cna_media_player_get_play_position_ticks", game_handle)
+              )
+            end
+
+            def GameHasControl = boolean("cna_media_player_get_game_has_control")
+            def IsMuted = boolean("cna_media_player_get_is_muted")
+            def IsRepeating = boolean("cna_media_player_get_is_repeating")
+            def IsShuffled = boolean("cna_media_player_get_is_shuffled")
+            def IsVisualizationEnabled = boolean("cna_media_player_get_is_visualization_enabled")
+
+            # A setter cannot be an endless method definition in Ruby, which is the language
+            # constraint every setter in this binding records.
+            def IsMuted=(value)
+              set_boolean("cna_media_player_set_is_muted", value, "IsMuted")
+            end
+
+            def IsRepeating=(value)
+              set_boolean("cna_media_player_set_is_repeating", value, "IsRepeating")
+            end
+
+            def IsShuffled=(value)
+              set_boolean("cna_media_player_set_is_shuffled", value, "IsShuffled")
+            end
+
+            def IsVisualizationEnabled=(value)
+              set_boolean("cna_media_player_set_is_visualization_enabled", value, "IsVisualizationEnabled")
+            end
+
+            # `set_Volume` clamps rather than refusing: `MathHelper.Clamp(value, 0f, 1f)` is the
+            # first statement, so 2.0 becomes 1.0 and -1.0 becomes 0.0 and neither raises.
+            def Volume
+              output = CNA::Native.library.pointer_for("e", 0.0)
+              CNA::Native.library.call("cna_media_player_get_volume", game_handle, output)
+              output[0, 4].unpack1("e")
+            end
+
+            def Volume=(value)
+              number = CNA::Runtime::Numeric.f32(value)
+              raise ::TypeError, "Volume must be a number" if number.nil?
+
+              CNA::Native.library.call("cna_media_player_set_volume", game_handle,
+                                       number.clamp(0.0, 1.0))
+              value
+            end
+
+            private
+
+            def game_handle
+              CNA::Runtime::Context.__send__(:current_game, "MediaPlayer").__send__(:window_host_handle)
+            end
+
+            def call(symbol, *arguments)
+              CNA::Native.library.call(symbol, game_handle, *arguments)
+              nil
+            end
+
+            def boolean(symbol) = CNA::Runtime::MediaSupport.boolean(symbol, game_handle)
+
+            def set_boolean(symbol, value, name)
+              raise ::TypeError, "#{name} must be true or false" unless value == true || value == false
+
+              CNA::Native.library.call(symbol, game_handle, value ? 1 : 0)
+              value
+            end
+          end
+        end
+
+        # `MediaLibrary`: the producer for every other type in this namespace.
+        #
+        # Its two constructors are `MediaLibrary()` and `MediaLibrary(MediaSource)`; the second
+        # refuses a null source with `ArgumentNullException`. Both reach CNA's own library, and
+        # every collection property answers a **fresh live view** over the library's list, which is
+        # what XNA's does.
+        class MediaLibrary
+          include CNA::Runtime::MediaSupport::Disposable
+          public_class_method :new
+
+          def initialize(mediaSource = nil)
+            game = CNA::Runtime::Context.__send__(:current_game, "MediaLibrary")
+            output = CNA::Native.library.pointer_for("Q", 0)
+            @is_disposed = false
+            if mediaSource.nil?
+              CNA::Native.library.call("cna_media_library_create", game.__send__(:window_host_handle), output)
+            else
+              unless mediaSource.instance_of?(MediaSource)
+                raise ::TypeError, "mediaSource must be a MediaSource"
+              end
+
+              CNA::Native.library.call("cna_media_library_create_from_source",
+                                       game.__send__(:window_host_handle), 0, output)
+            end
+            @handle = output[0, 8].unpack1("Q")
+            @MediaSource = mediaSource || MediaSource.GetAvailableMediaSources.first
+          end
+
+          attr_reader :MediaSource
+
+          def Songs = collection("cna_media_library_get_songs") { |h| SongCollection.__send__(:from_native, h) }
+          def Albums = collection("cna_media_library_get_albums") { |h| AlbumCollection.__send__(:from_native, h) }
+          def Artists = collection("cna_media_library_get_artists") { |h| ArtistCollection.__send__(:from_native, h) }
+          def Genres = collection("cna_media_library_get_genres") { |h| GenreCollection.__send__(:from_native, h) }
+          def Playlists = collection("cna_media_library_get_playlists") { |h| PlaylistCollection.__send__(:from_native, h) }
+          def Pictures = collection("cna_media_library_get_pictures") { |h| PictureCollection.__send__(:from_native, h) }
+          def SavedPictures = collection("cna_media_library_get_saved_pictures") { |h| PictureCollection.__send__(:from_native, h) }
+
+          # `get_RootPictureAlbum` answers the album every picture album descends from, or null when
+          # the platform has none.
+          def RootPictureAlbum
+            verify_not_disposed!
+            handle = CNA::Runtime::MediaSupport.optional_handle("cna_media_library_get_root_picture_album", @handle)
+            handle.nil? ? nil : PictureAlbum.__send__(:from_native, handle)
+          end
+
+          # `GetPictureFromToken(string token)` answers the picture a token names, or null.
+          def GetPictureFromToken(token)
+            verify_not_disposed!
+            raise ::ArgumentError, "token" if token.nil?
+
+            view = CNA::Native::Layouts::StringView.new(String(token).b)
+            value = CNA::Native.library.pointer_for("Q", 0)
+            available = CNA::Native.library.pointer_for("C", 0)
+            CNA::Native.library.call("cna_media_library_get_picture_from_token", @handle,
+                                     view.read_u64(0), view.read_u64(8), value, available)
+            return nil if available[0, 1].unpack1("C").zero?
+
+            Picture.__send__(:from_native, value[0, 8].unpack1("Q"))
+          end
+
+          #     SavePicture(string name, byte[] source)
+          #     SavePicture(string name, Stream source)
+          #
+          # Both refuse a null name or source. The `Stream` overload reads the stream whole and
+          # hands the bytes to the same route, because CNA's stream form takes a **CNA** stream
+          # handle and a `CNA::Runtime::Stream` is a managed buffer — reading it is the honest
+          # bridge rather than inventing a handle.
+          def SavePicture(name, source)
+            verify_not_disposed!
+            raise ::ArgumentError, "name" if name.nil?
+            raise ::ArgumentError, "source" if source.nil?
+
+            bytes = case source
+                    when ::String then source.b
+                    when CNA::Runtime::Stream then read_stream(source)
+                    else raise ::TypeError, "source must be a byte String or a Stream"
+                    end
+            view = CNA::Native::Layouts::StringView.new(String(name).b)
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_media_library_save_picture", @handle,
+                                     view.read_u64(0), view.read_u64(8),
+                                     Fiddle::Pointer[bytes], bytes.bytesize, output)
+            Picture.__send__(:from_native, output[0, 8].unpack1("Q"))
+          end
+
+          private
+
+          def media_dispose_route = "cna_media_library_dispose"
+          def media_destroy_route = "cna_media_library_destroy"
+
+          def native_handle = @handle
+
+          def collection(symbol)
+            verify_not_disposed!
+            yield(CNA::Runtime::MediaSupport.handle_of(symbol, @handle))
+          end
+
+          def read_stream(stream)
+            buffer = +""
+            chunk = "\0" * 65_536
+            loop do
+              read = stream.Read(chunk, 0, chunk.bytesize)
+              break if read.zero?
+
+              buffer << chunk[0, read]
+            end
+            buffer.b
           end
         end
       end

@@ -28,8 +28,10 @@ class GraphicsResourceDisposalTest < Minitest::Test
     assert_includes STRICT.fetch("completeTypeNames"), NAME
     assert_equal ReviewedScoreboard::PARTIAL_TYPES, STRICT.fetch("PARTIAL_TYPES")
     # GraphicsResource was the fifth partial type to complete and Texture2D the fourth; SpriteBatch
-    # was the sixth, when the Effect cluster gave `Begin` its two remaining overloads.
-    assert_equal 2, STRICT.fetch("PARTIAL_TYPES")
+    # was the sixth, when the Effect cluster gave `Begin` its two remaining overloads. The count is
+    # the reviewed one above rather than a literal, because a **new** partial can arrive as well as
+    # an old one leave -- `Media.Song` did, on three members CNA exports no route for.
+    assert_includes STRICT.fetch("partialTypes").keys, "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
     assert_equal ReviewedScoreboard::COMPLETE_TYPES, STRICT.fetch("COMPLETE_TYPES")
     assert_equal ReviewedScoreboard::MISSING_MEMBER, STRICT.fetch("MISSING_MEMBER")
     refute_includes STRICT.fetch("partialTypes").keys, NAME

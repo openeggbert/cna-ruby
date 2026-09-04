@@ -188,6 +188,28 @@ module CNA
         ]
       end
 
+      # `CNA_VisualizationData`: two versioning words and two fixed 256-float buffers, which is why
+      # it is a value rather than a handle — there is nothing variable to describe.
+      class VisualizationData < Structure
+        VALUES = 0x100
+
+        layout size: 8 + (0x100 * 4 * 2), alignment: 4, fields: [
+          Layouts.field("struct_size", "uint32_t", 0, 4),
+          Layouts.field("struct_version", "uint32_t", 4, 4),
+          Layouts.field("frequencies", "float[256]", 8, 0x100 * 4),
+          Layouts.field("samples", "float[256]", 8 + (0x100 * 4), 0x100 * 4)
+        ]
+
+        def initialize
+          super
+          write_u32(0, self.class.size)
+          write_u32(4, 1)
+        end
+
+        def frequencies = pointer[8, VALUES * 4].unpack("e#{VALUES}")
+        def samples = pointer[8 + (VALUES * 4), VALUES * 4].unpack("e#{VALUES}")
+      end
+
       class Texture2DInfo < Structure
         layout size: 24, alignment: 4, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

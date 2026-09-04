@@ -60,7 +60,10 @@ class EffectClusterTest < Minitest::Test
     overloads = REFERENCE.fetch(name).fetch("members").select { |m| m.fetch("name") == "Begin" }
     assert_equal 5, overloads.length
     assert_equal 2, overloads.count { |m| m.fetch("parameters").any? { |p| p.fetch("type").end_with?(".Effect") } }
-    assert_equal %w[GraphicsDeviceManager GraphicsDevice],
+    # The two graphics runtime types were the only partials for a long while; `Media.Song` joined
+    # them when the Media namespace was built, on three members CNA has no route for. What this
+    # milestone claimed, and still claims, is that **it** left neither of the first two partial.
+    assert_equal %w[GraphicsDeviceManager GraphicsDevice Song],
                  STRICT.fetch("partialTypes").keys.map { |key| key.split(".").last }
   end
 

@@ -379,12 +379,14 @@ class PureManagedEnumBatchTest < Minitest::Test
       .each { |name| assert A.const_defined?(name, false), "Audio::#{name}" }
     # VisualizationData arrived in Foundation 51 from its own IL: a constructible holder whose
     # filler, MediaPlayer.GetVisualizationData, is still one of the names below.
-    # `VideoPlayer` left this list when its blocker was audited and found not to be one; what this
-    # batch claimed is unchanged, and the filler VisualizationData was deferred over --
-    # MediaPlayer.GetVisualizationData -- is still absent.
+    # `VideoPlayer` left this list when its blocker was audited and found not to be one, and the
+    # rest of it at Foundation 103 -- including the filler VisualizationData was deferred over,
+    # MediaPlayer.GetVisualizationData, which now returns real bytes. What this batch claimed is
+    # unchanged and is measured directly by
+    # `test_batch_adds_no_native_binding_constant_or_callback`: **it** built none of them.
     %i[MediaPlayer MediaLibrary Song Album Artist Playlist
        Picture PictureAlbum].each do |name|
-      refute M.const_defined?(name, false), "Media::#{name}"
+      assert M.const_defined?(name, false), "Media::#{name}"
     end
     # Keyboard, KeyboardState and Keys predate these batches. Input::Touch was opened by
     # Foundation 17 and extended by Foundation 23 with the two publicly constructible value types;
@@ -413,7 +415,11 @@ class PureManagedEnumBatchTest < Minitest::Test
       value_types = %i[TouchPanelCapabilities TouchLocation GestureSample TouchCollection
                        TouchPanel AudioListener AudioEmitter RendererDetail VisualizationData Video
                        SoundEffect SoundEffectInstance DynamicSoundEffectInstance Microphone
-                       AudioEngine AudioCategory WaveBank SoundBank Cue MediaSource VideoPlayer]
+                       AudioEngine AudioCategory WaveBank SoundBank Cue MediaSource VideoPlayer
+                       MediaPlayer MediaLibrary MediaQueue Song SongCollection Album
+                       AlbumCollection Artist ArtistCollection Genre GenreCollection Playlist
+                       PlaylistCollection Picture PictureCollection PictureAlbum
+                       PictureAlbumCollection]
       extras = declared & value_types
       extras += declared.grep(/Exception\z/)
       assert_equal (selected + extras).uniq.sort, declared, namespace.name

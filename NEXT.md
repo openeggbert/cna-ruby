@@ -83,6 +83,7 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 100 | the Model family: eight types, four enumerators, three upstream crashes | **12** | 48 |
 | 101 | `DrawableGameComponent`, and the producer claim the manager's own IL settled | **1** | 13 |
 | 102 | the Storage family, and the async façade that is not one | **2** | 32 |
+| 103 | the Media library and player, and the three routes CNA does not export | **17** | 182 |
 
 ## Measured state
 
@@ -101,22 +102,22 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 | count | what it measures |
 | ---: | --- |
 | 257 | XNA 4.0 Windows reference types |
-| 220 | types this binding projects |
-| 2612 | Ruby member identities |
-| 218 | complete types |
-| 2 | partial types |
-| 37 | missing types |
-| 46 | event identities |
-| 23 | types owning an event |
+| 237 | types this binding projects |
+| 2794 | Ruby member identities |
+| 234 | complete types |
+| 3 | partial types |
+| 20 | missing types |
+| 48 | event identities |
+| 24 | types owning an event |
 | 28 | projected BCL identities |
 
 **Strict diagnostics**
 
 | count | what it measures |
 | ---: | --- |
-| 50 | strict diagnostics in total |
-| 37 | `MISSING_TYPE` |
-| 8 | `MISSING_MEMBER` |
+| 36 | strict diagnostics in total |
+| 20 | `MISSING_TYPE` |
+| 11 | `MISSING_MEMBER` |
 | 5 | `OVERLOAD_MAPPING_MISMATCH` |
 | 0 | `PROPERTY_MAPPING_MISMATCH` |
 | 0 | every other structural category, summed |
@@ -134,10 +135,10 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 590 | bound C functions |
+| 757 | bound C functions |
 | 7 | callbacks |
 | 152 | constants |
-| 67 | struct layouts |
+| 68 | struct layouts |
 | 2 | admitted encoded ABI versions |
 | 2 | header roots cross-verified |
 | 0 | `ABI_MISMATCHES` |
@@ -163,17 +164,18 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 156 | runtime capability rows |
+| 157 | runtime capability rows |
 
 <!-- scoreboard:end -->
 
-`GraphicsDevice` and `GraphicsDeviceManager` are the two partial types, and
-`docs/graphics-runtime-member-audit.md` enumerates every member each still owes together with what
-that member actually needs.
+`GraphicsDevice`, `GraphicsDeviceManager` and `Media.Song` are the three partial types, and
+`docs/graphics-runtime-member-audit.md` enumerates every member the first two still owe together
+with what that member actually needs. `Song` owes `Album`, `Artist` and `Genre` — the only three
+members of the whole `Media` namespace CNA exports no route for.
 
 ## What is left, and what each thing is waiting for
 
-`docs/remaining-surface-audit.md` classifies **every** remaining member and type at Foundation 102,
+`docs/remaining-surface-audit.md` classifies **every** remaining member and type at Foundation 103,
 with the evidence for each rather than a judgement. In summary:
 
 | What | Count | Classification |
@@ -181,19 +183,16 @@ with the evidence for each rather than a judgement. In summary:
 | `GraphicsDevice`'s 3 and `GraphicsDeviceManager`'s 5 | 8 members | `BLOCKED_UPSTREAM_CNA` — all eight trace to the one adapter defect |
 | `GraphicsAdapter`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs` | 3 types | `BLOCKED_UPSTREAM_CNA` — the same defect |
 | the thirteen `Design` converters | 13 types | `BCL_PROJECTION_SCOPE` — four `System.ComponentModel` identities and a descriptor system |
-| the `Media` namespace | 17 types | **locally actionable**; `Song.Album`/`Artist`/`Genre` are `BLOCKED_UPSTREAM_CNA` inside it |
+| `Song.Album`, `Song.Artist`, `Song.Genre` | 3 members | `BLOCKED_UPSTREAM_CNA` — no `cna_song_get_album`/`_artist`/`_genre` exists, while every reverse navigation does |
 | the `ContentReader` family | 4 types | **locally actionable**, behind one `System.IO.BinaryReader` register decision |
 
-**The two locally actionable blocks are the next two milestones, in that order.** Both were surveyed
-rather than guessed at:
+**One locally actionable block is left, and it is the next milestone.** The `Media` block above it
+was Foundation 103, and it was surveyed before it was built rather than guessed at: every one of the
+seven collection getters succeeds against a plain `Game` on the `HEADLESS` artifact, the music
+collections are empty on this host and `pictures` answers **35**, so the picture half has real data.
+167 routes were bound, each with a production call site, and the ABI gate is `ABI_MISMATCHES` 0
+against both roots.
 
-- **`Media`.** `cna_media_library_create` was driven against a plain `Game` on the `HEADLESS`
-  artifact: every one of the seven collection getters succeeds, the music collections are empty on
-  this host and `pictures` answers **35**, so the picture half has real data. A manifest of the 166
-  routes that would have a production call site was generated from the header and passed the ABI
-  gate with `ABI_MISMATCHES` 0 against both roots — and was then **reverted**, because a bound route
-  with no call site does not stay in the manifest. Regenerating it is mechanical; the Ruby side is
-  196 members of IL to derive.
 - **`ContentReader`.** Twenty `cna_content_reader_*` routes exist. The decision to make first is
   `System.IO.BinaryReader`, which `ContentReader` extends and two of whose members it overrides —
   the same shape of decision `System.IO.Stream` was, and a decision rather than a blocker. `PROPERTY_MAPPING_MISMATCH` is **zero**: the one entry it used to carry

@@ -1,13 +1,14 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 220,
-  "completeTypes": 218,
+  "targetTypes": 237,
+  "completeTypes": 234,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
-    "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
+    "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+    "Microsoft.Xna.Framework.Media.Song"
   ],
-  "missingTypes": 37,
+  "missingTypes": 20,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -42,6 +43,7 @@
     "System.Collections.Generic.List`1+Enumerator",
     "System.Collections.ObjectModel.Collection`1",
     "System.Collections.ObjectModel.ReadOnlyCollection`1",
+    "System.DateTime",
     "System.Enum",
     "System.EventArgs",
     "System.EventHandler`1",

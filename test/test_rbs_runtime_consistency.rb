@@ -782,9 +782,14 @@ class RbsRuntimeConsistencyTest < Minitest::Test
        %w[AudioChannels AudioStopOptions MicrophoneState SoundState RendererDetail] + exceptions,
      "::Microsoft::Xna::Framework::Media" =>
        # VideoPlayer joined them when its NATIVE_RUNTIME was audited and found not to be one; it is
-       # neither implied nor produced by this milestone's enums either.
+       # neither implied nor produced by this milestone's enums either. Foundation 103's seventeen
+       # joined them for the same reason: this batch declared three enums, and a library, a player
+       # and their fifteen collections and rows are not implied by an enum.
        %w[MediaSourceType MediaState VideoSoundtrackType VisualizationData
-          VisualizationData::FloatCollection Video VideoPlayer]}.each do |namespace, expected|
+          VisualizationData::FloatCollection Video VideoPlayer
+          MediaPlayer MediaLibrary MediaQueue Song SongCollection Album AlbumCollection
+          Artist ArtistCollection Genre GenreCollection Playlist PlaylistCollection
+          Picture PictureCollection PictureAlbum PictureAlbumCollection]}.each do |namespace, expected|
       declared = environment.class_decls.keys.map(&:to_s).select { |name| name.start_with?("#{namespace}::") }
       assert_equal expected.map { |name| "#{namespace}::#{name}" }.sort, declared.sort
       declared.each do |name|
@@ -807,6 +812,17 @@ class RbsRuntimeConsistencyTest < Minitest::Test
         elsif short == "FloatCollection"
           # Its nested ReadOnlyCollection<float>, closed over System.Single.
           assert_operator runtime_type, :<, CNA::Runtime::ReadOnlyCollection, name
+        elsif short.end_with?("Collection")
+          # Foundation 103's seven live views: IEnumerable`1 over a native list, disposable.
+          assert_includes runtime_type.ancestors, CNA::Runtime::MediaSupport::Collection, name
+          assert_includes runtime_type.ancestors, CNA::Runtime::MediaSupport::Disposable, name
+        elsif %w[MediaPlayer MediaQueue].include?(short)
+          # The static class and the queue it owns: neither is IDisposable in the IL.
+          assert_equal Object, runtime_type.superclass, name
+          refute_includes runtime_type.ancestors, CNA::Runtime::MediaSupport::Disposable, name
+        elsif %w[MediaLibrary Song Album Artist Genre Playlist Picture PictureAlbum].include?(short)
+          # Foundation 103's disposable rows, each over one native handle.
+          assert_includes runtime_type.ancestors, CNA::Runtime::MediaSupport::Disposable, name
         else
           assert_operator runtime_type, :<, CNA::Runtime::EnumValue, name
         end
@@ -814,12 +830,12 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     end
 
     # Substring checks would match the selected MicrophoneState literal, so assert on declarations.
-    # Video left this list in Foundation 52, projected from its own IL as five ldfld getters, and
-    # VideoPlayer left it when its NATIVE_RUNTIME was audited. What is still absent is everything
-    # the MediaPlayer/MediaLibrary half of the namespace would need, and the whole audio surface
-    # this batch's enums do not imply.
-    %w[SoundEffect Microphone AudioEngine WaveBank SoundBank Cue MediaPlayer MediaLibrary
-       Song Album Playlist].each do |absent|
+    # Video left this list in Foundation 52, projected from its own IL as five ldfld getters,
+    # VideoPlayer left it when its NATIVE_RUNTIME was audited, and the MediaPlayer/MediaLibrary
+    # half left it at Foundation 103. What is still absent is the whole audio surface this batch's
+    # enums do not imply -- an enum is not a device -- and it is asserted in the file the batch
+    # really wrote, so a later milestone declaring one of these in media.rbs cannot satisfy it.
+    %w[SoundEffect Microphone AudioEngine WaveBank SoundBank Cue].each do |absent|
       %w[audio.rbs media.rbs].each do |file|
         refute_includes SIGNATURE_ROOT.join("microsoft", "xna", file).read, "class #{absent}\n"
       end

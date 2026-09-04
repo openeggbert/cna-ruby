@@ -109,19 +109,23 @@ class MediaVideoTest < Minitest::Test
   def test_it_implies_no_media_runtime_and_nothing_produces_one
     # `VideoPlayer` left this list when its blocker was audited: eleven of the eleven
     # NATIVE_RUNTIME deferrals this project has checked turned out to name something the type's own
-    # public surface does not expose or a route CNA already exports. What **this** milestone
-    # claimed is unchanged, and the half of the namespace nothing has selected is still absent.
-    %i[MediaPlayer MediaLibrary Song Album Playlist]
-      .each { |absent| refute M.const_defined?(absent, false), "Media::#{absent}" }
+    # public surface does not expose or a route CNA already exports. `MediaPlayer`, `MediaLibrary`,
+    # `Song`, `Album` and `Playlist` left it for the same reason at Foundation 103, which bound the
+    # routes CNA does export for them. Neither departure changes what **this** milestone claimed.
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     # `media_` left this check when MediaSource bound the four routes that measure what CNA answers
-    # for the source XNA builds from a resource string, and `cna_video_player_*` when VideoPlayer
-    # was built. What is still true, and is what this milestone really claims, is that **nothing
-    # produces a Video**: no `cna_video_create*` route is bound and no content route for video
-    # exists at all.
+    # for the source XNA builds from a resource string, `cna_video_player_*` when VideoPlayer was
+    # built, and `cna_media_player_*`/`cna_media_library_*` at Foundation 103. What is still true,
+    # and is what this milestone really claims, is that **nothing produces a Video**: no
+    # `cna_video_create*` route is bound and no content route for video exists at all.
     refute(symbols.any? { |symbol| symbol.start_with?("cna_video_create") })
     refute_includes symbols, "cna_content_manager_load_video"
-    refute(symbols.any? { |symbol| symbol.include?("media_player") || symbol.include?("media_library") })
+    # Foundation 103's player plays a Song, never a Video: `cna_media_player_play` is the only play
+    # route it bound and no route names both a player and a video. `cna_video_player_get_texture`
+    # is bound and is not a counter-example -- it *reads* a frame from a video already playing,
+    # which is why VideoPlayer is complete while nothing can hand it a first argument.
+    refute(symbols.any? { |symbol| symbol.include?("media_player") && symbol.include?("video") })
+    assert_includes symbols, "cna_video_player_get_texture"
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
   end
 end

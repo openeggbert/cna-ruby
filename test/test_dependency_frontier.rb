@@ -376,6 +376,12 @@ class DependencyFrontierTest < Minitest::Test
     # **not** here, and that is the list being right rather than incomplete: native reachability is
     # measured from each type's own **XNA IL**, and a bone's five members are `ldfld`s while a
     # collection's three are a linear scan over a list something else made.
+    # Sixteen of the Media namespace's seventeen joined together: every one of them reaches
+    # `UnsafeNativeMethods` or `WmpInterface` in XNA's own IL, which is the Windows Media Player
+    # COM surface. `Song` is **not** here and that is the list being right rather than incomplete:
+    # its members are `ldfld`s over fields the library filled, and `FromUri` is the one that would
+    # reach native — it is `MediaSong_FromUri`, and `Song` is partial, so it is not on this list of
+    # **complete** types at all.
     # `Storage.StorageDevice` joined with the Storage family: its three properties reach
     # `UnsafeNativeMethods.GetDiskFreeSpaceEx` through `StorageContainer.GetDeviceFolder`, which is
     # a real native entry point in XNA's own IL. `StorageContainer` is **not** here, which is the
@@ -431,6 +437,22 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.VertexBuffer
       Microsoft.Xna.Framework.Input.GamePad
       Microsoft.Xna.Framework.Input.Mouse
+      Microsoft.Xna.Framework.Media.Album
+      Microsoft.Xna.Framework.Media.AlbumCollection
+      Microsoft.Xna.Framework.Media.Artist
+      Microsoft.Xna.Framework.Media.ArtistCollection
+      Microsoft.Xna.Framework.Media.Genre
+      Microsoft.Xna.Framework.Media.GenreCollection
+      Microsoft.Xna.Framework.Media.MediaLibrary
+      Microsoft.Xna.Framework.Media.MediaPlayer
+      Microsoft.Xna.Framework.Media.MediaQueue
+      Microsoft.Xna.Framework.Media.Picture
+      Microsoft.Xna.Framework.Media.PictureAlbum
+      Microsoft.Xna.Framework.Media.PictureAlbumCollection
+      Microsoft.Xna.Framework.Media.PictureCollection
+      Microsoft.Xna.Framework.Media.Playlist
+      Microsoft.Xna.Framework.Media.PlaylistCollection
+      Microsoft.Xna.Framework.Media.SongCollection
       Microsoft.Xna.Framework.Media.VideoPlayer
       Microsoft.Xna.Framework.Storage.StorageDevice
     ], ((STRICT.fetch("completeTypeNames") & native) - internally_native.keys).sort

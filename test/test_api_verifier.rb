@@ -1806,6 +1806,8 @@ class ApiVerifierTest < Minitest::Test
       Microsoft.Xna.Framework.DrawableGameComponent::DrawOrderChanged
       Microsoft.Xna.Framework.Storage.StorageDevice::DeviceChanged
       Microsoft.Xna.Framework.Storage.StorageContainer::Disposing
+      Microsoft.Xna.Framework.Media.MediaPlayer::ActiveSongChanged
+      Microsoft.Xna.Framework.Media.MediaPlayer::MediaStateChanged
     ], selected
 
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
@@ -1825,11 +1827,16 @@ class ApiVerifierTest < Minitest::Test
         assert_match(/\ASystem\.EventHandler`1\[[^\[\]]+\]\z/, member.fetch("type"))
         assert_equal true, member.fetch("add")
         assert_equal true, member.fetch("remove")
-        # Every selected event is an instance event except one: `Storage.StorageDevice`'s
-        # `DeviceChanged` is a **static** field on the type, which the verifier measures on the
-        # singleton. It is named here rather than allowed by a loosened predicate.
-        expected = "#{type.fetch("name")}::#{member.fetch("name")}" ==
-                   "Microsoft.Xna.Framework.Storage.StorageDevice::DeviceChanged"
+        # Every selected event is an instance event except three, and all three are static fields
+        # on their type rather than on an instance: `Storage.StorageDevice`'s `DeviceChanged`, and
+        # `Media.MediaPlayer`'s two, which are static because the whole type is (`abstract sealed`
+        # in the CLR is a C# static class). The verifier measures each on the singleton, and they
+        # are named here rather than allowed by a loosened predicate.
+        expected = %w[
+          Microsoft.Xna.Framework.Storage.StorageDevice::DeviceChanged
+          Microsoft.Xna.Framework.Media.MediaPlayer::ActiveSongChanged
+          Microsoft.Xna.Framework.Media.MediaPlayer::MediaStateChanged
+        ].include?("#{type.fetch("name")}::#{member.fetch("name")}")
         assert_equal expected, member.fetch("static"), member.fetch("name")
       end
     end
@@ -1943,6 +1950,7 @@ class ApiVerifierTest < Minitest::Test
     assert_equal %w[
       Microsoft.Xna.Framework.GraphicsDeviceManager
       Microsoft.Xna.Framework.Graphics.GraphicsDevice
+      Microsoft.Xna.Framework.Media.Song
     ].sort, partial.keys.sort
     # 132 until Foundation 37 closed Game::Components and Game::Services, 130 until Foundation
     # 41 closed Game's four events and their three protected raisers -- the three methods among

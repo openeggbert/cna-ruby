@@ -59,6 +59,319 @@ module Microsoft
           def Volume: () -> Float
           def Volume=: (Float | Integer value) -> Float
         end
+
+        # ------------------------------------------------------------------- Foundation 103
+        #
+        # The library and player half of the namespace, over CNA's own media library. Every one of
+        # these is `IDisposable` in XNA and every one of them owns a native handle here, so
+        # `Dispose`, `Finalize` and `IsDisposed` are the contract's rather than this binding's.
+        #
+        # `Song` is the one partial type: `Album`, `Artist` and `Genre` are the only three members
+        # of the whole namespace CNA exports no route for, so they are declared nowhere.
+        class Song
+          def self.FromUri: (String name, String uri) -> Song
+
+          def Dispose: () -> nil
+          def Finalize: () -> nil
+          attr_reader IsDisposed: bool
+          def Name: () -> String
+          def Duration: () -> Float
+          def IsRated: () -> bool
+          def Rating: () -> Integer
+          def PlayCount: () -> Integer
+          def TrackNumber: () -> Integer
+          def IsProtected: () -> bool
+
+          def Equals: (untyped other) -> bool
+          def ==: (untyped other) -> bool
+          def eql?: (untyped other) -> bool
+          def hash: () -> Integer
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def to_s: () -> String
+        end
+
+        class Album
+          def Dispose: () -> nil
+          def Finalize: () -> nil
+          attr_reader IsDisposed: bool
+          def Name: () -> String
+          def Artist: () -> Artist
+          def Genre: () -> Genre
+          def Songs: () -> SongCollection
+          def Duration: () -> Float
+          def HasArt: () -> bool
+          # `null` when the album has no art, which is the IL's own answer rather than an empty
+          # stream.
+          def GetAlbumArt: () -> CNA::Runtime::Stream?
+          def GetThumbnail: () -> CNA::Runtime::Stream?
+
+          def Equals: (untyped other) -> bool
+          def ==: (untyped other) -> bool
+          def eql?: (untyped other) -> bool
+          def hash: () -> Integer
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def to_s: () -> String
+        end
+
+        class Artist
+          def Dispose: () -> nil
+          def Finalize: () -> nil
+          attr_reader IsDisposed: bool
+          def Name: () -> String
+          def Songs: () -> SongCollection
+          def Albums: () -> AlbumCollection
+
+          def Equals: (untyped other) -> bool
+          def ==: (untyped other) -> bool
+          def eql?: (untyped other) -> bool
+          def hash: () -> Integer
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def to_s: () -> String
+        end
+
+        class Genre
+          def Dispose: () -> nil
+          def Finalize: () -> nil
+          attr_reader IsDisposed: bool
+          def Name: () -> String
+          def Songs: () -> SongCollection
+          def Albums: () -> AlbumCollection
+
+          def Equals: (untyped other) -> bool
+          def ==: (untyped other) -> bool
+          def eql?: (untyped other) -> bool
+          def hash: () -> Integer
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def to_s: () -> String
+        end
+
+        class Playlist
+          def Dispose: () -> nil
+          def Finalize: () -> nil
+          attr_reader IsDisposed: bool
+          def Name: () -> String
+          def Songs: () -> SongCollection
+          def Duration: () -> Float
+
+          def Equals: (untyped other) -> bool
+          def ==: (untyped other) -> bool
+          def eql?: (untyped other) -> bool
+          def hash: () -> Integer
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def to_s: () -> String
+        end
+
+        class Picture
+          def Dispose: () -> nil
+          def Finalize: () -> nil
+          attr_reader IsDisposed: bool
+          def Name: () -> String
+          def Album: () -> PictureAlbum
+          def Width: () -> Integer
+          def Height: () -> Integer
+          # `System.DateTime` projects to `Time`; CNA answers 100ns ticks from the Unix epoch.
+          def Date: () -> Time
+          def GetImage: () -> CNA::Runtime::Stream?
+          def GetThumbnail: () -> CNA::Runtime::Stream?
+
+          def Equals: (untyped other) -> bool
+          def ==: (untyped other) -> bool
+          def eql?: (untyped other) -> bool
+          def hash: () -> Integer
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def to_s: () -> String
+        end
+
+        class PictureAlbum
+          def Dispose: () -> nil
+          def Finalize: () -> nil
+          attr_reader IsDisposed: bool
+          def Name: () -> String
+          # `null` at the root, which is how a consumer knows it has one.
+          def Parent: () -> PictureAlbum?
+          def Albums: () -> PictureAlbumCollection
+          def Pictures: () -> PictureCollection
+
+          def Equals: (untyped other) -> bool
+          def ==: (untyped other) -> bool
+          def eql?: (untyped other) -> bool
+          def hash: () -> Integer
+          def GetHashCode: () -> Integer
+          def ToString: () -> String
+          def to_s: () -> String
+        end
+
+        # `IEnumerable`1[Song]`, `IEnumerable` and `IDisposable`: a live view over the native
+        # list, indexed and counted on demand, never materialised.
+        class SongCollection
+          include Enumerable[Song]
+
+          def Dispose: () -> nil
+          def Finalize: () -> nil
+          attr_reader IsDisposed: bool
+          def Count: () -> Integer
+          def []: (Integer index) -> Song
+          def GetEnumerator: () -> CNA::Runtime::ArrayEnumerator[Song]
+          def each: () { (Song) -> void } -> self
+                  | () -> Enumerator[Song, self]
+        end
+
+        # `IEnumerable`1[Album]`, `IEnumerable` and `IDisposable`: a live view over the native
+        # list, indexed and counted on demand, never materialised.
+        class AlbumCollection
+          include Enumerable[Album]
+
+          def Dispose: () -> nil
+          def Finalize: () -> nil
+          attr_reader IsDisposed: bool
+          def Count: () -> Integer
+          def []: (Integer index) -> Album
+          def GetEnumerator: () -> CNA::Runtime::ArrayEnumerator[Album]
+          def each: () { (Album) -> void } -> self
+                  | () -> Enumerator[Album, self]
+        end
+
+        # `IEnumerable`1[Artist]`, `IEnumerable` and `IDisposable`: a live view over the native
+        # list, indexed and counted on demand, never materialised.
+        class ArtistCollection
+          include Enumerable[Artist]
+
+          def Dispose: () -> nil
+          def Finalize: () -> nil
+          attr_reader IsDisposed: bool
+          def Count: () -> Integer
+          def []: (Integer index) -> Artist
+          def GetEnumerator: () -> CNA::Runtime::ArrayEnumerator[Artist]
+          def each: () { (Artist) -> void } -> self
+                  | () -> Enumerator[Artist, self]
+        end
+
+        # `IEnumerable`1[Genre]`, `IEnumerable` and `IDisposable`: a live view over the native
+        # list, indexed and counted on demand, never materialised.
+        class GenreCollection
+          include Enumerable[Genre]
+
+          def Dispose: () -> nil
+          def Finalize: () -> nil
+          attr_reader IsDisposed: bool
+          def Count: () -> Integer
+          def []: (Integer index) -> Genre
+          def GetEnumerator: () -> CNA::Runtime::ArrayEnumerator[Genre]
+          def each: () { (Genre) -> void } -> self
+                  | () -> Enumerator[Genre, self]
+        end
+
+        # `IEnumerable`1[Playlist]`, `IEnumerable` and `IDisposable`: a live view over the native
+        # list, indexed and counted on demand, never materialised.
+        class PlaylistCollection
+          include Enumerable[Playlist]
+
+          def Dispose: () -> nil
+          def Finalize: () -> nil
+          attr_reader IsDisposed: bool
+          def Count: () -> Integer
+          def []: (Integer index) -> Playlist
+          def GetEnumerator: () -> CNA::Runtime::ArrayEnumerator[Playlist]
+          def each: () { (Playlist) -> void } -> self
+                  | () -> Enumerator[Playlist, self]
+        end
+
+        # `IEnumerable`1[Picture]`, `IEnumerable` and `IDisposable`: a live view over the native
+        # list, indexed and counted on demand, never materialised.
+        class PictureCollection
+          include Enumerable[Picture]
+
+          def Dispose: () -> nil
+          def Finalize: () -> nil
+          attr_reader IsDisposed: bool
+          def Count: () -> Integer
+          def []: (Integer index) -> Picture
+          def GetEnumerator: () -> CNA::Runtime::ArrayEnumerator[Picture]
+          def each: () { (Picture) -> void } -> self
+                  | () -> Enumerator[Picture, self]
+        end
+
+        # `IEnumerable`1[PictureAlbum]`, `IEnumerable` and `IDisposable`: a live view over the native
+        # list, indexed and counted on demand, never materialised.
+        class PictureAlbumCollection
+          include Enumerable[PictureAlbum]
+
+          def Dispose: () -> nil
+          def Finalize: () -> nil
+          attr_reader IsDisposed: bool
+          def Count: () -> Integer
+          def []: (Integer index) -> PictureAlbum
+          def GetEnumerator: () -> CNA::Runtime::ArrayEnumerator[PictureAlbum]
+          def each: () { (PictureAlbum) -> void } -> self
+                  | () -> Enumerator[PictureAlbum, self]
+        end
+
+        # `IDisposable`, with two constructors: the parameterless one and the one taking a
+        # `MediaSource`.
+        class MediaLibrary
+          def initialize: (?MediaSource? mediaSource) -> void
+
+          def Dispose: () -> nil
+          def Finalize: () -> nil
+          attr_reader IsDisposed: bool
+          def MediaSource: () -> MediaSource?
+          def Songs: () -> SongCollection
+          def Albums: () -> AlbumCollection
+          def Artists: () -> ArtistCollection
+          def Genres: () -> GenreCollection
+          def Playlists: () -> PlaylistCollection
+          def Pictures: () -> PictureCollection
+          def SavedPictures: () -> PictureCollection
+          def RootPictureAlbum: () -> PictureAlbum
+          # The byte[] overload takes a Ruby byte String; the Stream overload is read whole.
+          def SavePicture: (String name, String | CNA::Runtime::Stream source) -> Picture
+          def GetPictureFromToken: (String token) -> Picture
+        end
+
+        # Read-only in XNA except for `ActiveSongIndex`: nothing else on it mutates, so a queue is
+        # changed by `MediaPlayer.Play` and by nothing else.
+        class MediaQueue
+          def Count: () -> Integer
+          def ActiveSong: () -> Song?
+          def ActiveSongIndex: () -> Integer
+          def ActiveSongIndex=: (Integer value) -> Integer
+          def []: (Integer index) -> Song
+        end
+
+        # `abstract sealed` in the CLR -- a C# static class -- so every member is a singleton
+        # method and `new` is private. Its two events are static fields on the type.
+        class MediaPlayer
+          def self.Play: (Song | SongCollection song, ?Integer? index) -> nil
+          def self.Pause: () -> nil
+          def self.Resume: () -> nil
+          def self.Stop: () -> nil
+          def self.MoveNext: () -> nil
+          def self.MovePrevious: () -> nil
+          # Fills the caller's object in place and answers nothing, which is the IL's `System.Void`.
+          def self.GetVisualizationData: (VisualizationData visualizationData) -> nil
+          def self.Queue: () -> MediaQueue
+          def self.State: () -> MediaState
+          def self.PlayPosition: () -> Float
+          def self.Volume: () -> Float
+          def self.Volume=: (Float | Integer value) -> untyped
+          def self.IsMuted: () -> bool
+          def self.IsMuted=: (bool value) -> untyped
+          def self.IsShuffled: () -> bool
+          def self.IsShuffled=: (bool value) -> untyped
+          def self.IsRepeating: () -> bool
+          def self.IsRepeating=: (bool value) -> untyped
+          def self.IsVisualizationEnabled: () -> bool
+          def self.IsVisualizationEnabled=: (bool value) -> untyped
+          def self.GameHasControl: () -> bool
+          def self.ActiveSongChanged: () -> CNA::Runtime::Event
+          def self.MediaStateChanged: () -> CNA::Runtime::Event
+        end
       end
     end
   end
