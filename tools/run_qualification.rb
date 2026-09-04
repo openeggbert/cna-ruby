@@ -139,18 +139,38 @@ module CNAQualification
 
     # A private display, started for one attempt and stopped after it.
     # `CNA_QUALIFICATION_DISPLAY` overrides, for a host with no `Xvfb`.
+    #
+    # The number is **claimed** rather than guessed. A first draft picked `90 + rand(9)`; when that
+    # collided with a display already on the host, `Xvfb` exited immediately and the whole suite ran
+    # against a stranger's server — a real 1280x1024 window with focus, which made eight tests that
+    # assert the headless answers fail at once and moved the skip count by nine. So the number is
+    # taken from the first free `/tmp/.X<n>-lock`, the server is waited for rather than slept at,
+    # and a server that never comes up aborts instead of handing back a display that is not ours.
     def on_fresh_display
       return yield(ENV["CNA_QUALIFICATION_DISPLAY"]) unless ENV["CNA_QUALIFICATION_DISPLAY"].to_s.empty?
 
-      number = 90 + rand(9)
+      number = (90..119).find { |candidate| !File.exist?("/tmp/.X#{candidate}-lock") }
+      raise "no free X display number in 90..119" if number.nil?
+
       pid = spawn("Xvfb", ":#{number}", "-screen", "0", "1280x800x24",
                   out: File::NULL, err: File::NULL)
-      sleep 2
       begin
+        started = (1..40).any? do
+          sleep 0.25
+          break false unless Process.wait(pid, Process::WNOHANG).nil?
+
+          File.exist?("/tmp/.X11-unix/X#{number}")
+        end
+        raise "Xvfb :#{number} did not start" unless started
+
         yield(":#{number}")
       ensure
-        Process.kill("TERM", pid)
-        Process.wait(pid)
+        begin
+          Process.kill("TERM", pid)
+          Process.wait(pid)
+        rescue Errno::ESRCH, Errno::ECHILD
+          nil
+        end
       end
     end
 

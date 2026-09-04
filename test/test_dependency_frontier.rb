@@ -376,6 +376,11 @@ class DependencyFrontierTest < Minitest::Test
     # **not** here, and that is the list being right rather than incomplete: native reachability is
     # measured from each type's own **XNA IL**, and a bone's five members are `ldfld`s while a
     # collection's three are a linear scan over a list something else made.
+    # `Storage.StorageDevice` joined with the Storage family: its three properties reach
+    # `UnsafeNativeMethods.GetDiskFreeSpaceEx` through `StorageContainer.GetDeviceFolder`, which is
+    # a real native entry point in XNA's own IL. `StorageContainer` is **not** here, which is the
+    # list being right rather than incomplete: its file operations go through `DirectoryInfo` and
+    # `FileStream`, managed BCL types, and never through a P/Invoke of its own.
     assert_equal %w[
       Microsoft.Xna.Framework.Audio.AudioCategory
       Microsoft.Xna.Framework.Audio.AudioEngine
@@ -427,6 +432,7 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Input.GamePad
       Microsoft.Xna.Framework.Input.Mouse
       Microsoft.Xna.Framework.Media.VideoPlayer
+      Microsoft.Xna.Framework.Storage.StorageDevice
     ], ((STRICT.fetch("completeTypeNames") & native) - internally_native.keys).sort
     %w[
       Microsoft.Xna.Framework.FrameworkDispatcher

@@ -135,6 +135,8 @@ class GameWindowTest < Minitest::Test
   # ------------------------------------------------------------------- the abstract host members
 
   def test_allow_user_resizing_round_trips_through_the_real_route
+    skip RendererEnvironment::UNMEASURED unless RendererEnvironment.measured?
+
     with_window do |window, _game|
       # The initial value is the host's. A build with no native window answers false, which is also
       # XNA's own field default; a build whose renderer creates one answers CNA's windowed default,
@@ -157,6 +159,8 @@ class GameWindowTest < Minitest::Test
   # used to write the first column down as literals, which made it an assertion about the
   # qualification artifact rather than about the projection.
   def test_the_hosts_own_window_answers_are_reported_rather_than_replaced
+    skip RendererEnvironment::UNMEASURED unless RendererEnvironment.measured?
+
     with_window do |window, _game|
       bounds = window.ClientBounds
       assert_instance_of F::Rectangle, bounds

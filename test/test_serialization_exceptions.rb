@@ -77,11 +77,15 @@ class SerializationExceptionsTest < Minitest::Test
     assert_equal ReviewedScoreboard::MISSING_TYPES, STRICT.fetch("MISSING_TYPES")
   end
 
-  # Storage is a new namespace holding exactly one type, the shape Audio and Media took in
-  # Foundation 16. Nothing else in it exists.
-  def test_the_storage_namespace_holds_exactly_one_type
-    assert_equal [:StorageDeviceNotConnectedException], F::Storage.constants.sort
-    %i[StorageDevice StorageContainer StorageDeviceAsyncResult].each do |absent|
+  # Storage was a new namespace holding exactly one type, the shape Audio and Media took in
+  # Foundation 16. The two runtime types joined it when Storage was built; what this milestone
+  # claimed, and still claims, is that **it** added only the exception. `StorageDeviceAsyncResult`
+  # is `private` in XNA and is not a projected identity here either -- what a consumer holds is the
+  # `IAsyncResult` projection, which lives in `CNA::Runtime` because it is a BCL type.
+  def test_the_storage_namespace_holds_only_selected_types
+    assert_equal %i[StorageContainer StorageDevice StorageDeviceNotConnectedException],
+                 F::Storage.constants.sort
+    %i[StorageDeviceAsyncResult StorageContainerOpenAsyncResult StorageStream].each do |absent|
       refute F::Storage.const_defined?(absent, false), absent
     end
   end

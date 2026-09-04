@@ -265,7 +265,7 @@ class GameEventsTest < Minitest::Test
       assert_equal before, game.IsActive, "the event is an observation, not the state"
       # On an artifact whose renderer creates no window there is no focus to begin with, so the
       # seam is visible in its strongest form: the raiser cannot turn a false into a true.
-      refute game.IsActive unless RendererEnvironment.windowed?
+      refute game.IsActive if RendererEnvironment.measured? && !RendererEnvironment.windowed?
     ensure
       game.Dispose
     end

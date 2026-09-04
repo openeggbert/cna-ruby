@@ -139,7 +139,7 @@ class GameIsActiveTest < Minitest::Test
       assert_equal 0, CNA::Native.library.call("cna_game_get_is_active", handle, output)
       assert_equal output[0, 1].unpack1("C") == 1, game.IsActive
       # Nothing is embellished in either direction: a host with no native window has no focus.
-      refute game.IsActive unless RendererEnvironment.windowed?
+      refute game.IsActive if RendererEnvironment.measured? && !RendererEnvironment.windowed?
     end
   end
 

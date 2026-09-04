@@ -90,6 +90,25 @@ module CNA
         buffer[0, bytes].force_encoding(Encoding::UTF_8)
       end
 
+      # `counted_string` for a route whose copy takes an **index** as well as the buffer, and whose
+      # count route takes the same leading arguments. `StorageContainer.GetDirectoryNames` is the
+      # shape: one count call for the pattern, then one copy call per index.
+      def counted_string_at(copy_symbol, handle, view, index)
+        size = pointer_for("Q", 0)
+        # MEASURED: the sizing call answers `CNA_RESULT_BUFFER_TOO_SMALL` **and fills the count**,
+        # which is the header's own contract ("Receives the required byte count", and
+        # "insufficient capacity performs no partial write"). So 14 is the expected answer here and
+        # only another code is a failure -- and the count is read either way.
+        result = function(copy_symbol).call(handle, view.read_u64(0), view.read_u64(8), index, nil, 0, size)
+        check(result, copy_symbol) unless result == RESULT_BUFFER_TOO_SMALL
+        bytes = size[0, 8].unpack1("Q")
+        return "" if bytes.zero?
+
+        buffer = Fiddle::Pointer.malloc(bytes, Fiddle::RUBY_FREE)
+        call(copy_symbol, handle, view.read_u64(0), view.read_u64(8), index, buffer, bytes, size)
+        buffer[0, bytes].force_encoding(Encoding::UTF_8)
+      end
+
       def pointer_for(format, value = 0)
         data = [value].pack(format)
         pointer = Fiddle::Pointer.malloc(data.bytesize, Fiddle::RUBY_FREE)

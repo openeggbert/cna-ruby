@@ -5,20 +5,20 @@
   "REFERENCE_MEMBERS": 2964,
   "EXPECTED_RUBY_TYPES": 257,
   "EXPECTED_RUBY_MEMBERS": 2915,
-  "TARGET_TYPES": 218,
-  "TARGET_MEMBERS": 2581,
-  "TOTAL_DIAGNOSTICS": 52,
-  "COMPLETE_TYPES": 216,
+  "TARGET_TYPES": 220,
+  "TARGET_MEMBERS": 2612,
+  "TOTAL_DIAGNOSTICS": 50,
+  "COMPLETE_TYPES": 218,
   "PARTIAL_TYPES": 2,
-  "MISSING_TYPES": 39,
+  "MISSING_TYPES": 37,
   "ALLOWLIST_ENTRIES": 0,
-  "EVENT_IDENTITIES": 44,
-  "EVENT_OWNER_TYPES": 21,
+  "EVENT_IDENTITIES": 46,
+  "EVENT_OWNER_TYPES": 23,
   "EVENT_SUPPORT_TYPE": "CNA::Runtime::Event",
-  "BCL_PROJECTED_IDENTITIES": 22,
+  "BCL_PROJECTED_IDENTITIES": 28,
   "BCL_EXCEPTION_BASES": 2,
   "BCL_THROWN_EXCEPTIONS": 8,
-  "MISSING_TYPE": 39,
+  "MISSING_TYPE": 37,
   "MISSING_MEMBER": 8,
   "UNEXPECTED_TYPE": 0,
   "UNEXPECTED_MEMBER": 0,
@@ -85,7 +85,9 @@
     "Microsoft.Xna.Framework.Graphics.RenderTarget2D::ContentLost",
     "Microsoft.Xna.Framework.Graphics.RenderTargetCube::ContentLost",
     "Microsoft.Xna.Framework.DrawableGameComponent::VisibleChanged",
-    "Microsoft.Xna.Framework.DrawableGameComponent::DrawOrderChanged"
+    "Microsoft.Xna.Framework.DrawableGameComponent::DrawOrderChanged",
+    "Microsoft.Xna.Framework.Storage.StorageDevice::DeviceChanged",
+    "Microsoft.Xna.Framework.Storage.StorageContainer::Disposing"
   ],
   "bclProjection": {
     "types": {
@@ -93,6 +95,11 @@
       "System.Byte[]": "String",
       "System.IO.Stream": "CNA::Runtime::Stream",
       "System.IO.SeekOrigin": "CNA::Runtime::Stream::SeekOrigin",
+      "System.IO.FileMode": "CNA::Runtime::Stream::FileMode",
+      "System.IO.FileAccess": "CNA::Runtime::Stream::FileAccess",
+      "System.IO.FileShare": "CNA::Runtime::Stream::FileShare",
+      "System.IAsyncResult": "CNA::Runtime::AsyncResult",
+      "System.Threading.WaitHandle": "CNA::Runtime::AsyncResult::WaitHandle",
       "System.Collections.Generic.Dictionary`2": "CNA::Runtime::Dictionary",
       "System.Runtime.Serialization.SerializationInfo": "CNA::Runtime::SerializationInfo",
       "System.Runtime.Serialization.StreamingContext": "CNA::Runtime::StreamingContext",
@@ -337,7 +344,9 @@
     "Microsoft.Xna.Framework.Graphics.ModelMeshCollection+Enumerator",
     "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator",
     "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator",
-    "Microsoft.Xna.Framework.DrawableGameComponent"
+    "Microsoft.Xna.Framework.DrawableGameComponent",
+    "Microsoft.Xna.Framework.Storage.StorageDevice",
+    "Microsoft.Xna.Framework.Storage.StorageContainer"
   ],
   "partialTypes": {
     "Microsoft.Xna.Framework.GraphicsDeviceManager": [
@@ -390,9 +399,7 @@
     "Microsoft.Xna.Framework.Media.PlaylistCollection",
     "Microsoft.Xna.Framework.Media.Song",
     "Microsoft.Xna.Framework.Media.SongCollection",
-    "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs",
-    "Microsoft.Xna.Framework.Storage.StorageContainer",
-    "Microsoft.Xna.Framework.Storage.StorageDevice"
+    "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs"
   ],
   "localDiagnostics": {
     "Microsoft.Xna.Framework.MathHelper": 0,
@@ -612,7 +619,9 @@
     "Microsoft.Xna.Framework.Graphics.ModelMeshCollection+Enumerator": 0,
     "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator": 0,
     "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator": 0,
-    "Microsoft.Xna.Framework.DrawableGameComponent": 0
+    "Microsoft.Xna.Framework.DrawableGameComponent": 0,
+    "Microsoft.Xna.Framework.Storage.StorageDevice": 0,
+    "Microsoft.Xna.Framework.Storage.StorageContainer": 0
   },
   "details": {
     "MISSING_TYPE": [
@@ -652,9 +661,7 @@
       "Microsoft.Xna.Framework.Media.PlaylistCollection",
       "Microsoft.Xna.Framework.Media.Song",
       "Microsoft.Xna.Framework.Media.SongCollection",
-      "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs",
-      "Microsoft.Xna.Framework.Storage.StorageContainer",
-      "Microsoft.Xna.Framework.Storage.StorageDevice"
+      "Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs"
     ],
     "MISSING_MEMBER": [
       "Microsoft.Xna.Framework.Graphics.GraphicsDevice::.ctor (1 overload)",

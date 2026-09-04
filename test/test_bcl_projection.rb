@@ -63,26 +63,38 @@ class BclProjectionTest < Minitest::Test
                   # transitively: no XNA signature names SeekOrigin, System.IO.Stream::Seek does.
                   "System.Byte[]" => "String",
                   "System.IO.Stream" => "CNA::Runtime::Stream",
-                  "System.IO.SeekOrigin" => "CNA::Runtime::Stream::SeekOrigin"},
+                  "System.IO.SeekOrigin" => "CNA::Runtime::Stream::SeekOrigin",
+                  # The Storage family, and the second and third transitive demands: no XNA
+                  # signature names WaitHandle -- IAsyncResult.AsyncWaitHandle does -- while the
+                  # three IO enums are named directly by StorageContainer.OpenFile's overloads.
+                  "System.IO.FileMode" => "CNA::Runtime::Stream::FileMode",
+                  "System.IO.FileAccess" => "CNA::Runtime::Stream::FileAccess",
+                  "System.IO.FileShare" => "CNA::Runtime::Stream::FileShare",
+                  "System.IAsyncResult" => "CNA::Runtime::AsyncResult",
+                  "System.Threading.WaitHandle" => "CNA::Runtime::AsyncResult::WaitHandle"},
                  B::TYPES)
     # Foundation 33 also records a decision *not* to invent a constant, and Foundation 36 adds
     # the second such decision.
-    assert_equal ["System.Action`1", "System.IDisposable", "System.IServiceProvider",
-                  "System.Resources.ResourceManager"],
+    assert_equal ["System.Action`1", "System.AsyncCallback", "System.IDisposable",
+                  "System.IServiceProvider", "System.Resources.ResourceManager"],
                  B::STRUCTURAL_COLLAPSE.keys.sort
     assert_equal({"System.Exception" => "StandardError",
                   "System.Runtime.InteropServices.ExternalException" => "StandardError"},
                  B::EXCEPTION_BASES)
-    assert_equal ["System.Action`1", "System.Attribute", "System.Byte[]", "System.Char",
+    assert_equal ["System.Action`1", "System.AsyncCallback", "System.Attribute", "System.Byte[]",
+                  "System.Char",
                   "System.Collections.Generic.Dictionary`2", "System.Collections.Generic.IList`1",
                   "System.Collections.ObjectModel.Collection`1",
                   "System.Collections.ObjectModel.ReadOnlyCollection`1", "System.EventArgs",
-                  "System.Exception", "System.IDisposable", "System.IO.SeekOrigin", "System.IO.Stream",
+                  "System.Exception", "System.IAsyncResult", "System.IDisposable",
+                  "System.IO.FileAccess", "System.IO.FileMode", "System.IO.FileShare",
+                  "System.IO.SeekOrigin", "System.IO.Stream",
                   "System.IServiceProvider", "System.Nullable`1",
                   "System.Resources.ResourceManager",
                   "System.Runtime.InteropServices.ExternalException",
                   "System.Runtime.Serialization.SerializationInfo",
                   "System.Runtime.Serialization.StreamingContext", "System.Text.StringBuilder",
+                  "System.Threading.WaitHandle",
                   "System.TimeSpan", "System.Type"], B.identities
 
     B::TYPES.merge(B::EXCEPTION_BASES).each_value do |path|
@@ -118,7 +130,10 @@ class BclProjectionTest < Minitest::Test
     # `System.IO.Stream::Seek` in the pinned mscorlib and by no XNA signature at all, yet a consumer
     # holding a stream this binding produced needs it to seek. `docs/generated/bcl-inventory.json`
     # carries the same rule and records which kind of demand each family has.
-    transitive = { "System.IO.SeekOrigin" => "System.IO.Stream" }
+    # `WaitHandle` joined `SeekOrigin` as a transitive demand: no XNA signature names it, and
+    # `IAsyncResult.AsyncWaitHandle` -- itself named by four Storage signatures -- does.
+    transitive = { "System.IO.SeekOrigin" => "System.IO.Stream",
+                   "System.Threading.WaitHandle" => "System.IAsyncResult" }
     B.identities.each do |identity|
       demanded_by = transitive[identity]
       if demanded_by
@@ -126,7 +141,8 @@ class BclProjectionTest < Minitest::Test
                "#{identity} claims transitive demand but an XNA signature names it")
         family = BCL_INVENTORY.fetch("families").find { |entry| entry.fetch("family") == identity }
         assert_equal "transitive", family.fetch("demand"), identity
-        assert_equal ["#{demanded_by}::Seek"], family.fetch("bclConsumers"), identity
+        expected = identity == "System.IO.SeekOrigin" ? ["#{demanded_by}::Seek"] : nil
+        assert_equal expected, family.fetch("bclConsumers"), identity unless expected.nil?
         next
       end
       assert(signatures.any? { |signature| signature.include?(identity) }, identity)

@@ -1,11 +1,44 @@
 module Microsoft
   module Xna
     module Framework
-      # Exactly one projected type, the shape Audio and Media took for their enums. No StorageDevice,
-      # StorageContainer or file system of any kind.
+      # `StorageDevice`, `StorageContainer` and the exception a disconnected device raises. The
+      # stream a container's files open as is `CNA::Runtime::StorageStream`, not an XNA identity.
       module Storage
         class StorageDeviceNotConnectedException < StandardError
           def initialize: (?untyped first, ?untyped second) -> void
+        end
+
+        # `DeviceChanged` is a static event, so it is declared on the singleton.
+        class StorageDevice
+          def self.DeviceChanged: () -> CNA::Runtime::Event
+          def self.BeginShowSelector: (*untyped arguments) -> CNA::Runtime::AsyncResult
+          def self.EndShowSelector: (CNA::Runtime::AsyncResult result) -> StorageDevice
+          def BeginOpenContainer: (String displayName, ?untyped callback, ?untyped state) -> CNA::Runtime::AsyncResult
+          def EndOpenContainer: (CNA::Runtime::AsyncResult result) -> StorageContainer
+          def DeleteContainer: (String titleName) -> nil
+          def FreeSpace: () -> Integer
+          def TotalSpace: () -> Integer
+          def IsConnected: () -> bool
+        end
+
+        class StorageContainer
+          def DisplayName: () -> String
+          def StorageDevice: () -> StorageDevice
+          def IsDisposed: () -> bool
+          def DirectoryExists: (String directory) -> bool
+          def FileExists: (String file) -> bool
+          def CreateDirectory: (String directory) -> nil
+          def DeleteDirectory: (String directory) -> nil
+          def DeleteFile: (String file) -> nil
+          def CreateFile: (String file) -> CNA::Runtime::StorageStream
+          def OpenFile: (String file, CNA::Runtime::Stream::FileMode fileMode,
+                         ?CNA::Runtime::Stream::FileAccess? fileAccess,
+                         ?CNA::Runtime::Stream::FileShare? fileShare) -> CNA::Runtime::StorageStream
+          def GetDirectoryNames: (?String searchPattern) -> Array[String]
+          def GetFileNames: (?String searchPattern) -> Array[String]
+          def Dispose: (?bool disposing) -> nil
+          def Finalize: () -> nil
+          def Disposing: () -> CNA::Runtime::Event
         end
       end
     end

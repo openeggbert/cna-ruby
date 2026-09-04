@@ -53,7 +53,17 @@ FAMILIES = {
   "System.IO.Stream" =>
     "the declared return type of TitleContainer.OpenStream, ContentManager.OpenStream, StorageContainer.OpenFile/CreateFile and four Media getters, and the declared parameter of SoundEffect.FromStream, Texture2D.FromStream and Texture2D.SaveAsPng/SaveAsJpeg -- seventeen XNA members in all",
   "System.IO.SeekOrigin" =>
-    "the second parameter of System.IO.Stream::Seek, and the only identity a consumer of a stream this binding produces can name in order to seek; demanded transitively through Stream rather than directly by an XNA signature"
+    "the second parameter of System.IO.Stream::Seek, and the only identity a consumer of a stream this binding produces can name in order to seek; demanded transitively through Stream rather than directly by an XNA signature",
+  "System.IO.FileMode" =>
+    "the second parameter of all three StorageContainer.OpenFile overloads",
+  "System.IO.FileAccess" =>
+    "the third parameter of two StorageContainer.OpenFile overloads",
+  "System.IO.FileShare" =>
+    "the fourth parameter of StorageContainer.OpenFile's widest overload",
+  "System.IAsyncResult" =>
+    "the return of StorageDevice.BeginShowSelector and BeginOpenContainer and the argument of EndShowSelector and EndOpenContainer -- four XNA members",
+  "System.Threading.WaitHandle" =>
+    "the declared type of IAsyncResult.AsyncWaitHandle, and the only identity a consumer holding a result this binding produces can name in order to wait; demanded transitively through IAsyncResult rather than directly by an XNA signature"
 }.freeze
 
 # Support enums the collection families throw through. Their literal names are what make a derived

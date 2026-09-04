@@ -103,6 +103,24 @@ module RendererEnvironment
     path if path && File.file?(path)
   end
 
+  # Whether the environment could be measured at all.
+  #
+  # This module already says that an unmeasurable environment must make every renderer-conditional
+  # test **skip and say why** — and for a while six of them did not. `windowed?`,
+  # `render_target_readback?` and their kin all answer `false` when `measurement` is nil, so a test
+  # that branches on one took the HEADLESS branch on a real renderer and asserted a window of
+  # `[0, 0]` against a window of `[800, 480]`. Measured: one qualification run of the `OPENGL33`
+  # suite hit the X-connection limit during the measurement itself and eight tests failed at once,
+  # every one of them a capability predicate reading `false` for "unknown".
+  #
+  # So the predicates keep answering `false` — that is right for a caller asking "is it windowed",
+  # and `false` is the safe answer — and a test that would *assert* on the answer asks this first.
+  def measured? = !measurement.nil?
+
+  # The message such a test skips with, so the reason is in the output rather than inferred.
+  UNMEASURED = "the renderer environment could not be measured on this host; see " \
+               "RendererEnvironment#measure_safely"
+
   # True when this artifact's renderer really creates a native window, which is the single fact the
   # six environment-dependent expectations turn on.
   def windowed? = !measurement.nil? && measurement.fetch(:window_system) != UNKNOWN

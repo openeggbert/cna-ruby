@@ -59,7 +59,9 @@ class RendererQualificationTest < Minitest::Test
 
     assert_equal name, run.fetch("renderer").fetch("rendererName")
     assert_equal RendererEnvironment.window_system, run.fetch("renderer").fetch("nativeWindowSystem")
-    assert_equal RendererEnvironment.windowed?, run.fetch("renderer").fetch("nativeWindowSystem") != 0
+    if RendererEnvironment.measured?
+      assert_equal RendererEnvironment.windowed?, run.fetch("renderer").fetch("nativeWindowSystem") != 0
+    end
     assert_equal ENV.fetch("CNA_NATIVE_LIBRARY"), run.fetch("artifact").fetch("path")
   end
 
@@ -173,6 +175,7 @@ class RendererQualificationTest < Minitest::Test
   # something other than what they say.
   def test_the_environment_branch_agrees_with_a_second_independent_route
     skip "CNA_NATIVE_LIBRARY not supplied" unless RendererEnvironment.available?
+    skip RendererEnvironment::UNMEASURED unless RendererEnvironment.measured?
 
     game = Microsoft::Xna::Framework::Game.new
     begin

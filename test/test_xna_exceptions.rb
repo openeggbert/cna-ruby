@@ -172,9 +172,11 @@ class XnaExceptionsTest < Minitest::Test
       refute F::Graphics.const_defined?(name, false), "Graphics::#{name}"
     end
     # Foundation 49 opened Storage for exactly one type -- the shape Audio and Media took -- and
-    # added ContentLoadException beside Foundation 27's five ContentSerializer attributes. Neither
-    # is raised by anything, here or there.
-    assert_equal %i[StorageDeviceNotConnectedException], F::Storage.constants(false).sort
+    # added ContentLoadException beside Foundation 27's five ContentSerializer attributes. The two
+    # Storage runtime types joined it later; what this milestone claimed, and still claims, is that
+    # **it** built neither, and its own exception is still raised by nothing here.
+    assert_equal %i[StorageContainer StorageDevice StorageDeviceNotConnectedException],
+                 F::Storage.constants(false).sort
     assert_equal %i[ContentLoadException ContentManager ContentSerializerAttribute
                     ContentSerializerCollectionItemNameAttribute
                     ContentSerializerIgnoreAttribute ContentSerializerRuntimeTypeAttribute

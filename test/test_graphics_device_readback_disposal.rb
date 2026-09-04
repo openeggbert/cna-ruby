@@ -153,6 +153,7 @@ class GraphicsDeviceReadbackDisposalTest < Minitest::Test
   # is CNA's; and CNA refuses for a renderer reason instead. Same shape, different reason, and both
   # are recorded rather than blurred.
   def test_an_artifact_without_honest_readback_refuses
+    skip RendererEnvironment::UNMEASURED unless RendererEnvironment.measured?
     skip "this artifact reads the back buffer back" if RendererEnvironment.render_target_readback?
 
     outcome = with_device(8, 4) { |device| error_of { device.GetBackBufferData(colours(32)) } }

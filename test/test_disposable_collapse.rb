@@ -44,8 +44,8 @@ class DisposableCollapseTest < Minitest::Test
 
   def test_the_register_records_the_collapse_and_invents_nothing
     assert B.structural_collapse?(CLR)
-    assert_equal ["System.Action`1", "System.IDisposable", "System.IServiceProvider",
-                  "System.Resources.ResourceManager"],
+    assert_equal ["System.Action`1", "System.AsyncCallback", "System.IDisposable",
+                  "System.IServiceProvider", "System.Resources.ResourceManager"],
                  B::STRUCTURAL_COLLAPSE.keys.sort
     reason = B::STRUCTURAL_COLLAPSE.fetch(CLR)
     assert_includes reason, "Dispose()"
@@ -353,7 +353,8 @@ class DisposableCollapseTest < Minitest::Test
     # that this collapse moved nothing.
     assert ReviewedScoreboard.complete?(STRICT, "Microsoft.Xna.Framework.Game")
     # Three when this milestone ran; System.Resources.ResourceManager is the fourth, added when
-    # ResourceContentManager was built, which again does not weaken what this one claimed.
-    assert_equal 4, CNA::Runtime::BclProjection::STRUCTURAL_COLLAPSE.length
+    # ResourceContentManager was built, and System.AsyncCallback the fifth when Storage was --
+    # neither of which weakens what this one claimed.
+    assert_equal 5, CNA::Runtime::BclProjection::STRUCTURAL_COLLAPSE.length
   end
 end

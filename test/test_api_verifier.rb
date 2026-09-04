@@ -1804,6 +1804,8 @@ class ApiVerifierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.RenderTargetCube::ContentLost
       Microsoft.Xna.Framework.DrawableGameComponent::VisibleChanged
       Microsoft.Xna.Framework.DrawableGameComponent::DrawOrderChanged
+      Microsoft.Xna.Framework.Storage.StorageDevice::DeviceChanged
+      Microsoft.Xna.Framework.Storage.StorageContainer::Disposing
     ], selected
 
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
@@ -1823,7 +1825,12 @@ class ApiVerifierTest < Minitest::Test
         assert_match(/\ASystem\.EventHandler`1\[[^\[\]]+\]\z/, member.fetch("type"))
         assert_equal true, member.fetch("add")
         assert_equal true, member.fetch("remove")
-        assert_equal false, member.fetch("static")
+        # Every selected event is an instance event except one: `Storage.StorageDevice`'s
+        # `DeviceChanged` is a **static** field on the type, which the verifier measures on the
+        # singleton. It is named here rather than allowed by a loosened predicate.
+        expected = "#{type.fetch("name")}::#{member.fetch("name")}" ==
+                   "Microsoft.Xna.Framework.Storage.StorageDevice::DeviceChanged"
+        assert_equal expected, member.fetch("static"), member.fetch("name")
       end
     end
     # Two handler types until Foundation 93: the device's two resource events are the first

@@ -501,6 +501,8 @@ class EventProjectionTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.RenderTargetCube::ContentLost
       Microsoft.Xna.Framework.DrawableGameComponent::VisibleChanged
       Microsoft.Xna.Framework.DrawableGameComponent::DrawOrderChanged
+      Microsoft.Xna.Framework.Storage.StorageDevice::DeviceChanged
+      Microsoft.Xna.Framework.Storage.StorageContainer::Disposing
     ], STRICT.fetch("eventIdentities")
   end
 

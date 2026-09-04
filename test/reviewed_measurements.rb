@@ -21,7 +21,7 @@ module NativeSurfaceCensus
 
   # The census the repository last reviewed. `test_native_abi_gate.rb` compares the two, so this
   # file cannot drift from the manifest silently in either direction.
-  REVIEWED = { functions: 546, callbacks: 6, constants: 137, layouts: 67 }.freeze
+  REVIEWED = { functions: 590, callbacks: 7, constants: 152, layouts: 67 }.freeze
 end
 
 # The strict XNA scoreboard, for exactly the same reason and with exactly the same rule: a milestone
@@ -30,22 +30,22 @@ end
 # and left no single place a reader could call the authority. `docs/generated/api-compat-report.json`
 # is the measurement; this is the reviewed expectation of it.
 module ReviewedScoreboard
-  TARGET_TYPES = 218
-  TARGET_MEMBERS = 2581
-  COMPLETE_TYPES = 216
+  TARGET_TYPES = 220
+  TARGET_MEMBERS = 2612
+  COMPLETE_TYPES = 218
   PARTIAL_TYPES = 2
-  MISSING_TYPES = 39
+  MISSING_TYPES = 37
   MISSING_MEMBER = 8
   OVERLOAD_MAPPING_MISMATCH = 5
   # Zero since Foundation 89 projected `GraphicsDevice::Viewport`'s setter. The one entry this
   # carried for its whole history was that property's `"override": { "set": false }`, and it was
   # never a Ruby limitation — see `test_api_verifier.rb`'s inverted guard.
   PROPERTY_MAPPING_MISMATCH = 0
-  BCL_PROJECTED_IDENTITIES = 22
+  BCL_PROJECTED_IDENTITIES = 28
   BCL_EXCEPTION_BASES = 2
   BCL_THROWN_EXCEPTIONS = 8
-  EVENT_IDENTITIES = 44
-  EVENT_OWNER_TYPES = 21
+  EVENT_IDENTITIES = 46
+  EVENT_OWNER_TYPES = 23
   # `GraphicsDevice`'s projected surface, in one place and for the same reason the counts are in
   # one place: it is still a partial type, so every slice that lands on it moves this list, and five
   # unrelated tests should not each pin it as a literal.

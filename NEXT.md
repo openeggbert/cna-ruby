@@ -82,6 +82,7 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 99 | the qualification report becomes generated, and the last unguarded numbers | **0** | **0** |
 | 100 | the Model family: eight types, four enumerators, three upstream crashes | **12** | 48 |
 | 101 | `DrawableGameComponent`, and the producer claim the manager's own IL settled | **1** | 13 |
+| 102 | the Storage family, and the async façade that is not one | **2** | 32 |
 
 ## Measured state
 
@@ -100,21 +101,21 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 | count | what it measures |
 | ---: | --- |
 | 257 | XNA 4.0 Windows reference types |
-| 218 | types this binding projects |
-| 2581 | Ruby member identities |
-| 216 | complete types |
+| 220 | types this binding projects |
+| 2612 | Ruby member identities |
+| 218 | complete types |
 | 2 | partial types |
-| 39 | missing types |
-| 44 | event identities |
-| 21 | types owning an event |
-| 22 | projected BCL identities |
+| 37 | missing types |
+| 46 | event identities |
+| 23 | types owning an event |
+| 28 | projected BCL identities |
 
 **Strict diagnostics**
 
 | count | what it measures |
 | ---: | --- |
-| 52 | strict diagnostics in total |
-| 39 | `MISSING_TYPE` |
+| 50 | strict diagnostics in total |
+| 37 | `MISSING_TYPE` |
 | 8 | `MISSING_MEMBER` |
 | 5 | `OVERLOAD_MAPPING_MISMATCH` |
 | 0 | `PROPERTY_MAPPING_MISMATCH` |
@@ -133,9 +134,9 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 546 | bound C functions |
-| 6 | callbacks |
-| 137 | constants |
+| 590 | bound C functions |
+| 7 | callbacks |
+| 152 | constants |
 | 67 | struct layouts |
 | 2 | admitted encoded ABI versions |
 | 2 | header roots cross-verified |
@@ -162,7 +163,7 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 155 | runtime capability rows |
+| 156 | runtime capability rows |
 
 <!-- scoreboard:end -->
 

@@ -88,9 +88,9 @@
     "ThrowWrongKeyTypeArgumentException": "System.ArgumentException",
     "ThrowWrongValueTypeArgumentException": "System.ArgumentException"
   },
-  "BCL_FAMILIES": 5,
-  "BCL_TYPES": 20,
-  "BCL_MEMBERS": 299,
+  "BCL_FAMILIES": 10,
+  "BCL_TYPES": 25,
+  "BCL_MEMBERS": 355,
   "BCL_EXCEPTION_TYPES": 10,
   "families": [
     {
@@ -193,6 +193,89 @@
       "demand": "transitive",
       "types": [
         "System.IO.SeekOrigin"
+      ]
+    },
+    {
+      "family": "System.IO.FileMode",
+      "reason": "the second parameter of all three StorageContainer.OpenFile overloads",
+      "xnaConsumers": [
+        "Microsoft.Xna.Framework.Storage.StorageContainer::OpenFile"
+      ],
+      "xnaConsumerCount": 1,
+      "bclConsumers": [
+
+      ],
+      "demand": "direct",
+      "types": [
+        "System.IO.FileMode"
+      ]
+    },
+    {
+      "family": "System.IO.FileAccess",
+      "reason": "the third parameter of two StorageContainer.OpenFile overloads",
+      "xnaConsumers": [
+        "Microsoft.Xna.Framework.Storage.StorageContainer::OpenFile"
+      ],
+      "xnaConsumerCount": 1,
+      "bclConsumers": [
+
+      ],
+      "demand": "direct",
+      "types": [
+        "System.IO.FileAccess"
+      ]
+    },
+    {
+      "family": "System.IO.FileShare",
+      "reason": "the fourth parameter of StorageContainer.OpenFile's widest overload",
+      "xnaConsumers": [
+        "Microsoft.Xna.Framework.Storage.StorageContainer::OpenFile"
+      ],
+      "xnaConsumerCount": 1,
+      "bclConsumers": [
+
+      ],
+      "demand": "direct",
+      "types": [
+        "System.IO.FileShare"
+      ]
+    },
+    {
+      "family": "System.IAsyncResult",
+      "reason": "the return of StorageDevice.BeginShowSelector and BeginOpenContainer and the argument of EndShowSelector and EndOpenContainer -- four XNA members",
+      "xnaConsumers": [
+        "Microsoft.Xna.Framework.Storage.StorageDevice::BeginOpenContainer",
+        "Microsoft.Xna.Framework.Storage.StorageDevice::BeginShowSelector",
+        "Microsoft.Xna.Framework.Storage.StorageDevice::EndOpenContainer",
+        "Microsoft.Xna.Framework.Storage.StorageDevice::EndShowSelector"
+      ],
+      "xnaConsumerCount": 4,
+      "bclConsumers": [
+        "System.IO.Stream::BeginRead",
+        "System.IO.Stream::BeginWrite",
+        "System.IO.Stream::EndRead",
+        "System.IO.Stream::EndWrite"
+      ],
+      "demand": "direct",
+      "types": [
+        "System.IAsyncResult"
+      ]
+    },
+    {
+      "family": "System.Threading.WaitHandle",
+      "reason": "the declared type of IAsyncResult.AsyncWaitHandle, and the only identity a consumer holding a result this binding produces can name in order to wait; demanded transitively through IAsyncResult rather than directly by an XNA signature",
+      "xnaConsumers": [
+
+      ],
+      "xnaConsumerCount": 0,
+      "bclConsumers": [
+        "System.IAsyncResult::AsyncWaitHandle",
+        "System.IAsyncResult::get_AsyncWaitHandle",
+        "System.IO.Stream::CreateWaitHandle"
+      ],
+      "demand": "transitive",
+      "types": [
+        "System.Threading.WaitHandle"
       ]
     }
   ],
@@ -4661,6 +4744,325 @@
         }
       ]
     },
+    "System.IAsyncResult": {
+      "kind": "interface",
+      "baseType": null,
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": true,
+      "members": [
+        {
+          "kind": "method",
+          "name": "get_IsCompleted",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_AsyncWaitHandle",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.Threading.WaitHandle",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_AsyncState",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "object",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_CompletedSynchronously",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "IsCompleted",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance bool IsCompleted()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.IAsyncResult::get_IsCompleted"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "AsyncWaitHandle",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance class System.Threading.WaitHandle AsyncWaitHandle()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.IAsyncResult::get_AsyncWaitHandle"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "AsyncState",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance object AsyncState()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.IAsyncResult::get_AsyncState"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "CompletedSynchronously",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance bool CompletedSynchronously()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.IAsyncResult::get_CompletedSynchronously"
+            }
+          ]
+        }
+      ]
+    },
+    "System.IO.FileAccess": {
+      "kind": "enum",
+      "baseType": "System.Enum",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": true,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "field",
+          "name": "value__",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "public specialname rtspecialname int32 value__"
+        },
+        {
+          "kind": "field",
+          "name": "Read",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000001)",
+          "declaration": "public static literal valuetype System.IO.FileAccess Read = int32(0x00000001)"
+        },
+        {
+          "kind": "field",
+          "name": "Write",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000002)",
+          "declaration": "public static literal valuetype System.IO.FileAccess Write = int32(0x00000002)"
+        },
+        {
+          "kind": "field",
+          "name": "ReadWrite",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000003)",
+          "declaration": "public static literal valuetype System.IO.FileAccess ReadWrite = int32(0x00000003)"
+        }
+      ]
+    },
+    "System.IO.FileMode": {
+      "kind": "enum",
+      "baseType": "System.Enum",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": true,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "field",
+          "name": "value__",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "public specialname rtspecialname int32 value__"
+        },
+        {
+          "kind": "field",
+          "name": "CreateNew",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000001)",
+          "declaration": "public static literal valuetype System.IO.FileMode CreateNew = int32(0x00000001)"
+        },
+        {
+          "kind": "field",
+          "name": "Create",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000002)",
+          "declaration": "public static literal valuetype System.IO.FileMode Create = int32(0x00000002)"
+        },
+        {
+          "kind": "field",
+          "name": "Open",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000003)",
+          "declaration": "public static literal valuetype System.IO.FileMode Open = int32(0x00000003)"
+        },
+        {
+          "kind": "field",
+          "name": "OpenOrCreate",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000004)",
+          "declaration": "public static literal valuetype System.IO.FileMode OpenOrCreate = int32(0x00000004)"
+        },
+        {
+          "kind": "field",
+          "name": "Truncate",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000005)",
+          "declaration": "public static literal valuetype System.IO.FileMode Truncate = int32(0x00000005)"
+        },
+        {
+          "kind": "field",
+          "name": "Append",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000006)",
+          "declaration": "public static literal valuetype System.IO.FileMode Append = int32(0x00000006)"
+        }
+      ]
+    },
+    "System.IO.FileShare": {
+      "kind": "enum",
+      "baseType": "System.Enum",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": true,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "field",
+          "name": "value__",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "public specialname rtspecialname int32 value__"
+        },
+        {
+          "kind": "field",
+          "name": "None",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000000)",
+          "declaration": "public static literal valuetype System.IO.FileShare None = int32(0x00000000)"
+        },
+        {
+          "kind": "field",
+          "name": "Read",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000001)",
+          "declaration": "public static literal valuetype System.IO.FileShare Read = int32(0x00000001)"
+        },
+        {
+          "kind": "field",
+          "name": "Write",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000002)",
+          "declaration": "public static literal valuetype System.IO.FileShare Write = int32(0x00000002)"
+        },
+        {
+          "kind": "field",
+          "name": "ReadWrite",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000003)",
+          "declaration": "public static literal valuetype System.IO.FileShare ReadWrite = int32(0x00000003)"
+        },
+        {
+          "kind": "field",
+          "name": "Delete",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000004)",
+          "declaration": "public static literal valuetype System.IO.FileShare Delete = int32(0x00000004)"
+        },
+        {
+          "kind": "field",
+          "name": "Inheritable",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000010)",
+          "declaration": "public static literal valuetype System.IO.FileShare Inheritable = int32(0x00000010)"
+        }
+      ]
+    },
     "System.IO.SeekOrigin": {
       "kind": "enum",
       "baseType": "System.Enum",
@@ -5938,6 +6340,623 @@
           "behaviour": {
             "storesConstructorArgumentToField": false
           }
+        }
+      ]
+    },
+    "System.Threading.WaitHandle": {
+      "kind": "class",
+      "baseType": "System.MarshalByRefObject",
+      "interfaceDeclarations": [
+        "System.IDisposable"
+      ],
+      "interfaces": [
+        "System.IDisposable"
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": true,
+      "members": [
+        {
+          "kind": "field",
+          "name": "WaitTimeout",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "literal": "int32(0x00000102)",
+          "declaration": "public static literal int32 WaitTimeout = int32(0x00000102)"
+        },
+        {
+          "kind": "field",
+          "name": "InvalidHandle",
+          "access": "family",
+          "static": true,
+          "explicitInterface": false,
+          "declaration": "static family initonly native int InvalidHandle"
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_Handle",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "native int",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "set_Handle",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "native int",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "get_SafeWaitHandle",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class Microsoft.Win32.SafeHandles.SafeWaitHandle",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "set_SafeWaitHandle",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class Microsoft.Win32.SafeHandles.SafeWaitHandle",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "WaitOne",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "millisecondsTimeout"
+            },
+            {
+              "type": "bool",
+              "name": "exitContext"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "WaitOne",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "valuetype System.TimeSpan",
+              "name": "timeout"
+            },
+            {
+              "type": "bool",
+              "name": "exitContext"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "WaitOne",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "WaitOne",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "millisecondsTimeout"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "WaitOne",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "valuetype System.TimeSpan",
+              "name": "timeout"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "WaitAll",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "class System.Threading.WaitHandle[]",
+              "name": "waitHandles"
+            },
+            {
+              "type": "int32",
+              "name": "millisecondsTimeout"
+            },
+            {
+              "type": "bool",
+              "name": "exitContext"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.NotSupportedException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "WaitAll",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "class System.Threading.WaitHandle[]",
+              "name": "waitHandles"
+            },
+            {
+              "type": "valuetype System.TimeSpan",
+              "name": "timeout"
+            },
+            {
+              "type": "bool",
+              "name": "exitContext"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "WaitAll",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "class System.Threading.WaitHandle[]",
+              "name": "waitHandles"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "WaitAll",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "class System.Threading.WaitHandle[]",
+              "name": "waitHandles"
+            },
+            {
+              "type": "int32",
+              "name": "millisecondsTimeout"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "WaitAll",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "class System.Threading.WaitHandle[]",
+              "name": "waitHandles"
+            },
+            {
+              "type": "valuetype System.TimeSpan",
+              "name": "timeout"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "WaitAny",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "class System.Threading.WaitHandle[]",
+              "name": "waitHandles"
+            },
+            {
+              "type": "int32",
+              "name": "millisecondsTimeout"
+            },
+            {
+              "type": "bool",
+              "name": "exitContext"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.NotSupportedException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "WaitAny",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "class System.Threading.WaitHandle[]",
+              "name": "waitHandles"
+            },
+            {
+              "type": "valuetype System.TimeSpan",
+              "name": "timeout"
+            },
+            {
+              "type": "bool",
+              "name": "exitContext"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "WaitAny",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "class System.Threading.WaitHandle[]",
+              "name": "waitHandles"
+            },
+            {
+              "type": "valuetype System.TimeSpan",
+              "name": "timeout"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "WaitAny",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "class System.Threading.WaitHandle[]",
+              "name": "waitHandles"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "WaitAny",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "class System.Threading.WaitHandle[]",
+              "name": "waitHandles"
+            },
+            {
+              "type": "int32",
+              "name": "millisecondsTimeout"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SignalAndWait",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "class System.Threading.WaitHandle",
+              "name": "toSignal"
+            },
+            {
+              "type": "class System.Threading.WaitHandle",
+              "name": "toWaitOn"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "SignalAndWait",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "class System.Threading.WaitHandle",
+              "name": "toSignal"
+            },
+            {
+              "type": "class System.Threading.WaitHandle",
+              "name": "toWaitOn"
+            },
+            {
+              "type": "valuetype System.TimeSpan",
+              "name": "timeout"
+            },
+            {
+              "type": "bool",
+              "name": "exitContext"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "SignalAndWait",
+          "access": "public",
+          "static": true,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "class System.Threading.WaitHandle",
+              "name": "toSignal"
+            },
+            {
+              "type": "class System.Threading.WaitHandle",
+              "name": "toWaitOn"
+            },
+            {
+              "type": "int32",
+              "name": "millisecondsTimeout"
+            },
+            {
+              "type": "bool",
+              "name": "exitContext"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.InvalidOperationException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "Close",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "bool",
+              "name": "explicitDisposing"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Handle",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance native int Handle()",
+          "accessors": [
+            {
+              "accessor": "set",
+              "method": "System.Threading.WaitHandle::set_Handle"
+            },
+            {
+              "accessor": "get",
+              "method": "System.Threading.WaitHandle::get_Handle"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "SafeWaitHandle",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance class Microsoft.Win32.SafeHandles.SafeWaitHandle SafeWaitHandle()",
+          "accessors": [
+            {
+              "accessor": "set",
+              "method": "System.Threading.WaitHandle::set_SafeWaitHandle"
+            },
+            {
+              "accessor": "get",
+              "method": "System.Threading.WaitHandle::get_SafeWaitHandle"
+            }
+          ]
         }
       ]
     }

@@ -2181,6 +2181,14 @@
     {
       "name": "Microsoft.Xna.Framework.DrawableGameComponent",
       "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Storage.StorageDevice",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Storage.StorageContainer",
+      "complete": true
     }
   ]
 }

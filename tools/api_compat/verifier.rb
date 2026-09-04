@@ -468,8 +468,16 @@ module CNAApiCompat
     # identity may exist beside the reader, and the reader's value must be the primitive itself
     # (or, on an abstract XNA interface, the same NotImplementedError every other member raises).
     def verify_runtime_events(name, type, object, result)
-      declared = type.fetch("members").select { |member| member.fetch("kind") == "event" }
-                     .map { |member| member.fetch("name").to_sym }
+      events = type.fetch("members").select { |member| member.fetch("kind") == "event" }
+      # A **static** event is one field on the type rather than one per instance, and it projects to
+      # a singleton reader. `Storage.StorageDevice::DeviceChanged` is the first and only one in the
+      # selected surface -- CNA's subscription is process-global too, which is the same shape -- and
+      # it is measured on the singleton class rather than being reported as an instance event that
+      # is missing. Everything asked of an instance event is asked of it: one reader, no `add_`,
+      # `remove_` or writer beside it, and the reader's value the generic primitive itself.
+      static, declared = events.partition { |member| member.fetch("static", false) }
+      verify_static_events(name, static, object, result)
+      declared = declared.map { |member| member.fetch("name").to_sym }
       registered = object.respond_to?(:xna_event_identities) ? object.xna_event_identities : []
       return if declared.empty? && registered.empty?
 
@@ -498,6 +506,31 @@ module CNAApiCompat
         next if projected == :expected
 
         result.add("EVENT_MAPPING_MISMATCH", "#{name}::#{identity} projects #{projected}", type: name)
+      end
+    end
+
+    # The static half of the check above, asked of the type's singleton.
+    def verify_static_events(name, members, object, result)
+      members.each do |member|
+        identity = member.fetch("name")
+        unless object.singleton_class.public_method_defined?(identity)
+          result.add("EVENT_MAPPING_MISMATCH", "#{name}::#{identity} is not projected as a static reader", type: name)
+          next
+        end
+        %W[add_#{identity} remove_#{identity} #{identity}=].each do |leaked|
+          next unless object.singleton_class.method_defined?(leaked) ||
+                      object.singleton_class.private_method_defined?(leaked)
+
+          result.add("EVENT_MAPPING_MISMATCH", "#{name}::#{identity} also projects #{leaked}", type: name)
+        end
+        value = begin
+          object.public_send(identity)
+        rescue StandardError => error
+          error
+        end
+        next if value.instance_of?(resolve_ruby_type(EVENT_SUPPORT_TYPE))
+
+        result.add("EVENT_MAPPING_MISMATCH", "#{name}::#{identity} projects #{value.class}", type: name)
       end
     end
 

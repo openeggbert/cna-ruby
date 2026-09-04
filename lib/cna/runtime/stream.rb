@@ -67,6 +67,49 @@ module CNA
         })
       end
 
+      # `System.IO.FileMode`, `FileAccess` and `FileShare`, the three BCL enums
+      # `StorageContainer.OpenFile`'s three overloads name. Like `SeekOrigin` above they are
+      # transitively demanded rather than declared by an XNA type of this binding's own, and like it
+      # they take the unchanged enum policy. Every value is read out of the pinned mscorlib —
+      # `FileMode` is 1..6 with **no zero**, `FileAccess` and `FileShare` are `[Flags]` — and CNA's
+      # `CNA_FILE_*` identities were read out of `storage.h` independently and are numerically the
+      # same, which the ABI gate checks as fifteen constants rather than taking on trust.
+      class FileMode < CNA::Runtime::EnumValue
+        extend CNA::Runtime::EnumType
+        CLR_IDENTITY = "System.IO.FileMode"
+        define_values({
+          "CreateNew" => 1,
+          "Create" => 2,
+          "Open" => 3,
+          "OpenOrCreate" => 4,
+          "Truncate" => 5,
+          "Append" => 6
+        })
+      end
+
+      class FileAccess < CNA::Runtime::EnumValue
+        extend CNA::Runtime::EnumType
+        CLR_IDENTITY = "System.IO.FileAccess"
+        define_values({
+          "Read" => 1,
+          "Write" => 2,
+          "ReadWrite" => 3
+        }, flags: true)
+      end
+
+      class FileShare < CNA::Runtime::EnumValue
+        extend CNA::Runtime::EnumType
+        CLR_IDENTITY = "System.IO.FileShare"
+        define_values({
+          "None" => 0,
+          "Read" => 1,
+          "Write" => 2,
+          "ReadWrite" => 3,
+          "Delete" => 4,
+          "Inheritable" => 16
+        }, flags: true)
+      end
+
       # The default `CopyTo` buffer size is not measured — the CLR reads it from an internal
       # constant this inventory does not carry — so the two-argument overload is the one that
       # states a size, and the one-argument overload documents the number it chose here rather than

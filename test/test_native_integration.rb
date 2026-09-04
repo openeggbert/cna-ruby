@@ -181,7 +181,9 @@ class NativeIntegrationTest < Minitest::Test
                  game.names - [:Activated]
     assert_equal 0, game.names.count(:Exiting)
     assert_equal 0, game.names.count(:Deactivated)
-    assert_equal(RendererEnvironment.windowed? ? 1 : 0, game.names.count(:Activated))
+    if RendererEnvironment.measured?
+      assert_equal(RendererEnvironment.windowed? ? 1 : 0, game.names.count(:Activated))
+    end
   end
 
   # The registrations are released before the game is destroyed, and releasing them is what stops

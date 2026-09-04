@@ -176,6 +176,7 @@ class RenderTargetsTest < Minitest::Test
       plain.Dispose
       result
     end
+    skip RendererEnvironment::UNMEASURED unless RendererEnvironment.measured?
     unless RendererEnvironment.render_target_readback?
       # HEADLESS has no readback of any kind, and says so rather than answering zeros.
       assert_equal CNA::CapabilityError, values[0].first

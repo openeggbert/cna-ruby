@@ -340,9 +340,13 @@ class TitleContainerTest < Minitest::Test
     %i[ContentReader ContentTypeReader].each do |absent|
       refute F::Content.const_defined?(absent, false), absent.to_s
     end
-    %i[StorageDevice StorageContainer].each do |absent|
-      refute F::Storage.const_defined?(absent, false), absent.to_s
+    # The two Storage runtime types left this list when they were built; what this milestone
+    # claimed, and still claims, is that **it** built neither -- `TitleContainer` reads the title's
+    # own read-only content and reaches no storage container at all.
+    %i[StorageDevice StorageContainer].each do |present|
+      assert F::Storage.const_defined?(present, false), present.to_s
     end
+    refute_includes CNA::Native::Manifest::FUNCTIONS.map(&:symbol), "cna_title_container_write_ext"
     refute F.const_defined?(:TitleLocation, false), "TitleLocation is assembly-internal in XNA"
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length

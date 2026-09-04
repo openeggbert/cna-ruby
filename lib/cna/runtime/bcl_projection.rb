@@ -116,6 +116,27 @@ module CNA
         "System.Byte[]" => "String",
         "System.IO.Stream" => "CNA::Runtime::Stream",
         "System.IO.SeekOrigin" => "CNA::Runtime::Stream::SeekOrigin",
+        # The three enums `StorageContainer.OpenFile`'s overloads name. Transitively demanded the
+        # way `SeekOrigin` was -- no XNA type of this binding's own declares one -- and every value
+        # read out of the pinned mscorlib: `FileMode` is 1..6 with **no zero**, `FileAccess` and
+        # `FileShare` are `[Flags]`. CNA's `CNA_FILE_*` identities were read out of `storage.h`
+        # independently and are numerically the same, which the ABI gate checks as fifteen constants.
+        "System.IO.FileMode" => "CNA::Runtime::Stream::FileMode",
+        "System.IO.FileAccess" => "CNA::Runtime::Stream::FileAccess",
+        "System.IO.FileShare" => "CNA::Runtime::Stream::FileShare",
+        # `System.IAsyncResult` is named by four XNA signatures, every one of them a Storage
+        # `BeginXxx` return or an `EndXxx` argument. XNA's own two implementations of it are
+        # `private` and neither is asynchronous: the wait handle is created **already signalled**,
+        # `CompletedSynchronously` is `ldc.i4.1`, and `BeginShowSelector` invokes the callback
+        # inline before returning. So the projection is a completed result, which is the shape the
+        # contract actually has. `CNA::Runtime::AsyncResult` carries the derivation.
+        "System.IAsyncResult" => "CNA::Runtime::AsyncResult",
+        # `System.Threading.WaitHandle` is reachable through exactly one member of one property --
+        # `IAsyncResult.AsyncWaitHandle.WaitOne`, on a handle that is permanently signalled -- so
+        # the projection carries that one member and its two overloads and nothing else. No
+        # `ManualResetEvent`, `Set`, `Reset` or `SafeHandle` is invented: the reachable surface
+        # cannot call them.
+        "System.Threading.WaitHandle" => "CNA::Runtime::AsyncResult::WaitHandle",
         "System.Collections.Generic.Dictionary`2" => "CNA::Runtime::Dictionary",
         "System.Runtime.Serialization.SerializationInfo" => "CNA::Runtime::SerializationInfo",
         "System.Runtime.Serialization.StreamingContext" => "CNA::Runtime::StreamingContext",
@@ -206,7 +227,8 @@ module CNA
         # contentManager.RecordDisposableObject(d);`. It is an override for where a loaded
         # disposable is registered, not an extra notification, so a supplied callable *replaces* the
         # manager's own bookkeeping rather than adding to it.
-        "System.Action`1" => "declares one member, Invoke(T), which is Ruby's `#call`; every use across the whole measured XNA reach is null-check, store and one invocation, so there is no delegate identity -- no multicast, removal or equality -- to preserve, and no Ruby constant, Proc restriction or Action wrapper is invented"
+        "System.Action`1" => "declares one member, Invoke(T), which is Ruby's `#call`; every use across the whole measured XNA reach is null-check, store and one invocation, so there is no delegate identity -- no multicast, removal or equality -- to preserve, and no Ruby constant, Proc restriction or Action wrapper is invented",
+        "System.AsyncCallback" => "declares one member, Invoke(IAsyncResult), and the same collapse System.Action`1 records applies for the same reason: Storage's four Begin overloads null-check it and invoke it once, inline, before returning. Any Ruby callable is accepted and no delegate identity is preserved"
       }.freeze
 
       # A CLR **generic parameter** placeholder: `!!0` for a generic method's, `!0` for a generic

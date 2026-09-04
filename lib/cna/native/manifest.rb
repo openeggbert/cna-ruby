@@ -1130,7 +1130,61 @@ module CNA
                    *by_value_memory("CNA_Matrix", eightbytes: 8, preceding_integer_arguments: 6),
                    *by_value_memory("CNA_Matrix", eightbytes: 8, preceding_integer_arguments: 6)],
                   ownership: "borrows model; draws every mesh after writing the three matrices into every effect"),
-        signature("cna_model_mesh_draw", T[:result], [handle("CNA_ModelMeshHandle")], ownership: "borrows mesh; draws every drawable part")
+        signature("cna_model_mesh_draw", T[:result], [handle("CNA_ModelMeshHandle")], ownership: "borrows mesh; draws every drawable part"),
+
+        # The Storage family.
+        #
+        # XNA's `BeginShowSelector`/`EndShowSelector` and `BeginOpenContainer`/`EndOpenContainer`
+        # look asynchronous and are not: `BeginShowSelector`'s whole IL validates, constructs a
+        # `StorageDeviceAsyncResult` whose `ManualResetEvent` is created **already signalled** and
+        # whose `CompletedSynchronously` is `ldc.i4.1`, invokes the callback inline and returns.
+        # CNA's header says the same of its side -- "no operation handle is invented for work that
+        # never pends" -- so one C route carries each pair and `CNA_StorageCompletionCallback` is
+        # invoked before the route returns, which is where the projected `AsyncCallback` runs.
+        signature("cna_storage_device_show_selector", T[:result], [callback_pointer("CNA_StorageCompletionCallback"), T[:ptr], pointer("CNA_StorageDeviceHandle")], ownership: "returns an OWNED storage device", callback_abi: "CNA_StorageCompletionCallback"),
+        signature("cna_storage_device_show_selector_for_player", T[:result], [enum("CNA_PlayerIndex"), callback_pointer("CNA_StorageCompletionCallback"), T[:ptr], pointer("CNA_StorageDeviceHandle")], ownership: "returns an OWNED storage device", callback_abi: "CNA_StorageCompletionCallback"),
+        signature("cna_storage_device_show_selector_with_space", T[:result], [T[:i32], T[:i32], callback_pointer("CNA_StorageCompletionCallback"), T[:ptr], pointer("CNA_StorageDeviceHandle")], ownership: "returns an OWNED storage device", callback_abi: "CNA_StorageCompletionCallback"),
+        signature("cna_storage_device_show_selector_for_player_with_space", T[:result], [enum("CNA_PlayerIndex"), T[:i32], T[:i32], callback_pointer("CNA_StorageCompletionCallback"), T[:ptr], pointer("CNA_StorageDeviceHandle")], ownership: "returns an OWNED storage device", callback_abi: "CNA_StorageCompletionCallback"),
+        signature("cna_storage_device_destroy", T[:result], [handle("CNA_StorageDeviceHandle")], ownership: "releases one owned storage device"),
+        signature("cna_storage_device_get_free_space", T[:result], [handle("CNA_StorageDeviceHandle"), pointer("int64_t")], ownership: "borrows device; caller output"),
+        signature("cna_storage_device_get_total_space", T[:result], [handle("CNA_StorageDeviceHandle"), pointer("int64_t")], ownership: "borrows device; caller output"),
+        signature("cna_storage_device_get_is_connected", T[:result], [handle("CNA_StorageDeviceHandle"), pointer("CNA_Bool")], ownership: "borrows device; caller output"),
+        signature("cna_storage_device_delete_container", T[:result], [handle("CNA_StorageDeviceHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64])], ownership: "borrows device; deletes the container directory"),
+        signature("cna_storage_device_subscribe_device_changed", T[:result], [callback_pointer("CNA_StorageCompletionCallback"), T[:ptr], pointer("CNA_Handle")], ownership: "process-global subscription; returns an OWNED registration", callback_abi: "CNA_StorageCompletionCallback"),
+        signature("cna_storage_device_unsubscribe_device_changed", T[:result], [T[:handle]], ownership: "releases one owned registration"),
+        signature("cna_storage_container_open", T[:result], [handle("CNA_StorageDeviceHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), callback_pointer("CNA_StorageCompletionCallback"), T[:ptr], pointer("CNA_StorageContainerHandle")], ownership: "borrows device; returns an OWNED container", callback_abi: "CNA_StorageCompletionCallback"),
+        signature("cna_storage_container_destroy", T[:result], [handle("CNA_StorageContainerHandle")], ownership: "releases one owned container"),
+        signature("cna_storage_container_dispose", T[:result], [handle("CNA_StorageContainerHandle")], ownership: "borrows container; performs XNA's Dispose"),
+        signature("cna_storage_container_get_is_disposed", T[:result], [handle("CNA_StorageContainerHandle"), pointer("CNA_Bool")], ownership: "borrows container; caller output"),
+        signature("cna_storage_container_get_storage_device", T[:result], [handle("CNA_StorageContainerHandle"), pointer("CNA_StorageDeviceHandle")], ownership: "borrows container; returns an OWNED device view"),
+        signature("cna_storage_container_get_display_name_size", T[:result], [handle("CNA_StorageContainerHandle"), pointer("uint64_t")], ownership: "borrows container; caller output"),
+        signature("cna_storage_container_copy_display_name", T[:result], [handle("CNA_StorageContainerHandle"), pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows container; caller buffer"),
+        signature("cna_storage_container_subscribe_disposing", T[:result], [handle("CNA_StorageContainerHandle"), callback_pointer("CNA_StorageCompletionCallback"), T[:ptr], pointer("CNA_Handle")], ownership: "borrows container; returns an OWNED registration", callback_abi: "CNA_StorageCompletionCallback"),
+        signature("cna_storage_container_unsubscribe_disposing", T[:result], [T[:handle]], ownership: "releases one owned registration"),
+        signature("cna_storage_container_create_directory", T[:result], [handle("CNA_StorageContainerHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64])], ownership: "borrows container"),
+        signature("cna_storage_container_directory_exists", T[:result], [handle("CNA_StorageContainerHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("CNA_Bool")], ownership: "borrows container; caller output"),
+        signature("cna_storage_container_delete_directory", T[:result], [handle("CNA_StorageContainerHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64])], ownership: "borrows container"),
+        signature("cna_storage_container_file_exists", T[:result], [handle("CNA_StorageContainerHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("CNA_Bool")], ownership: "borrows container; caller output"),
+        signature("cna_storage_container_delete_file", T[:result], [handle("CNA_StorageContainerHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64])], ownership: "borrows container"),
+        signature("cna_storage_container_get_directory_name_count", T[:result], [handle("CNA_StorageContainerHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("uint64_t")], ownership: "borrows container; caller output"),
+        signature("cna_storage_container_copy_directory_name", T[:result], [handle("CNA_StorageContainerHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), T[:u64], pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows container; caller buffer"),
+        signature("cna_storage_container_get_file_name_count", T[:result], [handle("CNA_StorageContainerHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("uint64_t")], ownership: "borrows container; caller output"),
+        signature("cna_storage_container_copy_file_name", T[:result], [handle("CNA_StorageContainerHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), T[:u64], pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows container; caller buffer"),
+        signature("cna_storage_container_create_file", T[:result], [handle("CNA_StorageContainerHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("CNA_StorageStreamHandle")], ownership: "borrows container; returns an OWNED stream"),
+        signature("cna_storage_container_open_file", T[:result], [handle("CNA_StorageContainerHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), enum("CNA_FileMode"), pointer("CNA_StorageStreamHandle")], ownership: "borrows container; returns an OWNED stream"),
+        signature("cna_storage_container_open_file_access", T[:result], [handle("CNA_StorageContainerHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), enum("CNA_FileMode"), enum("CNA_FileAccess"), pointer("CNA_StorageStreamHandle")], ownership: "borrows container; returns an OWNED stream"),
+        signature("cna_storage_container_open_file_share", T[:result], [handle("CNA_StorageContainerHandle"), *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), enum("CNA_FileMode"), enum("CNA_FileAccess"), enum("CNA_FileShare"), pointer("CNA_StorageStreamHandle")], ownership: "borrows container; returns an OWNED stream"),
+        signature("cna_storage_stream_close", T[:result], [handle("CNA_StorageStreamHandle")], ownership: "closes and releases one owned stream"),
+        signature("cna_storage_stream_flush", T[:result], [handle("CNA_StorageStreamHandle")], ownership: "borrows stream"),
+        signature("cna_storage_stream_read", T[:result], [handle("CNA_StorageStreamHandle"), pointer("uint8_t"), T[:u64], pointer("uint64_t")], ownership: "borrows stream; caller buffer"),
+        signature("cna_storage_stream_write", T[:result], [handle("CNA_StorageStreamHandle"), pointer("uint8_t", const: true), T[:u64]], ownership: "borrows stream; reads the caller's bytes for the call"),
+        signature("cna_storage_stream_seek", T[:result], [handle("CNA_StorageStreamHandle"), T[:i64], enum("CNA_SeekOrigin"), pointer("int64_t")], ownership: "borrows stream; caller output"),
+        signature("cna_storage_stream_get_position", T[:result], [handle("CNA_StorageStreamHandle"), pointer("int64_t")], ownership: "borrows stream; caller output"),
+        signature("cna_storage_stream_get_length", T[:result], [handle("CNA_StorageStreamHandle"), pointer("int64_t")], ownership: "borrows stream; caller output"),
+        signature("cna_storage_stream_set_length", T[:result], [handle("CNA_StorageStreamHandle"), T[:i64]], ownership: "borrows stream"),
+        signature("cna_storage_stream_get_can_read", T[:result], [handle("CNA_StorageStreamHandle"), pointer("CNA_Bool")], ownership: "borrows stream; caller output"),
+        signature("cna_storage_stream_get_can_write", T[:result], [handle("CNA_StorageStreamHandle"), pointer("CNA_Bool")], ownership: "borrows stream; caller output"),
+        signature("cna_storage_stream_get_can_seek", T[:result], [handle("CNA_StorageStreamHandle"), pointer("CNA_Bool")], ownership: "borrows stream; caller output")
       ].freeze
 
       CALLBACKS = [
@@ -1144,6 +1198,11 @@ module CNA
         # declaration rather than against the other.
         { name: "CNA_GamerAsyncCallback", c_return: "void", c_arguments: ["void*"], calling_convention: "platform C", fiddle_return: VOID, fiddle_arguments: [PTR] },
         { name: "CNA_AudioEventCallback", c_return: "void", c_arguments: ["void*"], calling_convention: "platform C", fiddle_return: VOID, fiddle_arguments: [PTR] },
+        # The storage completion callback, invoked **before** the route that takes it returns:
+        # CNA completes every storage operation synchronously, which is what XNA's own fake-async
+        # Begin/End pair does too. Shape-identical to three others and a separate identity, for the
+        # reason `CNA_GamerAsyncCallback` records.
+        { name: "CNA_StorageCompletionCallback", c_return: "void", c_arguments: ["void*"], calling_convention: "platform C", fiddle_return: VOID, fiddle_arguments: [PTR] },
         # The device's data-free event handler takes the device handle as well as the context,
         # which is what makes it a different identity from CNA_GameEventCallback rather than
         # another shape-identical one.
@@ -1283,7 +1342,15 @@ module CNA
         "CNA_GAMEPAD_TYPE_GUITAR" => 6,
         "CNA_GAMEPAD_TYPE_ALTERNATE_GUITAR" => 7,
         "CNA_GAMEPAD_TYPE_DRUM_KIT" => 8,
-        "CNA_GAMEPAD_TYPE_BIG_BUTTON_PAD" => 9
+        "CNA_GAMEPAD_TYPE_BIG_BUTTON_PAD" => 9,
+        # `System.IO.FileMode`, `FileAccess` and `FileShare`, whose CNA identities are numerically
+        # the CLR's -- both read out of their own pinned source rather than remembered, and equal.
+        "CNA_FILE_MODE_CREATE_NEW" => 1, "CNA_FILE_MODE_CREATE" => 2, "CNA_FILE_MODE_OPEN" => 3,
+        "CNA_FILE_MODE_OPEN_OR_CREATE" => 4, "CNA_FILE_MODE_TRUNCATE" => 5, "CNA_FILE_MODE_APPEND" => 6,
+        "CNA_FILE_ACCESS_READ" => 1, "CNA_FILE_ACCESS_WRITE" => 2, "CNA_FILE_ACCESS_READ_WRITE" => 3,
+        "CNA_FILE_SHARE_NONE" => 0, "CNA_FILE_SHARE_READ" => 1, "CNA_FILE_SHARE_WRITE" => 2,
+        "CNA_FILE_SHARE_READ_WRITE" => 3, "CNA_FILE_SHARE_DELETE" => 4,
+        "CNA_FILE_SHARE_INHERITABLE" => 16
       }.freeze
     end
   end
