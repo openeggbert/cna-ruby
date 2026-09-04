@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "authority": "the pinned original Microsoft.Xna.Framework.dll, admitted by exact SHA-256",
   "provenance": "derived with ikdasm. No Microsoft-owned bytes, IL text or machine-local path is reproduced here.",
   "scope": "the thirteen Microsoft.Xna.Framework.Design converters and the three private PropertyDescriptor implementations their collections are built from",
@@ -12,6 +12,27 @@
   "DESIGN_DESCRIPTOR_TYPES": 3,
   "DESIGN_IDENTITIES": 55,
   "DESIGN_REACHED_BCL_IDENTITIES": 31,
+  "DESIGN_SCALAR_ELEMENT_TYPES": 3,
+  "scalarElementTypes": {
+    "System.Byte": [
+      "Microsoft.Xna.Framework.Design.ColorConverter::ConvertFrom",
+      "Microsoft.Xna.Framework.Design.ColorConverter::ConvertTo"
+    ],
+    "System.Int32": [
+      "Microsoft.Xna.Framework.Design.PointConverter::ConvertFrom",
+      "Microsoft.Xna.Framework.Design.PointConverter::ConvertTo"
+    ],
+    "System.Single": [
+      "Microsoft.Xna.Framework.Design.QuaternionConverter::ConvertFrom",
+      "Microsoft.Xna.Framework.Design.QuaternionConverter::ConvertTo",
+      "Microsoft.Xna.Framework.Design.Vector2Converter::ConvertFrom",
+      "Microsoft.Xna.Framework.Design.Vector2Converter::ConvertTo",
+      "Microsoft.Xna.Framework.Design.Vector3Converter::ConvertFrom",
+      "Microsoft.Xna.Framework.Design.Vector3Converter::ConvertTo",
+      "Microsoft.Xna.Framework.Design.Vector4Converter::ConvertFrom",
+      "Microsoft.Xna.Framework.Design.Vector4Converter::ConvertTo"
+    ]
+  },
   "base": {
     "type": "Microsoft.Xna.Framework.Design.MathTypeConverter",
     "baseType": "System.ComponentModel.ExpandableObjectConverter",
@@ -598,7 +619,7 @@
         "A"
       ],
       "convertFrom": {
-        "elementType": "uint8",
+        "elementType": "System.Byte",
         "arrayCount": 4,
         "expectedParams": [
           "R",
@@ -618,7 +639,7 @@
       "convertTo": {
         "stringBranch": true,
         "instanceDescriptorBranch": true,
-        "elementType": "uint8",
+        "elementType": "System.Byte",
         "constructorParameters": [
           "System.Byte",
           "System.Byte",
@@ -1062,7 +1083,7 @@
         "Y"
       ],
       "convertFrom": {
-        "elementType": "int32",
+        "elementType": "System.Int32",
         "arrayCount": 2,
         "expectedParams": [
           "X",
@@ -1078,7 +1099,7 @@
       "convertTo": {
         "stringBranch": true,
         "instanceDescriptorBranch": true,
-        "elementType": "int32",
+        "elementType": "System.Int32",
         "constructorParameters": [
           "System.Int32",
           "System.Int32"
@@ -1173,7 +1194,7 @@
         "W"
       ],
       "convertFrom": {
-        "elementType": "float32",
+        "elementType": "System.Single",
         "arrayCount": 4,
         "expectedParams": [
           "X",
@@ -1193,7 +1214,7 @@
       "convertTo": {
         "stringBranch": true,
         "instanceDescriptorBranch": true,
-        "elementType": "float32",
+        "elementType": "System.Single",
         "constructorParameters": [
           "System.Single",
           "System.Single",
@@ -1479,7 +1500,7 @@
         "Y"
       ],
       "convertFrom": {
-        "elementType": "float32",
+        "elementType": "System.Single",
         "arrayCount": 2,
         "expectedParams": [
           "X",
@@ -1495,7 +1516,7 @@
       "convertTo": {
         "stringBranch": true,
         "instanceDescriptorBranch": true,
-        "elementType": "float32",
+        "elementType": "System.Single",
         "constructorParameters": [
           "System.Single",
           "System.Single"
@@ -1587,7 +1608,7 @@
         "Z"
       ],
       "convertFrom": {
-        "elementType": "float32",
+        "elementType": "System.Single",
         "arrayCount": 3,
         "expectedParams": [
           "X",
@@ -1605,7 +1626,7 @@
       "convertTo": {
         "stringBranch": true,
         "instanceDescriptorBranch": true,
-        "elementType": "float32",
+        "elementType": "System.Single",
         "constructorParameters": [
           "System.Single",
           "System.Single",
@@ -1713,7 +1734,7 @@
         "W"
       ],
       "convertFrom": {
-        "elementType": "float32",
+        "elementType": "System.Single",
         "arrayCount": 4,
         "expectedParams": [
           "X",
@@ -1733,7 +1754,7 @@
       "convertTo": {
         "stringBranch": true,
         "instanceDescriptorBranch": true,
-        "elementType": "float32",
+        "elementType": "System.Single",
         "constructorParameters": [
           "System.Single",
           "System.Single",

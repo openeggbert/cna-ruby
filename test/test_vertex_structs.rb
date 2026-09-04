@@ -44,7 +44,9 @@ class VertexStructsTest < Minitest::Test
     # Effect cluster uncovered EffectMaterial and DirectionalLight behind the Effect base, and 5
     # when the buffers uncovered ModelMeshPart, and 2 when the Model family built it. What this
     # test claims -- that the queue these four came from was consumed -- is unchanged.
-    assert_equal 2, FRONTIER.fetch("dependencyCompleteCandidates").length
+    # ...and 1 when the Design converters were built. What this test claims -- that the queue
+    # these four came from was consumed -- is unchanged.
+    assert_equal 1, FRONTIER.fetch("dependencyCompleteCandidates").length
   end
 
   def test_each_is_a_value_type_declaring_the_interface_with_the_same_six_member_shape

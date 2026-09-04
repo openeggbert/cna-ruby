@@ -1,5 +1,14 @@
 # Foundation 28 — the BCL reference authority
 
+> **This is a historical milestone record and its numbers are Foundation 28's.** The machinery it
+> describes was generalised at Foundation 105, which admitted a **second** authority —
+> `System.dll` — for the thirteen XNA `Design` converters. Every gate below still holds and is now
+> a property of a registry rather than of mscorlib: read
+> `tools/api_compat/reference/BCL_PROVENANCE.md` for both pinned identities and
+> `docs/design-converter-evidence.md` for what the second one was admitted to do. The one gate that
+> **changed** is the pairing: it is no longer "all ten XNA assemblies", because only six reference
+> `System`, so the referrer set is asserted per authority.
+
 Foundation 21 opened `CNA::Runtime::BclProjection` with a rule that has held ever since: only a CLR
 identity the selected XNA surface actually names, and whose Ruby projection can be decided *without
 guessing*, may be admitted. Three identities passed it — `System.EventArgs`, `System.TimeSpan`,

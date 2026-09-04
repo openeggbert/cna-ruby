@@ -1,18 +1,5 @@
 # Missing type inventory
 
-- `Microsoft.Xna.Framework.Design.BoundingBoxConverter`
-- `Microsoft.Xna.Framework.Design.BoundingSphereConverter`
-- `Microsoft.Xna.Framework.Design.ColorConverter`
-- `Microsoft.Xna.Framework.Design.MathTypeConverter`
-- `Microsoft.Xna.Framework.Design.MatrixConverter`
-- `Microsoft.Xna.Framework.Design.PlaneConverter`
-- `Microsoft.Xna.Framework.Design.PointConverter`
-- `Microsoft.Xna.Framework.Design.QuaternionConverter`
-- `Microsoft.Xna.Framework.Design.RayConverter`
-- `Microsoft.Xna.Framework.Design.RectangleConverter`
-- `Microsoft.Xna.Framework.Design.Vector2Converter`
-- `Microsoft.Xna.Framework.Design.Vector3Converter`
-- `Microsoft.Xna.Framework.Design.Vector4Converter`
 - `Microsoft.Xna.Framework.Graphics.GraphicsAdapter`
 - `Microsoft.Xna.Framework.GraphicsDeviceInformation`
 - `Microsoft.Xna.Framework.PreparingDeviceSettingsEventArgs`

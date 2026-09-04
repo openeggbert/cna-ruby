@@ -185,7 +185,68 @@ module CNA
         # exactly `value.is_a?(type)`, and a Module used as a Hash key compares by identity, which
         # is what Dictionary<Type, ...>'s default comparer does. Nothing here claims the CLR Type
         # reflection surface; the register records what the XNA surface actually uses.
-        "System.Type" => "Module"
+        "System.Type" => "Module",
+
+        # ---------------------------------------------------- Foundation 105: the Design family
+        #
+        # Seven `System.ComponentModel` identities from the second admitted authority, four
+        # `System.Reflection` ones and two `System.Globalization` ones from the first, every one of
+        # them reached by the thirteen XNA `Design` converters and every one measured from the
+        # pinned binary rather than from .NET documentation. `docs/generated/bcl-inventory.json`
+        # carries the surfaces and `docs/generated/design-converter-inventory.json` the reach.
+        #
+        # `ExpandableObjectConverter` is the one that had to exist before any of the others could:
+        # it is the declared base type of `MathTypeConverter` in the reference contract, so the API
+        # verifier resolves the XNA class's Ruby superclass through this entry. Mapping it to
+        # `Object` would have made the base a `BASE_MAPPING_MISMATCH`, and flattening
+        # `TypeConverter`'s members into `MathTypeConverter` by hand would have invented the half of
+        # `CanConvertFrom` and `CanConvertTo` that is really the base class's answer.
+        "System.ComponentModel.TypeConverter" => "CNA::Runtime::ComponentModel::TypeConverter",
+        "System.ComponentModel.ExpandableObjectConverter" => "CNA::Runtime::ComponentModel::ExpandableObjectConverter",
+        "System.ComponentModel.PropertyDescriptor" => "CNA::Runtime::ComponentModel::PropertyDescriptor",
+        "System.ComponentModel.PropertyDescriptorCollection" => "CNA::Runtime::ComponentModel::PropertyDescriptorCollection",
+        "System.ComponentModel.TypeDescriptor" => "CNA::Runtime::ComponentModel::TypeDescriptor",
+        "System.ComponentModel.Design.Serialization.InstanceDescriptor" => "CNA::Runtime::ComponentModel::InstanceDescriptor",
+        # `ITypeDescriptorContext` is an interface, and the register's usual answer for one is a
+        # structural collapse -- the contract survives as the members the implementing XNA type
+        # already declares. That answer needs an implementing type, and **no XNA type implements
+        # this one**: the consumer supplies the context. So it projects to a Ruby module carrying
+        # the six measured identities, which a consumer may include and which
+        # `ITypeDescriptorContext.check` refuses an object for when any of them is missing. A
+        # collapse here would have meant accepting any object at all, which is the failure mode the
+        # projection exists to prevent.
+        "System.ComponentModel.ITypeDescriptorContext" => "CNA::Runtime::ComponentModel::ITypeDescriptorContext",
+        # The scalar element converters. `MathTypeConverter` formats and parses no number itself:
+        # both generic helpers resolve one of these through `TypeDescriptor.GetConverter` and
+        # delegate, so which one is reached decides whether hexadecimal is accepted and which
+        # `NumberStyles` a parse uses.
+        "System.ComponentModel.BaseNumberConverter" => "CNA::Runtime::ComponentModel::BaseNumberConverter",
+        "System.ComponentModel.Int32Converter" => "CNA::Runtime::ComponentModel::Int32Converter",
+        "System.ComponentModel.SingleConverter" => "CNA::Runtime::ComponentModel::SingleConverter",
+        "System.ComponentModel.ByteConverter" => "CNA::Runtime::ComponentModel::ByteConverter",
+        # `CultureInfo` is directly named by twenty-one XNA Design signatures; `TextInfo` is
+        # transitively demanded through its one reached property, the way `SeekOrigin` is through
+        # `Stream::Seek`. The CLR reads culture data from the operating system and Ruby has no
+        # equivalent, so a projected culture carries the separators the reach consumes and a
+        # consumer constructs any culture other than the invariant one -- recorded as a
+        # LANGUAGE_MAPPING_LIMITATION rather than hidden behind an invented locale database.
+        "System.Globalization.CultureInfo" => "CNA::Runtime::Globalization::CultureInfo",
+        "System.Globalization.TextInfo" => "CNA::Runtime::Globalization::TextInfo",
+        # The reflection closure, and no more of it. `MemberInfo` is `InstanceDescriptor`'s declared
+        # first parameter; the other three are what `Type`'s three admitted lookups answer. No
+        # `Assembly`, `MethodInfo`, `Binder` or `BindingFlags` is projected, because nothing in the
+        # measured reach can name one.
+        "System.Reflection.MemberInfo" => "CNA::Runtime::Reflection::MemberInfo",
+        "System.Reflection.ConstructorInfo" => "CNA::Runtime::Reflection::ConstructorInfo",
+        "System.Reflection.FieldInfo" => "CNA::Runtime::Reflection::FieldInfo",
+        "System.Reflection.PropertyInfo" => "CNA::Runtime::Reflection::PropertyInfo",
+        # `IDictionary` is the second parameter of all twelve `CreateInstance` members, and every
+        # one of them does exactly one thing with it: `get_Item(name)`. That is Ruby's `Hash#[]`,
+        # and a Hash is what a consumer already has. `ICollection` is `InstanceDescriptor`'s
+        # `Arguments` -- a fixed sequence a caller reads in order, which is a Ruby Array, the same
+        # answer `System.Collections.Generic.IList`1` already takes for a CLR array.
+        "System.Collections.IDictionary" => "Hash",
+        "System.Collections.ICollection" => "Array"
       }.freeze
 
       # A BCL identity the selected XNA surface names that projects to **no Ruby constant at all**,
@@ -234,7 +295,13 @@ module CNA
         # disposable is registered, not an extra notification, so a supplied callable *replaces* the
         # manager's own bookkeeping rather than adding to it.
         "System.Action`1" => "declares one member, Invoke(T), which is Ruby's `#call`; every use across the whole measured XNA reach is null-check, store and one invocation, so there is no delegate identity -- no multicast, removal or equality -- to preserve, and no Ruby constant, Proc restriction or Action wrapper is invented",
-        "System.AsyncCallback" => "declares one member, Invoke(IAsyncResult), and the same collapse System.Action`1 records applies for the same reason: Storage's four Begin overloads null-check it and invoke it once, inline, before returning. Any Ruby callable is accepted and no delegate identity is preserved"
+        "System.AsyncCallback" => "declares one member, Invoke(IAsyncResult), and the same collapse System.Action`1 records applies for the same reason: Storage's four Begin overloads null-check it and invoke it once, inline, before returning. Any Ruby callable is accepted and no delegate identity is preserved",
+        # Foundation 105. Neither is named by an XNA signature; both are named by a member this
+        # register projects, so leaving them undecided would be exactly the silence this table
+        # exists to break. Both are measured in the BCL inventory before being collapsed: the
+        # measurement is what says each really declares one member.
+        "System.Collections.IComparer" => "declares one member, Compare(object, object), which is Ruby's two-argument comparison block. It reaches this register as the second parameter of two PropertyDescriptorCollection.Sort overloads; inventing a Ruby module for it would reject a lambda and a Method for no measured reason, which is the collapse System.Action`1 already records",
+        "System.EventHandler" => "declares one member, Invoke(object sender, EventArgs e), and the same collapse applies for the same reason. It is what PropertyDescriptor.AddValueChanged takes and what FieldPropertyDescriptor.SetValue's OnValueChanged call invokes -- measured at IL_000d..IL_0014 -- so a consumer observes it firing, and any Ruby callable of arity two is accepted. No multicast list, removal semantics or delegate equality is preserved beyond the last-match removal RemoveValueChanged already performs"
       }.freeze
 
       # A CLR **generic parameter** placeholder: `!!0` for a generic method's, `!0` for a generic

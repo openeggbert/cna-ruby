@@ -221,7 +221,7 @@ def convert_from(ops)
   return nil if call.nil?
 
   index = ops.index(call)
-  element = call.last[/ConvertToValues<([^>]*)>/, 1].to_s.strip
+  element = identity(call.last[/ConvertToValues<([^>]*)>/, 1].to_s)
   array = ops[0...index].rindex { |op, operand| op == "newarr" && identity(operand) == "System.String" }
   count = ops[0...array].reverse.filter_map { |op, operand| constant(op, operand) }.first
   constructed = ops[index..].find { |op, _| op == "newobj" }&.last
@@ -237,7 +237,7 @@ def convert_to(ops)
   descriptor = ops.index { |op, operand| op == "newobj" && newobj_target(operand).end_with?("InstanceDescriptor") }
   facts = {"stringBranch" => !join.nil?,
            "instanceDescriptorBranch" => !descriptor.nil?,
-           "elementType" => join&.last&.[](/ConvertFromValues<([^>]*)>/, 1)&.strip}
+           "elementType" => join.nil? ? nil : identity(join.last[/ConvertFromValues<([^>]*)>/, 1].to_s)}
   if descriptor
     constructor = ops[0...descriptor].rindex { |op, operand| op == "call" && operand.include?("System.Type::GetConstructor") }
     array = ops[0...constructor].rindex { |op, operand| op == "newarr" && identity(operand) == "System.Type" }
@@ -407,8 +407,25 @@ reached = (([BASE] + DERIVED + DESCRIPTORS).flat_map do |name|
   body.scan(/\[(mscorlib|System)\]([A-Za-z_][A-Za-z0-9_.`+]*)/).map { |assembly, type| "#{assembly}:#{type}" }
 end).tally.sort_by { |identity, count| [-count, identity] }.to_h
 
+# The scalar element types the family converts through, and the converter each resolves to.
+#
+# `MathTypeConverter.ConvertToValues<T>` and `ConvertFromValues<T>` do not parse or format the
+# element themselves: both call `TypeDescriptor.GetConverter(typeof(T))` and delegate. So the string
+# form of every value the thirteen converters produce or accept is that converter's answer, and
+# which converter it is has to be measured rather than assumed. `T` is read out of the generic call
+# site; the resolution is `ReflectTypeDescriptionProvider`'s intrinsic table, extracted below from
+# the admitted System.dll rather than remembered.
+scalar_element_types = converters.each_with_object({}) do |converter, found|
+  %w[convertFrom convertTo].each do |member|
+    element = converter.dig(member, "elementType")
+    next if element.nil?
+
+    (found[element] ||= []) << "#{converter.fetch("type")}::#{member == "convertFrom" ? "ConvertFrom" : "ConvertTo"}"
+  end
+end.transform_values(&:uniq).sort.to_h
+
 inventory = {
-  "schemaVersion" => 1,
+  "schemaVersion" => 2,
   "authority" => "the pinned original Microsoft.Xna.Framework.dll, admitted by exact SHA-256",
   "provenance" => "derived with ikdasm. No Microsoft-owned bytes, IL text or machine-local path is reproduced here.",
   "scope" => "the thirteen Microsoft.Xna.Framework.Design converters and the three private PropertyDescriptor implementations their collections are built from",
@@ -418,6 +435,8 @@ inventory = {
   "DESIGN_IDENTITIES" => base_record.fetch("members").length + base_record.fetch("fields").length +
     converters.sum { |converter| converter.fetch("declaredMembers").length },
   "DESIGN_REACHED_BCL_IDENTITIES" => reached.length,
+  "DESIGN_SCALAR_ELEMENT_TYPES" => scalar_element_types.length,
+  "scalarElementTypes" => scalar_element_types,
   "base" => base_record,
   "descriptors" => descriptors,
   "converters" => converters,

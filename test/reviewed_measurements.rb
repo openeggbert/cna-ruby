@@ -30,18 +30,28 @@ end
 # and left no single place a reader could call the authority. `docs/generated/api-compat-report.json`
 # is the measurement; this is the reviewed expectation of it.
 module ReviewedScoreboard
-  TARGET_TYPES = 241
-  TARGET_MEMBERS = 2827
-  COMPLETE_TYPES = 239
+  # Foundation 105 moved every one of these: the thirteen `Design` converters were the whole of the
+  # `BCL_PROJECTION_SCOPE` remainder, and projecting them left only the three types the measured
+  # CNA adapter defect blocks. TARGET_TYPES 241 -> 254, COMPLETE_TYPES 239 -> 252,
+  # MISSING_TYPES 16 -> 3, and the remaining eight partial members are the adapter defect's.
+  TARGET_TYPES = 254
+  TARGET_MEMBERS = 2880
+  COMPLETE_TYPES = 252
   PARTIAL_TYPES = 2
-  MISSING_TYPES = 16
+  MISSING_TYPES = 3
   MISSING_MEMBER = 8
   OVERLOAD_MAPPING_MISMATCH = 5
   # Zero since Foundation 89 projected `GraphicsDevice::Viewport`'s setter. The one entry this
   # carried for its whole history was that property's `"override": { "set": false }`, and it was
   # never a Ruby limitation — see `test_api_verifier.rb`'s inverted guard.
   PROPERTY_MAPPING_MISMATCH = 0
-  BCL_PROJECTED_IDENTITIES = 29
+  # 29 until Foundation 105, which admitted System.dll and projected the demand-driven
+  # `System.ComponentModel` closure: seven ComponentModel identities and four scalar element
+  # converters from the new authority, four `System.Reflection` and two `System.Globalization` ones
+  # from mscorlib, plus `IDictionary`, `ICollection`, and the two interfaces a consumer
+  # constructs to use a projected member -- `IComparer` and `EventHandler`, both collapsed to a
+  # Ruby callable after their surfaces were measured.
+  BCL_PROJECTED_IDENTITIES = 50
   BCL_EXCEPTION_BASES = 2
   BCL_THROWN_EXCEPTIONS = 9
   EVENT_IDENTITIES = 48

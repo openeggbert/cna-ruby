@@ -1,8 +1,8 @@
 # The remaining surface, classified member by member
 
-**Measured 2026-09-04 at Foundation 104**, against the strict report
-(`docs/generated/api-compat-report.json`), the pinned XNA IL, the pinned mscorlib and the qualified
-CNA C ABI 0.21.0 artifacts. 241 target types, **239 complete**, 2 partial, 16 missing.
+**Measured 2026-09-04 at Foundation 105**, against the strict report
+(`docs/generated/api-compat-report.json`), the pinned XNA IL, the two pinned BCL authorities and the
+qualified CNA C ABI 0.21.0 artifacts. 254 target types, **252 complete**, 2 partial, 3 missing.
 
 Every entry below is one of the classifications the session's stop condition admits, and each names
 the evidence rather than a judgement. Nothing here is deferred for being large.
@@ -33,6 +33,17 @@ every property is a fiction, and the seven members above would carry that fictio
 and the manager.
 
 `MISSING_MEMBER` is therefore **8**, and there is no ninth.
+
+**Re-checked at Foundation 105 without re-running the artifacts, because nothing moved.** `cnanext`
+advanced 55 commits during that milestone, so the standing rule — re-measure a blocker rather than
+trust the note — was applied to the question of *whether* a re-measurement was owed:
+`modules/graphics/src/Xna/GraphicsAdapter.cpp`, which
+`docs/graphics-adapter-ordering-upstream-defect.md` names as the defect's site, has **zero** commits
+since, `modules/graphics` as a whole has zero, the only `Video`-named change is a content test for
+`VideoReader`, and the qualified artifact is byte-identical at
+`c32bfbd307d695664f906ccf2834ec3f9ebc240fa388d544ac21ee3ebaeb731b`. All 55 commits are
+content-pipeline and shader-design work. Re-running three renderer qualifications against unchanged
+code would have produced the same three fictions at three artifacts' cost.
 
 ### The third partial type that was not — `Media.Song`, and a blocker that was wrong
 
@@ -66,57 +77,84 @@ songs, so every reachable `Song` is one `FromUri` built and all three navigation
 nil. The test asserts that case and skips the other with a message naming what it gave up, which is
 the same decision `Microphone` records for capture.
 
-## The 16 missing types
+## The 3 missing types
 
-### 3 blocked on the same adapter defect
+They were sixteen at Foundation 104. Thirteen of those were the `Design` converters, built at
+Foundation 105 and recorded below; what is left is three, and all three are one defect.
+
+### 3 blocked on the adapter defect
 
 `Graphics.GraphicsAdapter`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs` —
 `BLOCKED_UPSTREAM_CNA`. The second's `Adapter` property is a `GraphicsAdapter` and the third's whole
 surface is a `GraphicsDeviceInformation`, so neither can be honest while the first is not.
 
-### 13 `BCL_PROJECTION_SCOPE` — the `Design` converters
+### 13 built at Foundation 105 — the `Design` converters
 
-`MathTypeConverter` and the twelve converters that derive from it. The blocker is not authority and
-not CNA: it is the reach of `System.ComponentModel`.
+`MathTypeConverter` and the twelve converters that derive from it. **This section used to classify
+them `BCL_PROJECTION_SCOPE`, and that was a scope decision rather than a blocker.** Its own evidence
+said so: the authority was on this machine, the reach was measurable, and what was deferred was the
+work of projecting a descriptor system. Foundation 105 does that work.
 
-- `MathTypeConverter` extends **`ExpandableObjectConverter`**, and its `CanConvertFrom`/`CanConvertTo`
-  fall through to `TypeConverter`'s own implementations rather than answering for themselves.
-- `GetProperties` returns a **`PropertyDescriptorCollection`**, and the field it answers it from is
-  built by `MemberPropertyDescriptor`, `FieldPropertyDescriptor` and `PropertyPropertyDescriptor` —
-  three `private` XNA classes over `System.ComponentModel.PropertyDescriptor`.
-- Every member takes an **`ITypeDescriptorContext`**, and `CanConvertTo` special-cases
-  **`InstanceDescriptor`**, which is what `CreateInstance` exists to feed.
+**A second BCL authority, admitted to the same standard as the first.** `System.dll` declares every
+`System.ComponentModel` identity the family reaches and mscorlib declares none of them, so the
+inventory had to stop being pinned to one assembly. It is now a registry: exact SHA-256, an identity
+derived from each assembly's own `.publickey` blob, a Microsoft origin claim read out of the PE, and
+a pairing proof — every gate a property of the registry rather than of mscorlib.
 
-That is four `System.ComponentModel` identities plus a descriptor system, none of them in the BCL
-register, and the register's rule is to project what the XNA surface can reach. What a Ruby consumer
-would reach here is a .NET designer-serialisation facility that has no Ruby analogue at all.
+One gate had to get **stronger** to admit the second binary rather than weaker. Only six of the ten
+pinned XNA assemblies reference `System`; requiring all ten would have failed and requiring merely
+one would have proved nothing, so the referrer set is itself asserted and an assembly that gained or
+lost the reference now fails the gate. `tools/api_compat/reference/BCL_PROVENANCE.md` carries both
+identities and the partition.
 
-**Re-measured at Foundation 104**, from the IL rather than from this page, because the standing rule
-is that a blocker is measured before it is trusted. Four things were checked and all four hold:
+**The demand closure is generated, not asserted.**
+`docs/generated/design-converter-inventory.json` derives the whole audit table from the pinned IL —
+base, fields, descriptor names, authored order, sort order, field-versus-property reflection, scalar
+element type, string-convert support, the constructor each `InstanceDescriptor` names, the dictionary
+keys each `CreateInstance` reads — and `test/test_design_converters.rb` asserts the Ruby against it,
+so neither side can drift. Thirty-two BCL families are admitted across the two authorities, on three
+measured demands: **direct** (an XNA signature names it), **transitive** (an admitted family's
+measured surface does), and **behavioural** (the measured XNA behaviour calls it and a consumer
+observes the result). `System.ComponentModel.TypeDescriptor` is the case that needed the third: no
+signature anywhere names it, and both of `MathTypeConverter`'s generic helpers call `GetConverter`.
 
-1. `propertyDescriptions` and `supportStringConvert` are `.field family` — protected, not
-   `assembly` — so they *are* in the projected surface and the first of them is typed
-   `PropertyDescriptorCollection`. A protected field of an unprojectable type is not a member a
-   subclass can be given.
-2. `CanConvertFrom`'s fallback really is `call instance bool
-   [System]System.ComponentModel.TypeConverter::CanConvertFrom`, at `IL_001f`, and `CanConvertTo`'s
-   at `IL_0017`. Half of each member's observable answer is the base class's, so projecting the
-   type without the base would be inventing behaviour rather than deriving it.
-3. `CanConvertTo`'s special case is `ldtoken
-   [System]System.ComponentModel.Design.Serialization.InstanceDescriptor` at `IL_0001` — a fifth
-   identity, and in a fourth namespace.
-4. **The authority would have to be a second one.** Every identity above lives in `System.dll`, not
-   in `mscorlib`. `tools/api_compat/build_bcl_inventory.rb` is pinned to one assembly by SHA-256,
-   derives its public key token from that assembly's own `.publickey`, and proves the pairing
-   through each XNA assembly's `AssemblyRef` to **mscorlib**. Admitting `System.dll` means a second
-   pinned authority and a second pairing proof — which is a decision about what this binding's BCL
-   floor is, not a member to write.
+**Four facts the IL settled that no page had recorded.**
 
-The reach, counted rather than described: `TypeConverter` alone declares about thirty public
-identities, `PropertyDescriptor` about twenty, `PropertyDescriptorCollection` about twenty, and
-`CultureInfo` far more than all of them together. Projecting fifty-three design-time identities that
-nothing in this binding consumes would cost well over a hundred BCL ones. The classification is
-`BCL_PROJECTION_SCOPE`, and it is a scope decision with a measured price rather than a deferral.
+1. **`MatrixConverter` and `RectangleConverter` never sort.** The other ten call
+   `PropertyDescriptorCollection.Sort(names)` in their constructors; those two do not, so their
+   property order is the authored one — `M11..M44` and `X, Y, Width, Height`, neither of them
+   alphabetical, which is what a bare `Sort()` would have given.
+
+2. **`ColorConverter` cannot produce an `InstanceDescriptor`.** Its `ConvertTo` asks
+   `typeof(Color).GetConstructor(new[]{ typeof(byte) ×4 })`. `Color` declares seven public
+   constructors and none takes four bytes, so `GetConstructor` answers **null**, the IL's own
+   `ConstructorInfo.op_Inequality(ctor, null)` at `IL_00bb` fails, and the branch is skipped
+   entirely. The generator resolves every named constructor against the reference contract: eleven
+   of twelve resolve and the twelfth is reported rather than implemented as though it did.
+
+3. **Six converters answer `CanConvertTo(String)` true and cannot format one.**
+   `supportStringConvert` is false for `BoundingBox`, `BoundingSphere`, `Matrix`, `Plane`, `Ray` and
+   `Rectangle`, so `CanConvertFrom(String)` is false — but `CanConvertTo` falls through to
+   `TypeConverter.CanConvertTo`, whose whole body is `destinationType == typeof(string)`. So it is
+   true, and `ConvertTo` really does produce a string: the base's, which is `value.ToString()`.
+
+4. **`TypeConverter.CanConvertFrom` answers for `InstanceDescriptor`, not for `String`.** Half of
+   each converter's answer is the base class's, which is why the base is projected rather than
+   flattened: writing those members by hand would have been inventing behaviour rather than
+   deriving it.
+
+**One language mapping limitation, recorded rather than hidden.** Ruby's `Integer` is the
+projection of both `System.Int32` and `System.Byte`, and two measured behaviours turn on telling
+them apart — `Color`'s missing four-byte constructor, and which element converter parses a channel
+(`ByteConverter` accepts hexadecimal and ranges 0..255; `Int32Converter` does not range-check to a
+byte). So the reflection registry is keyed by **CLR identity** and answers the Ruby type beside it:
+the lookup is exact and the value a consumer reads is what `System.Type` projects to.
+
+A second one: the CLR reads culture data from the operating system and Ruby has nothing equivalent.
+This binding ships no locale database — `CultureInfo` carries the separators the reach consumes,
+the invariant culture's values are read out of the pinned mscorlib's own `CultureData` initialiser,
+and a consumer constructs any other culture with the values it needs. `CurrentCulture` defaults to
+the invariant one so a converter's output does not depend on the host's locale environment.
 
 ### 4 built at Foundation 104 — the `ContentReader` family
 
@@ -175,27 +213,34 @@ the file's own mtime rather than by reading the header.
 | Classification | Types | Members |
 | --- | ---: | ---: |
 | `BLOCKED_UPSTREAM_CNA` (the adapter defect) | 3 | 8 partial members |
-| `BCL_PROJECTION_SCOPE` (`System.ComponentModel`) | 13 | — |
 | built at Foundation 103 — `Media` | 17 | 185, all of them |
 | built at Foundation 104 — `ContentReader` | 4 | 30, over zero new native routes |
 | corrected at Foundation 104 — `Media.Song` | — | 3, on a blocker that was measured false |
+| built at Foundation 105 — `Design` | 13 | 55, over zero new native routes |
 
-**Nothing on this page is locally actionable.** Every remaining type is one of the sixteen missing
-ones, and every one of those is either the adapter defect or the `System.ComponentModel` scope;
-every remaining member is one of the eight, and every one of those traces to that same adapter
-defect. Opening any of them is upstream work.
+**Every remaining row is the same upstream defect.** All three missing types and all eight partial
+members trace to CNA's adapter initialisation order, and there is nothing else on this page.
+`BCL_PROJECTION_SCOPE` no longer classifies a **type**: the thirteen converters were the whole of
+that, and `test/test_design_converters.rb` asserts on three independent artifacts that no selected
+type carries it, so reintroducing it for a selected family fails a test rather than passing review.
+
+It still classifies two **members**, and that is a different thing rather than a leftover.
+`BinaryReader.ReadDecimal` returns `System.Decimal` and its second constructor takes
+`System.Text.Encoding`; no XNA signature names either type, so the inventory's demand rule refuses
+both families and the members that return them cannot be projected. That is the classification doing
+its job — refusing an identity nothing demands — rather than deferring one the project selected.
+`lib/cna/runtime/binary_reader.rb` records both.
 
 ## Every strict diagnostic, accounted for
 
-`TOTAL_DIAGNOSTICS` is **29**, and this is all of them:
+`TOTAL_DIAGNOSTICS` is **16**, down from 29, and this is all of them:
 
 | count | category | classification |
 | ---: | --- | --- |
-| 13 | `MISSING_TYPE` — the `Design` converters | `BCL_PROJECTION_SCOPE` |
 | 3 | `MISSING_TYPE` — `GraphicsAdapter`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs` | `BLOCKED_UPSTREAM_CNA` |
 | 8 | `MISSING_MEMBER` — `GraphicsDevice`'s 3 and `GraphicsDeviceManager`'s 5 | `BLOCKED_UPSTREAM_CNA` |
 | 5 | `OVERLOAD_MAPPING_MISMATCH` | **not a fourth thing**: the verifier reports an overload count beside a missing member whenever the member is a method or constructor, so these five are the five method-shaped entries of the eight above, counted a second time |
 
 Every other structural category is **zero**, the allowlist is empty and
 `UNMEASURED_STRUCTURAL_CATEGORY` is zero. There is no diagnostic on this project that is not in the
-table above, and none of them is local.
+table above, all sixteen trace to one upstream defect, and none of them is local.

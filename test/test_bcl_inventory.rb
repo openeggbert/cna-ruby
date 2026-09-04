@@ -80,6 +80,12 @@ class BclInventoryTest < Minitest::Test
       assert_equal expected.fetch("company"), record.fetch("company"), name
       assert_equal expected.fetch("description"), record.fetch("description"), name
       assert record.fetch("observedFileVersion").start_with?("4.0.30319.1"), record.fetch("observedFileVersion")
+      # ikdasm produced every value above, so a second disassembler over the same bytes has to
+      # agree on the three the whole gate turns on. "Cross-checked" may never quietly mean
+      # "not run", so the record names the tool or says why there was none.
+      cross = record.fetch("crossCheck")
+      assert_equal "monodis", cross.fetch("tool"), name
+      assert_equal %w[assemblyName assemblyVersion publicKey], cross.fetch("agreesOn"), name
     end
     # Two different binaries, not the same one admitted twice.
     assert_equal 2, INVENTORY.fetch("authorities").values.map { |record| record.fetch("sha256") }.uniq.length
@@ -203,11 +209,11 @@ class BclInventoryTest < Minitest::Test
   def test_the_bcl_metrics_are_reported_separately_and_add_up
     # Five when the Stream projection landed; ten once the Storage family added the three IO
     # enums, `IAsyncResult` and the one `WaitHandle` member reachable through it; eleven with
-    # `System.IO.BinaryReader`, the CLR base of `Content.ContentReader`; twenty-six once the
-    # Design family admitted System.dll -- seven ComponentModel families from the new authority
-    # and eight more from mscorlib that the converters reach.
-    assert_equal 26, INVENTORY.fetch("BCL_FAMILIES")
-    assert_equal({"mscorlib" => 19, "System" => 7}, INVENTORY.fetch("BCL_FAMILIES_BY_AUTHORITY"))
+    # `System.IO.BinaryReader`, the CLR base of `Content.ContentReader`; thirty once the Design
+    # family admitted System.dll -- eleven ComponentModel families from the new authority, four of
+    # them the scalar element converters, and eight more from mscorlib that the converters reach.
+    assert_equal 32, INVENTORY.fetch("BCL_FAMILIES")
+    assert_equal({"mscorlib" => 21, "System" => 11}, INVENTORY.fetch("BCL_FAMILIES_BY_AUTHORITY"))
     assert_equal INVENTORY.fetch("families").length, INVENTORY.fetch("BCL_FAMILIES")
     assert_equal types.length, INVENTORY.fetch("BCL_TYPES")
     assert_equal types.values.sum { |entry| entry.fetch("members").length }, INVENTORY.fetch("BCL_MEMBERS")
@@ -265,8 +271,26 @@ class BclInventoryTest < Minitest::Test
         assert_empty family.fetch("bclConsumers"), identity
         refute(signatures.any? { |signature| signature.include?(identity) },
                "#{identity} claims behavioural demand but an XNA signature names it")
-        assert_includes DESIGN.fetch("reachedBclIdentities").keys,
-                        "#{family.fetch("designReachAuthority")}:#{identity}", identity
+        # Two shapes of behavioural demand, and each names where its evidence is. An identity the
+        # Design IL references carries `designReachAuthority`; one reached only through the
+        # intrinsic converter table carries `intrinsicConverterFor`, naming the element type whose
+        # table entry resolves to it. A family claiming behavioural demand with neither would be an
+        # assertion rather than a measurement.
+        if family.key?("designReachAuthority")
+          assert_includes DESIGN.fetch("reachedBclIdentities").keys,
+                          "#{family.fetch("designReachAuthority")}:#{identity}", identity
+        elsif family.key?("intrinsicConverterFor")
+          element = family.fetch("intrinsicConverterFor")
+          assert_includes DESIGN.fetch("scalarElementTypes").keys, element, identity
+          assert_equal identity, INVENTORY.fetch("intrinsicTypeConverters").fetch(element), identity
+        else
+          # The base of a demanded element converter: required to represent one, and named as the
+          # base of at least one family that is itself demanded.
+          bases = INVENTORY.fetch("families").filter_map do |other|
+            INVENTORY.fetch("types").dig(other.fetch("family"), "baseType") if other.key?("intrinsicConverterFor")
+          end
+          assert_includes bases, identity, "#{identity} claims behavioural demand with no evidence"
+        end
       else
         flunk "#{identity} declares an unknown demand #{family.fetch("demand").inspect}"
       end

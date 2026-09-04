@@ -85,6 +85,7 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 102 | the Storage family, and the async façade that is not one | **2** | 32 |
 | 103 | the Media library and player, and the three routes CNA does not export | **17** | 182 |
 | 104 | the `ContentReader` family, over one BCL decision and no native route; and `Song`'s three navigations, on a blocker measured false | **4** | 33 |
+| 105 | the thirteen `Design` converters, over a second admitted BCL authority and no native route | **13** | 55 |
 
 ## Measured state
 
@@ -103,21 +104,21 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 | count | what it measures |
 | ---: | --- |
 | 257 | XNA 4.0 Windows reference types |
-| 241 | types this binding projects |
-| 2827 | Ruby member identities |
-| 239 | complete types |
+| 254 | types this binding projects |
+| 2880 | Ruby member identities |
+| 252 | complete types |
 | 2 | partial types |
-| 16 | missing types |
+| 3 | missing types |
 | 48 | event identities |
 | 24 | types owning an event |
-| 29 | projected BCL identities |
+| 50 | projected BCL identities |
 
 **Strict diagnostics**
 
 | count | what it measures |
 | ---: | --- |
-| 29 | strict diagnostics in total |
-| 16 | `MISSING_TYPE` |
+| 16 | strict diagnostics in total |
+| 3 | `MISSING_TYPE` |
 | 8 | `MISSING_MEMBER` |
 | 5 | `OVERLOAD_MAPPING_MISMATCH` |
 | 0 | `PROPERTY_MAPPING_MISMATCH` |
@@ -158,14 +159,14 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 2 | dependency-complete frontier candidates |
+| 1 | dependency-complete frontier candidates |
 | 0 | of them consumable now |
 
 **Capability registry**
 
 | count | what it measures |
 | ---: | --- |
-| 158 | runtime capability rows |
+| 161 | runtime capability rows |
 
 <!-- scoreboard:end -->
 
@@ -177,16 +178,23 @@ in the shipped library, and are bound now.
 
 ## What is left, and what each thing is waiting for
 
-`docs/remaining-surface-audit.md` classifies **every** remaining member and type at Foundation 104,
+`docs/remaining-surface-audit.md` classifies **every** remaining member and type at Foundation 105,
 with the evidence for each rather than a judgement. In summary:
 
 | What | Count | Classification |
 | --- | ---: | --- |
 | `GraphicsDevice`'s 3 and `GraphicsDeviceManager`'s 5 | 8 members | `BLOCKED_UPSTREAM_CNA` — all eight trace to the one adapter defect |
 | `GraphicsAdapter`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs` | 3 types | `BLOCKED_UPSTREAM_CNA` — the same defect |
-| the thirteen `Design` converters | 13 types | `BCL_PROJECTION_SCOPE` — four `System.ComponentModel` identities and a descriptor system |
 
-**Nothing locally actionable is left.** The two blocks that were are Foundations 103 and 104, and
+The thirteen `Design` converters were on this table as `BCL_PROJECTION_SCOPE` for four milestones,
+and Foundation 105 removed them by building them. That classification was a scope decision rather
+than a blocker — the authority was on the machine and the reach was measurable — so the milestone
+admitted `System.dll` as a second pinned BCL authority, projected the demand-driven
+`System.ComponentModel` closure the converters actually reach, and left the adapter defect as the
+only thing on this page.
+
+**What is left is one upstream defect.** The blocks that were local are Foundations 103, 104 and
+105, and
 each was surveyed before it was built rather than guessed at. `Media` bound 167 routes, each with a
 production call site, against a library this host really has — 35 pictures, an empty music half,
 `ABI_MISMATCHES` 0 on both roots. The `ContentReader` family bound **none**: the register decision
@@ -352,24 +360,28 @@ rule the `GraphicsDeviceManager` producer audit established:
 ## Recommended next frontier
 
 **The stop condition is met, and `docs/remaining-surface-audit.md` is where to check it.** Its last
-table accounts for every one of the 29 strict diagnostics: thirteen `Design` converters are
-`BCL_PROJECTION_SCOPE`, three types and eight members are `BLOCKED_UPSTREAM_CNA` on one measured
-adapter defect, and the five `OVERLOAD_MAPPING_MISMATCH` entries are those same eight counted a
-second time because the verifier reports an overload count beside every missing method. Every other
-structural category is zero, the allowlist is empty and `UNMEASURED_STRUCTURAL_CATEGORY` is zero.
+table accounts for every one of the 16 strict diagnostics, and all sixteen are the same thing: three
+types and eight members are `BLOCKED_UPSTREAM_CNA` on one measured adapter defect, and the five
+`OVERLOAD_MAPPING_MISMATCH` entries are those same eight counted a second time because the verifier
+reports an overload count beside every missing method. Every other structural category is zero, the
+allowlist is empty and `UNMEASURED_STRUCTURAL_CATEGORY` is zero. `BCL_PROJECTION_SCOPE` classifies
+nothing at all.
 
 **Both frontiers are at rest.** `docs/generated/dependency-frontier.md` carries the
 dependency-complete candidates and the scoreboard counts them; each has been audited and each
 measurement stands. The member frontier is at rest too, which it was not before Foundation 104: the
 eight members the two partial types still owe are `BLOCKED_UPSTREAM_CNA` to the last one, every one
 of them tracing to the adapter defect `docs/graphics-adapter-ordering-upstream-defect.md` measured,
-and the sixteen missing types are three on that same defect and thirteen `Design` converters that
-are `BCL_PROJECTION_SCOPE`. `docs/remaining-surface-audit.md` classifies every one of them with its
-evidence. **There is no locally executable work left in the selected surface.**
+and the three missing types are on that same defect. The `BCL_PROJECTION` blocker category has left
+the dependency frontier entirely: it carried the converter family and nothing else, and one
+candidate remains, which is the adapter. `docs/remaining-surface-audit.md` classifies every
+remaining row with its evidence. **There is no locally executable work left in the selected
+surface.**
 
 What would open more is upstream, not local: an adapter list CNA builds after the video subsystem
-exists, or a decision to admit `System.dll` as a second pinned BCL authority and project .NET's
-type-descriptor system for thirteen design-time converters nothing here consumes.
+exists. The other half of that sentence used to be "or a decision to admit `System.dll`" — that
+decision was taken and executed at Foundation 105, and naming it again as future work would be the
+staleness this page exists to prevent.
 Foundation 89's audit — `docs/graphics-runtime-member-audit.md` — is what measured the graphics half
 family by family against CNA 0.21.0's real exports rather than against the blanket "graphics
 runtime" word this handoff used to carry, and it is still the model for how the next one should

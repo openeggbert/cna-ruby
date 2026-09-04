@@ -58,8 +58,8 @@ class VideoPlayerTest < Minitest::Test
     # and uncovered EffectMaterial and DirectionalLight behind the Effect base, which is a frontier
     # advancing rather than regressing. What this test claims -- that VideoPlayer left it -- stands.
     candidates = FRONTIER.fetch("dependencyCompleteCandidates").map { |c| c.fetch("name") }.sort
-    assert_equal %w[Microsoft.Xna.Framework.Design.MathTypeConverter
-                    Microsoft.Xna.Framework.Graphics.GraphicsAdapter], candidates
+    # ...and Foundation 105 built MathTypeConverter, leaving the adapter defect alone.
+    assert_equal %w[Microsoft.Xna.Framework.Graphics.GraphicsAdapter], candidates
     refute_includes candidates, NAME
     assert_empty FRONTIER.fetch("consumableCandidates")
     # Every Media type this project ever selected is complete now, and so is every one it did not:

@@ -47,6 +47,37 @@ and the same 4.0.30319.1 RTM build. On the machine this work was done on both ar
 Wine XNA 4.0 environment; any copy whose SHA-256 matches is equally authoritative and any copy whose
 SHA-256 does not is not, so no path is recorded here.
 
+### The near miss, named
+
+A genuine Microsoft assembly called `System` that this gate **refuses** is on the same machine, and
+it is worth naming because it is the exact analogue of the Xbox 360 mscorlib recorded above: XNA
+Game Studio 4.0 ships a .NET **Compact** Framework `System.dll` under
+`.../XNA Game Studio/v4.0/References/Xbox360/`.
+
+| Field | Admitted `System` | The Xbox 360 near miss |
+| --- | --- | --- |
+| SHA-256 | `c3182e40f09a8d3a0167a833dc1ce7c3cb2bfddbd32031d8d3f41481d0467462` | `0a46c52a7ccdaf16dc4fe29865ed36f0431fbcd1d0bdee3395331bf8ffd3f270` |
+| Bytes | 3481928 | 42496 |
+| Assembly name | `System` | `System` |
+| Assembly version | `4.0.0.0` | **`2.0.5.0`** |
+| Public key | the ECMA key `00000000000000000400000000000000` | **a full 128-byte Microsoft key** |
+
+The name is identical and everything the gate actually checks differs, so the refusal is a
+measurement rather than a filename rule. It is refused four times over: by SHA-256, by byte length,
+by the manifest's `.ver`, and by the token derived from its own key blob — and, had it passed all of
+those, by the pairing, because the pinned XNA Windows assemblies bind `System 4.0.0.0`. This is
+recorded rather than wired into a test because the path is machine-local; the committed control is
+the metadata mutation in the negative-control set, which fails the same four gates.
+
+### A second disassembler, on the facts the gate turns on
+
+`ikdasm` produces every identity value above, so a defect in *it* would be invisible to any check
+that reads only its output. The builder therefore reads the assembly table a second time with
+**`monodis`** — a different disassembler over the same bytes — and requires it to agree on the
+assembly name, the assembly version and the public key blob. Both admitted authorities pass, and
+the inventory records which tool ran under each authority's `crossCheck`, so "cross-checked" can
+never quietly mean "not run": when `monodis` is absent the record says so instead of being omitted.
+
 ### Reading the PE version resource
 
 A resource key occurs in a PE more than once: in the `VS_VERSION_INFO` string table beside its

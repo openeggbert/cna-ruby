@@ -555,7 +555,10 @@ class DependencyFrontierTest < Minitest::Test
     # EffectMaterial were audited and built, which put the three stock effects that name them onto
     # the partial list instead; and **2** when the Model family took ModelMeshPart off it. Two is
     # the fewest this frontier has ever carried, and both entries left are genuinely blocked.
-    assert_equal 2, REPORT.fetch("dependencyCompleteCandidates").length
+    # ...and **1** at Foundation 105, when the thirteen Design converters were built and the
+    # `BCL_PROJECTION` blocker left the frontier entirely. One is the fewest it has ever carried,
+    # and the entry left is the measured CNA adapter defect.
+    assert_equal 1, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -745,8 +748,9 @@ class DependencyFrontierTest < Minitest::Test
       # Microphone was here under NATIVE_RUNTIME until that deferral was checked too, and it was
       # wrong for a third reason: not the ABI, not the host, but nothing at all. This machine has
       # three capture devices, CNA enumerates every one, and the retired 0.7.0 headers declare the
-      # same sixteen routes. Graphics.GraphicsAdapter replaces it as the NATIVE_RUNTIME example.
-      "Microsoft.Xna.Framework.Graphics.GraphicsAdapter" => "NATIVE_RUNTIME",
+      # same sixteen routes. Graphics.GraphicsAdapter replaces it as the NATIVE_RUNTIME example,
+      # and since Foundation 105 it is the frontier's only entry -- the row below records what
+      # left, and there is no second example to name.
       # TextureCollection was here until its deferral was checked and turned out to be simply
       # mistaken -- the two routes it needs were exported by the retired artifact too.
       # EffectAnnotation replaced it and has itself been replaced: the Effect cluster built the
@@ -754,12 +758,12 @@ class DependencyFrontierTest < Minitest::Test
       # TitleContainer used to be here under BCL_PROJECTION and is deliberately not replaced by
       # another example: the Stream projection consumed it, which is what a retired blocker looks
       # like. `test_the_stream_projection_consumed_title_container` asserts that directly.
-      # ContentManager left too, consumed by the Stream and Action`1 projections. What is left
-      # under BCL_PROJECTION is the converter family alone: ResourceContentManager, which the
-      # completed ContentManager uncovered behind it, was built once System.Resources.ResourceManager
-      # was collapsed to the one member it reaches -- and it is the first candidate this frontier
-      # ever *selected* rather than merely listed.
-      "Microsoft.Xna.Framework.Design.MathTypeConverter" => "BCL_PROJECTION",
+      # ContentManager left too, consumed by the Stream and Action`1 projections. What was left
+      # under BCL_PROJECTION was the converter family alone, and Foundation 105 built that: it
+      # admitted System.dll as a second BCL authority, projected the demand-driven
+      # System.ComponentModel closure the thirteen converters reach, and took the **whole
+      # BCL_PROJECTION category** off this frontier. There is no example to name under it any more,
+      # and this register says so rather than leaving a stale one.
       # Arrived when GraphicsResource completed. It is the only dependency-complete candidate that
       # carries the producer blocker: its own IL calls IVertexType members and nothing in this
       # projection conforms to that interface. The four state objects that arrived with it carry
@@ -786,7 +790,8 @@ class DependencyFrontierTest < Minitest::Test
       # NATIVE_RUNTIME naming three `GraphicsDevice` members genuinely absent at the time --
       # `SetVertexBuffer`, `Indices` and `DrawIndexedPrimitives`, all three since projected -- and
       # the Model family built it. Two entries are left and both are real.
-      "Microsoft.Xna.Framework.Design.MathTypeConverter" => "BCL_PROJECTION",
+      # `MathTypeConverter` was the BCL_PROJECTION entry until Foundation 105 built it, and with
+      # it the whole blocker category left the frontier.
       "Microsoft.Xna.Framework.Graphics.GraphicsAdapter" => "NATIVE_RUNTIME"
     }.each do |name, expected|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }

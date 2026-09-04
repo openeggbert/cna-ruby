@@ -75,37 +75,116 @@ class BclProjectionTest < Minitest::Test
                   "System.IO.FileAccess" => "CNA::Runtime::Stream::FileAccess",
                   "System.IO.FileShare" => "CNA::Runtime::Stream::FileShare",
                   "System.IAsyncResult" => "CNA::Runtime::AsyncResult",
-                  "System.Threading.WaitHandle" => "CNA::Runtime::AsyncResult::WaitHandle"},
+                  "System.Threading.WaitHandle" => "CNA::Runtime::AsyncResult::WaitHandle",
+                  # Foundation 105: the demand-driven System.ComponentModel closure the thirteen
+                  # Design converters reach, plus the reflection and globalization identities they
+                  # reach through it. Seven ComponentModel identities and four scalar element
+                  # converters come from the second admitted authority, System.dll; the four
+                  # System.Reflection and two System.Globalization ones come from mscorlib.
+                  # IDictionary collapses to Ruby's Hash because every CreateInstance does exactly
+                  # get_Item on it, and ICollection to Array because that is what an
+                  # InstanceDescriptor's Arguments is.
+                  "System.ComponentModel.TypeConverter" => "CNA::Runtime::ComponentModel::TypeConverter",
+                  "System.ComponentModel.ExpandableObjectConverter" => "CNA::Runtime::ComponentModel::ExpandableObjectConverter",
+                  "System.ComponentModel.PropertyDescriptor" => "CNA::Runtime::ComponentModel::PropertyDescriptor",
+                  "System.ComponentModel.PropertyDescriptorCollection" => "CNA::Runtime::ComponentModel::PropertyDescriptorCollection",
+                  "System.ComponentModel.TypeDescriptor" => "CNA::Runtime::ComponentModel::TypeDescriptor",
+                  "System.ComponentModel.Design.Serialization.InstanceDescriptor" => "CNA::Runtime::ComponentModel::InstanceDescriptor",
+                  "System.ComponentModel.ITypeDescriptorContext" => "CNA::Runtime::ComponentModel::ITypeDescriptorContext",
+                  "System.ComponentModel.BaseNumberConverter" => "CNA::Runtime::ComponentModel::BaseNumberConverter",
+                  "System.ComponentModel.Int32Converter" => "CNA::Runtime::ComponentModel::Int32Converter",
+                  "System.ComponentModel.SingleConverter" => "CNA::Runtime::ComponentModel::SingleConverter",
+                  "System.ComponentModel.ByteConverter" => "CNA::Runtime::ComponentModel::ByteConverter",
+                  "System.Globalization.CultureInfo" => "CNA::Runtime::Globalization::CultureInfo",
+                  "System.Globalization.TextInfo" => "CNA::Runtime::Globalization::TextInfo",
+                  "System.Reflection.MemberInfo" => "CNA::Runtime::Reflection::MemberInfo",
+                  "System.Reflection.ConstructorInfo" => "CNA::Runtime::Reflection::ConstructorInfo",
+                  "System.Reflection.FieldInfo" => "CNA::Runtime::Reflection::FieldInfo",
+                  "System.Reflection.PropertyInfo" => "CNA::Runtime::Reflection::PropertyInfo",
+                  "System.Collections.IDictionary" => "Hash",
+                  "System.Collections.ICollection" => "Array"},
                  B::TYPES)
     # Foundation 33 also records a decision *not* to invent a constant, and Foundation 36 adds
     # the second such decision.
-    assert_equal ["System.Action`1", "System.AsyncCallback", "System.IDisposable",
+    # Foundation 105 adds the two interfaces a consumer must *construct* to use a projected member.
+    # Both collapse to a Ruby callable for the same measured reason the first two do, and both were
+    # measured in the BCL inventory before being collapsed rather than assumed to declare one member.
+    assert_equal ["System.Action`1", "System.AsyncCallback", "System.Collections.IComparer",
+                  "System.EventHandler", "System.IDisposable",
                   "System.IServiceProvider", "System.Resources.ResourceManager"],
                  B::STRUCTURAL_COLLAPSE.keys.sort
+    # `IComparer` is an interface and really declares one member. `EventHandler` is a **delegate**
+    # -- `extends System.MulticastDelegate` -- so the CLR generates `BeginInvoke`/`EndInvoke` beside
+    # `Invoke` and a constructor taking an object and a native int. The contract is `Invoke` alone,
+    # which is the same reading `System.Action`1` and `System.AsyncCallback` already take, and the
+    # measurement is what says so rather than an assumption about how a delegate is shaped.
+    comparer = BCL_INVENTORY.fetch("types").fetch("System.Collections.IComparer")
+    assert_equal "interface", comparer.fetch("kind")
+    assert_equal %w[Compare], comparer.fetch("members").map { |member| member.fetch("name") }
+
+    handler = BCL_INVENTORY.fetch("types").fetch("System.EventHandler")
+    assert_equal "System.MulticastDelegate", handler.fetch("baseType")
+    assert_equal %w[.ctor BeginInvoke EndInvoke Invoke],
+                 handler.fetch("members").map { |member| member.fetch("name") }.sort
+    invoke = handler.fetch("members").find { |member| member.fetch("name") == "Invoke" }
+    assert_equal ["object", "class System.EventArgs"], invoke.fetch("parameters").map { |p| p.fetch("type") }
     assert_equal({"System.Exception" => "StandardError",
                   "System.Runtime.InteropServices.ExternalException" => "StandardError"},
                  B::EXCEPTION_BASES)
-    assert_equal ["System.Action`1", "System.AsyncCallback", "System.Attribute", "System.Byte[]",
-                  "System.Char",
-                  "System.Collections.Generic.Dictionary`2", "System.Collections.Generic.IList`1",
-                  "System.Collections.ObjectModel.Collection`1",
-                  "System.Collections.ObjectModel.ReadOnlyCollection`1", "System.EventArgs",
-                  "System.Exception", "System.IAsyncResult", "System.IDisposable",
-                  "System.IO.BinaryReader",
-                  "System.IO.FileAccess", "System.IO.FileMode", "System.IO.FileShare",
-                  "System.IO.SeekOrigin", "System.IO.Stream",
-                  "System.IServiceProvider", "System.Nullable`1",
-                  "System.Resources.ResourceManager",
-                  "System.Runtime.InteropServices.ExternalException",
-                  "System.Runtime.Serialization.SerializationInfo",
-                  "System.Runtime.Serialization.StreamingContext", "System.Text.StringBuilder",
-                  "System.Threading.WaitHandle",
-                  "System.TimeSpan", "System.Type"], B.identities
+    assert_equal [
+       "System.Action`1", "System.AsyncCallback",
+       "System.Attribute", "System.Byte[]",
+       "System.Char", "System.Collections.Generic.Dictionary`2",
+       "System.Collections.Generic.IList`1", "System.Collections.ICollection",
+       "System.Collections.IComparer", "System.Collections.IDictionary",
+       "System.Collections.ObjectModel.Collection`1", "System.Collections.ObjectModel.ReadOnlyCollection`1",
+       "System.ComponentModel.BaseNumberConverter", "System.ComponentModel.ByteConverter",
+       "System.ComponentModel.Design.Serialization.InstanceDescriptor", "System.ComponentModel.ExpandableObjectConverter",
+       "System.ComponentModel.ITypeDescriptorContext", "System.ComponentModel.Int32Converter",
+       "System.ComponentModel.PropertyDescriptor", "System.ComponentModel.PropertyDescriptorCollection",
+       "System.ComponentModel.SingleConverter", "System.ComponentModel.TypeConverter",
+       "System.ComponentModel.TypeDescriptor", "System.EventArgs",
+       "System.EventHandler", "System.Exception",
+       "System.Globalization.CultureInfo", "System.Globalization.TextInfo",
+       "System.IAsyncResult", "System.IDisposable",
+       "System.IO.BinaryReader", "System.IO.FileAccess",
+       "System.IO.FileMode", "System.IO.FileShare",
+       "System.IO.SeekOrigin", "System.IO.Stream",
+       "System.IServiceProvider", "System.Nullable`1",
+       "System.Reflection.ConstructorInfo", "System.Reflection.FieldInfo",
+       "System.Reflection.MemberInfo", "System.Reflection.PropertyInfo",
+       "System.Resources.ResourceManager", "System.Runtime.InteropServices.ExternalException",
+       "System.Runtime.Serialization.SerializationInfo", "System.Runtime.Serialization.StreamingContext",
+       "System.Text.StringBuilder", "System.Threading.WaitHandle",
+       "System.TimeSpan", "System.Type"
+    ], B.identities
 
-    B::TYPES.merge(B::EXCEPTION_BASES).each_value do |path|
+    # Every projected identity resolves, and to a Ruby type rather than a value. Two of them
+    # resolve to a bare Module rather than a Class, and both are Foundation 105's:
+    #
+    # - `TypeDescriptor` is a CLR **static class** -- `sealed` with no public constructor and no
+    #   instance member. A Ruby class with a private `new` would carry an instance identity the CLR
+    #   type does not have.
+    # - `ITypeDescriptorContext` is an interface **this binding never implements**: the consumer
+    #   supplies the context. A module is what a consumer includes, and it is the first interface
+    #   this register has projected at all.
+    #
+    # `IAsyncResult` is the interface that shows why "interface implies module" would be the wrong
+    # rule: XNA's own implementations of it are private and always completed, so what this binding
+    # hands back is a concrete `AsyncResult`, and a consumer receives an instance.
+    modules = B::TYPES.merge(B::EXCEPTION_BASES).filter_map do |identity, path|
       resolved = path.split("::").reduce(Object) { |scope, part| scope.const_get(part, false) }
-      assert_instance_of Class, resolved, path
+      assert_kind_of Module, resolved, path
+      identity unless resolved.instance_of?(Class)
     end
+    assert_equal %w[System.ComponentModel.ITypeDescriptorContext System.ComponentModel.TypeDescriptor],
+                 modules.sort
+    # And the two that are modules really are the CLR shapes that justify it.
+    assert_equal "interface",
+                 BCL_INVENTORY.dig("types", "System.ComponentModel.ITypeDescriptorContext", "kind")
+    static_class = BCL_INVENTORY.fetch("types").fetch("System.ComponentModel.TypeDescriptor")
+    assert static_class.fetch("sealed")
+    assert static_class.fetch("members").none? { |member| member.fetch("kind") == "constructor" && member.fetch("access") == "public" }
 
     # Deliberately not designed yet. Dictionary`2 was on this list until Foundation 46 measured it
     # against the same mscorlib, and the SerializationInfo/StreamingContext pair until Foundation 49
@@ -137,21 +216,30 @@ class BclProjectionTest < Minitest::Test
     # carries the same rule and records which kind of demand each family has.
     # `WaitHandle` joined `SeekOrigin` as a transitive demand: no XNA signature names it, and
     # `IAsyncResult.AsyncWaitHandle` -- itself named by four Storage signatures -- does.
-    transitive = { "System.IO.SeekOrigin" => "System.IO.Stream",
-                   "System.Threading.WaitHandle" => "System.IAsyncResult" }
+    #
+    # The exceptions used to be a hand-kept list of two, which would have had to grow by ten at
+    # Foundation 105 and could then have gone stale the way every hand-kept table in this project
+    # eventually has. It reads the generated inventory instead: an identity no XNA signature names
+    # must be a family the inventory records as `transitive` or `behavioural`, and the inventory's
+    # own builder aborts on a family with neither kind of consumer. So the rule is measured on both
+    # sides rather than restated here.
+    families = BCL_INVENTORY.fetch("families").to_h { |entry| [entry.fetch("family"), entry] }
+    indirect = []
     B.identities.each do |identity|
-      demanded_by = transitive[identity]
-      if demanded_by
-        refute(signatures.any? { |signature| signature.include?(identity) },
-               "#{identity} claims transitive demand but an XNA signature names it")
-        family = BCL_INVENTORY.fetch("families").find { |entry| entry.fetch("family") == identity }
-        assert_equal "transitive", family.fetch("demand"), identity
-        expected = identity == "System.IO.SeekOrigin" ? ["#{demanded_by}::Seek"] : nil
-        assert_equal expected, family.fetch("bclConsumers"), identity unless expected.nil?
-        next
-      end
-      assert(signatures.any? { |signature| signature.include?(identity) }, identity)
+      next if signatures.any? { |signature| signature.include?(identity) }
+
+      family = families[identity]
+      refute_nil family, "#{identity} is in the register, no XNA signature names it, and it is not an admitted family"
+      assert_includes %w[transitive behavioural], family.fetch("demand"), identity
+      indirect << identity
     end
+    # And the indirect ones stay the minority: most of the register is named outright.
+    assert_operator indirect.length, :<, B.identities.length / 2
+    # `SeekOrigin` remains the case that established the rule, and its one consumer is still the
+    # member that reaches it.
+    assert_equal ["System.IO.Stream::Seek"], families.fetch("System.IO.SeekOrigin").fetch("bclConsumers")
+    assert_includes indirect, "System.IO.SeekOrigin"
+    assert_includes indirect, "System.Threading.WaitHandle"
   end
 
   def test_the_strict_report_measures_the_register

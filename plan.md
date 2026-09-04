@@ -42,21 +42,21 @@ the prose would have fixed exactly that one milestone.
 | count | what it measures |
 | ---: | --- |
 | 257 | XNA 4.0 Windows reference types |
-| 241 | types this binding projects |
-| 2827 | Ruby member identities |
-| 239 | complete types |
+| 254 | types this binding projects |
+| 2880 | Ruby member identities |
+| 252 | complete types |
 | 2 | partial types |
-| 16 | missing types |
+| 3 | missing types |
 | 48 | event identities |
 | 24 | types owning an event |
-| 29 | projected BCL identities |
+| 50 | projected BCL identities |
 
 **Strict diagnostics**
 
 | count | what it measures |
 | ---: | --- |
-| 29 | strict diagnostics in total |
-| 16 | `MISSING_TYPE` |
+| 16 | strict diagnostics in total |
+| 3 | `MISSING_TYPE` |
 | 8 | `MISSING_MEMBER` |
 | 5 | `OVERLOAD_MAPPING_MISMATCH` |
 | 0 | `PROPERTY_MAPPING_MISMATCH` |
@@ -97,14 +97,14 @@ the prose would have fixed exactly that one milestone.
 
 | count | what it measures |
 | ---: | --- |
-| 2 | dependency-complete frontier candidates |
+| 1 | dependency-complete frontier candidates |
 | 0 | of them consumable now |
 
 **Capability registry**
 
 | count | what it measures |
 | ---: | --- |
-| 158 | runtime capability rows |
+| 161 | runtime capability rows |
 
 <!-- scoreboard:end -->
 
@@ -312,9 +312,6 @@ delimited and checked against `docs/generated/missing-type-inventory.md` by
 `test/test_plan_boundaries.rb`, so every name in it is a type the strict report really calls missing.
 
 <!-- absent-types:begin -->
-`BoundingBoxConverter`, `BoundingSphereConverter`, `ColorConverter`, `MathTypeConverter`,
-`MatrixConverter`, `PlaneConverter`, `PointConverter`, `QuaternionConverter`, `RayConverter`,
-`RectangleConverter`, `Vector2Converter`, `Vector3Converter`, `Vector4Converter`,
 `GraphicsAdapter`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs`
 <!-- absent-types:end -->
 

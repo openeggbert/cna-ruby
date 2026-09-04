@@ -200,6 +200,31 @@ module CNA
 
         format("%.7g", number)
       end
+
+      # `Single.ToString("R", formatInfo)` -- the **round-trip** format, which is not the same as
+      # the default `Single.ToString()` that `single_string` projects.
+      #
+      # The distinction is measured rather than stylistic. `SingleConverter.ToString(value,
+      # formatInfo)` passes the literal `"R"`, and `MathTypeConverter.ConvertFromValues` formats
+      # every element through that converter -- so the string a `Vector3Converter` produces uses
+      # this and the string `Vector3.ToString()` produces uses the other, and for a value needing
+      # more than seven significant digits they differ.
+      #
+      # .NET Framework 4's `"R"` for Single is "G7, and G9 if that does not round-trip"; the
+      # shortest-round-trip algorithm arrived much later and is not what the pinned CLR does. So
+      # this tries seven significant digits, parses the result back, rounds it to float32, and
+      # falls to nine only when that fails to reproduce the value exactly.
+      def single_round_trip_string(value)
+        number = f32(value)
+        return "NaN" if number.nan?
+        return number.negative? ? "-Infinity" : "Infinity" if number.infinite?
+        return "0" if number.zero?
+
+        seven = format("%.7g", number)
+        return seven if f32(Float(seven)) == number
+
+        format("%.9g", number)
+      end
     end
   end
 end

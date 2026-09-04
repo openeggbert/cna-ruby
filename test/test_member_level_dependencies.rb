@@ -317,7 +317,8 @@ class MemberLevelDependenciesTest < Minitest::Test
     # ...and 5 when the four buffer types and the binding were built, which made ModelMeshPart
     # dependency-complete: the frontier keeps uncovering what a completed base was hiding.
     # ...and 2 when the Model family was built, which took ModelMeshPart off it again.
-    assert_equal 2, REPORT.fetch("dependencyCompleteCandidates").length
+    # ...and 1 when the Design converters were built, which took MathTypeConverter off it.
+    assert_equal 1, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")

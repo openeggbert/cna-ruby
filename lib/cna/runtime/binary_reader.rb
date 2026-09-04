@@ -23,6 +23,11 @@ module CNA
     #   measured in the pinned IL at `IL_0002` — so the overload this binding needs is the one it
     #   projects. `BCL_PROJECTION_SCOPE`.
     #
+    # These two are the classification doing what it is for: **refusing a BCL family nothing
+    # demands**. That is a different thing from deferring a family the project has selected, which
+    # is what it wrongly recorded for the thirteen `Design` converters until Foundation 105 built
+    # them — and which `test/test_design_converters.rb` now gates against.
+    #
     # Everything else is here, reading little-endian off the projected `System.IO.Stream`, which is
     # the byte order the CLR's own `BinaryReader` uses on every platform it ships on.
     class BinaryReader

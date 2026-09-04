@@ -44,7 +44,8 @@ class DisposableCollapseTest < Minitest::Test
 
   def test_the_register_records_the_collapse_and_invents_nothing
     assert B.structural_collapse?(CLR)
-    assert_equal ["System.Action`1", "System.AsyncCallback", "System.IDisposable",
+    assert_equal ["System.Action`1", "System.AsyncCallback", "System.Collections.IComparer",
+                  "System.EventHandler", "System.IDisposable",
                   "System.IServiceProvider", "System.Resources.ResourceManager"],
                  B::STRUCTURAL_COLLAPSE.keys.sort
     reason = B::STRUCTURAL_COLLAPSE.fetch(CLR)
@@ -297,8 +298,9 @@ class DisposableCollapseTest < Minitest::Test
     # DirectionalLight arrived behind the Effect base. What this collapse claimed is unchanged.
     # And 3 -> 4 when the buffers uncovered ModelMeshPart behind them, then 4 -> 1 as the stock
     # effects and the Model family were built. What this collapse claimed is unchanged throughout.
-    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 1},
-                 FRONTIER.fetch("blockerSummary"))
+    # And 1 -> 0 for BCL_PROJECTION at Foundation 105: the thirteen Design converters were the
+    # whole of that category. What this collapse claimed is unchanged throughout.
+    assert_equal({"NATIVE_RUNTIME" => 1}, FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end
 
@@ -353,8 +355,9 @@ class DisposableCollapseTest < Minitest::Test
     # that this collapse moved nothing.
     assert ReviewedScoreboard.complete?(STRICT, "Microsoft.Xna.Framework.Game")
     # Three when this milestone ran; System.Resources.ResourceManager is the fourth, added when
-    # ResourceContentManager was built, and System.AsyncCallback the fifth when Storage was --
-    # neither of which weakens what this one claimed.
-    assert_equal 5, CNA::Runtime::BclProjection::STRUCTURAL_COLLAPSE.length
+    # ResourceContentManager was built, System.AsyncCallback the fifth when Storage was, and
+    # System.Collections.IComparer and System.EventHandler the sixth and seventh when the Design
+    # converters were -- none of which weakens what this one claimed.
+    assert_equal 7, CNA::Runtime::BclProjection::STRUCTURAL_COLLAPSE.length
   end
 end

@@ -1,0 +1,305 @@
+# The thirteen `Microsoft.Xna.Framework.Design` converters, and the BCL projections they are built
+# from. Every identity here is one the pinned XNA metadata declares, and
+# `test/test_rbs_runtime_consistency.rb` resolves each against the runtime.
+#
+# The three private XNA descriptor classes are deliberately absent: the CLR declares them
+# `.class private`, this binding keeps them private constants, and a static contract that named
+# them would claim a public identity XNA does not have.
+
+module CNA
+  module Runtime
+    module Globalization
+      class TextInfo
+        attr_reader ListSeparator: String
+        attr_reader CultureName: String
+        def ToString: () -> String
+        def to_s: () -> String
+      end
+
+      class CultureInfo
+        def initialize: (String name, ?listSeparator: String?, ?numberDecimalSeparator: String?,
+                         ?numberGroupSeparator: String?, ?negativeSign: String?, ?positiveSign: String?,
+                         ?nanSymbol: String?, ?positiveInfinitySymbol: String?,
+                         ?negativeInfinitySymbol: String?) -> void
+        attr_reader Name: String
+        attr_reader TextInfo: TextInfo
+        attr_reader NumberDecimalSeparator: String
+        attr_reader NumberGroupSeparator: String
+        attr_reader NegativeSign: String
+        attr_reader PositiveSign: String
+        attr_reader NaNSymbol: String
+        attr_reader PositiveInfinitySymbol: String
+        attr_reader NegativeInfinitySymbol: String
+        def self.InvariantCulture: () -> CultureInfo
+        def self.CurrentCulture: () -> CultureInfo
+        def self.CurrentCulture=: (CultureInfo?) -> CultureInfo?
+        def self.with_current_culture: [T] (CultureInfo?) { () -> T } -> T
+        def ToString: () -> String
+        def to_s: () -> String
+      end
+    end
+
+    module Reflection
+      class MemberInfo
+        attr_reader Name: String
+        attr_reader DeclaringType: untyped
+        def GetCustomAttributes: (?untyped, ?bool) -> ::Array[untyped]
+        def ToString: () -> String
+        def to_s: () -> String
+      end
+
+      class FieldInfo < MemberInfo
+        attr_reader FieldType: Module
+        attr_reader clr_field_type: String?
+        def GetValue: (untyped component) -> untyped
+        def SetValue: (untyped component, untyped value) -> nil
+      end
+
+      class PropertyInfo < MemberInfo
+        attr_reader PropertyType: Module
+        attr_reader clr_property_type: String?
+        def CanWrite: () -> bool
+        def GetValue: (untyped component, ?untyped) -> untyped
+        def SetValue: (untyped component, untyped value, ?untyped) -> nil
+      end
+
+      class ConstructorInfo < MemberInfo
+        attr_reader ParameterTypes: ::Array[Module]
+        attr_reader clr_parameter_types: ::Array[untyped]
+        def GetParameters: () -> ::Array[Module]
+        def Invoke: (untyped arguments) -> untyped
+      end
+
+      def self.register_type_identity: (String, Module) -> String
+      def self.ruby_type: (untyped) -> untyped
+      def self.register: (Module, ?fields: Hash[String | Symbol, untyped],
+                          ?properties: Hash[String | Symbol, untyped],
+                          ?constructors: ::Array[::Array[untyped]]) -> Module
+      def self.GetField: (Module, String | Symbol) -> FieldInfo?
+      def self.GetProperty: (Module, String | Symbol) -> PropertyInfo?
+      def self.GetConstructor: (Module, untyped) -> ConstructorInfo?
+      def self.registered?: (Module) -> bool
+      def self.registered_types: () -> ::Array[Module]
+    end
+
+    module ComponentModel
+      # An interface with no XNA implementer: a consumer supplies the context, so the projection is
+      # a module carrying the six measured identities plus the validator that refuses a partial one.
+      module ITypeDescriptorContext
+        def self.check: (untyped context, String member) -> untyped
+      end
+
+      class TypeConverter
+        def CanConvertFrom: (*untyped) -> bool
+        def CanConvertTo: (*untyped) -> bool
+        def ConvertFrom: (*untyped) -> untyped
+        def ConvertTo: (*untyped) -> untyped
+        def ConvertFromString: (*untyped) -> untyped
+        def ConvertToString: (*untyped) -> String
+        def ConvertFromInvariantString: (*untyped) -> untyped
+        def ConvertToInvariantString: (*untyped) -> String
+        def CreateInstance: (*untyped) -> untyped
+        def GetCreateInstanceSupported: (*untyped) -> bool
+        def GetProperties: (*untyped) -> PropertyDescriptorCollection?
+        def GetPropertiesSupported: (*untyped) -> bool
+        def GetStandardValues: (*untyped) -> untyped
+        def GetStandardValuesExclusive: (*untyped) -> bool
+        def GetStandardValuesSupported: (*untyped) -> bool
+        def IsValid: (*untyped) -> bool
+        def GetConvertFromException: (untyped) -> StandardError
+        def GetConvertToException: (untyped, untyped) -> StandardError
+      end
+
+      class ExpandableObjectConverter < TypeConverter
+      end
+
+      class BaseNumberConverter < TypeConverter
+        def AllowHex: () -> bool
+      end
+
+      class Int32Converter < BaseNumberConverter
+      end
+
+      class ByteConverter < BaseNumberConverter
+      end
+
+      class SingleConverter < BaseNumberConverter
+      end
+
+      class PropertyDescriptor
+        def initialize: (String | Symbol name, ?::Array[untyped]?) -> void
+        attr_reader Name: String
+        attr_reader Attributes: ::Array[untyped]
+        def ComponentType: () -> untyped
+        def PropertyType: () -> untyped
+        def IsReadOnly: () -> bool
+        def GetValue: (untyped component) -> untyped
+        def SetValue: (untyped component, untyped value) -> nil
+        def CanResetValue: (untyped component) -> bool
+        def ResetValue: (untyped component) -> nil
+        def ShouldSerializeValue: (untyped component) -> bool
+        def Converter: () -> TypeConverter
+        def IsLocalizable: () -> bool
+        def SerializationVisibility: () -> Symbol
+        def SupportsChangeEvents: () -> bool
+        def GetChildProperties: (*untyped) -> PropertyDescriptorCollection?
+        def GetEditor: (untyped) -> untyped
+        def AddValueChanged: (untyped component, untyped handler) -> nil
+        def RemoveValueChanged: (untyped component, untyped handler) -> nil
+        def OnValueChanged: (untyped component, untyped args) -> nil
+        def Equals: (untyped) -> bool
+        def GetHashCode: () -> Integer
+        def ToString: () -> String
+        def to_s: () -> String
+      end
+
+      class PropertyDescriptorCollection
+        include Enumerable[PropertyDescriptor]
+        def initialize: (::Array[PropertyDescriptor] properties, ?bool readOnly) -> void
+        def self.Empty: () -> PropertyDescriptorCollection
+        def Count: () -> Integer
+        def []: (Integer | String | Symbol) -> PropertyDescriptor?
+        def Find: (String | Symbol name, bool ignoreCase) -> PropertyDescriptor?
+        def Contains: (PropertyDescriptor) -> bool
+        def IndexOf: (PropertyDescriptor) -> Integer
+        def Add: (PropertyDescriptor) -> Integer
+        def Insert: (Integer, PropertyDescriptor) -> nil
+        def Remove: (PropertyDescriptor) -> nil
+        def RemoveAt: (Integer) -> nil
+        def Clear: () -> nil
+        def CopyTo: (::Array[untyped] destination, Integer index) -> nil
+        def Sort: (*untyped) -> PropertyDescriptorCollection
+        def GetEnumerator: () -> Enumerator[PropertyDescriptor, untyped]
+        def each: () { (PropertyDescriptor) -> void } -> PropertyDescriptorCollection
+                | () -> Enumerator[PropertyDescriptor, untyped]
+        def IsReadOnly: () -> bool
+        def ToString: () -> String
+        def to_s: () -> String
+      end
+
+      class InstanceDescriptor
+        def initialize: (untyped memberInfo, ::Array[untyped]? arguments, ?bool isComplete) -> void
+        attr_reader MemberInfo: untyped
+        attr_reader Arguments: ::Array[untyped]
+        attr_reader IsComplete: bool
+        def Invoke: () -> untyped
+        def ToString: () -> String
+        def to_s: () -> String
+      end
+
+      # A CLR static class -- `sealed`, no public constructor, no instance member -- so a Ruby
+      # module rather than a class.
+      module TypeDescriptor
+        def self.register_converter: (Module, Class) -> Module
+        def self.GetConverter: (Module) -> TypeConverter
+        def self.GetProperties: (untyped value, ?::Array[untyped]?) -> PropertyDescriptorCollection
+        def self.register_properties: (Module) { () -> PropertyDescriptorCollection } -> Module
+        def self.scalar_converter: (String) -> TypeConverter
+        def self.registered_converter_types: () -> ::Array[Module]
+        def self.converter_registered?: (Module) -> bool
+      end
+    end
+  end
+end
+
+module Microsoft
+  module Xna
+    module Framework
+      module Design
+        # Eight declared identities: one constructor, five public methods and two `family` fields,
+        # which project to a protected reader and writer pair each.
+        class MathTypeConverter < CNA::Runtime::ComponentModel::ExpandableObjectConverter
+          def initialize: () -> void
+          def CanConvertFrom: (*untyped) -> bool
+          def CanConvertTo: (*untyped) -> bool
+          def GetCreateInstanceSupported: (*untyped) -> bool
+          def GetPropertiesSupported: (*untyped) -> bool
+          def GetProperties: (*untyped) -> CNA::Runtime::ComponentModel::PropertyDescriptorCollection?
+        end
+
+        # Nine of the twelve declare `ConvertFrom`; `MatrixConverter`, `PlaneConverter` and
+        # `RectangleConverter` inherit `TypeConverter`'s, which accepts an `InstanceDescriptor`.
+        class BoundingBoxConverter < MathTypeConverter
+          def initialize: () -> void
+          def ConvertFrom: (*untyped) -> untyped
+          def ConvertTo: (*untyped) -> untyped
+          def CreateInstance: (*untyped) -> untyped
+        end
+
+        class BoundingSphereConverter < MathTypeConverter
+          def initialize: () -> void
+          def ConvertFrom: (*untyped) -> untyped
+          def ConvertTo: (*untyped) -> untyped
+          def CreateInstance: (*untyped) -> untyped
+        end
+
+        class ColorConverter < MathTypeConverter
+          def initialize: () -> void
+          def ConvertFrom: (*untyped) -> untyped
+          def ConvertTo: (*untyped) -> untyped
+          def CreateInstance: (*untyped) -> untyped
+        end
+
+        class MatrixConverter < MathTypeConverter
+          def initialize: () -> void
+          def ConvertTo: (*untyped) -> untyped
+          def CreateInstance: (*untyped) -> untyped
+        end
+
+        class PlaneConverter < MathTypeConverter
+          def initialize: () -> void
+          def ConvertTo: (*untyped) -> untyped
+          def CreateInstance: (*untyped) -> untyped
+        end
+
+        class PointConverter < MathTypeConverter
+          def initialize: () -> void
+          def ConvertFrom: (*untyped) -> untyped
+          def ConvertTo: (*untyped) -> untyped
+          def CreateInstance: (*untyped) -> untyped
+        end
+
+        class QuaternionConverter < MathTypeConverter
+          def initialize: () -> void
+          def ConvertFrom: (*untyped) -> untyped
+          def ConvertTo: (*untyped) -> untyped
+          def CreateInstance: (*untyped) -> untyped
+        end
+
+        class RayConverter < MathTypeConverter
+          def initialize: () -> void
+          def ConvertFrom: (*untyped) -> untyped
+          def ConvertTo: (*untyped) -> untyped
+          def CreateInstance: (*untyped) -> untyped
+        end
+
+        class RectangleConverter < MathTypeConverter
+          def initialize: () -> void
+          def ConvertTo: (*untyped) -> untyped
+          def CreateInstance: (*untyped) -> untyped
+        end
+
+        class Vector2Converter < MathTypeConverter
+          def initialize: () -> void
+          def ConvertFrom: (*untyped) -> untyped
+          def ConvertTo: (*untyped) -> untyped
+          def CreateInstance: (*untyped) -> untyped
+        end
+
+        class Vector3Converter < MathTypeConverter
+          def initialize: () -> void
+          def ConvertFrom: (*untyped) -> untyped
+          def ConvertTo: (*untyped) -> untyped
+          def CreateInstance: (*untyped) -> untyped
+        end
+
+        class Vector4Converter < MathTypeConverter
+          def initialize: () -> void
+          def ConvertFrom: (*untyped) -> untyped
+          def ConvertTo: (*untyped) -> untyped
+          def CreateInstance: (*untyped) -> untyped
+        end
+      end
+    end
+  end
+end

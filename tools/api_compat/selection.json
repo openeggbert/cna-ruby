@@ -2273,6 +2273,58 @@
     {
       "name": "Microsoft.Xna.Framework.Content.ContentReader",
       "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Design.MathTypeConverter",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Design.BoundingBoxConverter",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Design.BoundingSphereConverter",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Design.ColorConverter",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Design.MatrixConverter",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Design.PlaneConverter",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Design.PointConverter",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Design.QuaternionConverter",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Design.RayConverter",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Design.RectangleConverter",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Design.Vector2Converter",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Design.Vector3Converter",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Design.Vector4Converter",
+      "complete": true
     }
   ]
 }

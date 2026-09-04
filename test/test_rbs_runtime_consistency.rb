@@ -716,6 +716,67 @@ class RbsRuntimeConsistencyTest < Minitest::Test
     refute_includes declared, :GraphicsDevice=, "#{ruby_name}#GraphicsDevice="
   end
 
+  # Foundation 105 -- the thirteen Design converters, declared against the same pinned contract the
+  # runtime is verified against rather than against this file's opinion of them.
+  #
+  # The static contract is where the family's two asymmetries have to survive: nine converters
+  # declare `ConvertFrom` and three do not, and `MathTypeConverter`'s two `family` fields project to
+  # a protected reader and writer pair each rather than to a public property. An RBS that flattened
+  # either would claim a surface the metadata does not have.
+  def test_foundation105_design_rbs_declares_the_exact_thirteen_converter_contract
+    contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
+    design = contract.fetch("types").select { |type| type.fetch("name").include?(".Design.") }
+    assert_equal 13, design.length
+
+    environment = load_environment
+    design.each do |type|
+      ruby_name = "::#{type.fetch("rubyName")}"
+      _key, entry = environment.class_decls.find { |candidate, _value| candidate.to_s == ruby_name }
+      refute_nil entry, ruby_name
+      declaration = entry.decls.first.decl
+      assert_instance_of RBS::AST::Declarations::Class, declaration, ruby_name
+
+      declared = declaration.members.map(&:name)
+      # Every method and constructor the pinned contract declares is in the signature. The two
+      # `family` fields are not: they project to protected members, which an RBS declaring the
+      # public surface must not claim.
+      expected = type.fetch("members").filter_map do |member|
+        case member.fetch("kind")
+        when "constructor" then :initialize
+        when "method" then member.fetch("name").to_sym
+        end
+      end
+      assert_equal expected.sort, declared.sort, ruby_name
+
+      runtime_type = resolve_constant(ruby_name)
+      assert_instance_of Class, runtime_type, ruby_name
+      declared.each { |method| assert runtime_type.method_defined?(method) || method == :initialize, "#{ruby_name}##{method}" }
+    end
+
+    # The base's own contract, and the asymmetry the twelve inherit from it.
+    base = design.find { |type| type.fetch("name").end_with?(".MathTypeConverter") }
+    assert_equal 2, base.fetch("members").count { |member| member.fetch("kind") == "field" }
+    base.fetch("members").select { |member| member.fetch("kind") == "field" }.each do |field|
+      identity = field.fetch("name").to_sym
+      assert Microsoft::Xna::Framework::Design::MathTypeConverter.protected_method_defined?(identity),
+             "#{identity} must be protected, as the CLR `.field family` is"
+      assert Microsoft::Xna::Framework::Design::MathTypeConverter.protected_method_defined?(:"#{identity}=")
+      refute Microsoft::Xna::Framework::Design::MathTypeConverter.public_method_defined?(identity)
+    end
+
+    # Nine declare ConvertFrom and three do not, which the signature has to reflect rather than
+    # smooth over.
+    with_convert_from = design.count do |type|
+      type.fetch("members").any? { |member| member.fetch("name") == "ConvertFrom" }
+    end
+    assert_equal 9, with_convert_from
+    assert_equal 12, design.count { |type| type.fetch("members").any? { |m| m.fetch("name") == "CreateInstance" } }
+
+    # And the base class relationship really is the projected BCL one, not Object.
+    assert_equal CNA::Runtime::ComponentModel::ExpandableObjectConverter,
+                 Microsoft::Xna::Framework::Design::MathTypeConverter.superclass
+  end
+
   def test_foundation17_touch_closure_rbs_matches_the_pinned_contract
     contract = JSON.parse(File.read(Pathname(__dir__).join("..", "tools", "api_compat", "signatures.json")))
     names = %w[TouchLocationState GestureType TouchPanelCapabilities]

@@ -20,6 +20,14 @@
       "publicKeyTokenDerivation": "SHA-1 of the assembly's own .publickey blob, low eight bytes, reversed",
       "observedAssemblyVersion": "4.0.0.0",
       "observedFileVersion": "4.0.30319.1 (RTMRel.030319-0100)",
+      "crossCheck": {
+        "tool": "monodis",
+        "agreesOn": [
+          "assemblyName",
+          "assemblyVersion",
+          "publicKey"
+        ]
+      },
       "pairing": {
         "rule": "every pinned XNA assembly that declares an AssemblyRef to this authority must name the exact version and public key token the admitted binary derives, and the set of assemblies that declare one is itself asserted",
         "xnaReferrers": [
@@ -106,6 +114,14 @@
       "publicKeyTokenDerivation": "SHA-1 of the assembly's own .publickey blob, low eight bytes, reversed",
       "observedAssemblyVersion": "4.0.0.0",
       "observedFileVersion": "4.0.30319.1 built by: RTMRel",
+      "crossCheck": {
+        "tool": "monodis",
+        "agreesOn": [
+          "assemblyName",
+          "assemblyVersion",
+          "publicKey"
+        ]
+      },
       "pairing": {
         "rule": "every pinned XNA assembly that declares an AssemblyRef to this authority must name the exact version and public key token the admitted binary derives, and the set of assemblies that declare one is itself asserted",
         "xnaReferrers": [
@@ -176,22 +192,48 @@
     "System": {
     }
   },
+  "intrinsicTypeConverters": {
+    "System.Array": "System.ComponentModel.ArrayConverter",
+    "System.Boolean": "System.ComponentModel.BooleanConverter",
+    "System.Byte": "System.ComponentModel.ByteConverter",
+    "System.Char": "System.ComponentModel.CharConverter",
+    "System.Collections.ICollection": "System.ComponentModel.CollectionConverter",
+    "System.DateTime": "System.ComponentModel.DateTimeConverter",
+    "System.DateTimeOffset": "System.ComponentModel.DateTimeOffsetConverter",
+    "System.Decimal": "System.ComponentModel.DecimalConverter",
+    "System.Double": "System.ComponentModel.DoubleConverter",
+    "System.Enum": "System.ComponentModel.EnumConverter",
+    "System.Globalization.CultureInfo": "System.ComponentModel.CultureInfoConverter",
+    "System.Guid": "System.ComponentModel.GuidConverter",
+    "System.Int16": "System.ComponentModel.Int16Converter",
+    "System.Int32": "System.ComponentModel.Int32Converter",
+    "System.Int64": "System.ComponentModel.Int64Converter",
+    "System.Object": "System.ComponentModel.TypeConverter",
+    "System.SByte": "System.ComponentModel.SByteConverter",
+    "System.Single": "System.ComponentModel.SingleConverter",
+    "System.String": "System.ComponentModel.StringConverter",
+    "System.TimeSpan": "System.ComponentModel.TimeSpanConverter",
+    "System.UInt16": "System.ComponentModel.UInt16Converter",
+    "System.UInt32": "System.ComponentModel.UInt32Converter",
+    "System.UInt64": "System.ComponentModel.UInt64Converter",
+    "System.Void": "System.ComponentModel.TypeConverter"
+  },
   "BCL_AUTHORITIES": 2,
-  "BCL_FAMILIES": 26,
-  "BCL_TYPES": 45,
-  "BCL_MEMBERS": 902,
+  "BCL_FAMILIES": 32,
+  "BCL_TYPES": 51,
+  "BCL_MEMBERS": 915,
   "BCL_EXCEPTION_TYPES": 13,
   "BCL_TYPES_BY_AUTHORITY": {
-    "mscorlib": 37,
-    "System": 8
+    "mscorlib": 39,
+    "System": 12
   },
   "BCL_MEMBERS_BY_AUTHORITY": {
-    "mscorlib": 672,
-    "System": 230
+    "mscorlib": 677,
+    "System": 238
   },
   "BCL_FAMILIES_BY_AUTHORITY": {
-    "mscorlib": 19,
-    "System": 7
+    "mscorlib": 21,
+    "System": 11
   },
   "families": [
     {
@@ -363,6 +405,8 @@
       ],
       "xnaConsumerCount": 4,
       "bclConsumers": [
+        "System.EventHandler::BeginInvoke",
+        "System.EventHandler::EndInvoke",
         "System.IO.Stream::BeginRead",
         "System.IO.Stream::BeginWrite",
         "System.IO.Stream::EndRead",
@@ -447,7 +491,7 @@
     {
       "family": "System.ComponentModel.ITypeDescriptorContext",
       "authority": "System",
-      "reason": "the first parameter of forty-five XNA Design members -- every CanConvertFrom, CanConvertTo, ConvertFrom, ConvertTo, CreateInstance, GetProperties, GetPropertiesSupported and GetCreateInstanceSupported the family declares",
+      "reason": "the first parameter of thirty-eight XNA Design members -- every CanConvertFrom, CanConvertTo, ConvertFrom, ConvertTo, CreateInstance, GetProperties, GetPropertiesSupported and GetCreateInstanceSupported the family declares",
       "xnaConsumers": [
         "Microsoft.Xna.Framework.Design.BoundingBoxConverter::ConvertFrom",
         "Microsoft.Xna.Framework.Design.BoundingBoxConverter::ConvertTo",
@@ -490,6 +534,10 @@
       ],
       "xnaConsumerCount": 38,
       "bclConsumers": [
+        "System.ComponentModel.BaseNumberConverter::CanConvertFrom",
+        "System.ComponentModel.BaseNumberConverter::CanConvertTo",
+        "System.ComponentModel.BaseNumberConverter::ConvertFrom",
+        "System.ComponentModel.BaseNumberConverter::ConvertTo",
         "System.ComponentModel.ExpandableObjectConverter::GetProperties",
         "System.ComponentModel.ExpandableObjectConverter::GetPropertiesSupported",
         "System.ComponentModel.TypeConverter::CanConvertFrom",
@@ -636,6 +684,8 @@
       ],
       "xnaConsumerCount": 21,
       "bclConsumers": [
+        "System.ComponentModel.BaseNumberConverter::ConvertFrom",
+        "System.ComponentModel.BaseNumberConverter::ConvertTo",
         "System.ComponentModel.TypeConverter::ConvertFrom",
         "System.ComponentModel.TypeConverter::ConvertFromString",
         "System.ComponentModel.TypeConverter::ConvertTo",
@@ -801,6 +851,157 @@
         "System.Reflection.PropertyInfo"
       ],
       "designReachAuthority": "mscorlib"
+    },
+    {
+      "family": "System.ComponentModel.BaseNumberConverter",
+      "authority": "System",
+      "reason": "the CLR base of the three element converters below, and where the shape they share lives: the hexadecimal prefixes, the culture resolution and the NumberFormatInfo lookup are all declared here rather than in any of them",
+      "xnaConsumers": [
+
+      ],
+      "xnaConsumerCount": 0,
+      "bclConsumers": [
+
+      ],
+      "demand": "behavioural",
+      "types": [
+        "System.ComponentModel.BaseNumberConverter"
+      ]
+    },
+    {
+      "family": "System.ComponentModel.Int32Converter",
+      "authority": "System",
+      "reason": "what TypeDescriptor.GetConverter answers for System.Int32, the element type PointConverter and RectangleConverter name in ConvertToValues<int32>",
+      "xnaConsumers": [
+
+      ],
+      "xnaConsumerCount": 0,
+      "bclConsumers": [
+
+      ],
+      "demand": "behavioural",
+      "types": [
+        "System.ComponentModel.Int32Converter"
+      ],
+      "intrinsicConverterFor": "System.Int32"
+    },
+    {
+      "family": "System.ComponentModel.SingleConverter",
+      "authority": "System",
+      "reason": "what TypeDescriptor.GetConverter answers for System.Single, the element type the seven vector, quaternion, plane, ray, bounding and matrix converters name",
+      "xnaConsumers": [
+
+      ],
+      "xnaConsumerCount": 0,
+      "bclConsumers": [
+
+      ],
+      "demand": "behavioural",
+      "types": [
+        "System.ComponentModel.SingleConverter"
+      ],
+      "intrinsicConverterFor": "System.Single"
+    },
+    {
+      "family": "System.ComponentModel.ByteConverter",
+      "authority": "System",
+      "reason": "what TypeDescriptor.GetConverter answers for System.Byte, the element type ColorConverter alone names in ConvertToValues<uint8>",
+      "xnaConsumers": [
+
+      ],
+      "xnaConsumerCount": 0,
+      "bclConsumers": [
+
+      ],
+      "demand": "behavioural",
+      "types": [
+        "System.ComponentModel.ByteConverter"
+      ],
+      "intrinsicConverterFor": "System.Byte"
+    },
+    {
+      "family": "System.Collections.IComparer",
+      "authority": "mscorlib",
+      "reason": "the second parameter of two PropertyDescriptorCollection.Sort overloads, which a consumer holding the collection MathTypeConverter.GetProperties answers can call; demanded transitively through that collection",
+      "xnaConsumers": [
+
+      ],
+      "xnaConsumerCount": 0,
+      "bclConsumers": [
+        "System.ComponentModel.PropertyDescriptorCollection::InternalSort",
+        "System.ComponentModel.PropertyDescriptorCollection::Sort"
+      ],
+      "demand": "transitive",
+      "types": [
+        "System.Collections.IComparer"
+      ]
+    },
+    {
+      "family": "System.EventHandler",
+      "authority": "mscorlib",
+      "reason": "the second parameter of PropertyDescriptor.AddValueChanged and RemoveValueChanged, and what FieldPropertyDescriptor.SetValue's OnValueChanged call invokes; demanded transitively through the descriptors a consumer receives",
+      "xnaConsumers": [
+        "Microsoft.Xna.Framework.Audio.AudioEngine::Disposing",
+        "Microsoft.Xna.Framework.Audio.Cue::Disposing",
+        "Microsoft.Xna.Framework.Audio.DynamicSoundEffectInstance::BufferNeeded",
+        "Microsoft.Xna.Framework.Audio.Microphone::BufferReady",
+        "Microsoft.Xna.Framework.Audio.SoundBank::Disposing",
+        "Microsoft.Xna.Framework.Audio.WaveBank::Disposing",
+        "Microsoft.Xna.Framework.DrawableGameComponent::DrawOrderChanged",
+        "Microsoft.Xna.Framework.DrawableGameComponent::VisibleChanged",
+        "Microsoft.Xna.Framework.Game::Activated",
+        "Microsoft.Xna.Framework.Game::Deactivated",
+        "Microsoft.Xna.Framework.Game::Disposed",
+        "Microsoft.Xna.Framework.Game::Exiting",
+        "Microsoft.Xna.Framework.GameComponent::Disposed",
+        "Microsoft.Xna.Framework.GameComponent::EnabledChanged",
+        "Microsoft.Xna.Framework.GameComponent::UpdateOrderChanged",
+        "Microsoft.Xna.Framework.GameComponentCollection::ComponentAdded",
+        "Microsoft.Xna.Framework.GameComponentCollection::ComponentRemoved",
+        "Microsoft.Xna.Framework.GameWindow::ClientSizeChanged",
+        "Microsoft.Xna.Framework.GameWindow::OrientationChanged",
+        "Microsoft.Xna.Framework.GameWindow::ScreenDeviceNameChanged",
+        "Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer::ContentLost",
+        "Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer::ContentLost",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DeviceLost",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DeviceReset",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DeviceResetting",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Disposing",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::ResourceCreated",
+        "Microsoft.Xna.Framework.Graphics.GraphicsDevice::ResourceDestroyed",
+        "Microsoft.Xna.Framework.Graphics.GraphicsResource::Disposing",
+        "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService::DeviceCreated",
+        "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService::DeviceDisposing",
+        "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService::DeviceReset",
+        "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService::DeviceResetting",
+        "Microsoft.Xna.Framework.Graphics.RenderTarget2D::ContentLost",
+        "Microsoft.Xna.Framework.Graphics.RenderTargetCube::ContentLost",
+        "Microsoft.Xna.Framework.GraphicsDeviceManager::DeviceCreated",
+        "Microsoft.Xna.Framework.GraphicsDeviceManager::DeviceDisposing",
+        "Microsoft.Xna.Framework.GraphicsDeviceManager::DeviceReset",
+        "Microsoft.Xna.Framework.GraphicsDeviceManager::DeviceResetting",
+        "Microsoft.Xna.Framework.GraphicsDeviceManager::Disposed",
+        "Microsoft.Xna.Framework.GraphicsDeviceManager::PreparingDeviceSettings",
+        "Microsoft.Xna.Framework.IDrawable::DrawOrderChanged",
+        "Microsoft.Xna.Framework.IDrawable::VisibleChanged",
+        "Microsoft.Xna.Framework.IUpdateable::EnabledChanged",
+        "Microsoft.Xna.Framework.IUpdateable::UpdateOrderChanged",
+        "Microsoft.Xna.Framework.Media.MediaPlayer::ActiveSongChanged",
+        "Microsoft.Xna.Framework.Media.MediaPlayer::MediaStateChanged",
+        "Microsoft.Xna.Framework.Storage.StorageContainer::Disposing",
+        "Microsoft.Xna.Framework.Storage.StorageDevice::DeviceChanged"
+      ],
+      "xnaConsumerCount": 49,
+      "bclConsumers": [
+        "System.ComponentModel.PropertyDescriptor::AddValueChanged",
+        "System.ComponentModel.PropertyDescriptor::RemoveValueChanged",
+        "System.Exception::add_SerializeObjectState",
+        "System.Exception::remove_SerializeObjectState"
+      ],
+      "demand": "direct",
+      "types": [
+        "System.EventHandler"
+      ]
     }
   ],
   "types": {
@@ -3466,6 +3667,40 @@
         }
       ]
     },
+    "System.Collections.IComparer": {
+      "authority": "mscorlib",
+      "kind": "interface",
+      "baseType": null,
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": true,
+      "members": [
+        {
+          "kind": "method",
+          "name": "Compare",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "x"
+            },
+            {
+              "type": "object",
+              "name": "y"
+            }
+          ]
+        }
+      ]
+    },
     "System.Collections.IDictionary": {
       "authority": "mscorlib",
       "kind": "interface",
@@ -5168,6 +5403,150 @@
         }
       ]
     },
+    "System.ComponentModel.BaseNumberConverter": {
+      "authority": "System",
+      "kind": "class",
+      "baseType": "System.ComponentModel.TypeConverter",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": true,
+      "members": [
+        {
+          "kind": "method",
+          "name": "CanConvertFrom",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "class System.ComponentModel.ITypeDescriptorContext",
+              "name": "context"
+            },
+            {
+              "type": "[mscorlib]System.Type",
+              "name": "sourceType"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ConvertFrom",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "object",
+          "parameters": [
+            {
+              "type": "class System.ComponentModel.ITypeDescriptorContext",
+              "name": "context"
+            },
+            {
+              "type": "[mscorlib]System.Globalization.CultureInfo",
+              "name": "culture"
+            },
+            {
+              "type": "object",
+              "name": "value"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ConvertTo",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "object",
+          "parameters": [
+            {
+              "type": "class System.ComponentModel.ITypeDescriptorContext",
+              "name": "context"
+            },
+            {
+              "type": "[mscorlib]System.Globalization.CultureInfo",
+              "name": "culture"
+            },
+            {
+              "type": "object",
+              "name": "value"
+            },
+            {
+              "type": "[mscorlib]System.Type",
+              "name": "destinationType"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "CanConvertTo",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+            {
+              "type": "class System.ComponentModel.ITypeDescriptorContext",
+              "name": "context"
+            },
+            {
+              "type": "[mscorlib]System.Type",
+              "name": "t"
+            }
+          ]
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        }
+      ]
+    },
+    "System.ComponentModel.ByteConverter": {
+      "authority": "System",
+      "kind": "class",
+      "baseType": "System.ComponentModel.BaseNumberConverter",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        }
+      ]
+    },
     "System.ComponentModel.Design.Serialization.InstanceDescriptor": {
       "authority": "System",
       "kind": "class",
@@ -5492,6 +5871,36 @@
               "method": "System.ComponentModel.ITypeDescriptorContext::get_PropertyDescriptor"
             }
           ]
+        }
+      ]
+    },
+    "System.ComponentModel.Int32Converter": {
+      "authority": "System",
+      "kind": "class",
+      "baseType": "System.ComponentModel.BaseNumberConverter",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
         }
       ]
     },
@@ -6751,6 +7160,36 @@
               "method": "System.ComponentModel.PropertyDescriptorCollection::get_Item"
             }
           ]
+        }
+      ]
+    },
+    "System.ComponentModel.SingleConverter": {
+      "authority": "System",
+      "kind": "class",
+      "baseType": "System.ComponentModel.BaseNumberConverter",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
         }
       ]
     },
@@ -8786,6 +9225,98 @@
             {
               "accessor": "get",
               "method": "System.ComponentModel.TypeDescriptor::get_InterfaceType"
+            }
+          ]
+        }
+      ]
+    },
+    "System.EventHandler": {
+      "authority": "mscorlib",
+      "kind": "class",
+      "baseType": "System.MulticastDelegate",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": true,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "object"
+            },
+            {
+              "type": "native int",
+              "name": "method"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Invoke",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "sender"
+            },
+            {
+              "type": "class System.EventArgs",
+              "name": "e"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "BeginInvoke",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.IAsyncResult",
+          "parameters": [
+            {
+              "type": "object",
+              "name": "sender"
+            },
+            {
+              "type": "class System.EventArgs",
+              "name": "e"
+            },
+            {
+              "type": "class System.AsyncCallback",
+              "name": "callback"
+            },
+            {
+              "type": "object",
+              "name": "object"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "EndInvoke",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.IAsyncResult",
+              "name": "result"
             }
           ]
         }

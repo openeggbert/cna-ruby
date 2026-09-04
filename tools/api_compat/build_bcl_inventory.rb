@@ -121,7 +121,7 @@ FAMILIES = {
   "System.ComponentModel.ExpandableObjectConverter" => {"authority" => "System", "reason" =>
     "the declared base type of Microsoft.Xna.Framework.Design.MathTypeConverter in the XNA reference contract, and therefore of all twelve converters that derive from it"},
   "System.ComponentModel.ITypeDescriptorContext" => {"authority" => "System", "reason" =>
-    "the first parameter of forty-five XNA Design members -- every CanConvertFrom, CanConvertTo, ConvertFrom, ConvertTo, CreateInstance, GetProperties, GetPropertiesSupported and GetCreateInstanceSupported the family declares"},
+    "the first parameter of thirty-eight XNA Design members -- every CanConvertFrom, CanConvertTo, ConvertFrom, ConvertTo, CreateInstance, GetProperties, GetPropertiesSupported and GetCreateInstanceSupported the family declares"},
   "System.ComponentModel.PropertyDescriptorCollection" => {"authority" => "System", "reason" =>
     "the declared return type of MathTypeConverter.GetProperties and the declared type of its protected propertyDescriptions field"},
   "System.ComponentModel.PropertyDescriptor" => {"authority" => "System", "reason" =>
@@ -145,7 +145,29 @@ FAMILIES = {
   "System.Reflection.FieldInfo" => {"authority" => "mscorlib", "reason" =>
     "what Type.GetField answers and what FieldPropertyDescriptor is constructed from; it is what PropertyDescriptor.PropertyType, GetValue and SetValue answer for eleven of the twelve converters, so a consumer observes it through every descriptor they produce"},
   "System.Reflection.PropertyInfo" => {"authority" => "mscorlib", "reason" =>
-    "what Type.GetProperty answers and what PropertyPropertyDescriptor is constructed from; ColorConverter is the one converter whose descriptors read properties rather than fields, so its four descriptors observe this one instead"}
+    "what Type.GetProperty answers and what PropertyPropertyDescriptor is constructed from; ColorConverter is the one converter whose descriptors read properties rather than fields, so its four descriptors observe this one instead"},
+
+  # The scalar element converters. MathTypeConverter parses and formats no number itself: both of
+  # its generic helpers call TypeDescriptor.GetConverter(typeof(T)) and delegate, so the string form
+  # of every value the thirteen converters produce or accept is one of these three classes' answer,
+  # down to which NumberStyles it parses with and whether it accepts hexadecimal.
+  "System.ComponentModel.BaseNumberConverter" => {"authority" => "System", "reason" =>
+    "the CLR base of the three element converters below, and where the shape they share lives: the hexadecimal prefixes, the culture resolution and the NumberFormatInfo lookup are all declared here rather than in any of them"},
+  "System.ComponentModel.Int32Converter" => {"authority" => "System", "reason" =>
+    "what TypeDescriptor.GetConverter answers for System.Int32, the element type PointConverter and RectangleConverter name in ConvertToValues<int32>"},
+  "System.ComponentModel.SingleConverter" => {"authority" => "System", "reason" =>
+    "what TypeDescriptor.GetConverter answers for System.Single, the element type the seven vector, quaternion, plane, ray, bounding and matrix converters name"},
+  "System.ComponentModel.ByteConverter" => {"authority" => "System", "reason" =>
+    "what TypeDescriptor.GetConverter answers for System.Byte, the element type ColorConverter alone names in ConvertToValues<uint8>"},
+
+  # The two interfaces a consumer has to *construct* in order to use a projected member. Neither is
+  # named by an XNA signature and both are named by an admitted one, so both are transitive demands
+  # -- and both are measured here rather than collapsed on an assumption about how many members
+  # they declare.
+  "System.Collections.IComparer" => {"authority" => "mscorlib", "reason" =>
+    "the second parameter of two PropertyDescriptorCollection.Sort overloads, which a consumer holding the collection MathTypeConverter.GetProperties answers can call; demanded transitively through that collection"},
+  "System.EventHandler" => {"authority" => "mscorlib", "reason" =>
+    "the second parameter of PropertyDescriptor.AddValueChanged and RemoveValueChanged, and what FieldPropertyDescriptor.SetValue's OnValueChanged call invokes; demanded transitively through the descriptors a consumer receives"}
 }.freeze
 
 # Support enums the collection families throw through. Their literal names are what make a derived
@@ -228,6 +250,36 @@ def admit(name, expected, bcl_directory, xna_directory)
     abort "#{name} assembly version mismatch: found #{version}, expected #{expected.fetch("assemblyVersion")}"
   end
 
+  # An independent tool, on the facts the whole gate turns on.
+  #
+  # `ikdasm` produced every value above, so a defect in *it* would go unnoticed by every check that
+  # reads only its output -- which is the shape of the mistake this project has made before. The
+  # cross-check reads the assembly table with `monodis`, a different disassembler over the same
+  # bytes, and requires it to agree on the assembly name, the version and the public key blob. It
+  # is skipped only when `monodis` is genuinely absent, and the inventory records which it was, so
+  # "cross-checked" can never quietly mean "not run".
+  cross_check = if ENV.fetch("PATH", "").split(File::PATH_SEPARATOR)
+                     .any? { |entry| File.executable?(File.join(entry, "monodis")) }
+                  table = IO.popen(["monodis", "--assembly", path], err: File::NULL, &:read).to_s
+                  found_name = table[/^Name:\s*(\S+)/, 1]
+                  found_version = table[/^Version:\s*([0-9.]+)/, 1]
+                  found_key = table[/Dump:\n((?:0x[0-9a-fA-F]{8}:(?:\s+[0-9A-Fa-f]{2})+\s*\n)+)/, 1]
+                              .to_s.gsub(/0x[0-9a-fA-F]{8}:/, "").split.map(&:downcase).join
+                  unless found_name == expected.fetch("assemblyName")
+                    abort "#{name}: monodis reads the assembly name as #{found_name.inspect}, ikdasm as #{expected.fetch("assemblyName").inspect}"
+                  end
+                  unless found_version == version
+                    abort "#{name}: monodis reads the version as #{found_version.inspect}, ikdasm as #{version.inspect}"
+                  end
+                  unless found_key == public_key.gsub(/\s+/, "").downcase
+                    abort "#{name}: monodis and ikdasm disagree on the public key blob"
+                  end
+
+                  {"tool" => "monodis", "agreesOn" => %w[assemblyName assemblyVersion publicKey]}
+                else
+                  {"tool" => nil, "reason" => "monodis is not on PATH; ikdasm is the only extraction"}
+                end
+
   pe = File.binread(path)
   %w[CompanyName FileDescription].zip(%w[company description]).each do |resource, key|
     found = version_resources(pe, resource)
@@ -269,6 +321,7 @@ def admit(name, expected, bcl_directory, xna_directory)
      "publicKeyTokenDerivation" => "SHA-1 of the assembly's own .publickey blob, low eight bytes, reversed",
      "observedAssemblyVersion" => version,
      "observedFileVersion" => file_version,
+     "crossCheck" => cross_check,
      "pairing" => {
        "rule" => "every pinned XNA assembly that declares an AssemblyRef to this authority must name the exact version and public key token the admitted binary derives, and the set of assemblies that declare one is itself asserted",
        "xnaReferrers" => referrers.sort,
@@ -835,12 +888,46 @@ end
 # derived from the same IL by tools/api_compat/build_design_inventory.rb. A family claimed here
 # that the generated reach does not carry is refused like any other.
 design_inventory_path = File.join(root, "docs", "generated", "design-converter-inventory.json")
-behavioural_reach = if File.file?(design_inventory_path)
-                      JSON.parse(File.read(design_inventory_path)).fetch("reachedBclIdentities", {}).keys
-                          .to_h { |entry| [entry.split(":", 2).last, entry.split(":", 2).first] }
-                    else
-                      {}
-                    end
+design_inventory = File.file?(design_inventory_path) ? JSON.parse(File.read(design_inventory_path)) : {}
+behavioural_reach = design_inventory.fetch("reachedBclIdentities", {}).keys
+                                    .to_h { |entry| [entry.split(":", 2).last, entry.split(":", 2).first] }
+
+# The intrinsic converter table, extracted rather than remembered.
+#
+# `TypeDescriptor.GetConverter(Type)` resolves a type with no `TypeConverterAttribute` through
+# `ReflectTypeDescriptionProvider`'s static `_intrinsicTypeConverters` hashtable, which is built in
+# that class's initialiser as a run of `ldtoken <type>; ldtoken <converter>; ... set_Item`. Reading
+# the pairs out of it is what makes "Single converts through SingleConverter" a measurement.
+#
+# It is also the second demand channel for the three element converter families: the design
+# inventory says which element types the generic helpers name, and this says which converter each
+# of those resolves to.
+intrinsic_frame = bodies_by_authority.fetch("System")["System.ComponentModel.ReflectTypeDescriptionProvider"]
+intrinsic_converters = {}
+if intrinsic_frame
+  pending = []
+  members(intrinsic_frame[:body]).each do |member|
+    # The table is built lazily in the property getter, not in a static constructor: the field is
+    # null-checked and filled on first read. Looking for a `.cctor` finds nothing at all.
+    next unless member[:name] == "get_IntrinsicTypeConverters"
+
+    member[:ops].each do |op, operand|
+      case op
+      when "ldtoken" then pending << operand.to_s.strip.sub(/\A\[[^\]]+\]/, "")
+      when "callvirt", "call"
+        intrinsic_converters[pending[-2]] = pending[-1] if operand.include?("::set_Item") && pending.length >= 2
+        pending.clear if operand.include?("::set_Item")
+      end
+    end
+  end
+end
+# Every element type the Design family names must resolve here. A converter family admitted for an
+# element type the table does not carry would be a guess.
+design_inventory.fetch("scalarElementTypes", {}).each_key do |element|
+  next if intrinsic_converters.key?(element)
+
+  abort "the Design family converts through #{element} and the intrinsic converter table does not carry it"
+end
 
 # The transitive half of the demand rule, measured against what was actually extracted.
 bcl_consumers = FAMILIES.keys.to_h do |family|
@@ -855,9 +942,18 @@ bcl_consumers = FAMILIES.keys.to_h do |family|
   end.uniq.sort
   [family, users]
 end
+# A family reached through the intrinsic converter table is demanded the same way one named in the
+# Design IL is: the chain is `ConvertToValues<T>` -> `TypeDescriptor.GetConverter(typeof(T))` ->
+# this table, and every link of it is generated.
+intrinsic_demand = design_inventory.fetch("scalarElementTypes", {}).keys
+                                   .filter_map { |element| intrinsic_converters[element] }.uniq
+
 transitively_demanded.each do |family|
   next unless bcl_consumers.fetch(family).empty?
   next if behavioural_reach.key?(family)
+  next if intrinsic_demand.include?(family)
+  # The CLR base of a demanded element converter is required to represent it.
+  next if intrinsic_demand.any? { |converter| selected.dig(converter, "baseType") == family }
 
   abort "family #{family} has no XNA consumer, no admitted-BCL consumer and no measured behavioural reach; the inventory is demand-driven"
 end
@@ -879,6 +975,10 @@ families = FAMILIES.map do |family, entry|
   # Where the reach was measured, for every family the design inventory records -- not only the one
   # that needs it to be admitted at all.
   record["designReachAuthority"] = behavioural_reach.fetch(family) if behavioural_reach.key?(family)
+  # Where an element converter's demand comes from: the element type whose intrinsic-table entry
+  # names it, so the chain from `ConvertToValues<T>` to this family is visible in one place.
+  element = intrinsic_converters.find { |_, converter| converter == family }&.first
+  record["intrinsicConverterFor"] = element if element && design_inventory.fetch("scalarElementTypes", {}).key?(element)
   record
 end
 
@@ -901,6 +1001,10 @@ inventory = {
   # and the schema makes it say which authority it means.
   "authorities" => admitted.transform_values { |entry| entry.fetch("record") },
   "throwHelperResolution" => throw_helper_by_authority.transform_values { |table| table.sort.to_h },
+  # `ReflectTypeDescriptionProvider`'s intrinsic table, read out of its static initialiser. This is
+  # what `TypeDescriptor.GetConverter` answers for a type carrying no TypeConverterAttribute, and
+  # it is what resolves the three scalar element types the Design family converts through.
+  "intrinsicTypeConverters" => intrinsic_converters.sort.to_h,
   "BCL_AUTHORITIES" => admitted.length,
   "BCL_FAMILIES" => families.length,
   "BCL_TYPES" => selected.length,
