@@ -169,7 +169,34 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 `GraphicsDevice` and `GraphicsDeviceManager` are the two partial types, and
 `docs/graphics-runtime-member-audit.md` enumerates every member each still owes together with what
-that member actually needs. `PROPERTY_MAPPING_MISMATCH` is **zero**: the one entry it used to carry
+that member actually needs.
+
+## What is left, and what each thing is waiting for
+
+`docs/remaining-surface-audit.md` classifies **every** remaining member and type at Foundation 102,
+with the evidence for each rather than a judgement. In summary:
+
+| What | Count | Classification |
+| --- | ---: | --- |
+| `GraphicsDevice`'s 3 and `GraphicsDeviceManager`'s 5 | 8 members | `BLOCKED_UPSTREAM_CNA` — all eight trace to the one adapter defect |
+| `GraphicsAdapter`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs` | 3 types | `BLOCKED_UPSTREAM_CNA` — the same defect |
+| the thirteen `Design` converters | 13 types | `BCL_PROJECTION_SCOPE` — four `System.ComponentModel` identities and a descriptor system |
+| the `Media` namespace | 17 types | **locally actionable**; `Song.Album`/`Artist`/`Genre` are `BLOCKED_UPSTREAM_CNA` inside it |
+| the `ContentReader` family | 4 types | **locally actionable**, behind one `System.IO.BinaryReader` register decision |
+
+**The two locally actionable blocks are the next two milestones, in that order.** Both were surveyed
+rather than guessed at:
+
+- **`Media`.** `cna_media_library_create` was driven against a plain `Game` on the `HEADLESS`
+  artifact: every one of the seven collection getters succeeds, the music collections are empty on
+  this host and `pictures` answers **35**, so the picture half has real data. A manifest of the 166
+  routes that would have a production call site was generated from the header and passed the ABI
+  gate with `ABI_MISMATCHES` 0 against both roots — and was then **reverted**, because a bound route
+  with no call site does not stay in the manifest. Regenerating it is mechanical; the Ruby side is
+  196 members of IL to derive.
+- **`ContentReader`.** Twenty `cna_content_reader_*` routes exist. The decision to make first is
+  `System.IO.BinaryReader`, which `ContentReader` extends and two of whose members it overrides —
+  the same shape of decision `System.IO.Stream` was, and a decision rather than a blocker. `PROPERTY_MAPPING_MISMATCH` is **zero**: the one entry it used to carry
 was `GraphicsDevice::Viewport`, and `docs/graphics-device-viewport-evidence.md` records why that was
 never a Ruby limitation -- `CNA_Viewport` is MEMORY class, and the setter works once the manifest
 expands it the way the System V classification says it travels.
