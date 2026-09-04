@@ -872,6 +872,90 @@ module Microsoft
           def OnApply: () -> nil
         end
 
+        # The Model family. `ContentManager.Load(Model, name)` is the only producer, so none of the
+        # eight declares a constructor here.
+        class ModelBone
+          attr_reader Name: String
+          attr_reader Index: Integer
+          attr_reader Parent: ModelBone?
+          attr_reader Children: ModelBoneCollection
+          def Transform: () -> Matrix
+          def Transform=: (Matrix value) -> Matrix
+        end
+
+        class ModelBoneCollection < CNA::Runtime::ReadOnlyCollection
+          def []: (Integer | String key) -> ModelBone
+          def TryGetValue: (String boneName) ?{ (ModelBone) -> void } -> bool
+          def GetEnumerator: () -> ModelBoneCollection::Enumerator
+          def each: () ?{ (ModelBone) -> void } -> untyped
+
+          class Enumerator
+            include CNA::Runtime::ArrayEnumerator
+          end
+        end
+
+        class ModelMeshPart
+          attr_reader StartIndex: Integer
+          attr_reader PrimitiveCount: Integer
+          attr_reader VertexOffset: Integer
+          attr_reader NumVertices: Integer
+          attr_reader IndexBuffer: IndexBuffer?
+          attr_reader VertexBuffer: VertexBuffer?
+          attr_reader Effect: Effect?
+          attr_accessor Tag: untyped
+          def Effect=: (Effect? value) -> Effect?
+        end
+
+        class ModelMeshPartCollection < CNA::Runtime::ReadOnlyCollection
+          def GetEnumerator: () -> ModelMeshPartCollection::Enumerator
+          def each: () ?{ (ModelMeshPart) -> void } -> untyped
+
+          class Enumerator
+            include CNA::Runtime::ArrayEnumerator
+          end
+        end
+
+        class ModelEffectCollection < CNA::Runtime::ReadOnlyCollection
+          def GetEnumerator: () -> ModelEffectCollection::Enumerator
+          def each: () ?{ (Effect) -> void } -> untyped
+
+          class Enumerator
+            include CNA::Runtime::ArrayEnumerator
+          end
+        end
+
+        class ModelMesh
+          attr_reader Name: String
+          attr_reader ParentBone: ModelBone?
+          attr_reader BoundingSphere: Microsoft::Xna::Framework::BoundingSphere
+          attr_reader MeshParts: ModelMeshPartCollection
+          attr_reader Effects: ModelEffectCollection
+          attr_accessor Tag: untyped
+          def Draw: () -> nil
+        end
+
+        class ModelMeshCollection < CNA::Runtime::ReadOnlyCollection
+          def []: (Integer | String key) -> ModelMesh
+          def TryGetValue: (String meshName) ?{ (ModelMesh) -> void } -> bool
+          def GetEnumerator: () -> ModelMeshCollection::Enumerator
+          def each: () ?{ (ModelMesh) -> void } -> untyped
+
+          class Enumerator
+            include CNA::Runtime::ArrayEnumerator
+          end
+        end
+
+        class Model
+          attr_reader Root: ModelBone?
+          attr_reader Bones: ModelBoneCollection
+          attr_reader Meshes: ModelMeshCollection
+          attr_accessor Tag: untyped
+          def CopyBoneTransformsTo: (::Array[Matrix?] destinationBoneTransforms) -> nil
+          def CopyAbsoluteBoneTransformsTo: (::Array[Matrix?] destinationBoneTransforms) -> nil
+          def CopyBoneTransformsFrom: (::Array[Matrix] sourceBoneTransforms) -> nil
+          def Draw: (Matrix world, Matrix view, Matrix projection) -> nil
+        end
+
         class SpriteBatch < GraphicsResource
           def initialize: (GraphicsDevice graphics_device) -> void
           def Begin: () -> nil

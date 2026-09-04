@@ -64,6 +64,15 @@ module CNA
               | () -> Enumerator[untyped, untyped]
     end
 
+    # The body of an XNA collection's nested Enumerator struct: two fields and three members over a
+    # backing array. Ruby language support, not an XNA identity.
+    module ArrayEnumerator
+      def initialize: (Array[untyped] wrappedArray) -> void
+      def Current: () -> untyped
+      def MoveNext: () -> bool
+      def Dispose: () -> nil
+    end
+
     # The Ruby projection of System.Collections.ObjectModel.Collection`1: the mutable sibling of
     # the class above, a live view over the backing Array whose every mutation runs through one of
     # four protected hooks. No Ruby-idiomatic mutation exists beside the CLR surface.

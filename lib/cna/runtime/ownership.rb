@@ -67,14 +67,33 @@ module CNA
         game.__send__(:register_native_child, self)
       end
 
+      # A handle another native object owns and this wrapper only reads.
+      #
+      # `Model` is why it exists: a content-loaded model owns its parts' `Effect`, `VertexBuffer`
+      # and `IndexBuffer`, and CNA refuses `cna_*_destroy` on each of the three with
+      # `CNA_RESULT_INVALID_STATE` — measured, and documented by the model header. So the wrapper
+      # takes `PARENT_OWNED`: it never claims the handle in the generation, never releases it, and
+      # is not registered as an owned child, which is exactly what the ownership already means.
+      def initialize_parent_owned_resource(game, handle)
+        @native_game = game
+        @native_handle = NativeHandle.new(
+          handle: handle,
+          ownership: Ownership::PARENT_OWNED,
+          generation: game.__send__(:generation),
+          release: nil,
+          parent: game
+        )
+      end
+
       def IsDisposed = @native_handle.nil? || @native_handle.disposed?
 
       def Dispose
         return if self.IsDisposed
 
         prepare_native_dispose
+        parent_owned = @native_handle.ownership == Ownership::PARENT_OWNED
         @native_handle.dispose
-        @native_game.__send__(:unregister_native_child, self)
+        @native_game.__send__(:unregister_native_child, self) unless parent_owned
         nil
       end
 

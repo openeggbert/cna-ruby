@@ -7,7 +7,8 @@ module CNA
     Signature = Data.define(
       :symbol, :c_return, :c_arguments, :fiddle_return, :fiddle_arguments,
       :pointer_depths, :const_arguments, :integer_widths, :signedness,
-      :ownership, :result_lifetime, :callback_abi, :value_aggregates, :abi_fillers
+      :ownership, :result_lifetime, :callback_abi, :value_aggregates, :abi_fillers,
+      :since
     )
 
     module Manifest
@@ -25,7 +26,13 @@ module CNA
 
       module_function
 
-      def signature(symbol, return_type, arguments, ownership:, result_lifetime: "thread-local until next failing call", callback_abi: nil)
+      # `since:` names the earliest admitted ABI version that declares the route. It is `nil` for
+      # every route both admitted header roots declare, which is all but one of them: the whole
+      # point of admitting two roots is that they agree, so an exception has to be **declared** and
+      # is compared against the headers rather than assumed. `NativeAbiGate` skips a route in a root
+      # older than its `since`, and `test_native_abi_gate.rb` plants a wrong `since` to prove the
+      # skip is narrow.
+      def signature(symbol, return_type, arguments, ownership:, result_lifetime: "thread-local until next failing call", callback_abi: nil, since: nil)
         c_arguments = arguments.map { |value| value.fetch(:c) }
         # An argument declared with `by_value` expands into one entry per eightbyte, and this
         # records where each aggregate starts and how many entries it occupies, so the C spelling
@@ -59,7 +66,8 @@ module CNA
           result_lifetime: result_lifetime,
           callback_abi: callback_abi,
           value_aggregates: value_aggregates.freeze,
-          abi_fillers: abi_fillers.freeze
+          abi_fillers: abi_fillers.freeze,
+          since: since
         )
       end
 
@@ -1051,7 +1059,78 @@ module CNA
         signature("cna_gamepad_get_state", T[:result], [T[:handle], enum("CNA_PlayerIndex"), pointer("CNA_GamePadState")], ownership: "borrows Game; caller MANAGED_VALUE snapshot output"),
         signature("cna_gamepad_get_state_with_dead_zone", T[:result], [T[:handle], enum("CNA_PlayerIndex"), enum("CNA_GamePadDeadZone"), pointer("CNA_GamePadState")], ownership: "borrows Game; caller MANAGED_VALUE snapshot output"),
         signature("cna_gamepad_get_capabilities", T[:result], [T[:handle], enum("CNA_PlayerIndex"), pointer("CNA_GamePadCapabilities")], ownership: "borrows Game; caller MANAGED_VALUE snapshot output"),
-        signature("cna_gamepad_set_vibration", T[:result], [T[:handle], enum("CNA_PlayerIndex"), T[:float], T[:float], pointer("CNA_Bool")], ownership: "borrows Game; writes selected controller actuator; caller Boolean output")
+        signature("cna_gamepad_set_vibration", T[:result], [T[:handle], enum("CNA_PlayerIndex"), T[:float], T[:float], pointer("CNA_Bool")], ownership: "borrows Game; writes selected controller actuator; caller Boolean output"),
+
+        # The Model family.
+        #
+        # `Model.Draw`, `ModelMesh.Draw` and the internal `ModelMeshPart.Draw` are pure managed IL
+        # over members this binding already has -- `IEffectMatrices`, `EffectPass.Apply`,
+        # `GraphicsDevice.SetVertexBuffer`, `Indices` and `DrawIndexedPrimitives` -- and the
+        # managed path was written first. It is **unreachable**: every generic `Effect` route
+        # segfaults on the effect a loaded model publishes, `cna_effect_get_parameters`,
+        # `cna_effect_get_techniques` and `cna_effect_get_current_technique` alike, measured with no
+        # Ruby in the path. Without `CurrentTechnique.Passes` there is no managed draw loop, so
+        # `cna_model_draw` and `cna_model_mesh_draw` are bound and are what the two members call.
+        # Both answer success on `HEADLESS` and `OPENGL33`. See
+        # `docs/model-load-shutdown-upstream-defect.md`.
+        #
+        # `cna_content_manager_load_model` is the producer. XNA's `Model` has an `assembly`
+        # constructor and `ContentManager.Load<Model>` is the only way a consumer gets one, which is
+        # exactly the shape `Texture2D` and `SpriteFont` already follow here.
+        #
+        # MEASURED, and the reason every wrapper caches by **index** rather than by handle: a bone,
+        # mesh, part or collection *view* is a **fresh handle on every call** --
+        # `cna_model_bone_collection_get_at(c, 0)` twice answers two different handles for one bone.
+        # A part's retained effect, vertex buffer and index buffer are the opposite: the same handle
+        # every time, and the model owns them.
+        signature("cna_content_manager_load_model", T[:result], [T[:handle], *by_value("CNA_StringView", pointer("char", const: true), T[:u64]), pointer("CNA_ModelHandle")], ownership: "borrows content manager; the model is CACHED BY THE MANAGER -- cna_model_destroy on it segfaults, see docs/model-destroy-upstream-defect.md", since: 0x0000_1500),
+        signature("cna_model_get_bones", T[:result], [handle("CNA_ModelHandle"), pointer("CNA_ModelBoneCollectionHandle")], ownership: "borrows model; returns an OWNED live collection view"),
+        signature("cna_model_get_meshes", T[:result], [handle("CNA_ModelHandle"), pointer("CNA_ModelMeshCollectionHandle")], ownership: "borrows model; returns an OWNED live collection view"),
+        signature("cna_model_get_root", T[:result], [handle("CNA_ModelHandle"), pointer("CNA_Bool"), pointer("CNA_ModelBoneHandle")], ownership: "borrows model; returns an OWNED optional root view"),
+        signature("cna_model_get_bone_transform_count", T[:result], [handle("CNA_ModelHandle"), pointer("uint64_t")], ownership: "borrows model; caller output"),
+        signature("cna_model_bone_collection_get_count", T[:result], [handle("CNA_ModelBoneCollectionHandle"), pointer("uint64_t")], ownership: "borrows collection; caller output"),
+        signature("cna_model_bone_collection_get_at", T[:result], [handle("CNA_ModelBoneCollectionHandle"), T[:u64], pointer("CNA_ModelBoneHandle")], ownership: "borrows collection; returns an OWNED bone view, fresh on every call"),
+        signature("cna_model_bone_destroy", T[:result], [handle("CNA_ModelBoneHandle")], ownership: "releases one owned bone view"),
+        signature("cna_model_bone_collection_destroy", T[:result], [handle("CNA_ModelBoneCollectionHandle")], ownership: "releases one owned bone-collection view"),
+        signature("cna_model_bone_get_name_byte_count", T[:result], [handle("CNA_ModelBoneHandle"), pointer("uint64_t")], ownership: "borrows bone; caller output"),
+        signature("cna_model_bone_copy_name", T[:result], [handle("CNA_ModelBoneHandle"), pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows bone; caller buffer"),
+        signature("cna_model_bone_get_index", T[:result], [handle("CNA_ModelBoneHandle"), pointer("int32_t")], ownership: "borrows bone; caller output"),
+        signature("cna_model_bone_get_transform", T[:result], [handle("CNA_ModelBoneHandle"), pointer("CNA_Matrix")], ownership: "borrows bone; caller output"),
+        signature("cna_model_bone_set_transform", T[:result], [handle("CNA_ModelBoneHandle"), *by_value_memory("CNA_Matrix", eightbytes: 8, preceding_integer_arguments: 1)], ownership: "borrows bone"),
+        signature("cna_model_bone_get_parent", T[:result], [handle("CNA_ModelBoneHandle"), pointer("CNA_Bool"), pointer("CNA_ModelBoneHandle")], ownership: "borrows bone; returns an OWNED optional parent view"),
+        signature("cna_model_bone_get_children", T[:result], [handle("CNA_ModelBoneHandle"), pointer("CNA_ModelBoneCollectionHandle")], ownership: "borrows bone; returns an OWNED live collection view"),
+        signature("cna_model_mesh_collection_get_count", T[:result], [handle("CNA_ModelMeshCollectionHandle"), pointer("uint64_t")], ownership: "borrows collection; caller output"),
+        signature("cna_model_mesh_collection_get_at", T[:result], [handle("CNA_ModelMeshCollectionHandle"), T[:u64], pointer("CNA_ModelMeshHandle")], ownership: "borrows collection; returns an OWNED mesh view, fresh on every call"),
+        signature("cna_model_mesh_collection_destroy", T[:result], [handle("CNA_ModelMeshCollectionHandle")], ownership: "releases one owned mesh-collection view"),
+        signature("cna_model_mesh_destroy", T[:result], [handle("CNA_ModelMeshHandle")], ownership: "releases one owned mesh view"),
+        signature("cna_model_mesh_get_name_byte_count", T[:result], [handle("CNA_ModelMeshHandle"), pointer("uint64_t")], ownership: "borrows mesh; caller output"),
+        signature("cna_model_mesh_copy_name", T[:result], [handle("CNA_ModelMeshHandle"), pointer("char"), T[:u64], pointer("uint64_t")], ownership: "borrows mesh; caller buffer"),
+        signature("cna_model_mesh_get_bounding_sphere", T[:result], [handle("CNA_ModelMeshHandle"), pointer("CNA_BoundingSphere")], ownership: "borrows mesh; caller output"),
+        signature("cna_model_mesh_get_parent_bone", T[:result], [handle("CNA_ModelMeshHandle"), pointer("CNA_Bool"), pointer("CNA_ModelBoneHandle")], ownership: "borrows mesh; returns an OWNED optional bone view"),
+        signature("cna_model_mesh_get_mesh_parts", T[:result], [handle("CNA_ModelMeshHandle"), pointer("CNA_ModelMeshPartCollectionHandle")], ownership: "borrows mesh; returns an OWNED live collection view"),
+        signature("cna_model_mesh_get_effects", T[:result], [handle("CNA_ModelMeshHandle"), pointer("CNA_ModelEffectCollectionHandle")], ownership: "borrows mesh; returns an OWNED live collection view"),
+        signature("cna_model_mesh_part_collection_get_count", T[:result], [handle("CNA_ModelMeshPartCollectionHandle"), pointer("uint64_t")], ownership: "borrows collection; caller output"),
+        signature("cna_model_mesh_part_collection_get_at", T[:result], [handle("CNA_ModelMeshPartCollectionHandle"), T[:u64], pointer("CNA_ModelMeshPartHandle")], ownership: "borrows collection; returns an OWNED part view, fresh on every call"),
+        signature("cna_model_mesh_part_collection_destroy", T[:result], [handle("CNA_ModelMeshPartCollectionHandle")], ownership: "releases one owned part-collection view"),
+        signature("cna_model_mesh_part_destroy", T[:result], [handle("CNA_ModelMeshPartHandle")], ownership: "releases one owned part view"),
+        signature("cna_model_mesh_part_get_num_vertices", T[:result], [handle("CNA_ModelMeshPartHandle"), pointer("int32_t")], ownership: "borrows part; caller output"),
+        signature("cna_model_mesh_part_get_primitive_count", T[:result], [handle("CNA_ModelMeshPartHandle"), pointer("int32_t")], ownership: "borrows part; caller output"),
+        signature("cna_model_mesh_part_get_start_index", T[:result], [handle("CNA_ModelMeshPartHandle"), pointer("int32_t")], ownership: "borrows part; caller output"),
+        signature("cna_model_mesh_part_get_vertex_offset", T[:result], [handle("CNA_ModelMeshPartHandle"), pointer("int32_t")], ownership: "borrows part; caller output"),
+        signature("cna_model_mesh_part_get_effect", T[:result], [handle("CNA_ModelMeshPartHandle"), pointer("CNA_Bool"), pointer("CNA_EffectHandle")], ownership: "borrows part; returns a MODEL-OWNED effect handle, stable across calls, never destroyed here"),
+        signature("cna_model_mesh_part_set_effect", T[:result], [handle("CNA_ModelMeshPartHandle"), handle("CNA_EffectHandle")], ownership: "borrows part; retains the effect"),
+        signature("cna_model_mesh_part_get_vertex_buffer", T[:result], [handle("CNA_ModelMeshPartHandle"), pointer("CNA_Bool"), pointer("CNA_VertexBufferHandle")], ownership: "borrows part; returns a MODEL-OWNED buffer handle, stable across calls, never destroyed here"),
+        signature("cna_model_mesh_part_get_index_buffer", T[:result], [handle("CNA_ModelMeshPartHandle"), pointer("CNA_Bool"), pointer("CNA_IndexBufferHandle")], ownership: "borrows part; returns a MODEL-OWNED buffer handle, stable across calls, never destroyed here"),
+        signature("cna_model_effect_collection_get_count", T[:result], [handle("CNA_ModelEffectCollectionHandle"), pointer("uint64_t")], ownership: "borrows collection; caller output"),
+        signature("cna_model_effect_collection_get_at", T[:result], [handle("CNA_ModelEffectCollectionHandle"), T[:u64], pointer("CNA_EffectHandle")], ownership: "borrows collection; returns a MODEL-OWNED effect handle"),
+        signature("cna_model_effect_collection_destroy", T[:result], [handle("CNA_ModelEffectCollectionHandle")], ownership: "releases one owned effect-collection view"),
+        signature("cna_model_draw", T[:result],
+                  [handle("CNA_ModelHandle"),
+                   *by_value_memory("CNA_Matrix", eightbytes: 8, preceding_integer_arguments: 1),
+                   *by_value_memory("CNA_Matrix", eightbytes: 8, preceding_integer_arguments: 6),
+                   *by_value_memory("CNA_Matrix", eightbytes: 8, preceding_integer_arguments: 6)],
+                  ownership: "borrows model; draws every mesh after writing the three matrices into every effect"),
+        signature("cna_model_mesh_draw", T[:result], [handle("CNA_ModelMeshHandle")], ownership: "borrows mesh; draws every drawable part")
       ].freeze
 
       CALLBACKS = [

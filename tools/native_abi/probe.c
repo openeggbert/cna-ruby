@@ -512,6 +512,55 @@ CHECK_FN(cna_gamepad_get_state_with_dead_zone, CNA_Result, (CNA_Handle, CNA_Play
 CHECK_FN(cna_gamepad_get_capabilities, CNA_Result, (CNA_Handle, CNA_PlayerIndex, CNA_GamePadCapabilities*));
 CHECK_FN(cna_gamepad_set_vibration, CNA_Result, (CNA_Handle, CNA_PlayerIndex, float, float, CNA_Bool*));
 
+/* The Model family: accessors only, no draw route. */
+/* Declared only from ABI 0.21.0. The manifest records `since: 0x00001500` and NativeAbiGate skips
+   it in an older root, so the retired 0.7.0 headers stay admitted. */
+#if (CNA_ABI_VERSION_MAJOR > 0) || (CNA_ABI_VERSION_MAJOR == 0 && CNA_ABI_VERSION_MINOR >= 21)
+CHECK_FN(cna_content_manager_load_model, CNA_Result, (CNA_Handle, CNA_StringView, CNA_ModelHandle*));
+#endif
+CHECK_FN(cna_model_get_bones, CNA_Result, (CNA_ModelHandle, CNA_ModelBoneCollectionHandle*));
+CHECK_FN(cna_model_get_meshes, CNA_Result, (CNA_ModelHandle, CNA_ModelMeshCollectionHandle*));
+CHECK_FN(cna_model_get_root, CNA_Result, (CNA_ModelHandle, CNA_Bool*, CNA_ModelBoneHandle*));
+CHECK_FN(cna_model_get_bone_transform_count, CNA_Result, (CNA_ModelHandle, uint64_t*));
+CHECK_FN(cna_model_bone_collection_get_count, CNA_Result, (CNA_ModelBoneCollectionHandle, uint64_t*));
+CHECK_FN(cna_model_bone_collection_get_at, CNA_Result, (CNA_ModelBoneCollectionHandle, uint64_t, CNA_ModelBoneHandle*));
+CHECK_FN(cna_model_bone_destroy, CNA_Result, (CNA_ModelBoneHandle));
+CHECK_FN(cna_model_bone_collection_destroy, CNA_Result, (CNA_ModelBoneCollectionHandle));
+CHECK_FN(cna_model_bone_get_name_byte_count, CNA_Result, (CNA_ModelBoneHandle, uint64_t*));
+CHECK_FN(cna_model_bone_copy_name, CNA_Result, (CNA_ModelBoneHandle, char*, uint64_t, uint64_t*));
+CHECK_FN(cna_model_bone_get_index, CNA_Result, (CNA_ModelBoneHandle, int32_t*));
+CHECK_FN(cna_model_bone_get_transform, CNA_Result, (CNA_ModelBoneHandle, CNA_Matrix*));
+CHECK_FN(cna_model_bone_set_transform, CNA_Result, (CNA_ModelBoneHandle, CNA_Matrix));
+CHECK_FN(cna_model_bone_get_parent, CNA_Result, (CNA_ModelBoneHandle, CNA_Bool*, CNA_ModelBoneHandle*));
+CHECK_FN(cna_model_bone_get_children, CNA_Result, (CNA_ModelBoneHandle, CNA_ModelBoneCollectionHandle*));
+CHECK_FN(cna_model_mesh_collection_get_count, CNA_Result, (CNA_ModelMeshCollectionHandle, uint64_t*));
+CHECK_FN(cna_model_mesh_collection_get_at, CNA_Result, (CNA_ModelMeshCollectionHandle, uint64_t, CNA_ModelMeshHandle*));
+CHECK_FN(cna_model_mesh_collection_destroy, CNA_Result, (CNA_ModelMeshCollectionHandle));
+CHECK_FN(cna_model_mesh_destroy, CNA_Result, (CNA_ModelMeshHandle));
+CHECK_FN(cna_model_mesh_get_name_byte_count, CNA_Result, (CNA_ModelMeshHandle, uint64_t*));
+CHECK_FN(cna_model_mesh_copy_name, CNA_Result, (CNA_ModelMeshHandle, char*, uint64_t, uint64_t*));
+CHECK_FN(cna_model_mesh_get_bounding_sphere, CNA_Result, (CNA_ModelMeshHandle, CNA_BoundingSphere*));
+CHECK_FN(cna_model_mesh_get_parent_bone, CNA_Result, (CNA_ModelMeshHandle, CNA_Bool*, CNA_ModelBoneHandle*));
+CHECK_FN(cna_model_mesh_get_mesh_parts, CNA_Result, (CNA_ModelMeshHandle, CNA_ModelMeshPartCollectionHandle*));
+CHECK_FN(cna_model_mesh_get_effects, CNA_Result, (CNA_ModelMeshHandle, CNA_ModelEffectCollectionHandle*));
+CHECK_FN(cna_model_mesh_part_collection_get_count, CNA_Result, (CNA_ModelMeshPartCollectionHandle, uint64_t*));
+CHECK_FN(cna_model_mesh_part_collection_get_at, CNA_Result, (CNA_ModelMeshPartCollectionHandle, uint64_t, CNA_ModelMeshPartHandle*));
+CHECK_FN(cna_model_mesh_part_collection_destroy, CNA_Result, (CNA_ModelMeshPartCollectionHandle));
+CHECK_FN(cna_model_mesh_part_destroy, CNA_Result, (CNA_ModelMeshPartHandle));
+CHECK_FN(cna_model_mesh_part_get_num_vertices, CNA_Result, (CNA_ModelMeshPartHandle, int32_t*));
+CHECK_FN(cna_model_mesh_part_get_primitive_count, CNA_Result, (CNA_ModelMeshPartHandle, int32_t*));
+CHECK_FN(cna_model_mesh_part_get_start_index, CNA_Result, (CNA_ModelMeshPartHandle, int32_t*));
+CHECK_FN(cna_model_mesh_part_get_vertex_offset, CNA_Result, (CNA_ModelMeshPartHandle, int32_t*));
+CHECK_FN(cna_model_mesh_part_get_effect, CNA_Result, (CNA_ModelMeshPartHandle, CNA_Bool*, CNA_EffectHandle*));
+CHECK_FN(cna_model_mesh_part_set_effect, CNA_Result, (CNA_ModelMeshPartHandle, CNA_EffectHandle));
+CHECK_FN(cna_model_mesh_part_get_vertex_buffer, CNA_Result, (CNA_ModelMeshPartHandle, CNA_Bool*, CNA_VertexBufferHandle*));
+CHECK_FN(cna_model_mesh_part_get_index_buffer, CNA_Result, (CNA_ModelMeshPartHandle, CNA_Bool*, CNA_IndexBufferHandle*));
+CHECK_FN(cna_model_effect_collection_get_count, CNA_Result, (CNA_ModelEffectCollectionHandle, uint64_t*));
+CHECK_FN(cna_model_effect_collection_get_at, CNA_Result, (CNA_ModelEffectCollectionHandle, uint64_t, CNA_EffectHandle*));
+CHECK_FN(cna_model_effect_collection_destroy, CNA_Result, (CNA_ModelEffectCollectionHandle));
+CHECK_FN(cna_model_draw, CNA_Result, (CNA_ModelHandle, CNA_Matrix, CNA_Matrix, CNA_Matrix));
+CHECK_FN(cna_model_mesh_draw, CNA_Result, (CNA_ModelMeshHandle));
+
 typedef CNA_Result (*expected_lifecycle)(CNA_Handle, const CNA_GameTime*, void*, CNA_CallbackError*);
 typedef CNA_Result (*expected_begin_draw)(CNA_Handle, const CNA_GameTime*, void*, CNA_Bool*, CNA_CallbackError*);
 _Static_assert(__builtin_types_compatible_p(CNA_GameLifecycleCallback, expected_lifecycle), "lifecycle callback mismatch");
@@ -1032,6 +1081,51 @@ int main(void) {
     SIGNATURE(cna_gamepad_get_state_with_dead_zone, "CNA_Result|CNA_Handle,CNA_PlayerIndex,CNA_GamePadDeadZone,CNA_GamePadState*");
     SIGNATURE(cna_gamepad_get_capabilities, "CNA_Result|CNA_Handle,CNA_PlayerIndex,CNA_GamePadCapabilities*");
     SIGNATURE(cna_gamepad_set_vibration, "CNA_Result|CNA_Handle,CNA_PlayerIndex,float,float,CNA_Bool*");
+#if (CNA_ABI_VERSION_MAJOR > 0) || (CNA_ABI_VERSION_MAJOR == 0 && CNA_ABI_VERSION_MINOR >= 21)
+    SIGNATURE(cna_content_manager_load_model, "CNA_Result|CNA_Handle,CNA_StringView,CNA_ModelHandle*");
+#endif
+    SIGNATURE(cna_model_get_bones, "CNA_Result|CNA_ModelHandle,CNA_ModelBoneCollectionHandle*");
+    SIGNATURE(cna_model_get_meshes, "CNA_Result|CNA_ModelHandle,CNA_ModelMeshCollectionHandle*");
+    SIGNATURE(cna_model_get_root, "CNA_Result|CNA_ModelHandle,CNA_Bool*,CNA_ModelBoneHandle*");
+    SIGNATURE(cna_model_get_bone_transform_count, "CNA_Result|CNA_ModelHandle,uint64_t*");
+    SIGNATURE(cna_model_bone_collection_get_count, "CNA_Result|CNA_ModelBoneCollectionHandle,uint64_t*");
+    SIGNATURE(cna_model_bone_collection_get_at, "CNA_Result|CNA_ModelBoneCollectionHandle,uint64_t,CNA_ModelBoneHandle*");
+    SIGNATURE(cna_model_bone_destroy, "CNA_Result|CNA_ModelBoneHandle");
+    SIGNATURE(cna_model_bone_collection_destroy, "CNA_Result|CNA_ModelBoneCollectionHandle");
+    SIGNATURE(cna_model_bone_get_name_byte_count, "CNA_Result|CNA_ModelBoneHandle,uint64_t*");
+    SIGNATURE(cna_model_bone_copy_name, "CNA_Result|CNA_ModelBoneHandle,char*,uint64_t,uint64_t*");
+    SIGNATURE(cna_model_bone_get_index, "CNA_Result|CNA_ModelBoneHandle,int32_t*");
+    SIGNATURE(cna_model_bone_get_transform, "CNA_Result|CNA_ModelBoneHandle,CNA_Matrix*");
+    SIGNATURE(cna_model_bone_set_transform, "CNA_Result|CNA_ModelBoneHandle,CNA_Matrix");
+    SIGNATURE(cna_model_bone_get_parent, "CNA_Result|CNA_ModelBoneHandle,CNA_Bool*,CNA_ModelBoneHandle*");
+    SIGNATURE(cna_model_bone_get_children, "CNA_Result|CNA_ModelBoneHandle,CNA_ModelBoneCollectionHandle*");
+    SIGNATURE(cna_model_mesh_collection_get_count, "CNA_Result|CNA_ModelMeshCollectionHandle,uint64_t*");
+    SIGNATURE(cna_model_mesh_collection_get_at, "CNA_Result|CNA_ModelMeshCollectionHandle,uint64_t,CNA_ModelMeshHandle*");
+    SIGNATURE(cna_model_mesh_collection_destroy, "CNA_Result|CNA_ModelMeshCollectionHandle");
+    SIGNATURE(cna_model_mesh_destroy, "CNA_Result|CNA_ModelMeshHandle");
+    SIGNATURE(cna_model_mesh_get_name_byte_count, "CNA_Result|CNA_ModelMeshHandle,uint64_t*");
+    SIGNATURE(cna_model_mesh_copy_name, "CNA_Result|CNA_ModelMeshHandle,char*,uint64_t,uint64_t*");
+    SIGNATURE(cna_model_mesh_get_bounding_sphere, "CNA_Result|CNA_ModelMeshHandle,CNA_BoundingSphere*");
+    SIGNATURE(cna_model_mesh_get_parent_bone, "CNA_Result|CNA_ModelMeshHandle,CNA_Bool*,CNA_ModelBoneHandle*");
+    SIGNATURE(cna_model_mesh_get_mesh_parts, "CNA_Result|CNA_ModelMeshHandle,CNA_ModelMeshPartCollectionHandle*");
+    SIGNATURE(cna_model_mesh_get_effects, "CNA_Result|CNA_ModelMeshHandle,CNA_ModelEffectCollectionHandle*");
+    SIGNATURE(cna_model_mesh_part_collection_get_count, "CNA_Result|CNA_ModelMeshPartCollectionHandle,uint64_t*");
+    SIGNATURE(cna_model_mesh_part_collection_get_at, "CNA_Result|CNA_ModelMeshPartCollectionHandle,uint64_t,CNA_ModelMeshPartHandle*");
+    SIGNATURE(cna_model_mesh_part_collection_destroy, "CNA_Result|CNA_ModelMeshPartCollectionHandle");
+    SIGNATURE(cna_model_mesh_part_destroy, "CNA_Result|CNA_ModelMeshPartHandle");
+    SIGNATURE(cna_model_mesh_part_get_num_vertices, "CNA_Result|CNA_ModelMeshPartHandle,int32_t*");
+    SIGNATURE(cna_model_mesh_part_get_primitive_count, "CNA_Result|CNA_ModelMeshPartHandle,int32_t*");
+    SIGNATURE(cna_model_mesh_part_get_start_index, "CNA_Result|CNA_ModelMeshPartHandle,int32_t*");
+    SIGNATURE(cna_model_mesh_part_get_vertex_offset, "CNA_Result|CNA_ModelMeshPartHandle,int32_t*");
+    SIGNATURE(cna_model_mesh_part_get_effect, "CNA_Result|CNA_ModelMeshPartHandle,CNA_Bool*,CNA_EffectHandle*");
+    SIGNATURE(cna_model_mesh_part_set_effect, "CNA_Result|CNA_ModelMeshPartHandle,CNA_EffectHandle");
+    SIGNATURE(cna_model_mesh_part_get_vertex_buffer, "CNA_Result|CNA_ModelMeshPartHandle,CNA_Bool*,CNA_VertexBufferHandle*");
+    SIGNATURE(cna_model_mesh_part_get_index_buffer, "CNA_Result|CNA_ModelMeshPartHandle,CNA_Bool*,CNA_IndexBufferHandle*");
+    SIGNATURE(cna_model_effect_collection_get_count, "CNA_Result|CNA_ModelEffectCollectionHandle,uint64_t*");
+    SIGNATURE(cna_model_effect_collection_get_at, "CNA_Result|CNA_ModelEffectCollectionHandle,uint64_t,CNA_EffectHandle*");
+    SIGNATURE(cna_model_effect_collection_destroy, "CNA_Result|CNA_ModelEffectCollectionHandle");
+    SIGNATURE(cna_model_draw, "CNA_Result|CNA_ModelHandle,CNA_Matrix,CNA_Matrix,CNA_Matrix");
+    SIGNATURE(cna_model_mesh_draw, "CNA_Result|CNA_ModelMeshHandle");
 
     STRUCT(CNA_StringView); FIELD(CNA_StringView, data); FIELD(CNA_StringView, byte_length);
     STRUCT(CNA_Rectangle); FIELD(CNA_Rectangle, x); FIELD(CNA_Rectangle, y); FIELD(CNA_Rectangle, width); FIELD(CNA_Rectangle, height);
@@ -1064,6 +1158,7 @@ int main(void) {
     STRUCT(CNA_BackBufferReadback); FIELD(CNA_BackBufferReadback, struct_size); FIELD(CNA_BackBufferReadback, struct_version); FIELD(CNA_BackBufferReadback, has_source_rectangle); FIELD(CNA_BackBufferReadback, source_rectangle); FIELD(CNA_BackBufferReadback, start_index); FIELD(CNA_BackBufferReadback, element_count);
     STRUCT(CNA_UserPrimitives); FIELD(CNA_UserPrimitives, struct_size); FIELD(CNA_UserPrimitives, struct_version); FIELD(CNA_UserPrimitives, primitive_type); FIELD(CNA_UserPrimitives, vertex_source); FIELD(CNA_UserPrimitives, vertex_data); FIELD(CNA_UserPrimitives, vertex_declaration); FIELD(CNA_UserPrimitives, vertex_offset); FIELD(CNA_UserPrimitives, num_vertices); FIELD(CNA_UserPrimitives, primitive_count); FIELD(CNA_UserPrimitives, reserved);
     STRUCT(CNA_UserIndices); FIELD(CNA_UserIndices, struct_size); FIELD(CNA_UserIndices, struct_version); FIELD(CNA_UserIndices, index_element_size); FIELD(CNA_UserIndices, index_offset); FIELD(CNA_UserIndices, index_data);
+    STRUCT(CNA_BoundingSphere); FIELD(CNA_BoundingSphere, center); FIELD(CNA_BoundingSphere, radius);
     STRUCT(CNA_Viewport); FIELD(CNA_Viewport, x); FIELD(CNA_Viewport, y); FIELD(CNA_Viewport, width); FIELD(CNA_Viewport, height); FIELD(CNA_Viewport, min_depth); FIELD(CNA_Viewport, max_depth);
     STRUCT(CNA_Texture2DInfo); FIELD(CNA_Texture2DInfo, struct_size); FIELD(CNA_Texture2DInfo, struct_version); FIELD(CNA_Texture2DInfo, width); FIELD(CNA_Texture2DInfo, height); FIELD(CNA_Texture2DInfo, level_count); FIELD(CNA_Texture2DInfo, format);
     STRUCT(CNA_Texture3DCreateInfo); FIELD(CNA_Texture3DCreateInfo, struct_size); FIELD(CNA_Texture3DCreateInfo, struct_version); FIELD(CNA_Texture3DCreateInfo, width); FIELD(CNA_Texture3DCreateInfo, height); FIELD(CNA_Texture3DCreateInfo, depth); FIELD(CNA_Texture3DCreateInfo, mip_map); FIELD(CNA_Texture3DCreateInfo, reserved0); FIELD(CNA_Texture3DCreateInfo, format); FIELD(CNA_Texture3DCreateInfo, reserved1);

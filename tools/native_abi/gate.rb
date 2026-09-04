@@ -111,10 +111,9 @@ module NativeAbiGate
       expected_fillers = if size <= 16
                            0
                          else
-                           preceding = (0...(index - declared_fillers)).count do |position|
-                             !fillers.include?(position) && !inside_aggregate?(aggregates, position)
-                           end
-                           INTEGER_ARGUMENT_REGISTERS - preceding
+                           consumed = integer_registers_consumed(aggregates, fillers, c_structs,
+                                                                 index - declared_fillers)
+                           [INTEGER_ARGUMENT_REGISTERS - consumed, 0].max
                          end
       next if declared_fillers == expected_fillers
 
@@ -127,6 +126,34 @@ module NativeAbiGate
     aggregates.any? { |start, aggregate| position > start && position < start + aggregate.fetch(:members) }
   end
 
+  # How many INTEGER argument registers the first `limit` manifest positions consume.
+  #
+  # A scalar consumes one and so does a register filler — that is what a filler is for. An
+  # aggregate consumes registers **only** when it really travels in them: SSE eightbytes go to the
+  # xmm file and MEMORY-class ones go on the stack, so neither takes an integer register, and a
+  # second MEMORY aggregate after a first therefore needs no fillers of its own. `cna_model_draw`,
+  # which passes three `CNA_Matrix` by value, is the route that made the difference measurable:
+  # the earlier formula counted each aggregate's first position as one integer argument and asked
+  # the second and third matrices for four and three fillers that the callee never reads.
+  def integer_registers_consumed(aggregates, fillers, c_structs, limit)
+    consumed = 0
+    position = 0
+    while position < limit
+      aggregate = aggregates[position]
+      if aggregate
+        size, = c_structs[aggregate.fetch(:c)]
+        register_class = aggregate.fetch(:register_class, "INTEGER")
+        consumed += aggregate.fetch(:members) if register_class == "INTEGER" && !size.nil? && size <= 16
+        position += aggregate.fetch(:members)
+        next
+      end
+
+      consumed += 1
+      position += 1
+    end
+    consumed
+  end
+
   # Compares one header root's measurements with the supplied manifest surface.
   #
   # Returns `[mismatches, missing_header_symbols]`. `missing_header_symbols` is measured rather
@@ -137,7 +164,16 @@ module NativeAbiGate
     missing_header_symbols = []
 
     c_signatures = records["SIGNATURE"].to_h { |name, result, arguments| [name, "#{result}|#{arguments}"] }
+    # The header root's own encoded version, which is what a `since:` route is compared against.
+    root_version = records["CONSTANT"].to_h { |name, value| [name, Integer(value)] }["CNA_ABI_VERSION"]
     functions.each do |entry|
+      since = entry.respond_to?(:since) ? entry.since : nil
+      # A route declared only from a later ABI version is absent from an older root **by
+      # declaration**, and the probe does not emit it there either. Skipping it here is what keeps
+      # the older root admitted; skipping it anywhere else would be a hole, so the skip is narrow:
+      # only this entry, only this root, and only because the manifest says so.
+      next if since && root_version && root_version < since
+
       expected = c_signatures[entry.symbol]
       if expected.nil?
         missing_header_symbols << entry.symbol
@@ -150,7 +186,12 @@ module NativeAbiGate
 
     layout_by_c_name = layouts.to_h { |layout| ["CNA_#{layout.name.split("::").last}", layout] }
     c_structs = records["STRUCT"].to_h { |name, size, alignment| [name, [Integer(size), Integer(alignment)]] }
-    functions.each { |entry| mismatches.concat(aggregate_mismatches(entry, c_structs)) }
+    functions.each do |entry|
+      since = entry.respond_to?(:since) ? entry.since : nil
+      next if since && root_version && root_version < since
+
+      mismatches.concat(aggregate_mismatches(entry, c_structs))
+    end
     c_fields = records["FIELD"].to_h { |struct_name, field_name, offset, size| ["#{struct_name}.#{field_name}", [Integer(offset), Integer(size)]] }
     layout_by_c_name.each do |name, layout|
       c_size, c_alignment = c_structs.fetch(name, [nil, nil])
@@ -180,10 +221,16 @@ module NativeAbiGate
      "#{admitted.map { |value| decode.call(value) }.join(", ")}"]
   end
 
-  # Every admitted version must agree on every measurement **except** the ABI version itself.
-  # That equality is the whole evidence for admitting more than one version at a time; when it
-  # stops holding, the extra version has to leave the set rather than be waved through.
-  def cross_version_mismatches(measurements)
+  # Every admitted version must agree on every measurement **except** the ABI version itself and
+  # the routes the manifest declares `since:` a later version. That equality is the whole evidence
+  # for admitting more than one version at a time; when it stops holding for anything else, the
+  # extra version has to leave the set rather than be waved through.
+  #
+  # `later_only` is the set of symbols the manifest says arrived after the oldest admitted root.
+  # It is a **declaration**, not a discovery: a symbol absent from one root and not declared here
+  # is still a cross-version mismatch, which is what stops the exception from widening on its own.
+  def cross_version_mismatches(measurements, later_only: [])
+    later_only = later_only.to_a
     reference_root, reference = measurements.first
     measurements.drop(1).flat_map do |root, records|
       %w[SIGNATURE STRUCT FIELD CONSTANT].flat_map do |kind|
@@ -191,6 +238,9 @@ module NativeAbiGate
         right = normalize(records[kind], kind)
         (left.keys | right.keys).filter_map do |key|
           next if left[key] == right[key]
+          # A declared later-only route may be present in one root and absent from the other, and
+          # nothing else: if both roots declare it they must still agree.
+          next if kind == "SIGNATURE" && later_only.include?(key) && (left[key].nil? || right[key].nil?)
 
           "cross-version #{kind} #{key}: #{reference_root}=#{left[key].inspect} #{root}=#{right[key].inspect}"
         end

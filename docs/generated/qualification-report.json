@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "generatedBy": "tools/run_qualification.rb",
   "historicalRecord": "docs/qualification-foundations-34-39.json",
-  "milestone": "Foundation 98",
-  "date": "2026-09-03",
+  "milestone": "Foundation 100",
+  "date": "2026-09-04",
   "toolchain": {
     "ruby": "ruby 3.3.8 (2025-04-09 revision b200bad6cd) [x86_64-linux-gnu]",
     "rubyEngine": "ruby",
@@ -15,7 +15,7 @@
   },
   "git": {
     "branch": "develop",
-    "head": "ee2dae78303065302e873f2a9bcc7d094e2a3d08",
+    "head": "e66462d873a8eaeb153377aa544813a4b8ab1b3b",
     "worktreeClean": false
   },
   "artifacts": [
@@ -25,8 +25,8 @@
       "librarySha256": "c32bfbd307d695664f906ccf2834ec3f9ebc240fa388d544ac21ee3ebaeb731b",
       "opensADisplay": false,
       "suite": {
-        "runs": 1749,
-        "assertions": 52233,
+        "runs": 1771,
+        "assertions": 52607,
         "failures": 0,
         "errors": 0,
         "skips": 41,
@@ -42,12 +42,12 @@
       "librarySha256": "f7da256097338aacd77cd72eb778e8ab5d80525dd16fddac7cdd9a1885343d5c",
       "opensADisplay": true,
       "suite": {
-        "runs": 1749,
-        "assertions": 52243,
+        "runs": 1771,
+        "assertions": 52629,
         "failures": 0,
-        "errors": 4,
+        "errors": 0,
         "skips": 34,
-        "xDisplayAcquisitionFlakes": 4,
+        "xDisplayAcquisitionFlakes": 0,
         "unexplained": [
 
         ]
@@ -59,12 +59,12 @@
       "librarySha256": "ab055b5e9c10b57d9755445951b118406bc065ca9eaa3fe4c0851a2352bb3e6e",
       "opensADisplay": true,
       "suite": {
-        "runs": 1749,
-        "assertions": 52329,
+        "runs": 1771,
+        "assertions": 52700,
         "failures": 0,
-        "errors": 3,
+        "errors": 2,
         "skips": 17,
-        "xDisplayAcquisitionFlakes": 3,
+        "xDisplayAcquisitionFlakes": 2,
         "unexplained": [
 
         ]
@@ -77,7 +77,7 @@
     "BCL_EXCEPTION_BASES": 2,
     "BCL_PROJECTED_IDENTITIES": 22,
     "BCL_THROWN_EXCEPTIONS": 8,
-    "COMPLETE_TYPES": 203,
+    "COMPLETE_TYPES": 215,
     "ENUM_VALUE_MISMATCH": 0,
     "EVENT_IDENTITIES": 42,
     "EVENT_MAPPING_MISMATCH": 0,
@@ -92,8 +92,8 @@
     "LANGUAGE_MAPPING_MISMATCH": 0,
     "METHOD_SIGNATURE_MAPPING_MISMATCH": 0,
     "MISSING_MEMBER": 8,
-    "MISSING_TYPE": 52,
-    "MISSING_TYPES": 52,
+    "MISSING_TYPE": 40,
+    "MISSING_TYPES": 40,
     "OPERATOR_MAPPING_MISMATCH": 0,
     "OVERLOAD_MAPPING_MISMATCH": 5,
     "PARAMETER_MAPPING_MISMATCH": 0,
@@ -104,9 +104,9 @@
     "REFERENCE_MEMBERS": 2964,
     "REFERENCE_TYPES": 257,
     "RETURN_MAPPING_MISMATCH": 0,
-    "TARGET_MEMBERS": 2520,
-    "TARGET_TYPES": 205,
-    "TOTAL_DIAGNOSTICS": 65,
+    "TARGET_MEMBERS": 2568,
+    "TARGET_TYPES": 217,
+    "TOTAL_DIAGNOSTICS": 53,
     "TYPE_KIND_MISMATCH": 0,
     "UNEXPECTED_MEMBER": 0,
     "UNEXPECTED_TYPE": 0,
@@ -143,11 +143,11 @@
       "/home/robertvokac/deps/cna-c-abi-0.7.0/include"
     ],
     "library": "/home/robertvokac/deps/cna-c-abi-0.21.0/libcna_c_api.so",
-    "BOUND_FUNCTIONS": 503,
-    "SIGNATURE_MEASUREMENTS": 1796,
-    "C_LAYOUT_MEASUREMENTS": 1140,
-    "RUBY_LAYOUT_MEASUREMENTS": 1140,
-    "STRUCT_LAYOUTS": 66,
+    "BOUND_FUNCTIONS": 546,
+    "SIGNATURE_MEASUREMENTS": 1973,
+    "C_LAYOUT_MEASUREMENTS": 1146,
+    "RUBY_LAYOUT_MEASUREMENTS": 1146,
+    "STRUCT_LAYOUTS": 67,
     "CALLBACKS": 6,
     "CONSTANTS": 137,
     "ADMITTED_ABI_VERSIONS": 2,
@@ -173,7 +173,7 @@
     }
   },
   "dependencyFrontier": {
-    "dependencyCompleteCandidates": 3,
+    "dependencyCompleteCandidates": 2,
     "consumableCandidates": 0,
     "selectionRoute": "none-consumable",
     "selectedNext": null
@@ -184,7 +184,7 @@
     "TYPES_NATIVE_REACHABLE": 77
   },
   "capabilities": {
-    "CAPABILITIES": 153,
+    "CAPABILITIES": 154,
     "CAPABILITY_CONTRADICTIONS": 0
   }
 }

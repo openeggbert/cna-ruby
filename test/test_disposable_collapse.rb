@@ -295,8 +295,9 @@ class DisposableCollapseTest < Minitest::Test
     # NATIVE_RUNTIME 3 -> 2 when Media.VideoPlayer's blocker was audited and found not to be one,
     # and 2 -> 3 when the Effect cluster was built: EffectAnnotation left and EffectMaterial and
     # DirectionalLight arrived behind the Effect base. What this collapse claimed is unchanged.
-    # And 3 -> 4 when the buffers uncovered ModelMeshPart behind them.
-    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 2},
+    # And 3 -> 4 when the buffers uncovered ModelMeshPart behind them, then 4 -> 1 as the stock
+    # effects and the Model family were built. What this collapse claimed is unchanged throughout.
+    assert_equal({"BCL_PROJECTION" => 1, "NATIVE_RUNTIME" => 1},
                  FRONTIER.fetch("blockerSummary"))
     assert_includes FRONTIER.fetch("mappedBclTypes"), CLR
   end

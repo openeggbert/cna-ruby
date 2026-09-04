@@ -181,6 +181,13 @@ module CNA
         ]
       end
 
+      # `CNA_BoundingSphere`: a `CNA_Vector3` centre and a float radius, four floats with no padding.
+      class BoundingSphere < Structure
+        layout size: 16, alignment: 4, fields: [
+          Layouts.field("center", "CNA_Vector3", 0, 12), Layouts.field("radius", "float", 12, 4)
+        ]
+      end
+
       class Texture2DInfo < Structure
         layout size: 24, alignment: 4, fields: [
           Layouts.field("struct_size", "uint32_t", 0, 4), Layouts.field("struct_version", "uint32_t", 4, 4),

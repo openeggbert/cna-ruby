@@ -79,6 +79,8 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 96 | `GraphicsDeviceManager`'s ten, and the producer audit's one wrong inference | **0** | 10 |
 | 97 | `Graphics.BasicEffect`, and the SSE and MEMORY by-value shapes it needed | **1** | 47 |
 | 98 | the four remaining stock effects, closing the family | **4** | 66 |
+| 99 | the qualification report becomes generated, and the last unguarded numbers | **0** | **0** |
+| 100 | the Model family: eight types, four enumerators, three upstream crashes | **12** | 48 |
 
 ## Measured state
 
@@ -97,11 +99,11 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 | count | what it measures |
 | ---: | --- |
 | 257 | XNA 4.0 Windows reference types |
-| 205 | types this binding projects |
-| 2520 | Ruby member identities |
-| 203 | complete types |
+| 217 | types this binding projects |
+| 2568 | Ruby member identities |
+| 215 | complete types |
 | 2 | partial types |
-| 52 | missing types |
+| 40 | missing types |
 | 42 | event identities |
 | 20 | types owning an event |
 | 22 | projected BCL identities |
@@ -110,8 +112,8 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 65 | strict diagnostics in total |
-| 52 | `MISSING_TYPE` |
+| 53 | strict diagnostics in total |
+| 40 | `MISSING_TYPE` |
 | 8 | `MISSING_MEMBER` |
 | 5 | `OVERLOAD_MAPPING_MISMATCH` |
 | 0 | `PROPERTY_MAPPING_MISMATCH` |
@@ -130,10 +132,10 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 503 | bound C functions |
+| 546 | bound C functions |
 | 6 | callbacks |
 | 137 | constants |
-| 66 | struct layouts |
+| 67 | struct layouts |
 | 2 | admitted encoded ABI versions |
 | 2 | header roots cross-verified |
 | 0 | `ABI_MISMATCHES` |
@@ -152,14 +154,14 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 3 | dependency-complete frontier candidates |
+| 2 | dependency-complete frontier candidates |
 | 0 | of them consumable now |
 
 **Capability registry**
 
 | count | what it measures |
 | ---: | --- |
-| 153 | runtime capability rows |
+| 154 | runtime capability rows |
 
 <!-- scoreboard:end -->
 

@@ -436,19 +436,30 @@ class ReadOnlyCollectionTest < Minitest::Test
   # than this projection completing anything. `test_microphone.rb` measures that member, and
   # `SpriteFont.Characters` -- the second such member -- left the same way.
   def test_no_xna_type_became_complete_because_of_this_projection
+    # The four `Model*Collection`s left this list when the Model family was built. What this
+    # projection claimed, and still claims, is that **it** completed none of them: each is complete
+    # because its own three members were projected over a real model, not because a BCL base
+    # arrived under it.
     %w[
       Microsoft.Xna.Framework.Graphics.GraphicsAdapter
-      Microsoft.Xna.Framework.Graphics.ModelBoneCollection
-      Microsoft.Xna.Framework.Graphics.ModelEffectCollection
-      Microsoft.Xna.Framework.Graphics.ModelMeshCollection
-      Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection
     ].each { |name| assert_includes STRICT.fetch("missingTypeNames"), name }
 
+    # Four XNA collections take the CLR generic as their base, and all four are the `Model*`
+    # ones. This used to assert that **none** was selected; now that they are, what it asserts is
+    # that each one's Ruby class really inherits the projection rather than flattening it, which is
+    # the relationship this class exists to carry.
     signatures = JSON.parse(ROOT.join("tools", "api_compat", "signatures.json").read)
     inheriting = signatures.fetch("types").select do |entry|
       entry["baseType"].to_s.start_with?(CLR)
     end
-    assert_empty inheriting
+    assert_equal %w[ModelBoneCollection ModelMeshCollection ModelMeshPartCollection
+                    ModelEffectCollection].sort,
+                 inheriting.map { |entry| entry.fetch("name").split(".").last }.sort
+    inheriting.each do |entry|
+      klass = Object.const_get(entry.fetch("rubyName"))
+      assert_operator klass, :<, CNA::Runtime::ReadOnlyCollection, entry.fetch("name")
+      refute_nil klass.clr_element_types, "#{entry.fetch("name")} must declare its CLR element type"
+    end
     assert_equal 0, STRICT.fetch("GENERIC_MAPPING_MISMATCH")
     assert_equal 0, STRICT.fetch("BASE_MAPPING_MISMATCH")
     assert_equal 0, STRICT.fetch("LANGUAGE_MAPPING_MISMATCH")

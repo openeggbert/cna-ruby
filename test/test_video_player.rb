@@ -59,8 +59,7 @@ class VideoPlayerTest < Minitest::Test
     # advancing rather than regressing. What this test claims -- that VideoPlayer left it -- stands.
     candidates = FRONTIER.fetch("dependencyCompleteCandidates").map { |c| c.fetch("name") }.sort
     assert_equal %w[Microsoft.Xna.Framework.Design.MathTypeConverter
-                    Microsoft.Xna.Framework.Graphics.GraphicsAdapter
-                    Microsoft.Xna.Framework.Graphics.ModelMeshPart], candidates
+                    Microsoft.Xna.Framework.Graphics.GraphicsAdapter], candidates
     refute_includes candidates, NAME
     assert_empty FRONTIER.fetch("consumableCandidates")
     # Every Media type this project ever selected is complete now; what is left in that namespace

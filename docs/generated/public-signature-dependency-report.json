@@ -1,13 +1,13 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 205,
-  "completeTypes": 203,
+  "targetTypes": 217,
+  "completeTypes": 215,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
   ],
-  "missingTypes": 52,
+  "missingTypes": 40,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -100,7 +100,7 @@
   },
   "blockerSummary": {
     "BCL_PROJECTION": 1,
-    "NATIVE_RUNTIME": 2
+    "NATIVE_RUNTIME": 1
   },
   "partialDependencySatisfiedCandidates": [
     {
@@ -178,65 +178,7 @@
     }
   ],
   "ilOnlyBlockedCandidates": [
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.ModelMeshPart",
-      "kind": "class",
-      "expectedRubyIdentities": 8,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.Effect",
-        "Microsoft.Xna.Framework.Graphics.IndexBuffer",
-        "Microsoft.Xna.Framework.Graphics.VertexBuffer"
-      ],
-      "unmetDependencies": [
 
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-        "Microsoft.Xna.Framework.Graphics.ModelEffectCollection",
-        "Microsoft.Xna.Framework.Graphics.ModelMesh"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
-        "Microsoft.Xna.Framework.Graphics.ModelEffectCollection",
-        "Microsoft.Xna.Framework.Graphics.ModelMesh"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-
-      ],
-      "ilDerivationRequired": false,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-        "Draw"
-      ],
-      "runtimeDataDetail": null
-    }
   ],
   "consumableCandidates": [
 
@@ -298,65 +240,6 @@
       "ilAssembly": "Microsoft.Xna.Framework.dll",
       "nativeReachableMethods": [
 
-      ],
-      "runtimeDataDetail": null
-    },
-    {
-      "name": "Microsoft.Xna.Framework.Graphics.ModelMeshPart",
-      "kind": "class",
-      "expectedRubyIdentities": 8,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Graphics.Effect",
-        "Microsoft.Xna.Framework.Graphics.IndexBuffer",
-        "Microsoft.Xna.Framework.Graphics.VertexBuffer"
-      ],
-      "unmetDependencies": [
-
-      ],
-      "missingTypeDependencies": [
-
-      ],
-      "partialTypeDependencies": {
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
-        "Microsoft.Xna.Framework.Graphics.GraphicsResource",
-        "Microsoft.Xna.Framework.Graphics.ModelEffectCollection",
-        "Microsoft.Xna.Framework.Graphics.ModelMesh"
-      ],
-      "ilOnlyUnmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
-        "Microsoft.Xna.Framework.Graphics.ModelEffectCollection",
-        "Microsoft.Xna.Framework.Graphics.ModelMesh"
-      ],
-      "partialDependencySatisfied": false,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": true,
-      "blockers": [
-        "NATIVE_RUNTIME"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-
-      ],
-      "producerlessInterfaces": [
-
-      ],
-      "eventMembers": [
-
-      ],
-      "behaviourBearingMembers": [
-
-      ],
-      "ilDerivationRequired": false,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Graphics.dll",
-      "nativeReachableMethods": [
-        "Draw"
       ],
       "runtimeDataDetail": null
     },

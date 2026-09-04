@@ -42,9 +42,9 @@ class VertexStructsTest < Minitest::Test
     assert_equal "none-consumable", FRONTIER.fetch("selectionRoute")
     # 4 until Media.VideoPlayer's blocker was audited in the milestone after this one, 3 until the
     # Effect cluster uncovered EffectMaterial and DirectionalLight behind the Effect base, and 5
-    # when the buffers uncovered ModelMeshPart. What this test claims -- that the queue these four
-    # came from was consumed -- is unchanged.
-    assert_equal 3, FRONTIER.fetch("dependencyCompleteCandidates").length
+    # when the buffers uncovered ModelMeshPart, and 2 when the Model family built it. What this
+    # test claims -- that the queue these four came from was consumed -- is unchanged.
+    assert_equal 2, FRONTIER.fetch("dependencyCompleteCandidates").length
   end
 
   def test_each_is_a_value_type_declaring_the_interface_with_the_same_six_member_shape

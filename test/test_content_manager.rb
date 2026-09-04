@@ -175,9 +175,11 @@ class ContentManagerTest < Minitest::Test
   end
 
   # The registry is what `Load` really dispatches on, so it grows only when a milestone registers
-  # a materializer. `SpriteFont` joined `Texture2D` when its three BCL blockers were decided.
+  # a materializer. `SpriteFont` joined `Texture2D` when its three BCL blockers were decided, and
+  # `Model` joined both when the Model family was built -- `ContentManager.Load` is the only
+  # producer XNA gives that type.
   def test_the_supported_registry_names_exactly_what_is_implemented
-    assert_equal [G::Texture2D, G::SpriteFont], CM.supported_types
+    assert_equal [G::Texture2D, G::SpriteFont, G::Model], CM.supported_types
   end
 
   # --------------------------------------------------------------------------- Game.Content
@@ -365,9 +367,10 @@ class ContentManagerTest < Minitest::Test
     refute_includes CM.supported_types, F::Audio::SoundEffect
     # `TextureCube` and `Texture3D` were here until their own milestone built them, and neither is
     # loadable: no reader for either is registered, which is the claim this list is really making.
-    # The nine `Effect` types left this list when the cluster was built; what this milestone
-    # claimed, and still claims, is that **it** built none of them.
-    %i[Model].each { |absent| refute G.const_defined?(absent, false), absent.to_s }
+    # The nine `Effect` types left this list when the cluster was built, and `Model` when the
+    # Model family was; what this milestone claimed, and still claims, is that **it** built none of
+    # them and registered no materializer of its own beyond `Texture2D`.
+    %i[GraphicsAdapter].each { |absent| refute G.const_defined?(absent, false), absent.to_s }
     [G::TextureCube, G::Texture3D].each { |built| refute_includes CM.supported_types, built }
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length

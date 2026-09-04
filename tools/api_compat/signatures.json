@@ -51794,6 +51794,994 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::OcclusionQuery"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.Model",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "CopyBoneTransformsTo",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "destinationBoneTransforms",
+              "type": "Microsoft.Xna.Framework.Matrix[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "CopyAbsoluteBoneTransformsTo",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "destinationBoneTransforms",
+              "type": "Microsoft.Xna.Framework.Matrix[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "CopyBoneTransformsFrom",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "sourceBoneTransforms",
+              "type": "Microsoft.Xna.Framework.Matrix[]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Draw",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "world",
+              "type": "Microsoft.Xna.Framework.Matrix",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "view",
+              "type": "Microsoft.Xna.Framework.Matrix",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "projection",
+              "type": "Microsoft.Xna.Framework.Matrix",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Root",
+          "type": "Microsoft.Xna.Framework.Graphics.ModelBone",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Bones",
+          "type": "Microsoft.Xna.Framework.Graphics.ModelBoneCollection",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Tag",
+          "type": "System.Object",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Meshes",
+          "type": "Microsoft.Xna.Framework.Graphics.ModelMeshCollection",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::Model"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelBone",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "property",
+          "name": "Name",
+          "type": "System.String",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Index",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Transform",
+          "type": "Microsoft.Xna.Framework.Matrix",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Parent",
+          "type": "Microsoft.Xna.Framework.Graphics.ModelBone",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Children",
+          "type": "Microsoft.Xna.Framework.Graphics.ModelBoneCollection",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::ModelBone"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelBoneCollection",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Collections.ObjectModel.ReadOnlyCollection`1[Microsoft.Xna.Framework.Graphics.ModelBone]",
+      "interfaces": [
+        "System.Collections.Generic.ICollection`1[Microsoft.Xna.Framework.Graphics.ModelBone]",
+        "System.Collections.Generic.IEnumerable`1[Microsoft.Xna.Framework.Graphics.ModelBone]",
+        "System.Collections.Generic.IList`1[Microsoft.Xna.Framework.Graphics.ModelBone]",
+        "System.Collections.Generic.IReadOnlyCollection`1[Microsoft.Xna.Framework.Graphics.ModelBone]",
+        "System.Collections.Generic.IReadOnlyList`1[Microsoft.Xna.Framework.Graphics.ModelBone]",
+        "System.Collections.ICollection",
+        "System.Collections.IEnumerable",
+        "System.Collections.IList"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "TryGetValue",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "boneName",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "Microsoft.Xna.Framework.Graphics.ModelBone&",
+              "ref": true,
+              "out": true,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetEnumerator",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Graphics.ModelBoneCollection+Enumerator",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Item",
+          "type": "Microsoft.Xna.Framework.Graphics.ModelBone",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+            {
+              "name": "boneName",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::ModelBoneCollection"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelMesh",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "Draw",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Name",
+          "type": "System.String",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "ParentBone",
+          "type": "Microsoft.Xna.Framework.Graphics.ModelBone",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "BoundingSphere",
+          "type": "Microsoft.Xna.Framework.BoundingSphere",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Tag",
+          "type": "System.Object",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "MeshParts",
+          "type": "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Effects",
+          "type": "Microsoft.Xna.Framework.Graphics.ModelEffectCollection",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::ModelMesh"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelMeshCollection",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Collections.ObjectModel.ReadOnlyCollection`1[Microsoft.Xna.Framework.Graphics.ModelMesh]",
+      "interfaces": [
+        "System.Collections.Generic.ICollection`1[Microsoft.Xna.Framework.Graphics.ModelMesh]",
+        "System.Collections.Generic.IEnumerable`1[Microsoft.Xna.Framework.Graphics.ModelMesh]",
+        "System.Collections.Generic.IList`1[Microsoft.Xna.Framework.Graphics.ModelMesh]",
+        "System.Collections.Generic.IReadOnlyCollection`1[Microsoft.Xna.Framework.Graphics.ModelMesh]",
+        "System.Collections.Generic.IReadOnlyList`1[Microsoft.Xna.Framework.Graphics.ModelMesh]",
+        "System.Collections.ICollection",
+        "System.Collections.IEnumerable",
+        "System.Collections.IList"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "TryGetValue",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "meshName",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "value",
+              "type": "Microsoft.Xna.Framework.Graphics.ModelMesh&",
+              "ref": true,
+              "out": true,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "GetEnumerator",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Graphics.ModelMeshCollection+Enumerator",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Item",
+          "type": "Microsoft.Xna.Framework.Graphics.ModelMesh",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+            {
+              "name": "meshName",
+              "type": "System.String",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::ModelMeshCollection"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelMeshPart",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "property",
+          "name": "StartIndex",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "PrimitiveCount",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "VertexOffset",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "NumVertices",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "IndexBuffer",
+          "type": "Microsoft.Xna.Framework.Graphics.IndexBuffer",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "VertexBuffer",
+          "type": "Microsoft.Xna.Framework.Graphics.VertexBuffer",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Effect",
+          "type": "Microsoft.Xna.Framework.Graphics.Effect",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Tag",
+          "type": "System.Object",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::ModelMeshPart"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Collections.ObjectModel.ReadOnlyCollection`1[Microsoft.Xna.Framework.Graphics.ModelMeshPart]",
+      "interfaces": [
+        "System.Collections.Generic.ICollection`1[Microsoft.Xna.Framework.Graphics.ModelMeshPart]",
+        "System.Collections.Generic.IEnumerable`1[Microsoft.Xna.Framework.Graphics.ModelMeshPart]",
+        "System.Collections.Generic.IList`1[Microsoft.Xna.Framework.Graphics.ModelMeshPart]",
+        "System.Collections.Generic.IReadOnlyCollection`1[Microsoft.Xna.Framework.Graphics.ModelMeshPart]",
+        "System.Collections.Generic.IReadOnlyList`1[Microsoft.Xna.Framework.Graphics.ModelMeshPart]",
+        "System.Collections.ICollection",
+        "System.Collections.IEnumerable",
+        "System.Collections.IList"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "GetEnumerator",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::ModelMeshPartCollection"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelEffectCollection",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Collections.ObjectModel.ReadOnlyCollection`1[Microsoft.Xna.Framework.Graphics.Effect]",
+      "interfaces": [
+        "System.Collections.Generic.ICollection`1[Microsoft.Xna.Framework.Graphics.Effect]",
+        "System.Collections.Generic.IEnumerable`1[Microsoft.Xna.Framework.Graphics.Effect]",
+        "System.Collections.Generic.IList`1[Microsoft.Xna.Framework.Graphics.Effect]",
+        "System.Collections.Generic.IReadOnlyCollection`1[Microsoft.Xna.Framework.Graphics.Effect]",
+        "System.Collections.Generic.IReadOnlyList`1[Microsoft.Xna.Framework.Graphics.Effect]",
+        "System.Collections.ICollection",
+        "System.Collections.IEnumerable",
+        "System.Collections.IList"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "GetEnumerator",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::ModelEffectCollection"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelBoneCollection+Enumerator",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "System.Collections.Generic.IEnumerator`1[Microsoft.Xna.Framework.Graphics.ModelBone]",
+        "System.Collections.IEnumerator",
+        "System.IDisposable"
+      ],
+      "directInterfaces": [
+        "System.Collections.Generic.IEnumerator`1[Microsoft.Xna.Framework.Graphics.ModelBone]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "MoveNext",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Current",
+          "type": "Microsoft.Xna.Framework.Graphics.ModelBone",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::ModelBoneCollection::Enumerator"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelMeshCollection+Enumerator",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "System.Collections.Generic.IEnumerator`1[Microsoft.Xna.Framework.Graphics.ModelMesh]",
+        "System.Collections.IEnumerator",
+        "System.IDisposable"
+      ],
+      "directInterfaces": [
+        "System.Collections.Generic.IEnumerator`1[Microsoft.Xna.Framework.Graphics.ModelMesh]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "MoveNext",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Current",
+          "type": "Microsoft.Xna.Framework.Graphics.ModelMesh",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::ModelMeshCollection::Enumerator"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "System.Collections.Generic.IEnumerator`1[Microsoft.Xna.Framework.Graphics.ModelMeshPart]",
+        "System.Collections.IEnumerator",
+        "System.IDisposable"
+      ],
+      "directInterfaces": [
+        "System.Collections.Generic.IEnumerator`1[Microsoft.Xna.Framework.Graphics.ModelMeshPart]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "MoveNext",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Current",
+          "type": "Microsoft.Xna.Framework.Graphics.ModelMeshPart",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::ModelMeshPartCollection::Enumerator"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator",
+      "kind": "struct",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.ValueType",
+      "interfaces": [
+        "System.Collections.Generic.IEnumerator`1[Microsoft.Xna.Framework.Graphics.Effect]",
+        "System.Collections.IEnumerator",
+        "System.IDisposable"
+      ],
+      "directInterfaces": [
+        "System.Collections.Generic.IEnumerator`1[Microsoft.Xna.Framework.Graphics.Effect]"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "MoveNext",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Boolean",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Current",
+          "type": "Microsoft.Xna.Framework.Graphics.Effect",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Graphics::ModelEffectCollection::Enumerator"
     }
   ]
 }

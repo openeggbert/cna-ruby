@@ -343,7 +343,10 @@ class PureManagedEnumBatchTest < Minitest::Test
     # render target, and this batch selected the enums its create-info is made of.
     # `occlusion_query_` left this list when the query was built and `effect_matrices_` when the
     # first stock effect was, for the same reason every fragment before them left.
-    %w[model_mesh_ content_reader_].each do |fragment|
+    # `model_mesh_` left this list when the Model family was built, for the same reason every
+    # fragment before it left: what binds a model route is the model, and this batch selected
+    # `PrimitiveType` and nothing that holds one.
+    %w[content_reader_].each do |fragment|
       refute CNA::Native::Manifest::FUNCTIONS.any? { |entry| entry.symbol.include?(fragment) }, fragment
     end
   end

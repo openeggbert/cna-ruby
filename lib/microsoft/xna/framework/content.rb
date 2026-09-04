@@ -271,9 +271,18 @@ module Microsoft
 
           # XNA disposes every recorded disposable, then clears both stores in a `finally`, so a
           # raising `Dispose` still leaves the manager empty.
+          # XNA disposes every recorded disposable and nothing else. This adds one step, and it is
+          # this binding's own bookkeeping rather than XNA surface: an asset that holds **native
+          # views** but is not `IDisposable` -- `Graphics::Model` is the only one -- releases them
+          # here. XNA's `Model` needs no such step because its `ModelReader` registers the buffers
+          # and effects it made as disposable assets; CNA's model owns those itself and hands out
+          # views instead, so the views are what there is to release.
           def Unload
             ensure_not_disposed!
             begin
+              @loaded_assets.each_value do |asset|
+                asset.__send__(:release_content_views) if asset.respond_to?(:release_content_views, true)
+              end
               @disposable_assets.each { |asset| asset.Dispose if asset.respond_to?(:Dispose) }
             ensure
               @loaded_assets.clear

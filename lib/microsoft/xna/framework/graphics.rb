@@ -4007,13 +4007,21 @@ module Microsoft
 
           private
 
+          # A `ModelMeshPart`'s buffer: a handle the **model** owns, which CNA refuses to destroy
+          # with `CNA_RESULT_INVALID_STATE`. `PARENT_OWNED`, so nothing here releases it.
+          def initialize_model_owned(device, handle)
+            @GraphicsDevice = device
+            @Name = nil
+            @Tag = nil
+            initialize_parent_owned_resource(device.__send__(:game), handle)
+            read_native_info
+            self
+          end
+
           def initialize_from_native(device, handle)
             release = lambda { |value| CNA::Native.library.call("cna_vertex_buffer_destroy", value) }
             initialize_resource(device, handle, release)
-            info = CNA::Native::Layouts::VertexBufferInfo.new
-            CNA::Native.library.call("cna_vertex_buffer_get_info", native_handle, info.pointer)
-            @VertexCount = info.read_i32(8)
-            @BufferUsage = BufferUsage.coerce(info.read_u32(12))
+            read_native_info
             self
           rescue Exception
             if defined?(@native_handle) && @native_handle
@@ -4022,6 +4030,14 @@ module Microsoft
               release&.call(handle)
             end
             raise
+          end
+
+          def read_native_info
+            info = CNA::Native::Layouts::VertexBufferInfo.new
+            CNA::Native.library.call("cna_vertex_buffer_get_info", native_handle, info.pointer)
+            @VertexCount = info.read_i32(8)
+            @BufferUsage = BufferUsage.coerce(info.read_u32(12))
+            nil
           end
 
           def content_lost?
@@ -4229,14 +4245,21 @@ module Microsoft
             [offset, data, start_index, element_count, options]
           end
 
+          # A `ModelMeshPart`'s buffer: a handle the **model** owns, which CNA refuses to destroy
+          # with `CNA_RESULT_INVALID_STATE`. `PARENT_OWNED`, so nothing here releases it.
+          def initialize_model_owned(device, handle)
+            @GraphicsDevice = device
+            @Name = nil
+            @Tag = nil
+            initialize_parent_owned_resource(device.__send__(:game), handle)
+            read_native_info
+            self
+          end
+
           def initialize_from_native(device, handle)
             release = lambda { |value| CNA::Native.library.call("cna_index_buffer_destroy", value) }
             initialize_resource(device, handle, release)
-            info = CNA::Native::Layouts::IndexBufferInfo.new
-            CNA::Native.library.call("cna_index_buffer_get_info", native_handle, info.pointer)
-            @IndexCount = info.read_i32(8)
-            @IndexElementSize = Graphics.const_get(:IndexElementSize).coerce(info.read_u32(12))
-            @BufferUsage = BufferUsage.coerce(info.read_u32(16))
+            read_native_info
             self
           rescue Exception
             if defined?(@native_handle) && @native_handle
@@ -4245,6 +4268,15 @@ module Microsoft
               release&.call(handle)
             end
             raise
+          end
+
+          def read_native_info
+            info = CNA::Native::Layouts::IndexBufferInfo.new
+            CNA::Native.library.call("cna_index_buffer_get_info", native_handle, info.pointer)
+            @IndexCount = info.read_i32(8)
+            @IndexElementSize = Graphics.const_get(:IndexElementSize).coerce(info.read_u32(12))
+            @BufferUsage = BufferUsage.coerce(info.read_u32(16))
+            nil
           end
 
           def content_lost?
@@ -5095,6 +5127,11 @@ module Microsoft
 
           private
 
+          def initialize_items(items)
+            @items = items.freeze
+            self
+          end
+
           def initialize_from_native(effect, collection)
             @items = EffectParameterCollection.__send__(:build, effect, collection).freeze
             self
@@ -5104,6 +5141,11 @@ module Microsoft
             private
 
             def from_native(effect, collection) = allocate.__send__(:initialize_from_native, effect, collection)
+
+            # An empty collection with no native backing, for the one place a collection exists but
+            # its routes do not: a model-owned effect, whose `cna_effect_get_parameters` and
+            # `cna_effect_get_techniques` both segfault upstream.
+            def from_items(items) = allocate.__send__(:initialize_items, items)
 
             def build(effect, collection)
               count = effect.__send__(:collection_count, "cna_effect_parameter_collection_get_count", collection)
@@ -5405,6 +5447,11 @@ module Microsoft
 
           private
 
+          def initialize_items(items)
+            @items = items.freeze
+            self
+          end
+
           def initialize_from_native(effect, collection)
             count = effect.__send__(:collection_count, "cna_effect_technique_collection_get_count", collection)
             @items = ::Array.new(count) do |index|
@@ -5421,6 +5468,11 @@ module Microsoft
             private
 
             def from_native(effect, collection) = allocate.__send__(:initialize_from_native, effect, collection)
+
+            # An empty collection with no native backing, for the one place a collection exists but
+            # its routes do not: a model-owned effect, whose `cna_effect_get_parameters` and
+            # `cna_effect_get_techniques` both segfault upstream.
+            def from_items(items) = allocate.__send__(:initialize_items, items)
           end
         end
 
@@ -5506,6 +5558,32 @@ module Microsoft
           end
 
           private
+
+          # A `ModelMeshPart`'s effect: a handle the **model** owns. CNA refuses
+          # `cna_effect_destroy` on one with `CNA_RESULT_INVALID_STATE`, so the wrapper takes
+          # `PARENT_OWNED` and releases nothing.
+          #
+          # UPSTREAM, and the reason `build_graph` is not called: **every generic `Effect` route
+          # segfaults on this handle.** `cna_effect_get_parameters`, `cna_effect_get_techniques` and
+          # `cna_effect_get_current_technique` each fault immediately, measured through a bare
+          # `Fiddle::Function` with no Ruby object in the path, while `cna_basic_effect_*` on the
+          # same handle answers correctly — `get_diffuse_color` returns the fixture's documented
+          # 0.64000004529953. The same three routes work on an effect from `cna_basic_effect_create`,
+          # so it is the content-loaded one that is broken. DEVIATION, recorded: `Parameters` and
+          # `Techniques` are therefore **empty** on a model's effect and `CurrentTechnique` is nil,
+          # where XNA's carry the built-in shader's. Nothing is fabricated to fill them, and
+          # `docs/model-load-shutdown-upstream-defect.md` carries the measurement.
+          def initialize_model_owned(device, handle)
+            @views = []
+            @GraphicsDevice = device
+            @Name = nil
+            @Tag = nil
+            initialize_parent_owned_resource(device.__send__(:game), handle)
+            @Parameters = EffectParameterCollection.__send__(:from_items, [])
+            @Techniques = EffectTechniqueCollection.__send__(:from_items, [])
+            @current_technique = nil
+            self
+          end
 
           # The construction path the five stock effects take. XNA's stock effects call
           # `Effect(device, BasicEffectCode.Code)` with a built-in compiled shader; CNA's
@@ -6963,6 +7041,692 @@ module Microsoft
           end
         end
 
+        # ------------------------------------------------------------------ the Model family
+        #
+        # Eight types, one object graph, and **no draw route**.
+        #
+        # ## Why nothing here calls `cna_model_draw`
+        #
+        # `Model.Draw`, `ModelMesh.Draw` and the `assembly` `ModelMeshPart.Draw` are pure managed IL
+        # over members this binding already has. `ModelMeshPart.Draw` is
+        #
+        #     if (NumVertices <= 0) return;
+        #     var device = vertexBuffer.GraphicsDevice;
+        #     device.SetVertexBuffer(vertexBuffer, vertexOffset);
+        #     device.Indices = indexBuffer;
+        #     device.DrawIndexedPrimitives(TriangleList, 0, 0, numVertices, startIndex, primitiveCount);
+        #
+        # every one of which is projected; `ModelMesh.Draw` is that over every part for every pass
+        # of every part's effect; and `Model.Draw` is that over every mesh after writing the mesh's
+        # absolute bone transform times `world` into each effect's `IEffectMatrices`. So the draw
+        # calls are the IL, not CNA's re-implementation of it, and `cna_model_draw` and
+        # `cna_model_mesh_draw` stay unbound — a route with no production call site does not enter
+        # the manifest.
+        #
+        # ## Identity, and why every wrapper caches by index
+        #
+        # XNA's `Model.Bones[0]` is the same object every time; CNA's
+        # `cna_model_bone_collection_get_at` answers a **fresh handle on every call** — measured,
+        # two calls for one bone give two handles. So the whole graph is built once, in construction
+        # order, and every parent, child and parent-bone link is resolved by **index** into that
+        # graph rather than by handle. A part's retained effect, vertex buffer and index buffer are
+        # the opposite: the same handle every time, and the model owns them, so those wrappers take
+        # `PARENT_OWNED` and destroy nothing.
+        #
+        # ## What owns what
+        #
+        # The views the graph holds — the bone, mesh and part views and the four collection views —
+        # are the caller's and are released by `Model#release_content_views`, which
+        # `ContentManager#Unload` and `#Dispose` call. `cna_model_destroy` is **not** in the
+        # manifest: XNA's `Model` is not `IDisposable` so no projected member wants it, and calling
+        # it on a content-loaded model segfaults. See `docs/model-load-shutdown-upstream-defect.md`,
+        # which also records that merely loading a model makes process shutdown segfault — an
+        # upstream fault this binding does not cause and cannot repair.
+
+        # `sealed`, five properties, an `assembly` constructor and an `assembly` `AddChildren`.
+        # `Name` and `Index` are `ldfld`; `Transform` is a field pair; `Parent` and `Children` are
+        # set once by `AddChildren` when the model is built.
+        class ModelBone
+          private_class_method :new
+
+          attr_reader :Name, :Index, :Parent, :Children
+
+          # `ldfld transform` / `stfld transform`, with no validation of any kind on either side.
+          def Transform
+            Matrix.new(*CNA::Runtime::StockEffectSupport.read_matrix("cna_model_bone_get_transform", @handle))
+          end
+
+          def Transform=(value)
+            raise ::TypeError, "Transform must be a Matrix" unless value.instance_of?(Matrix)
+
+            CNA::Native.library.call("cna_model_bone_set_transform", @handle, 0, 0, 0, 0, 0,
+                                     *CNA::Runtime::StockEffectSupport.matrix_eightbytes(value))
+            value
+          end
+
+          private
+
+          def initialize_from_native(handle)
+            @handle = handle
+            @Name = CNA::Native.library.counted_string("cna_model_bone_get_name_byte_count",
+                                                       "cna_model_bone_copy_name", handle)
+            index = CNA::Native.library.pointer_for("l", 0)
+            CNA::Native.library.call("cna_model_bone_get_index", handle, index)
+            @Index = index[0, 4].unpack1("l")
+            self
+          end
+
+          # `AddChildren(ModelBone parent, ModelBone[] children)` is two `stfld`s: the parent, and a
+          # new `ModelBoneCollection` over the children. It runs once, when the model is built.
+          def add_children(parent, children)
+            @Parent = parent
+            @Children = ModelBoneCollection.__send__(:from_items, children)
+            nil
+          end
+
+          def native_handle = @handle
+        end
+
+        # `ReadOnlyCollection<ModelBone>` plus `Item[string]`, `TryGetValue` and a struct
+        # `GetEnumerator`. `TryGetValue` is a linear scan comparing `ModelBone.Name` with
+        # `String.Compare(..., StringComparison.Ordinal)` — `ldc.i4.4`, so **case-sensitive** — and
+        # `Item[string]` is `TryGetValue` with `KeyNotFoundException` on failure. Both are managed
+        # here for the same reason the graph is cached: `cna_model_bone_collection_find` would hand
+        # back a fresh handle with no way back to the object that owns the identity.
+        class ModelBoneCollection < CNA::Runtime::ReadOnlyCollection
+          projects_elements "Microsoft.Xna.Framework.Graphics.ModelBone"
+          private_class_method :new
+
+          def [](key)
+            return super if key.is_a?(::Integer)
+
+            found = nil
+            raise ::KeyError, key.to_s unless TryGetValue(key) { |value| found = value }
+
+            found
+          end
+
+          # `TryGetValue(string boneName, out ModelBone value)`. Ruby has no `out` parameter, so the
+          # projection keeps the Boolean return and yields the value — the rule this binding already
+          # applies to every `TryGetValue`. A null or empty name is
+          # `ArgumentNullException("boneName")`, which is the one guard the IL carries.
+          def TryGetValue(boneName)
+            raise ::ArgumentError, "boneName" if boneName.nil? || String(boneName).empty?
+
+            match = find { |bone| bone.Name == boneName }
+            return false if match.nil?
+
+            yield match if block_given?
+            true
+          end
+
+          # `newobj Enumerator(this.wrappedArray)` — over the backing array, not the wrapper.
+          def GetEnumerator = Enumerator.__send__(:new, self.Items)
+
+          # Ruby language support: `each` is the one Ruby identity that carries CLR
+          # `GetEnumerator`, and it is written over the projected struct so that the two agree.
+          def each
+            return to_enum(:each) unless block_given?
+
+            # An uppercase bareword is a constant to the parser, so the receiver is explicit —
+            # the Ruby constraint every uppercase instance method in this binding carries.
+            enumerator = self.GetEnumerator
+            yield enumerator.Current while enumerator.MoveNext
+            self
+          end
+
+          # `ModelBoneCollection+Enumerator`, addressed the way the reference contract spells a nested type. Its
+          # only constructor is `assembly`, so `new` is private under the constructor-free rule.
+          class Enumerator
+            include CNA::Runtime::ArrayEnumerator
+            private_class_method :new
+          end
+
+          class << self
+            private
+
+            def from_items(items) = allocate.tap { |value| value.__send__(:initialize, items) }
+          end
+        end
+
+        # `sealed`, eight properties, an `assembly` constructor and the `assembly` `Draw`.
+        # Six of the eight are read-only; `Effect` and `Tag` are the two a consumer may write.
+        class ModelMeshPart
+          private_class_method :new
+
+          attr_reader :StartIndex, :PrimitiveCount, :VertexOffset, :NumVertices,
+                      :IndexBuffer, :VertexBuffer, :Effect
+          attr_accessor :Tag
+
+          # `set_Effect` is the one member of this family with real bookkeeping, and it is
+          # reproduced statement for statement:
+          #
+          #     if (value == effect) return;
+          #     bool oldStillUsed = false, newAlreadyUsed = false;
+          #     foreach (part in parent.MeshParts) {
+          #         if (ReferenceEquals(part, this)) continue;
+          #         var other = part.Effect;
+          #         if      (ReferenceEquals(other, effect)) oldStillUsed   = true;
+          #         else if (ReferenceEquals(other, value))  newAlreadyUsed = true;
+          #     }
+          #     if (!oldStillUsed && effect != null) parent.Effects.Remove(effect);
+          #     if (!newAlreadyUsed && value != null) parent.Effects.Add(value);
+          #     effect = value;
+          #
+          # The `else if` matters: a sibling holding the *old* effect stops the scan from noticing
+          # that it also holds the new one, so a part is counted for one of the two and never both.
+          def Effect=(value)
+            unless value.nil? || value.is_a?(Microsoft::Xna::Framework::Graphics::Effect)
+              raise ::TypeError, "Effect must be an Effect or nil"
+            end
+            return value if value.equal?(@Effect)
+
+            old_still_used = false
+            new_already_used = false
+            @parent.MeshParts.each do |part|
+              next if part.equal?(self)
+
+              other = part.Effect
+              if other.equal?(@Effect)
+                old_still_used = true
+              elsif other.equal?(value)
+                new_already_used = true
+              end
+            end
+            effects = @parent.Effects
+            effects.__send__(:remove_effect, @Effect) if !old_still_used && !@Effect.nil?
+            effects.__send__(:add_effect, value) if !new_already_used && !value.nil?
+            CNA::Native.library.call("cna_model_mesh_part_set_effect", @handle,
+                                     value.nil? ? 0 : value.__send__(:native_handle))
+            @Effect = value
+          end
+
+          private
+
+          def initialize_from_native(model, handle)
+            @handle = handle
+            @Tag = nil
+            %w[start_index primitive_count vertex_offset num_vertices].each do |field|
+              output = CNA::Native.library.pointer_for("l", 0)
+              CNA::Native.library.call("cna_model_mesh_part_get_#{field}", handle, output)
+              instance_variable_set(:"@#{field.split("_").map(&:capitalize).join}", output[0, 4].unpack1("l"))
+            end
+            @NumVertices = @NumVertices
+            @Effect = model.__send__(:effect_for, optional("cna_model_mesh_part_get_effect", handle))
+            @VertexBuffer = model.__send__(:vertex_buffer_for, optional("cna_model_mesh_part_get_vertex_buffer", handle))
+            @IndexBuffer = model.__send__(:index_buffer_for, optional("cna_model_mesh_part_get_index_buffer", handle))
+            self
+          end
+
+          # The `CNA_Bool*` / handle pair every optional getter in this family answers.
+          def optional(symbol, handle)
+            present = CNA::Native.library.pointer_for("C", 0)
+            value = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call(symbol, handle, present, value)
+            present[0, 1].unpack1("C").zero? ? nil : value[0, 8].unpack1("Q")
+          end
+
+          def adopt_parent(mesh)
+            @parent = mesh
+            nil
+          end
+
+          def native_handle = @handle
+
+          class << self
+            private
+
+            def from_native(model, handle) = allocate.__send__(:initialize_from_native, model, handle)
+          end
+        end
+
+        # `ReadOnlyCollection<ModelMeshPart>` and a struct `GetEnumerator`. It declares no indexer
+        # of its own: the inherited one is the whole of its access.
+        class ModelMeshPartCollection < CNA::Runtime::ReadOnlyCollection
+          projects_elements "Microsoft.Xna.Framework.Graphics.ModelMeshPart"
+          private_class_method :new
+
+          # `newobj Enumerator(this.wrappedArray)` — over the backing array, not the wrapper.
+          def GetEnumerator = Enumerator.__send__(:new, self.Items)
+
+          # Ruby language support: `each` is the one Ruby identity that carries CLR
+          # `GetEnumerator`, and it is written over the projected struct so that the two agree.
+          def each
+            return to_enum(:each) unless block_given?
+
+            # An uppercase bareword is a constant to the parser, so the receiver is explicit —
+            # the Ruby constraint every uppercase instance method in this binding carries.
+            enumerator = self.GetEnumerator
+            yield enumerator.Current while enumerator.MoveNext
+            self
+          end
+
+          # `ModelMeshPartCollection+Enumerator`, addressed the way the reference contract spells a nested type. Its
+          # only constructor is `assembly`, so `new` is private under the constructor-free rule.
+          class Enumerator
+            include CNA::Runtime::ArrayEnumerator
+            private_class_method :new
+          end
+
+          class << self
+            private
+
+            def from_items(items) = allocate.tap { |value| value.__send__(:initialize, items) }
+          end
+        end
+
+        # `ReadOnlyCollection<Effect>` and a struct `GetEnumerator`. Its `Add` and `Remove` are
+        # `assembly` — `ModelMeshPart.set_Effect` is their only caller — so neither is a projected
+        # identity and both are private here.
+        class ModelEffectCollection < CNA::Runtime::ReadOnlyCollection
+          projects_elements "Microsoft.Xna.Framework.Graphics.Effect"
+          private_class_method :new
+
+          # `newobj Enumerator(this.wrappedArray)` — over the backing array, not the wrapper.
+          def GetEnumerator = Enumerator.__send__(:new, self.Items)
+
+          # Ruby language support: `each` is the one Ruby identity that carries CLR
+          # `GetEnumerator`, and it is written over the projected struct so that the two agree.
+          def each
+            return to_enum(:each) unless block_given?
+
+            # An uppercase bareword is a constant to the parser, so the receiver is explicit —
+            # the Ruby constraint every uppercase instance method in this binding carries.
+            enumerator = self.GetEnumerator
+            yield enumerator.Current while enumerator.MoveNext
+            self
+          end
+
+          # `ModelEffectCollection+Enumerator`, addressed the way the reference contract spells a nested type. Its
+          # only constructor is `assembly`, so `new` is private under the constructor-free rule.
+          class Enumerator
+            include CNA::Runtime::ArrayEnumerator
+            private_class_method :new
+          end
+
+          private
+
+          # `Items.Add(effect)` / `Items.Remove(effect)` on the backing list the wrapper holds by
+          # reference, which is why a mutation shows through the read-only view.
+          def add_effect(effect)
+            self.Items << effect
+            nil
+          end
+
+          def remove_effect(effect)
+            index = self.Items.index { |value| value.equal?(effect) }
+            self.Items.delete_at(index) unless index.nil?
+            nil
+          end
+
+          class << self
+            private
+
+            def from_items(items) = allocate.tap { |value| value.__send__(:initialize, items) }
+          end
+        end
+
+        # `sealed`, six properties and a public `Draw`. The constructor wires each part's `parent`
+        # back to the mesh, which is what `ModelMeshPart.set_Effect` walks.
+        class ModelMesh
+          private_class_method :new
+
+          attr_reader :Name, :ParentBone, :BoundingSphere, :MeshParts, :Effects
+          attr_accessor :Tag
+
+          # XNA's IL is: for every part, for every pass of that part's effect, apply the pass then
+          # draw the part; a part with no effect is `InvalidOperationException(ModelHasNoEffect)`.
+          # That loop is **unreachable** here — `CurrentTechnique` on a model's effect segfaults
+          # upstream — so this forwards to `cna_model_mesh_draw`, which performs the same loop
+          # natively and answers success on `HEADLESS` and `OPENGL33`. DEVIATION, recorded: the
+          # `ModelHasNoEffect` refusal is CNA's to make, and it makes its own.
+          def Draw
+            CNA::Native.library.call("cna_model_mesh_draw", @handle)
+            nil
+          end
+
+          private
+
+          def initialize_from_native(model, handle, bones)
+            @handle = handle
+            @Tag = nil
+            @Name = CNA::Native.library.counted_string("cna_model_mesh_get_name_byte_count",
+                                                       "cna_model_mesh_copy_name", handle)
+            sphere = CNA::Native::Layouts::BoundingSphere.new
+            CNA::Native.library.call("cna_model_mesh_get_bounding_sphere", handle, sphere.pointer)
+            @BoundingSphere = Microsoft::Xna::Framework::BoundingSphere.new(
+              Vector3.new(sphere.read_f32(0), sphere.read_f32(4), sphere.read_f32(8)),
+              sphere.read_f32(12)
+            )
+            @ParentBone = bones[model.__send__(:bone_index_of, optional_bone(handle))]
+            parts = model.__send__(:view, "cna_model_mesh_get_mesh_parts",
+                                   "cna_model_mesh_part_collection_destroy", handle)
+            count = model.__send__(:count_of, "cna_model_mesh_part_collection_get_count", parts)
+            items = ::Array.new(count) do |index|
+              part = ModelMeshPart.__send__(
+                :from_native, model,
+                model.__send__(:element, "cna_model_mesh_part_collection_get_at",
+                               "cna_model_mesh_part_destroy", parts, index)
+              )
+              part.__send__(:adopt_parent, self)
+              part
+            end
+            @MeshParts = ModelMeshPartCollection.__send__(:from_items, items)
+            # `Effects` is the distinct effects of the parts, in first-use order, which is what the
+            # `assembly` `Add` produces as the reader walks the parts.
+            effects = []
+            items.each do |part|
+              next if part.Effect.nil? || effects.any? { |value| value.equal?(part.Effect) }
+
+              effects << part.Effect
+            end
+            @Effects = ModelEffectCollection.__send__(:from_items, effects)
+            self
+          end
+
+          def optional_bone(handle)
+            present = CNA::Native.library.pointer_for("C", 0)
+            value = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_model_mesh_get_parent_bone", handle, present, value)
+            present[0, 1].unpack1("C").zero? ? nil : value[0, 8].unpack1("Q")
+          end
+
+          def native_handle = @handle
+
+          class << self
+            private
+
+            def from_native(model, handle, bones) = allocate.__send__(:initialize_from_native, model, handle, bones)
+          end
+        end
+
+        # `ReadOnlyCollection<ModelMesh>` plus `Item[string]`, `TryGetValue` and a struct
+        # `GetEnumerator` — the same three `ModelBoneCollection` has, over `ModelMesh.Name`.
+        class ModelMeshCollection < CNA::Runtime::ReadOnlyCollection
+          projects_elements "Microsoft.Xna.Framework.Graphics.ModelMesh"
+          private_class_method :new
+
+          def [](key)
+            return super if key.is_a?(::Integer)
+
+            found = nil
+            raise ::KeyError, key.to_s unless TryGetValue(key) { |value| found = value }
+
+            found
+          end
+
+          def TryGetValue(meshName)
+            raise ::ArgumentError, "meshName" if meshName.nil? || String(meshName).empty?
+
+            match = find { |mesh| mesh.Name == meshName }
+            return false if match.nil?
+
+            yield match if block_given?
+            true
+          end
+
+          # `newobj Enumerator(this.wrappedArray)` — over the backing array, not the wrapper.
+          def GetEnumerator = Enumerator.__send__(:new, self.Items)
+
+          # Ruby language support: `each` is the one Ruby identity that carries CLR
+          # `GetEnumerator`, and it is written over the projected struct so that the two agree.
+          def each
+            return to_enum(:each) unless block_given?
+
+            # An uppercase bareword is a constant to the parser, so the receiver is explicit —
+            # the Ruby constraint every uppercase instance method in this binding carries.
+            enumerator = self.GetEnumerator
+            yield enumerator.Current while enumerator.MoveNext
+            self
+          end
+
+          # `ModelMeshCollection+Enumerator`, addressed the way the reference contract spells a nested type. Its
+          # only constructor is `assembly`, so `new` is private under the constructor-free rule.
+          class Enumerator
+            include CNA::Runtime::ArrayEnumerator
+            private_class_method :new
+          end
+
+          class << self
+            private
+
+            def from_items(items) = allocate.tap { |value| value.__send__(:initialize, items) }
+          end
+        end
+
+        # `sealed`, four properties and four methods, all pure managed over `Bones` and `Meshes`.
+        # `ContentManager.Load(Model, name)` is the only producer, exactly as XNA's `assembly`
+        # constructor makes it.
+        class Model
+          private_class_method :new
+
+          attr_reader :Root, :Bones, :Meshes
+          attr_accessor :Tag
+
+          # `destinationBoneTransforms == null -> ArgumentNullException`, then
+          # `destinationBoneTransforms.Length < Bones.Count -> ArgumentOutOfRangeException`, then
+          # one `bones[i].transform` per bone. It writes into the array it is given and answers
+          # nothing, so a Ruby caller passes an Array and reads it back.
+          def CopyBoneTransformsTo(destinationBoneTransforms)
+            destination = validated(destinationBoneTransforms, "destinationBoneTransforms")
+            @Bones.each_with_index { |bone, index| destination[index] = bone.Transform }
+            nil
+          end
+
+          # The same two guards, then for each bone either its own transform when it has no parent
+          # or `bone.transform * destination[bone.Parent.Index]`. The loop reads what it has already
+          # written, which is why bone order matters and why a parent must precede its children.
+          def CopyAbsoluteBoneTransformsTo(destinationBoneTransforms)
+            destination = validated(destinationBoneTransforms, "destinationBoneTransforms")
+            @Bones.each_with_index do |bone, index|
+              parent = bone.Parent
+              destination[index] =
+                parent.nil? ? bone.Transform : bone.Transform * destination[parent.Index]
+            end
+            nil
+          end
+
+          # `sourceBoneTransforms == null -> ArgumentNullException`, then
+          # `sourceBoneTransforms.Length < Bones.Count -> ArgumentOutOfRangeException`, then one
+          # `bones[i].transform = source[i]` per bone.
+          def CopyBoneTransformsFrom(sourceBoneTransforms)
+            source = validated(sourceBoneTransforms, "sourceBoneTransforms")
+            @Bones.each_with_index { |bone, index| bone.Transform = source[index] }
+            nil
+          end
+
+          # XNA's IL takes the absolute transforms into the private static `sharedDrawBoneMatrices`,
+          # then for every mesh writes `absolute[mesh.ParentBone.Index] * world`, `view` and
+          # `projection` into every effect's `IEffectMatrices` and draws the mesh, refusing a null
+          # effect with `InvalidOperationException(ModelHasNoEffect)` and one that is not
+          # `IEffectMatrices` with `ModelHasNoIEffectMatrices`.
+          #
+          # None of that loop can run here: reaching an effect's matrices means reaching the effect,
+          # and every generic `Effect` route segfaults on the one a loaded model publishes. So this
+          # keeps the three managed type checks and forwards to `cna_model_draw`, which performs the
+          # identical sequence natively — the header documents it as "draws every model mesh after
+          # applying world, view and projection matrices" — and answers success on `HEADLESS` and
+          # `OPENGL33`. DEVIATION, recorded: both `InvalidOperationException`s are CNA's to raise.
+          #
+          # The three matrices are three MEMORY-class by-value aggregates in one call, which is the
+          # first route in this manifest to carry more than one. Only the **first** needs register
+          # fillers: once the six integer registers are consumed nothing later can travel in them,
+          # and `NativeAbiGate` had to learn that before this route could pass the gate.
+          def Draw(world, view, projection)
+            %w[world view projection].each_with_index do |name, index|
+              value = [world, view, projection][index]
+              raise ::TypeError, "#{name} must be a Matrix" unless value.instance_of?(Matrix)
+            end
+
+            CNA::Native.library.call(
+              "cna_model_draw", @handle, 0, 0, 0, 0, 0,
+              *CNA::Runtime::StockEffectSupport.matrix_eightbytes(world),
+              *CNA::Runtime::StockEffectSupport.matrix_eightbytes(view),
+              *CNA::Runtime::StockEffectSupport.matrix_eightbytes(projection)
+            )
+            nil
+          end
+
+          private
+
+          def validated(array, name)
+            raise ::ArgumentError, name if array.nil?
+            raise ::TypeError, "#{name} must be an Array of Matrix" unless array.is_a?(::Array)
+            raise ::RangeError, name if array.length < @Bones.Count
+
+            array
+          end
+
+          def initialize_from_native(device, handle)
+            @device = device
+            @handle = handle
+            @Tag = nil
+            @views = []
+            @effects = {}
+            @vertex_buffers = {}
+            @index_buffers = {}
+            @shared_draw_bone_matrices = nil
+
+            bone_collection = view("cna_model_get_bones", "cna_model_bone_collection_destroy", handle)
+            count = count_of("cna_model_bone_collection_get_count", bone_collection)
+            handles = ::Array.new(count) do |index|
+              element("cna_model_bone_collection_get_at", "cna_model_bone_destroy", bone_collection, index)
+            end
+            bones = handles.map { |bone| ModelBone.__send__(:allocate).__send__(:initialize_from_native, bone) }
+            @bone_index_by_handle = {}
+            handles.each_with_index { |bone, index| @bone_index_by_handle[bone] = index }
+            bones.each_with_index { |bone, index| @bone_index_by_handle[bone.Index] ||= index }
+            wire_hierarchy(handles, bones)
+            @Bones = ModelBoneCollection.__send__(:from_items, bones)
+            @Root = bones[bone_index_of(optional_root(handle))]
+
+            mesh_collection = view("cna_model_get_meshes", "cna_model_mesh_collection_destroy", handle)
+            meshes = ::Array.new(count_of("cna_model_mesh_collection_get_count", mesh_collection)) do |index|
+              ModelMesh.__send__(:from_native, self,
+                                 element("cna_model_mesh_collection_get_at", "cna_model_mesh_destroy",
+                                         mesh_collection, index),
+                                 bones)
+            end
+            @Meshes = ModelMeshCollection.__send__(:from_items, meshes)
+            self
+          end
+
+          # `AddChildren` for every bone, resolved by **index**: `cna_model_bone_get_parent` and
+          # `cna_model_bone_get_children` each answer fresh handles, so the link is read as an index
+          # and looked up in the graph rather than compared as a handle.
+          def wire_hierarchy(handles, bones)
+            children = ::Array.new(bones.length) { [] }
+            parents = ::Array.new(bones.length)
+            handles.each_with_index do |bone, index|
+              parent = optional_parent(bone)
+              next if parent.nil?
+
+              position = bone_index_of(parent)
+              parents[index] = bones[position]
+              children[position] << bones[index]
+            end
+            bones.each_with_index { |bone, index| bone.__send__(:add_children, parents[index], children[index]) }
+            nil
+          end
+
+          def optional_parent(handle)
+            present = CNA::Native.library.pointer_for("C", 0)
+            value = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_model_bone_get_parent", handle, present, value)
+            return nil if present[0, 1].unpack1("C").zero?
+
+            record(value[0, 8].unpack1("Q"), "cna_model_bone_destroy")
+          end
+
+          def optional_root(handle)
+            present = CNA::Native.library.pointer_for("C", 0)
+            value = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call("cna_model_get_root", handle, present, value)
+            return nil if present[0, 1].unpack1("C").zero?
+
+            record(value[0, 8].unpack1("Q"), "cna_model_bone_destroy")
+          end
+
+          # A bone handle -> its index in `Bones`. A handle this graph has not seen is a fresh view
+          # of a bone it has, so the index is asked of the bone itself.
+          def bone_index_of(handle)
+            return nil if handle.nil?
+            return @bone_index_by_handle.fetch(handle) if @bone_index_by_handle.key?(handle)
+
+            output = CNA::Native.library.pointer_for("l", 0)
+            CNA::Native.library.call("cna_model_bone_get_index", handle, output)
+            @bone_index_by_handle.fetch(output[0, 4].unpack1("l"))
+          end
+
+          def view(symbol, destroy, owner)
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call(symbol, owner, output)
+            record(output[0, 8].unpack1("Q"), destroy)
+          end
+
+          def element(symbol, destroy, collection, index)
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call(symbol, collection, index, output)
+            record(output[0, 8].unpack1("Q"), destroy)
+          end
+
+          def count_of(symbol, collection)
+            output = CNA::Native.library.pointer_for("Q", 0)
+            CNA::Native.library.call(symbol, collection, output)
+            output[0, 8].unpack1("Q")
+          end
+
+          def record(handle, destroy)
+            @views << [handle, destroy]
+            handle
+          end
+
+          # One Ruby object per model-owned native handle, which is what makes
+          # `part.Effect.equal?(mesh.Effects[0])` true the way XNA's reference equality is.
+          def effect_for(handle)
+            return nil if handle.nil?
+
+            @effects[handle] ||= Microsoft::Xna::Framework::Graphics::Effect
+                                 .__send__(:allocate).__send__(:initialize_model_owned, @device, handle)
+          end
+
+          def vertex_buffer_for(handle)
+            return nil if handle.nil?
+
+            @vertex_buffers[handle] ||= VertexBuffer.__send__(:allocate)
+                                                    .__send__(:initialize_model_owned, @device, handle)
+          end
+
+          def index_buffer_for(handle)
+            return nil if handle.nil?
+
+            @index_buffers[handle] ||= IndexBuffer.__send__(:allocate)
+                                                  .__send__(:initialize_model_owned, @device, handle)
+          end
+
+          # Every view this graph took, released in reverse. `ContentManager` calls it on `Unload`
+          # and on `Dispose`; nothing else does, because XNA's `Model` declares no disposal member
+          # and this binding adds none.
+          def release_content_views
+            views = @views
+            @views = []
+            views.reverse_each do |handle, destroy|
+              CNA::Native.library.call(destroy, handle)
+            rescue CNA::NativeError
+              nil
+            end
+            nil
+          end
+
+          def native_handle = @handle
+
+          class << self
+            private
+
+            def from_native(device, handle) = allocate.__send__(:initialize_from_native, device, handle)
+          end
+        end
+
       end
 
       class GraphicsDeviceManager
@@ -7414,6 +8178,37 @@ Microsoft::Xna::Framework::Content::ContentManager.__send__(
     :new, CNA::Runtime::Context.__send__(:current_game, "SpriteFont"),
     font_handle, texture[0, 8].unpack1("Q")
   )
+end
+
+# `ContentManager.Load(Model, name)` is the only producer XNA gives a consumer -- `Model`'s
+# constructor is `assembly` -- and `cna_content_manager_load_model` is its canonical route.
+#
+# UPSTREAM: loading a model makes **process shutdown** segfault, on every qualified artifact, with
+# the game already disposed and with or without `cna_content_manager_unload`. The API itself is
+# correct and the model is complete; only teardown is not. Nothing here works around it and nothing
+# hides it -- `docs/model-load-shutdown-upstream-defect.md` carries the whole measurement and
+# `test/test_model.rb` asserts the crash so that a later CNA fixing it fails a test rather than
+# passing unnoticed.
+Microsoft::Xna::Framework::Content::ContentManager.__send__(
+  :register_materializer, Microsoft::Xna::Framework::Graphics::Model
+) do |manager, asset_name|
+  handle = manager.__send__(:native_handle)
+  device = manager.__send__(:graphics_device)
+  view = CNA::Native::Layouts::StringView.new(asset_name.b)
+  output = CNA::Native.library.pointer_for("Q", 0)
+  begin
+    CNA::Native.library.call("cna_content_manager_load_model", handle,
+                             view.read_u64(0), view.read_u64(8), output)
+  rescue CNA::NativeError => error
+    raise Microsoft::Xna::Framework::Content::ContentLoadException,
+          "#{asset_name} could not be loaded as Model: #{error.message}"
+  end
+  model_handle = output[0, 8].unpack1("Q")
+  if model_handle.zero?
+    raise Microsoft::Xna::Framework::Content::ContentLoadException,
+          "#{asset_name} reported a successful load with no model"
+  end
+  Microsoft::Xna::Framework::Graphics::Model.__send__(:from_native, device, model_handle)
 end
 
 require_relative "graphics/vertex_structs"

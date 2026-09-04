@@ -30,7 +30,8 @@ mismatches, missing_header_symbols = NativeAbiGate.compare(
   constants: CNA::Native::Manifest::CONSTANTS
 )
 admission = measurements.flat_map { |root, rows| NativeAbiGate.admission_mismatches(rows, root, admitted, decode) }
-cross_version = NativeAbiGate.cross_version_mismatches(measurements)
+later_only = CNA::Native::Manifest::FUNCTIONS.select(&:since).map(&:symbol)
+cross_version = NativeAbiGate.cross_version_mismatches(measurements, later_only: later_only)
 mismatches.concat(admission).concat(cross_version)
 
 missing_library = []

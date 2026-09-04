@@ -370,6 +370,12 @@ class DependencyFrontierTest < Minitest::Test
     # Begin overloads completed it. The five stock effects joined as each was built -- `BasicEffect`
     # alone in Foundation 97, the other four together in Foundation 98 -- and all five belong:
     # every property of every one of them is a `cna_*_effect_*` route of its own.
+    # Three of the Model family joined together -- `Model`, `ModelMesh` and `ModelMeshPart` -- and
+    # each belongs: a part reads its own `cna_model_mesh_part_*` routes and the two `Draw`s reach
+    # `cna_model_draw` and `cna_model_mesh_draw`. `ModelBone` and the four `Model*Collection`s are
+    # **not** here, and that is the list being right rather than incomplete: native reachability is
+    # measured from each type's own **XNA IL**, and a bone's five members are `ldfld`s while a
+    # collection's three are a linear scan over a list something else made.
     assert_equal %w[
       Microsoft.Xna.Framework.Audio.AudioCategory
       Microsoft.Xna.Framework.Audio.AudioEngine
@@ -402,6 +408,9 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.EffectTechniqueCollection
       Microsoft.Xna.Framework.Graphics.EnvironmentMapEffect
       Microsoft.Xna.Framework.Graphics.IndexBuffer
+      Microsoft.Xna.Framework.Graphics.Model
+      Microsoft.Xna.Framework.Graphics.ModelMesh
+      Microsoft.Xna.Framework.Graphics.ModelMeshPart
       Microsoft.Xna.Framework.Graphics.OcclusionQuery
       Microsoft.Xna.Framework.Graphics.RenderTarget2D
       Microsoft.Xna.Framework.Graphics.RenderTargetCube
@@ -506,10 +515,11 @@ class DependencyFrontierTest < Minitest::Test
     # blocker was audited and found not to be one either; and 4 when the nine-type Effect cluster
     # was built -- EffectAnnotation left it and EffectMaterial and DirectionalLight arrived behind
     # the Effect base. A frontier that rises when a base completes is advancing, not regressing.
-    # ...5 when the buffers uncovered ModelMeshPart behind them; and 3 when DirectionalLight and
+    # ...5 when the buffers uncovered ModelMeshPart behind them; 3 when DirectionalLight and
     # EffectMaterial were audited and built, which put the three stock effects that name them onto
-    # the partial list instead. Three is the fewest this frontier has ever carried.
-    assert_equal 3, REPORT.fetch("dependencyCompleteCandidates").length
+    # the partial list instead; and **2** when the Model family took ModelMeshPart off it. Two is
+    # the fewest this frontier has ever carried, and both entries left are genuinely blocked.
+    assert_equal 2, REPORT.fetch("dependencyCompleteCandidates").length
     assert_equal REPORT.fetch("dependencyCompleteCandidates").length,
                  REPORT.fetch("blockerSummary").values.sum
     # Foundation 31 completed the TouchCollection pair, which made TouchPanel consumable, and
@@ -736,11 +746,11 @@ class DependencyFrontierTest < Minitest::Test
       # EffectMaterial and DirectionalLight took its place. Both were then audited, and both were
       # the twelfth and thirteenth deferral this register has retired: the light's four native
       # identities reach EffectParameter::SetValue and the material's one reaches Effect's clone
-      # constructor, and both of those are projected. What is left on the list is ModelMeshPart,
-      # whose Draw reaches three GraphicsDevice members this binding does not project -- the first
-      # NATIVE_RUNTIME here in a long while that names something genuinely absent.
+      # constructor, and both of those are projected. `ModelMeshPart` was next, with a
+      # NATIVE_RUNTIME naming three `GraphicsDevice` members genuinely absent at the time --
+      # `SetVertexBuffer`, `Indices` and `DrawIndexedPrimitives`, all three since projected -- and
+      # the Model family built it. Two entries are left and both are real.
       "Microsoft.Xna.Framework.Design.MathTypeConverter" => "BCL_PROJECTION",
-      "Microsoft.Xna.Framework.Graphics.ModelMeshPart" => "NATIVE_RUNTIME",
       "Microsoft.Xna.Framework.Graphics.GraphicsAdapter" => "NATIVE_RUNTIME"
     }.each do |name, expected|
       candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }

@@ -213,11 +213,13 @@ class MemberLevelDependenciesTest < Minitest::Test
     # 1 until `EffectAnnotation` was built with the rest of the Effect cluster, which emptied this
     # list -- the two render targets that took its place still reach the partial GraphicsDevice --
     # and 1 again when the buffers made `ModelMeshPart` dependency-complete while its own IL still
-    # reaches the `Model` graph nothing here projects.
-    assert_equal 1, signature_complete.length
+    # reached the `Model` graph nothing projected then. **0 now**: the Model family was built, so
+    # the one entry this measurement ever exposed is gone. That is the measurement doing its job to
+    # completion rather than the measurement ceasing to work, so what is asserted is the property
+    # -- every entry here is signature-complete and il-only blocked -- over however many there are.
+    assert_equal 0, signature_complete.length
     names = signature_complete.map { |entry| entry.fetch("name") }.sort
     # ContentManager was here until the Stream and Action`1 projections consumed it.
-    assert_equal ["Microsoft.Xna.Framework.Graphics.ModelMeshPart"], names
     refute_includes names, "Microsoft.Xna.Framework.Audio.Cue"
   end
 
@@ -247,14 +249,17 @@ class MemberLevelDependenciesTest < Minitest::Test
   #
   # `ModelMeshPart` demonstrates the shape now, and its second half is three types deep: it is
   # native-blocked on `Draw` and reaches `GraphicsDevice`, `ModelEffectCollection` and `ModelMesh`.
+  # `ModelMeshPart` was the example: native-blocked on `Draw` **and** blocked on the missing
+  # `ModelMesh` its `parent` field names. The Model family was built and it is neither any more, so
+  # what this asserts is the shape rather than that one entry -- an il-only blocked candidate that
+  # also names a missing type is the two-blocker case, and there may be none.
   def test_a_candidate_can_be_blocked_twice_over
-    {"Microsoft.Xna.Framework.Graphics.ModelMeshPart" => "Microsoft.Xna.Framework.Graphics.ModelMesh"}
-      .each do |name, blocker|
-      entry = REPORT.fetch("ilOnlyBlockedCandidates").find { |item| item.fetch("name") == name }
-      refute_nil entry, name
-      assert_includes entry.fetch("blockers"), "NATIVE_RUNTIME", "still native-blocked"
-      assert_includes entry.fetch("ilOnlyUnmetDependencies"), blocker, "and blocked on a missing type too"
-      assert_includes STRICT.fetch("missingTypeNames"), blocker
+    REPORT.fetch("ilOnlyBlockedCandidates").each do |entry|
+      unmet = entry.fetch("ilOnlyUnmetDependencies")
+      next if unmet.empty?
+
+      refute_empty entry.fetch("blockers"), entry.fetch("name")
+      unmet.each { |blocker| assert_includes STRICT.fetch("missingTypeNames"), blocker }
     end
     # And the two that were built with both halves still unresolved: their own IL reaches the
     # adapter, and this binding does not need it.
@@ -304,7 +309,8 @@ class MemberLevelDependenciesTest < Minitest::Test
     # always causes. A rising count is what advancing looks like.
     # ...and 5 when the four buffer types and the binding were built, which made ModelMeshPart
     # dependency-complete: the frontier keeps uncovering what a completed base was hiding.
-    assert_equal 3, REPORT.fetch("dependencyCompleteCandidates").length
+    # ...and 2 when the Model family was built, which took ModelMeshPart off it again.
+    assert_equal 2, REPORT.fetch("dependencyCompleteCandidates").length
     assert_empty REPORT.fetch("consumableCandidates")
     assert_equal "none-consumable", REPORT.fetch("selectionRoute")
     assert_nil REPORT.fetch("selectedNext")
@@ -320,9 +326,10 @@ class MemberLevelDependenciesTest < Minitest::Test
     end
     # `EffectAnnotation` was the one entry that was both il-only blocked **and** dependency-complete
     # by the type-level rule, which is exactly the overlap this report exists to show. Building it
-    # left the two render targets, and neither is dependency-complete: each still reaches the
-    # partial `GraphicsDevice`. So the overlap is empty now and the reason it is empty is recorded.
-    assert_equal 1, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
+    # left the two render targets, then `ModelMeshPart` took its place, and building the Model
+    # family took that one too. The overlap is **empty** now and the reason is recorded each time:
+    # every entry that is both gets built, which is what the overlap is for.
+    assert_equal 0, REPORT.fetch("ilOnlyBlockedCandidates").count { |entry| entry.fetch("dependencyComplete") }
     # And the two that are not: each still reaches the partial `GraphicsDevice`.
     REPORT.fetch("ilOnlyBlockedCandidates").reject { |entry| entry.fetch("dependencyComplete") }.each do |entry|
       assert_includes entry.fetch("unmetDependencies"), "Microsoft.Xna.Framework.Graphics.GraphicsDevice",

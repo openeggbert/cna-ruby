@@ -2129,6 +2129,54 @@
     {
       "name": "Microsoft.Xna.Framework.Graphics.OcclusionQuery",
       "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.Model",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelBone",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelBoneCollection",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelMesh",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelMeshCollection",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelMeshPart",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelEffectCollection",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelBoneCollection+Enumerator",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelMeshCollection+Enumerator",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator",
+      "complete": true
     }
   ]
 }

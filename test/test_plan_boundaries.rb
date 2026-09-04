@@ -48,9 +48,19 @@ class PlanBoundariesTest < Minitest::Test
 
   def listed_absent = ABSENT.scan(/`([^`\s]+(?:`\d+)?)`/).flatten.uniq
 
-  def test_the_delimited_list_exists_and_is_not_empty
+  # The floor used to be the hand-written `> 40`, which is the same kind of number this whole guard
+  # exists to stop: it went stale the moment the Model family took the missing count from 48 to 40.
+  # What the list is for is that a reader can see every absent type, so the measurement is the
+  # inventory's own count -- with the one generic spelling the list writes differently accounted
+  # for by name rather than by a slack bound.
+  GENERIC_SPELLINGS = { "ContentTypeReader`1" => "ContentTypeReader" }.freeze
+
+  def test_the_delimited_list_names_every_absent_type
     refute_empty ABSENT.strip, "plan.md must delimit its absent-type list for this guard to read"
-    assert_operator listed_absent.length, :>, 40
+    expected = missing_types.map { |name| self.class.leaf(name) }
+                            .map { |leaf| GENERIC_SPELLINGS.fetch(leaf, leaf) }.uniq
+    assert_empty expected - listed_absent, "plan.md's absent list is missing a type the report names"
+    assert_equal expected.sort, listed_absent.sort
   end
 
   # The guard, in both directions. Every name in the delimited list must be a type the strict report
