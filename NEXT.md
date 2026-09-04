@@ -351,6 +351,13 @@ rule the `GraphicsDeviceManager` producer audit established:
 
 ## Recommended next frontier
 
+**The stop condition is met, and `docs/remaining-surface-audit.md` is where to check it.** Its last
+table accounts for every one of the 29 strict diagnostics: thirteen `Design` converters are
+`BCL_PROJECTION_SCOPE`, three types and eight members are `BLOCKED_UPSTREAM_CNA` on one measured
+adapter defect, and the five `OVERLOAD_MAPPING_MISMATCH` entries are those same eight counted a
+second time because the verifier reports an overload count beside every missing method. Every other
+structural category is zero, the allowlist is empty and `UNMEASURED_STRUCTURAL_CATEGORY` is zero.
+
 **Both frontiers are at rest.** `docs/generated/dependency-frontier.md` carries the
 dependency-complete candidates and the scoreboard counts them; each has been audited and each
 measurement stands. The member frontier is at rest too, which it was not before Foundation 104: the

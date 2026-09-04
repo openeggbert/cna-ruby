@@ -184,3 +184,18 @@ the file's own mtime rather than by reading the header.
 ones, and every one of those is either the adapter defect or the `System.ComponentModel` scope;
 every remaining member is one of the eight, and every one of those traces to that same adapter
 defect. Opening any of them is upstream work.
+
+## Every strict diagnostic, accounted for
+
+`TOTAL_DIAGNOSTICS` is **29**, and this is all of them:
+
+| count | category | classification |
+| ---: | --- | --- |
+| 13 | `MISSING_TYPE` — the `Design` converters | `BCL_PROJECTION_SCOPE` |
+| 3 | `MISSING_TYPE` — `GraphicsAdapter`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs` | `BLOCKED_UPSTREAM_CNA` |
+| 8 | `MISSING_MEMBER` — `GraphicsDevice`'s 3 and `GraphicsDeviceManager`'s 5 | `BLOCKED_UPSTREAM_CNA` |
+| 5 | `OVERLOAD_MAPPING_MISMATCH` | **not a fourth thing**: the verifier reports an overload count beside a missing member whenever the member is a method or constructor, so these five are the five method-shaped entries of the eight above, counted a second time |
+
+Every other structural category is **zero**, the allowlist is empty and
+`UNMEASURED_STRUCTURAL_CATEGORY` is zero. There is no diagnostic on this project that is not in the
+table above, and none of them is local.
