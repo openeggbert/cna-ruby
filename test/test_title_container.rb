@@ -337,8 +337,12 @@ class TitleContainerTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_adds_no_content_pipeline_and_no_storage_runtime
-    %i[ContentReader ContentTypeReader].each do |absent|
-      refute F::Content.const_defined?(absent, false), absent.to_s
+    # Both left this list when Foundation 104 built them; what this milestone claimed, and still
+    # claims, is that **it** built neither. It did more than that in the end: the reader family
+    # reads its compiled assets through `ContentManager.OpenStream`, which is this type's own
+    # `OpenStream`, so the pipeline that was absent here now rests on it.
+    %i[ContentReader ContentTypeReader].each do |built|
+      assert F::Content.const_defined?(built, false), built.to_s
     end
     # The two Storage runtime types left this list when they were built; what this milestone
     # claimed, and still claims, is that **it** built neither -- `TitleContainer` reads the title's

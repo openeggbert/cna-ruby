@@ -113,7 +113,7 @@ class SerializationExceptionsTest < Minitest::Test
   def test_serialization_exception_is_a_measured_thrown_exception
     assert_equal "CNA::Runtime::SerializationError",
                  B::THROWN_EXCEPTIONS.fetch("System.Runtime.Serialization.SerializationException")
-    assert_equal 8, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
+    assert_equal ReviewedScoreboard::BCL_THROWN_EXCEPTIONS, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
     assert_operator CNA::Runtime::SerializationError, :<, ::StandardError
     refute_operator CNA::Runtime::SerializationError, :<, ::ScriptError
     refute_includes B.identities, "System.Runtime.Serialization.SerializationException"
@@ -247,7 +247,10 @@ class SerializationExceptionsTest < Minitest::Test
     # serialization carriers and completed two exception types, and neither is raised by anything it
     # added. So the claim narrows to the one type no member of this binding raises, and the
     # ContentManager case is asserted where it belongs, in `test_content_manager.rb`.
-    refute F::Content.const_defined?(:ContentReader, false)
+    # `ContentReader` exists since Foundation 104 and raises `ContentLoadException` too, for the
+    # container header and the type manifest. That does not change what this milestone claimed --
+    # it built neither -- and the one type no member of this binding raises is the one below.
+    assert F::Content.const_defined?(:ContentReader, false)
     sources = Dir[ROOT.join("lib", "**", "*.rb")].flat_map do |path|
       File.readlines(path).reject { |line| line.strip.start_with?("#") }
     end

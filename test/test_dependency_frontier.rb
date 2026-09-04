@@ -378,10 +378,16 @@ class DependencyFrontierTest < Minitest::Test
     # collection's three are a linear scan over a list something else made.
     # Sixteen of the Media namespace's seventeen joined together: every one of them reaches
     # `UnsafeNativeMethods` or `WmpInterface` in XNA's own IL, which is the Windows Media Player
-    # COM surface. `Song` is **not** here and that is the list being right rather than incomplete:
-    # its members are `ldfld`s over fields the library filled, and `FromUri` is the one that would
-    # reach native — it is `MediaSong_FromUri`, and `Song` is partial, so it is not on this list of
-    # **complete** types at all.
+    # COM surface. `Song` joined the list at Foundation 104, when the three navigation routes
+    # Foundation 103 recorded as absent turned out to exist and completed the type: its members are
+    # `ldfld`s over fields the library filled, and `FromUri` is `MediaSong_FromUri`, a real native
+    # entry point in XNA's own IL.
+    # `Content.ContentReader` joined at Foundation 104, and it is the clearest case on this list of
+    # native reachability that is **not** a native dependency: the two methods are `Create` and
+    # `PrepareStream`, and what they reach is `System.IO.Stream`'s own decompression path for an
+    # LZX-compressed container. Every other member of the type is `BinaryReader` arithmetic. The
+    # projection binds no route and refuses a compressed container, so the reachability is real and
+    # the dependency is not, which is exactly the distinction this list exists to keep visible.
     # `Storage.StorageDevice` joined with the Storage family: its three properties reach
     # `UnsafeNativeMethods.GetDiskFreeSpaceEx` through `StorageContainer.GetDeviceFolder`, which is
     # a real native entry point in XNA's own IL. `StorageContainer` is **not** here, which is the
@@ -398,6 +404,7 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Audio.SoundEffectInstance
       Microsoft.Xna.Framework.Audio.WaveBank
       Microsoft.Xna.Framework.Content.ContentManager
+      Microsoft.Xna.Framework.Content.ContentReader
       Microsoft.Xna.Framework.FrameworkDispatcher
       Microsoft.Xna.Framework.Game
       Microsoft.Xna.Framework.GamerServices.GamerServicesComponent
@@ -452,6 +459,7 @@ class DependencyFrontierTest < Minitest::Test
       Microsoft.Xna.Framework.Media.PictureCollection
       Microsoft.Xna.Framework.Media.Playlist
       Microsoft.Xna.Framework.Media.PlaylistCollection
+      Microsoft.Xna.Framework.Media.Song
       Microsoft.Xna.Framework.Media.SongCollection
       Microsoft.Xna.Framework.Media.VideoPlayer
       Microsoft.Xna.Framework.Storage.StorageDevice

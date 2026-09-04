@@ -35,37 +35,76 @@ class MediaTest < Minitest::Test
 
   # ------------------------------------------------------------------- the contract, from metadata
 
-  def test_sixteen_of_the_seventeen_are_complete_and_song_is_the_exception
+  def test_all_seventeen_are_complete_including_song
     complete = STRICT.fetch("completeTypeNames")
-    (BUILT - ["Song"]).each do |short|
-      assert_includes complete, "Microsoft.Xna.Framework.Media.#{short}"
-    end
-    assert_equal ["Microsoft.Xna.Framework.Media.Song"],
-                 STRICT.fetch("partialTypes").keys.grep(/\AMicrosoft\.Xna\.Framework\.Media\./)
+    BUILT.each { |short| assert_includes complete, "Microsoft.Xna.Framework.Media.#{short}" }
+    assert_empty STRICT.fetch("partialTypes").keys.grep(/\AMicrosoft\.Xna\.Framework\.Media\./)
     assert_equal ReviewedScoreboard::COMPLETE_TYPES, STRICT.fetch("COMPLETE_TYPES")
     assert_equal ReviewedScoreboard::PARTIAL_TYPES, STRICT.fetch("PARTIAL_TYPES")
-    # Every Media name has left the missing-type inventory.
+    # Every Media name has left the missing-type inventory too.
     assert_empty STRICT.fetch("missingTypeNames").grep(/\AMicrosoft\.Xna\.Framework\.Media\./)
   end
 
-  # The blocker, stated as the three routes that do not exist beside the ones that do.
-  def test_songs_three_outstanding_members_are_exactly_the_routes_cna_does_not_export
-    outstanding = STRICT.fetch("partialTypes").fetch("Microsoft.Xna.Framework.Media.Song")
-    assert_equal ["Microsoft.Xna.Framework.Media.Song::Artist (1 overload)",
-                  "Microsoft.Xna.Framework.Media.Song::Album (1 overload)",
-                  "Microsoft.Xna.Framework.Media.Song::Genre (1 overload)"].sort, outstanding.sort
-
+  # A CORRECTION, and the rule that caught it. Foundation 103 recorded `Song.Album`, `Song.Artist`
+  # and `Song.Genre` as `BLOCKED_UPSTREAM_CNA` on the claim that CNA exports no route for them.
+  # That claim was false. Foundation 104 re-measured it the way this project requires a blocker to
+  # be re-measured -- against the shipped artifact rather than against the note -- and `nm -D` lists
+  # all three, both admitted header roots declare all three, and the ABI gate type-checks all three.
+  #
+  # This test is the guard that would have caught it: it asserts the routes are **present**, in the
+  # library, in the manifest and in the projected surface.
+  def test_songs_three_navigations_exist_in_the_library_and_are_bound
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
-    %w[cna_song_get_album cna_song_get_artist cna_song_get_genre].each do |absent|
-      refute_includes symbols, absent
-      refute(CNA::Native.library.respond_to?(:handle) && native_symbol?(absent),
-             "#{absent} is in the library after all; Song's blocker is stale")
+    %w[cna_song_get_album cna_song_get_artist cna_song_get_genre].each do |route|
+      assert_includes symbols, route
+      assert native_symbol?(route), "#{route} is not in the shipped library"
     end
-    # The reverse navigations are all exported, which is what makes the gap a gap rather than a
-    # design: CNA models the graph, just not from the song outwards.
+    %i[Album Artist Genre].each { |member| assert M::Song.public_method_defined?(member), member.to_s }
+    # The reverse navigations are exported too, so the graph really is walkable in both directions.
     %w[cna_album_get_songs cna_artist_get_songs cna_artist_get_albums
        cna_genre_get_songs cna_genre_get_albums cna_playlist_get_songs].each do |present|
       assert_includes symbols, present
+    end
+  end
+
+  # Each of the three answers a borrowed handle **plus an availability flag**, and the header says
+  # what false means: a song with no library context. A song built from a URI is exactly that, and
+  # this machine's library has no songs, so the negative case is what is measurable here and the
+  # positive one is recorded as environment-limited rather than claimed.
+  def test_a_song_built_from_a_uri_has_no_library_context
+    directory = ENV["CNA_TEST_XNB_DIR"]
+    skip "CNA_TEST_XNB_DIR not supplied" if directory.nil? || !File.directory?(directory)
+
+    path = File.join(directory, "song", "one_two_three.ogg")
+    skip "the song fixture is not present" unless File.file?(path)
+
+    with_game do
+      song = M::Song.FromUri("probe", path)
+      begin
+        refute_empty song.Name
+        assert_nil song.Album
+        assert_nil song.Artist
+        assert_nil song.Genre
+      ensure
+        song.Dispose
+      end
+    end
+  end
+
+  # And when the library *does* hold songs, each navigation answers a real entity whose own
+  # collection contains the song again. This machine's library is empty, so the assertion skips
+  # rather than being weakened -- the same decision `Microphone` records for capture.
+  def test_a_library_song_names_the_album_artist_and_genre_that_contain_it
+    with_library do |library|
+      songs = library.Songs
+      skip "this machine's media library reports no songs" if songs.Count.zero?
+
+      song = songs[0]
+      [[song.Album, :Songs], [song.Artist, :Songs], [song.Genre, :Songs]].each do |entity, member|
+        next if entity.nil?
+
+        assert_includes entity.public_send(member).to_a.map(&:Name), song.Name
+      end
     end
   end
 

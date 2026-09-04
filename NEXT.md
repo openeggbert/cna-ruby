@@ -84,6 +84,7 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 101 | `DrawableGameComponent`, and the producer claim the manager's own IL settled | **1** | 13 |
 | 102 | the Storage family, and the async façade that is not one | **2** | 32 |
 | 103 | the Media library and player, and the three routes CNA does not export | **17** | 182 |
+| 104 | the `ContentReader` family, over one BCL decision and no native route; and `Song`'s three navigations, on a blocker measured false | **4** | 33 |
 
 ## Measured state
 
@@ -102,22 +103,22 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 | count | what it measures |
 | ---: | --- |
 | 257 | XNA 4.0 Windows reference types |
-| 237 | types this binding projects |
-| 2794 | Ruby member identities |
-| 234 | complete types |
-| 3 | partial types |
-| 20 | missing types |
+| 241 | types this binding projects |
+| 2827 | Ruby member identities |
+| 239 | complete types |
+| 2 | partial types |
+| 16 | missing types |
 | 48 | event identities |
 | 24 | types owning an event |
-| 28 | projected BCL identities |
+| 29 | projected BCL identities |
 
 **Strict diagnostics**
 
 | count | what it measures |
 | ---: | --- |
-| 36 | strict diagnostics in total |
-| 20 | `MISSING_TYPE` |
-| 11 | `MISSING_MEMBER` |
+| 29 | strict diagnostics in total |
+| 16 | `MISSING_TYPE` |
+| 8 | `MISSING_MEMBER` |
 | 5 | `OVERLOAD_MAPPING_MISMATCH` |
 | 0 | `PROPERTY_MAPPING_MISMATCH` |
 | 0 | every other structural category, summed |
@@ -135,7 +136,7 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 757 | bound C functions |
+| 760 | bound C functions |
 | 7 | callbacks |
 | 152 | constants |
 | 68 | struct layouts |
@@ -164,18 +165,19 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 157 | runtime capability rows |
+| 158 | runtime capability rows |
 
 <!-- scoreboard:end -->
 
-`GraphicsDevice`, `GraphicsDeviceManager` and `Media.Song` are the three partial types, and
-`docs/graphics-runtime-member-audit.md` enumerates every member the first two still owe together
-with what that member actually needs. `Song` owes `Album`, `Artist` and `Genre` — the only three
-members of the whole `Media` namespace CNA exports no route for.
+`GraphicsDevice` and `GraphicsDeviceManager` are the two partial types, and
+`docs/graphics-runtime-member-audit.md` enumerates every member each still owes together with what
+that member actually needs. `Media.Song` was a third for one milestone, on a blocker Foundation 104
+measured false: `cna_song_get_album`, `_artist` and `_genre` are in both admitted header roots and
+in the shipped library, and are bound now.
 
 ## What is left, and what each thing is waiting for
 
-`docs/remaining-surface-audit.md` classifies **every** remaining member and type at Foundation 103,
+`docs/remaining-surface-audit.md` classifies **every** remaining member and type at Foundation 104,
 with the evidence for each rather than a judgement. In summary:
 
 | What | Count | Classification |
@@ -183,19 +185,15 @@ with the evidence for each rather than a judgement. In summary:
 | `GraphicsDevice`'s 3 and `GraphicsDeviceManager`'s 5 | 8 members | `BLOCKED_UPSTREAM_CNA` — all eight trace to the one adapter defect |
 | `GraphicsAdapter`, `GraphicsDeviceInformation`, `PreparingDeviceSettingsEventArgs` | 3 types | `BLOCKED_UPSTREAM_CNA` — the same defect |
 | the thirteen `Design` converters | 13 types | `BCL_PROJECTION_SCOPE` — four `System.ComponentModel` identities and a descriptor system |
-| `Song.Album`, `Song.Artist`, `Song.Genre` | 3 members | `BLOCKED_UPSTREAM_CNA` — no `cna_song_get_album`/`_artist`/`_genre` exists, while every reverse navigation does |
-| the `ContentReader` family | 4 types | **locally actionable**, behind one `System.IO.BinaryReader` register decision |
 
-**One locally actionable block is left, and it is the next milestone.** The `Media` block above it
-was Foundation 103, and it was surveyed before it was built rather than guessed at: every one of the
-seven collection getters succeeds against a plain `Game` on the `HEADLESS` artifact, the music
-collections are empty on this host and `pictures` answers **35**, so the picture half has real data.
-167 routes were bound, each with a production call site, and the ABI gate is `ABI_MISMATCHES` 0
-against both roots.
-
-- **`ContentReader`.** Twenty `cna_content_reader_*` routes exist. The decision to make first is
-  `System.IO.BinaryReader`, which `ContentReader` extends and two of whose members it overrides —
-  the same shape of decision `System.IO.Stream` was, and a decision rather than a blocker. `PROPERTY_MAPPING_MISMATCH` is **zero**: the one entry it used to carry
+**Nothing locally actionable is left.** The two blocks that were are Foundations 103 and 104, and
+each was surveyed before it was built rather than guessed at. `Media` bound 167 routes, each with a
+production call site, against a library this host really has — 35 pictures, an empty music half,
+`ABI_MISMATCHES` 0 on both roots. The `ContentReader` family bound **none**: the register decision
+turned out to be one line, `System.IO.BinaryReader`, and the thirty-one `cna_content_reader_*`
+routes turned out to be unreachable rather than unwanted, because `cna_content_reader_create` takes
+a save-game `CNA_StorageStreamHandle` and an XNA `ContentReader` reads a title asset.
+`docs/content-reader-native-route-audit.md` records that measurement. `PROPERTY_MAPPING_MISMATCH` is **zero**: the one entry it used to carry
 was `GraphicsDevice::Viewport`, and `docs/graphics-device-viewport-evidence.md` records why that was
 never a Ruby limitation -- `CNA_Viewport` is MEMORY class, and the setter works once the manifest
 expands it the way the System V classification says it travels.
@@ -353,12 +351,22 @@ rule the `GraphicsDeviceManager` producer audit established:
 
 ## Recommended next frontier
 
-**The type frontier is at rest and the member frontier is not.** `docs/generated/dependency-frontier.md`
-carries the dependency-complete candidates and the scoreboard counts them; each has been audited and
-each measurement stands. What is actually available is the members the two partial graphics types
-still owe, and Foundation 89's audit — `docs/graphics-runtime-member-audit.md` — measured every one
-of them family by family against CNA 0.21.0's real exports rather than against the blanket "graphics
-runtime" word this handoff used to carry.
+**Both frontiers are at rest.** `docs/generated/dependency-frontier.md` carries the
+dependency-complete candidates and the scoreboard counts them; each has been audited and each
+measurement stands. The member frontier is at rest too, which it was not before Foundation 104: the
+eight members the two partial types still owe are `BLOCKED_UPSTREAM_CNA` to the last one, every one
+of them tracing to the adapter defect `docs/graphics-adapter-ordering-upstream-defect.md` measured,
+and the sixteen missing types are three on that same defect and thirteen `Design` converters that
+are `BCL_PROJECTION_SCOPE`. `docs/remaining-surface-audit.md` classifies every one of them with its
+evidence. **There is no locally executable work left in the selected surface.**
+
+What would open more is upstream, not local: an adapter list CNA builds after the video subsystem
+exists, or a decision to admit `System.dll` as a second pinned BCL authority and project .NET's
+type-descriptor system for thirteen design-time converters nothing here consumes.
+Foundation 89's audit — `docs/graphics-runtime-member-audit.md` — is what measured the graphics half
+family by family against CNA 0.21.0's real exports rather than against the blanket "graphics
+runtime" word this handoff used to carry, and it is still the model for how the next one should
+start.
 
 **The reusable finding is the one that keeps recurring.** All four graphics state objects reported
 `NATIVE_RUNTIME`, and in all four the reachability was `Apply` — one `assembly`-visible member that

@@ -354,11 +354,16 @@ class ContentManagerTest < Minitest::Test
   # ------------------------------------------------------------------- and exactly what it does not
 
   def test_it_adds_no_content_reader_pipeline_or_second_asset_type
-    # `ResourceContentManager` was here until its own milestone built it, which is what this list
-    # is for: it names what *this* milestone did not add.
-    %i[ContentReader ContentTypeReader ContentTypeReaderManager].each do |absent|
-      refute C.const_defined?(absent, false), absent.to_s
+    # `ResourceContentManager` was here until its own milestone built it, and the three reader
+    # types until Foundation 104, which is what this list is for: it names what *this* milestone
+    # did not add. What it really claims is that this milestone registered exactly one
+    # materializer, and the reader family did not change that -- it added a **fall-through** for a
+    # type no materializer answers for, not another entry in the registry.
+    %i[ContentReader ContentTypeReader ContentTypeReaderManager].each do |built|
+      assert C.const_defined?(built, false), built.to_s
     end
+    assert_equal [F::Graphics::Texture2D, F::Graphics::SpriteFont, F::Graphics::Model].sort_by(&:name),
+                 CM.supported_types.sort_by(&:name)
     # The audio cluster exists, and this milestone did not build it: no `Load<SoundEffect>` reader
     # is registered, which is what the supported-type registry states.
     refute_includes CM.supported_types, F::Audio::SoundEffect

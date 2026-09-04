@@ -1258,6 +1258,13 @@ module CNA
         signature("cna_song_get_play_count", T[:result], [handle("CNA_SongHandle"), pointer("int32_t")], ownership: "borrows the handle; caller output"),
         signature("cna_song_get_rating", T[:result], [handle("CNA_SongHandle"), pointer("int32_t")], ownership: "borrows the handle; caller output"),
         signature("cna_song_get_track_number", T[:result], [handle("CNA_SongHandle"), pointer("int32_t")], ownership: "borrows the handle; caller output"),
+        # The three navigations Foundation 103 recorded as absent and Foundation 104 found. Each
+        # answers a **borrowed** handle into the library the song came from, plus an availability
+        # flag: a song a caller built from a URI has no library context and reports false, which
+        # the header calls an ordinary answer rather than a failure.
+        signature("cna_song_get_album", T[:result], [handle("CNA_SongHandle"), pointer("CNA_AlbumHandle"), pointer("CNA_Bool")], ownership: "borrows the handle; caller output"),
+        signature("cna_song_get_artist", T[:result], [handle("CNA_SongHandle"), pointer("CNA_ArtistHandle"), pointer("CNA_Bool")], ownership: "borrows the handle; caller output"),
+        signature("cna_song_get_genre", T[:result], [handle("CNA_SongHandle"), pointer("CNA_GenreHandle"), pointer("CNA_Bool")], ownership: "borrows the handle; caller output"),
         signature("cna_song_get_is_disposed", T[:result], [handle("CNA_SongHandle"), pointer("CNA_Bool")], ownership: "borrows the handle; caller output"),
         signature("cna_song_dispose", T[:result], [handle("CNA_SongHandle")], ownership: "borrows the handle; performs XNA's Dispose"),
         signature("cna_song_destroy", T[:result], [handle("CNA_SongHandle")], ownership: "releases one owned handle"),

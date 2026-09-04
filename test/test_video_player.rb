@@ -62,10 +62,10 @@ class VideoPlayerTest < Minitest::Test
                     Microsoft.Xna.Framework.Graphics.GraphicsAdapter], candidates
     refute_includes candidates, NAME
     assert_empty FRONTIER.fetch("consumableCandidates")
-    # Every Media type this project ever selected is complete now. The MediaPlayer/MediaLibrary
-    # half, unselected and missing whole when this milestone ran, was selected and built at
-    # Foundation 103; the one type still short is `Song`, on the three members -- `Album`,
-    # `Artist`, `Genre` -- CNA exports no route for.
+    # Every Media type this project ever selected is complete now, and so is every one it did not:
+    # the MediaPlayer/MediaLibrary half, unselected and missing whole when this milestone ran, was
+    # selected and built at Foundation 103, and `Song` -- recorded partial there on three routes
+    # said not to exist -- completed at Foundation 104 when they turned out to.
     assert_equal %w[Microsoft.Xna.Framework.Media.Album
                     Microsoft.Xna.Framework.Media.AlbumCollection
                     Microsoft.Xna.Framework.Media.Artist
@@ -84,14 +84,14 @@ class VideoPlayerTest < Minitest::Test
                     Microsoft.Xna.Framework.Media.PictureCollection
                     Microsoft.Xna.Framework.Media.Playlist
                     Microsoft.Xna.Framework.Media.PlaylistCollection
+                    Microsoft.Xna.Framework.Media.Song
                     Microsoft.Xna.Framework.Media.SongCollection
                     Microsoft.Xna.Framework.Media.Video
                     Microsoft.Xna.Framework.Media.VideoPlayer
                     Microsoft.Xna.Framework.Media.VideoSoundtrackType
                     Microsoft.Xna.Framework.Media.VisualizationData],
                  STRICT.fetch("completeTypeNames").grep(/\AMicrosoft\.Xna\.Framework\.Media\./).sort
-    assert_equal ["Microsoft.Xna.Framework.Media.Song"],
-                 STRICT.fetch("partialTypes").keys.grep(/\AMicrosoft\.Xna\.Framework\.Media\./)
+    assert_empty STRICT.fetch("partialTypes").keys.grep(/\AMicrosoft\.Xna\.Framework\.Media\./)
   end
 
   def test_the_contract_is_fifteen_members_over_idisposable

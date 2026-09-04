@@ -63,7 +63,9 @@ FAMILIES = {
   "System.IAsyncResult" =>
     "the return of StorageDevice.BeginShowSelector and BeginOpenContainer and the argument of EndShowSelector and EndOpenContainer -- four XNA members",
   "System.Threading.WaitHandle" =>
-    "the declared type of IAsyncResult.AsyncWaitHandle, and the only identity a consumer holding a result this binding produces can name in order to wait; demanded transitively through IAsyncResult rather than directly by an XNA signature"
+    "the declared type of IAsyncResult.AsyncWaitHandle, and the only identity a consumer holding a result this binding produces can name in order to wait; demanded transitively through IAsyncResult rather than directly by an XNA signature",
+  "System.IO.BinaryReader" =>
+    "the CLR base of Content.ContentReader, whose ReadSingle and ReadDouble override it and whose ReadVector2/3/4, ReadMatrix, ReadQuaternion and ReadColor are each a sequence of calls back into it"
 }.freeze
 
 # Support enums the collection families throw through. Their literal names are what make a derived

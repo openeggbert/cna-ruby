@@ -63,6 +63,10 @@ class BclProjectionTest < Minitest::Test
                   # transitively: no XNA signature names SeekOrigin, System.IO.Stream::Seek does.
                   "System.Byte[]" => "String",
                   "System.IO.Stream" => "CNA::Runtime::Stream",
+                  # The ContentReader family's one register decision: the CLR base of
+                  # Content.ContentReader, named by the reference contract exactly once and
+                  # exactly there.
+                  "System.IO.BinaryReader" => "CNA::Runtime::BinaryReader",
                   "System.IO.SeekOrigin" => "CNA::Runtime::Stream::SeekOrigin",
                   # The Storage family, and the second and third transitive demands: no XNA
                   # signature names WaitHandle -- IAsyncResult.AsyncWaitHandle does -- while the
@@ -87,6 +91,7 @@ class BclProjectionTest < Minitest::Test
                   "System.Collections.ObjectModel.Collection`1",
                   "System.Collections.ObjectModel.ReadOnlyCollection`1", "System.EventArgs",
                   "System.Exception", "System.IAsyncResult", "System.IDisposable",
+                  "System.IO.BinaryReader",
                   "System.IO.FileAccess", "System.IO.FileMode", "System.IO.FileShare",
                   "System.IO.SeekOrigin", "System.IO.Stream",
                   "System.IServiceProvider", "System.Nullable`1",
@@ -155,7 +160,7 @@ class BclProjectionTest < Minitest::Test
     assert_equal({"types" => B::TYPES, "exceptionBases" => B::EXCEPTION_BASES,
                   "thrownExceptions" => B::THROWN_EXCEPTIONS},
                  STRICT.fetch("bclProjection"))
-    assert_equal 8, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
+    assert_equal ReviewedScoreboard::BCL_THROWN_EXCEPTIONS, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
     assert_equal 0, STRICT.fetch("LANGUAGE_MAPPING_MISMATCH")
     assert_equal 0, STRICT.fetch("BASE_MAPPING_MISMATCH")
   end

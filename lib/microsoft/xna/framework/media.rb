@@ -470,6 +470,20 @@ module Microsoft
           def Rating = media_int32("cna_song_get_rating")
           def TrackNumber = media_int32("cna_song_get_track_number")
 
+          # The three navigations that make the graph walkable from the song outwards. Each is an
+          # `ldfld` in XNA over a field the library filled, so each may be null there; CNA answers
+          # the same shape with an availability flag, and reports false for a song built from a URI
+          # because such a song has no library context at all.
+          #
+          # Foundation 103 recorded these as `BLOCKED_UPSTREAM_CNA` on the claim that no route
+          # existed. **That was wrong**, and the standing rule caught it: a blocker is re-measured
+          # before it is trusted, and `nm -D` on the qualified artifact lists
+          # `cna_song_get_album`, `cna_song_get_artist` and `cna_song_get_genre` beside the routes
+          # this type already used. Both admitted header roots declare all three.
+          def Album = optional_library_entity("cna_song_get_album") { |h| Album.__send__(:from_native, h) }
+          def Artist = optional_library_entity("cna_song_get_artist") { |h| Artist.__send__(:from_native, h) }
+          def Genre = optional_library_entity("cna_song_get_genre") { |h| Genre.__send__(:from_native, h) }
+
           # `Equals(object)` is `Equals(obj as Song)`, and `Equals(Song)` compares the handles.
           # `op_Equality` adds the null pair, which Ruby spells with `nil`.
           def Equals(other)
@@ -489,6 +503,16 @@ module Microsoft
             verify_not_disposed!
             CNA::Runtime::MediaSupport.int32("cna_song_get_hash_code", @handle)
           end
+
+          private
+
+          def optional_library_entity(symbol)
+            verify_not_disposed!
+            handle = CNA::Runtime::MediaSupport.optional_handle(symbol, @handle)
+            handle.nil? ? nil : yield(handle)
+          end
+
+          public
 
           def hash = self.GetHashCode
 

@@ -53949,6 +53949,45 @@
         },
         {
           "kind": "property",
+          "name": "Artist",
+          "type": "Microsoft.Xna.Framework.Media.Artist",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Album",
+          "type": "Microsoft.Xna.Framework.Media.Album",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Genre",
+          "type": "Microsoft.Xna.Framework.Media.Genre",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
           "name": "Duration",
           "type": "System.TimeSpan",
           "static": false,
@@ -56915,6 +56954,706 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Media::MediaLibrary"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentTypeReader",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "protected",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "targetType",
+              "type": "System.Type",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Initialize",
+          "static": false,
+          "access": "protected-internal",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "manager",
+              "type": "Microsoft.Xna.Framework.Content.ContentTypeReaderManager",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Read",
+          "static": false,
+          "access": "protected-internal",
+          "returnType": "System.Object",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "input",
+              "type": "Microsoft.Xna.Framework.Content.ContentReader",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "existingInstance",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "TargetType",
+          "type": "System.Type",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "TypeVersion",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "CanDeserializeIntoExistingObject",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Content::ContentTypeReader"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentTypeReader`1",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "Microsoft.Xna.Framework.Content.ContentTypeReader",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+        {
+          "name": "T",
+          "position": 0,
+          "specialConstraints": [
+
+          ],
+          "typeConstraints": [
+
+          ]
+        }
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "protected",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Read",
+          "static": false,
+          "access": "protected-internal",
+          "returnType": "System.Object",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "input",
+              "type": "Microsoft.Xna.Framework.Content.ContentReader",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "existingInstance",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Read",
+          "static": false,
+          "access": "protected-internal",
+          "returnType": "!0",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "input",
+              "type": "Microsoft.Xna.Framework.Content.ContentReader",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "existingInstance",
+              "type": "!0",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Content::ContentTypeReaderOfT"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentTypeReaderManager",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.Object",
+      "interfaces": [
+
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "GetTypeReader",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Content.ContentTypeReader",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "targetType",
+              "type": "System.Type",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Content::ContentTypeReaderManager"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentReader",
+      "kind": "class",
+      "flags": false,
+      "sealed": true,
+      "underlyingType": null,
+      "baseType": "System.IO.BinaryReader",
+      "interfaces": [
+        "System.IDisposable"
+      ],
+      "directInterfaces": [
+
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "method",
+          "name": "ReadObject",
+          "static": false,
+          "access": "public",
+          "returnType": "!!0",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadObject",
+          "static": false,
+          "access": "public",
+          "returnType": "!!0",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "existingInstance",
+              "type": "!!0",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadObject",
+          "static": false,
+          "access": "public",
+          "returnType": "!!0",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "typeReader",
+              "type": "Microsoft.Xna.Framework.Content.ContentTypeReader",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadObject",
+          "static": false,
+          "access": "public",
+          "returnType": "!!0",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "typeReader",
+              "type": "Microsoft.Xna.Framework.Content.ContentTypeReader",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "existingInstance",
+              "type": "!!0",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadRawObject",
+          "static": false,
+          "access": "public",
+          "returnType": "!!0",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadRawObject",
+          "static": false,
+          "access": "public",
+          "returnType": "!!0",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "existingInstance",
+              "type": "!!0",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadRawObject",
+          "static": false,
+          "access": "public",
+          "returnType": "!!0",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "typeReader",
+              "type": "Microsoft.Xna.Framework.Content.ContentTypeReader",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadRawObject",
+          "static": false,
+          "access": "public",
+          "returnType": "!!0",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "typeReader",
+              "type": "Microsoft.Xna.Framework.Content.ContentTypeReader",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "existingInstance",
+              "type": "!!0",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadSharedResource",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "fixup",
+              "type": "System.Action`1[!!0]",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadExternalReference",
+          "static": false,
+          "access": "public",
+          "returnType": "!!0",
+          "genericParameters": [
+            {
+              "name": "T",
+              "position": 0,
+              "specialConstraints": [
+
+              ],
+              "typeConstraints": [
+
+              ]
+            }
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadVector2",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector2",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadVector3",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector3",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadVector4",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Vector4",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadMatrix",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Matrix",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadQuaternion",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Quaternion",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadColor",
+          "static": false,
+          "access": "public",
+          "returnType": "Microsoft.Xna.Framework.Color",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadSingle",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Single",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadDouble",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Double",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "ContentManager",
+          "type": "Microsoft.Xna.Framework.Content.ContentManager",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "AssetName",
+          "type": "System.String",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::Content::ContentReader"
     }
   ]
 }

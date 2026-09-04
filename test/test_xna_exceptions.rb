@@ -177,10 +177,11 @@ class XnaExceptionsTest < Minitest::Test
     # **it** built neither, and its own exception is still raised by nothing here.
     assert_equal %i[StorageContainer StorageDevice StorageDeviceNotConnectedException],
                  F::Storage.constants(false).sort
-    assert_equal %i[ContentLoadException ContentManager ContentSerializerAttribute
+    assert_equal %i[ContentLoadException ContentManager ContentReader ContentSerializerAttribute
                     ContentSerializerCollectionItemNameAttribute
                     ContentSerializerIgnoreAttribute ContentSerializerRuntimeTypeAttribute
-                    ContentSerializerTypeVersionAttribute
+                    ContentSerializerTypeVersionAttribute ContentTypeReader
+                    ContentTypeReaderManager ContentTypeReaderOfT
                     ResourceContentManager], F::Content.constants(false).sort
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length

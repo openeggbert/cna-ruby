@@ -1,14 +1,13 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 237,
-  "completeTypes": 234,
+  "targetTypes": 241,
+  "completeTypes": 239,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
-    "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
-    "Microsoft.Xna.Framework.Media.Song"
+    "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
   ],
-  "missingTypes": 20,
+  "missingTypes": 16,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -44,6 +43,7 @@
     "System.Collections.ObjectModel.Collection`1",
     "System.Collections.ObjectModel.ReadOnlyCollection`1",
     "System.DateTime",
+    "System.Double",
     "System.Enum",
     "System.EventArgs",
     "System.EventHandler`1",
@@ -53,6 +53,7 @@
     "System.IComparable`1",
     "System.IDisposable",
     "System.IEquatable`1",
+    "System.IO.BinaryReader",
     "System.IO.FileAccess",
     "System.IO.FileMode",
     "System.IO.FileShare",
@@ -81,6 +82,7 @@
     "System.UInt16",
     "System.UInt32",
     "System.UInt64",
+    "System.Uri",
     "System.ValueType",
     "System.Void"
   ],
@@ -89,6 +91,7 @@
       "System.EventArgs": "CNA::Runtime::EventArgs",
       "System.Byte[]": "String",
       "System.IO.Stream": "CNA::Runtime::Stream",
+      "System.IO.BinaryReader": "CNA::Runtime::BinaryReader",
       "System.IO.SeekOrigin": "CNA::Runtime::Stream::SeekOrigin",
       "System.IO.FileMode": "CNA::Runtime::Stream::FileMode",
       "System.IO.FileAccess": "CNA::Runtime::Stream::FileAccess",

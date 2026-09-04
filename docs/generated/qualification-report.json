@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "generatedBy": "tools/run_qualification.rb",
   "historicalRecord": "docs/qualification-foundations-34-39.json",
-  "milestone": "Foundation 103",
+  "milestone": "Foundation 104",
   "date": "2026-09-04",
   "toolchain": {
     "ruby": "ruby 3.3.8 (2025-04-09 revision b200bad6cd) [x86_64-linux-gnu]",
@@ -15,7 +15,7 @@
   },
   "git": {
     "branch": "develop",
-    "head": "46a6ed22f6af83ef71bf818342d005828d4391b1",
+    "head": "48557c09401074c6fa6ee58f3fe2238ccc79fe3c",
     "worktreeClean": false
   },
   "artifacts": [
@@ -25,11 +25,11 @@
       "librarySha256": "c32bfbd307d695664f906ccf2834ec3f9ebc240fa388d544ac21ee3ebaeb731b",
       "opensADisplay": false,
       "suite": {
-        "runs": 1825,
-        "assertions": 54221,
+        "runs": 1858,
+        "assertions": 54493,
         "failures": 0,
         "errors": 0,
-        "skips": 41,
+        "skips": 42,
         "xDisplayAcquisitionFlakes": 0,
         "unexplained": [
 
@@ -42,12 +42,12 @@
       "librarySha256": "f7da256097338aacd77cd72eb778e8ab5d80525dd16fddac7cdd9a1885343d5c",
       "opensADisplay": true,
       "suite": {
-        "runs": 1825,
-        "assertions": 54244,
+        "runs": 1858,
+        "assertions": 54509,
         "failures": 0,
-        "errors": 0,
-        "skips": 34,
-        "xDisplayAcquisitionFlakes": 0,
+        "errors": 4,
+        "skips": 35,
+        "xDisplayAcquisitionFlakes": 4,
         "unexplained": [
 
         ]
@@ -59,12 +59,12 @@
       "librarySha256": "ab055b5e9c10b57d9755445951b118406bc065ca9eaa3fe4c0851a2352bb3e6e",
       "opensADisplay": true,
       "suite": {
-        "runs": 1825,
-        "assertions": 54320,
-        "failures": 0,
-        "errors": 1,
-        "skips": 17,
-        "xDisplayAcquisitionFlakes": 1,
+        "runs": 1858,
+        "assertions": 54581,
+        "failures": 1,
+        "errors": 2,
+        "skips": 18,
+        "xDisplayAcquisitionFlakes": 3,
         "unexplained": [
 
         ]
@@ -75,9 +75,9 @@
     "ALLOWLIST_ENTRIES": 0,
     "BASE_MAPPING_MISMATCH": 0,
     "BCL_EXCEPTION_BASES": 2,
-    "BCL_PROJECTED_IDENTITIES": 28,
-    "BCL_THROWN_EXCEPTIONS": 8,
-    "COMPLETE_TYPES": 234,
+    "BCL_PROJECTED_IDENTITIES": 29,
+    "BCL_THROWN_EXCEPTIONS": 9,
+    "COMPLETE_TYPES": 239,
     "ENUM_VALUE_MISMATCH": 0,
     "EVENT_IDENTITIES": 48,
     "EVENT_MAPPING_MISMATCH": 0,
@@ -91,22 +91,22 @@
     "INTERNAL_TYPE_LEAK": 0,
     "LANGUAGE_MAPPING_MISMATCH": 0,
     "METHOD_SIGNATURE_MAPPING_MISMATCH": 0,
-    "MISSING_MEMBER": 11,
-    "MISSING_TYPE": 20,
-    "MISSING_TYPES": 20,
+    "MISSING_MEMBER": 8,
+    "MISSING_TYPE": 16,
+    "MISSING_TYPES": 16,
     "OPERATOR_MAPPING_MISMATCH": 0,
     "OVERLOAD_MAPPING_MISMATCH": 5,
     "PARAMETER_MAPPING_MISMATCH": 0,
-    "PARTIAL_TYPES": 3,
+    "PARTIAL_TYPES": 2,
     "PROPERTY_MAPPING_MISMATCH": 0,
     "PUBLIC_NATIVE_FFI_LEAK": 0,
     "RAW_HANDLE_LEAK": 0,
     "REFERENCE_MEMBERS": 2964,
     "REFERENCE_TYPES": 257,
     "RETURN_MAPPING_MISMATCH": 0,
-    "TARGET_MEMBERS": 2794,
-    "TARGET_TYPES": 237,
-    "TOTAL_DIAGNOSTICS": 36,
+    "TARGET_MEMBERS": 2827,
+    "TARGET_TYPES": 241,
+    "TOTAL_DIAGNOSTICS": 29,
     "TYPE_KIND_MISMATCH": 0,
     "UNEXPECTED_MEMBER": 0,
     "UNEXPECTED_TYPE": 0,
@@ -114,7 +114,7 @@
     "schemaVersion": 1
   },
   "remainingPartialTypes": {
-    "count": 3,
+    "count": 2,
     "outstanding": {
       "Microsoft.Xna.Framework.GraphicsDeviceManager": [
         "Microsoft.Xna.Framework.GraphicsDeviceManager::FindBestDevice (1 overload)",
@@ -127,11 +127,6 @@
         "Microsoft.Xna.Framework.Graphics.GraphicsDevice::.ctor (1 overload)",
         "Microsoft.Xna.Framework.Graphics.GraphicsDevice::DisplayMode (1 overload)",
         "Microsoft.Xna.Framework.Graphics.GraphicsDevice::Adapter (1 overload)"
-      ],
-      "Microsoft.Xna.Framework.Media.Song": [
-        "Microsoft.Xna.Framework.Media.Song::Artist (1 overload)",
-        "Microsoft.Xna.Framework.Media.Song::Album (1 overload)",
-        "Microsoft.Xna.Framework.Media.Song::Genre (1 overload)"
       ]
     }
   },
@@ -148,8 +143,8 @@
       "/home/robertvokac/deps/cna-c-abi-0.7.0/include"
     ],
     "library": "/home/robertvokac/deps/cna-c-abi-0.21.0/libcna_c_api.so",
-    "BOUND_FUNCTIONS": 757,
-    "SIGNATURE_MEASUREMENTS": 2682,
+    "BOUND_FUNCTIONS": 760,
+    "SIGNATURE_MEASUREMENTS": 2694,
     "C_LAYOUT_MEASUREMENTS": 1156,
     "RUBY_LAYOUT_MEASUREMENTS": 1156,
     "STRUCT_LAYOUTS": 68,
@@ -189,7 +184,7 @@
     "TYPES_NATIVE_REACHABLE": 77
   },
   "capabilities": {
-    "CAPABILITIES": 157,
+    "CAPABILITIES": 158,
     "CAPABILITY_CONTRADICTIONS": 0
   }
 }

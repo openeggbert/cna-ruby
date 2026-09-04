@@ -44,6 +44,10 @@ class NotSupportedErrorTest < Minitest::Test
                   "System.ArgumentException" => "ArgumentError",
                   "System.IndexOutOfRangeException" => "IndexError",
                   "System.NotSupportedException" => "CNA::Runtime::NotSupportedError",
+                  # Added by Foundation 104 with the ContentReader family: `BinaryReader.ReadString`
+                  # is its only measured thrower among the admitted BCL members, and Ruby's EOFError
+                  # is an IOError just as the CLR's EndOfStreamException is an IOException.
+                  "System.IO.IOException" => "IOError",
                   # Added by Foundation 32; see test_touch_panel.rb.
                   "System.InvalidOperationException" => "RuntimeError",
                   # Added by Foundation 46; see test_dictionary.rb.
@@ -52,7 +56,7 @@ class NotSupportedErrorTest < Minitest::Test
                   "System.Runtime.Serialization.SerializationException" =>
                     "CNA::Runtime::SerializationError"},
                  B::THROWN_EXCEPTIONS)
-    assert_equal 8, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
+    assert_equal ReviewedScoreboard::BCL_THROWN_EXCEPTIONS, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
     assert_equal B::THROWN_EXCEPTIONS, STRICT.fetch("bclProjection").fetch("thrownExceptions")
   end
 

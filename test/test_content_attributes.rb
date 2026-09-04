@@ -52,9 +52,13 @@ class ContentAttributesTest < Minitest::Test
                     ContentSerializerIgnoreAttribute ContentSerializerRuntimeTypeAttribute
                     ContentSerializerTypeVersionAttribute],
                  (C.constants(false) - %i[ContentLoadException ContentManager
-                                          ResourceContentManager]).sort
-    %i[ContentReader ContentTypeReader ContentTypeReaderManager].each do |absent|
-      refute C.const_defined?(absent, false), "Content::#{absent}"
+                                          ResourceContentManager ContentReader ContentTypeReader
+                                          ContentTypeReaderOfT ContentTypeReaderManager]).sort
+    # The reader family arrived at Foundation 104 from its own IL and its own BCL decision, and
+    # like the two managers before it, this milestone neither implies nor produces any of it --
+    # which is why the four are named in the subtraction above rather than the list being loosened.
+    %i[ContentReader ContentTypeReader ContentTypeReaderOfT ContentTypeReaderManager].each do |built|
+      assert C.const_defined?(built, false), "Content::#{built}"
     end
   end
 
@@ -177,10 +181,10 @@ class ContentAttributesTest < Minitest::Test
   end
 
   def test_the_cluster_adds_no_content_pipeline
-    # `TitleContainer` and `SpriteFont` exist now; what this milestone claimed, and still claims,
-    # is that **it** built no pipeline. The native census below is what measures that, and it is the
-    # assertion that has survived every later milestone unchanged.
-    refute F::Content.const_defined?(:ContentReader, false)
+    # `TitleContainer` and `SpriteFont` exist now, and `ContentReader` since Foundation 104; what
+    # this milestone claimed, and still claims, is that **it** built no pipeline. The native census
+    # below is what measures that, and it is the assertion that has survived every later milestone
+    # unchanged -- including the reader family, which added no native route at all.
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:constants), CNA::Native::Manifest::CONSTANTS.length
   end

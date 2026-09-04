@@ -66,8 +66,10 @@ module Microsoft
         # these is `IDisposable` in XNA and every one of them owns a native handle here, so
         # `Dispose`, `Finalize` and `IsDisposed` are the contract's rather than this binding's.
         #
-        # `Song` is the one partial type: `Album`, `Artist` and `Genre` are the only three members
-        # of the whole namespace CNA exports no route for, so they are declared nowhere.
+        # `Song` was recorded partial at Foundation 103 on the claim that CNA exports no route for
+        # `Album`, `Artist` and `Genre`. Foundation 104 re-measured that claim against the shipped
+        # artifact and it was false: all three routes exist, in both admitted header roots, and are
+        # bound and declared below.
         class Song
           def self.FromUri: (String name, String uri) -> Song
 
@@ -81,6 +83,11 @@ module Microsoft
           def PlayCount: () -> Integer
           def TrackNumber: () -> Integer
           def IsProtected: () -> bool
+          # Each answers a borrowed library entity, or `nil` for a song with no library context --
+          # which is every song built with `FromUri`.
+          def Album: () -> Album?
+          def Artist: () -> Artist?
+          def Genre: () -> Genre?
 
           def Equals: (untyped other) -> bool
           def ==: (untyped other) -> bool

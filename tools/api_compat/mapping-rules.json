@@ -70,13 +70,14 @@
   "expectedTypeFormula": "reference public types",
   "expectedMemberFormula": "reference public members minus enum value__ metadata storage",
   "bclProjection": {
-    "register": "CNA::Runtime::BclProjection; measured, not aspirational \u2014 the API verifier resolves every entry and the dependency frontier consumes the same register",
+    "register": "CNA::Runtime::BclProjection; measured, not aspirational — the API verifier resolves every entry and the dependency frontier consumes the same register",
     "namespace": "a projected BCL identity lives in the CNA runtime; no fabricated Ruby ::System namespace is created",
     "scope": "only a CLR identity the selected XNA surface actually names, and whose Ruby projection can be decided without guessing, is admitted",
     "types": {
       "System.EventArgs": "CNA::Runtime::EventArgs",
       "System.Byte[]": "String",
       "System.IO.Stream": "CNA::Runtime::Stream",
+      "System.IO.BinaryReader": "CNA::Runtime::BinaryReader",
       "System.IO.SeekOrigin": "CNA::Runtime::Stream::SeekOrigin",
       "System.IO.FileMode": "CNA::Runtime::Stream::FileMode",
       "System.IO.FileAccess": "CNA::Runtime::Stream::FileAccess",
@@ -118,6 +119,7 @@
       "System.ArgumentException": "ArgumentError",
       "System.IndexOutOfRangeException": "IndexError",
       "System.NotSupportedException": "CNA::Runtime::NotSupportedError, a dedicated language-support class that descends from StandardError. Ruby's NotImplementedError is deliberately refused: it descends from ScriptError, not StandardError, so a bare rescue -- the analogue of a CLR catch (Exception) -- would not catch it, and a routine recoverable CLR failure would escape ordinary Ruby error handling. RuntimeError and ArgumentError are catchable but each say something the CLR exception does not and neither carries a distinct identity a caller can rescue by name. The admitted mscorlib settles the hierarchy (SystemException under System.Exception, which this register already roots at StandardError) and the three public constructors; the parameterless form's CLR message is the localized framework resource Arg_NotSupportedException, which is not reproduced, so a NotSupportedError raised without a message carries Ruby's own default",
+      "System.IO.IOException": "IOError, Ruby's own \"the stream could not answer\" identity. BinaryReader.ReadString and ReadDecimal are its only measured throwers in the admitted families, and the EndOfStreamException the CLR raises for a truncated read is one of its subclasses just as Ruby's EOFError is one of IOError's, so a bare rescue of either catches both the way a CLR catch (IOException) would",
       "System.InvalidOperationException": "RuntimeError, Ruby's generic recoverable failure and the class raise \"message\" produces, paired with the CLR's generic wrong-state failure. The binding was already pairing them before this register existed: CurveKeyCollection raises RuntimeError for the fail-fast enumeration the CLR signals with InvalidOperationException, and ReadOnlyCollection follows it. FrozenError would say something about frozen objects the CLR does not, and StandardError itself would lose the identity",
       "System.Collections.Generic.KeyNotFoundException": "KeyError, Ruby's own \"the key was not found in this keyed collection\" identity and what Hash#fetch raises. Dictionary`2::get_Item constructs it through ThrowHelper::ThrowKeyNotFoundException when FindEntry answers a negative index; KeyError descends from IndexError and so from StandardError, and reusing it keeps the distinction the CLR draws between a missing index and a missing key, which System.IndexOutOfRangeException already occupies in this table",
       "System.Runtime.Serialization.SerializationException": "CNA::Runtime::SerializationError, a dedicated StandardError subclass for the same reason NotSupportedError is one. SerializationInfo really throws it twice -- Serialization_SameNameTwice when AddValue is given a name already present, and Serialization_NotFound when GetElement cannot find one -- and no existing Ruby class says what it says: RuntimeError is already spoken for by InvalidOperationException and would lose the identity, and KeyError would claim a keyed collection this is not",

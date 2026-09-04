@@ -115,6 +115,12 @@ module CNA
         # produced stream. Full derivation in docs/stream-projection-design.md.
         "System.Byte[]" => "String",
         "System.IO.Stream" => "CNA::Runtime::Stream",
+        # The CLR base of `Content.ContentReader`, named by the reference contract exactly once and
+        # exactly there. Twenty-four of its twenty-six public identities project; `ReadDecimal` and
+        # the `Encoding` constructor overload do not, because `System.Decimal` and
+        # `System.Text.Encoding` are named by no XNA signature and the BCL inventory refuses a
+        # family with no XNA consumer. `CNA::Runtime::BinaryReader` carries the derivation.
+        "System.IO.BinaryReader" => "CNA::Runtime::BinaryReader",
         "System.IO.SeekOrigin" => "CNA::Runtime::Stream::SeekOrigin",
         # The three enums `StorageContainer.OpenFile`'s overloads name. Transitively demanded the
         # way `SeekOrigin` was -- no XNA type of this binding's own declares one -- and every value
@@ -280,6 +286,11 @@ module CNA
         "System.ArgumentException" => "ArgumentError",
         "System.IndexOutOfRangeException" => "IndexError",
         "System.NotSupportedException" => "CNA::Runtime::NotSupportedError",
+        # `BinaryReader.ReadString` and `ReadDecimal` are the only measured throwers of it, and
+        # Ruby's IOError is the same idea: a stream that could not answer. EOFError, which
+        # `read_exactly` raises for the CLR's EndOfStreamException, is one of its subclasses, so a
+        # bare rescue of either catches both the way a CLR `catch (IOException)` would.
+        "System.IO.IOException" => "IOError",
         # RuntimeError is Ruby's generic recoverable failure, the class `raise "message"` produces,
         # and InvalidOperationException is the CLR's generic wrong-state failure. This binding was
         # already pairing them before the register existed -- CurveKeyCollection raises RuntimeError

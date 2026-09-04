@@ -135,7 +135,9 @@ class DocumentScoreboardTest < Minitest::Test
   # one of them to still occur, so an entry cannot quietly rot into a licence for a stale count.
   LITERAL_NUMERALS = {
     "6" => "Native frontier 6, a milestone's name",
-    "44100" => "the mixer's sample rate in Hz"
+    "44100" => "the mixer's sample rate in Hz",
+    "103" => "Foundation 103, a milestone's name -- the one that recorded Song's blocker",
+    "104" => "Foundation 104, a milestone's name -- the one that measured it false"
   }.freeze
 
   # A sentinel the sweep must still be able to see. Stripping code spans is itself a scanner, and

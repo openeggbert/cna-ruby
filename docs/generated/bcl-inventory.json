@@ -88,10 +88,10 @@
     "ThrowWrongKeyTypeArgumentException": "System.ArgumentException",
     "ThrowWrongValueTypeArgumentException": "System.ArgumentException"
   },
-  "BCL_FAMILIES": 10,
-  "BCL_TYPES": 25,
-  "BCL_MEMBERS": 355,
-  "BCL_EXCEPTION_TYPES": 10,
+  "BCL_FAMILIES": 11,
+  "BCL_TYPES": 27,
+  "BCL_MEMBERS": 388,
+  "BCL_EXCEPTION_TYPES": 11,
   "families": [
     {
       "family": "System.Collections.ObjectModel.ReadOnlyCollection`1",
@@ -173,7 +173,9 @@
       ],
       "xnaConsumerCount": 14,
       "bclConsumers": [
-
+        "System.IO.BinaryReader::.ctor",
+        "System.IO.BinaryReader::BaseStream",
+        "System.IO.BinaryReader::get_BaseStream"
       ],
       "demand": "direct",
       "types": [
@@ -276,6 +278,21 @@
       "demand": "transitive",
       "types": [
         "System.Threading.WaitHandle"
+      ]
+    },
+    {
+      "family": "System.IO.BinaryReader",
+      "reason": "the CLR base of Content.ContentReader, whose ReadSingle and ReadDouble override it and whose ReadVector2/3/4, ReadMatrix, ReadQuaternion and ReadColor are each a sequence of calls back into it",
+      "xnaConsumers": [
+        "Microsoft.Xna.Framework.Content.ContentReader (base)"
+      ],
+      "xnaConsumerCount": 1,
+      "bclConsumers": [
+
+      ],
+      "demand": "direct",
+      "types": [
+        "System.IO.BinaryReader"
       ]
     }
   ],
@@ -4859,6 +4876,476 @@
         }
       ]
     },
+    "System.IO.BinaryReader": {
+      "kind": "class",
+      "baseType": "System.Object",
+      "interfaceDeclarations": [
+        "System.IDisposable"
+      ],
+      "interfaces": [
+        "System.IDisposable"
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.IO.Stream",
+              "name": "input"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.IO.Stream",
+              "name": "input"
+            },
+            {
+              "type": "class System.Text.Encoding",
+              "name": "encoding"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "newobj"
+              }
+            ],
+            "storesConstructorArgumentToField": true
+          }
+        },
+        {
+          "kind": "method",
+          "name": "get_BaseStream",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "class System.IO.Stream",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Close",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "bool",
+              "name": "disposing"
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "PeekChar",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Read",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadBoolean",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "bool",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadByte",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "uint8",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadSByte",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int8",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadChar",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "char",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadInt16",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int16",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadUInt16",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "uint16",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadInt32",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadUInt32",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "uint32",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadInt64",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int64",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadUInt64",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "uint64",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadSingle",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "float32",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadDouble",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "float64",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "ReadDecimal",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "valuetype System.Decimal",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.IO.IOException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "ReadString",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "string",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.IO.IOException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "Read",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "char[]",
+              "name": "buffer"
+            },
+            {
+              "type": "int32",
+              "name": "index"
+            },
+            {
+              "type": "int32",
+              "name": "count"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "ReadChars",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "char[]",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "count"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "Read",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "int32",
+          "parameters": [
+            {
+              "type": "uint8[]",
+              "name": "buffer"
+            },
+            {
+              "type": "int32",
+              "name": "index"
+            },
+            {
+              "type": "int32",
+              "name": "count"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentNullException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              },
+              {
+                "exception": "System.ArgumentException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "ReadBytes",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "uint8[]",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "count"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "method",
+          "name": "FillBuffer",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "int32",
+              "name": "numBytes"
+            }
+          ],
+          "behaviour": {
+            "throws": [
+              {
+                "exception": "System.ArgumentOutOfRangeException",
+                "via": "newobj"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "property",
+          "name": "BaseStream",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "declaration": "instance class System.IO.Stream BaseStream()",
+          "accessors": [
+            {
+              "accessor": "get",
+              "method": "System.IO.BinaryReader::get_BaseStream"
+            }
+          ]
+        }
+      ]
+    },
     "System.IO.FileAccess": {
       "kind": "enum",
       "baseType": "System.Enum",
@@ -5060,6 +5547,115 @@
           "explicitInterface": false,
           "literal": "int32(0x00000010)",
           "declaration": "public static literal valuetype System.IO.FileShare Inheritable = int32(0x00000010)"
+        }
+      ]
+    },
+    "System.IO.IOException": {
+      "kind": "class",
+      "baseType": "System.SystemException",
+      "interfaceDeclarations": [
+
+      ],
+      "interfaces": [
+
+      ],
+      "genericParameters": 0,
+      "sealed": false,
+      "abstract": false,
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            },
+            {
+              "type": "int32",
+              "name": "hresult"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "public",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "string",
+              "name": "message"
+            },
+            {
+              "type": "class System.Exception",
+              "name": "innerException"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
+        },
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "access": "family",
+          "static": false,
+          "explicitInterface": false,
+          "returnType": "void",
+          "parameters": [
+            {
+              "type": "class System.Runtime.Serialization.SerializationInfo",
+              "name": "info"
+            },
+            {
+              "type": "valuetype System.Runtime.Serialization.StreamingContext",
+              "name": "context"
+            }
+          ],
+          "behaviour": {
+            "storesConstructorArgumentToField": false
+          }
         }
       ]
     },

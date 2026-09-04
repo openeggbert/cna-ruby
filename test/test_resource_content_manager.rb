@@ -115,8 +115,13 @@ class ResourceContentManagerTest < Minitest::Test
     symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
     refute(symbols.any? { |s| s.include?("resource") })
     assert_equal NativeSurfaceCensus::REVIEWED.fetch(:functions), CNA::Native::Manifest::FUNCTIONS.length
-    %i[ContentReader ContentTypeReader ContentTypeReaderManager].each do |absent|
-      refute C.const_defined?(absent, false), absent.to_s
+    # The three reader types left this list when Foundation 104 built them. What **this**
+    # milestone claimed is unchanged and is the sentence above it: this type's IL reaches no
+    # native entry point, and the reader family it once stood beside is pure managed too -- not
+    # one `cna_content_reader_*` route is bound.
+    %i[ContentReader ContentTypeReader ContentTypeReaderManager].each do |built|
+      assert C.const_defined?(built, false), built.to_s
     end
+    refute(symbols.any? { |s| s.start_with?("cna_content_reader_", "cna_content_type_reader_") })
   end
 end

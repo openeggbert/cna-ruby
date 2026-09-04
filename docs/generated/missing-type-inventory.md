@@ -1,9 +1,5 @@
 # Missing type inventory
 
-- `Microsoft.Xna.Framework.Content.ContentReader`
-- `Microsoft.Xna.Framework.Content.ContentTypeReader`
-- `Microsoft.Xna.Framework.Content.ContentTypeReaderManager`
-- `Microsoft.Xna.Framework.Content.ContentTypeReader`1`
 - `Microsoft.Xna.Framework.Design.BoundingBoxConverter`
 - `Microsoft.Xna.Framework.Design.BoundingSphereConverter`
 - `Microsoft.Xna.Framework.Design.ColorConverter`

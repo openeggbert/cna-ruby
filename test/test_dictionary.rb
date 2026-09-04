@@ -54,7 +54,7 @@ class DictionaryTest < Minitest::Test
 
   def test_key_not_found_is_a_measured_thrown_exception
     assert_equal "KeyError", B::THROWN_EXCEPTIONS.fetch("System.Collections.Generic.KeyNotFoundException")
-    assert_equal 8, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
+    assert_equal ReviewedScoreboard::BCL_THROWN_EXCEPTIONS, STRICT.fetch("BCL_THROWN_EXCEPTIONS")
     assert_operator ::KeyError, :<, ::StandardError
     refute_operator ::KeyError, :<, ::ScriptError
     documented = RULES.fetch("bclProjection").fetch("thrownExceptions")

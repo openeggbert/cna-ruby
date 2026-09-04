@@ -1947,10 +1947,12 @@ class ApiVerifierTest < Minitest::Test
   def test_batch_does_not_expand_the_deferred_partial_runtime_types
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))
     partial = strict.fetch("partialTypes")
+    # `Media.Song` was here for one milestone and left the way a partial type should: Foundation
+    # 104 re-measured the blocker Foundation 103 wrote, found the three routes in both admitted
+    # header roots and in the shipped library, and bound them.
     assert_equal %w[
       Microsoft.Xna.Framework.GraphicsDeviceManager
       Microsoft.Xna.Framework.Graphics.GraphicsDevice
-      Microsoft.Xna.Framework.Media.Song
     ].sort, partial.keys.sort
     # 132 until Foundation 37 closed Game::Components and Game::Services, 130 until Foundation
     # 41 closed Game's four events and their three protected raisers -- the three methods among

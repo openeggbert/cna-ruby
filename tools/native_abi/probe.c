@@ -667,6 +667,9 @@ CHECK_FN(cna_song_get_is_rated, CNA_Result, (CNA_SongHandle song, CNA_Bool* out_
 CHECK_FN(cna_song_get_play_count, CNA_Result, (CNA_SongHandle song, int32_t* out_play_count));
 CHECK_FN(cna_song_get_rating, CNA_Result, (CNA_SongHandle song, int32_t* out_rating));
 CHECK_FN(cna_song_get_track_number, CNA_Result, (CNA_SongHandle song, int32_t* out_track_number));
+CHECK_FN(cna_song_get_album, CNA_Result, (CNA_SongHandle song, CNA_AlbumHandle* out_album, CNA_Bool* out_available));
+CHECK_FN(cna_song_get_artist, CNA_Result, (CNA_SongHandle song, CNA_ArtistHandle* out_artist, CNA_Bool* out_available));
+CHECK_FN(cna_song_get_genre, CNA_Result, (CNA_SongHandle song, CNA_GenreHandle* out_genre, CNA_Bool* out_available));
 CHECK_FN(cna_song_get_is_disposed, CNA_Result, (CNA_SongHandle song, CNA_Bool* out_disposed));
 CHECK_FN(cna_song_dispose, CNA_Result, (CNA_SongHandle song));
 CHECK_FN(cna_song_destroy, CNA_Result, (CNA_SongHandle song));
@@ -1446,6 +1449,9 @@ int main(void) {
     SIGNATURE(cna_song_get_play_count, "CNA_Result|CNA_SongHandle,int32_t*");
     SIGNATURE(cna_song_get_rating, "CNA_Result|CNA_SongHandle,int32_t*");
     SIGNATURE(cna_song_get_track_number, "CNA_Result|CNA_SongHandle,int32_t*");
+    SIGNATURE(cna_song_get_album, "CNA_Result|CNA_SongHandle,CNA_AlbumHandle*,CNA_Bool*");
+    SIGNATURE(cna_song_get_artist, "CNA_Result|CNA_SongHandle,CNA_ArtistHandle*,CNA_Bool*");
+    SIGNATURE(cna_song_get_genre, "CNA_Result|CNA_SongHandle,CNA_GenreHandle*,CNA_Bool*");
     SIGNATURE(cna_song_get_is_disposed, "CNA_Result|CNA_SongHandle,CNA_Bool*");
     SIGNATURE(cna_song_dispose, "CNA_Result|CNA_SongHandle");
     SIGNATURE(cna_song_destroy, "CNA_Result|CNA_SongHandle");

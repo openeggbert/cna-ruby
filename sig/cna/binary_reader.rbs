@@ -1,0 +1,32 @@
+# `System.IO.BinaryReader`, measured from the pinned Microsoft .NET Framework 4.0 mscorlib. Two of
+# its twenty-six public identities are deliberately absent and are named here so the absence is a
+# decision rather than a hole: `ReadDecimal`, whose `System.Decimal` no XNA signature names, and
+# the `(Stream, Encoding)` constructor, whose `System.Text.Encoding` no XNA signature names either.
+module CNA
+  module Runtime
+    class BinaryReader
+      def initialize: (CNA::Runtime::Stream input) -> void
+      def BaseStream: () -> CNA::Runtime::Stream
+      def Close: () -> nil
+      def Dispose: () -> nil
+      def ReadBoolean: () -> bool
+      def ReadByte: () -> Integer
+      def ReadSByte: () -> Integer
+      def ReadInt16: () -> Integer
+      def ReadUInt16: () -> Integer
+      def ReadInt32: () -> Integer
+      def ReadUInt32: () -> Integer
+      def ReadInt64: () -> Integer
+      def ReadUInt64: () -> Integer
+      def ReadSingle: () -> Float
+      def ReadDouble: () -> Float
+      def ReadChar: () -> Integer
+      def PeekChar: () -> Integer
+      def ReadChars: (Integer count) -> Array[Integer]
+      def ReadString: () -> String
+      def ReadBytes: (Integer count) -> String
+      # `Read()` answers one code unit or -1; `Read(buffer, index, count)` answers how many it took.
+      def Read: (*untyped) -> Integer
+    end
+  end
+end

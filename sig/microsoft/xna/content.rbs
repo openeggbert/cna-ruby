@@ -55,3 +55,70 @@ module Microsoft
     end
   end
 end
+
+module Microsoft
+  module Xna
+    module Framework
+      module Content
+        # ------------------------------------------------------------------- Foundation 104
+        #
+        # The reader family, and the one BCL register decision behind it: `ContentReader` extends
+        # `System.IO.BinaryReader`, which the XNA 4.0 Windows reference contract names exactly once
+        # and exactly there.
+        #
+        # Every generic method takes its type argument as a leading `Module`, which is
+        # `mapping-rules.json`'s `generics.methodProjection` and the same rule `ContentManager.Load`
+        # follows. `System.Type` projects to `Module` and `System.Action`1` collapses to `#call`,
+        # so a fixup may be a callable or a block.
+        class ContentTypeReader
+          def initialize: (Module? targetType) -> void
+          def TargetType: () -> Module?
+          def TypeVersion: () -> Integer
+          def CanDeserializeIntoExistingObject: () -> bool
+          def Initialize: (ContentTypeReaderManager? manager) -> nil
+          def Read: (ContentReader input, untyped existingInstance) -> untyped
+        end
+
+        # `ContentTypeReader`1<T>`. A Ruby class is not statically generic, so `!T` is class
+        # metadata: `reads` declares it and `clr_element_types` reports it the way every other
+        # closed generic in this binding reports one.
+        class ContentTypeReaderOfT < ContentTypeReader
+          def self.reads: (?Module? type) -> Module?
+          def self.clr_element_types: () -> Array[String]
+
+          def initialize: () -> void
+        end
+
+        # Sealed, with a private constructor and exactly one public member. A consumer only ever
+        # holds one inside `ContentTypeReader#Initialize`.
+        class ContentTypeReaderManager
+          def GetTypeReader: (Module targetType) -> ContentTypeReader
+        end
+
+        # Sealed, private constructor, and eighteen methods over the twenty-four `BinaryReader`
+        # identities it inherits.
+        class ContentReader < CNA::Runtime::BinaryReader
+          attr_reader ContentManager: ContentManager?
+          attr_reader AssetName: String
+
+          def ReadObject: (Module type, ?untyped typeReaderOrExisting, ?untyped existingInstance) -> untyped
+          def ReadRawObject: (Module type, ?untyped typeReaderOrExisting, ?untyped existingInstance) -> untyped
+          def ReadSharedResource: (Module type, ?_Callable? fixup) ?{ (untyped) -> void } -> nil
+          def ReadExternalReference: (Module type) -> untyped
+          def ReadVector2: () -> Microsoft::Xna::Framework::Vector2
+          def ReadVector3: () -> Microsoft::Xna::Framework::Vector3
+          def ReadVector4: () -> Microsoft::Xna::Framework::Vector4
+          def ReadQuaternion: () -> Microsoft::Xna::Framework::Quaternion
+          def ReadMatrix: () -> Microsoft::Xna::Framework::Matrix
+          def ReadColor: () -> Microsoft::Xna::Framework::Color
+          def ReadSingle: () -> Float
+          def ReadDouble: () -> Float
+        end
+      end
+    end
+  end
+end
+
+interface _Callable
+  def call: (*untyped) -> untyped
+end

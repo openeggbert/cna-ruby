@@ -2192,123 +2192,7 @@
     },
     {
       "name": "Microsoft.Xna.Framework.Media.Song",
-      "include": [
-        {
-          "kind": "method",
-          "name": "FromUri",
-          "static": true,
-          "parameters": [
-            "System.String",
-            "System.Uri"
-          ]
-        },
-        {
-          "kind": "method",
-          "name": "Finalize",
-          "static": false,
-          "parameters": []
-        },
-        {
-          "kind": "method",
-          "name": "Dispose",
-          "static": false,
-          "parameters": []
-        },
-        {
-          "kind": "method",
-          "name": "op_Equality",
-          "static": true,
-          "parameters": [
-            "Microsoft.Xna.Framework.Media.Song",
-            "Microsoft.Xna.Framework.Media.Song"
-          ]
-        },
-        {
-          "kind": "method",
-          "name": "op_Inequality",
-          "static": true,
-          "parameters": [
-            "Microsoft.Xna.Framework.Media.Song",
-            "Microsoft.Xna.Framework.Media.Song"
-          ]
-        },
-        {
-          "kind": "method",
-          "name": "Equals",
-          "static": false,
-          "parameters": [
-            "System.Object"
-          ]
-        },
-        {
-          "kind": "method",
-          "name": "Equals",
-          "static": false,
-          "parameters": [
-            "Microsoft.Xna.Framework.Media.Song"
-          ]
-        },
-        {
-          "kind": "method",
-          "name": "ToString",
-          "static": false,
-          "parameters": []
-        },
-        {
-          "kind": "method",
-          "name": "GetHashCode",
-          "static": false,
-          "parameters": []
-        },
-        {
-          "kind": "property",
-          "name": "IsDisposed",
-          "static": false,
-          "parameters": []
-        },
-        {
-          "kind": "property",
-          "name": "Name",
-          "static": false,
-          "parameters": []
-        },
-        {
-          "kind": "property",
-          "name": "Duration",
-          "static": false,
-          "parameters": []
-        },
-        {
-          "kind": "property",
-          "name": "IsRated",
-          "static": false,
-          "parameters": []
-        },
-        {
-          "kind": "property",
-          "name": "Rating",
-          "static": false,
-          "parameters": []
-        },
-        {
-          "kind": "property",
-          "name": "PlayCount",
-          "static": false,
-          "parameters": []
-        },
-        {
-          "kind": "property",
-          "name": "TrackNumber",
-          "static": false,
-          "parameters": []
-        },
-        {
-          "kind": "property",
-          "name": "IsProtected",
-          "static": false,
-          "parameters": []
-        }
-      ]
+      "complete": true
     },
     {
       "name": "Microsoft.Xna.Framework.Media.SongCollection",
@@ -2372,6 +2256,22 @@
     },
     {
       "name": "Microsoft.Xna.Framework.Media.MediaLibrary",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentTypeReader",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentTypeReader`1",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentTypeReaderManager",
+      "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.Content.ContentReader",
       "complete": true
     }
   ]
