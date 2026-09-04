@@ -647,20 +647,20 @@ class DependencyFrontierTest < Minitest::Test
   # depended on either component class -- see the extractor correction below -- and GameComponent
   # itself in Foundation 38, once Game.Components gave it a producer. DrawableGameComponent stays
   # out for a reason the graph measures rather than for anything about events.
-  def test_game_component_family_is_not_dependency_complete
-    {
-      "Microsoft.Xna.Framework.DrawableGameComponent" => %w[
-        Microsoft.Xna.Framework.Graphics.GraphicsDevice
-      ]
-    }.each do |name, unmet|
-      candidate = REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
-      assert_nil candidate, "#{name} must not be dependency-complete"
-      assert_includes STRICT.fetch("missingTypeNames"), name
-
-      type = BY_NAME.fetch(name)
-      assert_includes type.fetch("members").map { |member| member.fetch("kind") }, "event", name
-      unmet.each { |dependency| refute_includes STRICT.fetch("completeTypeNames"), dependency, dependency }
-    end
+  # `DrawableGameComponent` was the entry: not dependency-complete by the type-level rule, because
+  # its `GraphicsDevice` property names the partial `GraphicsDevice`. The member-level refinement
+  # then showed it reaches **no member** of that type at all -- it republishes the service's device
+  # -- and Foundation 101 built it once `GraphicsDeviceManager` was made the producer its own
+  # constructor IL says it is. So it is complete and off every list, and what stays measured is the
+  # two facts that were always true of it.
+  def test_the_game_component_family_left_the_frontier_by_being_built
+    name = "Microsoft.Xna.Framework.DrawableGameComponent"
+    assert_nil REPORT.fetch("dependencyCompleteCandidates").find { |item| item.fetch("name") == name }
+    assert_includes STRICT.fetch("completeTypeNames"), name
+    type = BY_NAME.fetch(name)
+    assert_includes type.fetch("members").map { |member| member.fetch("kind") }, "event", name
+    # The type-level rule's reason is still the truth about the graph: `GraphicsDevice` is partial.
+    refute_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
 
     # Game *was* one of the deferred partial runtime types when this was written, and the point
     # was that a partial Game declaring Components and Services was already enough: what a missing

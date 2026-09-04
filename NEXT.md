@@ -81,6 +81,7 @@ states the **session-start baseline**, which never moves, and lets git answer ev
 | 98 | the four remaining stock effects, closing the family | **4** | 66 |
 | 99 | the qualification report becomes generated, and the last unguarded numbers | **0** | **0** |
 | 100 | the Model family: eight types, four enumerators, three upstream crashes | **12** | 48 |
+| 101 | `DrawableGameComponent`, and the producer claim the manager's own IL settled | **1** | 13 |
 
 ## Measured state
 
@@ -99,21 +100,21 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 | count | what it measures |
 | ---: | --- |
 | 257 | XNA 4.0 Windows reference types |
-| 217 | types this binding projects |
-| 2568 | Ruby member identities |
-| 215 | complete types |
+| 218 | types this binding projects |
+| 2581 | Ruby member identities |
+| 216 | complete types |
 | 2 | partial types |
-| 40 | missing types |
-| 42 | event identities |
-| 20 | types owning an event |
+| 39 | missing types |
+| 44 | event identities |
+| 21 | types owning an event |
 | 22 | projected BCL identities |
 
 **Strict diagnostics**
 
 | count | what it measures |
 | ---: | --- |
-| 53 | strict diagnostics in total |
-| 40 | `MISSING_TYPE` |
+| 52 | strict diagnostics in total |
+| 39 | `MISSING_TYPE` |
 | 8 | `MISSING_MEMBER` |
 | 5 | `OVERLOAD_MAPPING_MISMATCH` |
 | 0 | `PROPERTY_MAPPING_MISMATCH` |
@@ -161,7 +162,7 @@ block below is **generated** by `tools/scoreboard.rb` from the reports, rewritte
 
 | count | what it measures |
 | ---: | --- |
-| 154 | runtime capability rows |
+| 155 | runtime capability rows |
 
 <!-- scoreboard:end -->
 

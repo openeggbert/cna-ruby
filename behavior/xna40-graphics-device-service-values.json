@@ -38,7 +38,8 @@
       "operation": "GraphicsDeviceService.ProducerAbsent",
       "args": [],
       "provenance": "RUBY_MAPPING_QUALIFICATION",
-      "expected": [false, false, null, null, ["INTERFACE_PRODUCER_MISSING"], ["Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"]]
+      "note": "This is a RUBY_MAPPING_QUALIFICATION row -- a measurement of this projection's own state, which a milestone acting on it is expected to move -- not an XNA fact. It measured that nothing provides IGraphicsDeviceService for eleven milestones, and it measures the producer now, in the same six elements. Foundation 101 corrected the finding it recorded: docs/graphics-device-service-producer-audit.md concluded that registering a producer would need a material Game/graphics lifecycle redesign, and re-reading GraphicsDeviceManager's own constructor IL is what settled it -- the registration is two AddService calls into GameServiceContainer, a projected managed dictionary nothing in CNA reads, and this manager has answered every member of the service contract since Foundation 96 measured its four events to be relays of the device's own. What the audit got right is untouched and is still measured by the third element: a bare Game registers nothing, and CNA's own container still has no registration route. The fourth element is the new one -- a Game with a manager answers that manager -- the fifth records that DrawableGameComponent is built rather than blocked, and the sixth that no interface on the frontier is producerless any more. Pre-correction SHA-256 of the aggregate 6b7d764473b0a2c610dc2eda69107dee047dd9031c02280d37285d8775e58b2c, of the per-milestone file b89d89d61919e97529d12e0941d7c3fa1d88683a72e31cab8b8e212a05535bc8.",
+      "expected": [true, true, null, true, "built", []]
     }
   ]
 }

@@ -74,12 +74,15 @@ class VertexStructsTest < Minitest::Test
       assert_includes type.ancestors, G::IVertexType, clr(type)
       assert type.new.is_a?(G::IVertexType), clr(type)
     end
-    # And the rule still refuses the interface it has always refused, so nothing was loosened.
+    # The rule refused `IGraphicsDeviceService` for eleven milestones and refuses nothing now:
+    # `GraphicsDeviceManager` became its producer when its constructor IL was re-read. A rule with
+    # nothing left to catch is the rule having been satisfied, and the four structs above are still
+    # the first types that ever satisfied it.
     producerless = (FRONTIER.fetch("dependencyCompleteCandidates") +
                     FRONTIER.fetch("partialDependencySatisfiedCandidates") +
                     FRONTIER.fetch("ilOnlyBlockedCandidates"))
                    .flat_map { |entry| entry.fetch("producerlessInterfaces") }.uniq
-    assert_equal ["Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"], producerless
+    assert_empty producerless
   end
 
   # XNA implements `IVertexType.VertexDeclaration` **explicitly**: the metadata says

@@ -194,15 +194,21 @@ class GraphicsDeviceManagerEventsTest < Minitest::Test
     game.Dispose
   end
 
-  # The two steps that are already no-ops here, and for a measured reason rather than an omission.
-  def test_the_service_and_window_steps_have_nothing_to_undo
+  # `Dispose(Boolean)`'s IL removes **nothing** from `Game.Services`: it disposes the device, nulls
+  # it, unhooks the window handler and raises `Disposed`. So the two registrations the constructor
+  # made outlive disposal, and a consumer that asks the container afterwards still gets the manager.
+  # This test used to assert the container was empty throughout, which was the producer audit's
+  # finding and is no longer true — the manager registers itself, exactly as its constructor IL
+  # does. What it asserts now is the IL's own answer: the registrations survive.
+  def test_disposal_removes_neither_service_registration
     game = F::Game.new
     manager = F::GraphicsDeviceManager.new(game)
     service = G.const_get(:IGraphicsDeviceService)
-    assert_nil game.Services.GetService(service),
-               "the producer audit's finding: this manager is not in the managed container"
+    assert_same manager, game.Services.GetService(service)
     manager.Dispose
-    assert_nil game.Services.GetService(service)
+    assert_same manager, game.Services.GetService(service),
+                "Dispose(Boolean) has no RemoveService in it"
+    assert_same manager, game.Services.GetService(F::IGraphicsDeviceManager)
     game.Dispose
   end
 

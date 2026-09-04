@@ -94,20 +94,20 @@ class MemberLevelDependenciesTest < Minitest::Test
   # The nine service edges are an IL fact and never move. What Foundation 40 changed is only which
   # blocker they produce: the interface is complete now, so the *type* is no longer missing -- and
   # the type is still not consumable, because nothing provides the service.
+  # The nine edges are what the measurement owns, and they are unchanged by the type being built:
+  # they are read from the pinned IL, not from the projection.
   def test_drawable_game_component_reaches_nine_members_of_the_device_service
     service = edges("Microsoft.Xna.Framework.DrawableGameComponent")
                 .grep(/IGraphicsDeviceService::/)
     assert_equal 9, service.length
     assert_includes service, "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService::get_GraphicsDevice"
     assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
-    assert_includes STRICT.fetch("missingTypeNames"), "Microsoft.Xna.Framework.DrawableGameComponent"
+    # It was on the missing list for eleven milestones and is complete now: the producer the nine
+    # edges need is `GraphicsDeviceManager`, registered by its own constructor IL.
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.DrawableGameComponent"
+    assert_nil candidate("Microsoft.Xna.Framework.DrawableGameComponent")
 
-    entry = candidate("Microsoft.Xna.Framework.DrawableGameComponent")
-    refute_nil entry
-    assert_empty entry.fetch("ilOnlyUnmetDependencies"),
-                 "the interface it reaches is complete, so no il-only *type* is unmet"
-
-    # And the single Game member it reaches really is complete, which is why the type's blocker is
+    # And the single Game member it reaches really is complete, which is why the type's blocker was
     # the producer and nothing else.
     assert_equal ["Microsoft.Xna.Framework.Game::get_Services"],
                  edges("Microsoft.Xna.Framework.DrawableGameComponent").grep(/Framework\.Game::/)
@@ -119,17 +119,22 @@ class MemberLevelDependenciesTest < Minitest::Test
   # ------------------------------------------------- Foundation 40: completing a contract is not
   # ------------------------------------------------- the same as providing one
 
-  # The structural graph now finds every dependency met -- and the type still cannot be used. This
-  # is the exact gap the producer blocker closes, and it must never silently reopen.
-  def test_drawable_game_component_stays_blocked_on_a_producer_not_on_a_type
-    entry = candidate("Microsoft.Xna.Framework.DrawableGameComponent")
-    assert entry.fetch("partialDependencySatisfied"),
-           "structurally every dependency is met, which is precisely why the blocker is needed"
-    assert_equal ["INTERFACE_PRODUCER_MISSING"], entry.fetch("blockers")
-    assert_equal ["Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"],
-                 entry.fetch("producerlessInterfaces")
-    refute_includes REPORT.fetch("consumableCandidates").map { |c| c.fetch("name") },
-                    "Microsoft.Xna.Framework.DrawableGameComponent"
+  # The structural graph found every dependency met while the type still could not be used, and the
+  # `INTERFACE_PRODUCER_MISSING` blocker is what said so. The blocker was **right**, and the way it
+  # was cleared is the only way it can be: a real producer, `GraphicsDeviceManager`, registered by
+  # the two `AddService` calls in its own constructor IL. So what this asserts now is that the rule
+  # is satisfied rather than suppressed -- the type is complete, it is off every candidate list, and
+  # a real object conforms to the interface it reaches.
+  def test_the_producer_blocker_was_cleared_by_a_producer
+    assert_nil candidate("Microsoft.Xna.Framework.DrawableGameComponent")
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.DrawableGameComponent"
+    service = Microsoft::Xna::Framework::Graphics::IGraphicsDeviceService
+    assert_includes Microsoft::Xna::Framework::GraphicsDeviceManager.ancestors, service
+    (REPORT.fetch("dependencyCompleteCandidates") +
+     REPORT.fetch("partialDependencySatisfiedCandidates") +
+     REPORT.fetch("ilOnlyBlockedCandidates")).each do |entry|
+      refute_includes entry.fetch("producerlessInterfaces"), service.name.tr("::", "."), entry.fetch("name")
+    end
   end
 
   # The rule is general, not a special case wearing one type's name: it is asked of every interface,
@@ -140,35 +145,37 @@ class MemberLevelDependenciesTest < Minitest::Test
               REPORT.fetch("ilOnlyBlockedCandidates"))
              .select { |entry| entry.fetch("blockers").include?("INTERFACE_PRODUCER_MISSING") }
              .to_h { |entry| [entry.fetch("name"), entry.fetch("producerlessInterfaces")] }
-    # VertexDeclaration was the second case until it was built; the rule that caught it is
-    # unchanged and still catches the first. It is worth recording what happened to it: the
-    # interface it reached, IVertexType, has since been projected too and **still has no
-    # producer**, because nothing in this binding conforms to it -- which is the next test's
-    # subject and the reason a completed interface is not a provider.
-    assert_equal({
-                   "Microsoft.Xna.Framework.DrawableGameComponent" =>
-                     ["Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"]
-                 }, caught)
+    # VertexDeclaration was the second case until it was built, and DrawableGameComponent the first
+    # until `GraphicsDeviceManager` was made the producer its own constructor IL says it is. The
+    # rule that caught both is unchanged and catches nothing now, which is what a rule looks like
+    # when every case it found has been resolved rather than waived.
+    assert_empty caught
     assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Graphics.IVertexType"
     assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Graphics.VertexDeclaration"
     assert_includes REPORT.fetch("candidatePolicy"), "INTERFACE_PRODUCER_MISSING"
   end
 
   # Conformance is measured through real Ruby ancestry, so a module that merely exists cannot make
-  # the blocker disappear. GraphicsDeviceManager is the sole declared implementer in the pinned
-  # contract, it is partial, and its Ruby class does not include the module.
-  def test_no_projected_type_conforms_to_the_device_service
+  # the blocker disappear. `GraphicsDeviceManager` is the sole declared implementer in the pinned
+  # contract; it used to be partial **and** not include the module, which is what made the blocker
+  # right. It includes it now, and it answers every member for real rather than inheriting the
+  # abstract stub -- which is the difference between conforming and declaring.
+  def test_the_declared_implementer_conforms_for_real
     reference = JSON.parse(ROOT.join("tools", "api_compat", "reference",
                                      "xna40-windows-runtime-contract.json").read)
     service = "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
     declared = reference.fetch("types").select { |type| type.fetch("interfaces").include?(service) }
                         .map { |type| type.fetch("name") }
     assert_equal ["Microsoft.Xna.Framework.GraphicsDeviceManager"], declared
-    assert_includes STRICT.fetch("partialTypes").keys, "Microsoft.Xna.Framework.GraphicsDeviceManager"
 
     module_ = Microsoft::Xna::Framework::Graphics::IGraphicsDeviceService
-    refute_includes Microsoft::Xna::Framework::GraphicsDeviceManager.ancestors, module_,
-                    "conformance must not be claimed while the contract members are abstract stubs"
+    manager = Microsoft::Xna::Framework::GraphicsDeviceManager
+    assert_includes manager.ancestors, module_
+    %i[GraphicsDevice DeviceCreated DeviceReset DeviceResetting DeviceDisposing].each do |name|
+      owner = manager.instance_method(name).owner
+      refute_equal module_, owner, "#{name} must be the manager's own, not the abstract stub"
+    end
+    # And the stub is still a stub for anything that only declares it.
     assert_raises(NotImplementedError) { Class.new { include module_ }.new.GraphicsDevice }
   end
 
@@ -355,14 +362,23 @@ class MemberLevelDependenciesTest < Minitest::Test
     assert_includes STRICT.fetch("partialTypes").keys, "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
 
     # A partial dependency is therefore *satisfiable*: the rule must stay member-level and must
-    # never regress to "any reference to a partial type blocks".
+    # never regress to "any reference to a partial type blocks". The
+    # `partialDependencySatisfiedCandidates` list is **empty** now, because every candidate that was
+    # ever on it has been built -- the stock effects, the Model family and finally
+    # `DrawableGameComponent`. An empty list is the rule having been applied to exhaustion rather
+    # than the rule having stopped, so what is asserted is the property over however many entries
+    # there are, plus the fact that the list emptied by consumption.
     device = "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
-    still_satisfied = REPORT.fetch("partialDependencySatisfiedCandidates").select do |entry|
-      entry.fetch("partialTypeDependencies").key?(device)
-    end
-    refute_empty still_satisfied, "naming a partial type must not by itself block a candidate"
-    still_satisfied.each do |entry|
+    REPORT.fetch("partialDependencySatisfiedCandidates").each do |entry|
+      next unless entry.fetch("partialTypeDependencies").key?(device)
+
       assert_empty entry.fetch("partialTypeDependencies").fetch(device).fetch("reachedButMissing")
+    end
+    %w[Microsoft.Xna.Framework.Graphics.SkinnedEffect
+       Microsoft.Xna.Framework.Graphics.ModelMeshPart
+       Microsoft.Xna.Framework.DrawableGameComponent].each do |consumed|
+      assert_includes STRICT.fetch("completeTypeNames"), consumed,
+                      "the partial list emptied by being consumed, not by being narrowed"
     end
   end
 end

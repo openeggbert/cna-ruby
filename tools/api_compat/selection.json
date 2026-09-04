@@ -2177,6 +2177,10 @@
     {
       "name": "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator",
       "complete": true
+    },
+    {
+      "name": "Microsoft.Xna.Framework.DrawableGameComponent",
+      "complete": true
     }
   ]
 }

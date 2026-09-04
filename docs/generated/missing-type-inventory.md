@@ -17,7 +17,6 @@
 - `Microsoft.Xna.Framework.Design.Vector2Converter`
 - `Microsoft.Xna.Framework.Design.Vector3Converter`
 - `Microsoft.Xna.Framework.Design.Vector4Converter`
-- `Microsoft.Xna.Framework.DrawableGameComponent`
 - `Microsoft.Xna.Framework.Graphics.GraphicsAdapter`
 - `Microsoft.Xna.Framework.GraphicsDeviceInformation`
 - `Microsoft.Xna.Framework.Media.Album`

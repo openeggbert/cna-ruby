@@ -1,13 +1,13 @@
 {
   "schemaVersion": 3,
   "referenceTypes": 257,
-  "targetTypes": 217,
-  "completeTypes": 215,
+  "targetTypes": 218,
+  "completeTypes": 216,
   "partialTypes": [
     "Microsoft.Xna.Framework.GraphicsDeviceManager",
     "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
   ],
-  "missingTypes": 40,
+  "missingTypes": 39,
   "candidatePolicy": "missing type; all XNA public-signature dependencies complete, which is a type-level test the member-level edges recorded in the IL inventory can now refine but deliberately do not relax; consumable only when no BCL_PROJECTION, IL_UNAVAILABLE, NATIVE_RUNTIME, RUNTIME_DATA or INTERFACE_PRODUCER_MISSING blocker applies; a selected partial remainder reverse edge wins the tie; then fewest expected Ruby identities",
   "ilProvenance": {
     "register": "tools/api_compat/reference/XNA_IL_PROVENANCE.md",
@@ -103,79 +103,7 @@
     "NATIVE_RUNTIME": 1
   },
   "partialDependencySatisfiedCandidates": [
-    {
-      "name": "Microsoft.Xna.Framework.DrawableGameComponent",
-      "kind": "class",
-      "expectedRubyIdentities": 13,
-      "dependencies": [
-        "Microsoft.Xna.Framework.Game",
-        "Microsoft.Xna.Framework.GameComponent",
-        "Microsoft.Xna.Framework.GameTime",
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
-        "Microsoft.Xna.Framework.IDrawable"
-      ],
-      "unmetDependencies": [
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice"
-      ],
-      "missingTypeDependencies": [
 
-      ],
-      "partialTypeDependencies": {
-        "Microsoft.Xna.Framework.Graphics.GraphicsDevice": {
-          "reachedMembers": [
-
-          ],
-          "reachedButMissing": [
-
-          ]
-        }
-      },
-      "ilOnlyDependencies": [
-        "Microsoft.Xna.Framework.GameServiceContainer",
-        "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
-      ],
-      "ilOnlyUnmetDependencies": [
-
-      ],
-      "partialDependencySatisfied": true,
-      "partialRemainderReverseEdges": [
-
-      ],
-      "dependencyComplete": false,
-      "blockers": [
-        "INTERFACE_PRODUCER_MISSING"
-      ],
-      "unmappedBclTypes": [
-
-      ],
-      "reachedInterfaces": [
-        "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
-      ],
-      "producerlessInterfaces": [
-        "Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService"
-      ],
-      "eventMembers": [
-        "VisibleChanged",
-        "DrawOrderChanged"
-      ],
-      "behaviourBearingMembers": [
-        ".ctor",
-        "Initialize",
-        "Dispose",
-        "Draw",
-        "LoadContent",
-        "UnloadContent",
-        "OnDrawOrderChanged",
-        "OnVisibleChanged"
-      ],
-      "ilDerivationRequired": true,
-      "ilAvailable": true,
-      "ilAssembly": "Microsoft.Xna.Framework.Game.dll",
-      "nativeReachableMethods": [
-
-      ],
-      "runtimeDataDetail": null
-    }
   ],
   "ilOnlyBlockedCandidates": [
 

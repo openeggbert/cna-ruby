@@ -209,24 +209,32 @@ class GameServiceContainerTest < Minitest::Test
 
   # -------------------------------------------------------------------- nothing populates one
 
-  # Foundation 37 gave the type its producer: every Game now owns one. What has not changed is
-  # that nothing *registers* anything in it -- a freshly constructed Game answers nil for every key,
-  # and no member of this binding calls AddService.
-  def test_nothing_in_this_binding_registers_a_service
+  # Foundation 37 gave the type its producer: every Game now owns one. For a long time nothing
+  # *registered* anything in it either, and this test asserted that no member of the binding ever
+  # called `AddService` at all -- which was true, and which turned out to be a **missing statement
+  # of the IL** rather than a property worth keeping. `GraphicsDeviceManager`'s constructor puts
+  # itself in under both service types; `DrawableGameComponent.Initialize` is what reads it.
+  #
+  # So what is asserted now is the shape: a **bare** `Game` registers nothing, and the only writer
+  # anywhere is the manager's constructor.
+  def test_only_the_graphics_device_manager_registers_a_service
     assert_nil container.GetService(F::IGraphicsDeviceManager)
-    assert ReviewedScoreboard.complete?(STRICT, "Microsoft.Xna.Framework.Game")
+    assert_includes STRICT.fetch("completeTypeNames"), "Microsoft.Xna.Framework.Game"
 
     game = F::Game.new
     assert_instance_of F::GameServiceContainer, game.Services
     assert_nil game.Services.GetService(F::IGraphicsDeviceManager)
     assert_empty game.Services.instance_variable_get(:@services)
 
-    # No member of this binding calls AddService on anything: the type declares it and nothing
-    # anywhere invokes it.
-    calls = ROOT.glob("lib/**/*.rb").flat_map do |path|
-      path.read.lines.grep(/\.AddService\b/)
-    end
-    assert_empty calls
+    manager = F::GraphicsDeviceManager.new(game)
+    assert_same manager, game.Services.GetService(F::IGraphicsDeviceManager)
+    assert_same manager, game.Services.GetService(Microsoft::Xna::Framework::Graphics::IGraphicsDeviceService)
+    assert_equal 2, game.Services.instance_variable_get(:@services).length
+
+    # And it really is the only writer: every `AddService` call site in the library is that
+    # constructor's two.
+    files = ROOT.glob("lib/**/*.rb").select { |path| path.read.match?(/^\s+game\.Services\.AddService\b/) }
+    assert_equal ["graphics.rb"], files.map { |path| path.basename.to_s }
   ensure
     game&.Dispose
   end

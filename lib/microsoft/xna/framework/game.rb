@@ -167,6 +167,141 @@ module Microsoft
       # inheritance, so it really inherits from `CNA::Runtime::Collection` and the whole
       # `Collection<T>` public surface — `Count`, the indexer, `Add`, `Clear`, `Contains`, `CopyTo`,
       # `GetEnumerator`, `IndexOf`, `Insert`, `Remove`, `RemoveAt` — arrives by inheritance rather
+      # `DrawableGameComponent` — a `GameComponent` that also declares `IDrawable`.
+      #
+      # ## The producer this type waited for
+      #
+      # `Initialize` looks `IGraphicsDeviceService` up in `Game.Services` and refuses with
+      # `InvalidOperationException(MissingGraphicsDeviceService)` when it is absent, and for a long
+      # time this binding registered none — `docs/graphics-device-service-producer-audit.md`
+      # deferred the whole type on that. The audit's own re-reading is what unblocked it:
+      # `GraphicsDeviceManager`'s constructor IL puts itself into that container as **both**
+      # `IGraphicsDeviceManager` and `IGraphicsDeviceService`, the container is a projected managed
+      # dictionary no part of CNA reads, and this manager already answers every member of the
+      # service contract. Registering it is one statement of the IL. Nothing about CNA's lifecycle
+      # changed, and nothing here asks it to.
+      #
+      # ## Everything else is `GameComponent`'s shape again
+      #
+      # `visible` starts **true** — the constructor's first two instructions, before the base
+      # constructor runs — `drawOrder` starts zero, and both setters are the same five instructions
+      # `Enabled` and `UpdateOrder` are: same-value suppression first, the field written before the
+      # notification, `On…Changed(this, EventArgs.Empty)` after.
+      class DrawableGameComponent < GameComponent
+        extend CNA::Runtime::EventOwner
+        include IDrawable
+
+        xna_event :VisibleChanged
+        xna_event :DrawOrderChanged
+
+        # `visible = true; base(game);` — in that order, so a base constructor that read `Visible`
+        # would already see true.
+        def initialize(game)
+          @Visible = true
+          @DrawOrder = 0
+          @initialized = false
+          @device_service = nil
+          @device_handlers = nil
+          super
+        end
+
+        attr_reader :Visible, :DrawOrder
+
+        def Visible=(value)
+          value = value ? true : false unless value == true || value == false
+          return if @Visible == value
+
+          @Visible = value
+          OnVisibleChanged(self, CNA::Runtime::EventArgs::Empty)
+          nil
+        end
+
+        def DrawOrder=(value)
+          order = CNA::Runtime::Numeric.int32(value, "value")
+          return if @DrawOrder == order
+
+          @DrawOrder = order
+          OnDrawOrderChanged(self, CNA::Runtime::EventArgs::Empty)
+          nil
+        end
+
+        # `if (deviceService == null) throw new InvalidOperationException(
+        #      PropertyCannotBeCalledBeforeInitialize); return deviceService.GraphicsDevice;`
+        #
+        # So this is not a stored device: it is the **service's** device, read every time, and it
+        # refuses before `Initialize` has run rather than answering nil.
+        def GraphicsDevice
+          if @device_service.nil?
+            raise ::RuntimeError, "This property cannot be called before Initialize()."
+          end
+
+          @device_service.GraphicsDevice
+        end
+
+        # `base.Initialize(); if (initialized) return;` then the service lookup, the refusal, the
+        # four subscriptions, one `LoadContent` when the service already has a device, and
+        # `initialized = true`. Every branch is reproduced, including the guard that makes a second
+        # `Initialize` do nothing but the base's.
+        def Initialize
+          super
+          return nil if @initialized
+
+          @device_service = self.Game&.Services&.GetService(Graphics::IGraphicsDeviceService)
+          if @device_service.nil?
+            raise ::RuntimeError, "No Graphics Device Service"
+          end
+
+          # Four `add_` calls onto the service, kept so `Dispose(true)` can remove exactly these.
+          # `DeviceResetting` and `DeviceReset` are bare `ret`s in the IL and are subscribed anyway,
+          # because removing them in `Dispose` is what the IL does and a handler that was never
+          # added cannot be removed.
+          @device_handlers = {
+            DeviceCreated: ->(_sender, _args) { self.LoadContent },
+            DeviceResetting: ->(_sender, _args) { nil },
+            DeviceReset: ->(_sender, _args) { nil },
+            DeviceDisposing: ->(_sender, _args) { self.UnloadContent }
+          }
+          @device_handlers.each { |name, handler| @device_service.__send__(name).add(handler) }
+          self.LoadContent unless @device_service.GraphicsDevice.nil?
+          @initialized = true
+          nil
+        end
+
+        # `public virtual void Draw(GameTime gameTime)` whose body is a bare `ret`. It exists to be
+        # overridden, and it validates nothing — not even a null `gameTime`.
+        def Draw(_gameTime) = nil
+
+        # `if (!disposing) return;` then `UnloadContent()`, then the four `remove_` calls when a
+        # service was found, then `base.Dispose(disposing)`. `UnloadContent` runs **before** the
+        # unsubscribes and regardless of whether a service exists.
+        def Dispose(disposing = true)
+          return super unless disposing
+
+          self.UnloadContent
+          @device_handlers&.each { |name, handler| @device_service.__send__(name).remove(handler) }
+          @device_handlers = nil
+          super
+        end
+
+        protected
+
+        # Two `family virtual` extension points, both a bare `ret`.
+        def LoadContent = nil
+        def UnloadContent = nil
+
+        # `family virtual`, one null check and one `Invoke` each — the shape every `On…` raiser in
+        # this binding has.
+        def OnVisibleChanged(sender, args)
+          self.VisibleChanged.__send__(:dispatch, sender, args)
+          nil
+        end
+
+        def OnDrawOrderChanged(sender, args)
+          self.DrawOrderChanged.__send__(:dispatch, sender, args)
+          nil
+        end
+      end
+
       # than being flattened into unrelated methods here. The CLR type argument cannot live in the
       # superclass expression because a Ruby class is not statically generic, so it is declared as
       # metadata and the API verifier measures it.

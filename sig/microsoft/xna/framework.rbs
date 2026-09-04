@@ -70,6 +70,25 @@ module Microsoft
         def Disposed: () -> CNA::Runtime::Event
       end
 
+      # A GameComponent that also declares IDrawable. Its GraphicsDevice is the
+      # IGraphicsDeviceService's, looked up in Game.Services by Initialize, and it refuses before
+      # Initialize has run rather than answering nil.
+      class DrawableGameComponent < GameComponent
+        include IDrawable
+
+        def initialize: (Game? game) -> void
+        def Visible: () -> bool
+        def Visible=: (bool value) -> bool?
+        def DrawOrder: () -> Integer
+        def DrawOrder=: (Integer value) -> Integer?
+        def GraphicsDevice: () -> Microsoft::Xna::Framework::Graphics::GraphicsDevice
+        def Initialize: () -> nil
+        def Draw: (GameTime? gameTime) -> nil
+        def Dispose: (?bool disposing) -> nil
+        def VisibleChanged: () -> CNA::Runtime::Event
+        def DrawOrderChanged: () -> CNA::Runtime::Event
+      end
+
       # A sealed Collection<IGameComponent>. Its whole declared surface is four protected hooks
       # and two events; every public collection member arrives from CNA::Runtime::Collection.
       class GameComponentCollection < CNA::Runtime::Collection

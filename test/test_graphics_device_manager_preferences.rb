@@ -228,17 +228,27 @@ class GraphicsDeviceManagerPreferencesTest < Minitest::Test
     end
   end
 
-  def test_the_producer_audits_outcome_is_untouched
+  # This asserted "outcome B of the producer audit": that the manager declared neither service
+  # contract and registered as neither. Both halves were the audit's own mistake, and re-reading
+  # the constructor IL is what corrected them -- the registration is two `AddService` calls into a
+  # managed dictionary nothing in CNA reads. What the audit got right, and what is asserted here
+  # now, is the half that has not changed: **CNA's own container** still has no registration route
+  # and this binding still adds none.
+  def test_the_manager_is_both_services_and_cnas_container_is_still_untouched
     manager_class = F::GraphicsDeviceManager
-    refute manager_class.include?(G::IGraphicsDeviceService)
-    refute manager_class.include?(F::IGraphicsDeviceManager)
+    assert manager_class.include?(G::IGraphicsDeviceService)
+    assert manager_class.include?(F::IGraphicsDeviceManager)
+    symbols = CNA::Native::Manifest::FUNCTIONS.map(&:symbol)
+    %w[cna_game_add_service cna_game_get_service cna_game_services_add].each do |absent|
+      refute_includes symbols, absent
+    end
     skip "CNA_NATIVE_LIBRARY not supplied" unless ENV["CNA_NATIVE_LIBRARY"]
 
     game = Host.new { nil }
     begin
-      assert_nil game.Services.GetService(G::IGraphicsDeviceService),
-                 "nothing registers the manager, which is outcome B of the producer audit"
-      assert_nil game.Services.GetService(F::IGraphicsDeviceManager)
+      manager = game.Services.GetService(G::IGraphicsDeviceService)
+      refute_nil manager
+      assert_same manager, game.Services.GetService(F::IGraphicsDeviceManager)
     ensure
       game.Dispose
     end

@@ -7731,6 +7731,8 @@ module Microsoft
 
       class GraphicsDeviceManager
         extend CNA::Runtime::EventOwner
+        include Graphics::IGraphicsDeviceService
+        include IGraphicsDeviceManager
         DefaultBackBufferWidth = 800
         DefaultBackBufferHeight = 480
         attr_reader :GraphicsDevice
@@ -7755,8 +7757,31 @@ module Microsoft
         xna_event :DeviceResetting
         xna_event :Disposed
 
+        # The constructor's IL, in its order: a null game is
+        # `ArgumentNullException("game", GameCannotBeNull)`, a game that already has an
+        # `IGraphicsDeviceManager` is `ArgumentException(GraphicsDeviceManagerAlreadyPresent)`, and
+        # then **both** service registrations —
+        #
+        #     game.Services.AddService(typeof(IGraphicsDeviceManager), this);
+        #     game.Services.AddService(typeof(IGraphicsDeviceService), this);
+        #
+        # CORRECTION, and the second half of the one `docs/graphics-device-service-producer-audit.md`
+        # got wrong. That audit concluded this binding could register no `IGraphicsDeviceService`
+        # producer without "a material Game/graphics lifecycle redesign", and it was conflating two
+        # different things. What would be a redesign is making the managed container the one **CNA's
+        # lifecycle** runs against; the audit is right that this binding will not do that. What the
+        # IL above does is put this object into `GameServiceContainer`, a projected managed
+        # dictionary that nothing in CNA reads and that no lifecycle consults — and this manager
+        # already answers every member of `IGraphicsDeviceService`: `GraphicsDevice` since it was
+        # built, and the four events since Foundation 96 measured them to be relays of the device's
+        # own. Registering it is one statement of the IL, not a redesign, and it is what
+        # `DrawableGameComponent.Initialize` looks up.
         def initialize(game)
           raise TypeError, "GraphicsDeviceManager.new expects Game" unless game.is_a?(Game)
+          if game.Services.GetService(IGraphicsDeviceManager)
+            raise ::ArgumentError, "a GraphicsDeviceManager is already present in this Game's services"
+          end
+
           @game = game
           @GraphicsDevice = Graphics::GraphicsDevice.__send__(:new, game)
           @native_handle = nil
@@ -7764,6 +7789,41 @@ module Microsoft
           initialize_preferences
           hook_device_events
           game.__send__(:attach_graphics_manager, self)
+          game.Services.AddService(IGraphicsDeviceManager, self)
+          game.Services.AddService(Graphics::IGraphicsDeviceService, self)
+        end
+
+        # `IGraphicsDeviceManager`'s three members are **explicit** implementations in XNA and are
+        # not part of the selected surface, so they are private here — the rule
+        # `Dictionary`2` and the two lightless stock effects already follow. Each is kept faithfully
+        # rather than dropped:
+        #
+        #     CreateDevice() => ChangeDevice(true)
+        #     BeginDraw()    => EnsureDevice() ? (beginDrawOk = true) : false
+        #     EndDraw()      => if (beginDrawOk && device != null) try { device.Present(); }
+        #                       catch (DeviceLostException) {} catch (DeviceNotResetException) {}
+        #
+        # `ChangeDevice` and `EnsureDevice` are `private` in XNA and are CNA's work here: the device
+        # exists from construction and the host drives the frame, so `CreateDevice` has nothing left
+        # to create and `EnsureDevice` nothing to recover.
+        private def CreateDevice = nil
+
+        private def BeginDraw
+          return false if @GraphicsDevice.nil? || @GraphicsDevice.IsDisposed
+
+          @begin_draw_ok = true
+        end
+
+        private def EndDraw
+          return nil unless @begin_draw_ok
+          return nil if @GraphicsDevice.nil?
+
+          begin
+            @GraphicsDevice.Present
+          rescue CNA::NativeError
+            nil
+          end
+          nil
         end
 
         # ------------------------------------------------------------------ the four raisers

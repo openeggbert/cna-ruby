@@ -1270,21 +1270,27 @@ def execute(item)
      strict.fetch("partialTypes").key?("Microsoft.Xna.Framework.GraphicsDeviceManager"),
      strict.fetch("completeTypeNames").include?(service)]
   when "GraphicsDeviceService.ProducerAbsent"
-    # The contract exists and nothing provides it. Every half is asked of the live runtime.
+    # The contract, and what provides it. This row measured "nothing does" for eleven milestones
+    # and now measures the producer that does, in the same six elements: the two conformance
+    # declarations, the two container answers -- for a **bare** game and then for one with a
+    # manager -- what the frontier says about DrawableGameComponent, and what interfaces the
+    # frontier still calls producerless.
     service = G::IGraphicsDeviceService
     game = F::Game.new
     begin
       frontier = JSON.parse(File.read(File.expand_path("../docs/generated/public-signature-dependency-report.json", __dir__)))
-      drawable = (frontier.fetch("partialDependencySatisfiedCandidates") +
-                  frontier.fetch("ilOnlyBlockedCandidates") +
-                  frontier.fetch("dependencyCompleteCandidates"))
-                 .find { |entry| entry.fetch("name") == "Microsoft.Xna.Framework.DrawableGameComponent" }
+      candidates = frontier.fetch("partialDependencySatisfiedCandidates") +
+                   frontier.fetch("ilOnlyBlockedCandidates") +
+                   frontier.fetch("dependencyCompleteCandidates")
+      drawable = candidates.find { |entry| entry.fetch("name") == "Microsoft.Xna.Framework.DrawableGameComponent" }
+      bare = game.Services.GetService(service)
+      manager = F::GraphicsDeviceManager.new(game)
       [F::GraphicsDeviceManager.ancestors.include?(service),
        F::GraphicsDeviceManager.ancestors.include?(F::IGraphicsDeviceManager),
-       game.Services.GetService(service),
-       game.Services.GetService(F::IGraphicsDeviceManager),
-       drawable.fetch("blockers"),
-       drawable.fetch("producerlessInterfaces")]
+       bare,
+       game.Services.GetService(service).equal?(manager),
+       drawable.nil? ? "built" : drawable.fetch("blockers"),
+       candidates.flat_map { |entry| entry.fetch("producerlessInterfaces") }.uniq]
     ensure
       game.Dispose
     end

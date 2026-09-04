@@ -1802,6 +1802,8 @@ class ApiVerifierTest < Minitest::Test
       Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer::ContentLost
       Microsoft.Xna.Framework.Graphics.RenderTarget2D::ContentLost
       Microsoft.Xna.Framework.Graphics.RenderTargetCube::ContentLost
+      Microsoft.Xna.Framework.DrawableGameComponent::VisibleChanged
+      Microsoft.Xna.Framework.DrawableGameComponent::DrawOrderChanged
     ], selected
 
     strict = JSON.parse(File.read(File.expand_path("../docs/generated/api-compat-report.json", __dir__)))

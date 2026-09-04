@@ -30,11 +30,11 @@ end
 # and left no single place a reader could call the authority. `docs/generated/api-compat-report.json`
 # is the measurement; this is the reviewed expectation of it.
 module ReviewedScoreboard
-  TARGET_TYPES = 217
-  TARGET_MEMBERS = 2568
-  COMPLETE_TYPES = 215
+  TARGET_TYPES = 218
+  TARGET_MEMBERS = 2581
+  COMPLETE_TYPES = 216
   PARTIAL_TYPES = 2
-  MISSING_TYPES = 40
+  MISSING_TYPES = 39
   MISSING_MEMBER = 8
   OVERLOAD_MAPPING_MISMATCH = 5
   # Zero since Foundation 89 projected `GraphicsDevice::Viewport`'s setter. The one entry this
@@ -44,8 +44,8 @@ module ReviewedScoreboard
   BCL_PROJECTED_IDENTITIES = 22
   BCL_EXCEPTION_BASES = 2
   BCL_THROWN_EXCEPTIONS = 8
-  EVENT_IDENTITIES = 42
-  EVENT_OWNER_TYPES = 20
+  EVENT_IDENTITIES = 44
+  EVENT_OWNER_TYPES = 21
   # `GraphicsDevice`'s projected surface, in one place and for the same reason the counts are in
   # one place: it is still a partial type, so every slice that lands on it moves this list, and five
   # unrelated tests should not each pin it as a literal.

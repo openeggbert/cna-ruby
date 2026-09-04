@@ -389,13 +389,12 @@ class ManagedDescriptorsTest < Minitest::Test
   # Foundation 35, from its own IL rather than from anything this type implies, and the relation
   # runs the other way: the collection constructs these args, so it names the type and not the
   # reverse.
-  # The event args type still implies neither the collection nor the component class. Both exist
-  # now -- Foundation 35 and 38 -- each from its own IL rather than from anything this type implies,
-  # and the relation runs the other way: the collection constructs these args, so it names the type
-  # and not the reverse. DrawableGameComponent, which this type does not name at all, is still
-  # absent.
+  # The event args type still implies neither the collection nor the component class. All three
+  # exist now -- Foundations 35, 38 and 101 -- each from its own IL rather than from anything this
+  # type implies, and the relation runs the other way: the collection constructs these args, so it
+  # names the type and not the reverse.
   def test_the_event_args_type_implies_no_game_component_family
-    refute F.const_defined?(:DrawableGameComponent, false)
+    assert F.const_defined?(:DrawableGameComponent, false)
     assert F.const_defined?(:GameComponentCollection, false)
     assert F.const_defined?(:GameComponent, false)
     assert_nil F::GameComponentCollectionEventArgs.new(nil).GameComponent

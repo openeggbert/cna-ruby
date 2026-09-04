@@ -262,10 +262,46 @@ Game/graphics lifecycle redesign — the managed `Game` would have to stop being
 over CNA's `Game` and start being the `Game`, which is the opposite of how every milestone so far
 has been built.
 
-## What `DrawableGameComponent` still needs
+## The second thing this audit got wrong, corrected in Foundation 101
 
-Unchanged by this milestone, and now measured rather than argued: its nine
-`IGraphicsDeviceService` member edges are satisfied by a *type* that exists and blocked by an
-*object* that does not, which the frontier reports as `INTERFACE_PRODUCER_MISSING`. Completing it
-today would ship a type whose `Initialize` throws
-`InvalidOperationException(MissingGraphicsDeviceService)` the moment `Game.Initialize` reaches it.
+The paragraph above is two claims, and only the first survives.
+
+**What is still true:** CNA's native service container has no registration route, this binding adds
+none, and nothing here makes the managed `Game` the object CNA's lifecycle runs against. A
+`cna_game_add_service` does not exist and is not asked for.
+
+**What was wrong:** that registering an `IGraphicsDeviceService` at all *is* that redesign. It is
+not. `GraphicsDeviceManager`'s own constructor IL is
+
+```
+if (game.Services.GetService(typeof(IGraphicsDeviceManager)) != null)
+    throw new ArgumentException(GraphicsDeviceManagerAlreadyPresent);
+game.Services.AddService(typeof(IGraphicsDeviceManager), this);
+game.Services.AddService(typeof(IGraphicsDeviceService), this);
+```
+
+`GameServiceContainer` is a projected managed dictionary. Nothing in CNA reads it, no lifecycle
+consults it, and `AddService` triggers nothing — the audit's own warning about "a second
+registration duplicating the lifecycle" is about **CNA's** container, and this is not that one. And
+this manager already answered every member of the contract: `GraphicsDevice` since it was built, and
+`DeviceCreated`, `DeviceResetting`, `DeviceReset` and `DeviceDisposing` since Foundation 96 measured
+them to be relays of the device's own — the milestone that corrected this audit the first time.
+
+So the registration was a **missing statement of the IL**, not a deferred architecture, and it is
+one line each. The manager now includes both contracts and answers both, `IGraphicsDeviceManager`'s
+three members privately as the explicit implementations they are.
+
+## What `DrawableGameComponent` needed, and got
+
+Its nine `IGraphicsDeviceService` member edges were satisfied by a *type* that existed and blocked
+by an *object* that did not, which the frontier reported as `INTERFACE_PRODUCER_MISSING`. That
+blocker was **right**, and the only thing that could clear it is what cleared it: a real producer.
+Foundation 101 built the type in full, and the measurement is end to end — a
+`DrawableGameComponent` added to `Game.Components` is initialized by the engine, has `LoadContent`
+called because the service already has a device, is updated and drawn by the real loop while it is
+enabled and visible, and is unloaded on disposal.
+
+`INTERFACE_PRODUCER_MISSING` now catches nothing anywhere on the frontier. That is the rule having
+been satisfied rather than waived: `test_member_level_dependencies.rb` asserts the empty set, and
+asserts that the manager answers each contract member itself rather than inheriting the abstract
+stub.

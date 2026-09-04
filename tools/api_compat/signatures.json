@@ -52782,6 +52782,239 @@
         }
       ],
       "rubyName": "Microsoft::Xna::Framework::Graphics::ModelEffectCollection::Enumerator"
+    },
+    {
+      "name": "Microsoft.Xna.Framework.DrawableGameComponent",
+      "kind": "class",
+      "flags": false,
+      "sealed": false,
+      "underlyingType": null,
+      "baseType": "Microsoft.Xna.Framework.GameComponent",
+      "interfaces": [
+        "Microsoft.Xna.Framework.IDrawable",
+        "Microsoft.Xna.Framework.IGameComponent",
+        "Microsoft.Xna.Framework.IUpdateable",
+        "System.IDisposable"
+      ],
+      "directInterfaces": [
+        "Microsoft.Xna.Framework.IDrawable"
+      ],
+      "genericParameters": [
+
+      ],
+      "members": [
+        {
+          "kind": "constructor",
+          "name": ".ctor",
+          "static": false,
+          "access": "public",
+          "returnType": null,
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "game",
+              "type": "Microsoft.Xna.Framework.Game",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Initialize",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Dispose",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "disposing",
+              "type": "System.Boolean",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "Draw",
+          "static": false,
+          "access": "public",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "gameTime",
+              "type": "Microsoft.Xna.Framework.GameTime",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "LoadContent",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "UnloadContent",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "OnDrawOrderChanged",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "sender",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "args",
+              "type": "System.EventArgs",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "method",
+          "name": "OnVisibleChanged",
+          "static": false,
+          "access": "protected",
+          "returnType": "System.Void",
+          "genericParameters": [
+
+          ],
+          "parameters": [
+            {
+              "name": "sender",
+              "type": "System.Object",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            },
+            {
+              "name": "args",
+              "type": "System.EventArgs",
+              "ref": false,
+              "out": false,
+              "in": false,
+              "optional": false
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "Visible",
+          "type": "System.Boolean",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "DrawOrder",
+          "type": "System.Int32",
+          "static": false,
+          "get": true,
+          "set": true,
+          "getAccess": "public",
+          "setAccess": "public",
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "GraphicsDevice",
+          "type": "Microsoft.Xna.Framework.Graphics.GraphicsDevice",
+          "static": false,
+          "get": true,
+          "set": false,
+          "getAccess": "public",
+          "setAccess": null,
+          "parameters": [
+
+          ]
+        },
+        {
+          "kind": "event",
+          "name": "VisibleChanged",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        },
+        {
+          "kind": "event",
+          "name": "DrawOrderChanged",
+          "type": "System.EventHandler`1[System.EventArgs]",
+          "static": false,
+          "add": true,
+          "remove": true
+        }
+      ],
+      "rubyName": "Microsoft::Xna::Framework::DrawableGameComponent"
     }
   ]
 }

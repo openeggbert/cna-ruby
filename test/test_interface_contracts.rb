@@ -158,13 +158,33 @@ class InterfaceContractsTest < Minitest::Test
     end
   end
 
-  def test_no_partial_runtime_type_includes_an_interface_contract
-    # Including one would add public members that the partial selected surface does not declare.
+  # Including a contract adds public members, so a **partial** type may only include one whose
+  # members it already declares. `GraphicsDeviceManager` is the one that does: it includes
+  # `IGraphicsDeviceService` and `IGraphicsDeviceManager` because its constructor IL registers it as
+  # both, and it answers every member of the first for real and the second's three privately.
+  # Every other partial type still includes none.
+  ALLOWED_PARTIAL_CONTRACTS = {
+    "Microsoft::Xna::Framework::GraphicsDeviceManager" =>
+      %w[Microsoft.Xna.Framework.Graphics.IGraphicsDeviceService
+         Microsoft.Xna.Framework.IGraphicsDeviceManager]
+  }.freeze
+
+  def test_a_partial_runtime_type_includes_only_a_contract_it_really_answers
     modules = CONTRACTS.keys.map { |name| resolve(name) }
     PARTIAL_RUNTIME_TYPES.each do |name|
       type = resolve(name)
+      allowed = ALLOWED_PARTIAL_CONTRACTS.fetch(name, []).map { |contract| resolve(contract) }
       modules.each do |interface|
+        next if allowed.include?(interface)
+
         refute_includes type.ancestors, interface, "#{name} must not include #{interface}"
+      end
+      allowed.each do |interface|
+        assert_includes type.ancestors, interface, "#{name} must include #{interface}"
+        interface.instance_methods.each do |member|
+          refute_equal interface, type.instance_method(member).owner,
+                       "#{name}##{member} must be its own, not #{interface}'s abstract stub"
+        end
       end
     end
     assert_equal ReviewedScoreboard::GRAPHICS_DEVICE_SURFACE, G::GraphicsDevice.public_instance_methods(false).sort
@@ -202,15 +222,15 @@ class InterfaceContractsTest < Minitest::Test
     # in 38, each from its own IL rather than from anything these interfaces imply. What the
     # contracts still imply is nothing: a fresh container is empty, a fresh collection is empty, and
     # a fresh component reaches no device.
-    # LaunchParameters arrived in Foundation 46 from its own IL and its own BCL base, and
-    # GameWindow in 48 from its own IL over the canonical window routes.
-    %i[DrawableGameComponent]
-      .each { |name| refute F.const_defined?(name, false), "Framework::#{name}" }
+    # LaunchParameters arrived in Foundation 46 from its own IL and its own BCL base, GameWindow in
+    # 48 from its own IL over the canonical window routes, and DrawableGameComponent in 101 once
+    # GraphicsDeviceManager was made the producer its own constructor IL says it is.
     # Foundation 40 projected IGraphicsDeviceService -- under Graphics, which is where the pinned
-    # contract declares it, and never under Framework. Its existence is a contract, not a runtime:
-    # nothing conforms to it and Game.Services holds no key for it.
+    # contract declares it, and never under Framework.
     refute F.const_defined?(:IGraphicsDeviceService, false), "Framework::IGraphicsDeviceService"
     assert G.const_defined?(:IGraphicsDeviceService, false), "Graphics::IGraphicsDeviceService"
+    # A **bare** container and a **bare** Game still hold nothing: only the manager's constructor
+    # writes, which is what these contracts imply nothing about.
     assert_nil F::GameServiceContainer.new.GetService(G::IGraphicsDeviceService)
     assert_empty F::Game.new.Services.instance_variable_get(:@services)
     assert_equal 0, F::GameComponentCollection.new.Count

@@ -5,20 +5,20 @@
   "REFERENCE_MEMBERS": 2964,
   "EXPECTED_RUBY_TYPES": 257,
   "EXPECTED_RUBY_MEMBERS": 2915,
-  "TARGET_TYPES": 217,
-  "TARGET_MEMBERS": 2568,
-  "TOTAL_DIAGNOSTICS": 53,
-  "COMPLETE_TYPES": 215,
+  "TARGET_TYPES": 218,
+  "TARGET_MEMBERS": 2581,
+  "TOTAL_DIAGNOSTICS": 52,
+  "COMPLETE_TYPES": 216,
   "PARTIAL_TYPES": 2,
-  "MISSING_TYPES": 40,
+  "MISSING_TYPES": 39,
   "ALLOWLIST_ENTRIES": 0,
-  "EVENT_IDENTITIES": 42,
-  "EVENT_OWNER_TYPES": 20,
+  "EVENT_IDENTITIES": 44,
+  "EVENT_OWNER_TYPES": 21,
   "EVENT_SUPPORT_TYPE": "CNA::Runtime::Event",
   "BCL_PROJECTED_IDENTITIES": 22,
   "BCL_EXCEPTION_BASES": 2,
   "BCL_THROWN_EXCEPTIONS": 8,
-  "MISSING_TYPE": 40,
+  "MISSING_TYPE": 39,
   "MISSING_MEMBER": 8,
   "UNEXPECTED_TYPE": 0,
   "UNEXPECTED_MEMBER": 0,
@@ -83,7 +83,9 @@
     "Microsoft.Xna.Framework.Graphics.DynamicVertexBuffer::ContentLost",
     "Microsoft.Xna.Framework.Graphics.DynamicIndexBuffer::ContentLost",
     "Microsoft.Xna.Framework.Graphics.RenderTarget2D::ContentLost",
-    "Microsoft.Xna.Framework.Graphics.RenderTargetCube::ContentLost"
+    "Microsoft.Xna.Framework.Graphics.RenderTargetCube::ContentLost",
+    "Microsoft.Xna.Framework.DrawableGameComponent::VisibleChanged",
+    "Microsoft.Xna.Framework.DrawableGameComponent::DrawOrderChanged"
   ],
   "bclProjection": {
     "types": {
@@ -334,7 +336,8 @@
     "Microsoft.Xna.Framework.Graphics.ModelBoneCollection+Enumerator",
     "Microsoft.Xna.Framework.Graphics.ModelMeshCollection+Enumerator",
     "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator",
-    "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator"
+    "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator",
+    "Microsoft.Xna.Framework.DrawableGameComponent"
   ],
   "partialTypes": {
     "Microsoft.Xna.Framework.GraphicsDeviceManager": [
@@ -368,7 +371,6 @@
     "Microsoft.Xna.Framework.Design.Vector2Converter",
     "Microsoft.Xna.Framework.Design.Vector3Converter",
     "Microsoft.Xna.Framework.Design.Vector4Converter",
-    "Microsoft.Xna.Framework.DrawableGameComponent",
     "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
     "Microsoft.Xna.Framework.GraphicsDeviceInformation",
     "Microsoft.Xna.Framework.Media.Album",
@@ -609,7 +611,8 @@
     "Microsoft.Xna.Framework.Graphics.ModelBoneCollection+Enumerator": 0,
     "Microsoft.Xna.Framework.Graphics.ModelMeshCollection+Enumerator": 0,
     "Microsoft.Xna.Framework.Graphics.ModelMeshPartCollection+Enumerator": 0,
-    "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator": 0
+    "Microsoft.Xna.Framework.Graphics.ModelEffectCollection+Enumerator": 0,
+    "Microsoft.Xna.Framework.DrawableGameComponent": 0
   },
   "details": {
     "MISSING_TYPE": [
@@ -630,7 +633,6 @@
       "Microsoft.Xna.Framework.Design.Vector2Converter",
       "Microsoft.Xna.Framework.Design.Vector3Converter",
       "Microsoft.Xna.Framework.Design.Vector4Converter",
-      "Microsoft.Xna.Framework.DrawableGameComponent",
       "Microsoft.Xna.Framework.Graphics.GraphicsAdapter",
       "Microsoft.Xna.Framework.GraphicsDeviceInformation",
       "Microsoft.Xna.Framework.Media.Album",
